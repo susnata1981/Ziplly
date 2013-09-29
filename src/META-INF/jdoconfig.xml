@@ -10,5 +10,6 @@
        <property name="javax.jdo.option.RetainValues" value="true"/>
        <property name="datanucleus.appengine.autoCreateDatastoreTxns" value="true"/>
        <property name="datanucleus.appengine.singletonPMFForName" value="true"/>
-    --></persistence-manager-factory>
+    -->
+   </persistence-manager-factory>
 </jdoconfig>
