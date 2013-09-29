@@ -7,7 +7,7 @@
     Allows App Engine to send multiple requests to one instance in parallel:
   -->
   <threadsafe>true</threadsafe>
-
+  
   <!-- Configure serving/caching of GWT files -->
   <static-files>
     <include path="**" />
@@ -24,7 +24,6 @@
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
   </system-properties>
 
-  <use-google-connector-j>true</use-google-connector-j>
   
   <sessions-enabled>true</sessions-enabled>
   
@@ -33,6 +32,7 @@
     asynchronously write HTTP session data to the datastore:
 
       <async-session-persistence enabled="true" />
+  <use-google-connector-j>true</use-google-connector-j>
 
     With this feature enabled, there is a very small chance your app will see
     stale session data. For details, see
