@@ -33,11 +33,20 @@ public class AccountDAOImpl implements AccountDAO {
 	public void save(AccountDTO account) {
 		EntityManager em = EntitManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
-		em.merge(account);
+		em.persist(account);
 		em.getTransaction().commit();
 		em.close();
 	}
 
+	@Override
+	public void update(AccountDTO account) {
+		EntityManager em = EntitManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		em.merge(account);
+		em.getTransaction().commit();
+		em.close();
+	}
+	
 	@Override
 	public List<AccountDTO> get(
 			com.ziplly.app.model.QueryMetaData qmd)
