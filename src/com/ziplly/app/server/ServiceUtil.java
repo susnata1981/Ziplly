@@ -40,6 +40,7 @@ public class ServiceUtil {
 		resp.setTimeCreated(a.getTimeCreated());
 		return resp;
 	}
+	
 	// public static Message convert(MessageDO msgDO) {
 	// Message msg = new Message();
 	// msg.setId(msgDO.getId());
