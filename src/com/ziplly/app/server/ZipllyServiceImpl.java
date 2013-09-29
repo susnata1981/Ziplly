@@ -19,6 +19,7 @@ import com.ziplly.app.dao.NotFoundException;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.Category;
 import com.ziplly.app.model.LatLong;
@@ -48,7 +49,7 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 			return null;
 		}
 
-		Account account = null;
+		AccountDTO account = null;
 		boolean newAccount = false;
 
 		try {
@@ -56,7 +57,7 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 		} catch (NotFoundException nfe) {
 			// create user
 			newAccount = true;
-			account = new Account();
+			account = new AccountDTO();
 			account.setEmail(fuser.getEmail());
 			account.setFirstName(fuser.getFirstName());
 			account.setLastName(fuser.getLastName());
@@ -101,7 +102,7 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 		return null;
 	}
 	
-	private AccountDetails doLogin(Account account) {
+	private AccountDetails doLogin(AccountDTO account) {
 		// update account last login timestamp
 		account.setLastLoginTime(new Date());
 		accountDAO.save(account);

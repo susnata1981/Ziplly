@@ -18,6 +18,6 @@
 	<classpathentry kind="lib" path="/Users/ghosh/Desktop/jar/Ziplly/jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="/Users/ghosh/Desktop/jar/Ziplly/mysql-connector-java-5.1.26-bin.jar"/>
 	<classpathentry kind="lib" path="/Users/ghosh/Desktop/jar/Ziplly/restfb-1.6.12.jar"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/appengine-java-sdk-1.4.3 2"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/appengine-java-sdk-1.8.1"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

@@ -3,15 +3,32 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Account implements Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="account")
+public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	Long id;
+	@Column(name="facebook_id")
 	private String fId;
 	private String email;
+	@Column(name="first_name")
 	private String firstName;
+	@Column(name="last_name")
 	private String lastName;
+	@Column(name="profile_url")
 	private String url;
+	@Column(name="access_token")
 	private String accessToken;
+	@Column(name="image_url")
 	private String imageUrl;
 	private String introduction;
 	private String city;
@@ -19,47 +36,10 @@ public class Account implements Serializable {
 	private int zip;
 	private String longitude;
 	private String latitude;
+	@Column(name="last_login")
 	private Date lastLoginTime;
+	@Column(name="time_created")
 	private Date timeCreated;
-	
-	public Account() {
-	}
-	
-//	public Account(Account a) {
-//		this.id = a.id;
-//		this.fId = a.fId;
-//		this.email = a.email;
-//		this.firstName = a.firstName;
-//		this.lastName = a.lastName;
-//		this.url = a.url;
-//		this.accessToken = a.accessToken;
-//		this.imageUrl = a.imageUrl;
-//		this.introduction = a.introduction;
-//		this.city = a.city;
-//		this.state = a.state;
-//		this.longitude = a.longitude;
-//		this.latitude = a.latitude;
-//		this.lastLoginTime = a.lastLoginTime;
-//		this.timeCreated = a.timeCreated;
-//	}
-	
-	public Account(AccountDTO a) {
-		this.id = a.getId();
-		this.fId = a.getfId();
-		this.email = a.getEmail();
-		this.firstName = a.getFirstName();
-		this.lastName = a.getLastName();
-		this.url = a.getUrl();
-		this.accessToken = a.getAccessToken();
-		this.imageUrl = a.getImageUrl();
-		this.introduction = a.getIntroduction();
-		this.city = a.getCity();
-		this.state = a.getState();
-		this.longitude = a.getState();
-		this.latitude = a.getLatitude();
-		this.lastLoginTime = a.getLastLoginTime();
-		this.timeCreated = a.getTimeCreated();
-	}
 	
 	public Long getId() {
 		return id;
@@ -145,7 +125,7 @@ public class Account implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.id == this.id;
+		return a.getId() == this.id;
 	}
 
 	public String getIntroduction() {
