@@ -1,17 +1,46 @@
-package com.ziplly.app.model;
+package com.ziplly.app.dao;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class Account implements Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.NamedNativeQueries;
+import org.hibernate.annotations.NamedNativeQuery;
+
+import com.ziplly.app.model.Account;
+
+@NamedNativeQueries({
+	@NamedNativeQuery(
+	name = "findAccountByEmail",
+	query = "select * from account a where a.email = :email",
+        resultClass = AccountDTO.class
+	)
+})
+@Entity
+@Table(name="account")
+public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	Long id;
+	@Column(name="facebook_id")
 	private String fId;
 	private String email;
+	@Column(name="first_name")
 	private String firstName;
+	@Column(name="last_name")
 	private String lastName;
+	@Column(name="profile_url")
 	private String url;
+	@Column(name="access_token")
 	private String accessToken;
+	@Column(name="image_url")
 	private String imageUrl;
 	private String introduction;
 	private String city;
@@ -19,29 +48,13 @@ public class Account implements Serializable {
 	private int zip;
 	private String longitude;
 	private String latitude;
+	@Column(name="last_login")
 	private Date lastLoginTime;
+	@Column(name="time_created")
 	private Date timeCreated;
 	
-	public Account() {
+	public AccountDTO() {
 	}
-	
-//	public Account(Account a) {
-//		this.id = a.id;
-//		this.fId = a.fId;
-//		this.email = a.email;
-//		this.firstName = a.firstName;
-//		this.lastName = a.lastName;
-//		this.url = a.url;
-//		this.accessToken = a.accessToken;
-//		this.imageUrl = a.imageUrl;
-//		this.introduction = a.introduction;
-//		this.city = a.city;
-//		this.state = a.state;
-//		this.longitude = a.longitude;
-//		this.latitude = a.latitude;
-//		this.lastLoginTime = a.lastLoginTime;
-//		this.timeCreated = a.timeCreated;
-//	}
 	
 	public Long getId() {
 		return id;
@@ -127,7 +140,7 @@ public class Account implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.id == this.id;
+		return a.getId() == this.id;
 	}
 
 	public String getIntroduction() {
@@ -207,19 +220,4 @@ public class Account implements Serializable {
 	public void setZip(int zip) {
 		this.zip = zip;
 	}
-	
-	public boolean hasLocation() {
-		return latitude != null && longitude != null;
-	}
-	
-	public String getImageUrl(int width,int height) {
-		String imgUrl = getImageUrl();
-		int index = imgUrl.indexOf("?");
-		if (index != 0) {
-			String newImgUrl = imgUrl.substring(0, index);
-			return newImgUrl + "?widht="+width+"&height="+height;
-		}
-		return getImageUrl();
-	}
-
 }

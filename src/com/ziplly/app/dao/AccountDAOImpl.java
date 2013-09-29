@@ -3,17 +3,25 @@ package com.ziplly.app.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
+import javax.persistence.Query;
 
 public class AccountDAOImpl implements AccountDAO {
 
 	@Override
 	public AccountDTO findByEmail(String email)
 			throws NotFoundException {
-		// TODO
-		throw new NotFoundException(); 
+		
+		EntityManager em = EntitManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createNamedQuery("findAccountByEmail");
+		query.setParameter("email", email);
+		List<AccountDTO> result = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		if (result.size() == 0) {
+			throw new NotFoundException();
+		}
+		return result.get(0);
 	}
 
 	@Override
@@ -28,15 +36,6 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntitManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
 		em.persist(account);
-		em.getTransaction().commit();
-		em.close();
-		
-		em = EntitManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		List<Account> accounts = em.createQuery("FROM account", Account.class).getResultList();
-		for(Account a: accounts) {
-			System.out.println(a.getDisplayName());
-		}
 		em.getTransaction().commit();
 		em.close();
 	}
