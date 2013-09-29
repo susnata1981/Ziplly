@@ -104,8 +104,8 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 	
 	private AccountDetails doLogin(AccountDTO account) {
 		// update account last login timestamp
-		account.setLastLoginTime(new Date());
-		accountDAO.save(account);
+//		account.setLastLoginTime(new Date());
+//		accountDAO.save(account);
 
 		AccountDetails ad = new AccountDetails();
 		ad.account = ServiceUtil.copy(account);

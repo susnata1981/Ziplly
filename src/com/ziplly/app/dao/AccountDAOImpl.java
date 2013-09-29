@@ -12,11 +12,9 @@ public class AccountDAOImpl implements AccountDAO {
 			throws NotFoundException {
 		
 		EntityManager em = EntitManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
 		Query query = em.createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
 		List<AccountDTO> result = query.getResultList();
-		em.getTransaction().commit();
 		em.close();
 		if (result.size() == 0) {
 			throw new NotFoundException();
@@ -35,7 +33,7 @@ public class AccountDAOImpl implements AccountDAO {
 	public void save(AccountDTO account) {
 		EntityManager em = EntitManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
-		em.persist(account);
+		em.merge(account);
 		em.getTransaction().commit();
 		em.close();
 	}

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NamedNativeQueries;
 import org.hibernate.annotations.NamedNativeQuery;
@@ -27,6 +28,7 @@ import com.ziplly.app.model.Account;
 public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
+	@NotNull
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	Long id;
 	@Column(name="facebook_id")
