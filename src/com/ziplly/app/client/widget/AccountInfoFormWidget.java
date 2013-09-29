@@ -224,7 +224,7 @@ public class AccountInfoFormWidget extends AbstractView {
 	
 	AccountDetails getAccountPrerefencesFromUi() {
 		AccountDetails input = new AccountDetails();
-		input.account = new Account(ad.account);
+		input.account = new Account();
 		String zip = SafeHtmlUtils.htmlEscape(zipTextBox.getText());
 		input.account.setZip(Integer.parseInt(zip));
 		List<Category> categories = new ArrayList<Category>();
