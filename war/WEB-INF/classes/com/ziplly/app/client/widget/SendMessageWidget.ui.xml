@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel ui:field="rootPanel">
+	    <b:Modal ui:field="modal">
+	    <g:HTMLPanel ui:field="status"/>
+		<b:WellForm>
+			<b:ControlGroup>
+				<b:ControlLabel for="subject">Subject</b:ControlLabel>
+				<b:Controls>
+					<b:TextBox ui:field="subject"></b:TextBox>
+					<b:HelpBlock>In addition to freeform text, any HTML5 text-based
+						input appears like so.</b:HelpBlock>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:ControlGroup>
+				<b:ControlLabel for="message">Message</b:ControlLabel>
+				<b:Controls>
+					<b:TextArea ui:field="message"></b:TextArea>
+					<b:HelpBlock>In addition to freeform text, any HTML5 text-based
+						input appears like so.</b:HelpBlock>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:SubmitButton ui:field="sendBtn">Send</b:SubmitButton>
+			<b:Button ui:field="closeBtn">Close</b:Button>
+		</b:WellForm>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

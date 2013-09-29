@@ -1,0 +1,58 @@
+/*general style*/
+header,hgroup,nav,section,article,aside,footer {
+	display: block;
+}
+
+/*header area*/
+header {
+	height: 100px;
+	text-align: center;
+}
+
+h2 {
+	font-family: cursive;
+	font-size: 20px;
+	padding: 4px;
+}
+
+/*nav area*/
+nav {
+	width: 100%;
+	height: 50px;
+	overflow: auto;
+	background: #f8f1f9;
+}
+
+#wrapper {
+	width: 940px;
+	border: 1px solid red;
+	overflow: auto;
+}
+/*section area*/
+section {
+	float: left;
+	width: 720px;
+	border: 1px solid #000;
+}
+
+article {
+	width: 720px;
+	background: #CCC;
+}
+
+/*aside area*/
+aside {
+	width: 200px;
+	height: 400px;
+	background: #f8f1f9;
+	float: left;
+}
+
+/*footer area*/
+footer {
+	clear: both;
+	height: 40px;
+	margin-top: 5px;
+	background: #f1f1f1;
+	text-align: center;
+}

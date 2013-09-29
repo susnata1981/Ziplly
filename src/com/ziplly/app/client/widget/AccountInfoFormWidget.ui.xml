@@ -1,0 +1,54 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style type="com.ziplly.app.client.widget.AccountInfoFormWidget.Style">
+		.checkbox {
+		float: left;
+		width: 120px;
+		margin:4px;
+		font-family: sans-serif;
+		font-size: 12px;
+		}
+		.text {
+		width:
+		400px;
+		padding: 4px;
+		}
+		.modal {
+		width: 620px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal ui:field="categoryListModal" addStyleNames="{style.modal}"
+			title="Please tell us about your interests" keyboard="true"
+			animation="true">
+			<b:Form>
+			    <!-- Introduction -->
+				<b:ControlGroup ui:field="introTextControlGroup">
+					<b:ControlLabel for="introText">Tell us about yourself (500 characters)</b:ControlLabel>
+					<b:Controls>
+						<b:TextArea b:id="introText" addStyleNames="{style.text}"
+							ui:field="introField" placeholder="Please say a few words about yourself..."></b:TextArea>
+						<b:HelpInline ui:field="introTextHelp"/>
+					</b:Controls>
+				</b:ControlGroup>
+				<!-- Zip -->
+				<b:ControlGroup ui:field="zipControlGroup">
+				    <b:ControlLabel for="zip">ZipCode</b:ControlLabel>
+				    <b:Controls>
+				        <b:TextBox ui:field="zipTextBox" placeholder="Enter your zipcode..."></b:TextBox>
+				        <b:HelpInline ui:field="zipTextHelp"/>
+				    </b:Controls>
+				</b:ControlGroup>
+				
+				<g:HTMLPanel ui:field="interestPanel">
+				</g:HTMLPanel>
+				<b:Button ui:field="saveBtn" text="Save" />
+				<b:Button ui:field="closeBtn" text="No, Thanks!" />
+			</b:Form>
+			<b:ModalFooter>
+			</b:ModalFooter>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

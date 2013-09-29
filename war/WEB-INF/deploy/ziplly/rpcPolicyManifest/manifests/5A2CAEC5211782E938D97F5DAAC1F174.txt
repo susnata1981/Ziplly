@@ -1,0 +1,2 @@
+serviceClass: com.ziplly.client.GreetingService
+path: 6B153AE7B197D59E1ECED93DC83EEA7B.gwt.rpc

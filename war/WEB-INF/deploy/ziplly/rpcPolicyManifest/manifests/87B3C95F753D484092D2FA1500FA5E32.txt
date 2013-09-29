@@ -1,0 +1,2 @@
+serviceClass: com.ziplly.app.client.ZipllyService
+path: 21B7CBC831379A57539397B56976372B.gwt.rpc

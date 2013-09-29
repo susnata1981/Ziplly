@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<b:NavTabs>
+			<b:NavLink active="true" ui:field="homeLink">Home</b:NavLink>
+			<b:Divider />
+			<b:NavLink ui:field="accountsLink">Account</b:NavLink>
+			<b:Divider />
+			<b:NavLink ui:field="browseAboutLink">About</b:NavLink>
+			<b:NavSearch size="2" placeholder="Search by interest..." alignment="RIGHT"/>
+		</b:NavTabs> 
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -1,0 +1,10 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	
+	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="res"/>
+	<g:HTMLPanel>
+		<g:Button styleName="{res.style.gButton}" ui:field="googleLoginButton"/>
+	</g:HTMLPanel>
+</ui:UiBinder> 
