@@ -2,7 +2,6 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.QueryMetaData;
 

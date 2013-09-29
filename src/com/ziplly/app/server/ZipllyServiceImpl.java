@@ -15,11 +15,11 @@ import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountDAOImpl;
+import com.ziplly.app.dao.AccountDTO;
 import com.ziplly.app.dao.NotFoundException;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.Category;
 import com.ziplly.app.model.LatLong;
@@ -104,11 +104,11 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 	
 	private AccountDetails doLogin(AccountDTO account) {
 		// update account last login timestamp
-		account.setLastLoginTime(new Date());
-		accountDAO.save(account);
+//		account.setLastLoginTime(new Date());
+//		accountDAO.save(account);
 
 		AccountDetails ad = new AccountDetails();
-		ad.account = new Account(account);
+		ad.account = ServiceUtil.copy(account);
 //		List<Category> categoriesForAccount = getCategoriesForAccount(account);
 //		if (categoriesForAccount != null) {
 //			ad.categories.addAll(categoriesForAccount);
