@@ -9,6 +9,7 @@ public interface AccountDAO {
 	AccountDTO findByEmail(String email) throws NotFoundException;
 	AccountDTO findById(Long accountId) throws NotFoundException;
 	void save(AccountDTO user);
+	void update(AccountDTO user);
 	List<AccountDTO> get(QueryMetaData qmd) throws IllegalArgumentException;
 //	Set<AccountDTO> getAccounts(GetAccountDetailsRequest req);
 	boolean save(AccountDetails ad);

@@ -72,15 +72,18 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
 					+ "/picture?width=200&height=160";
 			account.setImageUrl(imgUrl);
+			// save
+			accountDAO.save(account);
 		}
 
 		// update access token for existing user
 		if (!newAccount) {
 			account.setAccessToken(token.getAccess_token());
+			account.setLastLoginTime(new Date());
+			accountDAO.update(account);
 		}
 
-		// save
-		accountDAO.save(account);
+		
 
 //		if (!save) {
 //			throw new RuntimeException("Couldn't save account");
@@ -104,9 +107,6 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements ZipllySer
 	
 	private AccountDetails doLogin(AccountDTO account) {
 		// update account last login timestamp
-//		account.setLastLoginTime(new Date());
-//		accountDAO.save(account);
-
 		AccountDetails ad = new AccountDetails();
 		ad.account = ServiceUtil.copy(account);
 //		List<Category> categoriesForAccount = getCategoriesForAccount(account);
