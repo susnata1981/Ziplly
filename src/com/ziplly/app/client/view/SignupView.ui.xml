@@ -1,0 +1,60 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		#singupForm {
+		float: left;
+		width: 400px;
+		padding: 5px;
+		margin:
+		10px 0px 0px 40px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<div id="mainContent">
+			<div id="singupForm">
+			    <h2>Signup</h2>
+				<b:Alert ui:field="infoField" animation="true"/>
+				<b:Form>
+					<b:ControlGroup ui:field="firstnameCg">
+						<b:Controls>
+							<b:TextBox ui:field="firstname" placeholder="firstname..." />
+							<b:HelpInline ui:field="firstnameError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="lastnameCg">
+						<b:Controls>
+							<b:TextBox ui:field="lastname" placeholder="lastname..." />
+							<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="emailCg">
+						<b:Controls>
+							<b:TextBox ui:field="email" placeholder="email..." />
+							<b:HelpInline ui:field="emailError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="zipCg">
+						<b:Controls>
+							<b:TextBox ui:field="zip" placeholder="zip..." />
+							<b:HelpInline ui:field="zipError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="passwordCg">
+						<b:Controls>
+							<b:PasswordTextBox ui:field="password" placeholder="password..." />
+							<b:HelpInline ui:field="passwordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="confirmPasswordCg">
+						<b:Controls>
+							<b:PasswordTextBox ui:field="confirmPassword" placeholder="confirm password..." />
+							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+				</b:Form>
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

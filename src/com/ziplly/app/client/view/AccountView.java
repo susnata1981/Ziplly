@@ -81,7 +81,7 @@ public class AccountView extends AbstractAccountView {
 	}
 
 	boolean userLoggedIn() {
-		return getAd() != null && getAd().account != null;
+		return getAccount() != null;
 	}
 
 	@Override
@@ -123,13 +123,12 @@ public class AccountView extends AbstractAccountView {
 //	}
 	
 	void displayProfile() {
-		accountWidget.displayAccount(getAd());
+		accountWidget.displayAccount(getAccount());
 		profileSection.clear();
 		profileSection.add(accountWidget);
 		
 		// update categories
 		selectedCategories.clear();
-		selectedCategories.addAll(getAd().categories);
 		
 		// mark as visible
 		accountViewTabs.setVisible(true);

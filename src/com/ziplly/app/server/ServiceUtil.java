@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.ziplly.app.dao.AccountDTO;
 import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Category;
 import com.ziplly.app.shared.facebook.FacebookUserInterest;
 

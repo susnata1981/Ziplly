@@ -22,7 +22,7 @@ import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.AccountDTO;
 
 public class LogoutWidget extends Composite {
 
@@ -36,10 +36,10 @@ public class LogoutWidget extends Composite {
 	private ZipllyServiceAsync service;
 	private OAuthConfig authConfig = OAuthFactory
 			.getAuthConfig(OAuthProvider.FACEBOOK.name());
-	private AccountDetails ad;
 
 	@UiField
 	Button logoutBtn;
+	public AccountDTO account;
 
 	public LogoutWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
 		this.service = service;
@@ -53,17 +53,17 @@ public class LogoutWidget extends Composite {
 	}
 
 	private String getLogoutUrl() throws UnsupportedEncodingException {
-		if (ad.account != null) {
+		if (account != null) {
 			return OAuthConfigConstants.FB_LOGOUT_URL + "?" + "next="
 					+ authConfig.getRedirectUri() + "&access_token="
-					+ ad.account.getAccessToken();
+					+ account.getAccessToken();
 		}
 		throw new IllegalStateException("Trying to get logout url for non-logged account");
 	}
 
 	@UiHandler("logoutBtn")
 	void logout(ClickEvent event) {
-		if (ad.account == null) {
+		if (account == null) {
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class LogoutWidget extends Composite {
 
 		@Override
 		public void onEvent(LoginEvent event) {
-			lw.ad = event.getAccountDetails();
+			lw.account = event.getAccount();
 		}
 	}
 }

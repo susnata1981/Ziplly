@@ -18,8 +18,6 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,9 +26,8 @@ import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.widget.cell.InterestDetailsMiniCell;
-import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
-import com.ziplly.app.model.Category;
 import com.ziplly.app.model.CategoryDetails;
 
 public class AccountWidget extends AbstractAccountView {
@@ -93,7 +90,6 @@ public class AccountWidget extends AbstractAccountView {
 		return MyBundle.INSTANCE;
 	}
 
-	private AccountDetails currentAccount;
 	private AccountInfoFormWidget aifw;
 
 	private boolean displayEdit;
@@ -127,17 +123,17 @@ public class AccountWidget extends AbstractAccountView {
 				new AccountUpdateEventHandler() {
 					@Override
 					public void onEvent(AccountUpdateEvent event) {
-						AccountWidget.this.currentAccount = event.getAccountDetails();
-						Account a = AccountWidget.this.currentAccount.account;
-						System.out.println("Account:" + a.getDisplayName()
-								+ " last login:" + a.getLastLoginTime());
-						updateUiWithProfileData();
+//						AccountWidget.this.currentAccount = event.getAccountDetails();
+//						Account a = AccountWidget.this.currentAccount.account;
+//						System.out.println("Account:" + a.getDisplayName()
+//								+ " last login:" + a.getLastLoginTime());
+//						updateUiWithProfileData();
 					}
 				});
 	}
 
-	public void displayAccount(AccountDetails ad) {
-		this.currentAccount = ad;
+	public void displayAccount(AccountDTO account) {
+		this.account = account;
 		updateUiWithProfileData();
 		if (!isAccountComplete()) {
 			showAccountInfoFormWidget();
@@ -154,7 +150,6 @@ public class AccountWidget extends AbstractAccountView {
 	}
 
 	void updateProfile() {
-		Account account = currentAccount.account;
 		name.setInnerText(account.getDisplayName());
 		introduction.setInnerText(account.getIntroduction());
 		profileImageUrl.setUrl(account.getImageUrl());
@@ -162,8 +157,8 @@ public class AccountWidget extends AbstractAccountView {
 				account.getLastLoginTime());
 		lastLogin.setInnerText(date);
 
-		cityLabel.setInnerText(capitalize(account.getCity()));
-		stateLabel.setInnerText(capitalize(account.getState()));
+//		cityLabel.setInnerText(capitalize(account.getCity()));
+//		stateLabel.setInnerText(capitalize(account.getState()));
 
 		fbProfileLink.setHref(account.getUrl());
 		if (!displayEdit) {
@@ -173,11 +168,11 @@ public class AccountWidget extends AbstractAccountView {
 
 	void updateInterests() {
 		List<CategoryDetails> cdList = new ArrayList<CategoryDetails>();
-		for (Category c : currentAccount.categories) {
-			CategoryDetails cd = new CategoryDetails();
-			cd.category = c;
-			cdList.add(cd);
-		}
+//		for (Category c : currentAccount.categories) {
+//			CategoryDetails cd = new CategoryDetails();
+//			cd.category = c;
+//			cdList.add(cd);
+//		}
 		dataProvider = new ListDataProvider<CategoryDetails>();
 		dataProvider.addDataDisplay(interestList);
 		interestList.setRowData(cdList);
@@ -194,23 +189,23 @@ public class AccountWidget extends AbstractAccountView {
 	}
 
 	boolean isAccountComplete() {
-		return (currentAccount.account.getZip() == 0)
-				|| (currentAccount.account.getIntroduction() == null);
+		return (account.getZip() == 0)
+				|| (account.getIntroduction() == null);
 	}
 
 	void isUserLoggedIn() {
-		service.getLoggedInUser(new AsyncCallback<AccountDetails>() {
-			@Override
-			public void onSuccess(AccountDetails result) {
-				AccountWidget.this.displaySendMessageWidget(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.log(Level.SEVERE, "Error sending message: "+caught.getMessage());
-				Window.alert("Couldn't send message at this time");
-			}
-		});
+//		service.getLoggedInUser(new AsyncCallback<AccountDetails>() {
+//			@Override
+//			public void onSuccess(AccountDetails result) {
+//				AccountWidget.this.displaySendMessageWidget(result);
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				logger.log(Level.SEVERE, "Error sending message: "+caught.getMessage());
+//				Window.alert("Couldn't send message at this time");
+//			}
+//		});
 	}
 	
 	protected void displaySendMessageWidget(AccountDetails result) {

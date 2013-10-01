@@ -7,12 +7,10 @@ import java.util.logging.Level;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Heading;
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,6 +28,7 @@ import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthConfigConstants;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
@@ -37,6 +36,7 @@ import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.client.widget.MyBundle;
 import com.ziplly.app.client.widget.cell.AccountDetailsMiniCell;
 import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.CategoryDetails;
 
@@ -63,14 +63,8 @@ public class MainView extends AbstractView {
 	Button logoutBtn;
 
 	@UiField
-	Button searchBtn;
-
-	@UiField
-	TextBox searchField;
-
-//	@UiField(provided = true)
-//	LoginWidget loginWidget;
-
+	Button signupBtn;
+	
 	@UiField
 	Button fbLoginButtonOnMainPage;
 
@@ -78,6 +72,8 @@ public class MainView extends AbstractView {
 	MainViewStyle mainViewStyle;
 
 	private AccountDetails ad;
+
+	private AccountDTO account;
 
 	public MainView(SimpleEventBus eventBus) {
 		super(eventBus);
@@ -116,6 +112,12 @@ public class MainView extends AbstractView {
 		return MyBundle.INSTANCE;
 	}
 
+	@UiFactory
+	ZResources resources() {
+		ZResources.IMPL.style().ensureInjected();
+		return ZResources.IMPL;
+	}
+	
 	protected void fetchCategoryDetailsData() {
 	}
 
@@ -144,8 +146,8 @@ public class MainView extends AbstractView {
 	/*
 	 * Called after user logs in
 	 */
-	private void doLogin(AccountDetails ad) {
-		this.ad = ad;
+	private void doLogin(AccountDTO account) {
+		this.account = account;
 		disableLoginBtns(true);
 	}
 
@@ -186,13 +188,11 @@ public class MainView extends AbstractView {
 		Window.Location.replace(logoutUrl);
 	}
 
-	@UiHandler("searchBtn")
-	void searchByCategory(ClickEvent event) {
-		String searchCategory = SafeHtmlUtils.fromString(searchField.getText())
-				.asString().toLowerCase();
-		History.newItem("category/" + searchCategory);
+	@UiHandler("signupBtn")
+	public void signup(ClickEvent event) {
+		History.newItem("signup");
 	}
-
+	
 	private static class LoginHandler implements LoginEventHandler {
 		private MainView mainView;
 
@@ -202,7 +202,7 @@ public class MainView extends AbstractView {
 
 		@Override
 		public void onEvent(LoginEvent event) {
-			mainView.doLogin(event.getAccountDetails());
+			mainView.doLogin(event.getAccount());
 			History.newItem("account");
 		}
 	}

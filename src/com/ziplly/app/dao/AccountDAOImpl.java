@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.ziplly.app.model.AccountDTO;
+
 public class AccountDAOImpl implements AccountDAO {
 
 	@Override

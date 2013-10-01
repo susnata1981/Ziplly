@@ -6,12 +6,11 @@ import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.AccountDTO;
 
 public abstract class AbstractAccountView extends AbstractView {
-	private AccountDetails ad;
 	protected OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
-	
+	protected AccountDTO account;
 	
 	public AbstractAccountView(SimpleEventBus eventBus) {
 		super(eventBus);
@@ -22,13 +21,13 @@ public abstract class AbstractAccountView extends AbstractView {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
-				onUserLogin(event.getAccountDetails());
+				onUserLogin(event.getAccount());
 			}
 		});
 	}
 	
-	final protected void onUserLogin(AccountDetails ad) {
-		this.setAd(ad);
+	final protected void onUserLogin(AccountDTO accountDTO) {
+		this.setAccount(accountDTO);
 		internalOnUserLogin();
 	}
 
@@ -38,11 +37,11 @@ public abstract class AbstractAccountView extends AbstractView {
 	
 	protected abstract void internalOnUserLogin();
 
-	public AccountDetails getAd() {
-		return ad;
+	public AccountDTO getAccount() {
+		return account;
 	}
 
-	public void setAd(AccountDetails ad) {
-		this.ad = ad;
+	public void setAccount(AccountDTO account) {
+		this.account = account;
 	}
 }

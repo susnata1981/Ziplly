@@ -5,13 +5,10 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
-		<b:NavTabs>
-			<b:NavLink active="true" ui:field="homeLink">Home</b:NavLink>
-			<b:Divider />
-			<b:NavLink ui:field="accountsLink">Account</b:NavLink>
-			<b:Divider />
-			<b:NavLink ui:field="browseAboutLink">About</b:NavLink>
-			<b:NavSearch size="2" placeholder="Search by interest..." alignment="RIGHT"/>
-		</b:NavTabs> 
+		<ul>
+		    <li><g:Anchor ui:field="homeLink">Home</g:Anchor></li>
+		    <li><g:Anchor ui:field="accountsLink">Account</g:Anchor></li>
+		    <li><g:Anchor ui:field="aboutLink">About</g:Anchor></li>
+		</ul>
 	</g:HTMLPanel>
 </ui:UiBinder> 

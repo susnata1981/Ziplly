@@ -19,8 +19,9 @@ import com.ziplly.app.client.cookie.CookieManager;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
+import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.event.LoginEvent;
-import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 
 public class MainController implements ValueChangeHandler<String> {
@@ -32,10 +33,11 @@ public class MainController implements ValueChangeHandler<String> {
 	private NavView navView;
 	private AccountDetails ad;
 	private Logger logger = Logger.getLogger("MainController");
+	protected AccountDTO account;
 
-	public MainController(final HasWidgets widget,
+	public MainController(//final HasWidgets widget,
 			SimpleEventBus eventBus) {
-		this.container = widget;
+		this.container = RootPanel.get("main");
 		this.service = GWT.create(ZipllyService.class);
 		this.eventBus = eventBus;
 		this.accountView = new AccountView(eventBus);
@@ -89,29 +91,32 @@ public class MainController implements ValueChangeHandler<String> {
 	}
 
 	private void handleAuth(String code) {
-		service.getAccessToken(code, new AsyncCallback<AccountDetails>() {
+		service.doLogin(code, new AsyncCallback<AccountDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				logger.log(Level.SEVERE, "Failed to handle auth:" + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(AccountDetails ad) {
-				if (ad.account != null) {
-					MainController.this.ad = ad;
-					dropLoginCookie(ad.account);
-					eventBus.fireEvent(new LoginEvent(ad));
-					MainController.this.logger.log(Level.INFO, "User: " + ad.account.getDisplayName()
-							+ "(" + ad.account.getId() + ") logged in.");
+			public void onSuccess(AccountDTO account) {
+				if (account != null) {
+					MainController.this.account = account;
+//					dropLoginCookie(account);
+					eventBus.fireEvent(new LoginEvent(account));
+					MainController.this.logger.log(Level.INFO, "User: " + account.getDisplayName()
+							+ "(" + account.getId() + ") logged in.");
 				}
 			}
 		});
 	}
 
-	void dropLoginCookie(Account account) {
+	void dropLoginCookie(AccountDTO account) {
 		CookieManager.dropLoginCookie(account);
 	}
 
+	/*
+	 * Main entry point
+	 */
 	public void go() {
 		handleOAuthRedirect();
 		if ("".equals(History.getToken())) {
@@ -120,6 +125,7 @@ public class MainController implements ValueChangeHandler<String> {
 			History.fireCurrentHistoryState();
 		}
 	}
+	
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue().trim();
@@ -128,13 +134,22 @@ public class MainController implements ValueChangeHandler<String> {
 		
 		if (token != null) {
 			if (token.equals("home")) {
+				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("neighborhood_large.jpg");
+				RootPanel.get("wrapper").getElement().getStyle().setProperty("background",
+						"url('neighborhood_large.jpg');");
+				RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 				display(container, mainView);
 			} 
 			else if (token.startsWith("account")) {
+				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("none");
 				MatchResult result = accountPath.exec(token);
 				display(container, accountView);
-//				navView.setActive(NavLinkEnum.ACCOUNT);
-			} 
+			}
+			else if (token.startsWith("signup")) {
+				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("backgroundImage");
+				SignupView signupView = new SignupView(eventBus);
+				display(container, signupView);
+			}
 		}
 	}
 

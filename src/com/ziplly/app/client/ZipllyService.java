@@ -2,7 +2,7 @@ package com.ziplly.app.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 
 @RemoteServiceRelativePath("zipllyservice")
@@ -11,9 +11,13 @@ public interface ZipllyService extends RemoteService {
 	AccountDetails getAccessToken(String code) throws Exception;
 	
 	/* Account */
-	AccountDetails getLoggedInUser();
-	AccountDetails loginAccountById(long accountId);
-	Account getAccountById(long accountId);
+	AccountDTO getLoggedInUser();
+	AccountDTO loginAccountById(long accountId);
+	AccountDTO getAccountById(long accountId);
 	void logoutAccount();
+
+	AccountDTO doLogin(String code);
+
+	AccountDTO register(AccountDTO a);
 
 }

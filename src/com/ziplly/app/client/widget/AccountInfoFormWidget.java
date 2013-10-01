@@ -32,6 +32,7 @@ import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.UserInfoFormClosedEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.Category;
 import com.ziplly.app.model.InterestList;
@@ -44,7 +45,6 @@ public class AccountInfoFormWidget extends AbstractView {
 	private Logger logger = Logger.getLogger("AccountInfoFormWidget");
 	private static AccountInfoFormWidgetUiBinder uiBinder = GWT
 			.create(AccountInfoFormWidgetUiBinder.class);
-	private AccountDetails ad;
 
 	interface Style extends CssResource {
 		String checkbox();
@@ -91,6 +91,7 @@ public class AccountInfoFormWidget extends AbstractView {
 	Style style;
 
 	ListDataProvider<Category> interestDataProvider;
+	protected AccountDTO account;
 
 	public AccountInfoFormWidget(SimpleEventBus eventBus) {
 		super(eventBus);
@@ -129,7 +130,7 @@ public class AccountInfoFormWidget extends AbstractView {
 			accordion.add(ag);
 		}
 		interestPanel.add(accordion);
-		showSelectedInterests(ad.categories);
+//		showSelectedInterests(ad.categories);
 		updateAccountIntro();
 	}
 
@@ -139,7 +140,7 @@ public class AccountInfoFormWidget extends AbstractView {
 
 			@Override
 			public void onEvent(LoginEvent event) {
-				AccountInfoFormWidget.this.ad = event.getAccountDetails();
+				AccountInfoFormWidget.this.account = event.getAccount();
 			}
 		});
 	}
@@ -269,8 +270,8 @@ public class AccountInfoFormWidget extends AbstractView {
 	}
 
 	void updateAccountIntro() {
-		System.out.println("Updating intro:" + ad.account.getIntroduction());
-		introField.setText(ad.account.getIntroduction());
+		System.out.println("Updating intro:" + account.getIntroduction());
+		introField.setText(account.getIntroduction());
 	}
 
 	public void show() {

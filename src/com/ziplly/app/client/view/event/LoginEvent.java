@@ -2,15 +2,14 @@ package com.ziplly.app.client.view.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.AccountDTO;
 
-public class LoginEvent extends GwtEvent<LoginEventHandler>{
-	
+public class LoginEvent extends GwtEvent<LoginEventHandler> {
 	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
-	private AccountDetails ad;
+	private AccountDTO account;
 	
-	public LoginEvent(AccountDetails ad) {
-		this.ad = ad;
+	public LoginEvent(AccountDTO account) {
+		this.account = account;
 	}
 
 	@Override
@@ -23,7 +22,7 @@ public class LoginEvent extends GwtEvent<LoginEventHandler>{
 		handler.onEvent(this);
 	}
 
-	public AccountDetails getAccountDetails() {
-		return ad;
+	public AccountDTO getAccount() {
+		return account;
 	}
 }

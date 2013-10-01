@@ -3,15 +3,15 @@ package com.ziplly.app.client.cookie;
 import java.util.Date;
 
 import com.google.gwt.user.client.Cookies;
-import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 
 public class CookieManager {
 
 	public static final String LOGIN_COOKIE_NAME = "sid";
 
-	public static void dropLoginCookie(Account user) {
+	public static void dropLoginCookie(AccountDTO account) {
 		Date expiresIn = new Date(System.currentTimeMillis() + 60 * 60 * 1000);
-		Cookies.setCookie(LOGIN_COOKIE_NAME, user.getId().toString(),
+		Cookies.setCookie(LOGIN_COOKIE_NAME, account.getId().toString(),
 				expiresIn);
 	}
 

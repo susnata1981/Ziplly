@@ -21,7 +21,7 @@ public class Ziplly implements EntryPoint {
 		logger.log(Level.SEVERE, "Ziplly onModuleLoad initiated");
 		
 		controller = new MainController(
-				RootPanel.get("main"),
+//				RootPanel.get("main"),
 				eventBus);
 		controller.go();
 	}

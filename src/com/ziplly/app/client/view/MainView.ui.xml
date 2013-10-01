@@ -4,16 +4,14 @@
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="zresources" />
 	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="resource" />
 	<ui:style field="mainViewStyle"
 		type="com.ziplly.app.client.view.MainView.MainViewStyle">
 		#loginSection {
 		height: 50px;
 		margin: auto;
-		text-align: center;
-		}
-
-		#searchForm {
 		text-align: center;
 		}
 		.categoryHeading {
@@ -28,14 +26,25 @@
 		.individualProfilePerCategory {
 		float: left;
 		width: 330px;
-		margin: 5px 10px 20px 5px;
+		margin: 5px
+		10px 20px 5px;
 		}
 		.categoryDetails {
-			width: 800px;
-			margin: auto;
+		width: 800px;
+		margin:
+		auto;
+		}
+		.transparent {
+		opacity:0.4;
 		}
 	</ui:style>
 	<g:HTMLPanel>
+		<div id="mainHeading">
+			<h1>	
+			    <span class="bigtext">Ziplly</span><br/> 
+			    connecting <br/> 
+			    local community &amp; businesses</h1>
+		</div>
 		<div id="mainContent">
 			<div class="{mainViewStyle.logoutLnk}">
 				<b:Button ui:field="logoutBtn">Logout</b:Button>
@@ -43,18 +52,21 @@
 			<div id="loginSectionn">
 				<!-- <dt:LoginWidget ui:field="loginWidget" /> -->
 			</div>
-			<div id="searchForm">
+			<div id="mainPageSingupForm">
 				<b:WellForm>
-					<b:ControlLabel>Find People the easy way...</b:ControlLabel>
-					<b:TextBox placeholder="Search by interest…" ui:field="searchField" />
-					<b:HelpBlock>Search &amp; Connect</b:HelpBlock>
-					<b:Button addStyleNames="searchBtn" ui:field="searchBtn">Submit</b:Button>
+					<b:ControlLabel>Signup</b:ControlLabel>
+					<b:TextBox placeholder="email..." />
+					<b:TextBox placeholder="zip..." />
+					<b:TextBox placeholder="username..." />
+					<b:TextBox placeholder="password..." />
+					<b:Button type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+					<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
 				</b:WellForm>
-				<b:Button ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
 			</div>
 			<div class="{mainViewStyle.categoryDetails}">
 				<g:HTMLPanel ui:field="categoryDetailsSection"></g:HTMLPanel>
 			</div>
 		</div>
 	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>
+ 
