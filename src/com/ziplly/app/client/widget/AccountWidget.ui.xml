@@ -1,9 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
-	
+
 	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="res" />
 	<ui:style type="com.ziplly.app.client.widget.AccountWidget.Style">
 		.rootPanel {
@@ -49,18 +48,14 @@
 		.profile_general_info_section {
 		float: left;
 		height: 140px;
-		border: 1px solid #ddd;
+		background: #f1f8f1;
 		}
 		.profile_interest_section {
+		clear: both;
 		float: left;
-		margin-top: 20px 0px 0px 10px;
-		border: 1px solid #000;
-		background: #ffffff;
+		margin: 20px 0px 0px 140px;
 		}
 		.profile_section {
-		border: 1px
-		solid
-		#000;
 		overflow:auto;
 		}
 		.profile_image {
@@ -69,11 +64,16 @@
 		height: 130px;
 		padding: 10px;
 		}
+		.profile_info_section {
+		float: left;
+		margin: 10px 0px 0px 40px;
+		background: #f2f1f7;
+		overflow: auto;
+		}
 		.nameSection {
 		padding: 8px;
 		margin-left: 10px;
-		width:
-		600px;
+		width: 600px;
 		overflow: auto;
 		}
 		.name {
@@ -81,7 +81,8 @@
 		font-family: cursive;
 		font-weight: bold;
 		padding: 2px;
-		margin: 0px 0px 14px 0px;
+		margin: 0px 0px
+		14px 0px;
 		}
 		.right {
 		float:
@@ -95,47 +96,45 @@
 		font-size: 20px;
 		}
 	</ui:style>
-	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.rootPanel}">
+	<g:HTMLPanel ui:field="accountWidgetRoot" addStyleNames="{style.rootPanel}">
 		<div class="{style.profile_section}">
 			<b:Image addStyleNames="{style.profile_image}" ui:field="profileImageUrl"
 				url="" />
-			<div class="{style.profile_info_section}">
+			<div class="profile_info_section">
 				<div class="{style.profile_general_info_section}">
 					<div class="{style.nameSection}">
-						<div class="{style.name}" ui:field="name" />
-						<p class="{style.bigtext}" ui:field="introduction" />
-						<g:Anchor addStyleNames="{style.smalltext}" ui:field="fbProfileLink">
-						    Connect on facebook
-						</g:Anchor><b:Icon type="FACEBOOK"/> 
+						<div class="{style.name}">
+							<span ui:field="name" />
+							<g:Anchor addStyleNames="{style.smalltext} {style.right}"
+								ui:field="editCategoryLink">edit</g:Anchor>
+						</div>
+						<div class="{style.bigtext}" ui:field="introduction">
+						</div>
 						<div>
-							<span class="{style.smalltext}">Last seen active:</span>
-							<span class="{style.smalltext}" ui:field="lastLogin" />
-							<div class="{style.right}">
+							<div>
 								<span class="{style.smalltext}">Lives at</span>
 								<span class="{style.smalltext}" ui:field="cityLabel" />
 								,
 								<span class="{style.smalltext}" ui:field="stateLabel" />
 							</div>
 							<div>
-							    <b:Button ui:field="sendMsgBtn">Send Message</b:Button>
+								<span class="{style.smalltext}">Last seen active:</span>
+								<span class="{style.smalltext}" ui:field="lastLogin" />
+							</div>
+							<div>
+								<b:Button size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
 							</div>
 						</div>
-
 					</div>
-				</div>
-				<div addStyleNames="{style.profile_interest_section}">
-					<div class="{style.nameSection}">
-						<div class="{style.bigtext}">
-							Interests
-							<g:Anchor addStyleNames="{style.smalltext} {style.right}"
-								ui:field="editCategoryLink">edit</g:Anchor>
-						</div>
-						<g:HTMLPanel ui:field="categoryList">
-			    		    <cell:CellList ui:field="interestList"></cell:CellList>
-						</g:HTMLPanel>
-					</div>
-				</div>
-			</div>
+				</div> <!-- profile_general_info_section end -->
+				
+				<div class="{style.profile_interest_section}">
+					<span class="{style.bigtext}">Interests</span>
+					<g:HTMLPanel ui:field="categoryList">
+						<cell:CellList ui:field="interestList"></cell:CellList>
+					</g:HTMLPanel>
+				</div> <!--  profile_info_seciton_end -->
+			</div> <!--  profile_info_section end -->
 		</div>
 	</g:HTMLPanel>
 

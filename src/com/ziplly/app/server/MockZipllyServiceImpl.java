@@ -86,7 +86,8 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	
 	@Override
 	public AccountDTO doLogin(String code) {
-		return accounts.get(rnd.nextInt(accounts.size()));
+		//return accounts.get(rnd.nextInt(accounts.size()));
+		return null;
 	}
 	
 	@Override

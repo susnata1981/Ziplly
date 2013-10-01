@@ -53,9 +53,6 @@ public class AccountWidget extends AbstractAccountView {
 	Element introduction;
 
 	@UiField
-	Anchor fbProfileLink;
-
-	@UiField
 	Anchor editCategoryLink;
 
 	@UiField
@@ -82,7 +79,7 @@ public class AccountWidget extends AbstractAccountView {
 	Button sendMsgBtn;
 	
 	@UiField
-	HTMLPanel rootPanel;
+	HTMLPanel accountWidgetRoot;
 	
 	@UiFactory
 	public MyBundle createTheBundle() {
@@ -160,7 +157,6 @@ public class AccountWidget extends AbstractAccountView {
 //		cityLabel.setInnerText(capitalize(account.getCity()));
 //		stateLabel.setInnerText(capitalize(account.getState()));
 
-		fbProfileLink.setHref(account.getUrl());
 		if (!displayEdit) {
 			editCategoryLink.setVisible(false);
 		}

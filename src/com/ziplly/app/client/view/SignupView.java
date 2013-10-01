@@ -228,6 +228,7 @@ public class SignupView extends AbstractView {
 		if (!validateInput()) {
 			return;
 		}
+		infoField.setType(AlertType.SUCCESS);
 		String firstnameInput = firstname.getText().trim();
 		String lastnameInput = lastname.getText().trim();
 		String emailInput = email.getText().trim();
@@ -240,7 +241,6 @@ public class SignupView extends AbstractView {
 		service.register(account, new AsyncCallback<AccountDTO>() {
 			@Override
 			public void onSuccess(AccountDTO account) {
-				infoField.setType(AlertType.SUCCESS);
 				eventBus.fireEvent(new LoginEvent(account));
 			}
 

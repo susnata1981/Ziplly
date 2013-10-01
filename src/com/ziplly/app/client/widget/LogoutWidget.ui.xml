@@ -11,7 +11,7 @@
 	</ui:style>
 	<g:HTMLPanel>
 	    <div class="{style.logoutLnk}">
-			<b:Button ui:field="logoutBtn">Logout</b:Button>
+			<b:Button size="SMALL" ui:field="logoutBtn">Logout</b:Button>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.UserInfoFormClosedEvent;
@@ -38,7 +39,7 @@ import com.ziplly.app.model.Category;
 import com.ziplly.app.model.InterestList;
 import com.ziplly.app.model.InterestList.Activity;
 
-public class AccountInfoFormWidget extends AbstractView {
+public class AccountInfoFormWidget extends AbstractAccountView {
 
 	private static final int MIN_WORD_COUNT = 5;
 	private static final int MIN_CHARACTER_COUNT = 10;
@@ -276,5 +277,11 @@ public class AccountInfoFormWidget extends AbstractView {
 
 	public void show() {
 		categoryListModal.show();
+	}
+
+	@Override
+	protected void internalOnUserLogin() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -16,6 +16,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.widget.AccountWidget;
+import com.ziplly.app.client.widget.CommunityWallWidget;
 import com.ziplly.app.client.widget.ConversationWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
@@ -49,34 +50,36 @@ public class AccountView extends AbstractAccountView {
 	@UiField
 	TabPanel accountViewTabs;
 
-//	@UiField
-//	HTMLPanel profileStatSection;
+	// @UiField
+	// HTMLPanel profileStatSection;
 
 	@UiField
 	HTMLPanel conversationSection;
+
+	@UiField
+	HTMLPanel communityWallPanel;
 	
 	private AccountWidget accountWidget;
-	private ConversationWidget cw; 
-			
-	
+	private CommunityWallWidget cww;
+	private ConversationWidget cw;
+
 	public AccountView(SimpleEventBus eventBus) {
 		super(eventBus);
 	}
 
 	@Override
 	protected void initWidget() {
-//		cw = WidgetFactory.getConversationWidget(getService(), eventBus);
-//		asw = WidgetFactory.getAccountStatsWidget(getService(), eventBus);
+		// cw = WidgetFactory.getConversationWidget(getService(), eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	@Override
 	protected void postInitWidget() {
-		if (!userLoggedIn()) {
-			accountViewTabs.setVisible(false);
-			displayLoginRequiredMessage(true);
-		} else {
+		if (userLoggedIn()) {
 			displayLoginRequiredMessage(false);
+		} else {
+			displayLoginRequiredMessage(true);
+			accountViewTabs.setVisible(false);
 		}
 	}
 
@@ -87,8 +90,10 @@ public class AccountView extends AbstractAccountView {
 	@Override
 	protected void setupUiElements() {
 		accountWidget = WidgetFactory.getAccountWidget(eventBus);
+		cww = new CommunityWallWidget(eventBus);
 		this.loginWidget = WidgetFactory.getLoginWidget(getService(), eventBus);
-		this.logoutWidget = WidgetFactory.getLogoutWidget(getService(), eventBus);
+		this.logoutWidget = WidgetFactory.getLogoutWidget(getService(),
+				eventBus);
 	}
 
 	@Override
@@ -101,35 +106,23 @@ public class AccountView extends AbstractAccountView {
 	}
 
 	void refresh() {
-		if (userLoggedIn()) {
-			System.out.println();
-			displayProfile();
-//			profileStatSection.add(asw);
-//			conversationSection.add(cw);
-		} else {
-			displayLoginRequiredMessage(false);
-		}
+		displayProfile();
+		// conversationSection.add(cw);
 	}
 
-//	protected void updateTabs() {
-//		profileStatSection = new HTMLPanel("");
-//		Tab statsTab = new Tab();
-//		statsTab.setHeading("Account Summary");
-//		statsTab.add(asw);
-//		accountViewTabs.add(statsTab);
-//		Tab messageTab = new Tab();
-//		messageTab.setHeading("Messages");
-//		messageTab.add(cw);
-//	}
-	
 	void displayProfile() {
 		accountWidget.displayAccount(getAccount());
+		
+		// add community wall widget
+		communityWallPanel.clear();
+		communityWallPanel.add(cww);
+		
 		profileSection.clear();
 		profileSection.add(accountWidget);
 		
 		// update categories
 		selectedCategories.clear();
-		
+
 		// mark as visible
 		accountViewTabs.setVisible(true);
 	}

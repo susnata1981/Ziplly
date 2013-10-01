@@ -25,6 +25,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 
 public class MainController implements ValueChangeHandler<String> {
+	private static final String BACKGROUND_IMG_URL = "url('neighborhood_large.jpg')";
 	private HasWidgets container;
 	private ZipllyServiceAsync service;
 	private SimpleEventBus eventBus;
@@ -34,7 +35,6 @@ public class MainController implements ValueChangeHandler<String> {
 	private AccountDetails ad;
 	private Logger logger = Logger.getLogger("MainController");
 	protected AccountDTO account;
-
 	public MainController(//final HasWidgets widget,
 			SimpleEventBus eventBus) {
 		this.container = RootPanel.get("main");
@@ -134,25 +134,31 @@ public class MainController implements ValueChangeHandler<String> {
 		
 		if (token != null) {
 			if (token.equals("home")) {
-				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("neighborhood_large.jpg");
-				RootPanel.get("wrapper").getElement().getStyle().setProperty("background",
-						"url('neighborhood_large.jpg');");
-				RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
+				setBackgroundImage();
 				display(container, mainView);
 			} 
 			else if (token.startsWith("account")) {
-				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("none");
+				clearBackgroundImage();
 				MatchResult result = accountPath.exec(token);
 				display(container, accountView);
 			}
 			else if (token.startsWith("signup")) {
-				RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("backgroundImage");
+				setBackgroundImage();
 				SignupView signupView = new SignupView(eventBus);
 				display(container, signupView);
 			}
 		}
 	}
 
+	void setBackgroundImage() {
+		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
+		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
+	}
+	
+	void clearBackgroundImage() {
+		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("none");
+	}
+	
 //	private static class AccountLoginByCookieHandler implements AsyncCallback<AccountDetails> {
 //		private MainController controller;
 //

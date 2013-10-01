@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<div>
+		<!-- 	<cell:CellList ui:field="tweetList" /> -->
+		</div>
+		<div>
+			<b:Form>
+				<b:Fieldset>
+					<b:ControlGroup>
+						<b:Controls>
+							<b:TextBox ui:field="tweetTextBox" placeholder="Whats in your mind..."/>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button type="PRIMARY" ui:field="postBtn">Post</b:Button>
+				</b:Fieldset>
+			</b:Form>							    	
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

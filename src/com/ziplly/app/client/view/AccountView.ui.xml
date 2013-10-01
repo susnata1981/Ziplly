@@ -8,14 +8,15 @@
 		clear: both;
 		margin: 10px;
 		float: left;
-		width:
-		140px;
-		height: 100px;
+		width: 160px;
+		height: 120px;
+		border: 1px solid #000;
 		}
 		.profile_info {
 		clear: both;
 		margin: 10px;
 		width: 100px;
+		border: 1px solid #000;
 		}
 		.accountViewTabs {
 			width: 100%;
@@ -32,8 +33,11 @@
 				<dt:LoginWidget ui:field="loginWidget" />
 				<dt:LogoutWidget ui:field="logoutWidget" />
 			</div>
-			<b:TabPanel ui:field="accountViewTabs">
-				<b:Tab heading="Profile" active="true">
+			<b:TabPanel tabPosition="left" ui:field="accountViewTabs">
+			    <b:Tab heading="Community Wall" active="true">
+					<g:HTMLPanel ui:field="communityWallPanel" />
+				</b:Tab>
+				<b:Tab heading="Profile">
 					<g:HTMLPanel ui:field="profileSection" />
 				</b:Tab>
 				<b:Tab heading="Messages">
