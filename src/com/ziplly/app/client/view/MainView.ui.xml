@@ -38,12 +38,15 @@
 		opacity:0.4;
 		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel id="mainViewPanel">
 		<div id="mainHeading">
-			<h1>	
-			    <span class="bigtext">Ziplly</span><br/> 
-			    connecting <br/> 
-			    local community &amp; businesses</h1>
+			<h1>
+				<span class="bigtext">Ziplly</span>
+				<br />
+				connecting
+				<br />
+				local community &amp; businesses
+			</h1>
 		</div>
 		<div id="mainContent">
 			<div class="{mainViewStyle.logoutLnk}">

@@ -6,9 +6,9 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<ul>
-		    <li><g:Anchor ui:field="homeLink">Home</g:Anchor></li>
-		    <li><g:Anchor ui:field="accountsLink">Account</g:Anchor></li>
 		    <li><g:Anchor ui:field="aboutLink">About</g:Anchor></li>
+		    <li><g:Anchor ui:field="accountsLink">Account</g:Anchor></li>
+		    <li><g:Anchor ui:field="homeLink">Home</g:Anchor></li>
 		</ul>
 	</g:HTMLPanel>
 </ui:UiBinder> 

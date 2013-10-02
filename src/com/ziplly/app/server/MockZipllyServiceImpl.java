@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Random;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.base.Preconditions;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ziplly.app.client.ZipllyService;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 
@@ -29,6 +29,14 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 			"http://www.desicomments.com/graphics/cartoons/70.gif"
 	};
 	
+	private String [] comments = {
+			"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+			"Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+			"When an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+			"It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+			"It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." 
+	};
+
 	private String[] tweets = {
 			"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
 			"Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
@@ -42,7 +50,7 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	}
 
 	void setup() {
-		int N = accounts.size();
+		int N = firstnames.length;
 		for (int i = 0; i < N; i++) {
 			AccountDTO a = new AccountDTO();
 			String fn = firstnames[i % N], ln = lastnames[i % N];
@@ -55,8 +63,14 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 			a.setId(new Long(i));
 			a.setZip(98199);
 			a.setImageUrl(imageUrls[i%N]);
-			createTweets(a);
+			a.setTimeCreated(new Date());
+			a.setLastLoginTime(new Date());
 			accounts.add(a);
+		}
+		
+		// create tweets
+		for(AccountDTO a: accounts) {
+			createTweets(a);
 		}
 	}
 
@@ -70,10 +84,22 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 			t.setSender(a);
 			t.setType(TweetType.GENERAL);
 			t.setTweet_id(counter++);
+			int cc = rnd.nextInt(comments.length);
+			for(int k=0;k<cc;k++) {
+				CommentDTO c = new CommentDTO();
+				c.setContent(comments[k]);
+				c.setTimeCreated(new Date());
+				c.setAuthor(accounts.get(rnd.nextInt(accounts.size())));
+				t.getComments().add(c);
+			}
+			a.getTweets().add(t);
+			posts.add(t);
 		}
 	}
 
 	Random rnd = new Random(accounts.size());
+
+	private AccountDTO loggedInAccount;
 	
 	@Override
 	public AccountDTO register(AccountDTO a) {
@@ -86,8 +112,7 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	
 	@Override
 	public AccountDTO doLogin(String code) {
-		//return accounts.get(rnd.nextInt(accounts.size()));
-		return null;
+		return accounts.get(rnd.nextInt(accounts.size()-1));
 	}
 	
 	@Override
@@ -97,7 +122,10 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 
 	@Override
 	public AccountDTO getLoggedInUser() {
-		return accounts.get(rnd.nextInt());
+		if (loggedInAccount != null) {
+			this.loggedInAccount = accounts.get(rnd.nextInt());
+		}
+		return loggedInAccount;
 	}
 
 	@Override
@@ -120,6 +148,15 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 		return null;
 	}
 
+	@Override
+	public List<TweetDTO> getTweets(AccountDTO a) {
+		List<TweetDTO> result = Lists.newArrayList();
+		for(TweetDTO tweet: posts) {
+			result.add(tweet);
+		}
+		return result;
+	}
+	
 	@Override
 	public void logoutAccount() {
 		// TODO Auto-generated method stub

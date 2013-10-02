@@ -38,6 +38,6 @@ public class NavView extends Composite {
 	
 	@UiHandler("homeLink")
 	void home(ClickEvent event) {
-		History.newItem("home");
+		History.newItem("main");
 	}
 }

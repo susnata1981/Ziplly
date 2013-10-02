@@ -16,10 +16,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.literati.app.client.LiteratiServiceAsync;
-import com.literati.app.client.view.AbstractView;
-import com.literati.app.shared.Account;
-import com.literati.app.shared.Message;
+import com.ziplly.app.client.view.AbstractView;
+import com.ziplly.app.model.Account;
+import com.ziplly.app.model.Message;
 
 public class SendMessageWidget extends AbstractView {
 

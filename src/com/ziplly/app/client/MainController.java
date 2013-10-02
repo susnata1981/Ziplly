@@ -17,12 +17,12 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.cookie.CookieManager;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountDetails;
 
 public class MainController implements ValueChangeHandler<String> {
 	private static final String BACKGROUND_IMG_URL = "url('neighborhood_large.jpg')";
@@ -32,23 +32,27 @@ public class MainController implements ValueChangeHandler<String> {
 	private MainView mainView;
 	private AccountView accountView;
 	private NavView navView;
-	private AccountDetails ad;
 	private Logger logger = Logger.getLogger("MainController");
 	protected AccountDTO account;
-	public MainController(//final HasWidgets widget,
-			SimpleEventBus eventBus) {
+	private HomeView homeView;
+	public MainController(SimpleEventBus eventBus) {
 		this.container = RootPanel.get("main");
 		this.service = GWT.create(ZipllyService.class);
 		this.eventBus = eventBus;
 		this.accountView = new AccountView(eventBus);
 		this.navView = new NavView(eventBus);
 		this.mainView = new MainView(eventBus);
+		this.homeView = new HomeView(eventBus);
 		RootPanel.get("nav").add(navView);
-		setup();
+		init();
 	}
 
-	void setup() {
-		if (ad == null || ad.account == null) {
+	boolean isUserLoggedIn() {
+		return (this.account != null);
+	}
+	
+	void init() {
+		if (isUserLoggedIn()) {
 			checkLoginStatus();
 		}
 		History.addValueChangeHandler(this);
@@ -64,14 +68,6 @@ public class MainController implements ValueChangeHandler<String> {
 			return;
 		}
 		logger.log(Level.INFO, "Found logged in user: "+accountId);
-//		service.loginAccountById(Long.parseLong(accountId),
-//				new LoginHandler<HandleLogin>(new HandleLogin() {
-//					@Override
-//					public void onLogin(AccountDetails ad) {
-//						MainController.this.ad = ad;
-//						eventBus.fireEvent(new LoginEvent(ad));
-//					}
-//				}));
 	}
 
 	private void handleOAuthRedirect() {
@@ -84,10 +80,9 @@ public class MainController implements ValueChangeHandler<String> {
 			try {
 				handleAuth(code);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.SEVERE, "Error logging in user:"+e.getMessage());
 			}
 		}
-		History.newItem("home");
 	}
 
 	private void handleAuth(String code) {
@@ -105,6 +100,7 @@ public class MainController implements ValueChangeHandler<String> {
 					eventBus.fireEvent(new LoginEvent(account));
 					MainController.this.logger.log(Level.INFO, "User: " + account.getDisplayName()
 							+ "(" + account.getId() + ") logged in.");
+					History.newItem("home");
 				}
 			}
 		});
@@ -120,7 +116,7 @@ public class MainController implements ValueChangeHandler<String> {
 	public void go() {
 		handleOAuthRedirect();
 		if ("".equals(History.getToken())) {
-			History.newItem("home");
+			History.newItem("main");
 		} else {
 			History.fireCurrentHistoryState();
 		}
@@ -133,19 +129,28 @@ public class MainController implements ValueChangeHandler<String> {
 		RegExp accountPath = RegExp.compile("account/(\\S+)");
 		
 		if (token != null) {
-			if (token.equals("home")) {
+			if (token.equals("main")) {
+				// TODO: Hack
+				if (isUserLoggedIn()) {
+					display(container, homeView);
+					return;
+				}
 				setBackgroundImage();
 				display(container, mainView);
-			} 
-			else if (token.startsWith("account")) {
-				clearBackgroundImage();
-				MatchResult result = accountPath.exec(token);
-				display(container, accountView);
 			}
 			else if (token.startsWith("signup")) {
 				setBackgroundImage();
 				SignupView signupView = new SignupView(eventBus);
 				display(container, signupView);
+			}
+			else if (token.equals("home")) {
+				clearBackgroundImage();
+				display(container, homeView);
+			} 
+			else if (token.startsWith("account")) {
+				clearBackgroundImage();
+				MatchResult result = accountPath.exec(token);
+				display(container, accountView);
 			}
 		}
 	}

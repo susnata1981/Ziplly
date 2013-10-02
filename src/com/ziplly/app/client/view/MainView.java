@@ -203,7 +203,6 @@ public class MainView extends AbstractView {
 		@Override
 		public void onEvent(LoginEvent event) {
 			mainView.doLogin(event.getAccount());
-			History.newItem("account");
 		}
 	}
 

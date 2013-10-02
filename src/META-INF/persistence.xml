@@ -9,6 +9,7 @@
 		<class>com.ziplly.app.model.TagDTO</class>
 		<class>com.ziplly.app.dao.LikeDTO</class>
 		<class>com.ziplly.app.model.TweetDTO</class>
+		<class>com.ziplly.app.model.CommentDTO</class>
 		<properties>
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
 			<property name="javax.persistence.jdbc.url"

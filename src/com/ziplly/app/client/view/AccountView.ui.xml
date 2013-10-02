@@ -27,18 +27,17 @@
 			<g:Label>Please login first</g:Label>
 			<b:Button ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
 		</g:HTMLPanel>
-		
 		<div id="mainContent">
 			<div>
 				<dt:LoginWidget ui:field="loginWidget" />
 				<dt:LogoutWidget ui:field="logoutWidget" />
 			</div>
 			<b:TabPanel tabPosition="left" ui:field="accountViewTabs">
-			    <b:Tab heading="Community Wall" active="true">
-					<g:HTMLPanel ui:field="communityWallPanel" />
-				</b:Tab>
-				<b:Tab heading="Profile">
+				<b:Tab heading="Profile" active="true">
 					<g:HTMLPanel ui:field="profileSection" />
+				</b:Tab>
+				<b:Tab heading="Settings">
+					<g:HTMLPanel ui:field="settingsPanel"/>
 				</b:Tab>
 				<b:Tab heading="Messages">
 					<g:HTMLPanel ui:field="conversationSection" />

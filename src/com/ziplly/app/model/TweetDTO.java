@@ -1,5 +1,7 @@
 package com.ziplly.app.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class TweetDTO {
+public class TweetDTO implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long tweet_id;
@@ -30,7 +33,7 @@ public class TweetDTO {
 	@ManyToMany(mappedBy="tweets")
 	private Set<TagDTO> tags;
 	@OneToMany(mappedBy="tweet")
-	private List<CommentDTO> comments;
+	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
 	private int status;
 	private Date time_created;
 	

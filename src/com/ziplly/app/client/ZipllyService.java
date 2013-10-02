@@ -1,9 +1,12 @@
 package com.ziplly.app.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.TweetDTO;
 
 @RemoteServiceRelativePath("zipllyservice")
 public interface ZipllyService extends RemoteService {
@@ -19,5 +22,7 @@ public interface ZipllyService extends RemoteService {
 	AccountDTO doLogin(String code);
 
 	AccountDTO register(AccountDTO a);
+
+	List<TweetDTO> getTweets(AccountDTO a);
 
 }

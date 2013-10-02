@@ -7,7 +7,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.literati.app.shared.Conversation;
+import com.ziplly.app.model.Conversation;
 
 public class ConversationCell extends AbstractCell<Conversation> {
 	private SimpleEventBus eventBus;

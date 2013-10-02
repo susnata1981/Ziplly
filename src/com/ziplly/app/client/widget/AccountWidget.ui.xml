@@ -47,7 +47,7 @@
 		}
 		.profile_general_info_section {
 		float: left;
-		height: 140px;
+		height: auto;
 		background: #f1f8f1;
 		}
 		.profile_interest_section {

@@ -1,9 +1,11 @@
 package com.ziplly.app.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.TweetDTO;
 
 public interface ZipllyServiceAsync {
 	void getAccessToken(String code, AsyncCallback<AccountDetails> callback);
@@ -13,4 +15,5 @@ public interface ZipllyServiceAsync {
 	void logoutAccount(AsyncCallback<Void> callback);
 	void doLogin(String code, AsyncCallback<AccountDTO> callback);
 	void register(AccountDTO a, AsyncCallback<AccountDTO> callback);
+	void getTweets(AccountDTO a, AsyncCallback<List<TweetDTO>> callback);
 }

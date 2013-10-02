@@ -57,7 +57,7 @@ public class AccountView extends AbstractAccountView {
 	HTMLPanel conversationSection;
 
 	@UiField
-	HTMLPanel communityWallPanel;
+	HTMLPanel settingsPanel;
 	
 	private AccountWidget accountWidget;
 	private CommunityWallWidget cww;
@@ -107,15 +107,10 @@ public class AccountView extends AbstractAccountView {
 
 	void refresh() {
 		displayProfile();
-		// conversationSection.add(cw);
 	}
 
 	void displayProfile() {
 		accountWidget.displayAccount(getAccount());
-		
-		// add community wall widget
-		communityWallPanel.clear();
-		communityWallPanel.add(cww);
 		
 		profileSection.clear();
 		profileSection.add(accountWidget);

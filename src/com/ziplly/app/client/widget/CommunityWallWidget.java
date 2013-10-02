@@ -5,11 +5,17 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.AsyncDataProvider;
 import com.ziplly.app.client.view.AbstractAccountView;
+import com.ziplly.app.client.widget.cell.TweetCell;
+import com.ziplly.app.client.widget.dataprovider.TweetDataProvider;
 import com.ziplly.app.model.TweetDTO;
 
 public class CommunityWallWidget extends AbstractAccountView {
+
+	private static final int PAGE_SIZE = 10;
 
 	private static CommunityWallWidgetUiBinder uiBinder = GWT
 			.create(CommunityWallWidgetUiBinder.class);
@@ -22,12 +28,19 @@ public class CommunityWallWidget extends AbstractAccountView {
 		super(eventBus);
 	}
 
-//	@UiField(provided=true)
+	@UiField(provided = true)
+	SimplePager pager;
+	
+	@UiField(provided=true)
 	CellList<TweetDTO> tweetList;
+	
+	AsyncDataProvider<TweetDTO> dataProvider;
 	
 	@Override
 	protected void internalOnUserLogin() {
-		
+		dataProvider = new TweetDataProvider(this);
+		dataProvider.addDataDisplay(tweetList);
+		pager.setDisplay(tweetList);
 	}
 
 	@Override
@@ -37,12 +50,17 @@ public class CommunityWallWidget extends AbstractAccountView {
 
 	@Override
 	protected void postInitWidget() {
-		
+		dataProvider = new TweetDataProvider(this);
 	}
 
 	@Override
 	protected void setupUiElements() {
-		
+		tweetList = new CellList<TweetDTO>(new TweetCell(eventBus));
+		tweetList.setPageSize(PAGE_SIZE);
+		pager = new SimplePager();
 	}
 
+	public CellList<TweetDTO> getTweetList() {
+		return tweetList;
+	}
 }

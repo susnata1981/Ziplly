@@ -1,0 +1,24 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	
+	</ui:style>
+	<g:HTMLPanel ui:field="communityWallPanel">
+	    <aside>
+	        <dt>Inbox</dt>
+            <dd>A set of standards for styling documents presented on the 
+            World Wide Web.</dd>
+            <dt>PHP</dt>
+            <dd>A server-side scripting language suited to dynamic HTML document 
+            generation for the web.</dd>
+            <dt>JavaScript</dt>
+            <dd>A client-side scripting language used for manipulating HTML documents 
+            within a browser.</dd>
+	    </aside>
+	    <div id="cwall">
+	    	<dt:CommunityWallWidget ui:field="cww"/>
+	    </div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

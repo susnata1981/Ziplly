@@ -1,6 +1,7 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class AccountDTO implements Serializable {
 	private Date timeCreated;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
-	private List<TweetDTO> tweets;
+	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	
 	public AccountDTO() {
 	}
@@ -227,5 +228,13 @@ public class AccountDTO implements Serializable {
 
 	public void setZip(int zip) {
 		this.zip = zip;
+	}
+
+	public List<TweetDTO> getTweets() {
+		return tweets;
+	}
+
+	public void setTweets(List<TweetDTO> tweets) {
+		this.tweets = tweets;
 	}
 }
