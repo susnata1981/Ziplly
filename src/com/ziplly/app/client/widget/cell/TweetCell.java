@@ -10,9 +10,7 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class TweetCell extends AbstractCell<TweetDTO> {
@@ -23,15 +21,6 @@ public class TweetCell extends AbstractCell<TweetDTO> {
 		this.eventBus = eventBus;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.google.gwt.cell.client.AbstractCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder)
-	 */
-	/* (non-Javadoc)
-	 * @see com.google.gwt.cell.client.AbstractCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder)
-	 */
-	/* (non-Javadoc)
-	 * @see com.google.gwt.cell.client.AbstractCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder)
-	 */
 	@Override
 	public void render(Context context, TweetDTO tweet, SafeHtmlBuilder sb) {
 		StringBuilder resp = new StringBuilder();
@@ -60,6 +49,7 @@ public class TweetCell extends AbstractCell<TweetDTO> {
 
 			commentsContent.append("<div class='comment_box'>"
 							+ "<input class='comment_input' placeholder='enter your comments here...' type='text'/>"
+							+ "<a href='#'>Post</a>"
 							+ "</div>");
 			
 			resp.append("<div class='tweet'>"
@@ -107,14 +97,9 @@ public class TweetCell extends AbstractCell<TweetDTO> {
 	
 		// fire event
 		EventTarget eventTarget = event.getEventTarget();
-		if (parent.getElementsByTagName("a").getItem(0).isOrHasChild(Element.as(eventTarget))) {
-			Window.alert("Clicked on "+eventTarget.toSource());
-		}
-		Window.alert(event.getCurrentEventTarget().toSource());
 		Element as = Element.as(eventTarget);
-		String tagName = as.getTagName();
 		if (as.getTagName().matches("INPUT")) {
-			Window.alert("clicked on textbox");
+//			parent.setInnerHTML("<button>Post<button>");
 		}
 	}
 }

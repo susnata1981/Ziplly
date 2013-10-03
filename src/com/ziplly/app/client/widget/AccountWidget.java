@@ -81,6 +81,15 @@ public class AccountWidget extends AbstractAccountView {
 	@UiField
 	HTMLPanel accountWidgetRoot;
 	
+	@UiField
+	Element numberOfLikes;
+	
+	@UiField
+	Element numberOfComments;
+	
+	@UiField
+	Element numberOfPosts;
+	
 	@UiFactory
 	public MyBundle createTheBundle() {
 		MyBundle.INSTANCE.style().ensureInjected();

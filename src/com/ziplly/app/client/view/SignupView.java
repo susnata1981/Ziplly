@@ -16,10 +16,10 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
 
 public class SignupView extends AbstractView {
@@ -81,6 +81,9 @@ public class SignupView extends AbstractView {
 	@UiField
 	Button signupBtn;
 
+	@UiField(provided=true)
+	LoginWidget loginWidget;
+	
 	public SignupView(SimpleEventBus eventBus) {
 		super(eventBus);
 	}
@@ -97,6 +100,7 @@ public class SignupView extends AbstractView {
 
 	@Override
 	protected void setupUiElements() {
+		loginWidget = new LoginWidget(service, eventBus);
 	}
 
 	RegExp zipPattern = RegExp.compile("(\\d+){3,5}");

@@ -3,7 +3,8 @@ package com.ziplly.app.client.widget;
 import java.io.UnsupportedEncodingException;
 
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -30,30 +31,23 @@ public class LoginWidget extends Composite {
 	
 	public LoginWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		hide();
 	}
-	
+
 	@UiField
-	Modal loginModalForm;
-	
+	TextBox email;
+	@UiField
+	ControlGroup emailCg;
+
+	@UiField
+	TextBox password;
+	@UiField
+	ControlGroup passwordCg;
+
 	@UiField
 	Button fbLoginBtn;
 	
 	@UiField
-	Button browseBtn;
-	
-	public void hide() {
-		loginModalForm.hide();
-	}
-	
-	public void show() {
-		loginModalForm.show();
-	}
-	
-	@UiHandler("browseBtn")
-	public void close(ClickEvent event) {
-		hide();
-	}
+	Button loginBtn;
 	
 	@UiHandler("fbLoginBtn")
 	void fbLogin(ClickEvent event) {
@@ -62,5 +56,10 @@ public class LoginWidget extends Composite {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@UiHandler("loginBtn")
+	void login(ClickEvent event) {
+		
 	}
 }

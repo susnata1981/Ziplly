@@ -25,13 +25,12 @@
 	<g:HTMLPanel>
 	    <g:HTMLPanel ui:field="loginMessageLabel">
 			<g:Label>Please login first</g:Label>
-			<b:Button ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
-		</g:HTMLPanel>
-		<div id="mainContent">
 			<div>
 				<dt:LoginWidget ui:field="loginWidget" />
 				<dt:LogoutWidget ui:field="logoutWidget" />
 			</div>
+		</g:HTMLPanel>
+		<div id="mainContent">
 			<b:TabPanel tabPosition="left" ui:field="accountViewTabs">
 				<b:Tab heading="Profile" active="true">
 					<g:HTMLPanel ui:field="profileSection" />

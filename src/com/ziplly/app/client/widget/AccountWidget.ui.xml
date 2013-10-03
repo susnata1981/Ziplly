@@ -6,10 +6,10 @@
 	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="res" />
 	<ui:style type="com.ziplly.app.client.widget.AccountWidget.Style">
 		.rootPanel {
-		font-style: sans-serif;
-		font-size:
-		14px;
+		width: 800px;
 		padding: 4px;
+		border:
+		1px solid #ddd;
 		overflow: auto;
 		}
 		.editBtn {
@@ -19,9 +19,8 @@
 		font-family: sans-serif;
 		font-size: 20px;
 		line-height: 18px;
-		padding:
-		2px;
-		margin: 0px 0px 15px 0px;
+		padding: 4px;
+		margin: 4px;
 		}
 		.heading {
 		font-family: sans-serif;
@@ -42,31 +41,45 @@
 		}
 		.profile_info_section {
 		float: left;
-		margin-top: 3px 0px 10px 10px;
+		width: 600px;
+		margin: 3px 0px 10px 10px;
 		border: 1px solid #ddd;
+		}
+		.profile_stats_section {
+		float: left;
+		width: 600px;
+		clear: both;
+		margin: 20px 0px 10px 160px;
+		border: 1px solid #ddd;
+		}
+		.profile_stats_section ul {
+			list-style: none;
 		}
 		.profile_general_info_section {
 		float: left;
+		width: 600px;
 		height: auto;
 		background: #f1f8f1;
 		}
 		.profile_interest_section {
 		clear: both;
 		float: left;
-		margin: 20px 0px 0px 140px;
+		width: 600px;
+		margin: 20px 0px 10px 160px;
 		}
 		.profile_section {
-		overflow:auto;
+			overflow:auto;
 		}
-		.profile_image {
+		div.image {
 		float:left;
-		width: 160x;
-		height: 130px;
-		padding: 10px;
+		width: 160px;
+		height: 130px;	
+		padding: 2px;
 		}
 		.profile_info_section {
 		float: left;
-		margin: 10px 0px 0px 40px;
+		margin: 10px 0px 0px
+		40px;
 		background: #f2f1f7;
 		overflow: auto;
 		}
@@ -98,8 +111,9 @@
 	</ui:style>
 	<g:HTMLPanel ui:field="accountWidgetRoot" addStyleNames="{style.rootPanel}">
 		<div class="{style.profile_section}">
-			<b:Image addStyleNames="{style.profile_image}" ui:field="profileImageUrl"
-				url="" />
+		    <div class="{style.image}">
+				<b:Image ui:field="profileImageUrl" url="" />
+			</div>
 			<div class="profile_info_section">
 				<div class="{style.profile_general_info_section}">
 					<div class="{style.nameSection}">
@@ -127,14 +141,32 @@
 						</div>
 					</div>
 				</div> <!-- profile_general_info_section end -->
-				
-				<div class="{style.profile_interest_section}">
-					<span class="{style.bigtext}">Interests</span>
-					<g:HTMLPanel ui:field="categoryList">
-						<cell:CellList ui:field="interestList"></cell:CellList>
-					</g:HTMLPanel>
-				</div> <!--  profile_info_seciton_end -->
-			</div> <!--  profile_info_section end -->
+			</div> <!-- profile_info_section end -->
+			<div class="{style.profile_stats_section}">
+				<div class="{style.bigtext}">Activity section</div>
+				<hr />
+				<ul>
+					<li>
+						<span class="smalltext">Number of posts</span>
+						<a href="" ui:field="numberOfPosts"/>
+					</li>
+					<li>
+						<span class="smalltext">Number of comments</span>
+						<a href="" ui:field="numberOfComments"/>
+					</li>
+					<li>
+						<span class="smalltext">Number of likes</span>
+						<a href="" ui:field="numberOfLikes"/>
+					</li>
+				</ul>
+			</div>
+			<div class="{style.profile_interest_section}">
+				<span class="{style.bigtext}">Interests</span>
+				<hr/>
+				<g:HTMLPanel ui:field="categoryList">
+					<cell:CellList ui:field="interestList"></cell:CellList>
+				</g:HTMLPanel>
+			</div> <!-- profile_interest_section_end -->
 		</div>
 	</g:HTMLPanel>
 
