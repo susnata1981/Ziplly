@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.github.gwtbootstrap.client.ui.Accordion;
-import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -28,7 +26,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.ziplly.app.client.view.AbstractAccountView;
-import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.UserInfoFormClosedEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
@@ -37,7 +34,6 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.Category;
 import com.ziplly.app.model.InterestList;
-import com.ziplly.app.model.InterestList.Activity;
 
 public class AccountInfoFormWidget extends AbstractAccountView {
 
@@ -110,27 +106,27 @@ public class AccountInfoFormWidget extends AbstractAccountView {
 
 	@Override
 	protected void setupUiElements() {
-		interestList = InterestList.getInstance();
+//		interestList = InterestList.getInstance();
 	}
 
 	public void populateInterestPanel() {
 		categoryList.clear();
 		interestPanel.clear();
-		Map<Activity, List<String>> map = interestList.getInterests();
-		Accordion accordion = new Accordion();
-		for (Activity activity : map.keySet()) {
-			List<String> interests = map.get(activity);
-			AccordionGroup ag = new AccordionGroup();
-			ag.setHeading(activity.name().toLowerCase());
-			for (String interest : interests) {
-				CheckBox cb = new CheckBox(interest);
-				cb.addStyleName(style.checkbox());
-				categoryList.put(interest.toLowerCase(), cb);
-				ag.add(cb);
-			}
-			accordion.add(ag);
-		}
-		interestPanel.add(accordion);
+//		Map<Activity, List<String>> map = interestList.getInterests();
+//		Accordion accordion = new Accordion();
+//		for (Activity activity : map.keySet()) {
+//			List<String> interests = map.get(activity);
+//			AccordionGroup ag = new AccordionGroup();
+//			ag.setHeading(activity.name().toLowerCase());
+//			for (String interest : interests) {
+//				CheckBox cb = new CheckBox(interest);
+//				cb.addStyleName(style.checkbox());
+//				categoryList.put(interest.toLowerCase(), cb);
+//				ag.add(cb);
+//			}
+//			accordion.add(ag);
+//		}
+//		interestPanel.add(accordion);
 //		showSelectedInterests(ad.categories);
 		updateAccountIntro();
 	}
