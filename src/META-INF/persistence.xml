@@ -5,10 +5,11 @@
         http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0">
 	<persistence-unit name="zipllydb">
-		<class>com.ziplly.app.model.AccountDTO</class>
+		<class>com.ziplly.app.model.Account</class>
+		<class>com.ziplly.app.model.AccountSettings</class>
+		<class>com.ziplly.app.model.Tweet</class>
 		<class>com.ziplly.app.model.TagDTO</class>
 		<class>com.ziplly.app.dao.LikeDTO</class>
-		<class>com.ziplly.app.model.TweetDTO</class>
 		<class>com.ziplly.app.model.CommentDTO</class>
 		<properties>
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
@@ -17,9 +18,9 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.connection.pool_size" value="0" />
-			<property name="javax.persistence.validation.mode" value="none"/>
+			<property name="javax.persistence.validation.mode" value="none"/> 
 		</properties>
 	</persistence-unit>
 </persistence>

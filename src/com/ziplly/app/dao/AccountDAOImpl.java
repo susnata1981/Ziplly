@@ -3,37 +3,44 @@ package com.ziplly.app.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.model.Account;
 
 public class AccountDAOImpl implements AccountDAO {
 
 	@Override
-	public AccountDTO findByEmail(String email)
-			throws NotFoundException {
-		
-		EntityManager em = EntitManagerService.getInstance().getEntityManager();
+	public Account findByEmail(String email) throws NotFoundException {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
-		List<AccountDTO> result = query.getResultList();
-		em.close();
-		if (result.size() == 0) {
+		Account account = null;
+		try {
+			account = (Account) query.getSingleResult();
+		} catch(NoResultException ex) {
 			throw new NotFoundException();
+		} finally {
+			em.close();
 		}
-		return result.get(0);
+		
+		return account;
 	}
 
 	@Override
-	public AccountDTO findById(Long accountId)
+	public Account findById(Long accountId)
 			throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createNamedQuery("findAccountById");
+		query.setParameter("account_id", accountId);
+		Account result = (Account) query.getSingleResult();
+		return result;
 	}
 
 	@Override
-	public void save(AccountDTO account) {
-		EntityManager em = EntitManagerService.getInstance().getEntityManager();
+	public void save(Account account) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
 		em.persist(account);
 		em.getTransaction().commit();
@@ -41,32 +48,18 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public void update(AccountDTO account) {
-		EntityManager em = EntitManagerService.getInstance().getEntityManager();
+	public void update(Account account) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
 		em.merge(account);
 		em.getTransaction().commit();
 		em.close();
 	}
-	
-	@Override
-	public List<AccountDTO> get(
-			com.ziplly.app.model.QueryMetaData qmd)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public boolean save(com.ziplly.app.model.AccountDetails ad) {
-		// TODO Auto-generated method stub
-		return false;
+	public List<Account> getAll(int start, int end) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createNamedQuery("findAllAccounts");
+		return query.getResultList();
 	}
-
-	@Override
-	public List<AccountDTO> getAll(int start, int end) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

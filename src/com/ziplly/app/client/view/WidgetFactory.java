@@ -17,8 +17,8 @@ public class WidgetFactory {
 		return new LoginWidget(service, eventBus);
 	}
 	
-	public static LogoutWidget getLogoutWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
-		return new LogoutWidget(service, eventBus);
+	public static LogoutWidget getLogoutWidget(SimpleEventBus eventBus) {
+		return new LogoutWidget(eventBus);
 	}
 
 	public static ConversationWidget getConversationWidget(

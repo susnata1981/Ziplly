@@ -16,4 +16,6 @@ public interface ZipllyServiceAsync {
 	void doLogin(String code, AsyncCallback<AccountDTO> callback);
 	void register(AccountDTO a, AsyncCallback<AccountDTO> callback);
 	void getTweets(AccountDTO a, AsyncCallback<List<TweetDTO>> callback);
+	void loginOrRegisterAccount(String code, AsyncCallback<AccountDTO> callback);
+	void getFacebookUserDetails(String code, AsyncCallback<AccountDTO> callback);
 }

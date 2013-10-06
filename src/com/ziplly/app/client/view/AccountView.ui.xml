@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
@@ -23,11 +24,11 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-	    <g:HTMLPanel ui:field="loginMessageLabel">
+	    <dt:LogoutWidget ui:field="logoutWidget" />
+	    <g:HTMLPanel ui:field="loginMessagePanel">
 			<g:Label>Please login first</g:Label>
 			<div>
 				<dt:LoginWidget ui:field="loginWidget" />
-				<dt:LogoutWidget ui:field="logoutWidget" />
 			</div>
 		</g:HTMLPanel>
 		<div id="mainContent">
@@ -40,6 +41,7 @@
 				</b:Tab>
 				<b:Tab heading="Messages">
 					<g:HTMLPanel ui:field="conversationSection" />
+					<dt:AccountDetailsWidget ui:field="accountDetailsWidget" />
 				</b:Tab>
 			</b:TabPanel>
 		</div>

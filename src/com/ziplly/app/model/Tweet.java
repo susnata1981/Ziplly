@@ -6,24 +6,46 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public class TweetDTO implements Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="tweet")
+public class Tweet implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="tweet_id")
 	private long tweetId;
-	private AccountDTO sender;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="sender_id")
+	private Account sender;
+	@Column(name="image_id")
 	private long imageId;
 	private TweetType type;
 	private String content;
+	@ManyToMany(mappedBy="tweets")
 	private Set<TagDTO> tags;
+	@OneToMany(mappedBy="tweet")
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
 	private int status;
 	private Date timeCreated;
 	
-	public TweetDTO() {
+	public Tweet() {
 	}
 	
-	public TweetDTO(Tweet tweet) {
+	public Tweet(TweetDTO tweet) {
 		tweetId = tweet.getTweetId();
-		sender = new AccountDTO(tweet.getSender());
+		sender = new Account(tweet.getSender());
 		imageId = tweet.getImageId();
 		type = tweet.getType();
 		content = tweet.getContent();
@@ -49,16 +71,22 @@ public class TweetDTO implements Serializable {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	public Date getTime_created() {
+		return getTimeCreated();
+	}
+	public void setTime_created(Date time_created) {
+		this.setTimeCreated(time_created);
+	}
 	public List<CommentDTO> getComments() {
 		return comments;
 	}
 	public void setComments(List<CommentDTO> comments) {
 		this.comments = comments;
 	}
-	public AccountDTO getSender() {
+	public Account getSender() {
 		return sender;
 	}
-	public void setSender(AccountDTO sender) {
+	public void setSender(Account sender) {
 		this.sender = sender;
 	}
 	public long getImageId() {
@@ -67,9 +95,11 @@ public class TweetDTO implements Serializable {
 	public void setImageId(long imageId) {
 		this.imageId = imageId;
 	}
+
 	public long getTweetId() {
 		return tweetId;
 	}
+
 	public void setTweetId(long tweetId) {
 		this.tweetId = tweetId;
 	}

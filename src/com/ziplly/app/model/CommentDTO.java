@@ -4,14 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="comment")
 public class CommentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -19,9 +20,9 @@ public class CommentDTO implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int comment_id;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="tweet_id")
-	private TweetDTO tweet;
+	private Tweet tweet;
 	
 	private AccountDTO author;
 	private String content;

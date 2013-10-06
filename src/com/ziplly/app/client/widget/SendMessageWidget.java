@@ -16,6 +16,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.ZipllyService;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Message;
@@ -50,8 +51,8 @@ public class SendMessageWidget extends AbstractView {
 	private Account receiver;
 	private Account sender;
 
-	public SendMessageWidget(LiteratiServiceAsync service, SimpleEventBus eventBus, Account sender, Account receiver) {
-		super(service, eventBus);
+	public SendMessageWidget(SimpleEventBus eventBus, Account sender, Account receiver) {
+		super(eventBus);
 		this.sender = sender;
 		this.receiver = receiver;
 	}
@@ -76,23 +77,23 @@ public class SendMessageWidget extends AbstractView {
 		Message msg = new Message();
 		msg.setSubject(SafeHtmlUtils.htmlEscape(subject.getText().trim()));
 		msg.setMessage(SafeHtmlUtils.htmlEscape(message.getText().trim()));
-		service.sendMessage(sender, receiver, msg, new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				Alert alert = new Alert("Message sent");
-				alert.setType(AlertType.SUCCESS);
-				status.add(alert);
-				modal.hide();
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Alert alert = new Alert("Message couldn't sent");
-				alert.setAnimation(true);
-				alert.setType(AlertType.ERROR);
-				status.add(alert);
-			}
-		});
+//		service.sendMessage(sender, receiver, msg, new AsyncCallback<Void>() {
+//			@Override
+//			public void onSuccess(Void result) {
+//				Alert alert = new Alert("Message sent");
+//				alert.setType(AlertType.SUCCESS);
+//				status.add(alert);
+//				modal.hide();
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				Alert alert = new Alert("Message couldn't sent");
+//				alert.setAnimation(true);
+//				alert.setType(AlertType.ERROR);
+//				status.add(alert);
+//			}
+//		});
 	}
 
 	@UiHandler("closeBtn")

@@ -4,170 +4,85 @@
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="res" />
-	<ui:style type="com.ziplly.app.client.widget.AccountWidget.Style">
-		.rootPanel {
-		width: 800px;
-		padding: 4px;
-		border:
-		1px solid #ddd;
-		overflow: auto;
-		}
-		.editBtn {
-		float: right;
-		}
-		.bigtext {
-		font-family: sans-serif;
-		font-size: 20px;
-		line-height: 18px;
-		padding: 4px;
-		margin: 4px;
-		}
-		.heading {
-		font-family: sans-serif;
-		font-size: 20px;
-		line-height: 18px;
-		padding: 2px;
-		margin-bottom: 10px;
-		}
-		.text {
-		font-family: sans-serif;
-		font-size: 16px;
-		padding: 2px;
-		}
-		.smalltext {
-		font-family: Arial;
-		font-size: 12px;
-		padding: 2px;
-		}
-		.profile_info_section {
-		float: left;
-		width: 600px;
-		margin: 3px 0px 10px 10px;
-		border: 1px solid #ddd;
-		}
-		.profile_stats_section {
-		float: left;
-		width: 600px;
-		clear: both;
-		margin: 20px 0px 10px 160px;
-		border: 1px solid #ddd;
-		}
-		.profile_stats_section ul {
-			list-style: none;
-		}
-		.profile_general_info_section {
-		float: left;
-		width: 600px;
-		height: auto;
-		background: #f1f8f1;
-		}
-		.profile_interest_section {
-		clear: both;
-		float: left;
-		width: 600px;
-		margin: 20px 0px 10px 160px;
-		}
-		.profile_section {
-			overflow:auto;
-		}
-		div.image {
-		float:left;
-		width: 160px;
-		height: 130px;	
-		padding: 2px;
-		}
-		.profile_info_section {
-		float: left;
-		margin: 10px 0px 0px
-		40px;
-		background: #f2f1f7;
-		overflow: auto;
-		}
-		.nameSection {
-		padding: 8px;
-		margin-left: 10px;
-		width: 600px;
-		overflow: auto;
-		}
-		.name {
-		font-size: 28px;
-		font-family: cursive;
-		font-weight: bold;
-		padding: 2px;
-		margin: 0px 0px
-		14px 0px;
-		}
-		.right {
-		float:
-		right;
-		}
-		.interest {
-		width: 150px;
-		height: 30px;
-		background: #f1f1f1;
-		font-family:sans-serif;
-		font-size: 20px;
-		}
+	<ui:style src="account.css">
+
 	</ui:style>
 	<g:HTMLPanel ui:field="accountWidgetRoot" addStyleNames="{style.rootPanel}">
 		<div class="{style.profile_section}">
-		    <div class="{style.image}">
-				<b:Image ui:field="profileImageUrl" url="" />
+			<div class="{style.profile_image}">
+				<div>
+					<b:Image ui:field="profileImageUrl" url="" />
+				</div>
+				<div class="{style.profile_image_bottom_section}">
+					<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
+				</div>
+				<div>
+				    <g:Anchor addStyleNames="{style.view_profile_link}" ui:field="viewPublicProfile">View public profile</g:Anchor>
+				</div>
 			</div>
-			<div class="profile_info_section">
-				<div class="{style.profile_general_info_section}">
-					<div class="{style.nameSection}">
-						<div class="{style.name}">
-							<span ui:field="name" />
-							<g:Anchor addStyleNames="{style.smalltext} {style.right}"
-								ui:field="editCategoryLink">edit</g:Anchor>
-						</div>
-						<div class="{style.bigtext}" ui:field="introduction">
-						</div>
+			<div class="{style.profile_info_block}">
+				<div class="{style.profile_info_section}">
+					<div class="{style.profile_section_heading}">
+						<span>Basic Info</span>
+						<g:Anchor addStyleNames="{style.editlink}" ui:field="editBasicInfoLink">edit</g:Anchor>
+					</div>
+					<div class="{style.name}">
+						<span ui:field="name" />
+					</div>
+					<div class="{style.introduction}" ui:field="introduction">
+					</div>
+					<div>
 						<div>
-							<div>
-								<span class="{style.smalltext}">Lives at</span>
-								<span class="{style.smalltext}" ui:field="cityLabel" />
-								,
-								<span class="{style.smalltext}" ui:field="stateLabel" />
-							</div>
-							<div>
-								<span class="{style.smalltext}">Last seen active:</span>
-								<span class="{style.smalltext}" ui:field="lastLogin" />
-							</div>
-							<div>
-								<b:Button size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
-							</div>
+							<span class="{style.smalltext}">Last seen active:</span>
+							<span class="{style.smalltext}" ui:field="lastLogin" />
 						</div>
 					</div>
-				</div> <!-- profile_general_info_section end -->
-			</div> <!-- profile_info_section end -->
-			<div class="{style.profile_stats_section}">
-				<div class="{style.bigtext}">Activity section</div>
-				<hr />
-				<ul>
-					<li>
-						<span class="smalltext">Number of posts</span>
-						<a href="" ui:field="numberOfPosts"/>
-					</li>
-					<li>
-						<span class="smalltext">Number of comments</span>
-						<a href="" ui:field="numberOfComments"/>
-					</li>
-					<li>
-						<span class="smalltext">Number of likes</span>
-						<a href="" ui:field="numberOfLikes"/>
-					</li>
-				</ul>
-			</div>
-			<div class="{style.profile_interest_section}">
-				<span class="{style.bigtext}">Interests</span>
-				<hr/>
-				<g:HTMLPanel ui:field="categoryList">
-					<cell:CellList ui:field="interestList"></cell:CellList>
-				</g:HTMLPanel>
-			</div> <!-- profile_interest_section_end -->
-		</div>
+				</div>
+				<div class="{style.profile_info_section}">
+					<div class="{style.profile_section_heading}">
+						<span>Interests</span>
+						<g:Anchor addStyleNames="{style.editlink}" ui:field="editInterestLink">edit</g:Anchor>
+					</div>
+					<g:HTMLPanel ui:field="interestList">
+					</g:HTMLPanel>
+				</div>
+				<div class="{style.profile_info_section}">
+					<div class="{style.profile_section_heading}">
+						<span>Location</span>
+						<g:Anchor addStyleNames="{style.editlink}" ui:field="editLocationLink">edit</g:Anchor>
+					</div>
+					<div>
+						<div>
+							<span class="{style.smalltext}">City</span>
+							<span class="{style.smalltext}" ui:field="cityLabel" />
+						</div>
+						<div>
+							<span class="{style.smalltext}">State</span>
+							<span class="{style.smalltext}" ui:field="stateLabel" />
+						</div>
+					</div>
+				</div>
+				<div class="{style.profile_info_section}">
+					<div class="{style.profile_section_heading}">
+						<span>Activity</span>
+					</div>
+					<ul>
+						<li>
+							<span class="{style.smalltext}">Number of posts</span>
+							<a href="" ui:field="numberOfPosts" />
+						</li>
+						<li>
+							<span class="{style.smalltext}">Number of comments</span>
+							<a href="" ui:field="numberOfComments" />
+						</li>
+						<li>
+							<span class="{style.smalltext}">Number of likes</span>
+							<a href="" ui:field="numberOfLikes" />
+						</li>
+					</ul>
+				</div>
+			</div> <!-- profile_info_block end -->
+		</div> <!-- profile_section end -->
 	</g:HTMLPanel>
 
 </ui:UiBinder> 

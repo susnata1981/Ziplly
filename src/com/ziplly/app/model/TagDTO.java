@@ -27,7 +27,7 @@ public class TagDTO implements Serializable{
 		inverseJoinColumns= {
 				@JoinColumn(name="tag_id")
 		})
-	private List<TweetDTO> tweets;
+	private List<Tweet> tweets;
 
 	public String getKeyword() {
 		return keyword;

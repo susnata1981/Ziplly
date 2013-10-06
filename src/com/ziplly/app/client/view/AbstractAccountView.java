@@ -44,4 +44,8 @@ public abstract class AbstractAccountView extends AbstractView {
 	public void setAccount(AccountDTO account) {
 		this.account = account;
 	}
+	
+	public boolean isUserLoggedIn() {
+		return account != null;
+	}
 }

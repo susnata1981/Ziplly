@@ -35,6 +35,7 @@ public class MainController implements ValueChangeHandler<String> {
 	private Logger logger = Logger.getLogger("MainController");
 	protected AccountDTO account;
 	private HomeView homeView;
+
 	public MainController(SimpleEventBus eventBus) {
 		this.container = RootPanel.get("main");
 		this.service = GWT.create(ZipllyService.class);
@@ -50,7 +51,7 @@ public class MainController implements ValueChangeHandler<String> {
 	boolean isUserLoggedIn() {
 		return (this.account != null);
 	}
-	
+
 	void init() {
 		if (isUserLoggedIn()) {
 			checkLoginStatus();
@@ -67,7 +68,7 @@ public class MainController implements ValueChangeHandler<String> {
 		if (accountId == null) {
 			return;
 		}
-		logger.log(Level.INFO, "Found logged in user: "+accountId);
+		logger.log(Level.INFO, "Found logged in user: " + accountId);
 	}
 
 	private void handleOAuthRedirect() {
@@ -80,13 +81,13 @@ public class MainController implements ValueChangeHandler<String> {
 			try {
 				handleAuth(code);
 			} catch (Exception e) {
-				logger.log(Level.SEVERE, "Error logging in user:"+e.getMessage());
+				logger.log(Level.SEVERE, "Error logging in user:" + e.getMessage());
 			}
 		}
 	}
 
 	private void handleAuth(String code) {
-		service.doLogin(code, new AsyncCallback<AccountDTO>() {
+		service.getFacebookUserDetails(code, new AsyncCallback<AccountDTO>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				logger.log(Level.SEVERE, "Failed to handle auth:" + caught.getMessage());
@@ -96,11 +97,24 @@ public class MainController implements ValueChangeHandler<String> {
 			public void onSuccess(AccountDTO account) {
 				if (account != null) {
 					MainController.this.account = account;
-//					dropLoginCookie(account);
-					eventBus.fireEvent(new LoginEvent(account));
-					MainController.this.logger.log(Level.INFO, "User: " + account.getDisplayName()
-							+ "(" + account.getId() + ") logged in.");
-					History.newItem("home");
+					// dropLoginCookie(account);
+
+					// MainController.this.logger.log(Level.INFO, "User: " +
+					// account.getDisplayName()
+					// + "(" + account.getId() + ") logged in.");
+					// History.newItem("home");
+					// redirect to signup page
+					System.out.println("Received account:"+account+" ("+account.getId()+")");
+					System.out.println("Url="+account.getUrl());
+					if (account.getId() != null) {
+						// logged in user
+						eventBus.fireEvent(new LoginEvent(account));
+					} else {
+						setBackgroundImage();
+						SignupView signupView = new SignupView(eventBus);
+						signupView.displayAccount(account);
+						display(container, signupView);
+					}
 				}
 			}
 		});
@@ -121,13 +135,13 @@ public class MainController implements ValueChangeHandler<String> {
 			History.fireCurrentHistoryState();
 		}
 	}
-	
+
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue().trim();
 		System.out.println("Token = " + token);
 		RegExp accountPath = RegExp.compile("account/(\\S+)");
-		
+
 		if (token != null) {
 			if (token.equals("main")) {
 				// TODO: Hack
@@ -137,17 +151,14 @@ public class MainController implements ValueChangeHandler<String> {
 				}
 				setBackgroundImage();
 				display(container, mainView);
-			}
-			else if (token.startsWith("signup")) {
+			} else if (token.startsWith("signup")) {
 				setBackgroundImage();
 				SignupView signupView = new SignupView(eventBus);
 				display(container, signupView);
-			}
-			else if (token.equals("home")) {
+			} else if (token.equals("home")) {
 				clearBackgroundImage();
 				display(container, homeView);
-			} 
-			else if (token.startsWith("account")) {
+			} else if (token.startsWith("account")) {
 				clearBackgroundImage();
 				MatchResult result = accountPath.exec(token);
 				display(container, accountView);
@@ -156,35 +167,39 @@ public class MainController implements ValueChangeHandler<String> {
 	}
 
 	void setBackgroundImage() {
-		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
-		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
+		RootPanel.get("wrapper").getElement().getStyle()
+				.setBackgroundImage(BACKGROUND_IMG_URL);
+		RootPanel.get("wrapper").getElement().getStyle()
+				.setProperty("backgroundSize", "cover");
 	}
-	
+
 	void clearBackgroundImage() {
-		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage("none");
+		RootPanel.get("wrapper").getElement().getStyle()
+				.setBackgroundImage("none");
 	}
-	
-//	private static class AccountLoginByCookieHandler implements AsyncCallback<AccountDetails> {
-//		private MainController controller;
-//
-//		public AccountLoginByCookieHandler(MainController controller) {
-//			this.controller = controller;
-//		}
-//
-//		@Override
-//		public void onFailure(Throwable caught) {
-//			// TODO log it
-//		}
-//
-//		@Override
-//		public void onSuccess(Account account) {
-//			if (account == null) {
-//				return;
-//			}
-//			controller.account = account;
-//			controller.eventBus.fireEvent(new LoginEvent(account));
-//		}
-//	}
+
+	// private static class AccountLoginByCookieHandler implements
+	// AsyncCallback<AccountDetails> {
+	// private MainController controller;
+	//
+	// public AccountLoginByCookieHandler(MainController controller) {
+	// this.controller = controller;
+	// }
+	//
+	// @Override
+	// public void onFailure(Throwable caught) {
+	// // TODO log it
+	// }
+	//
+	// @Override
+	// public void onSuccess(Account account) {
+	// if (account == null) {
+	// return;
+	// }
+	// controller.account = account;
+	// controller.eventBus.fireEvent(new LoginEvent(account));
+	// }
+	// }
 
 	public void display(HasWidgets widget, Composite c) {
 		widget.clear();

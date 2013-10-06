@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
 import com.ziplly.app.client.widget.ConversationWidget;
 import com.ziplly.app.client.widget.LoginWidget;
@@ -27,10 +28,10 @@ public class AccountView extends AbstractAccountView {
 	List<Category> selectedCategories = new ArrayList<Category>();
 
 	@UiField
-	HTMLPanel loginMessageLabel;
+	HTMLPanel loginMessagePanel;
 
-//	@UiField
-//	Button fbLoginButtonOnMainPage;
+	// @UiField
+	// Button fbLoginButtonOnMainPage;
 
 	@UiField(provided = true)
 	LoginWidget loginWidget;
@@ -44,15 +45,15 @@ public class AccountView extends AbstractAccountView {
 	@UiField
 	TabPanel accountViewTabs;
 
-	// @UiField
-	// HTMLPanel profileStatSection;
-
 	@UiField
 	HTMLPanel conversationSection;
 
 	@UiField
 	HTMLPanel settingsPanel;
-	
+
+	@UiField(provided = true)
+	AccountDetailsWidget accountDetailsWidget;
+
 	private AccountWidget accountWidget;
 	private ConversationWidget cw;
 
@@ -62,37 +63,34 @@ public class AccountView extends AbstractAccountView {
 
 	@Override
 	protected void initWidget() {
-		// cw = WidgetFactory.getConversationWidget(getService(), eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	@Override
 	protected void postInitWidget() {
-		if (userLoggedIn()) {
+		if (isUserLoggedIn()) {
 			displayLoginRequiredMessage(false);
+			logoutWidget.setVisible(true);
 		} else {
 			displayLoginRequiredMessage(true);
+			logoutWidget.setVisible(false);
 			accountViewTabs.setVisible(false);
 		}
-	}
-
-	boolean userLoggedIn() {
-		return getAccount() != null;
 	}
 
 	@Override
 	protected void setupUiElements() {
 		this.accountWidget = WidgetFactory.getAccountWidget(eventBus);
 		this.loginWidget = WidgetFactory.getLoginWidget(getService(), eventBus);
-		this.logoutWidget = WidgetFactory.getLogoutWidget(getService(), eventBus);
+		this.logoutWidget = WidgetFactory.getLogoutWidget(eventBus);
+		this.accountDetailsWidget = new AccountDetailsWidget(eventBus);
 	}
 
 	@Override
 	protected void internalOnUserLogin() {
-		if (userLoggedIn()) {
-			displayLoginRequiredMessage(false);
-			refresh();
-		}
+		displayLoginRequiredMessage(false);
+		loginMessagePanel.setVisible(false);
+		refresh();
 	}
 
 	void refresh() {
@@ -101,10 +99,10 @@ public class AccountView extends AbstractAccountView {
 
 	void displayProfile() {
 		accountWidget.displayAccount(getAccount());
-		
+
 		profileSection.clear();
 		profileSection.add(accountWidget);
-		
+
 		// update categories
 		selectedCategories.clear();
 
@@ -114,9 +112,9 @@ public class AccountView extends AbstractAccountView {
 
 	void displayLoginRequiredMessage(boolean shouldDisplay) {
 		if (shouldDisplay) {
-			loginWidget.setVisible(true);
+			loginWidget.setVisible(shouldDisplay);
+		} else {
+			logoutWidget.setVisible(!shouldDisplay);
 		}
-		loginMessageLabel.setVisible(shouldDisplay);
-		logoutWidget.setVisible(!shouldDisplay);
 	}
 }

@@ -1,5 +1,7 @@
 package com.ziplly.app.client.view;
 
+import java.util.Date;
+
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -16,6 +18,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.view.event.LoginEvent;
@@ -95,7 +98,8 @@ public class SignupView extends AbstractView {
 
 	@Override
 	protected void postInitWidget() {
-		resetForm();
+//		resetForm();
+		infoField.setVisible(false);
 	}
 
 	@Override
@@ -168,7 +172,7 @@ public class SignupView extends AbstractView {
 			valid = false;
 		}
 
-		if (!passwordError.isVisible()) {
+//		if (!passwordError.isVisible()) {
 			if (passwordInput != null && confirmPasswordInput != null) {
 				if (!confirmPasswordInput.equals(passwordInput)) {
 					passwordCg.setType(ControlGroupType.ERROR);
@@ -176,7 +180,7 @@ public class SignupView extends AbstractView {
 					passwordError.setVisible(true);
 				}
 			}
-		}
+//		}
 		
 		return valid;
 	}
@@ -243,10 +247,13 @@ public class SignupView extends AbstractView {
 		account.setLastName(lastnameInput);
 		account.setEmail(emailInput);
 		account.setZip(Integer.parseInt(zipInput));
+		account.setLastLoginTime(new Date());
+		account.setTimeCreated(new Date());
 		service.register(account, new AsyncCallback<AccountDTO>() {
 			@Override
 			public void onSuccess(AccountDTO account) {
 				eventBus.fireEvent(new LoginEvent(account));
+				History.newItem("main");
 			}
 
 			@Override
@@ -254,5 +261,14 @@ public class SignupView extends AbstractView {
 				infoField.setType(AlertType.ERROR);
 			}
 		});
+	}
+
+	public void displayAccount(AccountDTO account) {
+		resetForm();
+		firstname.setText(account.getFirstName());
+		lastname.setText(account.getLastName());
+		email.setText(account.getEmail());
+		zip.setText(Integer.toString(account.getZip()));
+		
 	}
 }

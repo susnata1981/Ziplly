@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+	breadcrumb.ul {
+		list-style:none;
+	}
+	breadcrumb.ul li {
+		float:left;
+		width: 50px;
+		margin: 2px 20px 2px 20px;
+		padding: 10px;
+	}
+	breadcrumb.ul li a {
+		font-size: 16px;
+		font-family: sans-serif;
+	}
+	</ui:style>
+	<g:HTMLPanel>
+		<div class="breadcrumb">
+			<ul ui:field="profile">
+				<li><b:NavLink ui:field="aboutLink">About /</b:NavLink></li>
+				<li><b:NavLink ui:field="interestLink">Interest /</b:NavLink></li>
+				<li><b:NavLink ui:field="familyLink">Family</b:NavLink></li>
+			</ul>
+		</div>
+		<g:HTMLPanel ui:field="profilePanel">
+		    <g:HTMLPanel ui:field="aboutPanel">
+		        About
+		        <hr/> 
+		        <p>
+		        	Firstname<b:TextBox ui:field="firstname"></b:TextBox>
+		        </p>
+		        <p>
+		       		Lastname<b:TextBox ui:field="lastname"></b:TextBox>
+		        </p>
+		        <p>
+		        	Email<b:TextBox ui:field="email"></b:TextBox>
+		        </p>
+		    </g:HTMLPanel>
+		    <g:HTMLPanel ui:field="interestPanel">
+		        Interests
+		        <hr/>
+		    </g:HTMLPanel>
+   		    <g:HTMLPanel ui:field="familyPanel">
+   		        Family
+   		        <hr/>
+   		        <p>
+   		        	Status<b:TextBox ui:field="maritalStatus"></b:TextBox>
+   		        </p>
+   		        <p>
+		        	Occupation<b:TextBox ui:field="occupation"></b:TextBox>
+		        </p>
+		    </g:HTMLPanel>
+		    <b:Button type="PRIMARY">Save</b:Button>
+		</g:HTMLPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

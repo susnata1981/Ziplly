@@ -7,6 +7,7 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ziplly.app.client.ZipllyService;
+import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.CommentDTO;
@@ -47,6 +48,8 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	
 	public MockZipllyServiceImpl() {
 		setup();
+		EntityManagerService ems = EntityManagerService.getInstance();
+
 	}
 
 	void setup() {
@@ -61,6 +64,8 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 					"hello this is %s %s, check out my profile", fn, ln));
 			a.setUrl("http://www.yahoo.com");
 			a.setId(new Long(i));
+			a.setCity("seattle");
+			a.setState("washington");
 			a.setZip(98199);
 			a.setImageUrl(imageUrls[i%N]);
 			a.setTimeCreated(new Date());
@@ -160,6 +165,12 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	@Override
 	public void logoutAccount() {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public AccountDTO loginOrRegisterAccount(String code) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

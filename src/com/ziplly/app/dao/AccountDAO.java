@@ -2,17 +2,13 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountDetails;
-import com.ziplly.app.model.QueryMetaData;
+import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.model.Account;
 
 public interface AccountDAO {
-	AccountDTO findByEmail(String email) throws NotFoundException;
-	AccountDTO findById(Long accountId) throws NotFoundException;
-	void save(AccountDTO user);
-	void update(AccountDTO user);
-	List<AccountDTO> get(QueryMetaData qmd) throws IllegalArgumentException;
-//	Set<AccountDTO> getAccounts(GetAccountDetailsRequest req);
-	boolean save(AccountDetails ad);
-	List<AccountDTO> getAll(int start, int end);
+	Account findByEmail(String email) throws NotFoundException;
+	Account findById(Long accountId) throws NotFoundException;
+	void save(Account user);
+	void update(Account user);
+	List<Account> getAll(int start, int end);
 }

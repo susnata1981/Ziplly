@@ -5,48 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
-
-@NamedNativeQueries({
-	@NamedNativeQuery(
-	name = "findAccountByEmail",
-	query = "select * from account a where a.email = :email",
-        resultClass = AccountDTO.class
-	)
-})
-@Entity
-@Table(name="account")
 public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Id
-	@NotNull
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	Long account_id;
-	@Column(name="facebook_id")
+	private Long account_id;
 	private String fId;
 	private String email;
-	@Column(name="first_name")
 	private String firstName;
-	@Column(name="last_name")
 	private String lastName;
-	@Column(name="profile_url")
 	private String url;
-	@Column(name="access_token")
 	private String accessToken;
-	@Column(name="image_url")
 	private String imageUrl;
 	private String introduction;
 	private String city;
@@ -54,15 +21,36 @@ public class AccountDTO implements Serializable {
 	private int zip;
 	private String longitude;
 	private String latitude;
-	@Column(name="last_login")
+	private List<AccountSettingsDTO> accountSettings = new ArrayList<AccountSettingsDTO>();
 	private Date lastLoginTime;
-	@Column(name="time_created")
 	private Date timeCreated;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	
 	public AccountDTO() {
+	}
+	
+	public AccountDTO(Account account) {
+		account_id = account.getId();
+		fId = account.getfId();
+		firstName = account.getFirstName();
+		lastName = account.getLastName();
+		email = account.getEmail();
+		url = account.getUrl();
+		accessToken = account.getAccessToken();
+		imageUrl = account.getImageUrl();
+		introduction = account.getIntroduction();
+		city = account.getCity();
+		state = account.getState();
+		zip = account.getZip();
+		longitude = account.getLongitude();
+		latitude = account.getLatitude();
+		for(AccountSettings as : account.getAccountSettings()) {
+			AccountSettingsDTO asd = new AccountSettingsDTO(as);
+			accountSettings.add(asd);
+		}
+		lastLoginTime = account.getLastLoginTime();
+		timeCreated = account.getTimeCreated();
 	}
 	
 	public Long getId() {
@@ -237,4 +225,13 @@ public class AccountDTO implements Serializable {
 	public void setTweets(List<TweetDTO> tweets) {
 		this.tweets = tweets;
 	}
+
+	public List<AccountSettingsDTO> getAccountSettings() {
+		return accountSettings;
+	}
+
+	public void setAccountSettings(List<AccountSettingsDTO> accountSettings) {
+		this.accountSettings = accountSettings;
+	}
+
 }

@@ -11,7 +11,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.ZipllyServiceAsync;
 import com.ziplly.app.client.cookie.CookieManager;
@@ -19,12 +18,11 @@ import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthConfigConstants;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
-import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.view.event.LogoutEvent;
-import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 
-public class LogoutWidget extends Composite {
+public class LogoutWidget extends AbstractAccountView {
 
 	private static LogoutWidgetUiBinder uiBinder = GWT
 			.create(LogoutWidgetUiBinder.class);
@@ -41,17 +39,27 @@ public class LogoutWidget extends Composite {
 	Button logoutBtn;
 	public AccountDTO account;
 
-	public LogoutWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
-		this.service = service;
-		this.eventBus = eventBus;
+	public LogoutWidget(SimpleEventBus eventBus) {
+		super(eventBus);
+	}
+
+	@Override
+	protected void internalOnUserLogin() {
+	}
+
+	@Override
+	protected void initWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		setup();
 	}
 
-	private void setup() {
-		eventBus.addHandler(LoginEvent.TYPE, new LoginHandler(this));
+	@Override
+	protected void postInitWidget() {
 	}
 
+	@Override
+	protected void setupUiElements() {
+	}
+	
 	private String getLogoutUrl() throws UnsupportedEncodingException {
 		if (account != null) {
 			return OAuthConfigConstants.FB_LOGOUT_URL + "?" + "next="
@@ -87,18 +95,5 @@ public class LogoutWidget extends Composite {
 			}
 		});
 		Window.Location.replace(logoutUrl);
-	}
-
-	private static class LoginHandler implements LoginEventHandler {
-		private LogoutWidget lw;
-
-		public LoginHandler(final LogoutWidget lw) {
-			this.lw = lw;
-		}
-
-		@Override
-		public void onEvent(LoginEvent event) {
-			lw.account = event.getAccount();
-		}
 	}
 }

@@ -41,7 +41,7 @@ public class TweetCell extends AbstractCell<TweetDTO> {
 							+ "</div>"
 							+ "<div class='tweet_sender_link'>"
 								+ "posted by <a href='#account/"+acct.getId()+"'>"+tweet.getSender().getDisplayName()+"</a>"
-								+ ", on "+DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(tweet.getTime_created())+"</a>"
+								+ ", on "+DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(tweet.getTimeCreated())+"</a>"
 							+ "</div>"
 						+ "</div>"
 						+ "</div>");
@@ -73,7 +73,7 @@ public class TweetCell extends AbstractCell<TweetDTO> {
 									+ "</div>"
 									+ "<div class='tweet_sender_link'>"
 									+ "posted by <a href='#account/"+acct.getId()+"'>"+tweet.getSender().getDisplayName()+"</a>"
-											+ ", on "+DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(tweet.getTime_created())+"</a>"
+											+ ", on "+DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(tweet.getTimeCreated())+"</a>"
 									+"</div>"
 								+ "</div>"
 							+ "</div>"

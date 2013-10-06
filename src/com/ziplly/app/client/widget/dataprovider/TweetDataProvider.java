@@ -19,19 +19,19 @@ public class TweetDataProvider extends AsyncDataProvider<TweetDTO>{
 	@Override
 	protected void onRangeChanged(HasData<TweetDTO> display) {
 		final Range range = display.getVisibleRange();
-		cww.getService().getTweets(cww.getAccount(), new AsyncCallback<List<TweetDTO>>() {
-			
-			@Override
-			public void onSuccess(List<TweetDTO> result) {
-				updateRowData(range.getStart(), result);
-				cww.getTweetList().setRowCount(result.size());
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
+//		cww.getService().getTweets(cww.getAccount(), new AsyncCallback<List<TweetDTO>>() {
+//			
+//			@Override
+//			public void onSuccess(List<TweetDTO> result) {
+//				updateRowData(range.getStart(), result);
+//				cww.getTweetList().setRowCount(result.size());
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				
+//			}
+//		});
 	}
 
 }
