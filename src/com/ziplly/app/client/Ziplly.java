@@ -4,22 +4,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.core.client.GWT;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Ziplly implements EntryPoint {
-	private final SimpleEventBus eventBus = new SimpleEventBus();
-	private MainController controller;
 	private Logger logger = Logger.getLogger("ziplly");
+	ZGinInjector injector = GWT.create(ZGinInjector.class);
+	CachingDispatcherAsync dispatcher = injector.getCachingDispatcher();
+	MainController controller = injector.getMainController();
 	
 	@Override
 	public void onModuleLoad() {
 		logger.log(Level.INFO, "Ziplly onModuleLoad initiated");
-		
-		controller = new MainController(
-				eventBus);
 		controller.go();
 	}
 }

@@ -23,7 +23,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.inject.Inject;
 import com.ziplly.app.client.cookie.CookieManager;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthConfigConstants;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -75,8 +77,9 @@ public class MainView extends AbstractView {
 
 	private AccountDTO account;
 
-	public MainView(SimpleEventBus eventBus) {
-		super(eventBus);
+	@Inject
+	public MainView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@Override

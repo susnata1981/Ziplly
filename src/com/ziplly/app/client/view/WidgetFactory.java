@@ -1,29 +1,33 @@
 package com.ziplly.app.client.view;
 
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.inject.Inject;
 import com.ziplly.app.client.ZipllyServiceAsync;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.widget.AccountWidget;
-import com.ziplly.app.client.widget.ConversationWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
 
 public class WidgetFactory {
 	
-	public static AccountWidget getAccountWidget(SimpleEventBus eventBus) {
-		return new AccountWidget(eventBus,true);
+	@Inject
+	public static AccountWidget getAccountWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		return new AccountWidget(dispatcher,eventBus,true);
 	}
 	
-	public static LoginWidget getLoginWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
-		return new LoginWidget(service, eventBus);
-	}
+//	@Inject
+//	public static LoginWidget getLoginWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
+//		return new LoginWidget(service, eventBus);
+//	}
 	
-	public static LogoutWidget getLogoutWidget(SimpleEventBus eventBus) {
-		return new LogoutWidget(eventBus);
+	@Inject
+	public static LogoutWidget getLogoutWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		return new LogoutWidget(dispatcher, eventBus);
 	}
 
-	public static ConversationWidget getConversationWidget(
-			ZipllyServiceAsync service, 
-			SimpleEventBus eventBus) {
-		return new ConversationWidget(eventBus);
-	}
+//	public static ConversationWidget getConversationWidget(
+//			ZipllyServiceAsync service, 
+//			SimpleEventBus eventBus) {
+//		return new ConversationWidget(eventBus);
+//	}
 }

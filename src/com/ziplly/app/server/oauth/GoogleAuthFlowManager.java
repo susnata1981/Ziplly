@@ -32,8 +32,9 @@ public class GoogleAuthFlowManager extends OAuthFlowManager {
 	}
 
 	public AccessToken parseResponse(String response) throws JSONException {
-		Gson gson = new Gson();
-		return gson.fromJson(response, AccessToken.class);
+//		Gson gson = new Gson();
+//		return gson.fromJson(response, AccessToken.class);
+		return null;
 	}
 
 	@Override

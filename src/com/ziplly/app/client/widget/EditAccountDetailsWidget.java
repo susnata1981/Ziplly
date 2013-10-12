@@ -14,6 +14,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 
 public class EditAccountDetailsWidget extends AbstractAccountView {
@@ -52,8 +54,9 @@ public class EditAccountDetailsWidget extends AbstractAccountView {
 	@UiField
 	Button closeBtn;
 	
-	public EditAccountDetailsWidget(SimpleEventBus eventBus) {
-		super(eventBus);
+	@Inject
+	public EditAccountDetailsWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@Override

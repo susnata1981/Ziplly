@@ -7,6 +7,7 @@ import com.ziplly.app.model.Account;
 
 public interface AccountDAO {
 	Account findByEmail(String email) throws NotFoundException;
+	Account findByEmailAndPassword(String email, String password) throws NotFoundException;
 	Account findById(Long accountId) throws NotFoundException;
 	void save(Account user);
 	void update(Account user);

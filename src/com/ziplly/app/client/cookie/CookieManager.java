@@ -11,7 +11,7 @@ public class CookieManager {
 
 	public static void dropLoginCookie(AccountDTO account) {
 		Date expiresIn = new Date(System.currentTimeMillis() + 60 * 60 * 1000);
-		Cookies.setCookie(LOGIN_COOKIE_NAME, account.getId().toString(),
+		Cookies.setCookie(LOGIN_COOKIE_NAME, account.getAccountId().toString(),
 				expiresIn);
 	}
 

@@ -1,5 +1,10 @@
 package com.ziplly.app.shared;
 
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
 /**
  * <p>
  * FieldVerifier validates that the name the user enters is valid.
@@ -21,22 +26,62 @@ package com.ziplly.app.shared;
  * </p>
  */
 public class FieldVerifier {
+	private static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
+	private static final String CANT_BE_EMPTY = "Can't be empty";
+	private static final String INVALID_ZIP = "Invalid zip";
+	private static final String INVALID_EMAIL = "Invalid email";
 
-	/**
-	 * Verifies that the specified name is valid for our service.
-	 * 
-	 * In this example, we only require that the name is at least four
-	 * characters. In your application, you can use more complex checks to ensure
-	 * that usernames, passwords, email addresses, URLs, and other fields have the
-	 * proper syntax.
-	 * 
-	 * @param name the name to validate
-	 * @return true if valid, false if invalid
-	 */
-	public static boolean isValidName(String name) {
-		if (name == null) {
-			return false;
+	public static ValidationResult validateName(String name) {
+		ValidationResult result = new ValidationResult();
+		if (name == null || "".equals(name)) {
+			result.addError(CANT_BE_EMPTY);
 		}
-		return name.length() > 3;
+		return result;
+	}
+	
+	private static final RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
+	private static final RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
+
+	public static ValidationResult validateEmail(String email) {
+		ValidationResult result = new ValidationResult();
+		if (email == null || email.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+
+		MatchResult matcher = emailPattern.exec(email);
+		if (matcher == null) {
+			result.addError(INVALID_EMAIL);
+		}
+		return result;
+	}
+	
+	// TODO length check
+	public static ValidationResult validatePassword(String password) {
+		ValidationResult result = new ValidationResult();
+		if (password == null || password.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+		return result;
+	}
+	
+	public static ValidationResult validateZip(String zip) {
+		ValidationResult result = new ValidationResult();
+		if (zip == null || zip.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+		
+		MatchResult matcher = zipPattern.exec(zip);
+		if (matcher == null) {
+			result.addError(INVALID_ZIP);
+		}
+		return result;
+	}
+	
+	public static String getEscapedText(String input) {
+		if (input == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return SafeHtmlUtils.htmlEscape(input.toLowerCase().trim());
 	}
 }

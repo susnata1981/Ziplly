@@ -10,6 +10,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
 import com.ziplly.app.client.widget.ConversationWidget;
@@ -29,9 +31,6 @@ public class AccountView extends AbstractAccountView {
 
 	@UiField
 	HTMLPanel loginMessagePanel;
-
-	// @UiField
-	// Button fbLoginButtonOnMainPage;
 
 	@UiField(provided = true)
 	LoginWidget loginWidget;
@@ -56,9 +55,10 @@ public class AccountView extends AbstractAccountView {
 
 	private AccountWidget accountWidget;
 	private ConversationWidget cw;
-
-	public AccountView(SimpleEventBus eventBus) {
-		super(eventBus);
+	
+	@Inject
+	public AccountView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@Override
@@ -80,14 +80,16 @@ public class AccountView extends AbstractAccountView {
 
 	@Override
 	protected void setupUiElements() {
-		this.accountWidget = WidgetFactory.getAccountWidget(eventBus);
-		this.loginWidget = WidgetFactory.getLoginWidget(getService(), eventBus);
-		this.logoutWidget = WidgetFactory.getLogoutWidget(eventBus);
-		this.accountDetailsWidget = new AccountDetailsWidget(eventBus);
+		this.accountWidget = new AccountWidget(dispatcher, eventBus, false);
+		this.loginWidget = new LoginWidget(dispatcher, eventBus);
+		this.logoutWidget = new LogoutWidget(dispatcher, eventBus);
+//		this.logoutWidget = WidgetFactory.getLogoutWidget(dispatcher, eventBus);
+		this.accountDetailsWidget = new AccountDetailsWidget(dispatcher, eventBus);
 	}
 
 	@Override
 	protected void internalOnUserLogin() {
+		System.out.println("Calling internalOnUserLogin inside AccountView");
 		displayLoginRequiredMessage(false);
 		loginMessagePanel.setVisible(false);
 		refresh();

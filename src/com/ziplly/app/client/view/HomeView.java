@@ -6,6 +6,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.widget.CommunityWallWidget;
 
 public class HomeView extends AbstractAccountView {
@@ -16,8 +18,9 @@ public class HomeView extends AbstractAccountView {
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
 
-	public HomeView(SimpleEventBus eventBus) {
-		super(eventBus);
+	@Inject
+	public HomeView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@UiField
@@ -41,6 +44,6 @@ public class HomeView extends AbstractAccountView {
 
 	@Override
 	protected void setupUiElements() {
-		cww = new CommunityWallWidget(eventBus);
+		cww = new CommunityWallWidget(dispatcher, eventBus);
 	}
 }

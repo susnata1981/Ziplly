@@ -18,4 +18,5 @@ public interface ZipllyServiceAsync {
 	void getTweets(AccountDTO a, AsyncCallback<List<TweetDTO>> callback);
 	void loginOrRegisterAccount(String code, AsyncCallback<AccountDTO> callback);
 	void getFacebookUserDetails(String code, AsyncCallback<AccountDTO> callback);
+	void getUploadUrl(AsyncCallback<String> callback);
 }

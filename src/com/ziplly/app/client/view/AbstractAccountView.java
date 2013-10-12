@@ -1,19 +1,22 @@
 package com.ziplly.app.client.view;
 
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.model.AccountDTO;
 
 public abstract class AbstractAccountView extends AbstractView {
 	protected OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
 	protected AccountDTO account;
 	
-	public AbstractAccountView(SimpleEventBus eventBus) {
-		super(eventBus);
+	public AbstractAccountView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@Override
@@ -22,6 +25,13 @@ public abstract class AbstractAccountView extends AbstractView {
 			@Override
 			public void onEvent(LoginEvent event) {
 				onUserLogin(event.getAccount());
+			}
+		});
+		
+		eventBus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
+			@Override
+			public void onEvent(LogoutEvent event) {
+				AbstractAccountView.this.account = null;
 			}
 		});
 	}

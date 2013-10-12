@@ -23,7 +23,7 @@ public class ConversationDataProvider extends AsyncDataProvider<Conversation> {
 	@Override
 	protected void onRangeChanged(HasData<Conversation> display) {
 		final Range range = display.getVisibleRange();
-		System.out.println("Account id:" + cw.getAccount().getId());
+		System.out.println("Account id:" + cw.getAccount().getAccountId());
 //		service.getMessages(range.getStart(), range.getLength(),
 //				cw.getAd().account.getId(),
 //				new AsyncCallback<GetMessageResponse>() {

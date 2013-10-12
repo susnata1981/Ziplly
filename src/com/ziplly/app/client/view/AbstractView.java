@@ -7,13 +7,16 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Composite;
 import com.ziplly.app.client.ZipllyService;
 import com.ziplly.app.client.ZipllyServiceAsync;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 
 public abstract class AbstractView extends Composite {
 	protected Logger logger = Logger.getLogger("AbstractView");
 	protected ZipllyServiceAsync service;
+	protected CachingDispatcherAsync dispatcher;
 	protected SimpleEventBus eventBus;
 
-	public AbstractView(SimpleEventBus eventBus) {
+	public AbstractView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		this.dispatcher = dispatcher;
 		this.service = GWT.create(ZipllyService.class);
 		this.eventBus = eventBus;
 		setupUiElements();

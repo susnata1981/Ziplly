@@ -13,23 +13,28 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.regexp.shared.MatchResult;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.RegisterAccountAction;
+import com.ziplly.app.shared.RegisterAccountResult;
+import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends AbstractView {
 	private static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
-	private static final String CANT_BE_EMPTY = "Can't be empty";
-	private static final String INVALID_ZIP = "Invalid zip";
-	private static final String INVALID_EMAIL = "Invalid email";
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
 
@@ -84,126 +89,151 @@ public class SignupView extends AbstractView {
 	@UiField
 	Button signupBtn;
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	LoginWidget loginWidget;
+
+	@UiField
+	FileUpload uploadField;
 	
-	public SignupView(SimpleEventBus eventBus) {
-		super(eventBus);
+	@UiField
+	FormPanel uploadForm;
+	
+	@UiField
+	Button uploadBtn;
+	
+	@UiField
+	Image profileImagePreview;
+	
+	String profileImageUrl;
+	
+	@Inject
+	public SignupView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
+		System.out.println("Dispatcher = "+dispatcher+" eventBus="+eventBus);
 	}
 
 	@Override
 	protected void initWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
+		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+		uploadForm.setMethod(FormPanel.METHOD_POST);
+		uploadBtn.setEnabled(false);
+		uploadForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				resetUploadForm();
+				String imageUrl = event.getResults();
+				profileImagePreview.setUrl(imageUrl);
+				profileImagePreview.setVisible(true);
+				SignupView.this.profileImageUrl = imageUrl;
+			}
+		});
 	}
 
 	@Override
 	protected void postInitWidget() {
-//		resetForm();
+		// resetForm();
 		infoField.setVisible(false);
+		resetUploadForm();
 	}
 
+	private void resetUploadForm() {
+		uploadForm.reset();
+		profileImagePreview.setVisible(false);
+		service.getUploadUrl(new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				System.out.println("result1:"+result);
+				result = result.replace("susnatas-MacBook-Pro.local:8888", "127.0.0.1:8888");
+				System.out.println("result2:"+result);
+				uploadForm.setAction(result);
+				uploadBtn.setEnabled(true);
+			}
+		});
+	}
+	
 	@Override
 	protected void setupUiElements() {
-		loginWidget = new LoginWidget(service, eventBus);
+		loginWidget = new LoginWidget(dispatcher, eventBus);
 	}
-
-	RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
 
 	boolean validateZip() {
 		String zipInput = zip.getText().trim();
-		if (zipInput == null || zipInput.equals("")) {
+		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
+		if (!validateZip.isValid()) {
 			zipCg.setType(ControlGroupType.ERROR);
-			zipError.setText(CANT_BE_EMPTY);
-			zipError.setVisible(true);
-			return false;
-		}
-
-		MatchResult matcher = zipPattern.exec(zipInput);
-		if (matcher == null) {
-			zipCg.setType(ControlGroupType.ERROR);
-			zipError.setText(INVALID_ZIP);
+			zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
 			zipError.setVisible(true);
 			return false;
 		}
 		return true;
 	}
 
-	boolean validateInput() {
-		String firstnameInput = firstname.getText().trim();
-		boolean valid = true;
-		if (firstnameInput == null || firstnameInput.equals("")) {
-			firstnameCg.setType(ControlGroupType.ERROR);
-			firstnameError.setText(CANT_BE_EMPTY);
-			firstnameError.setVisible(true);
-			valid = false;
+	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
+		ValidationResult result = FieldVerifier.validateName(name);
+		if (!result.isValid()) {
+			cg.setType(ControlGroupType.ERROR);
+			helpInline.setText(result.getErrors().get(0).getErrorMessage());
+			helpInline.setVisible(true);
+			return false;
 		}
-
-		String lastnameInput = lastname.getText().trim();
-		if (lastnameInput == null || lastnameInput.equals("")) {
-			lastnameCg.setType(ControlGroupType.ERROR);
-			lastnameError.setText(CANT_BE_EMPTY);
-			lastnameError.setVisible(true);
-			valid = false;
-		}
-
-		boolean result = validateEmail();
-		if (!result) {
-			valid = false;
-		}
-
-		result = validateZip();
-		if (!result) {
-			valid = false;
-		}
-
-		String passwordInput = password.getText().trim();
-		if (passwordInput == null || passwordInput.equals("")) {
-			passwordCg.setType(ControlGroupType.ERROR);
-			passwordError.setText(CANT_BE_EMPTY);
-			passwordError.setVisible(true);
-			valid = false;
-		}
-
-		String confirmPasswordInput = confirmPassword.getText().trim();
-		if (confirmPasswordInput == null || confirmPasswordInput.equals("")) {
-			confirmPasswordCg.setType(ControlGroupType.ERROR);
-			confirmPasswordError.setText(CANT_BE_EMPTY);
-			confirmPasswordError.setVisible(true);
-			valid = false;
-		}
-
-//		if (!passwordError.isVisible()) {
-			if (passwordInput != null && confirmPasswordInput != null) {
-				if (!confirmPasswordInput.equals(passwordInput)) {
-					passwordCg.setType(ControlGroupType.ERROR);
-					passwordError.setText(PASSWORD_MISMATCH_ERROR);
-					passwordError.setVisible(true);
-				}
-			}
-//		}
-		
-		return valid;
+		return true;
 	}
-
-	RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
+	
 
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
-		if (emailInput == null || emailInput.equals("")) {
+		ValidationResult result = FieldVerifier.validateEmail(emailInput);
+		if (!result.isValid()) {
 			emailCg.setType(ControlGroupType.ERROR);
-			emailError.setText(CANT_BE_EMPTY);
-			emailError.setVisible(true);
-			return false;
-		}
-
-		MatchResult matcher = emailPattern.exec(emailInput);
-		if (matcher == null) {
-			emailCg.setType(ControlGroupType.ERROR);
-			emailError.setText(INVALID_EMAIL);
+			emailError.setText(result.getErrors().get(0).getErrorMessage());
 			emailError.setVisible(true);
 			return false;
 		}
 		return true;
+	}
+	
+	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {
+		ValidationResult result = FieldVerifier.validatePassword(password);
+		if (!result.isValid()) {
+			cg.setType(ControlGroupType.ERROR);
+			helpInline.setText(result.getErrors().get(0).getErrorMessage());
+			helpInline.setVisible(true);
+			return false;
+		}
+		return true;
+	}
+	
+	boolean validateInput() {
+		String firstnameInput = firstname.getText().trim();
+		boolean valid = true;
+		valid &= validateName(firstnameInput, firstnameCg, firstnameError);
+
+		String lastnameInput = lastname.getText().trim();
+		valid &= validateName(lastnameInput, lastnameCg, lastnameError);
+
+		valid &= validateEmail();
+
+		valid &= validateZip();
+
+		String passwordInput = password.getText().trim();
+		valid &= validatePassword(passwordInput, passwordCg, passwordError);
+
+		String confirmPasswordInput = confirmPassword.getText().trim();
+		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg, confirmPasswordError);
+		
+		if (passwordInput != null && confirmPasswordInput != null) {
+			if (!confirmPasswordInput.equals(passwordInput)) {
+				passwordCg.setType(ControlGroupType.ERROR);
+				passwordError.setText(PASSWORD_MISMATCH_ERROR);
+				passwordError.setVisible(true);
+			}
+		}
+		return valid;
 	}
 
 	void resetForm() {
@@ -233,6 +263,7 @@ public class SignupView extends AbstractView {
 
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
+		System.out.println("Calling submit signup...");
 		resetErrors();
 		if (!validateInput()) {
 			return;
@@ -246,19 +277,20 @@ public class SignupView extends AbstractView {
 		account.setFirstName(firstnameInput);
 		account.setLastName(lastnameInput);
 		account.setEmail(emailInput);
+		account.setPassword(password.getText().trim());
 		account.setZip(Integer.parseInt(zipInput));
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
-		service.register(account, new AsyncCallback<AccountDTO>() {
+		
+		if (profileImageUrl != null) {
+			account.setImageUrl(profileImageUrl);
+		}
+		
+		dispatcher.execute(new RegisterAccountAction(account), new DispatcherCallbackAsync<RegisterAccountResult>() {
 			@Override
-			public void onSuccess(AccountDTO account) {
-				eventBus.fireEvent(new LoginEvent(account));
-				History.newItem("main");
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				infoField.setType(AlertType.ERROR);
+			public void onSuccess(RegisterAccountResult result) {
+				System.out.println("Account "+result.getAccount()+" registered.");
+				eventBus.fireEvent(new LoginEvent(result.getAccount()));
 			}
 		});
 	}
@@ -269,6 +301,13 @@ public class SignupView extends AbstractView {
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
 		zip.setText(Integer.toString(account.getZip()));
-		
+		System.out.println("Img url="+account.getImageUrl());
+		profileImagePreview.setUrl(account.getImageUrl());
+		profileImagePreview.setVisible(true);
+	}
+	
+	@UiHandler("uploadBtn")
+	void upload(ClickEvent event) {
+		uploadForm.submit();
 	}
 }

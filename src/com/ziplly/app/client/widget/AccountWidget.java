@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
@@ -89,8 +90,8 @@ public class AccountWidget extends AbstractAccountView {
 		return MyBundle.INSTANCE;
 	}
 
-	public AccountWidget(SimpleEventBus eventBus, boolean displayEdit) {
-		super(eventBus);
+	public AccountWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus, boolean displayEdit) {
+		super(dispatcher, eventBus);
 		this.displayEdit = displayEdit;
 		logger.log(Level.INFO, "AccountWidget created");
 	}
@@ -106,7 +107,7 @@ public class AccountWidget extends AbstractAccountView {
 
 	@Override
 	protected void setupUiElements() {
-		eadw = new EditAccountDetailsWidget(eventBus);
+		eadw = new EditAccountDetailsWidget(dispatcher, eventBus);
 	}
 
 	@Override

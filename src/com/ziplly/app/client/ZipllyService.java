@@ -1,9 +1,7 @@
 package com.ziplly.app.client;
 
-import java.io.IOException;
 import java.util.List;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -28,4 +26,5 @@ public interface ZipllyService extends RemoteService {
 	List<TweetDTO> getTweets(AccountDTO a);
 
 	AccountDTO getFacebookUserDetails(String code) throws Exception;
+	String getUploadUrl();
 }

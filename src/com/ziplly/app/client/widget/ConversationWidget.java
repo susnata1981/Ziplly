@@ -14,6 +14,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.widget.dataprovider.ConversationDataProvider;
 import com.ziplly.app.model.Conversation;
@@ -44,8 +46,9 @@ public class ConversationWidget extends AbstractAccountView {
 	
 	ConversationDataProvider dataProvider;
 	
-	public ConversationWidget(SimpleEventBus eventBus) {
-		super(eventBus);
+	@Inject
+	public ConversationWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@Override

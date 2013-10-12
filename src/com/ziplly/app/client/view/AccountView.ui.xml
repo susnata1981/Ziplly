@@ -26,7 +26,6 @@
 	<g:HTMLPanel>
 	    <dt:LogoutWidget ui:field="logoutWidget" />
 	    <g:HTMLPanel ui:field="loginMessagePanel">
-			<g:Label>Please login first</g:Label>
 			<div>
 				<dt:LoginWidget ui:field="loginWidget" />
 			</div>

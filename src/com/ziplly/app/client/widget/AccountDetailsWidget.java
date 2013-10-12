@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 
 public class AccountDetailsWidget extends AbstractAccountView {
@@ -40,8 +41,8 @@ public class AccountDetailsWidget extends AbstractAccountView {
 	@UiField
 	HTMLPanel familyPanel;
 	
-	public AccountDetailsWidget(SimpleEventBus eventBus) {
-		super(eventBus);
+	public AccountDetailsWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 	
 	@Override

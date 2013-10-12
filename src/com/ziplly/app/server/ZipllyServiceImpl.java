@@ -3,10 +3,16 @@ package com.ziplly.app.server;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.restfb.types.User;
 import com.ziplly.app.client.ZipllyService;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -27,6 +33,7 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
 
+@Singleton
 public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		ZipllyService {
 	private static final long serialVersionUID = 1L;
@@ -34,7 +41,8 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 	private OAuthConfig authConfig = OAuthFactory
 			.getAuthConfig(OAuthProvider.FACEBOOK.name());
 	private Logger logger = Logger.getLogger("ZipplyServiceImpl");
-	private AccountDAO accountDAO = new AccountDAOImpl();
+	@Inject
+	private AccountDAO accountDAO;// = new AccountDAOImpl(null);
 
 	@Override
 	public AccountDTO getFacebookUserDetails(String code) throws Exception {
@@ -68,7 +76,7 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 			account.setLatitude(locInfo.latitude);
 			account.setIntroduction(fuser.getBio());
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
-					+ "/picture?width=200&height=160";
+					+ "/picture"; //?width=200&height=160
 			account.setImageUrl(imgUrl);
 			System.out.println("Returning "+account);
 			return account;
@@ -147,7 +155,14 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		}
 		// throw new
 		// IllegalArgumentException("Account:"+newAccount.getDisplayName()+" doens't exists");
-		return new AccountDTO(result);
+		storeUserInSession(newAccount);
+		return newAccount;
+	}
+
+	private void storeUserInSession(AccountDTO newAccount) {
+		HttpSession session = getThreadLocalRequest().getSession();
+		session.setMaxInactiveInterval(10*60);
+		session.setAttribute(LOGGED_IN_USER, newAccount);
 	}
 
 	// TODO change the input param
@@ -155,29 +170,6 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 			List<Category> input) {
 
 		return null;
-	}
-
-	// private AccountDetails doLogin(AccountDTO account) {
-	// // update account last login timestamp
-	// AccountDetails ad = new AccountDetails();
-	// ad.account = ServiceUtil.copy(account);
-	// // List<Category> categoriesForAccount =
-	// getCategoriesForAccount(account);
-	// // if (categoriesForAccount != null) {
-	// // ad.categories.addAll(categoriesForAccount);
-	// // }
-	//
-	// // save account in session
-	// HttpServletRequest request = this.getThreadLocalRequest();
-	// HttpSession session = request.getSession();
-	// session.setAttribute(LOGGED_IN_USER, ad);
-	// return ad;
-	// }
-
-	@Override
-	public void logoutAccount() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -194,8 +186,14 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public AccountDTO getLoggedInUser() {
-		// TODO Auto-generated method stub
-		return null;
+		HttpSession session = getThreadLocalRequest().getSession();
+		return (AccountDTO) session.getAttribute(LOGGED_IN_USER);
+	}
+
+	@Override
+	public void logoutAccount() {
+		HttpSession session = getThreadLocalRequest().getSession();
+		session.removeAttribute(LOGGED_IN_USER);
 	}
 
 	@Override
@@ -214,5 +212,10 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 	public AccountDetails getAccessToken(String code) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	@Override
+	public String getUploadUrl() {
+		return blobstoreService.createUploadUrl("/upload");
 	}
 }

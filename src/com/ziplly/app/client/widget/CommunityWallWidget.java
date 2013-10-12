@@ -8,6 +8,7 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.widget.cell.TweetCell;
 import com.ziplly.app.client.widget.dataprovider.TweetDataProvider;
@@ -24,8 +25,8 @@ public class CommunityWallWidget extends AbstractAccountView {
 			UiBinder<Widget, CommunityWallWidget> {
 	}
 
-	public CommunityWallWidget(SimpleEventBus eventBus) {
-		super(eventBus);
+	public CommunityWallWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+		super(dispatcher, eventBus);
 	}
 
 	@UiField(provided = true)

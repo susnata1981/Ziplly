@@ -7,9 +7,10 @@ import java.util.List;
 
 public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private Long account_id;
+	private Long accountId;
 	private String fId;
 	private String email;
+	private String password;
 	private String firstName;
 	private String lastName;
 	private String url;
@@ -26,12 +27,13 @@ public class AccountDTO implements Serializable {
 	private Date timeCreated;
 	
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
+	private Long uid;
 	
 	public AccountDTO() {
 	}
 	
 	public AccountDTO(Account account) {
-		account_id = account.getId();
+		accountId = account.getAccountId();
 		fId = account.getfId();
 		firstName = account.getFirstName();
 		lastName = account.getLastName();
@@ -53,12 +55,12 @@ public class AccountDTO implements Serializable {
 		timeCreated = account.getTimeCreated();
 	}
 	
-	public Long getId() {
-		return account_id;
+	public Long getAccountId() {
+		return accountId;
 	}
 
-	public void setId(Long id) {
-		this.account_id = id;
+	public void setAccountId(Long id) {
+		this.accountId = id;
 	}
 
 	public String getDisplayName() {
@@ -137,7 +139,7 @@ public class AccountDTO implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.getId() == this.account_id;
+		return a.getAccountId() == this.accountId;
 	}
 
 	public String getIntroduction() {
@@ -234,4 +236,18 @@ public class AccountDTO implements Serializable {
 		this.accountSettings = accountSettings;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setUid(Long uid) {
+		this.uid = uid;
+	}
+	public Long getUid() {
+		return uid;
+	}
 }

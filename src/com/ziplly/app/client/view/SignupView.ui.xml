@@ -1,67 +1,87 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-	xmlns:dt="urn:import:com.ziplly.app.client.widget" 
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		#singupForm {
 		float: left;
 		width: 320px;
 		padding: 5px;
-		margin: 10px 0px 0px 40px;
+		margin:
+		10px 0px 0px 40px;
 		background: #f1f1f1;
 		}
 		#loginForm {
-			position: absolute;
-			top:400px;
-			right: 40px;
+		position: absolute;
+		top:400px;
+		right: 40px;
+		}
+		.profileImagePreview {
+		width: 90px !important;
+		height: 70px !important;
+		float: right;
 		}
 	</ui:style>
 	<g:HTMLPanel>
 		<div id="mainContent">
 			<div id="singupForm">
-			    <div class="heading">Signup</div>
-				<b:Alert ui:field="infoField" animation="true"/>
+				<div class="heading">Signup</div>
+				<b:Alert ui:field="infoField" animation="true" />
 				<b:Form>
 					<b:ControlGroup ui:field="firstnameCg">
 						<b:Controls>
-						    <b:Label>Firstname</b:Label><br/>
+							<b:Label>Firstname</b:Label>
+							<br />
 							<b:TextBox ui:field="firstname" placeholder="firstname..." />
 							<b:HelpInline ui:field="firstnameError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="lastnameCg">
 						<b:Controls>
-						    <b:Label>Lastname</b:Label><br/>
+							<b:Label>Lastname</b:Label>
+							<br />
 							<b:TextBox ui:field="lastname" placeholder="lastname..." />
 							<b:HelpInline ui:field="lastnameError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="emailCg">
 						<b:Controls>
-						    <b:Label>Email</b:Label><br/>
+							<b:Label>Email</b:Label>
+							<br />
 							<b:TextBox ui:field="email" placeholder="email..." />
 							<b:HelpInline ui:field="emailError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<g:FormPanel ui:field="uploadForm">
+						<g:HTMLPanel>
+							<g:FileUpload ui:field="uploadField" name="image" />
+							<b:Button ui:field="uploadBtn">Upload</b:Button>
+							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+						</g:HTMLPanel>
+					</g:FormPanel>
 					<b:ControlGroup ui:field="zipCg">
 						<b:Controls>
-						    <b:Label>Zip</b:Label><br/>
+							<b:Label>Zip</b:Label>
+							<br />
 							<b:TextBox ui:field="zip" placeholder="zip..." />
 							<b:HelpInline ui:field="zipError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="passwordCg">
 						<b:Controls>
-						    <b:Label>Password</b:Label><br/>
-							<b:PasswordTextBox ui:field="password" placeholder="password..." />
+							<b:Label>Password</b:Label>
+							<br />
+							<b:PasswordTextBox ui:field="password"
+								placeholder="password..." />
 							<b:HelpInline ui:field="passwordError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="confirmPasswordCg">
 						<b:Controls>
-						    <b:Label>Confirm password</b:Label><br/>
-							<b:PasswordTextBox ui:field="confirmPassword" placeholder="confirm password..." />
+							<b:Label>Confirm password</b:Label>
+							<br />
+							<b:PasswordTextBox ui:field="confirmPassword"
+								placeholder="confirm password..." />
 							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
@@ -69,7 +89,7 @@
 				</b:Form>
 			</div>
 			<div id="loginForm">
-			    <dt:LoginWidget ui:field="loginWidget"/>
+				<dt:LoginWidget ui:field="loginWidget" />
 			</div>
 		</div>
 	</g:HTMLPanel>

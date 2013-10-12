@@ -18,14 +18,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.ziplly.app.shared.BCrypt;
+
 @NamedQueries({
 	@NamedQuery(
 		name = "findAccountByEmail",
 		query = "from Account a where a.email = :email"
 	),
 	@NamedQuery(
+		name = "findByEmailAndPassword",
+		query = "from Account a where a.email = :email and a.password = :password"
+	),
+	@NamedQuery(
 		name = "findAccountById",
-		query = "from Account a where a.id = :id"
+		query = "from Account a where a.accountId = :id"
 	),
 	@NamedQuery(
 		name = "findAllAccounts",
@@ -39,11 +45,14 @@ public class Account implements Serializable {
 	@Id
 	@NotNull
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	Long account_id;
+	@Column(name="account_id")
+	Long accountId;
 	@Column(name="facebook_id")
 	private String fId;
 	@Column(name="email")
 	private String email;
+	@Column(name="password")
+	private String password;
 	@Column(name="first_name")
 	private String firstName;
 	@Column(name="last_name")
@@ -75,11 +84,12 @@ public class Account implements Serializable {
 	}
 	
 	public Account(AccountDTO account) {
-		account_id = account.getId();
+		accountId = account.getAccountId();
 		fId = account.getfId();
 		firstName = account.getFirstName();
 		lastName = account.getLastName();
 		email = account.getEmail();
+		password = encryptPassword(account.getPassword());
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
@@ -97,12 +107,12 @@ public class Account implements Serializable {
 		timeCreated = account.getTimeCreated();
 	}
 	
-	public Long getId() {
-		return account_id;
+	public Long getAccountId() {
+		return accountId;
 	}
 
 	public void setId(Long id) {
-		this.account_id = id;
+		this.accountId = id;
 	}
 
 	public String getDisplayName() {
@@ -181,7 +191,7 @@ public class Account implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.getId() == this.account_id;
+		return a.getAccountId() == this.accountId;
 	}
 
 	public String getIntroduction() {
@@ -278,4 +288,15 @@ public class Account implements Serializable {
 		this.accountSettings = accountSettings;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = encryptPassword(password);
+	}
+	
+	protected String encryptPassword(String password) {
+		return BCrypt.hashpw(password, BCrypt.gensalt());
+	}
 }

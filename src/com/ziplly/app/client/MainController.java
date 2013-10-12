@@ -3,7 +3,6 @@ package com.ziplly.app.client;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -11,39 +10,57 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.ziplly.app.client.cookie.CookieManager;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.event.LogoutEvent;
+import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.shared.GetFacebookDetailsAction;
+import com.ziplly.app.shared.GetFacebookDetailsResult;
+import com.ziplly.app.shared.GetLoggedInUserAction;
+import com.ziplly.app.shared.GetLoggedInUserResult;
 
 public class MainController implements ValueChangeHandler<String> {
 	private static final String BACKGROUND_IMG_URL = "url('neighborhood_large.jpg')";
 	private HasWidgets container;
-	private ZipllyServiceAsync service;
 	private SimpleEventBus eventBus;
+	@Inject
 	private MainView mainView;
+	@Inject
 	private AccountView accountView;
+	@Inject
+	private HomeView homeView;
+	@Inject
+	SignupView signupView;
+
 	private NavView navView;
 	private Logger logger = Logger.getLogger("MainController");
 	protected AccountDTO account;
-	private HomeView homeView;
+	CachingDispatcherAsync dispatcher;
 
-	public MainController(SimpleEventBus eventBus) {
+	@Inject
+	public MainController(SimpleEventBus eventBus,
+			CachingDispatcherAsync dispatcher) {
+//		ZGinInjector injector = GWT.create(ZGinInjector.class);
 		this.container = RootPanel.get("main");
-		this.service = GWT.create(ZipllyService.class);
+		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
-		this.accountView = new AccountView(eventBus);
+//		this.accountView = new AccountView(dispatcher, eventBus);
 		this.navView = new NavView(eventBus);
-		this.mainView = new MainView(eventBus);
-		this.homeView = new HomeView(eventBus);
+//		this.mainView = new MainView(dispatcher, eventBus);
+//		this.homeView = new HomeView(dispatcher, eventBus);
+//		this.signupView = injector.getSignupView();
 		RootPanel.get("nav").add(navView);
 		init();
 	}
@@ -53,29 +70,43 @@ public class MainController implements ValueChangeHandler<String> {
 	}
 
 	void init() {
-		if (isUserLoggedIn()) {
-			checkLoginStatus();
-		}
 		History.addValueChangeHandler(this);
+		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
+			@Override
+			public void onEvent(LoginEvent event) {
+				MainController.this.account = event.getAccount();
+				History.newItem("account");
+			}
+		});
+		eventBus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
+			@Override
+			public void onEvent(LogoutEvent event) {
+				doLogout();
+				History.newItem("main");
+			}
+		});
+	}
+	
+	private void doLogout() {
+		this.account = null;
 	}
 
-	private void checkLoginStatus() {
-		checkUserInfoInCookie();
-	}
-
-	private void checkUserInfoInCookie() {
-		String accountId = CookieManager.getLoginCookie();
-		if (accountId == null) {
-			return;
+	void getLoggedInUser() {
+		if (account == null) {
+			dispatcher.execute(new GetLoggedInUserAction(),
+					new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+						@Override
+						public void onSuccess(GetLoggedInUserResult result) {
+							if (result != null && result.getAccount() != null) {
+								// user logged in
+								MainController.this.account = result.getAccount();
+							}
+						}
+					});
 		}
-		logger.log(Level.INFO, "Found logged in user: " + accountId);
 	}
 
 	private void handleOAuthRedirect() {
-		if (CookieManager.isUserLoggedIn()) {
-			History.newItem("home");
-		}
-
 		String code = Window.Location.getParameter("code");
 		if (code != null) {
 			try {
@@ -87,48 +118,29 @@ public class MainController implements ValueChangeHandler<String> {
 	}
 
 	private void handleAuth(String code) {
-		service.getFacebookUserDetails(code, new AsyncCallback<AccountDTO>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.log(Level.SEVERE, "Failed to handle auth:" + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(AccountDTO account) {
-				if (account != null) {
-					MainController.this.account = account;
-					// dropLoginCookie(account);
-
-					// MainController.this.logger.log(Level.INFO, "User: " +
-					// account.getDisplayName()
-					// + "(" + account.getId() + ") logged in.");
-					// History.newItem("home");
-					// redirect to signup page
-					System.out.println("Received account:"+account+" ("+account.getId()+")");
-					System.out.println("Url="+account.getUrl());
-					if (account.getId() != null) {
-						// logged in user
-						eventBus.fireEvent(new LoginEvent(account));
-					} else {
-						setBackgroundImage();
-						SignupView signupView = new SignupView(eventBus);
-						signupView.displayAccount(account);
-						display(container, signupView);
+		dispatcher.execute(new GetFacebookDetailsAction(code),
+				new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
+					@Override
+					public void onSuccess(GetFacebookDetailsResult result) {
+						AccountDTO account = result.getAccount();
+						if (account != null) {
+							if (account.getAccountId() != null) {
+								// logged in user
+								eventBus.fireEvent(new LoginEvent(account));
+							} else {
+								setBackgroundImage();
+								signupView.displayAccount(account);
+								display(container, signupView);
+							}
+						}
 					}
-				}
-			}
-		});
-	}
-
-	void dropLoginCookie(AccountDTO account) {
-		CookieManager.dropLoginCookie(account);
+				});
 	}
 
 	/*
 	 * Main entry point
 	 */
 	public void go() {
-		handleOAuthRedirect();
 		if ("".equals(History.getToken())) {
 			History.newItem("main");
 		} else {
@@ -141,19 +153,21 @@ public class MainController implements ValueChangeHandler<String> {
 		String token = event.getValue().trim();
 		System.out.println("Token = " + token);
 		RegExp accountPath = RegExp.compile("account/(\\S+)");
+		handleOAuthRedirect();
 
 		if (token != null) {
 			if (token.equals("main")) {
-				// TODO: Hack
-				if (isUserLoggedIn()) {
+				if (account != null) {
+					// user logged in
+					System.out.println("User:"+account+" logged in");
 					display(container, homeView);
-					return;
+				} else {
+					setBackgroundImage();
+					display(container, mainView);
 				}
-				setBackgroundImage();
-				display(container, mainView);
 			} else if (token.startsWith("signup")) {
 				setBackgroundImage();
-				SignupView signupView = new SignupView(eventBus);
+				// SignupView signupView = new SignupView(eventBus);
 				display(container, signupView);
 			} else if (token.equals("home")) {
 				clearBackgroundImage();
@@ -177,29 +191,6 @@ public class MainController implements ValueChangeHandler<String> {
 		RootPanel.get("wrapper").getElement().getStyle()
 				.setBackgroundImage("none");
 	}
-
-	// private static class AccountLoginByCookieHandler implements
-	// AsyncCallback<AccountDetails> {
-	// private MainController controller;
-	//
-	// public AccountLoginByCookieHandler(MainController controller) {
-	// this.controller = controller;
-	// }
-	//
-	// @Override
-	// public void onFailure(Throwable caught) {
-	// // TODO log it
-	// }
-	//
-	// @Override
-	// public void onSuccess(Account account) {
-	// if (account == null) {
-	// return;
-	// }
-	// controller.account = account;
-	// controller.eventBus.fireEvent(new LoginEvent(account));
-	// }
-	// }
 
 	public void display(HasWidgets widget, Composite c) {
 		widget.clear();
