@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.ZipllyService;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Message;
@@ -51,8 +52,8 @@ public class SendMessageWidget extends AbstractView {
 	private Account receiver;
 	private Account sender;
 
-	public SendMessageWidget(SimpleEventBus eventBus, Account sender, Account receiver) {
-		super(eventBus);
+	public SendMessageWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus, Account sender, Account receiver) {
+		super(dispatcher, eventBus);
 		this.sender = sender;
 		this.receiver = receiver;
 	}

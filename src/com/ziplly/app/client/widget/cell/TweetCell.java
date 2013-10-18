@@ -6,17 +6,17 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class TweetCell extends AbstractCell<TweetDTO> {
-	private SimpleEventBus eventBus;
+	EventBus eventBus;
 
-	public TweetCell(SimpleEventBus eventBus) {
+	public TweetCell(EventBus eventBus) {
 		super(BrowserEvents.CLICK);
 		this.eventBus = eventBus;
 	}

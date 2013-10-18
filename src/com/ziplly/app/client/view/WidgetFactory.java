@@ -10,20 +10,20 @@ import com.ziplly.app.client.widget.LogoutWidget;
 
 public class WidgetFactory {
 	
-	@Inject
-	public static AccountWidget getAccountWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		return new AccountWidget(dispatcher,eventBus,true);
-	}
+//	@Inject
+//	public static AccountWidget getAccountWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+//		return new AccountWidget(dispatcher,eventBus,true);
+//	}
 	
 //	@Inject
 //	public static LoginWidget getLoginWidget(ZipllyServiceAsync service, SimpleEventBus eventBus) {
 //		return new LoginWidget(service, eventBus);
 //	}
 	
-	@Inject
-	public static LogoutWidget getLogoutWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		return new LogoutWidget(dispatcher, eventBus);
-	}
+//	@Inject
+//	public static LogoutWidget getLogoutWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+//		return new LogoutWidget();
+//	}
 
 //	public static ConversationWidget getConversationWidget(
 //			ZipllyServiceAsync service, 

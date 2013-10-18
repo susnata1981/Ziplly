@@ -1,6 +1,7 @@
 package com.ziplly.app.client.view;
 
-import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -14,11 +15,16 @@ import com.ziplly.app.model.AccountDTO;
 public abstract class AbstractAccountView extends AbstractView {
 	protected OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
 	protected AccountDTO account;
+	PlaceController placeController; 
 	
-	public AbstractAccountView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+	public AbstractAccountView(CachingDispatcherAsync dispatcher, EventBus eventBus) {
 		super(dispatcher, eventBus);
 	}
 
+	public AbstractAccountView(CachingDispatcherAsync dispatcher, EventBus eventBus, PlaceController placeController) {
+		super(dispatcher, eventBus, placeController);
+	}
+	
 	@Override
 	protected void setupCommonHandlers() {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {

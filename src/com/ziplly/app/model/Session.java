@@ -12,8 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 
 @NamedQueries({
 		@NamedQuery(name = "fetchSessionByUid", query = "from Session s where s.uid = :uid"),
@@ -26,7 +27,8 @@ public class Session {
 	private Long id;
 	private Long uid;
 	@OneToOne(fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
+	@JoinColumn(name="account_id")
+	@NotNull
 	private Account account;
 	@Column(name = "time_created")
 	private Date timeCreated;

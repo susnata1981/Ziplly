@@ -19,10 +19,12 @@ public class AccountDTO implements Serializable {
 	private String introduction;
 	private String city;
 	private String state;
+	private String occupation;
 	private int zip;
 	private String longitude;
 	private String latitude;
-	private List<AccountSettingsDTO> accountSettings = new ArrayList<AccountSettingsDTO>();
+	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
+	private List<InterestDTO> interests = new ArrayList<InterestDTO>();
 	private Date lastLoginTime;
 	private Date timeCreated;
 	
@@ -44,15 +46,20 @@ public class AccountDTO implements Serializable {
 		introduction = account.getIntroduction();
 		city = account.getCity();
 		state = account.getState();
+		occupation = account.getOccupation();
 		zip = account.getZip();
 		longitude = account.getLongitude();
 		latitude = account.getLatitude();
-		for(AccountSettings as : account.getAccountSettings()) {
-			AccountSettingsDTO asd = new AccountSettingsDTO(as);
+		for(AccountSetting as : account.getAccountSettings()) {
+			AccountSettingDTO asd = new AccountSettingDTO(as);
 			accountSettings.add(asd);
+		}
+		for(Interest interest : account.getInterests()) {
+			interests.add(new InterestDTO(interest));
 		}
 		lastLoginTime = account.getLastLoginTime();
 		timeCreated = account.getTimeCreated();
+		uid = account.getUid();
 	}
 	
 	public Long getAccountId() {
@@ -228,11 +235,11 @@ public class AccountDTO implements Serializable {
 		this.tweets = tweets;
 	}
 
-	public List<AccountSettingsDTO> getAccountSettings() {
+	public List<AccountSettingDTO> getAccountSettings() {
 		return accountSettings;
 	}
 
-	public void setAccountSettings(List<AccountSettingsDTO> accountSettings) {
+	public void setAccountSettings(List<AccountSettingDTO> accountSettings) {
 		this.accountSettings = accountSettings;
 	}
 
@@ -249,5 +256,21 @@ public class AccountDTO implements Serializable {
 	}
 	public Long getUid() {
 		return uid;
+	}
+
+	public List<InterestDTO> getInterests() {
+		return interests;
+	}
+
+	public void setInterests(List<InterestDTO> interests) {
+		this.interests = interests;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
 	}
 }

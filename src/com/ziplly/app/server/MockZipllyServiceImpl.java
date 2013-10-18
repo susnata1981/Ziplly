@@ -63,7 +63,7 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 			a.setIntroduction(String.format(
 					"hello this is %s %s, check out my profile", fn, ln));
 			a.setUrl("http://www.yahoo.com");
-			a.setId(new Long(i));
+			a.setAccountId(new Long(i));
 			a.setCity("seattle");
 			a.setState("washington");
 			a.setZip(98199);
@@ -85,10 +85,8 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 		for (int i = 0; i < 10; i++) {
 			TweetDTO t = new TweetDTO();
 			t.setContent(tweets[i % N]);
-			t.setTime_created(new Date());
 			t.setSender(a);
 			t.setType(TweetType.GENERAL);
-			t.setTweet_id(counter++);
 			int cc = rnd.nextInt(comments.length);
 			for(int k=0;k<cc;k++) {
 				CommentDTO c = new CommentDTO();
@@ -136,7 +134,7 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	@Override
 	public AccountDTO loginAccountById(long accountId) {
 		for(AccountDTO a : accounts) {
-			if (a.getId() == accountId) {
+			if (a.getAccountId() == accountId) {
 				return a;
 			}
 		}
@@ -146,7 +144,7 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 	@Override
 	public AccountDTO getAccountById(long accountId) {
 		for(AccountDTO a : accounts) {
-			if (a.getId() == accountId) {
+			if (a.getAccountId() == accountId) {
 				return a;
 			}
 		}
@@ -169,6 +167,18 @@ public class MockZipllyServiceImpl extends RemoteServiceServlet implements Zipll
 
 	@Override
 	public AccountDTO loginOrRegisterAccount(String code) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AccountDTO getFacebookUserDetails(String code) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUploadUrl() {
 		// TODO Auto-generated method stub
 		return null;
 	}

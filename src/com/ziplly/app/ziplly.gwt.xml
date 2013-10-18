@@ -10,7 +10,14 @@
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
 	<inherits name="com.google.gwt.user.theme.standard.Standard" />
 
+	<!-- Activity & Place -->
+	<inherits name='com.google.gwt.activity.Activity'/>
+	<inherits name='com.google.gwt.place.Place'/>
+	
+	<!-- GIN -->
 	<inherits name="com.google.gwt.inject.Inject" />
+	
+	<!-- GWT Dispatch -->
 	<inherits name="net.customware.gwt.dispatch.Dispatch" />
 	
 	<inherits name="com.google.gwt.logging.Logging" />

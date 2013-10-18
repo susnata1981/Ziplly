@@ -17,10 +17,18 @@
 					<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
 				</div>
 				<div>
-				    <g:Anchor addStyleNames="{style.view_profile_link}" ui:field="viewPublicProfile">View public profile</g:Anchor>
+				    <g:Anchor addStyleNames="{style.view_profile_link}" ui:field="viewPublicProfileLink">View public profile</g:Anchor>
 				</div>
 			</div>
 			<div class="{style.profile_info_block}">
+			    <div class="{style.profile_info_section}">
+					<b:Form ui:field="tweetForm">
+						<b:ControlLabel>Share what's on your mind</b:ControlLabel>
+						<b:TextArea placeholder="Type something…" addStyleNames="{style.shareTextBox}" ui:field="tweetTextBox"/>
+						<b:HelpInline ui:field="tweetHelpInline"/>
+						<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn" ui:field="tweetBtn">Share</b:Button>
+					</b:Form>
+				</div>
 				<div class="{style.profile_info_section}">
 					<div class="{style.profile_section_heading}">
 						<span>Basic Info</span>
@@ -43,8 +51,15 @@
 						<span>Interests</span>
 						<g:Anchor addStyleNames="{style.editlink}" ui:field="editInterestLink">edit</g:Anchor>
 					</div>
-					<g:HTMLPanel ui:field="interestList">
+					<g:HTMLPanel ui:field="interestListPanel">
 					</g:HTMLPanel>
+				</div>
+				<div class="{style.profile_info_section}">
+					<div class="{style.profile_section_heading}">
+						<span>Occupation</span>
+						<g:Anchor addStyleNames="{style.editlink}" ui:field="editOccupationLink">edit</g:Anchor>
+					</div>
+					<span class="{style.smalltext}" ui:field="occupation"/>
 				</div>
 				<div class="{style.profile_info_section}">
 					<div class="{style.profile_section_heading}">

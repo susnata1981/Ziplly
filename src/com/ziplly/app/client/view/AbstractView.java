@@ -3,8 +3,9 @@ package com.ziplly.app.client.view;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.ZipllyService;
 import com.ziplly.app.client.ZipllyServiceAsync;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -13,9 +14,10 @@ public abstract class AbstractView extends Composite {
 	protected Logger logger = Logger.getLogger("AbstractView");
 	protected ZipllyServiceAsync service;
 	protected CachingDispatcherAsync dispatcher;
-	protected SimpleEventBus eventBus;
+	protected EventBus eventBus;
+	protected PlaceController placeController;
 
-	public AbstractView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
+	public AbstractView(CachingDispatcherAsync dispatcher, EventBus eventBus) {
 		this.dispatcher = dispatcher;
 		this.service = GWT.create(ZipllyService.class);
 		this.eventBus = eventBus;
@@ -25,6 +27,13 @@ public abstract class AbstractView extends Composite {
 		setupHandlers();
 	}
 	
+	public AbstractView(CachingDispatcherAsync dispatcher,
+			EventBus eventBus,
+			PlaceController placeController) {
+		this(dispatcher, eventBus);
+		this.setPlaceController(placeController);
+	}
+
 	protected void setupCommonHandlers() {
 	}
 
@@ -47,5 +56,13 @@ public abstract class AbstractView extends Composite {
 
 	public void setService(ZipllyServiceAsync service) {
 		this.service = service;
+	}
+
+	public PlaceController getPlaceController() {
+		return placeController;
+	}
+
+	public void setPlaceController(PlaceController placeController) {
+		this.placeController = placeController;
 	}
 }

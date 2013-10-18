@@ -15,9 +15,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+@NamedQueries({
+	@NamedQuery(
+		name = "findTweetsByZip",
+		query = "from Tweet t where t.sender.zip = :zip"),
+	@NamedQuery(
+		name = "findTweetsByAccountId",
+		query = "from Tweet t where t.sender.accountId = :accountId")
+})
 @Entity
 @Table(name="tweet")
 public class Tweet implements Serializable {
@@ -27,16 +37,21 @@ public class Tweet implements Serializable {
 	@Column(name="tweet_id")
 	private long tweetId;
 	@ManyToOne(fetch = FetchType.LAZY)
+	
 	@JoinColumn(name="sender_id")
 	private Account sender;
+
 	@Column(name="image_id")
 	private long imageId;
 	private TweetType type;
 	private String content;
+	
 	@ManyToMany(mappedBy="tweets")
 	private Set<TagDTO> tags;
+	
 	@OneToMany(mappedBy="tweet")
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
+	
 	private int status;
 	private Date timeCreated;
 	

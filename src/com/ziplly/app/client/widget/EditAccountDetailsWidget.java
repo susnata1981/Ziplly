@@ -1,25 +1,45 @@
 package com.ziplly.app.client.widget;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.view.AbstractAccountView;
+import com.ziplly.app.client.activities.AccountActivityPresenter;
+import com.ziplly.app.client.view.View;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountSettingDTO;
+import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.InterestDTO;
 
-public class EditAccountDetailsWidget extends AbstractAccountView {
+/*
+ * The tabs in this view are ordered as per the AccountDetailsType enum
+ */
+public class EditAccountDetailsWidget extends Composite implements View<AccountActivityPresenter> {
 
+	private static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
+	private static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
+	
 	private static EditAccountDetailsWidgetUiBinder uiBinder = GWT
 			.create(EditAccountDetailsWidgetUiBinder.class);
 
@@ -43,7 +63,17 @@ public class EditAccountDetailsWidget extends AbstractAccountView {
 	Element email;
 	
 	@UiField
+	ControlGroup introductionCg;
+	@UiField
+	TextBox introduction;
+	@UiField
+	HelpInline introductionError;
+	
+	@UiField
 	TextBox zip;
+	
+	@UiField
+	TextBox occupation;
 	
 	@UiField
 	Alert message;
@@ -53,38 +83,80 @@ public class EditAccountDetailsWidget extends AbstractAccountView {
 	
 	@UiField
 	Button closeBtn;
+
+	@UiField
+	Tab basicInfoTab;
+	@UiField
+	ShareSettingsWidget basicInfoSetting;
 	
-	@Inject
-	public EditAccountDetailsWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		super(dispatcher, eventBus);
+	@UiField
+	Tab occupationTab;
+	@UiField
+	ShareSettingsWidget occupationSetting;
+	
+	@UiField
+	Tab interestTab;
+	@UiField
+	ShareSettingsWidget interestSetting;
+	@UiField
+	HTMLPanel interestTabPanel;
+	
+	@UiField
+	Tab locationTab;
+	@UiField
+	ShareSettingsWidget locationSetting;
+	
+	Map<AccountDetailsType, Tab> accountDetailsTypeToTabsMap = new HashMap<AccountDetailsType, Tab>();
+	Map<Tab, ShareSettingsWidget> tabsToShareSettingWidgetMap = new HashMap<Tab, ShareSettingsWidget>();
+
+	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
+	
+	AccountActivityPresenter presenter;
+	private AccountDTO account;
+	
+	public EditAccountDetailsWidget() {
+
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		accountDetailsTypeToTabsMap.put(AccountDetailsType.BASICINFO, basicInfoTab);
+		tabsToShareSettingWidgetMap.put(basicInfoTab, basicInfoSetting);
+		
+		accountDetailsTypeToTabsMap.put(AccountDetailsType.OCCUPATION, occupationTab);
+		tabsToShareSettingWidgetMap.put(occupationTab, occupationSetting);
+		
+		accountDetailsTypeToTabsMap.put(AccountDetailsType.INTEREST, interestTab);
+		tabsToShareSettingWidgetMap.put(interestTab, interestSetting);
+		
+		accountDetailsTypeToTabsMap.put(AccountDetailsType.LOCATION, locationTab);
+		tabsToShareSettingWidgetMap.put(locationTab, locationSetting);
+
+		for(Activity activity : Activity.values()) {
+			CheckBox cb = new CheckBox(activity.name().toLowerCase());
+			interestToCheckboxMap.put(activity, cb);
+			interestTabPanel.add(cb);
+		}
 	}
 
-	@Override
-	protected void internalOnUserLogin() {
-		populateFields();
-	}
-
-	private void populateFields() {
+	void populateFields(AccountDTO account) {
 		// basic info
 		firstname.setInnerText(account.getFirstName());		
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
+
+		// interests
+		for(InterestDTO interest : account.getInterests()) {
+			Activity activity = Activity.valueOf(interest.getName().toUpperCase());
+			interestToCheckboxMap.get(activity).setValue(true);
+		}
 		
 		// location
 		zip.setText(Integer.toString(account.getZip()));
-	}
-
-	@Override
-	protected void initWidget() {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@Override
-	protected void postInitWidget() {
-	}
-
-	@Override
-	protected void setupUiElements() {
+		
+		// account settings
+		for(AccountSettingDTO asd: account.getAccountSettings()) {
+			Tab tab = accountDetailsTypeToTabsMap.get(asd.getSection());
+			tabsToShareSettingWidgetMap.get(tab).setSelection(asd.getSetting());
+		}
 	}
 
 	@UiHandler("closeBtn")
@@ -94,29 +166,61 @@ public class EditAccountDetailsWidget extends AbstractAccountView {
 	
 	@UiHandler("saveBtn")
 	void save(ClickEvent event) {
-		displayError();
 		if (!validate()) {
-			displayError();
+			displayMessage(FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
 			return;
 		}
 		
+		// TODO validation
+		if (!introduction.getText().equals("")) {
+			account.setIntroduction(introduction.getText());
+		}
+		
+		if (!zip.getText().equals("")) {
+			account.setZip(Integer.parseInt(zip.getText()));
+		}
+		
+		// interests
+		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
+		for(Entry<Activity, CheckBox> entry : interestToCheckboxMap.entrySet()) {
+			CheckBox cb = entry.getValue();
+			if (cb.getValue()) {
+				InterestDTO i = new InterestDTO();
+				i.setName(entry.getKey().name().toLowerCase());
+				selectedInterests.add(i);
+			}
+		}
+		account.getInterests().clear();
+		account.getInterests().addAll(selectedInterests);
+		
+//		account.setCity(city);
 		// TODO 
-		// call service
+		// call presenter
+		presenter.save(account);
 	}
 	
-	private void clearError() {
+	public void clearError() {
 		message.setVisible(false);
 		message.clear();
 	}
 	
-	private void displayError() {
-		message.setType(AlertType.ERROR);
-		message.setText("Erorrs exists in the form");
+	public void displaySuccessMessage() {
+		displayMessage(ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+	}
+	
+	public void displayErrorMessage() {
+		displayMessage(FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
+	}
+	
+	public void displayMessage(String msg, AlertType type) {
+		message.setType(type);
+		message.setText(msg);
 		message.setVisible(true);
 	}
 	
+	// TODO
 	boolean validate() {
-		return false;
+		return true;
 	}
 
 	public void show(AccountDetailsType adt) {
@@ -127,5 +231,22 @@ public class EditAccountDetailsWidget extends AbstractAccountView {
 	
 	public void hide() {
 		accountDetailsModal.hide();
+	}
+
+	@Override
+	public void clear() {
+		for(CheckBox cb: interestToCheckboxMap.values()) {
+			cb.setEnabled(false);
+		}
+	}
+
+	@Override
+	public void setPresenter(AccountActivityPresenter presenter) {
+		this.presenter = presenter;
+	}
+
+	public void displayAccount(AccountDTO account) {
+		this.account = account;
+		populateFields(account);
 	}
 }

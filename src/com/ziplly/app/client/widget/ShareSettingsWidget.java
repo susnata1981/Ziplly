@@ -16,10 +16,14 @@ public class ShareSettingsWidget extends Composite {
 			UiBinder<Widget, ShareSettingsWidget> {
 	}
 
-	@UiField
+	@UiField(provided=true)
 	ListBox shareSettingsList;
 	
 	public ShareSettingsWidget() {
+		shareSettingsList = new ListBox();
+		for(ShareSetting shareSetting : ShareSetting.values()) {
+			shareSettingsList.addItem(shareSetting.name().toLowerCase());
+		}
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -31,5 +35,9 @@ public class ShareSettingsWidget extends Composite {
 		
 		// default
 		return ShareSetting.values()[0];
+	}
+	
+	public void setSelection(ShareSetting shareSetting) {
+		shareSettingsList.setSelectedIndex(shareSetting.ordinal());
 	}
 }

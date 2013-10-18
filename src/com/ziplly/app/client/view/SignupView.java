@@ -12,28 +12,24 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.RegisterAccountAction;
-import com.ziplly.app.shared.RegisterAccountResult;
 import com.ziplly.app.shared.ValidationResult;
 
-public class SignupView extends AbstractView {
+public class SignupView extends Composite implements
+		View<SignupActivityPresenter>, LoginAwareView {
 	private static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
@@ -89,76 +85,45 @@ public class SignupView extends AbstractView {
 	@UiField
 	Button signupBtn;
 
-	@UiField(provided = true)
+	@UiField
 	LoginWidget loginWidget;
 
 	@UiField
 	FileUpload uploadField;
-	
+
 	@UiField
 	FormPanel uploadForm;
-	
+
 	@UiField
 	Button uploadBtn;
-	
+
 	@UiField
 	Image profileImagePreview;
-	
-	String profileImageUrl;
-	
-	@Inject
-	public SignupView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		super(dispatcher, eventBus);
-		System.out.println("Dispatcher = "+dispatcher+" eventBus="+eventBus);
-	}
 
-	@Override
-	protected void initWidget() {
+	String profileImageUrl;
+	SignupActivityPresenter presenter;
+
+	@Inject
+	public SignupView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
-		uploadBtn.setEnabled(false);
-		uploadForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				resetUploadForm();
-				String imageUrl = event.getResults();
-				profileImagePreview.setUrl(imageUrl);
-				profileImagePreview.setVisible(true);
-				SignupView.this.profileImageUrl = imageUrl;
-			}
-		});
 	}
 
-	@Override
-	protected void postInitWidget() {
-		// resetForm();
-		infoField.setVisible(false);
-		resetUploadForm();
-	}
-
-	private void resetUploadForm() {
+	public void reset() {
 		uploadForm.reset();
-		profileImagePreview.setVisible(false);
-		service.getUploadUrl(new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				System.out.println("result1:"+result);
-				result = result.replace("susnatas-MacBook-Pro.local:8888", "127.0.0.1:8888");
-				System.out.println("result2:"+result);
-				uploadForm.setAction(result);
-				uploadBtn.setEnabled(true);
-			}
-		});
+		uploadBtn.setEnabled(false);
+		infoField.setVisible(false);
 	}
-	
-	@Override
-	protected void setupUiElements() {
-		loginWidget = new LoginWidget(dispatcher, eventBus);
+
+	public void hideProfileImagePreview() {
+		profileImagePreview.setVisible(false);
+	}
+
+	public void displayProfileImagePreview(String imageUrl) {
+		profileImagePreview.setUrl(imageUrl);
+		profileImagePreview.setVisible(true);
+		this.profileImageUrl = imageUrl;
 	}
 
 	boolean validateZip() {
@@ -183,7 +148,6 @@ public class SignupView extends AbstractView {
 		}
 		return true;
 	}
-	
 
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
@@ -196,8 +160,9 @@ public class SignupView extends AbstractView {
 		}
 		return true;
 	}
-	
-	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {
+
+	boolean validatePassword(String password, ControlGroup cg,
+			HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validatePassword(password);
 		if (!result.isValid()) {
 			cg.setType(ControlGroupType.ERROR);
@@ -207,7 +172,7 @@ public class SignupView extends AbstractView {
 		}
 		return true;
 	}
-	
+
 	boolean validateInput() {
 		String firstnameInput = firstname.getText().trim();
 		boolean valid = true;
@@ -224,8 +189,9 @@ public class SignupView extends AbstractView {
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
 		String confirmPasswordInput = confirmPassword.getText().trim();
-		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg, confirmPasswordError);
-		
+		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg,
+				confirmPasswordError);
+
 		if (passwordInput != null && confirmPasswordInput != null) {
 			if (!confirmPasswordInput.equals(passwordInput)) {
 				passwordCg.setType(ControlGroupType.ERROR);
@@ -281,18 +247,12 @@ public class SignupView extends AbstractView {
 		account.setZip(Integer.parseInt(zipInput));
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
-		
+
 		if (profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
 		}
-		
-		dispatcher.execute(new RegisterAccountAction(account), new DispatcherCallbackAsync<RegisterAccountResult>() {
-			@Override
-			public void onSuccess(RegisterAccountResult result) {
-				System.out.println("Account "+result.getAccount()+" registered.");
-				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-			}
-		});
+
+		presenter.register(account);
 	}
 
 	public void displayAccount(AccountDTO account) {
@@ -300,14 +260,51 @@ public class SignupView extends AbstractView {
 		firstname.setText(account.getFirstName());
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
+		
 		zip.setText(Integer.toString(account.getZip()));
-		System.out.println("Img url="+account.getImageUrl());
-		profileImagePreview.setUrl(account.getImageUrl());
-		profileImagePreview.setVisible(true);
+		
+		System.out.println("Img url=" + account.getImageUrl());
+		
+		if (account.getImageUrl() != null) {
+			this.profileImageUrl = account.getImageUrl();
+			profileImagePreview.setUrl(account.getImageUrl());
+			profileImagePreview.setVisible(true);
+		}
 	}
-	
+
 	@UiHandler("uploadBtn")
 	void upload(ClickEvent event) {
 		uploadForm.submit();
+	}
+
+	@Override
+	public void displayLoginErrorMessage(String msg, AlertType type) {
+		loginWidget.setMessage(msg, type);
+	}
+
+	@Override
+	public void resetLoginForm() {
+		loginWidget.resetForm();
+	}
+
+	@Override
+	public void clear() {
+		resetForm();
+		loginWidget.clear();
+	}
+
+	@Override
+	public void setPresenter(SignupActivityPresenter presenter) {
+		this.presenter = (SignupActivityPresenter) presenter;
+		loginWidget.setPresenter(presenter);
+	}
+
+	public void setImageUploadUrl(String imageUrl) {
+		uploadForm.setAction(imageUrl);
+		uploadBtn.setEnabled(true);
+	}
+
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
 	}
 }

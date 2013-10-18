@@ -23,10 +23,10 @@
 			title="Account Details" backdrop="STATIC" keyboard="true" animation="true">
 			<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
 			<b:TabPanel ui:field="accountDetailsTab">
-				<b:Tab heading="About" active="true">
+				<b:Tab ui:field="basicInfoTab" heading="About" active="true">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget />
+							<dt:ShareSettingsWidget ui:field="basicInfoSetting"/>
 							<span>Basic Info</span>
 						</div>
 						<div class="{style.non_editable}">
@@ -41,12 +41,19 @@
 							<span class="{style.label}">Email</span>
 							<span ui:field="email" />
 						</div>
+						<b:ControlGroup ui:field="introductionCg">
+							<b:Controls>
+								<g:Label addStyleNames="{style.label}">Introduction</g:Label>
+								<b:TextBox ui:field="introduction" placeholder="introduce yourself..." />
+								<b:HelpInline ui:field="introductionError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
 					</g:HTMLPanel>
 				</b:Tab>
-				<b:Tab heading="Occupation">
+				<b:Tab ui:field="occupationTab" heading="Occupation">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget />
+							<dt:ShareSettingsWidget ui:field="occupationSetting"/>
 							<span>Occupation</span>
 						</div>
 						<b:ControlGroup ui:field="occupationCg">
@@ -58,20 +65,20 @@
 						</b:ControlGroup>
 					</g:HTMLPanel>
 				</b:Tab>
-				<b:Tab heading="Interests">
+				<b:Tab ui:field="interestTab" heading="Interests">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget />
+							<dt:ShareSettingsWidget ui:field="interestSetting"/>
 							<span>Interests</span>
 						</div>
-						<b:CheckBox>Outdoors</b:CheckBox>
-						<b:CheckBox>Indoors</b:CheckBox>
+						<g:HTMLPanel ui:field="interestTabPanel">
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</b:Tab>
-				<b:Tab heading="Location">
+				<b:Tab ui:field="locationTab" heading="Location">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget />
+							<dt:ShareSettingsWidget ui:field="locationSetting"/>
 							<span>Location</span>
 						</div>
 						<b:ControlGroup ui:field="zipCg">

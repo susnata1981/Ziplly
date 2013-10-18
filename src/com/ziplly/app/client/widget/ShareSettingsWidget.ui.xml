@@ -15,10 +15,10 @@
 		<b:ControlGroup>
 			<b:Controls>
 				<b:ListBox addStyleNames="{style.listbox}" ui:field="shareSettingsList">
-					<g:item>public</g:item>
+<!-- 					<g:item>public</g:item>
 					<g:item>community</g:item>
 					<g:item>private</g:item>
-				</b:ListBox>
+ -->				</b:ListBox>
 			</b:Controls>
 		</b:ControlGroup>
 	</g:HTMLPanel>

@@ -12,6 +12,9 @@ import org.jboss.logging.Logger.Level;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountSetting;
+import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.Interest;
 
 public class AccountDAOImpl implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class.getCanonicalName());
@@ -29,7 +32,7 @@ public class AccountDAOImpl implements AccountDAO {
 			logger.log(Level.ERROR, "Invalid arguements to findByEmail");
 			throw new IllegalArgumentException("Invalid arguement to findByEmail");
 		}
-		
+		System.out.println("Looking for account with email:"+email);
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
@@ -37,11 +40,12 @@ public class AccountDAOImpl implements AccountDAO {
 		try {
 			account = (Account) query.getSingleResult();
 		} catch(NoResultException ex) {
+			System.out.println("Didn't find account");
 			throw new NotFoundException();
 		} finally {
 			em.close();
 		}
-		
+		System.out.println("Found account with email:"+email);
 		return account;
 	}
 
@@ -73,7 +77,7 @@ public class AccountDAOImpl implements AccountDAO {
 			throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAccountById");
-		query.setParameter("account_id", accountId);
+		query.setParameter("accountId", accountId);
 		Account result = (Account) query.getSingleResult();
 		return result;
 	}
@@ -82,7 +86,24 @@ public class AccountDAOImpl implements AccountDAO {
 	public void save(Account account) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
+		
+		// account
 		em.persist(account);
+		
+		// account settings
+		for(AccountSetting as : account.getAccountSettings()) {
+			em.persist(as);
+		}
+		
+		// interests
+		// 1. delete all
+		// 2. add all
+//		for(Interest i : account.getInterests()) {
+//			Interest interest = getInterest(i.getActivity());
+//			interest.setAccount(account);
+//			em.persist(i);
+//		}
+			
 		em.getTransaction().commit();
 		em.close();
 	}
@@ -101,5 +122,13 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAllAccounts");
 		return query.getResultList();
+	}
+	
+	private Interest getInterest(Activity activity) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery("from Interest where activity = :activity");
+		query.setParameter("activity", activity);
+		
+		return (Interest) query.getSingleResult();
 	}
 }

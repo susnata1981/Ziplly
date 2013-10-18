@@ -17,11 +17,12 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.inject.Singleton;
 
+@Singleton
 public class UploadServlet extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(UploadServlet.class);
+	private static final Logger logger = Logger.getLogger(UploadServlet.class.getCanonicalName());
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	
 	@Override

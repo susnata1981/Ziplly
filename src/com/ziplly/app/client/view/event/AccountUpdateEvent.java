@@ -2,16 +2,15 @@ package com.ziplly.app.client.view.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
-import com.ziplly.app.model.AccountDetails;
+import com.ziplly.app.model.AccountDTO;
 
 public class AccountUpdateEvent extends
 		GwtEvent<AccountUpdateEventHandler> {
-	
-	private AccountDetails ad;
 	public static Type<AccountUpdateEventHandler> TYPE = new Type<AccountUpdateEventHandler>();
+	private AccountDTO account;
 
-	public AccountUpdateEvent(AccountDetails ad) {
-		this.ad = ad;
+	public AccountUpdateEvent(AccountDTO account) {
+		this.setAccount(account);
 	}
 	
 	@Override
@@ -24,7 +23,11 @@ public class AccountUpdateEvent extends
 		handler.onEvent(this);
 	}
 
-	public AccountDetails getAccountDetails() {
-		return ad;
+	public AccountDTO getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountDTO account) {
+		this.account = account;
 	}
 }

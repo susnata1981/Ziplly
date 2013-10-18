@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -34,7 +35,7 @@ import com.ziplly.app.shared.GetLoggedInUserResult;
 public class MainController implements ValueChangeHandler<String> {
 	private static final String BACKGROUND_IMG_URL = "url('neighborhood_large.jpg')";
 	private HasWidgets container;
-	private SimpleEventBus eventBus;
+	private EventBus eventBus;
 	@Inject
 	private MainView mainView;
 	@Inject
@@ -43,21 +44,22 @@ public class MainController implements ValueChangeHandler<String> {
 	private HomeView homeView;
 	@Inject
 	SignupView signupView;
-
+	
+	@Inject
 	private NavView navView;
 	private Logger logger = Logger.getLogger("MainController");
 	protected AccountDTO account;
 	CachingDispatcherAsync dispatcher;
 
 	@Inject
-	public MainController(SimpleEventBus eventBus,
+	public MainController(EventBus eventBus,
 			CachingDispatcherAsync dispatcher) {
 //		ZGinInjector injector = GWT.create(ZGinInjector.class);
 		this.container = RootPanel.get("main");
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 //		this.accountView = new AccountView(dispatcher, eventBus);
-		this.navView = new NavView(eventBus);
+//		this.navView = new NavView(eventBus);
 //		this.mainView = new MainView(dispatcher, eventBus);
 //		this.homeView = new HomeView(dispatcher, eventBus);
 //		this.signupView = injector.getSignupView();

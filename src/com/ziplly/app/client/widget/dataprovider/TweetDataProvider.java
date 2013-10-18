@@ -1,8 +1,5 @@
 package com.ziplly.app.client.widget.dataprovider;
 
-import java.util.List;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;

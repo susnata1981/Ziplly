@@ -76,20 +76,26 @@ public class SessionDAOImpl implements SessionDAO {
 				.getEntityManager();
 		Session existingSession = null;
 		try {
-			existingSession = findSessionByAccountId(session.getAccount()
-					.getAccountId());
+			existingSession = findSessionByAccountId(session.getAccount().getAccountId());
 		} catch (NotFoundException e) {
 		}
 
 		if (existingSession != null) {
 			logger.log(Level.SEVERE, "Duplicate session for user:"
 					+ session.getAccount().getAccountId());
-			// remove it
-			removeByAccountId(session.getAccount().getAccountId());
+			
+			// update it
+			em.getTransaction().begin();
+			existingSession.setTimeCreated(session.getTimeCreated());
+			existingSession.setExpireAt(session.getExpireAt());
+			existingSession.setUid(session.getUid());
+			em.merge(existingSession);
+			em.getTransaction().commit();
+			return;
+			// removeByAccountId(session.getAccount().getAccountId());
 		}
 
 		em.getTransaction().begin();
-		;
 		em.persist(session);
 		em.getTransaction().commit();
 		em.close();
@@ -100,15 +106,19 @@ public class SessionDAOImpl implements SessionDAO {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		Session session = null;
-		em.getTransaction().begin();
 		try {
-			session = findSessionByAccountId(accountId);
-		} catch (NotFoundException e) {
-			return;
+			em.getTransaction().begin();
+			Query query = em.createNamedQuery("fetchSessionByAccountId");
+			query.setParameter("account_id", accountId);
+			session = (Session) query.getSingleResult();
+			em.remove(session);
+		} catch (NoResultException nre) {
+			
 		}
-
-		em.remove(session);
-		em.getTransaction().commit();
+		finally {
+			em.getTransaction().commit();
+			em.close();
+		}
 	}
 
 	@Override
@@ -118,7 +128,7 @@ public class SessionDAOImpl implements SessionDAO {
 		}
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
-		
+
 		em.getTransaction().begin();
 		Query query = em.createNamedQuery("fetchSessionByUid");
 		query.setParameter("uid", uid);
@@ -126,10 +136,10 @@ public class SessionDAOImpl implements SessionDAO {
 		try {
 			session = (Session) query.getSingleResult();
 			em.remove(session);
-			em.getTransaction().commit();
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
 		} finally {
+			em.getTransaction().commit();
 			em.close();
 		}
 	}

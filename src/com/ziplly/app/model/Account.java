@@ -3,7 +3,9 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +14,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -31,7 +36,7 @@ import com.ziplly.app.shared.BCrypt;
 	),
 	@NamedQuery(
 		name = "findAccountById",
-		query = "from Account a where a.accountId = :id"
+		query = "from Account a where a.accountId = :accountId"
 	),
 	@NamedQuery(
 		name = "findAllAccounts",
@@ -46,7 +51,7 @@ public class Account implements Serializable {
 	@NotNull
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="account_id")
-	Long accountId;
+	private Long accountId;
 	@Column(name="facebook_id")
 	private String fId;
 	@Column(name="email")
@@ -67,10 +72,18 @@ public class Account implements Serializable {
 	private String city;
 	private String state;
 	private int zip;
+	private String occupation;
 	private String longitude;
 	private String latitude;
-	@OneToMany(mappedBy="account", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<AccountSettings> accountSettings = new ArrayList<AccountSettings>();
+	
+	@ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name="account_interest", 
+	joinColumns = {@JoinColumn(name = "account_id")},
+	inverseJoinColumns = {@JoinColumn(name = "interest_id", nullable = false)})
+	private Set<Interest> interests = new HashSet<Interest>();
+	
+	@OneToMany(mappedBy="account", fetch=FetchType.EAGER)
+	private List<AccountSetting> accountSettings = new ArrayList<AccountSetting>();
 	
 	@Column(name="last_login")
 	private Date lastLoginTime;
@@ -79,12 +92,13 @@ public class Account implements Serializable {
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
 	private List<Tweet> tweets = new ArrayList<Tweet>();
+	private Long uid;
 	
 	public Account() {
 	}
 	
 	public Account(AccountDTO account) {
-		accountId = account.getAccountId();
+		setAccountId(account.getAccountId());
 		fId = account.getfId();
 		firstName = account.getFirstName();
 		lastName = account.getLastName();
@@ -97,14 +111,19 @@ public class Account implements Serializable {
 		city = account.getCity();
 		state = account.getState();
 		zip = account.getZip();
+		occupation = account.getOccupation();
 		longitude = account.getLongitude();
 		latitude = account.getLatitude();
-		for(AccountSettingsDTO asd : account.getAccountSettings()) {
-			AccountSettings as = new AccountSettings(asd);
+		for(AccountSettingDTO asd : account.getAccountSettings()) {
+			AccountSetting as = new AccountSetting(asd);
 			accountSettings.add(as);
+		}
+		for(InterestDTO interest : account.getInterests()) {
+			interests.add(new Interest(interest));
 		}
 		lastLoginTime = account.getLastLoginTime();
 		timeCreated = account.getTimeCreated();
+		this.uid = account.getUid();
 	}
 	
 	public Long getAccountId() {
@@ -112,7 +131,7 @@ public class Account implements Serializable {
 	}
 
 	public void setId(Long id) {
-		this.accountId = id;
+		this.setAccountId(id);
 	}
 
 	public String getDisplayName() {
@@ -191,7 +210,7 @@ public class Account implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.getAccountId() == this.accountId;
+		return a.getAccountId() == this.getAccountId();
 	}
 
 	public String getIntroduction() {
@@ -280,11 +299,11 @@ public class Account implements Serializable {
 		this.tweets = tweets;
 	}
 
-	public List<AccountSettings> getAccountSettings() {
+	public List<AccountSetting> getAccountSettings() {
 		return accountSettings;
 	}
 
-	public void setAccountSettings(List<AccountSettings> accountSettings) {
+	public void setAccountSettings(List<AccountSetting> accountSettings) {
 		this.accountSettings = accountSettings;
 	}
 
@@ -298,5 +317,32 @@ public class Account implements Serializable {
 	
 	protected String encryptPassword(String password) {
 		return BCrypt.hashpw(password, BCrypt.gensalt());
+	}
+
+	public void setUid(Long uid) {
+		this.uid = uid;
+	}
+	public Long getUid() {
+		return uid;
+	}
+
+	public Set<Interest> getInterests() {
+		return interests;
+	}
+
+	public void setInterests(Set<Interest> interests) {
+		this.interests = interests;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
 	}
 }

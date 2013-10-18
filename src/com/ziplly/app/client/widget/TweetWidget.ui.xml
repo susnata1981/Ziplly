@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel ui:field="tweetPanel">
+		<div class='tweet'>
+			<div class='tweet_block'>
+				<div class='tweet_image'>
+					<g:Image ui:field="authorImage"/>
+				</div>
+				<div class='tweet_content'>
+					<div class='tweet_text' ui:field="tweetContent">
+					</div>
+					<div class='tweet_actions'>
+						<div>
+							<div class='tweet_action_link'>
+								<a>Like</a>
+							</div>
+							<div class='tweet_action_link'>
+								<a>Reply</a>
+							</div>
+							<div class='tweet_sender_link'>
+								posted by
+								<g:Anchor ui:field="authorProfileLink">
+									<span class="smalltext" ui:field="authorName"/>
+								</g:Anchor>
+									,on
+									<span ui:field="timeCreated" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

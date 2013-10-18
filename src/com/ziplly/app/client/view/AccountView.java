@@ -1,25 +1,21 @@
 package com.ziplly.app.client.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.gwtbootstrap.client.ui.TabPanel;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.activities.AccountActivityPresenter;
 import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
-import com.ziplly.app.client.widget.ConversationWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
-import com.ziplly.app.model.Category;
+import com.ziplly.app.model.AccountDTO;
 
-public class AccountView extends AbstractAccountView {
+public class AccountView extends Composite implements IAccountView, LoginAwareView {
 
 	private static AccountViewUiBinder uiBinder = GWT
 			.create(AccountViewUiBinder.class);
@@ -27,15 +23,13 @@ public class AccountView extends AbstractAccountView {
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
 
-	List<Category> selectedCategories = new ArrayList<Category>();
-
 	@UiField
 	HTMLPanel loginMessagePanel;
 
-	@UiField(provided = true)
+	@UiField
 	LoginWidget loginWidget;
 
-	@UiField(provided = true)
+	@UiField
 	LogoutWidget logoutWidget;
 
 	@UiField
@@ -54,69 +48,94 @@ public class AccountView extends AbstractAccountView {
 	AccountDetailsWidget accountDetailsWidget;
 
 	private AccountWidget accountWidget;
-	private ConversationWidget cw;
-	
-	@Inject
-	public AccountView(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		super(dispatcher, eventBus);
-	}
 
-	@Override
-	protected void initWidget() {
+	private AccountActivityPresenter presenter;
+
+	// private ConversationWidget cw;
+
+	public AccountView() {
+		this.accountWidget = new AccountWidget();
+		this.accountDetailsWidget = new AccountDetailsWidget(presenter);
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		loginWidget.setVisible(false);		
+		logoutWidget.setVisible(false);
+		accountViewTabs.setVisible(false);
+	}
+
+	public void displayLoginWidget() {
+		loginWidget.setVisible(true);
+		logoutWidget.setVisible(false);
+	}
+
+	public void displayLogoutWidget() {
+		logoutWidget.setVisible(true);
+		loginWidget.setVisible(false);
+	}
+	
+	@Override
+	public void setPresenter(AccountActivityPresenter presenter) {
+		this.presenter = presenter;
+		accountWidget.setPresenter(presenter);
+		loginWidget.setPresenter(presenter);
+		logoutWidget.setPresenter(presenter);
 	}
 
 	@Override
-	protected void postInitWidget() {
-		if (isUserLoggedIn()) {
-			displayLoginRequiredMessage(false);
-			logoutWidget.setVisible(true);
-		} else {
-			displayLoginRequiredMessage(true);
-			logoutWidget.setVisible(false);
-			accountViewTabs.setVisible(false);
+	public void display(AccountDTO account) {
+		if (account == null) {
+			throw new IllegalArgumentException();
 		}
-	}
-
-	@Override
-	protected void setupUiElements() {
-		this.accountWidget = new AccountWidget(dispatcher, eventBus, false);
-		this.loginWidget = new LoginWidget(dispatcher, eventBus);
-		this.logoutWidget = new LogoutWidget(dispatcher, eventBus);
-//		this.logoutWidget = WidgetFactory.getLogoutWidget(dispatcher, eventBus);
-		this.accountDetailsWidget = new AccountDetailsWidget(dispatcher, eventBus);
-	}
-
-	@Override
-	protected void internalOnUserLogin() {
-		System.out.println("Calling internalOnUserLogin inside AccountView");
-		displayLoginRequiredMessage(false);
-		loginMessagePanel.setVisible(false);
-		refresh();
-	}
-
-	void refresh() {
-		displayProfile();
-	}
-
-	void displayProfile() {
-		accountWidget.displayAccount(getAccount());
+		accountWidget.displayAccount(account);
 
 		profileSection.clear();
 		profileSection.add(accountWidget);
-
-		// update categories
-		selectedCategories.clear();
 
 		// mark as visible
 		accountViewTabs.setVisible(true);
 	}
 
-	void displayLoginRequiredMessage(boolean shouldDisplay) {
-		if (shouldDisplay) {
-			loginWidget.setVisible(shouldDisplay);
-		} else {
-			logoutWidget.setVisible(!shouldDisplay);
-		}
+	@Override
+	public void displayLoginErrorMessage(String msg, AlertType type) {
+		loginWidget.setMessage(msg, type);
+	}
+	
+	@Override
+	public void resetLoginForm() {
+		loginWidget.resetForm();
+	}
+	
+	@Override
+	public void onSave() {
+		// TODO Auto-generated method stub
+	}
+
+	public void clear() {
+		accountWidget.clear();
+		loginWidget.setVisible(false);		
+		logoutWidget.setVisible(false);
+		accountViewTabs.setVisible(false);
+	}
+
+	public void displayAccountUpdateSuccessfullMessage() {
+		accountWidget.getEditAccountDetailsWidget().displaySuccessMessage();
+	}
+	
+	public void displayAccountUpdateFailedMessage() {
+		accountWidget.getEditAccountDetailsWidget().displayErrorMessage();
+	}
+
+	public void displayPublicProfile(AccountDTO account) {
+		accountWidget.displayPublicProfile(account);
+
+		profileSection.clear();
+		profileSection.add(accountWidget);
+
+		// mark as visible
+		accountViewTabs.setVisible(true);
+	}
+
+	public void clearTweet() {
+		accountWidget.clearTweet();
 	}
 }

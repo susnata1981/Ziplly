@@ -1,7 +1,6 @@
 package com.ziplly.app.server.handlers;
 
 import java.util.Date;
-import java.util.UUID;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
@@ -13,10 +12,12 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.NeedsLoginException;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Session;
+import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.ZipllyServerConstants;
 
 public abstract class AbstractAccountActionHandler<T extends Action<R>,R extends Result> implements ActionHandler<T,R>{
@@ -25,42 +26,46 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>,R extends
 	protected AccountDAO accountDao;
 
 	@Inject
-	private Provider<HttpSession> httpSession;
+	protected Provider<HttpSession> httpSession;
+	protected AccountBLI accountBli;
+	protected Session session;
 
-	public AbstractAccountActionHandler(AccountDAO accountDao, SessionDAO sessionDao) {
+	public AbstractAccountActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
-	}
-	
-	/*
-	 * 1. Make an entry into Session table
-	 * 2. Create and drop cookie
-	 * 3. Return UID
-	 */
-	protected Long doLogin(Account account) {
-		// Do we need to check if session already exists. Probably not?
-		Session session = new Session();
-		session.setAccount(account);
-		Date currTime = new Date();
-		Date expireAt = new Date(currTime.getTime()+hoursInMillis);
-		session.setExpireAt(expireAt);
-		session.setTimeCreated(currTime);
-		Long uid = UUID.randomUUID().getMostSignificantBits();
-		session.setUid(uid);
-		sessionDao.save(session);
-		storeCookie(uid);
-		return uid;
+		this.accountBli = accountBli;
 	}
 
-	protected void storeCookie(Long uid) {
-		httpSession.get().setMaxInactiveInterval((int)hoursInMillis);
-		httpSession.get().setAttribute(ZipllyServerConstants.SESSION_ID, uid);
-	} 
+	protected boolean validateSession() throws NeedsLoginException {
+		Long existingUid = (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
+		if (existingUid != null) {
+			try {
+				this.session = sessionDao.findSessionByUid(existingUid);
+				if (isValidSession(session)) {
+					return true;
+				}
+			} catch (NumberFormatException e) {
+				throw e;
+			} catch (NotFoundException e) {
+			}
+		}
+		throw new NeedsLoginException();
+	}
+	
+	protected boolean isValidSession(Session session) {
+		if (session == null) {
+			return false;
+		}
+		return session.getExpireAt().after(new Date());
+	}
+	
+	protected Long getUidFromCookie() {
+		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
+	}
 	
 	@Override
 	public void rollback(T arg0,
 			R arg1, ExecutionContext arg2)
 			throws DispatchException {
-		
 	}
 }

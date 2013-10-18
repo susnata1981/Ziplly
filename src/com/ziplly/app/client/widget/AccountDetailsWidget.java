@@ -4,15 +4,14 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.view.AbstractAccountView;
+import com.ziplly.app.client.activities.Presenter;
 
-public class AccountDetailsWidget extends AbstractAccountView {
+public class AccountDetailsWidget extends Composite {
 	private static AccountDetailsWidgetUiBinder uiBinder = GWT
 			.create(AccountDetailsWidgetUiBinder.class);
 
@@ -40,27 +39,17 @@ public class AccountDetailsWidget extends AbstractAccountView {
 	
 	@UiField
 	HTMLPanel familyPanel;
-	
-	public AccountDetailsWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		super(dispatcher, eventBus);
-	}
-	
-	@Override
-	protected void internalOnUserLogin() {
-	}
 
-	@Override
-	protected void initWidget() {
+	Presenter presenter;
+	
+	public AccountDetailsWidget(Presenter presenter) {
+		this.presenter = presenter;
 		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@Override
-	protected void postInitWidget() {
 		hideAllPanel();
 		setVisible(aboutPanel);
 		setupEventHandlers();
 	}
-
+	
 	void setupEventHandlers() {
 		aboutLink.addClickHandler(new ClickHandler() {
 			@Override
@@ -97,13 +86,9 @@ public class AccountDetailsWidget extends AbstractAccountView {
 		familyLink.setDisabled(true);
 	}
 	
-	private void setVisible(HTMLPanel panel) {
+	void setVisible(HTMLPanel panel) {
 		hideAllPanel();
 		panel.setVisible(true);
-	}
-	
-	@Override
-	protected void setupUiElements() {
 	}
 
 }

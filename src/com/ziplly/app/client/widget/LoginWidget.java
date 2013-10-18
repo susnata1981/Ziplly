@@ -11,29 +11,22 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.InvalidCredentialsException;
-import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.client.activities.LoginWidgetPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
-import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.View;
 import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.ValidateLoginAction;
-import com.ziplly.app.shared.ValidateLoginResult;
 import com.ziplly.app.shared.ValidationResult;
 
-public class LoginWidget extends Composite {
+public class LoginWidget extends Composite implements View<LoginWidgetPresenter> {
 
 	private static LoginWidgetUiBinder uiBinder = GWT
 			.create(LoginWidgetUiBinder.class);
@@ -41,18 +34,13 @@ public class LoginWidget extends Composite {
 	interface LoginWidgetUiBinder extends UiBinder<Widget, LoginWidget> {
 	}
 
-	private static final String ACCOUNT_DOES_NOT_EXIST = "Account with this email doesn't exist";
-	private static final String INVALID_ACCOUNT_CREDENTIALS = "Invalid account credentials.";
+	public static final String ACCOUNT_DOES_NOT_EXIST = "Account with this email doesn't exist";
+	public static final String INVALID_ACCOUNT_CREDENTIALS = "Invalid account credentials.";
 	private OAuthConfig authConfig = OAuthFactory
 			.getAuthConfig(OAuthProvider.FACEBOOK.name());
-	private CachingDispatcherAsync dispatcher;
-	private SimpleEventBus eventBus;
 
 	@Inject
-	public LoginWidget(CachingDispatcherAsync dispatcher,
-			SimpleEventBus eventBus) {
-		this.dispatcher = dispatcher;
-		this.eventBus = eventBus;
+	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
 	}
@@ -79,6 +67,7 @@ public class LoginWidget extends Composite {
 
 	@UiField
 	Alert message;
+	LoginWidgetPresenter presenter;
 
 	@UiHandler("fbLoginBtn")
 	void fbLogin(ClickEvent event) {
@@ -114,17 +103,21 @@ public class LoginWidget extends Composite {
 		return valid;
 	}
 
-	void setMessage(String msg, AlertType type) {
+	public void setMessage(String msg, AlertType type) {
 		message.setType(type);
 		message.setText(msg);
 		message.setVisible(true);
 	}
 
-	void resetForm() {
+	public void resetForm() {
 		email.setText("");
 		password.setText("");
 	}
 
+	public void resetMessage() {
+		message.setVisible(false);
+	}
+	
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
 		if (!validateInput()) {
@@ -133,33 +126,17 @@ public class LoginWidget extends Composite {
 
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
 		String passwordInput = FieldVerifier.getEscapedText(password.getText());
-		dispatcher.execute(new ValidateLoginAction(emailInput, passwordInput),
-				new DispatcherCallbackAsync<ValidateLoginResult>() {
-					@Override
-					public void onSuccess(ValidateLoginResult result) {
-						if (result != null) {
-							eventBus.fireEvent(new LoginEvent(result
-									.getAccount()));
-							History.newItem("main");
-						} else {
-							LoginWidget.this.setMessage(
-									INVALID_ACCOUNT_CREDENTIALS,
-									AlertType.ERROR);
-						}
-						resetForm();
-					}
+		presenter.onLogin(emailInput, passwordInput);
+	}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught instanceof NotFoundException) {
-							LoginWidget.this.setMessage(ACCOUNT_DOES_NOT_EXIST,
-									AlertType.ERROR);
-						} else if (caught instanceof InvalidCredentialsException) {
-							LoginWidget.this.setMessage(
-									INVALID_ACCOUNT_CREDENTIALS,
-									AlertType.ERROR);
-						}
-					}
-				});
+	@Override
+	public void setPresenter(LoginWidgetPresenter presenter) {
+		this.presenter = (LoginWidgetPresenter)presenter;
+	}
+
+	@Override
+	public void clear() {
+		resetForm();
+		resetMessage();
 	}
 }

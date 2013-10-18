@@ -16,7 +16,6 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,6 +24,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.web.bindery.event.shared.EventBus;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AbstractAccountView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.event.UserInfoFormClosedEvent;
@@ -33,9 +34,14 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountDetails;
 import com.ziplly.app.model.Category;
-import com.ziplly.app.model.InterestList;
+import com.ziplly.app.model.Activity;
 
 public class AccountInfoFormWidget extends AbstractAccountView {
+
+	public AccountInfoFormWidget(CachingDispatcherAsync dispatcher,
+			EventBus eventBus) {
+		super(dispatcher, eventBus);
+	}
 
 	private static final int MIN_WORD_COUNT = 5;
 	private static final int MIN_CHARACTER_COUNT = 10;
@@ -52,7 +58,7 @@ public class AccountInfoFormWidget extends AbstractAccountView {
 	}
 
 	Map<String, CheckBox> categoryList = new HashMap<String, CheckBox>();;
-	private InterestList interestList;
+	private Activity interestList;
 
 	@UiField
 	Modal categoryListModal;
@@ -89,10 +95,6 @@ public class AccountInfoFormWidget extends AbstractAccountView {
 
 	ListDataProvider<Category> interestDataProvider;
 	protected AccountDTO account;
-
-	public AccountInfoFormWidget(SimpleEventBus eventBus) {
-		super(eventBus);
-	}
 
 	@Override
 	protected void initWidget() {
