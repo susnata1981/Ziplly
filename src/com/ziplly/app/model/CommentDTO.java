@@ -3,31 +3,24 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="comment")
 public class CommentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private int comment_id;
-	
-	@ManyToOne
-	@JoinColumn(name="tweet_id")
-	private Tweet tweet;
-	
+	private int commentId;
+	private TweetDTO tweet;
 	private AccountDTO author;
 	private String content;
 	private Date timeCreated;
 	
+	public CommentDTO() {
+	}
+	
+	public CommentDTO(Comment comment) {
+		this.commentId = comment.getCommentId();
+		this.author = AccountHandlerUtil.getAccountDTO(comment.getAuthor()); 
+		this.content = comment.getContent();
+		this.timeCreated = comment.getTimeCreated();
+	}
+
 	public String getContent() {
 		return content;
 	}
@@ -45,5 +38,17 @@ public class CommentDTO implements Serializable {
 	}
 	public void setAuthor(AccountDTO author) {
 		this.author = author;
+	}
+	public int getCommentId() {
+		return commentId;
+	}
+	public void setCommentId(int commentId) {
+		this.commentId = commentId;
+	}
+	public TweetDTO getTweet() {
+		return tweet;
+	}
+	public void setTweet(TweetDTO tweet) {
+		this.tweet = tweet;
 	}
 }

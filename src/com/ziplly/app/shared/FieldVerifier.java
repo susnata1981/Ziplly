@@ -41,6 +41,8 @@ public class FieldVerifier {
 	
 	private static final RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
 	private static final RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
+	private static final int MAX_TWEET_LENGTH = 256;
+	private static final String TWEET_TOO_LONG_ERROR = "Tweet can't be more than 256 characters.";
 
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
@@ -51,6 +53,19 @@ public class FieldVerifier {
 		MatchResult matcher = emailPattern.exec(email);
 		if (matcher == null) {
 			result.addError(INVALID_EMAIL);
+		}
+		return result;
+	}
+	
+	public static ValidationResult validateTweet(String tweet) {
+		ValidationResult result = new ValidationResult();
+		if (tweet == null || tweet.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+		
+		tweet = SafeHtmlUtils.htmlEscape(tweet);
+		if (tweet.length() > MAX_TWEET_LENGTH) {
+			result.addError(TWEET_TOO_LONG_ERROR);
 		}
 		return result;
 	}

@@ -22,6 +22,7 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.HomeView;
+import com.ziplly.app.client.view.IHomeView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.SignupView;
@@ -42,7 +43,7 @@ public class ZClientModule extends AbstractGinModule {
 		
 		// views
 		bind(AccountView.class).in(Singleton.class);
-		bind(HomeView.class).in(Singleton.class);
+		bind(IHomeView.class).to(HomeView.class).in(Singleton.class);
 		bind(SignupView.class).in(Singleton.class);
 		bind(MainView.class).in(Singleton.class);
 		bind(NavView.class).in(Singleton.class);

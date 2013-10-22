@@ -1,29 +1,21 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		#communityWallPanel {
 		float: left;
 		width: 700px;
 		}
 	</ui:style>
-	<g:HTMLPanel ui:field="tweetFilterPanel">
+	<g:HTMLPanel>
 		<aside>
-			<dl>
-				<dt>Filter tweets</dt>
-				<dd>
-					<g:Anchor>Announcements</g:Anchor>
-				</dd>
-				<dd>
-					<g:Anchor>Deals</g:Anchor>
-				</dd>
-				<dd>
-					<g:Anchor>Classfied</g:Anchor>
-				</dd>
-			</dl>
+			<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
 		</aside>
 		<div id="cwallId">
 			<!-- <dt:CommunityWallWidget ui:field="cww"/> -->
+			<b:Alert ui:field="message"/>
 			<g:HTMLPanel ui:field="communityWallPanel" />
 		</div>
 	</g:HTMLPanel>

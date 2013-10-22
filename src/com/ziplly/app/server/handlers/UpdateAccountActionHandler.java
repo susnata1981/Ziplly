@@ -8,6 +8,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccount;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
@@ -29,15 +31,21 @@ public class UpdateAccountActionHandler extends AbstractAccountActionHandler<Upd
 		if (action == null || action.getAccount() == null) {
 			throw new IllegalArgumentException();
 		}
-		Account account = new Account(action.getAccount());
-		accountBli.updateAccount(account);
-		AccountDTO result = new AccountDTO(account);
-		return new UpdateAccountResult(result);
+		
+		validateSession();
+		AccountDTO accountDto = action.getAccount();
+		if (accountDto instanceof PersonalAccountDTO) {
+			PersonalAccount account = new PersonalAccount((PersonalAccountDTO)accountDto);
+			accountBli.updateAccount(account);
+			AccountDTO result = new AccountDTO(account);
+			return new UpdateAccountResult(result);
+		}
+		
+		return new UpdateAccountResult();
 	}
 
 	@Override
 	public Class<UpdateAccountAction> getActionType() {
 		return UpdateAccountAction.class;
 	}
-
 }

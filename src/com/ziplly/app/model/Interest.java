@@ -12,8 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -39,7 +37,7 @@ public class Interest implements Serializable {
 	private String name;
 	
 	@ManyToMany(mappedBy = "interests", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-	private Set<Account> accounts = new HashSet<Account>();
+	private Set<PersonalAccount> accounts = new HashSet<PersonalAccount>();
 	private Date timeCreated;	
 
 	public Interest() {

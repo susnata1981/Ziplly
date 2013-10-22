@@ -20,7 +20,7 @@ public class AccountDetailsCellUiBinder extends AbstractCell<AccountDetails> {
 	@Override
 	public void onBrowserEvent(Context ctx, Element parent,
 			AccountDetails ad, NativeEvent event, ValueUpdater<AccountDetails> updater) {
-		History.newItem("account/" + ad.account.getId());
+//		History.newItem("account/" + ad.account.getAccountId()());
 	}
 	
 	@Override
@@ -29,10 +29,10 @@ public class AccountDetailsCellUiBinder extends AbstractCell<AccountDetails> {
 		if (ad != null && ad.account != null) {
 			Account a = ad.account;
 			resp.append("<div class='account_profile_med'>");
-			resp.append("<div class='profile_image_med'><img src='" + a.getImageUrl(180,130)+"'/></div>");
+			resp.append("<div class='profile_image_med'><img src='" + a.getImageUrl()+"'/></div>");
 			resp.append("<div class='profile_info_med'>");
-			resp.append("<div><span class='heading'>Name:</span> " + a.getDisplayName() + "</div>");
-			resp.append("<div><span class='heading'>Location:</span> " + a.getCity() + "</div>");
+//			resp.append("<div><span class='heading'>Name:</span> " + a.getDisplayName() + "</div>");
+//			resp.append("<div><span class='heading'>Location:</span> " + a.getCity() + "</div>");
 			resp.append("<div><span class='heading'>Interests</span><ul>");
 			int i = 0;
 			for(Category c: ad.categories) {

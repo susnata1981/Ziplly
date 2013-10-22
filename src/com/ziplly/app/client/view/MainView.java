@@ -1,7 +1,6 @@
 package com.ziplly.app.client.view;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
@@ -22,7 +21,6 @@ import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.MyBundle;
-import com.ziplly.app.model.TweetDTO;
 
 public class MainView extends Composite implements View<Presenter> {
 	private static MainViewUiBinder uiBinder = GWT

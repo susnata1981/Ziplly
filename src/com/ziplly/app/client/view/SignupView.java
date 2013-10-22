@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.widget.LoginWidget;
-import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -239,7 +239,7 @@ public class SignupView extends Composite implements
 		String lastnameInput = lastname.getText().trim();
 		String emailInput = email.getText().trim();
 		String zipInput = zip.getText().trim();
-		AccountDTO account = new AccountDTO();
+		PersonalAccountDTO account = new PersonalAccountDTO();
 		account.setFirstName(firstnameInput);
 		account.setLastName(lastnameInput);
 		account.setEmail(emailInput);
@@ -255,15 +255,13 @@ public class SignupView extends Composite implements
 		presenter.register(account);
 	}
 
-	public void displayAccount(AccountDTO account) {
+	public void displayAccount(PersonalAccountDTO account) {
 		resetForm();
 		firstname.setText(account.getFirstName());
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
 		
 		zip.setText(Integer.toString(account.getZip()));
-		
-		System.out.println("Img url=" + account.getImageUrl());
 		
 		if (account.getImageUrl() != null) {
 			this.profileImageUrl = account.getImageUrl();

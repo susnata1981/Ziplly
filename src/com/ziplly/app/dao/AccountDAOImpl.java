@@ -12,7 +12,6 @@ import org.jboss.logging.Logger.Level;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountSetting;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.Interest;
 
@@ -91,9 +90,10 @@ public class AccountDAOImpl implements AccountDAO {
 		em.persist(account);
 		
 		// account settings
-		for(AccountSetting as : account.getAccountSettings()) {
-			em.persist(as);
-		}
+		// TODO
+//		for(AccountSetting as : account.getAccountSettings()) {
+//			em.persist(as);
+//		}
 		
 		// interests
 		// 1. delete all

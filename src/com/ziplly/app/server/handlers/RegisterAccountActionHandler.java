@@ -9,41 +9,48 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccount;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.handlers.common.AccountHandlerUtil;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 
-public class RegisterAccountActionHandler extends AbstractAccountActionHandler<RegisterAccountAction, RegisterAccountResult> {
+public class RegisterAccountActionHandler
+		extends
+		AbstractAccountActionHandler<RegisterAccountAction, RegisterAccountResult> {
 
 	@Inject
 	public RegisterAccountActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao,
-			AccountBLI accountBli) {
+			SessionDAO sessionDao, AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public RegisterAccountResult execute(RegisterAccountAction action,
 			ExecutionContext ec) throws DispatchException {
-		
-		if (action == null || action.getAccount()==null) {
-			throw new IllegalArgumentException("Invalid argument to RegisterAccountResult");
+
+		if (action == null || action.getAccount() == null) {
+			throw new IllegalArgumentException(
+					"Invalid argument to RegisterAccountResult");
+		}
+		RegisterAccountResult result = new RegisterAccountResult();
+		AccountDTO accountDto = action.getAccount();
+		if (accountDto instanceof PersonalAccountDTO) {
+			 Account account = new PersonalAccount((PersonalAccountDTO) accountDto);
+			try {
+				Account newAccount = accountBli.register(account);
+				accountDto = new AccountDTO(newAccount);
+				result.setAccount(accountDto);
+				result.setUid(accountDto.getUid());
+				return result;
+			} catch (AccountExistsException e) {
+				throw e;
+			}
 		}
 		
-		Account account = new Account(action.getAccount());
-		try {
-			Account newAccount = accountBli.register(account);
-			AccountDTO accountDto = new AccountDTO(newAccount);
-			RegisterAccountResult result = new RegisterAccountResult(accountDto);
-			result.setUid(accountDto.getUid());
-			return result;
-		} catch( AccountExistsException e) {
-			throw e;
-		}
+		return result; 
 	}
 
-	
 	@Override
 	public Class<RegisterAccountAction> getActionType() {
 		return RegisterAccountAction.class;

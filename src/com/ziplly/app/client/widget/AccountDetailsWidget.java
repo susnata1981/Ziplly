@@ -42,8 +42,7 @@ public class AccountDetailsWidget extends Composite {
 
 	Presenter presenter;
 	
-	public AccountDetailsWidget(Presenter presenter) {
-		this.presenter = presenter;
+	public AccountDetailsWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		hideAllPanel();
 		setVisible(aboutPanel);

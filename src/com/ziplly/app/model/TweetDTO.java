@@ -4,17 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class TweetDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private long tweetId;
+	private Long tweetId;
 	private AccountDTO sender;
 	private long imageId;
 	private TweetType type;
 	private String content;
-	private Set<TagDTO> tags;
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
+	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
 	private int status;
 	private Date timeCreated;
 	
@@ -22,13 +21,21 @@ public class TweetDTO implements Serializable {
 	}
 	
 	public TweetDTO(Tweet tweet) {
-		tweetId = tweet.getTweetId();
-		sender = new AccountDTO(tweet.getSender());
+		this.tweetId = tweet.getTweetId();
 		imageId = tweet.getImageId();
 		type = tweet.getType();
 		content = tweet.getContent();
 		status = tweet.getStatus();
 		timeCreated = tweet.getTimeCreated();
+		this.sender = AccountHandlerUtil.getAccountDTO(tweet.getSender());
+		
+		for(Comment c: tweet.getComments()) {
+			comments.add(new CommentDTO(c));
+		}
+		
+		for(Love l : tweet.getLikes()) {
+			likes.add(new LoveDTO(l));
+		}
 	}
 	
 	public TweetType getType() {
@@ -67,10 +74,10 @@ public class TweetDTO implements Serializable {
 	public void setImageId(long imageId) {
 		this.imageId = imageId;
 	}
-	public long getTweetId() {
+	public Long getTweetId() {
 		return tweetId;
 	}
-	public void setTweetId(long tweetId) {
+	public void setTweetId(Long tweetId) {
 		this.tweetId = tweetId;
 	}
 
@@ -80,5 +87,13 @@ public class TweetDTO implements Serializable {
 
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
+	}
+
+	public void setLikes(List<LoveDTO> likes) {
+		this.likes = likes;
+	}
+	
+	public List<LoveDTO> getLikes() {
+		return likes;
 	}
 }

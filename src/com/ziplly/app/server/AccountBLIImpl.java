@@ -35,7 +35,8 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSetting;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.Interest;
-import com.ziplly.app.model.LatLong;
+import com.ziplly.app.model.PersonalAccount;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Session;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
@@ -43,28 +44,30 @@ import com.ziplly.app.shared.BCrypt;
 
 public class AccountBLIImpl implements AccountBLI {
 	private static final String UPLOAD_SERVICE_ENDPOINT = "/upload";
-	protected final long hoursInMillis = 2*60*60*1000;
+	protected final long hoursInMillis = 2 * 60 * 60 * 1000;
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
 	private BlobstoreService blobstoreService;
 
 	@Inject
 	protected Provider<HttpSession> httpSession;
-	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig = OAuthFactory
+			.getAuthConfig(OAuthProvider.FACEBOOK.name());
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 	private InterestDAO interestDao;
-	
+
 	@Inject
-	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, InterestDAO interestDao) {
+	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao,
+			InterestDAO interestDao) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.interestDao = interestDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		createInterestEntries();
 	}
-	
+
 	private void createInterestEntries() {
-		for(Activity a : Activity.values()) {
+		for (Activity a : Activity.values()) {
 			Interest i = new Interest();
 			i.setName(a.name().toLowerCase());
 			i.setTimeCreated(new Date());
@@ -76,14 +79,14 @@ public class AccountBLIImpl implements AccountBLI {
 	@Override
 	public Account getLoggedInUser() throws NotFoundException {
 		Long uid = getUidFromCookie();
-		
+
 		if (uid == null) {
 			return null;
 		}
-		
+
 		Session session = null;
 		session = sessionDao.findSessionByUid(uid);
-		System.out.println("Found session : "+session.getId());
+		System.out.println("Found session : " + session.getId());
 		if (isValidSession(session)) {
 			Account account = session.getAccount();
 			account.setUid(uid);
@@ -92,39 +95,42 @@ public class AccountBLIImpl implements AccountBLI {
 		System.out.println("Invalid session....");
 		return null;
 	}
-	
+
 	@Override
-	public Account getAccountById(Long accountId) throws NotFoundException  {
+	public Account getAccountById(Long accountId) throws NotFoundException {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
-		
 		Account account = accountDao.findById(accountId);
 		return account;
 	}
-	
+
 	@Override
 	public Account register(Account account) throws AccountExistsException {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// check for existing account
 		Account existingAccount = null;
 		try {
 			existingAccount = accountDao.findByEmail(account.getEmail());
-		} catch(NotFoundException nfe) {
+		} catch (NotFoundException nfe) {
 		}
-		
+
 		if (existingAccount != null) {
-			throw new AccountExistsException("Account already exists with this email: "+existingAccount.getEmail());
+			throw new AccountExistsException(
+					"Account already exists with this email: "
+							+ existingAccount.getEmail());
 		}
-		
-		createDefaultAccountSettings(account);
-		
+
+		if (account instanceof PersonalAccount) {
+			createDefaultAccountSettings((PersonalAccount) account);
+		}
+
 		// create account otherwise
 		accountDao.save(account);
-		
+
 		// login user
 		Long uid = doLogin(account);
 
@@ -132,8 +138,8 @@ public class AccountBLIImpl implements AccountBLI {
 		return account;
 	}
 
-	private void createDefaultAccountSettings(Account account) {
-		for(AccountDetailsType adt : AccountDetailsType.values()) {
+	private void createDefaultAccountSettings(PersonalAccount account) {
+		for (AccountDetailsType adt : AccountDetailsType.values()) {
 			AccountSetting as = new AccountSetting();
 			as.setSection(adt);
 			as.setSetting(ShareSetting.PUBLIC);
@@ -143,7 +149,8 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public Account validateLogin(String email, String password) throws InvalidCredentialsException, NotFoundException {
+	public Account validateLogin(String email, String password)
+			throws InvalidCredentialsException, NotFoundException {
 		Account account = null;
 		try {
 			account = accountDao.findByEmail(email);
@@ -155,7 +162,7 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (NotFoundException e) {
 			throw e;
 		}
-		
+
 		// login user
 		Long uid = doLogin(account);
 		account.setUid(uid);
@@ -165,26 +172,27 @@ public class AccountBLIImpl implements AccountBLI {
 	@Override
 	public Long doLogin(Account account) {
 		// Do we need to check if session already exists. Probably not?
-//		Long existingUid = (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
-//		if (existingUid != null) {
-//			try {
-//				Session session = sessionDao.findSessionByUid(existingUid);
-//				if (isValidSession(session)) {
-//					return existingUid;
-//				} else {
-//					// TODO
-//					// throw new NeedsLoginException();
-//				}
-//			} catch (NumberFormatException e) {
-//				throw e;
-//			} catch (NotFoundException e) {
-//			}
-//		}
-		
+		// Long existingUid = (Long)
+		// httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
+		// if (existingUid != null) {
+		// try {
+		// Session session = sessionDao.findSessionByUid(existingUid);
+		// if (isValidSession(session)) {
+		// return existingUid;
+		// } else {
+		// // TODO
+		// // throw new NeedsLoginException();
+		// }
+		// } catch (NumberFormatException e) {
+		// throw e;
+		// } catch (NotFoundException e) {
+		// }
+		// }
+
 		Session session = new Session();
 		session.setAccount(account);
 		Date currTime = new Date();
-		Date expireAt = new Date(currTime.getTime()+hoursInMillis);
+		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
 		session.setExpireAt(expireAt);
 		session.setTimeCreated(currTime);
 		Long uid = UUID.randomUUID().getMostSignificantBits();
@@ -199,31 +207,34 @@ public class AccountBLIImpl implements AccountBLI {
 		if (uid == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		Long uidInCookie = getUidFromCookie();
 		Long uidInRequest = uid;
 		if (uidInCookie == null || !uidInCookie.equals(uidInRequest)) {
 			throw new IllegalAccessError();
 		}
-		
+
 		Session session = sessionDao.findSessionByUid(uidInRequest);
 		if (session == null) {
-			logger.log(Level.WARNING, String.format("Session %l exists in cookie but not in session table", uidInCookie));
+			logger.log(Level.WARNING, String.format(
+					"Session %l exists in cookie but not in session table",
+					uidInCookie));
 		}
-		
+
 		sessionDao.removeByUid(session.getUid());
 		clearCookie();
 	}
-	
+
 	@Override
 	public AccountDTO getFacebookDetails(String code) throws OAuthException {
-		
+
 		Account loggedInAccount = getLoggedInUserBasedOnCookie();
 		if (loggedInAccount != null) {
 			return new AccountDTO(loggedInAccount);
 		}
-		
-		OAuthFlowManager authFlowManager = AuthFlowManagerFactory.get(authConfig);
+
+		OAuthFlowManager authFlowManager = AuthFlowManagerFactory
+				.get(authConfig);
 		AccessToken token;
 		try {
 			token = authFlowManager.exchange(code);
@@ -233,7 +244,6 @@ public class AccountBLIImpl implements AccountBLI {
 		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token
 				.getAccess_token());
 		User fuser = fUserDao.getUser();
-		LatLong locInfo = fUserDao.getLocationInfo(fuser);
 
 		if (fuser == null) {
 			return null;
@@ -245,75 +255,79 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (NotFoundException nfe) {
 			System.out.println("didn't find account.");
 			// create user
-			AccountDTO account = new AccountDTO();
+			PersonalAccountDTO account = new PersonalAccountDTO();
 			account.setEmail(fuser.getEmail());
 			account.setFirstName(fuser.getFirstName());
 			account.setLastName(fuser.getLastName());
 			account.setAccessToken(token.getAccess_token());
-			account.setfId(fuser.getId());
-			account.setLocation(fuser.getLocation().getName());
+			account.setFacebookId(fuser.getId());
 			account.setUrl(fuser.getLink());
-			account.setLongitude(locInfo.longitude);
-			account.setLatitude(locInfo.latitude);
 			account.setIntroduction(fuser.getBio());
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
-					+ "/picture"; //?width=200&height=160
+					+ "/picture"; // ?width=200&height=160
 			account.setImageUrl(imgUrl);
-			System.out.println("Returning "+account);
 			return account;
 		} catch (Exception e) {
-			System.out.println("Exception caught while getting facebook user details:"+ e);
+			System.out
+					.println("Exception caught while getting facebook user details:"
+							+ e);
 		}
-		
+
 		// login user
 		Long uid = doLogin(response);
 		AccountDTO result = new AccountDTO(response);
 		result.setUid(uid);
-		System.out.println("Returning existing account:"+response);
+		System.out.println("Returning existing account:" + response);
 		return result;
 	}
-	
-	// TODO check uid in request
+
 	@Override
 	public Account updateAccount(Account account) throws NeedsLoginException {
 		if (!isValidSession()) {
 			throw new NeedsLoginException();
 		}
-		
-		List<Interest> selectedInterests = Lists.newArrayList();
-		for(Interest i : account.getInterests()) {
-			Interest entry = interestDao.findInterestByName(i.getName());
-			if (entry != null) {
-				selectedInterests.add(entry);
+
+		if (account instanceof PersonalAccount) {
+			PersonalAccount paccount = (PersonalAccount) account;
+
+			List<Interest> selectedInterests = Lists.newArrayList();
+			for (Interest i : paccount.getInterests()) {
+				Interest entry = interestDao.findInterestByName(i.getName());
+				if (entry != null) {
+					selectedInterests.add(entry);
+				}
 			}
+			paccount.getInterests().clear();
+			paccount.getInterests().addAll(selectedInterests);
+			accountDao.update(paccount);
+			return paccount;
 		}
-		account.getInterests().clear();
-		account.getInterests().addAll(selectedInterests);
-		accountDao.update(account);
-		return account;
-	} 
-	
+		
+		throw new IllegalArgumentException();
+	}
+
 	@Override
 	public String getImageUploadUrl() {
 		return blobstoreService.createUploadUrl(UPLOAD_SERVICE_ENDPOINT);
 	}
-	
+
 	private Account getLoggedInUserBasedOnCookie() {
 		// Do we need to check if session already exists. Probably not?
-		Long existingUid = (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
+		Long existingUid = (Long) httpSession.get().getAttribute(
+				ZipllyServerConstants.SESSION_ID);
 		if (existingUid != null) {
 			Session session;
 			try {
 				session = sessionDao.findSessionByUid(existingUid);
 				if (isValidSession(session)) {
 					return session.getAccount();
-				} 
+				}
 			} catch (NotFoundException e) {
 			}
 		}
 		return null;
 	}
-	
+
 	private boolean isValidSession() {
 		Long uid = getUidFromCookie();
 		try {
@@ -332,7 +346,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	protected void storeCookie(Long uid) {
-		httpSession.get().setMaxInactiveInterval((int)hoursInMillis);
+		httpSession.get().setMaxInactiveInterval((int) hoursInMillis);
 		httpSession.get().setAttribute(ZipllyServerConstants.SESSION_ID, uid);
 	}
 
@@ -341,6 +355,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	Long getUidFromCookie() {
-		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
+		return (Long) httpSession.get().getAttribute(
+				ZipllyServerConstants.SESSION_ID);
 	}
 }

@@ -12,6 +12,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
@@ -31,7 +32,15 @@ public class GetCommunityWallDataActionHandler extends AbstractTweetActionHandle
 		validateSession();
 		
 		int zip = session.getAccount().getZip();
-		List<Tweet> tweets = tweetDao.findTweetsByZip(new Integer(zip));
+		TweetType type = action.getType();
+		List<Tweet> tweets = null;
+		
+		if (type != null && !type.equals(TweetType.ALL)) {
+			tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
+		} else {
+			tweets = tweetDao.findTweetsByZip(new Integer(zip));
+		}
+		
 		List<TweetDTO> tweetDtos = Lists.newArrayList();
 		for(Tweet t : tweets) {
 			TweetDTO tdto = new TweetDTO(t);

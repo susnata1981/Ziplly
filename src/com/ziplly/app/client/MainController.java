@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.History;
@@ -27,6 +26,7 @@ import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
 import com.ziplly.app.shared.GetFacebookDetailsResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -44,7 +44,7 @@ public class MainController implements ValueChangeHandler<String> {
 	private HomeView homeView;
 	@Inject
 	SignupView signupView;
-	
+
 	@Inject
 	private NavView navView;
 	private Logger logger = Logger.getLogger("MainController");
@@ -52,17 +52,16 @@ public class MainController implements ValueChangeHandler<String> {
 	CachingDispatcherAsync dispatcher;
 
 	@Inject
-	public MainController(EventBus eventBus,
-			CachingDispatcherAsync dispatcher) {
-//		ZGinInjector injector = GWT.create(ZGinInjector.class);
+	public MainController(EventBus eventBus, CachingDispatcherAsync dispatcher) {
+		// ZGinInjector injector = GWT.create(ZGinInjector.class);
 		this.container = RootPanel.get("main");
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
-//		this.accountView = new AccountView(dispatcher, eventBus);
-//		this.navView = new NavView(eventBus);
-//		this.mainView = new MainView(dispatcher, eventBus);
-//		this.homeView = new HomeView(dispatcher, eventBus);
-//		this.signupView = injector.getSignupView();
+		// this.accountView = new AccountView(dispatcher, eventBus);
+		// this.navView = new NavView(eventBus);
+		// this.mainView = new MainView(dispatcher, eventBus);
+		// this.homeView = new HomeView(dispatcher, eventBus);
+		// this.signupView = injector.getSignupView();
 		RootPanel.get("nav").add(navView);
 		init();
 	}
@@ -88,7 +87,7 @@ public class MainController implements ValueChangeHandler<String> {
 			}
 		});
 	}
-	
+
 	private void doLogout() {
 		this.account = null;
 	}
@@ -101,7 +100,8 @@ public class MainController implements ValueChangeHandler<String> {
 						public void onSuccess(GetLoggedInUserResult result) {
 							if (result != null && result.getAccount() != null) {
 								// user logged in
-								MainController.this.account = result.getAccount();
+								MainController.this.account = result
+										.getAccount();
 							}
 						}
 					});
@@ -114,7 +114,8 @@ public class MainController implements ValueChangeHandler<String> {
 			try {
 				handleAuth(code);
 			} catch (Exception e) {
-				logger.log(Level.SEVERE, "Error logging in user:" + e.getMessage());
+				logger.log(Level.SEVERE,
+						"Error logging in user:" + e.getMessage());
 			}
 		}
 	}
@@ -130,13 +131,23 @@ public class MainController implements ValueChangeHandler<String> {
 								// logged in user
 								eventBus.fireEvent(new LoginEvent(account));
 							} else {
-								setBackgroundImage();
-								signupView.displayAccount(account);
-								display(container, signupView);
+								// setBackgroundImage();
+								// signupView.displayAccount(account);
+								// display(container, signupView);
+								populateAndRedirectToSignup(account);
 							}
 						}
 					}
 				});
+	}
+
+	void populateAndRedirectToSignup(AccountDTO account) {
+		// This should always be true
+		if (account instanceof PersonalAccountDTO) {
+			setBackgroundImage();
+			signupView.displayAccount((PersonalAccountDTO)account);
+			display(container, signupView);
+		}
 	}
 
 	/*
@@ -161,7 +172,7 @@ public class MainController implements ValueChangeHandler<String> {
 			if (token.equals("main")) {
 				if (account != null) {
 					// user logged in
-					System.out.println("User:"+account+" logged in");
+					System.out.println("User:" + account + " logged in");
 					display(container, homeView);
 				} else {
 					setBackgroundImage();

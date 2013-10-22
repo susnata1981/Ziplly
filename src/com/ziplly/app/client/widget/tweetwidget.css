@@ -1,0 +1,141 @@
+@CHARSET "UTF-8";
+
+#cwallId {
+	float: left;
+	width: 800px;
+	margin-left: 30px;
+	border: 1px solid #ddd;
+}
+
+.smalltext {
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+.tweet {
+	width: 740px;
+	overflow: auto;
+	padding: 4px;
+	margin: 20px 4px 40px 14px;
+	font
+}
+
+.tweet_block {
+	overflow: auto;
+	background: #f1f8f6;
+}
+
+.tweet_image {
+	float: left;
+	width: 50px;
+	height: 35px;
+	margin: 8px 0px 0px 6px;
+}
+
+.tweet_image img {
+	width: 60px;
+	height: 40px;
+}
+
+.tweet_content {
+	float: left;
+	width: 600px;
+	margin: 0px 10px 0px 10px;
+}
+
+.tweetContentTextArea {
+	width: 560px;
+	height: 40px;
+	float: left;
+	margin: 0px 5px 5px 10px;	
+}
+
+div .tweet_actions {
+	clear: both;
+	margin: 0px 5px 5px 10px;
+}
+
+div.tweet_text {
+	font-family: Helvetica;
+	font-size: 14px;
+	padding: 6px;
+	line-height: 26px;
+}
+
+.tweetActionDropdown {
+	float: right;
+	list-style: none;
+}
+
+div.comment_text {
+	font-family: Helvetica;
+	font-size: 12px;
+	padding: 6px;
+	line-height: 26px;
+}
+
+.tweet_action_link {
+	float: left;
+	width: 50px;
+	margin: 8px 4px 4px 4px;
+	font-size: 13px;
+	font-family: sans-serif;
+}
+
+.tweet_sender_link {
+	float: right;
+	margin: 8px 4px 4px 4px;
+	font-size: 13px;
+	font-family: sans-serif;
+}
+
+.people_liked_section {
+	clear: both;
+	height: 24px;
+	padding: 3px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+
+/*************** Comment Section ***************/
+.tweetCommentSection {
+	clear: both;
+	width: 600px;
+	margin: 20px 5px 5px 20px;
+}
+
+.comments {
+	margin: 18px 0px 0px 60px;
+	width: 100%;
+	overflow: auto;
+}
+
+.profileImageForComment {
+	width: 30px !important;
+	height: 25px !important;
+	margin: 0px;	
+}
+
+.tweet_comment {
+	clear: both;
+	margin: 8px 0px 4px 2px;
+	border-bottom: 1px solid #ddd;
+}
+
+.comment_input {
+	margin: 8px 0px 2px 10px;
+	width: 500px;
+	height: 34px;
+	padding: 6px;
+}
+
+.commentInputTextBox {
+	margin: 8px 0px 2px 30px;
+	width: 500px;
+	height: 20px;
+	padding: 4px;
+}
+.commentInputActionSection {
+	clear: both;
+	margin: 8px 0px 2px 30px;
+}

@@ -7,71 +7,38 @@ import java.util.List;
 
 public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	private Long accountId;
-	private String fId;
+	private String facebookId;
+	private String accessToken;
 	private String email;
 	private String password;
-	private String firstName;
-	private String lastName;
 	private String url;
-	private String accessToken;
 	private String imageUrl;
-	private String introduction;
-	private String city;
-	private String state;
-	private String occupation;
 	private int zip;
-	private String longitude;
-	private String latitude;
-	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
-	private List<InterestDTO> interests = new ArrayList<InterestDTO>();
 	private Date lastLoginTime;
 	private Date timeCreated;
-	
-	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
+	private List<Tweet> tweets = new ArrayList<Tweet>();
 	private Long uid;
 	
 	public AccountDTO() {
 	}
 	
 	public AccountDTO(Account account) {
-		accountId = account.getAccountId();
-		fId = account.getfId();
-		firstName = account.getFirstName();
-		lastName = account.getLastName();
+		this.setAccountId(account.getAccountId());
+		setFacebookId(account.getFacebookId());
 		email = account.getEmail();
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
-		introduction = account.getIntroduction();
-		city = account.getCity();
-		state = account.getState();
-		occupation = account.getOccupation();
-		zip = account.getZip();
-		longitude = account.getLongitude();
-		latitude = account.getLatitude();
-		for(AccountSetting as : account.getAccountSettings()) {
-			AccountSettingDTO asd = new AccountSettingDTO(as);
-			accountSettings.add(asd);
-		}
-		for(Interest interest : account.getInterests()) {
-			interests.add(new InterestDTO(interest));
-		}
-		lastLoginTime = account.getLastLoginTime();
-		timeCreated = account.getTimeCreated();
-		uid = account.getUid();
+		setZip(account.getZip());
+		setLastLoginTime(account.getLastLoginTime());
+		setTimeCreated(account.getTimeCreated());
+		this.setUid(account.getUid());
 	}
 	
 	public Long getAccountId() {
 		return accountId;
-	}
-
-	public void setAccountId(Long id) {
-		this.accountId = id;
-	}
-
-	public String getDisplayName() {
-		return getFirstName() +" "+ getLastName();
 	}
 
 	public String getUrl() {
@@ -84,7 +51,7 @@ public class AccountDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return getDisplayName() + " : (" + email + ")";
+		return "(" + email + ")";
 	}
 
 	public String getEmail() {
@@ -93,22 +60,6 @@ public class AccountDTO implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
 	}
 
 	public String getAccessToken() {
@@ -127,14 +78,6 @@ public class AccountDTO implements Serializable {
 		this.imageUrl = imageUrl;
 	}
 
-	public String getfId() {
-		return fId;
-	}
-
-	public void setfId(String fId) {
-		this.fId = fId;
-	}
-	
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
@@ -146,23 +89,39 @@ public class AccountDTO implements Serializable {
 		}
 		
 		Account a = (Account)o;
-		return a.getAccountId() == this.accountId;
+		return a.getAccountId() == this.getAccountId();
 	}
 
-	public String getIntroduction() {
-		return introduction;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setIntroduction(String introduction) {
-		this.introduction = introduction;
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public Long getUid() {
+		return uid;
+	}
+
+	public void setUid(Long uid) {
+		this.uid = uid;
+	}
+
+	public int getZip() {
+		return zip;
+	}
+
+	public void setZip(int zip) {
+		this.zip = zip;
 	}
 
 	public Date getLastLoginTime() {
 		return lastLoginTime;
 	}
 
-	public void setLastLoginTime(Date date) {
-		this.lastLoginTime = date;
+	public void setLastLoginTime(Date lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
 	}
 
 	public Date getTimeCreated() {
@@ -173,104 +132,28 @@ public class AccountDTO implements Serializable {
 		this.timeCreated = timeCreated;
 	}
 
-	public void setLocation(String location) {
-		String [] locationMetadata = location.split(",");
-		this.city = locationMetadata[0].trim().toLowerCase();
-		this.state = locationMetadata[1].trim().toLowerCase();
+	public String getFacebookId() {
+		return facebookId;
 	}
 
-	public String getCity() {
-		return city;
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude.toString();
-	}
-	
-	public String getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude.toString();
-	}
-	
-	public int getZip() {
-		return zip;
-	}
-
-	public void setZip(int zip) {
-		this.zip = zip;
-	}
-
-	public List<TweetDTO> getTweets() {
+	public List<Tweet> getTweets() {
 		return tweets;
 	}
 
-	public void setTweets(List<TweetDTO> tweets) {
+	public void setTweets(List<Tweet> tweets) {
 		this.tweets = tweets;
 	}
 
-	public List<AccountSettingDTO> getAccountSettings() {
-		return accountSettings;
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+	// to be overridden
+	public String getDisplayName() {
+		return "<NAME>";
 	}
 
-	public void setAccountSettings(List<AccountSettingDTO> accountSettings) {
-		this.accountSettings = accountSettings;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setUid(Long uid) {
-		this.uid = uid;
-	}
-	public Long getUid() {
-		return uid;
-	}
-
-	public List<InterestDTO> getInterests() {
-		return interests;
-	}
-
-	public void setInterests(List<InterestDTO> interests) {
-		this.interests = interests;
-	}
-
-	public String getOccupation() {
-		return occupation;
-	}
-
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
-	}
 }

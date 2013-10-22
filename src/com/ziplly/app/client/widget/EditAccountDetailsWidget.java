@@ -27,10 +27,10 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountActivityPresenter;
 import com.ziplly.app.client.view.View;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSettingDTO;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.InterestDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 
 /*
  * The tabs in this view are ordered as per the AccountDetailsType enum
@@ -112,7 +112,7 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
 	
 	AccountActivityPresenter presenter;
-	private AccountDTO account;
+	private PersonalAccountDTO account;
 	
 	public EditAccountDetailsWidget() {
 
@@ -137,12 +137,15 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 		}
 	}
 
-	void populateFields(AccountDTO account) {
+	void populateFields(PersonalAccountDTO account) {
 		// basic info
 		firstname.setInnerText(account.getFirstName());		
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
 
+		// occupation
+		occupation.setText(account.getOccupation());
+		
 		// interests
 		for(InterestDTO interest : account.getInterests()) {
 			Activity activity = Activity.valueOf(interest.getName().toUpperCase());
@@ -164,6 +167,7 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 		hide();
 	}
 	
+	// TODO apply SafeHtmlUtils
 	@UiHandler("saveBtn")
 	void save(ClickEvent event) {
 		if (!validate()) {
@@ -180,6 +184,9 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 			account.setZip(Integer.parseInt(zip.getText()));
 		}
 		
+		if (!occupation.getText().equals("")) {
+			account.setOccupation(occupation.getText());
+		}
 		// interests
 		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
 		for(Entry<Activity, CheckBox> entry : interestToCheckboxMap.entrySet()) {
@@ -245,7 +252,7 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 		this.presenter = presenter;
 	}
 
-	public void displayAccount(AccountDTO account) {
+	public void displayAccount(PersonalAccountDTO account) {
 		this.account = account;
 		populateFields(account);
 	}

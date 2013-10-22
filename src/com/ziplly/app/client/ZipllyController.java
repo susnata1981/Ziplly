@@ -11,14 +11,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.places.AccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.view.NavView;
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.shared.GetFacebookDetailsAction;
-import com.ziplly.app.shared.GetFacebookDetailsResult;
 
 public class ZipllyController {
 	EventBus eventBus;

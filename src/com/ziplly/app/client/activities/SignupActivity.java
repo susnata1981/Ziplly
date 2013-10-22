@@ -13,6 +13,7 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.RegisterAccountAction;
@@ -39,7 +40,10 @@ public class SignupActivity extends AbstractLoginAwareActivity<SignupView>
 		setUploadImageHandler();
 		
 		if (place.getAccount() != null) {
-			view.displayAccount(place.getAccount());
+			AccountDTO a = place.getAccount();
+			if (a instanceof PersonalAccountDTO ) {
+				view.displayAccount((PersonalAccountDTO)a);
+			}
 		}
 		panel.setWidget(view);
 	}

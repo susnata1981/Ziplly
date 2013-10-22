@@ -2,5 +2,8 @@ package com.ziplly.app.model;
 
 public enum TweetType {
 	GENERAL,
-	PROMOTION
+	ANNOUNCEMENT,
+	HELP,
+	CLASSIFIEDS,
+	ALL
 }

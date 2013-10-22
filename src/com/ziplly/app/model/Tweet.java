@@ -1,9 +1,8 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -23,10 +22,16 @@ import javax.persistence.Table;
 @NamedQueries({
 	@NamedQuery(
 		name = "findTweetsByZip",
-		query = "from Tweet t where t.sender.zip = :zip"),
+		query = "from Tweet t where t.sender.zip = :zip order by timeCreated desc"),
+	@NamedQuery(
+		name = "findTweetsById",
+		query = "from Tweet t where t.tweetId = :tweetId order by timeCreated desc"),
 	@NamedQuery(
 		name = "findTweetsByAccountId",
-		query = "from Tweet t where t.sender.accountId = :accountId")
+		query = "from Tweet t where t.sender.accountId = :accountId order by timeCreated desc"),
+	@NamedQuery(
+			name = "findTweetsByTypeAndZip",
+			query = "from Tweet t where t.sender.zip = :zip and t.type = :type order by timeCreated desc"),
 })
 @Entity
 @Table(name="tweet")
@@ -36,8 +41,7 @@ public class Tweet implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="tweet_id")
 	private long tweetId;
-	@ManyToOne(fetch = FetchType.LAZY)
-	
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="sender_id")
 	private Account sender;
 
@@ -49,8 +53,11 @@ public class Tweet implements Serializable {
 	@ManyToMany(mappedBy="tweets")
 	private Set<TagDTO> tags;
 	
-	@OneToMany(mappedBy="tweet")
-	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
+	@OneToMany(mappedBy="tweet", fetch = FetchType.EAGER)
+	private Set<Comment> comments = new HashSet<Comment>();
+	
+	@OneToMany(mappedBy="tweet", fetch = FetchType.EAGER)
+	private Set<Love> likes = new HashSet<Love>();
 	
 	private int status;
 	private Date timeCreated;
@@ -59,8 +66,9 @@ public class Tweet implements Serializable {
 	}
 	
 	public Tweet(TweetDTO tweet) {
-		tweetId = tweet.getTweetId();
-		sender = new Account(tweet.getSender());
+		if (tweet.getTweetId() != null) {
+			tweetId = tweet.getTweetId();
+		}
 		imageId = tweet.getImageId();
 		type = tweet.getType();
 		content = tweet.getContent();
@@ -92,10 +100,10 @@ public class Tweet implements Serializable {
 	public void setTime_created(Date time_created) {
 		this.setTimeCreated(time_created);
 	}
-	public List<CommentDTO> getComments() {
+	public Set<Comment> getComments() {
 		return comments;
 	}
-	public void setComments(List<CommentDTO> comments) {
+	public void setComments(Set<Comment> comments) {
 		this.comments = comments;
 	}
 	public Account getSender() {
@@ -125,5 +133,13 @@ public class Tweet implements Serializable {
 
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
+	}
+
+	public Set<Love> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(Set<Love> likes) {
+		this.likes = likes;
 	}
 }

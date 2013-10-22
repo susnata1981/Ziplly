@@ -1,18 +1,22 @@
 package com.ziplly.app.client.widget;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -24,9 +28,13 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountActivityPresenter;
 import com.ziplly.app.client.view.View;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSettingDTO;
 import com.ziplly.app.model.InterestDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.ValidationResult;
 
 public class AccountWidget extends Composite implements
 		View<AccountActivityPresenter> {
@@ -87,6 +95,13 @@ public class AccountWidget extends Composite implements
 	Button tweetBtn;
 
 	@UiField
+	HTMLPanel tweetCategoryPanel;
+	@UiField
+	ControlGroup tweetCategoryCg;
+	@UiField
+	ListBox tweetCategoryList;
+
+	@UiField
 	HTMLPanel accountWidgetRoot;
 
 	@UiField
@@ -100,11 +115,11 @@ public class AccountWidget extends Composite implements
 
 	@UiField
 	Form tweetForm;
-	
+
 	private EditAccountDetailsWidget eadw;
 	boolean displayEdit;
 	AccountActivityPresenter presenter;
-	private AccountDTO account;
+	private PersonalAccountDTO account;
 	Map<AccountDetailsType, Anchor> editLinksMap = new HashMap<AccountDetailsType, Anchor>();
 
 	@UiFactory
@@ -122,20 +137,25 @@ public class AccountWidget extends Composite implements
 		editLinksMap.put(AccountDetailsType.OCCUPATION, editOccupationLink);
 		editLinksMap.put(AccountDetailsType.INTEREST, editInterestLink);
 		tweetForm.setVisible(false);
+
+		tweetCategoryPanel.setVisible(false);
+		for (TweetType tc : TweetType.values()) {
+			tweetCategoryList.addItem(tc.name().toLowerCase());
+		}
 	}
 
 	/*
 	 * Displays personal account for logged in user
 	 */
-	public void displayAccount(AccountDTO account) {
+	public void displayAccount(PersonalAccountDTO account) {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
 
 		this.account = account;
-		for (AccountSettingDTO asd : account.getAccountSettings()) {
-			populateSection(asd.getSection(), account);
-			editLinksMap.get(asd.getSection()).setVisible(true);
+		for (AccountDetailsType adt : AccountDetailsType.values()) {
+			populateSection(adt, account);
+			editLinksMap.get(adt).setVisible(true);
 		}
 		tweetForm.setVisible(true);
 	}
@@ -143,11 +163,19 @@ public class AccountWidget extends Composite implements
 	/*
 	 * Displays public profile of an user
 	 */
-	public void displayPublicProfile(AccountDTO account) {
+	public void displayPublicProfile(PersonalAccountDTO account) {
 		if (account == null) {
 			return;
 		}
 		this.account = account;
+
+		if (account.getAccountSettings().size() == 0) {
+			for (AccountDetailsType adt : AccountDetailsType.values()) {
+				populateSection(adt, account);
+				editLinksMap.get(adt).setVisible(false);
+			}
+		}
+
 		for (AccountSettingDTO asd : account.getAccountSettings()) {
 			if (asd.getSection().equals(AccountDetailsType.BASICINFO)
 					|| !asd.getSetting().equals(ShareSetting.PRIVATE)) {
@@ -159,7 +187,7 @@ public class AccountWidget extends Composite implements
 	}
 
 	protected void populateSection(AccountDetailsType section,
-			AccountDTO account) {
+			PersonalAccountDTO account) {
 		switch (section) {
 		case BASICINFO:
 			populateBasicInfo(account);
@@ -215,16 +243,14 @@ public class AccountWidget extends Composite implements
 		lastLogin.setInnerText("");
 	}
 
-	protected void populateLocation(AccountDTO account) {
-		cityLabel.setInnerText(capitalize(account.getCity()));
-		stateLabel.setInnerText(capitalize(account.getState()));
+	protected void populateLocation(PersonalAccountDTO account) {
 	}
 
-	protected void populateOccupation(AccountDTO account) {
+	protected void populateOccupation(PersonalAccountDTO account) {
 		occupation.setInnerText(account.getOccupation());
 	}
 
-	protected void populateBasicInfo(AccountDTO account) {
+	protected void populateBasicInfo(PersonalAccountDTO account) {
 		name.setInnerText(account.getDisplayName());
 		introduction.setInnerText(account.getIntroduction());
 		if (account.getImageUrl() != null) {
@@ -235,7 +261,7 @@ public class AccountWidget extends Composite implements
 		lastLogin.setInnerText(date);
 	}
 
-	protected void populateInterests(AccountDTO account) {
+	protected void populateInterests(PersonalAccountDTO account) {
 		interestListPanel.clear();
 		for (InterestDTO interest : account.getInterests()) {
 			interestListPanel.add(new Label(interest.getName()));
@@ -259,16 +285,41 @@ public class AccountWidget extends Composite implements
 
 	@UiHandler("sendMsgBtn")
 	void sendMessage(ClickEvent event) {
-
 	}
 
+	boolean validateTweet() {
+		String tweet = tweetTextBox.getText();
+		ValidationResult result = FieldVerifier.validateTweet(tweet);
+		if (!result.isValid()) {
+			tweetCategoryCg.setType(ControlGroupType.ERROR);
+			tweetHelpInline.setText(result.getErrors().get(0).getErrorMessage());
+			return false;
+		}
+		return true;
+	}
+	
 	@UiHandler("tweetBtn")
 	void tweet(ClickEvent event) {
-		// validate()
-		if (tweetTextBox.getText() != null) {
-			String content = tweetTextBox.getText().trim();
-			presenter.tweet(content);
+		if (!validateTweet()) {
+			return;
 		}
+		
+		if (tweetTextBox.getText() != null) {
+			TweetDTO tweet = new TweetDTO();
+			String content = tweetTextBox.getText().trim();
+			tweet.setContent(content);
+			TweetType tweetType = TweetType.values()[tweetCategoryList
+					.getSelectedIndex()];
+			tweet.setType(tweetType);
+			tweet.setTimeCreated(new Date());
+			presenter.tweet(tweet);
+			tweetCategoryPanel.setVisible(false);
+		}
+	}
+
+	@UiHandler("tweetTextBox")
+	public void tweetTextBoxOnFocus(FocusEvent event) {
+		tweetCategoryPanel.setVisible(true);
 	}
 
 	@UiHandler("viewPublicProfileLink")
@@ -286,17 +337,10 @@ public class AccountWidget extends Composite implements
 	}
 
 	public void clear() {
-	}
-
-	String capitalize(String str) {
-		if (str == null || str.length() == 0) {
-			return "";
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(Character.toUpperCase(str.charAt(0)))
-				.append(str.substring(1));
-		return sb.toString();
+		tweetCategoryCg.setType(ControlGroupType.NONE);
+		tweetHelpInline.setText("");
+		tweetTextBox.setText("");
+		tweetCategoryPanel.setVisible(false);
 	}
 
 	@Override

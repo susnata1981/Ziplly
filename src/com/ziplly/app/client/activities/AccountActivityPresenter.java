@@ -1,10 +1,13 @@
 package com.ziplly.app.client.activities;
 
-import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.TweetDTO;
 
 public interface AccountActivityPresenter extends Presenter, LoginWidgetPresenter {
-	void logout();
-	void save(AccountDTO account);
+	void save(PersonalAccountDTO account);
+	void displayProfile(PersonalAccountDTO account);
+	void displayPublicProfile(PersonalAccountDTO account);
 	void displayPublicProfile(Long accountId);
-	void tweet(String content);
+	void tweet(TweetDTO tweet);
+	void logout();
 }

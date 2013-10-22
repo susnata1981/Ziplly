@@ -8,7 +8,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountHandlerUtil;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
@@ -32,8 +32,7 @@ public class GetLoggedInUserActionHandler extends
 				return new GetLoggedInUserResult(null);
 			}
 			
-			AccountDTO accountDto = new AccountDTO(account);
-			return new GetLoggedInUserResult(accountDto);
+			return new GetLoggedInUserResult(AccountHandlerUtil.getAccountDTO(account));
 		} catch (NotFoundException nfe) {
 			return new GetLoggedInUserResult(null);
 		}

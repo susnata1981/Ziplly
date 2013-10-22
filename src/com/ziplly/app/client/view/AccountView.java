@@ -13,9 +13,9 @@ import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
-import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 
-public class AccountView extends Composite implements IAccountView, LoginAwareView {
+public class AccountView extends Composite implements IAccountView<PersonalAccountDTO>, LoginAwareView {
 
 	private static AccountViewUiBinder uiBinder = GWT
 			.create(AccountViewUiBinder.class);
@@ -55,7 +55,7 @@ public class AccountView extends Composite implements IAccountView, LoginAwareVi
 
 	public AccountView() {
 		this.accountWidget = new AccountWidget();
-		this.accountDetailsWidget = new AccountDetailsWidget(presenter);
+		this.accountDetailsWidget = new AccountDetailsWidget();
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		loginWidget.setVisible(false);		
@@ -63,11 +63,13 @@ public class AccountView extends Composite implements IAccountView, LoginAwareVi
 		accountViewTabs.setVisible(false);
 	}
 
+	@Override
 	public void displayLoginWidget() {
 		loginWidget.setVisible(true);
 		logoutWidget.setVisible(false);
 	}
 
+	@Override
 	public void displayLogoutWidget() {
 		logoutWidget.setVisible(true);
 		loginWidget.setVisible(false);
@@ -82,11 +84,22 @@ public class AccountView extends Composite implements IAccountView, LoginAwareVi
 	}
 
 	@Override
-	public void display(AccountDTO account) {
+	public void displayProfile(PersonalAccountDTO account) {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
+		
 		accountWidget.displayAccount(account);
+		profileSection.clear();
+		profileSection.add(accountWidget);
+
+		// mark as visible
+		accountViewTabs.setVisible(true);
+	}
+
+	@Override
+	public void displayPublicProfile(PersonalAccountDTO account) {
+		accountWidget.displayPublicProfile(account);
 
 		profileSection.clear();
 		profileSection.add(accountWidget);
@@ -123,16 +136,6 @@ public class AccountView extends Composite implements IAccountView, LoginAwareVi
 	
 	public void displayAccountUpdateFailedMessage() {
 		accountWidget.getEditAccountDetailsWidget().displayErrorMessage();
-	}
-
-	public void displayPublicProfile(AccountDTO account) {
-		accountWidget.displayPublicProfile(account);
-
-		profileSection.clear();
-		profileSection.add(accountWidget);
-
-		// mark as visible
-		accountViewTabs.setVisible(true);
 	}
 
 	public void clearTweet() {

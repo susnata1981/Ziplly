@@ -25,12 +25,15 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 	@Override
 	public TweetResult execute(TweetAction action, ExecutionContext arg1)
 			throws DispatchException {
-		if (action == null) {
+		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();
 		}
 		validateSession();
+		
 		Tweet tweet = new Tweet(action.getTweet());
+		tweet.setSender(session.getAccount());
 		tweetDao.save(tweet);
+		
 		TweetResult result = new TweetResult();
 		return result;
 	}

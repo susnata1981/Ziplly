@@ -6,12 +6,14 @@
 	version="1.0">
 	<persistence-unit name="zipllydb">
 		<class>com.ziplly.app.model.Account</class>
+		<class>com.ziplly.app.model.PersonalAccount</class>
+		<class>com.ziplly.app.model.BusinessAccount</class>
 		<class>com.ziplly.app.model.AccountSetting</class>
 		<class>com.ziplly.app.model.Interest</class>
 		<class>com.ziplly.app.model.Tweet</class>
-		<class>com.ziplly.app.model.TagDTO</class>
-		<class>com.ziplly.app.dao.LikeDTO</class>
-		<class>com.ziplly.app.model.CommentDTO</class>
+		<class>com.ziplly.app.model.Comment</class>
+		<class>com.ziplly.app.model.Love</class>
+		
 		<properties>
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
 			<property name="javax.persistence.jdbc.url"
