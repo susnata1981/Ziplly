@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="account.css" />
+
+	<g:HTMLPanel>
+		<b:Modal ui:field="accountWidgetModal" backdrop="STATIC"
+			keyboard="true" animation="true">
+			<g:HTMLPanel ui:field="accountWidgetRoot" addStyleNames="{style.rootPanel}">
+				<div class="{style.profile_section}">
+					<div class="{style.profile_image}">
+						<div>
+							<b:Image ui:field="profileImageUrl" />
+						</div>
+					</div>
+					<div class="{style.profile_info_block}">
+						<div class="{style.profile_info_section}">
+							<div class="{style.name}">
+								<span ui:field="name" />
+							</div>
+						</div>
+					</div> <!-- profile_info_block end -->
+				</div> <!-- profile_section end -->
+			</g:HTMLPanel>
+			<b:ModalFooter>
+        		<b:Button type="PRIMARY" ui:field="viewProfileBtn">Goto Profile</b:Button>
+        		<b:Button ui:field="cancelBtn">Cancel</b:Button>
+    		</b:ModalFooter>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

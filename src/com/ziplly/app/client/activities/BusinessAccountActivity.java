@@ -54,4 +54,9 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	public void displayProfile() {
 		view.displayProfile((BusinessAccountDTO)ctx.getAccount());
 	}
+
+	@Override
+	public void displayPublicProfile() {
+		
+	}
 }

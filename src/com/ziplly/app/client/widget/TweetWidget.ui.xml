@@ -18,7 +18,9 @@
         					<b:NavLink ui:field="reportSpamLink">Report Spam</b:NavLink>
   						</b:Dropdown>
   					</div>
+  					
 					<div class='{style.tweet_text}'>
+					    <span class="mediumtext" ui:field="tweetContentSpan"/>
 					    <b:TextArea ui:field="tweetContentTextArea" addStyleNames="{style.tweetContentTextArea}"/>
 					    <b:Button size="SMALL" ui:field="cancelBtn">cancel</b:Button>
 					    <b:Button type="PRIMARY" size="SMALL" ui:field="saveBtn">save</b:Button>

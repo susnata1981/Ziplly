@@ -13,6 +13,7 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -66,7 +67,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	Anchor authorProfileLink;
 	@UiField
 	Element authorName;
-
+	@UiField
+	Element tweetContentSpan;
+	
 	@UiField
 	TextArea tweetContentTextArea;
 	@UiField
@@ -132,7 +135,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 			public void onClick(ClickEvent event) {
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
+				tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
+				tweetContentTextArea.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 				saveBtn.setVisible(false);
+				cancelBtn.setVisible(false);
 			}
 		});
 		
@@ -142,6 +148,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 				hideTweetUpdateButtons();
 			}
 		});
+		
 		commentInputTextBox.setPlaceholder("Comment...");
 		commentInputTextBox.addFocusHandler(new FocusHandler() {
 			@Override
@@ -173,14 +180,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	void hideTweetUpdateButtons() {
+		tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
+		tweetContentTextArea.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 		tweetContentTextArea.setReadOnly(true);
 		saveBtn.setVisible(false);
 		cancelBtn.setVisible(false);
 	}
 	
 	void showTweetUpdateButtons() {
-		tweetContentTextArea.setReadOnly(false);
+		tweetContentSpan.getStyle().setVisibility(Visibility.HIDDEN);
 		tweetContentTextArea.setText(tweet.getContent());
+		tweetContentTextArea.setReadOnly(false);
+		tweetContentTextArea.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 		saveBtn.setVisible(true);
 		cancelBtn.setVisible(true);
 	}
@@ -323,7 +334,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	<T extends AccountDTO> void displayAccountModal(T acct) {
 		@SuppressWarnings("unchecked")
 		IAccountWidgetModal<T> accountWidgetModal = 
-				(IAccountWidgetModal<T>) WidgetFactory.getAccountWidgetModal(acct,presenter);
+				(IAccountWidgetModal<T>) WidgetFactory.getAccountWidgetModal(acct, presenter);
 		accountWidgetModal.show(acct);
 	}
 
@@ -394,7 +405,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	private void displayTweetSection() {
-		tweetContentTextArea.setText(tweet.getContent());
+		tweetContentSpan.setInnerHTML(tweet.getContent());
+		tweetContentTextArea.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 		tweet.getTimeCreated();
 		
 		String time = getFormattedTime(tweet.getTimeCreated());

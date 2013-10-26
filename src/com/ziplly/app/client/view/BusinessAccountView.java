@@ -138,7 +138,9 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
+		imageUploadForm.setVisible(false);
 		tweetFormPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		editAccountLink.setVisible(false);
 	}
 
 	@Override

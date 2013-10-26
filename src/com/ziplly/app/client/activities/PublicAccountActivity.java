@@ -59,6 +59,7 @@ public class PublicAccountActivity extends AbstractActivity {
 					panel.setWidget(pview);
 				} else if (account instanceof BusinessAccountDTO) {
 					bview.displayPublicProfile((BusinessAccountDTO)account);
+					panel.setWidget(bview);
 				}
 			}
 		});
