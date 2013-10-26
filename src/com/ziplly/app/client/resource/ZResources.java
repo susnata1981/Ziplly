@@ -12,10 +12,12 @@ public interface ZResources extends ClientBundle {
 		String mainPageBackground();
 	}
 	
+	@Source("No_person.jpg")
+	ImageResource noImage();
+	
 	@Source("neighborhood_large.jpg")
 	ImageResource neighborhoodLargePic();
 	
 	@Source("zstyle.css")
 	Styles style();
-	
 }

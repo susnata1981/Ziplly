@@ -9,10 +9,6 @@ public interface Presenter {
 	 */
 	void fetchData();
 	/*
-	 * Attaches the ui
-	 */
-	void updateUi();
-	/*
 	 * Display the view on the container
 	 */
 	void go(AcceptsOneWidget container);

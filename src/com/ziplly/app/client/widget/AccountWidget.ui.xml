@@ -40,8 +40,7 @@
 							</b:Controls>
 							<hr/>
 						</g:HTMLPanel>
-						<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
-							ui:field="tweetBtn">Share</b:Button>
+						<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn" ui:field="tweetBtn">Share</b:Button>
 					</b:Form>
 				</div>
 				<div class="{style.profile_info_section}">

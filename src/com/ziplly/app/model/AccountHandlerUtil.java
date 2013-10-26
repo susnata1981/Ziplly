@@ -13,4 +13,12 @@ public class AccountHandlerUtil {
 		return new AccountDTO(account);
 	}
 	
+	public static <K extends AccountDTO> Account getAccount(K account) {
+		if (account instanceof PersonalAccountDTO) {
+			return new PersonalAccount((PersonalAccountDTO)account);
+		} else if (account instanceof BusinessAccountDTO) {
+			return new BusinessAccount((BusinessAccountDTO)account);
+		}
+		return new Account(account);
+	}
 }

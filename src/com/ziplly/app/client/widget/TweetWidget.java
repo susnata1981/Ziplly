@@ -32,9 +32,11 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.HomePresenter;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.view.WidgetFactory;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class TweetWidget extends Composite implements ITweetWidgetView {
@@ -103,10 +105,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	final Modal modal = new Modal();
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
+	private IAccountWidgetModal<PersonalAccountDTO> personalAccountWidgetModal;
 	
 	public TweetWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
 		hideTweetUpdateButtons();
 		editTweetLink.addClickHandler(new ClickHandler() {
 			@Override
@@ -117,6 +119,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 		
 		hideCommentButtons();
 		setupHandlers();
+		personalAccountWidgetModal = new PersonalAccountWidgetModal();
 		modal.setAnimation(true);
 		modal.setWidth("400px");
 		modal.setCloseVisible(true);
@@ -139,7 +142,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 				hideTweetUpdateButtons();
 			}
 		});
-		
+		commentInputTextBox.setPlaceholder("Comment...");
 		commentInputTextBox.addFocusHandler(new FocusHandler() {
 			@Override
 			public void onFocus(FocusEvent event) {
@@ -286,14 +289,20 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 	
 	private HorizontalPanel addNextComment(final CommentDTO comment) {
-		Image pImage = new Image(comment.getAuthor().getImageUrl());
+		Image pImage = null;
+		if (comment.getAuthor().getImageUrl() != null) {
+		 pImage = new Image(comment.getAuthor().getImageUrl());
+		} else {
+			pImage = new Image("");
+		}
 		pImage.addStyleName(style.profileImageForComment());
 		pImage.setSize("30px", "25px");
 		Hyperlink imageLink = new Hyperlink();
 		pImage.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.displayProfile(comment.getAuthor().getAccountId());
+				AccountDTO acct = comment.getAuthor();
+				TweetWidget.this.displayAccountModal(acct);
 			}
 		});
 		imageLink.getElement().getFirstChild().appendChild(pImage.getElement());
@@ -311,6 +320,13 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 		return panel;
 	}
 	
+	<T extends AccountDTO> void displayAccountModal(T acct) {
+		@SuppressWarnings("unchecked")
+		IAccountWidgetModal<T> accountWidgetModal = 
+				(IAccountWidgetModal<T>) WidgetFactory.getAccountWidgetModal(acct,presenter);
+		accountWidgetModal.show(acct);
+	}
+
 	private void displayLikesSection() {
 		int likesCounter = 0;
 		modal.hide();
@@ -323,7 +339,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 			profileLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					presenter.goTo(new AccountPlace(like.getAuthor().getAccountId()));
+					displayAccountModal(like.getAuthor());
 				}
 			});
 			
@@ -335,7 +351,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 			}
 			likesCounter++;
 			likes.add(like);
-			modalPanel.add(new Anchor(like.getAuthor().getDisplayName()));
+			profileLink = new Anchor(like.getAuthor().getDisplayName());
+			
+			// TODO handler not working
+			profileLink.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					modal.hide();
+					displayAccountModal(like.getAuthor());
+				}
+			});
+			modalPanel.add(profileLink);
 		}
 		
 		modal.add(modalPanel);
@@ -382,12 +408,13 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 
 	@UiHandler("authorProfileLink")
 	void displayProfile(ClickEvent event) {
-		presenter.displayProfile(tweet.getSender().getAccountId());
+		displayAccountModal(tweet.getSender());
 	}
 
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
+		this.personalAccountWidgetModal.setPresenter(presenter);
 	}
 
 	@Override

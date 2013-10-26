@@ -1,5 +1,5 @@
 package com.ziplly.app.client.activities;
 
-public interface LoginWidgetPresenter extends Presenter {
+public interface LoginWidgetPresenter {
 	void onLogin(String email, String password);
 }

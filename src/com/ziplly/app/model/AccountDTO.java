@@ -26,6 +26,7 @@ public class AccountDTO implements Serializable {
 	
 	public AccountDTO(Account account) {
 		this.setAccountId(account.getAccountId());
+		this.password = account.getPassword();
 		setFacebookId(account.getFacebookId());
 		email = account.getEmail();
 		url = account.getUrl();

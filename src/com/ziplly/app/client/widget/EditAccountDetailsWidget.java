@@ -25,7 +25,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.AccountActivityPresenter;
+import com.ziplly.app.client.activities.AccountPresenter;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.model.AccountSettingDTO;
 import com.ziplly.app.model.Activity;
@@ -35,10 +36,10 @@ import com.ziplly.app.model.PersonalAccountDTO;
 /*
  * The tabs in this view are ordered as per the AccountDetailsType enum
  */
-public class EditAccountDetailsWidget extends Composite implements View<AccountActivityPresenter> {
+public class EditAccountDetailsWidget extends Composite implements View<AccountPresenter<PersonalAccountDTO>> {
 
-	private static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
-	private static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
+//	private static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
+//	private static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
 	
 	private static EditAccountDetailsWidgetUiBinder uiBinder = GWT
 			.create(EditAccountDetailsWidgetUiBinder.class);
@@ -111,8 +112,8 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 
 	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
 	
-	AccountActivityPresenter presenter;
 	private PersonalAccountDTO account;
+	private AccountPresenter<PersonalAccountDTO> presenter;
 	
 	public EditAccountDetailsWidget() {
 
@@ -142,6 +143,7 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 		firstname.setInnerText(account.getFirstName());		
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
+		introduction.setText(account.getIntroduction());
 
 		// occupation
 		occupation.setText(account.getOccupation());
@@ -171,7 +173,7 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 	@UiHandler("saveBtn")
 	void save(ClickEvent event) {
 		if (!validate()) {
-			displayMessage(FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
+			displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
 			return;
 		}
 		
@@ -212,11 +214,11 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 	}
 	
 	public void displaySuccessMessage() {
-		displayMessage(ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+		displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
 	}
 	
 	public void displayErrorMessage() {
-		displayMessage(FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
+		displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
 	}
 	
 	public void displayMessage(String msg, AlertType type) {
@@ -247,13 +249,13 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountA
 		}
 	}
 
-	@Override
-	public void setPresenter(AccountActivityPresenter presenter) {
-		this.presenter = presenter;
-	}
-
 	public void displayAccount(PersonalAccountDTO account) {
 		this.account = account;
 		populateFields(account);
+	}
+
+	@Override
+	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
+		this.presenter = presenter;
 	}
 }

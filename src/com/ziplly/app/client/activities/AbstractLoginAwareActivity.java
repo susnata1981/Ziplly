@@ -7,16 +7,16 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.LoginAwareView;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
-public abstract class AbstractLoginAwareActivity<T extends LoginAwareView> extends AbstractActivity {
-	protected T view;
+public abstract class AbstractLoginAwareActivity {
+/*	protected T view;
 	
-	public AbstractLoginAwareActivity(CachingDispatcherAsync dispatcher,
+	public AbstractActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
 			T view) {
 		super(dispatcher, eventBus, placeController);
@@ -29,9 +29,7 @@ public abstract class AbstractLoginAwareActivity<T extends LoginAwareView> exten
 			@Override
 			public void onSuccess(ValidateLoginResult result) {
 				if (result != null) {
-//					eventBus.fireEvent(new LoginEvent(result
-//							.getAccount()));
-					goTo(new AccountPlace());
+					goTo(new LoginPlace());
 				} else {
 					view.displayLoginErrorMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS, AlertType.ERROR);
 				}
@@ -48,5 +46,5 @@ public abstract class AbstractLoginAwareActivity<T extends LoginAwareView> exten
 				view.resetLoginForm();
 			}
 		});
-	}
+	}*/
 }

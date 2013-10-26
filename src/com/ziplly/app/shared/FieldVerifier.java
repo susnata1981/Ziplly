@@ -1,6 +1,5 @@
 package com.ziplly.app.shared;
 
-import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -97,6 +96,13 @@ public class FieldVerifier {
 			throw new IllegalArgumentException();
 		}
 		
+		return SafeHtmlUtils.htmlEscape(input.toLowerCase().trim());
+	}
+	
+	public static String sanitize(String input) {
+		if (input == null) {
+			return null;
+		}
 		return SafeHtmlUtils.htmlEscape(input.toLowerCase().trim());
 	}
 }

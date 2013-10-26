@@ -1,33 +1,26 @@
 package com.ziplly.app.client.view;
 
 import com.github.gwtbootstrap.client.ui.TabPanel;
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.AccountActivityPresenter;
+import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
-import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
 import com.ziplly.app.model.PersonalAccountDTO;
 
-public class AccountView extends Composite implements IAccountView<PersonalAccountDTO>, LoginAwareView {
+public class AccountView extends Composite implements IAccountView<PersonalAccountDTO> {
 
 	private static AccountViewUiBinder uiBinder = GWT
 			.create(AccountViewUiBinder.class);
 
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
-
-	@UiField
-	HTMLPanel loginMessagePanel;
-
-	@UiField
-	LoginWidget loginWidget;
 
 	@UiField
 	LogoutWidget logoutWidget;
@@ -49,7 +42,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	private AccountWidget accountWidget;
 
-	private AccountActivityPresenter presenter;
+	AccountPresenter<PersonalAccountDTO> presenter;
+
 
 	// private ConversationWidget cw;
 
@@ -57,29 +51,15 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		this.accountWidget = new AccountWidget();
 		this.accountDetailsWidget = new AccountDetailsWidget();
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		loginWidget.setVisible(false);		
 		logoutWidget.setVisible(false);
 		accountViewTabs.setVisible(false);
 	}
 
-	@Override
-	public void displayLoginWidget() {
-		loginWidget.setVisible(true);
-		logoutWidget.setVisible(false);
-	}
-
-	@Override
-	public void displayLogoutWidget() {
-		logoutWidget.setVisible(true);
-		loginWidget.setVisible(false);
-	}
 	
 	@Override
-	public void setPresenter(AccountActivityPresenter presenter) {
+	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
 		this.presenter = presenter;
 		accountWidget.setPresenter(presenter);
-		loginWidget.setPresenter(presenter);
 		logoutWidget.setPresenter(presenter);
 	}
 
@@ -88,7 +68,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		
+		displayLogoutWidget();
 		accountWidget.displayAccount(account);
 		profileSection.clear();
 		profileSection.add(accountWidget);
@@ -96,6 +76,12 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		// mark as visible
 		accountViewTabs.setVisible(true);
 	}
+
+	@Override
+	public void displayLogoutWidget() {
+		logoutWidget.setVisible(true);
+	}
+
 
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
@@ -108,24 +94,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		accountViewTabs.setVisible(true);
 	}
 
-	@Override
-	public void displayLoginErrorMessage(String msg, AlertType type) {
-		loginWidget.setMessage(msg, type);
-	}
-	
-	@Override
-	public void resetLoginForm() {
-		loginWidget.resetForm();
-	}
-	
-	@Override
-	public void onSave() {
-		// TODO Auto-generated method stub
-	}
-
 	public void clear() {
 		accountWidget.clear();
-		loginWidget.setVisible(false);		
 		logoutWidget.setVisible(false);
 		accountViewTabs.setVisible(false);
 	}
@@ -140,5 +110,33 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	public void clearTweet() {
 		accountWidget.clearTweet();
+	}
+
+
+	@Override
+	public void setImageUploadUrl(String url) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void displayProfileImagePreview(String imageUrl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void resetUploadForm() {
+		// TODO Auto-generated method stub
+		
 	}
 }

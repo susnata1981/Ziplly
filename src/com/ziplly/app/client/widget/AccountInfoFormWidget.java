@@ -269,8 +269,6 @@ public class AccountInfoFormWidget extends AbstractAccountView {
 	}
 
 	void updateAccountIntro() {
-		System.out.println("Updating intro:" + account.getIntroduction());
-		introField.setText(account.getIntroduction());
 	}
 
 	public void show() {

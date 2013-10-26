@@ -29,8 +29,8 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends Composite implements
-		View<SignupActivityPresenter>, LoginAwareView {
-	private static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
+		ISignupView<SignupActivityPresenter>, LoginAwareView {
+	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
 
@@ -277,12 +277,12 @@ public class SignupView extends Composite implements
 
 	@Override
 	public void displayLoginErrorMessage(String msg, AlertType type) {
-		loginWidget.setMessage(msg, type);
+		loginWidget.displayMessage(msg, type);
 	}
 
 	@Override
 	public void resetLoginForm() {
-		loginWidget.resetForm();
+		loginWidget.resetLoginForm();
 	}
 
 	@Override
@@ -304,5 +304,9 @@ public class SignupView extends Composite implements
 
 	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
 		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
+	}
+
+	public void displayMessage(String msg, AlertType error) {
+		loginWidget.displayMessage(msg, error);
 	}
 }

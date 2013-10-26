@@ -5,7 +5,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.LoginPlace;
 
 import net.customware.gwt.dispatch.shared.Result;
 
@@ -19,7 +19,7 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 	@Override
 	public void onFailure(Throwable caught) {
 		if (caught instanceof NeedsLoginException) {
-			placeController.goTo(new AccountPlace());
+			placeController.goTo(new LoginPlace());
 		}
 		Window.alert(caught.getLocalizedMessage());
 	}

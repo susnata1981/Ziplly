@@ -12,20 +12,29 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import com.google.web.bindery.event.shared.EventBus;
-import com.ziplly.app.client.activities.AccountActivity;
 import com.ziplly.app.client.activities.HomeActivity;
+import com.ziplly.app.client.activities.LoginActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.HomeView;
+import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.IHomeView;
+import com.ziplly.app.client.view.ILoginAccountView;
+import com.ziplly.app.client.view.ISignupView;
+import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.widget.EditAccount;
+import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
 
@@ -33,6 +42,7 @@ public class ZClientModule extends AbstractGinModule {
 
 	@Override
 	protected void configure() {
+		bind(ApplicationContext.class).in(Singleton.class);
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
@@ -42,25 +52,30 @@ public class ZClientModule extends AbstractGinModule {
 		bind(ZipllyController.class).in(Singleton.class);
 		
 		// views
-		bind(AccountView.class).in(Singleton.class);
+		bind(IAccountView.class).to(AccountView.class).in(Singleton.class);
+		bind(ILoginAccountView.class).to(LoginAccountView.class).in(Singleton.class);
+		bind(ISignupView.class).to(BusinessSignupView.class).in(Singleton.class);
 		bind(IHomeView.class).to(HomeView.class).in(Singleton.class);
 		bind(SignupView.class).in(Singleton.class);
+		bind(BusinessSignupView.class).in(Singleton.class);
 		bind(MainView.class).in(Singleton.class);
 		bind(NavView.class).in(Singleton.class);
 		
 		// widgets
 		bind(LoginWidget.class).in(Singleton.class);
 		bind(LogoutWidget.class).in(Singleton.class);
+		bind(EditAccount.class).annotatedWith(Names.named("business")).to(EditBusinessAccountWidget.class).in(Singleton.class);
 		
 		// activities
 		bind(HomeActivity.class);
-		bind(AccountActivity.class);
+		bind(LoginActivity.class);
 		bind(SignupActivity.class);
 		
 		// places
 		bind(HomePlace.class);
-		bind(AccountPlace.class);
+		bind(LoginPlace.class);
 		bind(SignupPlace.class);
+		bind(BusinessAccountPlace.class);
 		
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
 		bind(PlaceHistoryMapper.class).toProvider(PlaceHistoryMapperProvider.class).in(Singleton.class);

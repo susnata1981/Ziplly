@@ -5,8 +5,13 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		#communityWallPanel {
-		float: left;
-		width: 700px;
+			float: left;
+			width: 700px;
+		}
+		.center {
+			position: absolute;
+			top: 300px;
+			left: 500px;
 		}
 	</ui:style>
 	<g:HTMLPanel>

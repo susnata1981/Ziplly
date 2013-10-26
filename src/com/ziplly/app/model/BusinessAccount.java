@@ -5,13 +5,22 @@ import javax.persistence.Entity;
 @Entity
 public class BusinessAccount extends Account {
 	private static final long serialVersionUID = 1L;
-	
 	private String name;
 	private String phone;
+	private String website;
 	private String street1;
 	private String street2;
 	
 	public BusinessAccount() {
+	}
+	
+	public BusinessAccount(BusinessAccountDTO account) {
+		super(account);
+		this.name = account.getName();
+		this.phone = account.getPhone();
+		this.website = account.getWebsite();
+		this.street1 = account.getStreet1();
+		this.street2 = account.getStreet2();
 	}
 	
 	public String getName() {
@@ -38,5 +47,12 @@ public class BusinessAccount extends Account {
 	public void setStreet2(String street2) {
 		this.street2 = street2;
 	}
-	
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
 }

@@ -34,6 +34,7 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSetting;
 import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -171,24 +172,6 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public Long doLogin(Account account) {
-		// Do we need to check if session already exists. Probably not?
-		// Long existingUid = (Long)
-		// httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
-		// if (existingUid != null) {
-		// try {
-		// Session session = sessionDao.findSessionByUid(existingUid);
-		// if (isValidSession(session)) {
-		// return existingUid;
-		// } else {
-		// // TODO
-		// // throw new NeedsLoginException();
-		// }
-		// } catch (NumberFormatException e) {
-		// throw e;
-		// } catch (NotFoundException e) {
-		// }
-		// }
-
 		Session session = new Session();
 		session.setAccount(account);
 		Date currTime = new Date();
@@ -299,10 +282,11 @@ public class AccountBLIImpl implements AccountBLI {
 			}
 			paccount.getInterests().clear();
 			paccount.getInterests().addAll(selectedInterests);
-			accountDao.update(paccount);
-			return paccount;
+			return accountDao.update(paccount);
+		} else if (account instanceof BusinessAccount) {
+			BusinessAccount baccount = (BusinessAccount) account;
+			return accountDao.update(baccount);
 		}
-		
 		throw new IllegalArgumentException();
 	}
 

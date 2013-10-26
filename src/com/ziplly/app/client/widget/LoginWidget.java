@@ -18,15 +18,15 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.ziplly.app.client.activities.LoginWidgetPresenter;
+import com.ziplly.app.client.activities.LoginPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
-import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class LoginWidget extends Composite implements View<LoginWidgetPresenter> {
+public class LoginWidget extends Composite implements ILoginAccountView<LoginPresenter> {
 
 	private static LoginWidgetUiBinder uiBinder = GWT
 			.create(LoginWidgetUiBinder.class);
@@ -67,7 +67,7 @@ public class LoginWidget extends Composite implements View<LoginWidgetPresenter>
 
 	@UiField
 	Alert message;
-	LoginWidgetPresenter presenter;
+	private LoginPresenter presenter;
 
 	@UiHandler("fbLoginBtn")
 	void fbLogin(ClickEvent event) {
@@ -103,21 +103,6 @@ public class LoginWidget extends Composite implements View<LoginWidgetPresenter>
 		return valid;
 	}
 
-	public void setMessage(String msg, AlertType type) {
-		message.setType(type);
-		message.setText(msg);
-		message.setVisible(true);
-	}
-
-	public void resetForm() {
-		email.setText("");
-		password.setText("");
-	}
-
-	public void resetMessage() {
-		message.setVisible(false);
-	}
-	
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
 		if (!validateInput()) {
@@ -130,13 +115,32 @@ public class LoginWidget extends Composite implements View<LoginWidgetPresenter>
 	}
 
 	@Override
-	public void setPresenter(LoginWidgetPresenter presenter) {
-		this.presenter = (LoginWidgetPresenter)presenter;
+	public void clear() {
+		resetLoginForm();
+		resetMessage();
 	}
 
 	@Override
-	public void clear() {
-		resetForm();
-		resetMessage();
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		message.setVisible(true);
+	}
+
+	@Override
+	public void resetLoginForm() {
+		email.setText("");
+		password.setText("");	
+	}
+
+	@Override
+	public void resetMessage() {
+		message.setVisible(false);
+		message.clear();
+	}
+	
+	@Override
+	public void setPresenter(LoginPresenter presenter) {
+		this.presenter = presenter;
 	}
 }

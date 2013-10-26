@@ -2,15 +2,23 @@ package com.ziplly.app.client.activities;
 
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.constants.BackdropType;
+import com.github.gwtbootstrap.client.ui.constants.IconSize;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.inject.Inject;
+import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.IHomeView;
@@ -37,33 +45,70 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	IHomeView homeView;
 	
 	HomePlace place;
-	AcceptsOneWidget container;
 	AccountDTO account;
-
+	Modal modal = new Modal();
+	HTMLPanel loadingPanel = new HTMLPanel("<span>Loading</span>");
+	private AcceptsOneWidget panel;
+	
 	@Inject
 	public HomeActivity(CachingDispatcherAsync dispatcher, 
 			EventBus eventBus, 
 			HomePlace place,
 			PlaceController placeController,
 			MainView mainView,
+			ApplicationContext ctx,
 			HomeView homeView) {
-		super(dispatcher, eventBus, placeController);
+		
+		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.homeView = homeView;
-		this.mainView = mainView;		
+		this.mainView = mainView;
+		Icon loadingIcon = new Icon();
+		loadingIcon.setIcon(IconType.SPINNER);
+		loadingIcon.setIconSize(IconSize.LARGE);
+		loadingIcon.setVisible(true);
+		modal.getElement().getStyle().setMarginLeft(0, Unit.PX);
+		loadingPanel.add(loadingIcon);
+		modal.add(loadingPanel);
+		modal.setAnimation(true);
+		modal.setWidth("100px");
+		modal.setBackdrop(BackdropType.NONE);
+	}
+
+	void showLodingIcon() {
+		loadingPanel.setVisible(true);
+		modal.hide();
+	}
+	
+	void hideLoadingIcon() {
+		loadingPanel.setVisible(false);
+		modal.hide();
+	}
+	
+	@Override
+	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
+		fetchData();
+		setBackgroundImage();
+		bind();
+		modal.show();
+		bind();
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		bind();
-		go(panel);
+	public void onStop() {
+		clearBackgroundImage();
+		modal.hide();
 	}
 
 	@Override
 	public void go(AcceptsOneWidget container) {
-		this.container = container;
-		bind();
-		fetchData();
+		if (this.account != null) {
+			displayHomeView();
+		} else {
+			displayMainView();
+		}
+		hideLoadingIcon();
 	}
 
 	@Override
@@ -73,25 +118,27 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	}
 
 	void displayMainView() {
-		container.setWidget(mainView);
+		panel.setWidget(mainView);
 	}
 	
 	void displayHomeView() {
-		container.setWidget(homeView);
+		clearBackgroundImage();
+		panel.setWidget(homeView);
 	}
+	
+	
 	
 	@Override
 	public void fetchData() {
 		dispatcher.execute(new GetLoggedInUserAction(),
 				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-
 					@Override
 					public void onSuccess(GetLoggedInUserResult result) {
 						if (result != null && result.getAccount() != null) {
 							HomeActivity.this.account = result.getAccount();
 							getCommunitWallData(TweetType.ALL);
 						} else {
-							updateUi();
+							go(panel);
 						}
 					}
 				});
@@ -104,20 +151,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 				if (result != null) {
 					HomeActivity.this.displayTweets(result.getTweets());
 				}
-				updateUi();
+				go(panel);
 			}
 		});
 	}
 	
-	@Override
-	public void updateUi() {
-		if (this.account != null) {
-			displayHomeView();
-		} else {
-			displayMainView();
-		}
-	}
-
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
 		homeView.display(tweets);
@@ -131,7 +169,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	
 	@Override
 	public void displayProfile(Long accountId) {
-		placeController.goTo(new AccountPlace(accountId));
+		placeController.goTo(new LoginPlace(accountId));
 	}
 
 	@Override

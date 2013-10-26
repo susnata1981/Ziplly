@@ -4,6 +4,7 @@ public class BusinessAccountDTO extends AccountDTO {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String phone;
+	private String website;
 	private String street1;
 	private String street2;
 	
@@ -11,8 +12,10 @@ public class BusinessAccountDTO extends AccountDTO {
 	}
 	
 	public BusinessAccountDTO(BusinessAccount account) {
+		super(account);
 		this.name = account.getName();
 		this.phone = account.getPhone();
+		this.website = account.getWebsite();
 		this.street1 = account.getStreet1();
 		this.street2 = account.getStreet2();
 	}
@@ -44,5 +47,13 @@ public class BusinessAccountDTO extends AccountDTO {
 	@Override
 	public String getDisplayName() {
 		return name;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 }

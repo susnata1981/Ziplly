@@ -59,10 +59,12 @@ public class Account implements Serializable {
 	@Column(name="access_token")
 	private String accessToken;
 
+	@NotNull
 	@Column(name="email")
 	private String email;
 	
-	@Column(name="password")
+	@NotNull
+	@Column(name="password", updatable=false, insertable=true)
 	private String password;
 	
 	@Column(name="profile_url")
@@ -90,7 +92,9 @@ public class Account implements Serializable {
 		this.setAccountId(account.getAccountId());
 		setFacebookId(account.getFacebookId());
 		email = account.getEmail();
-		password = encryptPassword(account.getPassword());
+		if (account.getPassword() != null) {
+			password = encryptPassword(account.getPassword());
+		}
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
@@ -159,6 +163,10 @@ public class Account implements Serializable {
 		return password;
 	}
 
+	public void setDirectPassword(String password) {
+		this.password = password;
+	}
+	
 	public void setPassword(String password) {
 		this.password = encryptPassword(password);
 	}

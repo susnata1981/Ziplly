@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.HomePlace;
 
 public class NavView extends Composite {
@@ -39,7 +39,7 @@ public class NavView extends Composite {
 
 	@UiHandler("accountsLink")
 	void accountDetails(ClickEvent event) {
-		placeController.goTo(new AccountPlace());
+		placeController.goTo(new LoginPlace());
 	}
 	
 	@UiHandler("homeLink")

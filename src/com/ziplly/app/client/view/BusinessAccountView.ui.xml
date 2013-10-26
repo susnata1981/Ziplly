@@ -1,8 +1,67 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-	</ui:style>
+	<ui:style src="businessaccount.css" />
 	<g:HTMLPanel>
+		<dt:LogoutWidget ui:field="logoutWidget" />
+		<div class="{style.businessInfoSection}">
+			<div class="{style.imageSection}">
+				<div class="{style.profileImage}">
+					<b:Image ui:field="profileImageUrl" />
+				</div>
+				<div>
+				    <g:FormPanel ui:field="imageUploadForm">
+						<g:HTMLPanel>
+							<g:FileUpload ui:field="uploadField" name="image" />
+							<b:Button size="MINI" ui:field="uploadBtn">Upload</b:Button>
+							<b:Button size="MINI" ui:field="saveImageBtn">Save</b:Button>
+						</g:HTMLPanel>
+					</g:FormPanel>
+				</div>
+			</div>
+			<div class="{style.businessInfo}">
+				<div class="{style.section}">
+					<div class="{style.businessInfoElement}">
+						<span class="{style.name}" ui:field="name" />
+						<g:Anchor addStyleNames="{style.editlink}" ui:field="editAccountLink">edit</g:Anchor>
+					</div>
+					<div class="{style.businessInfoElement}">
+						<span class="smalltext">
+							<g:Anchor addStyleNames="{style.websiteLink} smalltext" ui:field="websiteUrl"></g:Anchor>
+						</span>
+					</div>
+					<div class="{style.businessInfoElement}">
+						<span class="smalltext">Phone:</span>
+						<span class="smalltext" ui:field="phone"></span>
+					</div>
+				</div>
+				<g:HTMLPanel ui:field="tweetFormPanel" addStyleNames="{style.section}">
+					<b:Form ui:field="tweetForm">
+						<b:ControlGroup ui:field="tweetCategoryCg">
+							<b:ControlLabel>Broadcast to the community</b:ControlLabel>
+							<b:Controls>
+								<b:TextArea placeholder="We're giving…"
+									addStyleNames="{style.shareTextBox}" ui:field="tweetTextBox" />
+								<b:HelpInline ui:field="tweetHelpInline" />
+							</b:Controls>
+						</b:ControlGroup>
+						<g:HTMLPanel ui:field="tweetCategoryPanel">
+							<b:ControlLabel>Select Category</b:ControlLabel>
+							<b:Controls>
+								<b:ListBox ui:field="tweetCategoryList">
+								</b:ListBox>
+							</b:Controls>
+							<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
+								ui:field="tweetBtn">Share</b:Button>
+						</g:HTMLPanel>
+					</b:Form>
+				</g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="{style.section}">
+					Endorsements
+				</g:HTMLPanel>
+			</div>
+		</div>
+
 	</g:HTMLPanel>
 </ui:UiBinder> 

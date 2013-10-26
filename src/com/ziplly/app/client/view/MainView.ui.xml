@@ -52,18 +52,24 @@
 			<!-- <div class="{mainViewStyle.logoutLnk}">
 				<b:Button ui:field="logoutBtn">Logout</b:Button>
 			</div> -->
-			<div id="loginSectionn">
+			<div id="loginSection">
 				<!-- <dt:LoginWidget ui:field="loginWidget" /> -->
 			</div>
 			<div id="mainPageSingupForm">
 				<b:WellForm>
-					<b:ControlLabel>Signup</b:ControlLabel>
+					<b:ControlLabel>Resident Signup</b:ControlLabel>
 					<b:TextBox placeholder="email..." />
 					<b:TextBox placeholder="zip..." />
 					<b:TextBox placeholder="username..." />
 					<b:TextBox placeholder="password..." />
 					<b:Button type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
 					<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
+				</b:WellForm>
+			</div>
+			<div id="mainPageBusinessSingupForm">
+				<b:WellForm>
+					<b:ControlLabel>Business Signup</b:ControlLabel>
+					<b:Button type="SUCCESS" ui:field="businessSignupBtn">Signup</b:Button>
 				</b:WellForm>
 			</div>
 			<div class="{mainViewStyle.categoryDetails}">

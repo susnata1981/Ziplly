@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.AccountActivityPresenter;
+import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.model.AccountSettingDTO;
 import com.ziplly.app.model.InterestDTO;
@@ -37,7 +37,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
 public class AccountWidget extends Composite implements
-		View<AccountActivityPresenter> {
+		View<AccountPresenter<PersonalAccountDTO>> {
 
 	private static AccountWidgetUiBinder uiBinder = GWT
 			.create(AccountWidgetUiBinder.class);
@@ -118,9 +118,10 @@ public class AccountWidget extends Composite implements
 
 	private EditAccountDetailsWidget eadw;
 	boolean displayEdit;
-	AccountActivityPresenter presenter;
 	private PersonalAccountDTO account;
 	Map<AccountDetailsType, Anchor> editLinksMap = new HashMap<AccountDetailsType, Anchor>();
+
+	private AccountPresenter<PersonalAccountDTO> presenter;
 
 	@UiFactory
 	public MyBundle createTheBundle() {
@@ -140,6 +141,9 @@ public class AccountWidget extends Composite implements
 
 		tweetCategoryPanel.setVisible(false);
 		for (TweetType tc : TweetType.values()) {
+			if (tc.equals(TweetType.ALL) || tc.equals(TweetType.OFFERS)) {
+				continue;
+			}
 			tweetCategoryList.addItem(tc.name().toLowerCase());
 		}
 	}
@@ -324,7 +328,7 @@ public class AccountWidget extends Composite implements
 
 	@UiHandler("viewPublicProfileLink")
 	void showPublicProfile(ClickEvent event) {
-		presenter.displayPublicProfile(account.getAccountId());
+//		presenter.displayPublicProfile(account.getAccountId());
 	}
 
 	void showAccountInfoFormWidget() {
@@ -343,17 +347,17 @@ public class AccountWidget extends Composite implements
 		tweetCategoryPanel.setVisible(false);
 	}
 
-	@Override
-	public void setPresenter(AccountActivityPresenter presenter) {
-		this.presenter = presenter;
-		eadw.setPresenter(presenter);
-	}
-
 	public EditAccountDetailsWidget getEditAccountDetailsWidget() {
 		return eadw;
 	}
 
 	public void clearTweet() {
 		tweetTextBox.setText("");
+	}
+
+	@Override
+	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
+		this.presenter = presenter;
+		eadw.setPresenter(presenter);
 	}
 }

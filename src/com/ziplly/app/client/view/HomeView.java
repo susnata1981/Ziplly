@@ -6,12 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ScrollEvent;
+import com.google.gwt.user.client.Window.ScrollHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -39,8 +44,10 @@ public class HomeView extends Composite implements IHomeView {
 	
 	private static HomeViewUiBinder uiBinder = GWT
 			.create(HomeViewUiBinder.class);
+	
 	HomePresenter presenter;
 	List<Anchor> filters = new ArrayList<Anchor>();
+	
 	// tweetId --> TweetWidget
 	Map<Long, ITweetWidgetView> tweetWidgetMap = new HashMap<Long, ITweetWidgetView>();
 	
@@ -49,7 +56,6 @@ public class HomeView extends Composite implements IHomeView {
 
 	public HomeView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
 		for(final TweetType type : TweetType.values()) {
 			Anchor anchor = new Anchor(type.name().toLowerCase());
 			anchor.setStyleName("tweetFilterLink");
@@ -63,6 +69,13 @@ public class HomeView extends Composite implements IHomeView {
 			filters.add(anchor);
 		}
 		message.setAnimation(true);
+		Window.addWindowScrollHandler(new ScrollHandler() {
+			@Override
+			public void onWindowScroll(ScrollEvent event) {
+				System.out.println("top="+event.getScrollTop()+" clientHeight="+Window.getClientHeight()+
+						"ch="+Document.get().getScrollHeight());
+			}
+		});
 	}
 
 	@UiField

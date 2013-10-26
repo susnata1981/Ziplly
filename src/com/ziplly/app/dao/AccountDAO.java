@@ -10,6 +10,6 @@ public interface AccountDAO {
 	Account findByEmailAndPassword(String email, String password) throws NotFoundException;
 	Account findById(Long accountId) throws NotFoundException;
 	void save(Account user);
-	void update(Account user);
+	Account update(Account user);
 	List<Account> getAll(int start, int end);
 }

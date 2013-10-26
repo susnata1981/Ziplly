@@ -41,7 +41,7 @@ public class Love implements Serializable {
 	@JoinColumn(name="comment_id")
 	Comment comment;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="account_id")
 	Account author;
 	
