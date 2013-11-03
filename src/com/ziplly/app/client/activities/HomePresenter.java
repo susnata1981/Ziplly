@@ -14,4 +14,5 @@ public interface HomePresenter extends Presenter {
 	void likeTweet(Long tweetId);
 	void updateTweet(TweetDTO tweet);
 	void deleteTweet(TweetDTO tweet);
+	void tweet(TweetDTO tweet);
 }

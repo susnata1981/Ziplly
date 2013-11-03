@@ -11,29 +11,29 @@ public class PersonalAccountDTO extends AccountDTO {
 	private String lastName;
 	private String introduction;
 	private String occupation;
-	
+
 	private Set<InterestDTO> interests = new HashSet<InterestDTO>();
 	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
 
 	public PersonalAccountDTO() {
 	}
-	
-	public PersonalAccountDTO(PersonalAccount account) {
-		super(account);
-		this.firstName = account.getFirstName();
-		this.lastName = account.getLastName();
-		this.introduction = account.getIntroduction();
-		this.occupation = account.getOccupation();
-		
-		for(AccountSetting asd : account.getAccountSettings()) {
-			AccountSettingDTO as = new AccountSettingDTO(asd);
-			getAccountSettings().add(as);
-		}
-		
-		for(Interest interest : account.getInterests()) {
-			getInterests().add(new InterestDTO(interest));
-		}
-	}
+
+//	public PersonalAccountDTO(PersonalAccount account) {
+//		super(account);
+//		this.firstName = account.getFirstName();
+//		this.lastName = account.getLastName();
+//		this.introduction = account.getIntroduction();
+//		this.occupation = account.getOccupation();
+//
+//		for (AccountSetting asd : account.getAccountSettings()) {
+//			AccountSettingDTO as = new AccountSettingDTO(asd);
+//			getAccountSettings().add(as);
+//		}
+//
+//		for (Interest interest : account.getInterests()) {
+//			getInterests().add(new InterestDTO(interest));
+//		}
+//	}
 
 	public List<AccountSettingDTO> getAccountSettings() {
 		return accountSettings;

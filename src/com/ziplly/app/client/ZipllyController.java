@@ -31,19 +31,25 @@ public class ZipllyController {
 	NavView navView;
 
 	CachingDispatcherAsync dispatcher;
+	com.google.gwt.event.shared.EventBus appEventBus;
+	ApplicationContext ctx;
 	
 	@Inject
 	public ZipllyController(
+			ApplicationContext ctx,
 			CachingDispatcherAsync dispatcher,
-			EventBus eventBus, 
+			EventBus eventBus,
+			com.google.gwt.event.shared.EventBus appEventBus,
 			ActivityMapper activityMapper,
 			ActivityManager activityManager,
 			PlaceController placeController,
 			PlaceHistoryMapper placeHistoryMapper,
 			PlaceHistoryHandler placeHistoryHandler,
 			NavView navView) {
+		this.ctx = ctx;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
+		this.appEventBus = appEventBus;
 		this.container = RootPanel.get("main");
 		RootPanel.get("nav").add(navView);
 		this.container.add(panel);

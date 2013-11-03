@@ -24,6 +24,7 @@ public class PublicAccountPlace extends Place {
 	
 	@Prefix("publicaccount")
 	public static class Tokenizer implements PlaceTokenizer<PublicAccountPlace> {
+
 		@Override
 		public PublicAccountPlace getPlace(String token) {
 			if (token != null && !"".equals(token)) {
@@ -34,7 +35,7 @@ public class PublicAccountPlace extends Place {
 
 		@Override
 		public String getToken(PublicAccountPlace place) {
-			return "";
+			return Long.toString(place.getAccountId());
 		}
 	}	
 }

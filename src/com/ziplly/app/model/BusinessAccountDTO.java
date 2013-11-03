@@ -11,15 +11,6 @@ public class BusinessAccountDTO extends AccountDTO {
 	public BusinessAccountDTO() {
 	}
 	
-	public BusinessAccountDTO(BusinessAccount account) {
-		super(account);
-		this.name = account.getName();
-		this.phone = account.getPhone();
-		this.website = account.getWebsite();
-		this.street1 = account.getStreet1();
-		this.street2 = account.getStreet2();
-	}
-	
 	public String getName() {
 		return name;
 	}

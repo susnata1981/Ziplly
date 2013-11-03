@@ -26,12 +26,14 @@ import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountHandlerUtil;
 import com.ziplly.app.model.AccountSetting;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.BusinessAccount;
@@ -78,42 +80,40 @@ public class AccountBLIImpl implements AccountBLI {
 
 	// TODO should we throw exception for invalid attempt?
 	@Override
-	public Account getLoggedInUser() throws NotFoundException {
+	public AccountDTO getLoggedInUser() throws NotFoundException {
 		Long uid = getUidFromCookie();
 
 		if (uid == null) {
 			return null;
 		}
-
 		Session session = null;
 		session = sessionDao.findSessionByUid(uid);
 		System.out.println("Found session : " + session.getId());
 		if (isValidSession(session)) {
 			Account account = session.getAccount();
 			account.setUid(uid);
-			return account;
+			return EntityUtil.convert(account);
 		}
 		System.out.println("Invalid session....");
 		return null;
 	}
 
 	@Override
-	public Account getAccountById(Long accountId) throws NotFoundException {
+	public AccountDTO getAccountById(Long accountId) throws NotFoundException {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
-		Account account = accountDao.findById(accountId);
-		return account;
+		return accountDao.findById(accountId);
 	}
 
 	@Override
-	public Account register(Account account) throws AccountExistsException {
+	public AccountDTO register(Account account) throws AccountExistsException {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
 
 		// check for existing account
-		Account existingAccount = null;
+		AccountDTO existingAccount = null;
 		try {
 			existingAccount = accountDao.findByEmail(account.getEmail());
 		} catch (NotFoundException nfe) {
@@ -130,13 +130,13 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		// create account otherwise
-		accountDao.save(account);
+		AccountDTO response = accountDao.save(account);
 
 		// login user
-		Long uid = doLogin(account);
+		Long uid = doLogin(response);
 
-		account.setUid(uid);
-		return account;
+		response.setUid(uid);
+		return response;
 	}
 
 	private void createDefaultAccountSettings(PersonalAccount account) {
@@ -144,15 +144,15 @@ public class AccountBLIImpl implements AccountBLI {
 			AccountSetting as = new AccountSetting();
 			as.setSection(adt);
 			as.setSetting(ShareSetting.PUBLIC);
-			as.setAccount(account);
+//			as.setAccount(account);
 			account.getAccountSettings().add(as);
 		}
 	}
 
 	@Override
-	public Account validateLogin(String email, String password)
+	public AccountDTO validateLogin(String email, String password)
 			throws InvalidCredentialsException, NotFoundException {
-		Account account = null;
+		AccountDTO account = null;
 		try {
 			account = accountDao.findByEmail(email);
 			String storedPassword = account.getPassword();
@@ -171,6 +171,21 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
+	public Long doLogin(AccountDTO account) {
+		Session session = new Session();
+		session.setAccount(AccountHandlerUtil.getAccount(account));
+		Date currTime = new Date();
+		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
+		session.setExpireAt(expireAt);
+		session.setTimeCreated(currTime);
+		Long uid = UUID.randomUUID().getMostSignificantBits();
+		session.setUid(uid);
+		sessionDao.save(session);
+		storeCookie(uid);
+		return uid;
+	}
+
+	@Override
 	public Long doLogin(Account account) {
 		Session session = new Session();
 		session.setAccount(account);
@@ -184,7 +199,7 @@ public class AccountBLIImpl implements AccountBLI {
 		storeCookie(uid);
 		return uid;
 	}
-
+	
 	@Override
 	public void logout(Long uid) throws NotFoundException {
 		if (uid == null) {
@@ -213,7 +228,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		Account loggedInAccount = getLoggedInUserBasedOnCookie();
 		if (loggedInAccount != null) {
-			return new AccountDTO(loggedInAccount);
+			return EntityUtil.convert(loggedInAccount);
 		}
 
 		OAuthFlowManager authFlowManager = AuthFlowManagerFactory
@@ -232,7 +247,7 @@ public class AccountBLIImpl implements AccountBLI {
 			return null;
 		}
 
-		Account response = null;
+		AccountDTO response = null;
 		try {
 			response = accountDao.findByEmail(fuser.getEmail());
 		} catch (NotFoundException nfe) {
@@ -258,36 +273,24 @@ public class AccountBLIImpl implements AccountBLI {
 
 		// login user
 		Long uid = doLogin(response);
-		AccountDTO result = new AccountDTO(response);
-		result.setUid(uid);
-		System.out.println("Returning existing account:" + response);
-		return result;
+//		AccountDTO result = new AccountDTO(response);
+		if (response instanceof PersonalAccountDTO) {
+//			PersonalAccountDTO result = new PersonalAccountDTO((PersonalAccount)response);
+			response.setUid(uid);
+			System.out.println("Returning existing account:" + response);
+			return response;
+		}
+		
+		throw new RuntimeException();
 	}
 
 	@Override
-	public Account updateAccount(Account account) throws NeedsLoginException {
+	public AccountDTO updateAccount(Account account) throws NeedsLoginException {
 		if (!isValidSession()) {
 			throw new NeedsLoginException();
 		}
-
-		if (account instanceof PersonalAccount) {
-			PersonalAccount paccount = (PersonalAccount) account;
-
-			List<Interest> selectedInterests = Lists.newArrayList();
-			for (Interest i : paccount.getInterests()) {
-				Interest entry = interestDao.findInterestByName(i.getName());
-				if (entry != null) {
-					selectedInterests.add(entry);
-				}
-			}
-			paccount.getInterests().clear();
-			paccount.getInterests().addAll(selectedInterests);
-			return accountDao.update(paccount);
-		} else if (account instanceof BusinessAccount) {
-			BusinessAccount baccount = (BusinessAccount) account;
-			return accountDao.update(baccount);
-		}
-		throw new IllegalArgumentException();
+		AccountDTO response = accountDao.update(account);
+		return response;
 	}
 
 	@Override
@@ -341,5 +344,14 @@ public class AccountBLIImpl implements AccountBLI {
 	Long getUidFromCookie() {
 		return (Long) httpSession.get().getAttribute(
 				ZipllyServerConstants.SESSION_ID);
+	}
+
+	@Override
+	public List<PersonalAccountDTO> getAccountByZip(AccountDTO account) {
+		if (account == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return accountDao.findByZip(account.getZip());
 	}
 }

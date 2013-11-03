@@ -1,5 +1,7 @@
 package com.ziplly.app.server;
 
+import java.util.List;
+
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
@@ -7,15 +9,18 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 
 public interface AccountBLI {
-	Account register(Account account) throws AccountExistsException;
-	Account validateLogin(String email,String password) throws InvalidCredentialsException, NotFoundException;
-	Account updateAccount(Account account) throws NeedsLoginException;
-	Long doLogin(Account account);
+	AccountDTO register(Account account) throws AccountExistsException;
+	AccountDTO validateLogin(String email,String password) throws InvalidCredentialsException, NotFoundException;
+	AccountDTO updateAccount(Account account) throws NeedsLoginException;
 	void logout(Long uid) throws NotFoundException;
 	AccountDTO getFacebookDetails(String code) throws OAuthException;
-	Account getLoggedInUser() throws NotFoundException;
+	AccountDTO getLoggedInUser() throws NotFoundException;
 	String getImageUploadUrl();
-	Account getAccountById(Long accountId) throws NotFoundException;
+	AccountDTO getAccountById(Long accountId) throws NotFoundException;
+	List<PersonalAccountDTO> getAccountByZip(AccountDTO account);
+	Long doLogin(AccountDTO account);
+	Long doLogin(Account account);
 }

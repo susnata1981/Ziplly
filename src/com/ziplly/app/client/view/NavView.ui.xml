@@ -1,14 +1,24 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style>
+		.navPillList {
+			float: right;
+			margin: 15px 100px 5px 0px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
-		<ul>
-		    <li><g:Anchor ui:field="aboutLink">About</g:Anchor></li>
-		    <li><g:Anchor ui:field="accountsLink">Account</g:Anchor></li>
-		    <li><g:Anchor ui:field="homeLink">Home</g:Anchor></li>
-		</ul>
+		<b:NavPills addStyleNames="{style.navPillList}">
+		    <b:NavLink ui:field="homeLink">Home</b:NavLink>
+			<b:Dropdown text="Account">
+				<b:NavLink ui:field="accountLink">Profile</b:NavLink>
+				<b:NavLink ui:field="messageLink">Messages</b:NavLink>
+				<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
+				<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
+			</b:Dropdown>
+			<b:NavLink ui:field="residentsLink">Resident</b:NavLink>
+			<b:NavLink ui:field="aboutLink">About</b:NavLink>
+		</b:NavPills>
 	</g:HTMLPanel>
 </ui:UiBinder> 

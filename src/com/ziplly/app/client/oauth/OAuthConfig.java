@@ -14,8 +14,8 @@ public class OAuthConfig implements Serializable{
 	private OAuthProvider provider;
 	private String key;
 	
-	public OAuthConfig() {
-	}
+//	public OAuthConfig() {
+//	}
 	
 	private OAuthConfig(OAuthProvider provider,String clientId,String key, String [] scopes,String redirectUri) {
 		this.setProvider(provider);
@@ -32,6 +32,7 @@ public class OAuthConfig implements Serializable{
 		paramsMap.put("client_id",getClientId());
 		paramsMap.put("redirect_uri",getRedirectUri());
 		paramsMap.put("response_type","code");
+		paramsMap.put("app_id", "217425525078759");
 		return OAuthUtil.getUrlWithParam(getProvider().getAuthUrl(), paramsMap);
 	}
 	

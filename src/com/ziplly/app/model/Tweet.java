@@ -12,12 +12,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
 	@NamedQuery(
@@ -41,8 +44,11 @@ public class Tweet implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="tweet_id")
 	private long tweetId;
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="sender_id")
+	@Fetch(FetchMode.JOIN)
+	@BatchSize(size=10)
 	private Account sender;
 
 	@Column(name="image_id")
@@ -50,13 +56,14 @@ public class Tweet implements Serializable {
 	private TweetType type;
 	private String content;
 	
-	@ManyToMany(mappedBy="tweets")
-	private Set<TagDTO> tags;
-	
-	@OneToMany(mappedBy="tweet", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="tweet")
+	@Fetch(FetchMode.JOIN)
+	@BatchSize(size=10)
 	private Set<Comment> comments = new HashSet<Comment>();
 	
-	@OneToMany(mappedBy="tweet", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="tweet")
+	@Fetch(FetchMode.JOIN)
+	@BatchSize(size=10)
 	private Set<Love> likes = new HashSet<Love>();
 	
 	private int status;

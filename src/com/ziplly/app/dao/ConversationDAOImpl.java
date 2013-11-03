@@ -1,58 +1,64 @@
 package com.ziplly.app.dao;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.ziplly.app.dao.OfyService.ofy;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.TxnWork;
-import com.literati.app.shared.Account;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import com.google.common.collect.Lists;
+import com.ziplly.app.model.Conversation;
+import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.Message;
 
 public class ConversationDAOImpl implements ConversationDAO {
+
 	@Override
-	public List<ConversationDO> getConversationForAccount(int start, int length, Long accountId) {
-		checkNotNull(accountId);
-		List<ConversationDO> conversations = ofy().load().type(ConversationDO.class).filter("receiver", 
-				Key.create(Account.class, accountId)).list();
-		return conversations;
+	public List<ConversationDTO> getConversationForAccount(Long accountId) {
+		if (accountId == null) {
+			throw new IllegalArgumentException();
+		}
+
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createNamedQuery("findConversationByAccountId");
+		query.setParameter("receiverAccountId", accountId);
+		query.setParameter("senderAccountId", accountId);
+		
+		@SuppressWarnings("unchecked")
+		List<Conversation> conversations = (List<Conversation>) query
+				.getResultList();
+
+		List<ConversationDTO> result = Lists.newArrayList();
+		for (Conversation c : conversations) {
+			Collections.sort(c.getMessages(), new Comparator<Message>() {
+				@Override
+				public int compare(Message m1, Message m2) {
+					if (m1.getTimeCreated().before(m2.getTimeCreated())) {
+						return -1;
+					}
+					return 1;
+				}
+
+			});
+			ConversationDTO clone = EntityUtil.clone(c);
+			clone.setIsSender(false);
+			if (clone.getSender().getAccountId() == accountId) {
+				clone.setIsSender(true);
+			}
+			result.add(clone);
+		}
+		return result;
 	}
 
 	@Override
-	public boolean save(final ConversationDO conversation) {
-		checkNotNull(conversation);
-		final MessageDO msg = conversation.getMessages().get(0);
-		final ConversationDO newConversationDO = new ConversationDO();
-		newConversationDO.setSender(conversation.getSenderKey());
-		newConversationDO.setReceiver(conversation.getReceiverKey());
-		return ofy().transact(new TxnWork<Objectify,Boolean>() {
-			public Boolean run(Objectify o) {
-				Key<ConversationDO> now = ofy().save().entity(newConversationDO).now();
-				msg.setConversation(newConversationDO);
-				ofy().save().entity(msg).now();
-				newConversationDO.getMessages().add(msg);
-				now = ofy().save().entity(newConversationDO).now();
-				return now != null;
-			}
-		});
-	}
-
-	@Override
-	public boolean save(Account sender, Account receiver, final MessageDO msg) {
-		checkNotNull(msg);
-		final ConversationDO newConversationDO = new ConversationDO();
-		newConversationDO.setSender(sender);
-		newConversationDO.setReceiver(receiver);
-		return ofy().transact(new TxnWork<Objectify,Boolean>() {
-			public Boolean run(Objectify o) {
-				Key<ConversationDO> now = ofy().save().entity(newConversationDO).now();
-				msg.setConversation(newConversationDO);
-				ofy().save().entity(msg).now();
-				newConversationDO.getMessages().add(msg);
-				now = ofy().save().entity(newConversationDO).now();
-				return now != null;
-			}
-		});
+	public void save(Conversation conversation) {
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		em.getTransaction().begin();
+		em.merge(conversation);
+		em.getTransaction().commit();
+		em.close();
 	}
 }

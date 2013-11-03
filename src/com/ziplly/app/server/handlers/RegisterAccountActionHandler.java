@@ -36,19 +36,16 @@ public class RegisterAccountActionHandler
 		}
 		RegisterAccountResult result = new RegisterAccountResult();
 		AccountDTO accountDto = action.getAccount();
-		
-//		if (accountDto instanceof PersonalAccountDTO) {
+
 		Account account = AccountHandlerUtil.getAccount(accountDto);
-			try {
-				Account newAccount = accountBli.register(account);
-				accountDto = AccountHandlerUtil.getAccountDTO(newAccount);
-				result.setAccount(accountDto);
-				result.setUid(accountDto.getUid());
-				return result;
-			} catch (AccountExistsException e) {
-				throw e;
-			}
-//		}
+		try {
+			AccountDTO newAccount = accountBli.register(account);
+			result.setAccount(newAccount);
+			result.setUid(accountDto.getUid());
+			return result;
+		} catch (AccountExistsException e) {
+			throw e;
+		}
 	}
 
 	@Override

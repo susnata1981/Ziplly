@@ -3,7 +3,6 @@ package com.ziplly.app.client.view;
 import java.io.UnsupportedEncodingException;
 
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Image;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -14,7 +13,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
@@ -37,8 +35,7 @@ public class MainView extends Composite implements View<Presenter> {
 		String categoryHeading();
 	}
 
-	private OAuthConfig authConfig = OAuthFactory
-			.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
 
 	@UiField
 	MyBundle resource;

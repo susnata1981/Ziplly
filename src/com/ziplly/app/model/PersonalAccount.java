@@ -27,13 +27,13 @@ public class PersonalAccount extends Account {
 	private String introduction;
 	private String occupation;
 	
-	@ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name="account_interest", 
-	joinColumns = {@JoinColumn(name = "account_id")},
-	inverseJoinColumns = {@JoinColumn(name = "interest_id", nullable = false)})
+		joinColumns = {@JoinColumn(name = "account_id")},
+		inverseJoinColumns = {@JoinColumn(name = "interest_id", nullable = false)})
 	private Set<Interest> interests = new HashSet<Interest>();
 	
-	@OneToMany(mappedBy="account", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="account", fetch=FetchType.LAZY)
 	private List<AccountSetting> accountSettings = new ArrayList<AccountSetting>();
 
 	public PersonalAccount() {

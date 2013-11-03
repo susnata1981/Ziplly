@@ -2,9 +2,10 @@ package com.ziplly.app.dao;
 
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.model.Love;
+import com.ziplly.app.model.LoveDTO;
 
 public interface LikeDAO {
-	void save(Love like) throws DuplicateException;
+	LoveDTO save(Love like) throws DuplicateException;
 	void delete(Love like);
-	Love findLikeByTweetAndAccountId(Long tweetId, Long accountId);
+	LoveDTO findLikeByTweetAndAccountId(Long tweetId, Long accountId);
 }

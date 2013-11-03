@@ -26,8 +26,6 @@ import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -246,7 +244,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
-		System.out.println("Calling submit signup...");
 		resetErrors();
 		if (!validateInput()) {
 			return;

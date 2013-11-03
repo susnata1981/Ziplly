@@ -140,6 +140,7 @@ public class AccountWidget extends Composite implements
 		tweetForm.setVisible(false);
 
 		tweetCategoryPanel.setVisible(false);
+		tweetCategoryList.clear();
 		for (TweetType tc : TweetType.values()) {
 			if (tc.equals(TweetType.ALL) || tc.equals(TweetType.OFFERS)) {
 				continue;
@@ -161,6 +162,7 @@ public class AccountWidget extends Composite implements
 			populateSection(adt, account);
 			editLinksMap.get(adt).setVisible(true);
 		}
+		sendMsgBtn.setVisible(false);
 		tweetForm.setVisible(true);
 	}
 
@@ -187,6 +189,7 @@ public class AccountWidget extends Composite implements
 				editLinksMap.get(asd.getSection()).setVisible(false);
 			}
 		}
+		sendMsgBtn.setVisible(true);
 		tweetForm.setVisible(false);
 	}
 
@@ -287,8 +290,13 @@ public class AccountWidget extends Composite implements
 		showAccountInfoFormWidget();
 	}
 
+	SendMessageWidget smw;
+	
 	@UiHandler("sendMsgBtn")
 	void sendMessage(ClickEvent event) {
+		smw = new SendMessageWidget(account);
+		smw.setPresenter(presenter);
+		smw.show();
 	}
 
 	boolean validateTweet() {
@@ -312,9 +320,9 @@ public class AccountWidget extends Composite implements
 			TweetDTO tweet = new TweetDTO();
 			String content = tweetTextBox.getText().trim();
 			tweet.setContent(content);
-			TweetType tweetType = TweetType.values()[tweetCategoryList
-					.getSelectedIndex()];
+			TweetType tweetType = TweetType.values()[tweetCategoryList.getSelectedIndex()];
 			tweet.setType(tweetType);
+			
 			tweet.setTimeCreated(new Date());
 			presenter.tweet(tweet);
 			tweetCategoryPanel.setVisible(false);
@@ -359,5 +367,9 @@ public class AccountWidget extends Composite implements
 	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
 		this.presenter = presenter;
 		eadw.setPresenter(presenter);
+	}
+
+	public void closeSendMessageModal() {
+		smw.hide();
 	}
 }

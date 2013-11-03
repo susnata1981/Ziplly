@@ -14,19 +14,7 @@ public class LoveDTO implements Serializable {
 	
 	public LoveDTO() {
 	}
-	
-	public LoveDTO(Love like) {
-		this.likeId = like.getLikeId();
-//		if (like.getComment() != null) {
-//			this.comment = new CommentDTO(like.getComment());
-//		}
-//		if (like.getTweet() != null) {
-//			this.tweet = new TweetDTO(like.getTweet());
-//		}
-		this.author = AccountHandlerUtil.getAccountDTO(like.getAuthor());
-		this.timeCreated = like.getTimeCreated();
-	}
-	
+
 	public TweetDTO getTweet() {
 		return tweet;
 	}

@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import com.ziplly.app.shared.BCrypt;
@@ -60,7 +62,7 @@ public class Account implements Serializable {
 	private String accessToken;
 
 	@NotNull
-	@Column(name="email")
+	@Column(name="email", unique = true)
 	private String email;
 	
 	@NotNull
@@ -80,7 +82,7 @@ public class Account implements Serializable {
 	@Column(name="time_created")
 	private Date timeCreated;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="sender")
 	private List<Tweet> tweets = new ArrayList<Tweet>();
 	
 	private Long uid;

@@ -18,11 +18,12 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.IHomeView;
 import com.ziplly.app.client.view.MainView;
+import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -35,6 +36,8 @@ import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
+import com.ziplly.app.shared.TweetAction;
+import com.ziplly.app.shared.TweetResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
@@ -77,7 +80,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 
 	void showLodingIcon() {
 		loadingPanel.setVisible(true);
-		modal.hide();
+		modal.show();
 	}
 	
 	void hideLoadingIcon() {
@@ -88,11 +91,15 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		fetchData();
 		setBackgroundImage();
 		bind();
-		modal.show();
-		bind();
+		showLodingIcon();
+		if (ctx.getAccount() != null) {
+			getCommunityWallData(TweetType.ALL);
+		} else {
+			fetchData();
+			panel.setWidget(mainView);
+		}
 	}
 
 	@Override
@@ -106,7 +113,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 		if (this.account != null) {
 			displayHomeView();
 		} else {
-			displayMainView();
+			fetchData();
 		}
 		hideLoadingIcon();
 	}
@@ -123,10 +130,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	
 	void displayHomeView() {
 		clearBackgroundImage();
+		hideLoadingIcon();
 		panel.setWidget(homeView);
 	}
-	
-	
 	
 	@Override
 	public void fetchData() {
@@ -135,23 +141,32 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 					@Override
 					public void onSuccess(GetLoggedInUserResult result) {
 						if (result != null && result.getAccount() != null) {
-							HomeActivity.this.account = result.getAccount();
-							getCommunitWallData(TweetType.ALL);
+							eventBus.fireEvent(new LoginEvent(result.getAccount()));
+							forward(result.getAccount());
 						} else {
-							go(panel);
+							displayMainView();
 						}
+						hideLoadingIcon();
 					}
 				});
 	}
 
-	void getCommunitWallData(TweetType type) {
+	void getCommunityWallData(TweetType type) {
+		IHomeView view = ctx.getHomeView();
+		if (view != null) {
+			displayHomeView();
+			return;
+		}
+		
 		dispatcher.execute(new GetCommunityWallDataAction(type), new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
 			@Override
 			public void onSuccess(GetCommunityWallDataResult result) {
 				if (result != null) {
+					hideLoadingIcon();
+					ctx.setHomeView(homeView);
 					HomeActivity.this.displayTweets(result.getTweets());
+					clearBackgroundImage();
 				}
-				go(panel);
 			}
 		});
 	}
@@ -159,12 +174,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
 		homeView.display(tweets);
+		panel.setWidget(homeView);
 	}
-
 
 	@Override
 	public void displayTweetsForCategory(TweetType type) {
-		getCommunitWallData(type);
+		getCommunityWallData(type);
 	}
 	
 	@Override
@@ -236,7 +251,21 @@ public class HomeActivity extends AbstractActivity implements HomePresenter {
 
 	@Override
 	public void deleteTweet(TweetDTO tweet) {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void tweet(TweetDTO tweet) {
+		AccountDTO account = ctx.getAccount();
+		if (account == null) {
+			placeController.goTo(new LoginPlace());
+		}
 		
+		dispatcher.execute(new TweetAction(tweet),
+			new DispatcherCallbackAsync<TweetResult>() {
+				@Override
+				public void onSuccess(TweetResult result) {
+					placeController.goTo(new HomePlace());
+				}
+			});
 	}
 }

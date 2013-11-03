@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.Hibernate;
+
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Session;
 
@@ -32,6 +34,8 @@ public class SessionDAOImpl implements SessionDAO {
 		Session session = null;
 		try {
 			session = (Session) query.getSingleResult();
+			session.getAccount().getAccountId();
+			Hibernate.initialize(session.getAccount());
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
 		} finally {

@@ -1,17 +1,20 @@
 package com.ziplly.app.client.view;
 
+import java.util.List;
+
+import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountPresenter;
-import com.ziplly.app.client.widget.AccountDetailsWidget;
 import com.ziplly.app.client.widget.AccountWidget;
+import com.ziplly.app.client.widget.ConversationWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
+import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class AccountView extends Composite implements IAccountView<PersonalAccountDTO> {
@@ -22,37 +25,37 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
 
-	@UiField
-	LogoutWidget logoutWidget;
+//	@UiField
+//	LogoutWidget logoutWidget;
 
 	@UiField
 	HTMLPanel profileSection;
 
-	@UiField
-	TabPanel accountViewTabs;
+//	@UiField
+//	TabPanel accountViewTabs;
+//
+//	@UiField
+//	Tab messagesTab;
+//	
+//	@UiField
+//	HTMLPanel mainContent;
+//	
+//	@UiField
+//	HTMLPanel settingsPanel;
 
-	@UiField
-	HTMLPanel conversationSection;
-
-	@UiField
-	HTMLPanel settingsPanel;
-
-	@UiField(provided = true)
-	AccountDetailsWidget accountDetailsWidget;
-
+//	@UiField
+//	ConversationWidget conversationWidget;
+	
 	private AccountWidget accountWidget;
 
 	AccountPresenter<PersonalAccountDTO> presenter;
 
 
-	// private ConversationWidget cw;
-
 	public AccountView() {
 		this.accountWidget = new AccountWidget();
-		this.accountDetailsWidget = new AccountDetailsWidget();
 		initWidget(uiBinder.createAndBindUi(this));
-		logoutWidget.setVisible(false);
-		accountViewTabs.setVisible(false);
+//		logoutWidget.setVisible(false);
+//		accountViewTabs.setVisible(false);
 	}
 
 	
@@ -60,7 +63,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
 		this.presenter = presenter;
 		accountWidget.setPresenter(presenter);
-		logoutWidget.setPresenter(presenter);
+//		conversationWidget.setPresenter(presenter);
+//		logoutWidget.setPresenter(presenter);
 	}
 
 	@Override
@@ -74,30 +78,33 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		profileSection.add(accountWidget);
 
 		// mark as visible
-		accountViewTabs.setVisible(true);
+//		accountViewTabs.setVisible(true);
 	}
 
 	@Override
 	public void displayLogoutWidget() {
-		logoutWidget.setVisible(true);
+//		logoutWidget.setVisible(true);
 	}
 
 
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
+		profileSection.clear();
 		accountWidget.displayPublicProfile(account);
-
 		profileSection.clear();
 		profileSection.add(accountWidget);
 
 		// mark as visible
-		accountViewTabs.setVisible(true);
+//		accountViewTabs.setVisible(true);
+//		accountViewTabs.selectTab(0);
 	}
 
+	@Override
 	public void clear() {
 		accountWidget.clear();
-		logoutWidget.setVisible(false);
-		accountViewTabs.setVisible(false);
+//		logoutWidget.setVisible(false);
+//		accountViewTabs.setVisible(false);
+//		conversationWidget.clear();
 	}
 
 	public void displayAccountUpdateSuccessfullMessage() {
@@ -112,31 +119,15 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		accountWidget.clearTweet();
 	}
 
-
 	@Override
-	public void setImageUploadUrl(String url) {
-		// TODO Auto-generated method stub
-		
+	public void closeSendMessageWidget() {
+		accountWidget.closeSendMessageModal();
 	}
 
 
 	@Override
-	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
-		// TODO Auto-generated method stub
-		
+	public void displayConversations(List<ConversationDTO> conversations) {
+//		conversationWidget.displayConversations(conversations);
 	}
 
-
-	@Override
-	public void displayProfileImagePreview(String imageUrl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void resetUploadForm() {
-		// TODO Auto-generated method stub
-		
-	}
 }

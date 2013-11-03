@@ -6,11 +6,12 @@ import javax.persistence.Query;
 
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.model.Love;
+import com.ziplly.app.model.LoveDTO;
 
 public class LikeDAOImpl implements LikeDAO {
 
 	@Override
-	public Love findLikeByTweetAndAccountId(Long tweetId, Long accountId) {
+	public LoveDTO findLikeByTweetAndAccountId(Long tweetId, Long accountId) {
 		if (tweetId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -20,11 +21,11 @@ public class LikeDAOImpl implements LikeDAO {
 		query.setParameter("tweetId", tweetId);
 		query.setParameter("accountId", accountId);
 		Love result = (Love) query.getSingleResult();
-		return result;
+		return EntityUtil.clone(result);
 	}
 	
 	@Override
-	public void save(Love like) throws DuplicateException {
+	public LoveDTO save(Love like) throws DuplicateException {
 		if (like == null) {
 			throw new IllegalArgumentException();
 		}
@@ -33,7 +34,7 @@ public class LikeDAOImpl implements LikeDAO {
 		
 		if (like.getTweet() != null) {
 			try {
-				Love result = findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor().getAccountId());
+				findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor().getAccountId());
 				throw new DuplicateException();
 			} catch(NoResultException nre) {
 				// ignore it
@@ -44,6 +45,7 @@ public class LikeDAOImpl implements LikeDAO {
 		em.getTransaction().begin();
 		em.persist(like);
 		em.getTransaction().commit();
+		return EntityUtil.clone(like);
 	}
 
 	@Override

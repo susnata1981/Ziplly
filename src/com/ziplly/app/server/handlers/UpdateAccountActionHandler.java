@@ -34,8 +34,7 @@ public class UpdateAccountActionHandler extends
 
 		AccountDTO accountDto = action.getAccount();
 		Account account = AccountHandlerUtil.getAccount(accountDto);
-		accountBli.updateAccount(account);
-		AccountDTO result = AccountHandlerUtil.getAccountDTO(account);
+		AccountDTO result = accountBli.updateAccount(account);
 		return new UpdateAccountResult(result);
 	}
 

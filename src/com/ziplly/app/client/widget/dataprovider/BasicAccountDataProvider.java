@@ -1,62 +1,42 @@
 package com.ziplly.app.client.widget.dataprovider;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.Range;
-import com.literati.app.client.LiteratiServiceAsync;
-import com.literati.app.client.view.AccountListView;
-import com.literati.app.shared.AccountDetails;
-import com.literati.app.shared.api.request.GetAccountDetailsRequest;
-import com.literati.app.shared.api.response.GetAccountDetailsResponse;
+import com.google.inject.Inject;
+import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.view.ResidentsView;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.GetResidentsRequest;
+import com.ziplly.app.shared.GetResidentsResult;
 
-public class BasicAccountDataProvider extends AbstractDataProvider<AccountDetails>{
-	private LiteratiServiceAsync service;
-	private GetAccountDetailsRequest gadr;
-	private AccountListView alv;
-
-	public BasicAccountDataProvider(
-			AccountListView alv) {
-		this.alv = alv;
-		this.service = alv.getService();
+public class BasicAccountDataProvider extends AbstractDataProvider<PersonalAccountDTO>{
+	private ResidentsView view;
+	@Inject
+	private CachingDispatcherAsync dispatcher;
+	private AccountDTO account;
+	
+	@Inject
+	public BasicAccountDataProvider(CachingDispatcherAsync dispatcher) {
+		this.dispatcher = dispatcher;
 	}
 	
 	@Override
-	protected void onRangeChanged(HasData<AccountDetails> display) {
-		if (gadr == null) {
-			throw new IllegalArgumentException("Request object not set in BasicAccountDataProvider object");
-		}
-		
-		final Range range = display.getVisibleRange();
-		gadr.start = range.getStart();
-		gadr.end = range.getStart() + range.getLength();
-		service.getAccountDetails(gadr, 
-				new AsyncCallback<GetAccountDetailsResponse>() {
+	protected void onRangeChanged(HasData<PersonalAccountDTO> display) {
+		dispatcher.execute(new GetResidentsRequest(account), new DispatcherCallbackAsync<GetResidentsResult>() {
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO
-				Window.alert("Failed to get account data:"+caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(GetAccountDetailsResponse adr) {
-				int size = adr.accounts.size();
-				if (size == 0) {
-					alv.showErrorMessage();
-				}
-				
-				alv.getCellList().setRowCount(size, true);
-				updateRowData(range.getStart(), adr.accounts);
+			public void onSuccess(GetResidentsResult result) {
+				view.getResidentsList().setRowData(result.getAccounts());
 			}
 		});
 	}
 
-	public GetAccountDetailsRequest getGadr() {
-		return gadr;
+	public void setView(ResidentsView view) {
+		this.view = view;
 	}
-
-	public void setGadr(GetAccountDetailsRequest gadr) {
-		this.gadr = gadr;
+	
+	public void setAccount(AccountDTO account) {
+		this.account = account;
 	}
 }

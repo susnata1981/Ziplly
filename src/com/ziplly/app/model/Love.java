@@ -33,11 +33,11 @@ public class Love implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long likeId;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="tweet_id")
 	Tweet tweet;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="comment_id")
 	Comment comment;
 	

@@ -6,6 +6,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.CommentDAOImpl;
+import com.ziplly.app.dao.ConversationDAO;
+import com.ziplly.app.dao.ConversationDAOImpl;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.InterestDAOImpl;
 import com.ziplly.app.dao.LikeDAO;
@@ -24,10 +26,11 @@ public class DAOModule extends AbstractModule {
 		bind(AccountDAO.class).to(AccountDAOImpl.class).in(Singleton.class);
 		bind(TweetDAO.class).to(TweetDAOImpl.class).in(Singleton.class);
 		bind(SessionDAO.class).to(SessionDAOImpl.class).in(Singleton.class);
-		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
 		bind(InterestDAO.class).to(InterestDAOImpl.class).in(Singleton.class);
 		bind(CommentDAO.class).to(CommentDAOImpl.class).in(Singleton.class);
 		bind(LikeDAO.class).to(LikeDAOImpl.class).in(Singleton.class);
+		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
+		bind(ConversationDAO.class).to(ConversationDAOImpl.class).in(Singleton.class);
 	}
 
 //	@Provides

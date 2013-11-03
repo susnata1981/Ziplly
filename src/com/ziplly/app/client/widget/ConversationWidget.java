@@ -1,110 +1,163 @@
 package com.ziplly.app.client.widget;
 
-import com.github.gwtbootstrap.client.ui.CellTable;
-import com.github.gwtbootstrap.client.ui.SimplePager;
-import com.github.gwtbootstrap.client.ui.SubmitButton;
-import com.github.gwtbootstrap.client.ui.TextArea;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.view.AbstractAccountView;
-import com.ziplly.app.client.widget.dataprovider.ConversationDataProvider;
-import com.ziplly.app.model.Conversation;
+import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.view.ConversationView.ConversationViewPresenter;
+import com.ziplly.app.client.view.View;
+import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.MessageDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 
-public class ConversationWidget extends AbstractAccountView {
-	private static final int PAGE_SIZE = 10;
+public class ConversationWidget extends Composite implements
+		View<ConversationViewPresenter> {
 
 	private static ConversationWidgetUiBinder uiBinder = GWT
 			.create(ConversationWidgetUiBinder.class);
 
-	interface ConversationWidgetUiBinder extends UiBinder<Widget, ConversationWidget> {
+	interface ConversationWidgetUiBinder extends
+			UiBinder<Widget, ConversationWidget> {
 	}
 
-	@UiField(provided=true)
-	SimplePager pager;
-	
-	@UiField(provided=true)
-	CellTable<Conversation> table;
-	
 	@UiField
-	TextBox subject;
-	
-	@UiField
-	TextArea message;
-	
-	@UiField
-	SubmitButton sendBtn;
-	
-	ConversationDataProvider dataProvider;
-	
+	HTMLPanel conversationPanel;
+	private ConversationViewPresenter presenter;
+	private Map<ConversationDTO, HTMLPanel> conversationToPanelMap = new HashMap<ConversationDTO, HTMLPanel>();
+	private Map<ConversationDTO, HTMLPanel> conversationToReplyPanelMap = new HashMap<ConversationDTO, HTMLPanel>();
 	@Inject
-	public ConversationWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus) {
-		super(dispatcher, eventBus);
-	}
-
-	@Override
-	protected void initWidget() {
+	public ConversationWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	@Override
-	protected void postInitWidget() {
-		dataProvider = new ConversationDataProvider(this, service);
-//		System.out.println("Account ID="+this.getAd().account.getDisplayName());
-		dataProvider.addDataDisplay(table);
+	public void setPresenter(ConversationViewPresenter presenter) {
+		this.presenter = presenter;
 	}
 
 	@Override
-	protected void setupUiElements() {
-		table = new CellTable<Conversation>();
-		buildTable();
-		pager = new SimplePager();
-		pager.setDisplay(table);
-		table.setPageSize(PAGE_SIZE);
+	public void clear() {
+		conversationPanel.clear();
 	}
 
-	void buildTable() {
-		TextColumn<Conversation> sender = new TextColumn<Conversation>() {
-			@Override
-			public String getValue(Conversation c) {
-				return c.getSender().getDisplayName();
+	public void updateConversation(final ConversationDTO c) {
+		HTMLPanel panel = conversationToPanelMap.get(c);
+		if (panel == null) {
+			HTMLPanel cPanel = new HTMLPanel("<hr/>");
+			conversationToPanelMap.put(c, cPanel);
+			displayConversation(cPanel, c);
+			HTMLPanel replyPanel = conversationToReplyPanelMap.get(c);
+			if (replyPanel == null) {
+				// error
+				throw new RuntimeException("Couldn't find replypanel for conversation: "+c.getId());
 			}
-		};
-		table.addColumn(sender, "Sender");
-		
-		TextColumn<Conversation> subject = new TextColumn<Conversation>() {
+			TextBox tbox = (TextBox) replyPanel.getWidget(0);
+			tbox.setText("");
+		} else {
+			int size = c.getMessages().size();
+			displayMessage(panel, c.getMessages().get(size-1), c);
+		}
+	}
+	
+	public void displayConversations(List<ConversationDTO> conversations) {
+		conversationPanel.clear();
+		for (final ConversationDTO c : conversations) {
+			HTMLPanel panel = new HTMLPanel("<hr/>");
+			conversationToPanelMap.put(c, panel);
+			displayConversation(panel, c);
+			conversationPanel.add(panel);
+			HTMLPanel replyPanel = new HTMLPanel("");
+			conversationToReplyPanelMap.put(c, replyPanel);
+			addReplyPanel(replyPanel, c);
+			conversationPanel.add(replyPanel);
+			conversationPanel.getElement().getStyle().setBackgroundColor("#e9e9e8");
+			conversationPanel.getElement().getStyle().setMargin(10, Unit.PX);
+			conversationPanel.getElement().getStyle().setBorderWidth(2, Unit.PX);
+		}
+	}
+
+	void displayConversation(final HTMLPanel panel, final ConversationDTO c) {
+		for (final MessageDTO message : c.getMessages()) {
+			displayMessage(panel, message, c);
+		}
+	}
+	
+	private void addReplyPanel(final HTMLPanel panel, final ConversationDTO c) {
+		HTMLPanel replyPanel = new HTMLPanel("");
+		final TextBox replyTextBox = new TextBox();
+		replyTextBox.setWidth("400px");
+		replyTextBox.setHeight("40px");
+		Button replyBtn = new Button("reply");
+		replyBtn.setType(ButtonType.PRIMARY);
+		replyPanel.add(replyTextBox);
+		replyPanel.add(replyBtn);
+		panel.add(replyPanel);
+		replyBtn.addClickHandler(new ClickHandler() {
 			@Override
-			public String getValue(Conversation c) {
-				System.out.println("C="+c.getMessages().size());
-				if (c.getMessages().size()>0) {
-					return c.getMessages().get(0).getSubject();
+			public void onClick(ClickEvent event) {
+				ConversationDTO conversation = new ConversationDTO();
+				conversation.setId(c.getId());
+				conversation.setSender(c.getSender());
+				conversation.setReceiver(c.getReceiver());
+				conversation.setSubject(c.getSubject());
+				conversation.setTimeUpdated(new Date());
+				conversation.getMessages().addAll(c.getMessages());
+				MessageDTO m = new MessageDTO();
+				m.setMessage(replyTextBox.getText());
+				m.setTimeCreated(new Date());
+				if (c.isSender()) {
+					m.setReceiver(c.getReceiver());
+					m.setSender(c.getSender());
+				} else {
+					m.setReceiver(c.getSender());
+					m.setSender(c.getReceiver());
 				}
-				return "";
-			}
-		};
-		table.addColumn(subject, "Subject");
-		
-		final SingleSelectionModel<Conversation> selectionModel = new SingleSelectionModel<Conversation>();
-		table.setSelectionModel(selectionModel);
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				Conversation c = selectionModel.getSelectedObject();
-				Window.alert(c.getMessages().get(0).getSubject()+" selected!");
+				conversation.add(m);
+				presenter.sendMessage(conversation);
 			}
 		});
 	}
 
-	@Override
-	protected void internalOnUserLogin() {
+	private void displayMessage(final HTMLPanel panel, final MessageDTO message, final ConversationDTO c) {
+		HTMLPanel senderDiv = new HTMLPanel("");
+		Anchor profileLink = new Anchor(message.getSender().getDisplayName());
+		profileLink.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (message.getSender() instanceof PersonalAccountDTO) {
+					presenter.goTo(new PersonalAccountPlace(message
+							.getSender().getAccountId()));
+				}
+			}
+		});
+
+		Image profileImage = new Image(message.getSender().getImageUrl());
+		profileImage.setWidth("60px");
+		profileImage.setHeight("50px");
+
+		senderDiv.add(profileLink);
+		senderDiv.add(profileImage);
+		panel.add(senderDiv);
+
+		HTMLPanel content = new HTMLPanel("<p>Subject:"+c.getSubject()+"</p><p>Message:"+message.getMessage()+"</p>");
+		panel.add(content);
 	}
+	
 }

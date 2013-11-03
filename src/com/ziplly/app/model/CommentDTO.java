@@ -14,13 +14,6 @@ public class CommentDTO implements Serializable {
 	public CommentDTO() {
 	}
 	
-	public CommentDTO(Comment comment) {
-		this.commentId = comment.getCommentId();
-		this.author = AccountHandlerUtil.getAccountDTO(comment.getAuthor()); 
-		this.content = comment.getContent();
-		this.timeCreated = comment.getTimeCreated();
-	}
-
 	public String getContent() {
 		return content;
 	}

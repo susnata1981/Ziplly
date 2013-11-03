@@ -7,28 +7,40 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.BusinessAccountActivity;
+import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
+import com.ziplly.app.client.activities.ConversationActvity;
 import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.LoginActivity;
 import com.ziplly.app.client.activities.OAuthActivity;
 import com.ziplly.app.client.activities.PersonalAccountActivity;
+import com.ziplly.app.client.activities.PersonalAccountSettingsActivity;
 import com.ziplly.app.client.activities.PublicAccountActivity;
+import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
+import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.places.PublicAccountPlace;
+import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
+import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.MainView;
+import com.ziplly.app.client.view.PersonalAccountSettingsView;
+import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 
 public class ZipllyActivityMapper implements ActivityMapper{
@@ -43,6 +55,10 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	private EventBus eventBus;
 	private ApplicationContext ctx;
 	private BusinessAccountView businessAccountView;
+	private ResidentsView residentsView;
+	private PersonalAccountSettingsView personalAccountSettingsView;
+	private BusinessAccountSettingsView businessAccountSettingsView;
+	private ConversationView conversationView;
 	
 	@Inject
 	public ZipllyActivityMapper(
@@ -53,6 +69,10 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			BusinessAccountView businessAccountView,
 			SignupView signupView,
 			BusinessSignupView businessSignupView,
+			ResidentsView residentsView,
+			PersonalAccountSettingsView personalAccountSettingsView,
+			BusinessAccountSettingsView businessAccountSettingsView,
+			ConversationView conversationView,
 			CachingDispatcherAsync dispatcher,
 			EventBus eventBus,
 			PlaceController placeController,
@@ -65,6 +85,10 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		this.businessAccountView = businessAccountView;
 		this.signupView = signupView;
 		this.businessSignupView = businessSignupView;
+		this.residentsView = residentsView;
+		this.personalAccountSettingsView = personalAccountSettingsView;
+		this.businessAccountSettingsView = businessAccountSettingsView;
+		this.conversationView = conversationView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -89,15 +113,28 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			return new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, businessSignupView);
 		}
 		else if (place instanceof PersonalAccountPlace) {
-			return new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView);
+			return new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView, (PersonalAccountPlace)place);
+		}
+		else if (place instanceof PersonalAccountSettingsPlace) {
+			return new PersonalAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, personalAccountSettingsView);
+		}
+		else if (place instanceof BusinessAccountSettingsPlace) {
+			return new BusinessAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, businessAccountSettingsView);
 		}
 		else if (place instanceof BusinessAccountPlace) {
 			return new BusinessAccountActivity(dispatcher, eventBus, placeController, ctx, businessAccountView, (BusinessAccountPlace)place);
 		}
-		else if (place instanceof PublicAccountPlace) {
-			return new PublicAccountActivity(dispatcher, eventBus, placeController, ctx, (PublicAccountPlace)place, accountView, businessAccountView);
+//		else if (place instanceof PublicAccountPlace) {
+//			return new PublicAccountActivity(dispatcher, eventBus, placeController, ctx, (PublicAccountPlace)place, accountView, businessAccountView);
+//		}
+		else if (place instanceof ConversationPlace) {
+			return new ConversationActvity(dispatcher, eventBus, placeController, ctx, conversationView);
 		}
-		return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, mainView, ctx, homeView);
+		else if (place instanceof ResidentPlace) {
+			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, residentsView);
+		}
+		
+		throw new IllegalArgumentException();
 	}
 
 }

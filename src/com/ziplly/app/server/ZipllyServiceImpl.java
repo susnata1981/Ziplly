@@ -21,13 +21,10 @@ import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountDetails;
-import com.ziplly.app.model.Category;
 import com.ziplly.app.model.LatLong;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
@@ -52,7 +49,7 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token
 				.getAccess_token());
 		User fuser = fUserDao.getUser();
-		LatLong locInfo = fUserDao.getLocationInfo(fuser);
+//		LatLong locInfo = fUserDao.getLocationInfo(fuser);
 
 		if (fuser == null) {
 			return null;
@@ -66,15 +63,15 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 			// create user
 			AccountDTO account = new AccountDTO();
 			account.setEmail(fuser.getEmail());
-			account.setFirstName(fuser.getFirstName());
-			account.setLastName(fuser.getLastName());
-			account.setAccessToken(token.getAccess_token());
-			account.setfId(fuser.getId());
-			account.setLocation(fuser.getLocation().getName());
-			account.setUrl(fuser.getLink());
-			account.setLongitude(locInfo.longitude);
-			account.setLatitude(locInfo.latitude);
-			account.setIntroduction(fuser.getBio());
+//			account.setFirstName(fuser.getFirstName());
+//			account.setLastName(fuser.getLastName());
+//			account.setAccessToken(token.getAccess_token());
+//			account.setfId(fuser.getId());
+//			account.setLocation(fuser.getLocation().getName());
+//			account.setUrl(fuser.getLink());
+//			account.setLongitude(locInfo.longitude);
+//			account.setLatitude(locInfo.latitude);
+//			account.setIntroduction(fuser.getBio());
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
 					+ "/picture"; //?width=200&height=160
 			account.setImageUrl(imgUrl);
@@ -112,17 +109,17 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 			// create user
 			account = new AccountDTO();
 			account.setEmail(fuser.getEmail());
-			account.setFirstName(fuser.getFirstName());
-			account.setLastName(fuser.getLastName());
-			account.setAccessToken(token.getAccess_token());
-			account.setfId(fuser.getId());
-			account.setLocation(fuser.getLocation().getName());
-			account.setUrl(fuser.getLink());
-			account.setLongitude(locInfo.longitude);
-			account.setLatitude(locInfo.latitude);
-			account.setLastLoginTime(new Date());
-			account.setTimeCreated(new Date());
-			account.setIntroduction(fuser.getBio());
+//			account.setFirstName(fuser.getFirstName());
+//			account.setLastName(fuser.getLastName());
+//			account.setAccessToken(token.getAccess_token());
+//			account.setfId(fuser.getId());
+//			account.setLocation(fuser.getLocation().getName());
+//			account.setUrl(fuser.getLink());
+//			account.setLongitude(locInfo.longitude);
+//			account.setLatitude(locInfo.latitude);
+//			account.setLastLoginTime(new Date());
+//			account.setTimeCreated(new Date());
+//			account.setIntroduction(fuser.getBio());
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
 					+ "/picture?width=200&height=160";
 			account.setImageUrl(imgUrl);
@@ -166,11 +163,11 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 	}
 
 	// TODO change the input param
-	protected AccountDetails saveAccountPreferences(Account account,
-			List<Category> input) {
-
-		return null;
-	}
+//	protected AccountDetails saveAccountPreferences(Account account,
+//			List<Category> input) {
+//
+//		return null;
+//	}
 
 	@Override
 	public AccountDTO doLogin(String code) {
@@ -208,11 +205,11 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		return new AccountDTO(response);
 	}
 
-	@Override
-	public AccountDetails getAccessToken(String code) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public AccountDetails getAccessToken(String code) throws Exception {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	@Override
 	public String getUploadUrl() {

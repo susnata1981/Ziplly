@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.gwt.json.client.JSONException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthUtil;

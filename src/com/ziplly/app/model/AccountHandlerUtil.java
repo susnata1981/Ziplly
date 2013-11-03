@@ -1,24 +1,26 @@
 package com.ziplly.app.model;
 
+import com.ziplly.app.dao.EntityUtil;
+
 
 
 public class AccountHandlerUtil {
 	public static <K extends Account> AccountDTO getAccountDTO(K account) {
 		if (account instanceof PersonalAccount) {
-			return new PersonalAccountDTO((PersonalAccount)account);
+			return EntityUtil.convert(account);
 		} else if (account instanceof BusinessAccount) {
-			BusinessAccountDTO ba = new BusinessAccountDTO((BusinessAccount)account);
-			return ba;
+			return EntityUtil.convert(account);
 		}
-		return new AccountDTO(account);
+		throw new IllegalArgumentException();
 	}
-	
+
 	public static <K extends AccountDTO> Account getAccount(K account) {
 		if (account instanceof PersonalAccountDTO) {
 			return new PersonalAccount((PersonalAccountDTO)account);
 		} else if (account instanceof BusinessAccountDTO) {
 			return new BusinessAccount((BusinessAccountDTO)account);
 		}
-		return new Account(account);
+//		return new Account(account);
+		throw new IllegalArgumentException();
 	}
 }

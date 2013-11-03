@@ -5,13 +5,10 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.shared.GetAccountByIdAction;
-import com.ziplly.app.shared.GetAccountByIdResult;
 
 public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAccountDTO> {
 
@@ -36,13 +33,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		
-		if (place.getAccountId() != null) {
-			displayPublicProfile(place.getAccountId());
-		} else if (ctx.getAccount() != null) {
+		if (ctx.getAccount() != null) {
 			bind();
-			setImageUploadUrl();
-			setUploadImageHandler();
 			displayProfile();
 			go(panel);
 		} else{
@@ -57,6 +49,5 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public void displayPublicProfile() {
-		
 	}
 }

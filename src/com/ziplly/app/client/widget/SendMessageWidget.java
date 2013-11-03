@@ -1,28 +1,33 @@
 package com.ziplly.app.client.widget;
 
+import java.util.Date;
+
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.SubmitButton;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.ZipllyService;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.view.AbstractView;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Message;
+import com.ziplly.app.client.activities.AccountPresenter;
+import com.ziplly.app.client.view.View;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.MessageDTO;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.ValidationResult;
 
-public class SendMessageWidget extends AbstractView {
+public class SendMessageWidget extends Composite implements View<AccountPresenter<?>>{
 
 	private static SendMessageWidgetUiBinder uiBinder = GWT
 			.create(SendMessageWidgetUiBinder.class);
@@ -33,7 +38,15 @@ public class SendMessageWidget extends AbstractView {
 
 	@UiField
 	TextBox subject;
+	@UiField
+	ControlGroup subjectCg;
+	@UiField
+	HelpInline subjectHelpInline;
 	
+	@UiField
+	ControlGroup messageCg;
+	@UiField
+	HelpInline messageHelpInline;
 	@UiField
 	TextArea message;
 	
@@ -41,64 +54,94 @@ public class SendMessageWidget extends AbstractView {
 	SubmitButton sendBtn;
 	
 	@UiField
-	HTMLPanel status;
+	Alert status;
 	
 	@UiField
 	HTMLPanel rootPanel;
 	
 	@UiField
 	Modal modal;
+	private AccountPresenter<?> presenter;
+	private AccountDTO receiver;
 	
-	private Account receiver;
-	private Account sender;
-
-	public SendMessageWidget(CachingDispatcherAsync dispatcher, SimpleEventBus eventBus, Account sender, Account receiver) {
-		super(dispatcher, eventBus);
-		this.sender = sender;
+	public SendMessageWidget(AccountDTO receiver) {
 		this.receiver = receiver;
-	}
-
-	@Override
-	protected void initWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
+		modal.hide();
+		subjectHelpInline.setVisible(false);
+		messageHelpInline.setVisible(false);
+		status.setVisible(false);
 	}
-
-	@Override
-	protected void postInitWidget() {
+	
+	public void show() {
 		modal.show();
 	}
+	
+	public void hide() {
+		modal.hide();
+	}
 
-	@Override
-	protected void setupUiElements() {
+	boolean validate() {
+		String subjectInput = FieldVerifier.getEscapedText(subject.getText());
+		ValidationResult result = FieldVerifier.validateName(subjectInput);
+		if (!result.isValid()) {
+			subjectCg.setType(ControlGroupType.ERROR);
+			subjectHelpInline.setText(result.getErrors().get(0).getErrorMessage());
+			subjectHelpInline.setVisible(true);
+			return false;
+		}
+
+		String messageInput = FieldVerifier.getEscapedText(message.getText());
+		result = FieldVerifier.validateName(messageInput);
+		if (!result.isValid()) {
+			messageCg.setType(ControlGroupType.ERROR);
+			messageHelpInline.setText(result.getErrors().get(0).getErrorMessage());
+			messageHelpInline.setVisible(true);
+			return false;
+		}
+		return true;
 	}
 	
 	@UiHandler("sendBtn")
 	void send(ClickEvent event) {
-		// validate form
-		Message msg = new Message();
-		msg.setSubject(SafeHtmlUtils.htmlEscape(subject.getText().trim()));
-		msg.setMessage(SafeHtmlUtils.htmlEscape(message.getText().trim()));
-//		service.sendMessage(sender, receiver, msg, new AsyncCallback<Void>() {
-//			@Override
-//			public void onSuccess(Void result) {
-//				Alert alert = new Alert("Message sent");
-//				alert.setType(AlertType.SUCCESS);
-//				status.add(alert);
-//				modal.hide();
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Alert alert = new Alert("Message couldn't sent");
-//				alert.setAnimation(true);
-//				alert.setType(AlertType.ERROR);
-//				status.add(alert);
-//			}
-//		});
+		if (!validate()) {
+			return;
+		}
+		ConversationDTO conversation = new ConversationDTO();
+		MessageDTO msg = new MessageDTO();
+		msg.setReceiver(receiver);
+		msg.setMessage(FieldVerifier.getEscapedText(message.getText().trim()));
+		msg.setTimeCreated(new Date());
+		conversation.setSubject(FieldVerifier.getEscapedText(subject.getText().trim()));
+		conversation.setReceiver(receiver);
+		conversation.setTimeCreated(new Date());
+		conversation.setTimeUpdated(new Date());
+		conversation.add(msg);
+		presenter.sendMessage(conversation);
 	}
 
 	@UiHandler("closeBtn")
 	void close(ClickEvent event) {
-		modal.hide();
+		hide();
+	}
+	
+	public void setStatus(String msg, AlertType type) {
+		status.setText(msg);
+		status.setType(type);
+		status.setVisible(true);
+	}
+
+	@Override
+	public void clear() {
+		subject.setText("");
+		message.setText("");
+		subjectHelpInline.setVisible(false);
+		messageHelpInline.setVisible(false);
+		status.setVisible(false);
+	}
+
+	@Override
+	public void setPresenter(AccountPresenter<?> presenter) {
+		this.presenter = presenter;
 	}
 }

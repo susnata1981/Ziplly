@@ -8,6 +8,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Tweet;
+import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
@@ -32,9 +33,10 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		
 		Tweet tweet = new Tweet(action.getTweet());
 		tweet.setSender(session.getAccount());
-		tweetDao.save(tweet);
+		TweetDTO saveTweet = tweetDao.save(tweet);
 		
 		TweetResult result = new TweetResult();
+		result.setTweet(saveTweet);
 		return result;
 	}
 

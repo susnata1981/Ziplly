@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.gwt.json.client.JSONException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthUtil;
@@ -54,9 +54,9 @@ public class FacebookAuthFlowManager extends OAuthFlowManager {
 		return at;
 	}
 	
-	public static void main(String[] args) throws JSONException {
-		FacebookAuthFlowManager fm = new FacebookAuthFlowManager(new OAuthConfig());
-		String s = "access_token=djksfdsdkljf&expires=5125091";
-		System.out.println(fm.parseResponse(s));
-	}
+//	public static void main(String[] args) throws JSONException {
+//		FacebookAuthFlowManager fm = new FacebookAuthFlowManager(new OAuthConfig());
+//		String s = "access_token=djksfdsdkljf&expires=5125091";
+//		System.out.println(fm.parseResponse(s));
+//	}
 }

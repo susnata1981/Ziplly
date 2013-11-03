@@ -20,24 +20,6 @@ public class TweetDTO implements Serializable {
 	public TweetDTO() {
 	}
 	
-	public TweetDTO(Tweet tweet) {
-		this.tweetId = tweet.getTweetId();
-		imageId = tweet.getImageId();
-		type = tweet.getType();
-		content = tweet.getContent();
-		status = tweet.getStatus();
-		timeCreated = tweet.getTimeCreated();
-		this.sender = AccountHandlerUtil.getAccountDTO(tweet.getSender());
-		
-		for(Comment c: tweet.getComments()) {
-			comments.add(new CommentDTO(c));
-		}
-		
-		for(Love l : tweet.getLikes()) {
-			likes.add(new LoveDTO(l));
-		}
-	}
-	
 	public TweetType getType() {
 		return type;
 	}

@@ -1,6 +1,7 @@
 package com.ziplly.app.client.view;
 
 import java.util.Date;
+import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -12,7 +13,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,7 +21,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountPresenter;
@@ -29,6 +29,7 @@ import com.ziplly.app.client.widget.EditAccount;
 import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -93,6 +94,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		logoutWidget.setVisible(false);
 		imageUploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		imageUploadForm.setMethod(FormPanel.METHOD_POST);
+		tweetCategoryList.clear();
 	}
 
 	@Override
@@ -128,7 +130,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		tweetCategoryList.clear();
 		tweetCategoryList.addItem(TweetType.OFFERS.name());
 		
-		tweetFormPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		tweetFormPanel.getElement().getStyle().setDisplay(Display.INLINE);
 		
 		logoutWidget.setVisible(true);
 		uploadBtn.setEnabled(false);
@@ -139,7 +141,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
 		imageUploadForm.setVisible(false);
-		tweetFormPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		tweetFormPanel.getElement().getStyle().setDisplay(Display.NONE);
 		editAccountLink.setVisible(false);
 	}
 
@@ -185,9 +187,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		TweetDTO tweet = new TweetDTO();
 		String content = tweetTextBox.getText().trim();
 		tweet.setContent(content);
-		TweetType tweetType = TweetType.values()[tweetCategoryList
-				.getSelectedIndex()];
-		tweet.setType(tweetType);
+		tweet.setType(TweetType.OFFERS);
 		tweet.setTimeCreated(new Date());
 		presenter.tweet(tweet);
 	}
@@ -198,29 +198,6 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		editAccountView.show();
 	}
 
-	@Override
-	public void setImageUploadUrl(String url) {
-		imageUploadForm.setAction(url);
-		uploadBtn.setEnabled(true);
-	}
-
-	@Override
-	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
-		imageUploadForm.addSubmitCompleteHandler(submitCompleteHandler);
-	}
-
-	@Override
-	public void displayProfileImagePreview(String imageUrl) {
-		profileImageUrl.setUrl(imageUrl);
-		saveImageBtn.setVisible(true);
-	}
-
-	@Override
-	public void resetUploadForm() {
-		imageUploadForm.reset();
-		uploadBtn.setEnabled(false);
-	}
-	
 	@UiHandler("uploadBtn") 
 	void uploadImage(ClickEvent event) {
 		saveImageBtn.setVisible(false);
@@ -232,5 +209,17 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		this.account.setImageUrl(profileImageUrl.getUrl());
 		presenter.save(account);
 		saveImageBtn.setVisible(false);
+	}
+
+	@Override
+	public void closeSendMessageWidget() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayConversations(List<ConversationDTO> conversations) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -23,7 +23,9 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessSignupView;
+import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.IHomeView;
@@ -32,11 +34,14 @@ import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
+import com.ziplly.app.client.view.PersonalAccountSettingsView;
+import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.widget.EditAccount;
 import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
+import com.ziplly.app.client.widget.dataprovider.BasicAccountDataProvider;
 
 public class ZClientModule extends AbstractGinModule {
 
@@ -46,12 +51,14 @@ public class ZClientModule extends AbstractGinModule {
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
+		bind(BasicAccountDataProvider.class);
 		
 		// main presenter
 		bind(MainController.class).in(Singleton.class);
 		bind(ZipllyController.class).in(Singleton.class);
 		
 		// views
+		bind(NavView.class).in(Singleton.class);
 		bind(IAccountView.class).to(AccountView.class).in(Singleton.class);
 		bind(ILoginAccountView.class).to(LoginAccountView.class).in(Singleton.class);
 		bind(ISignupView.class).to(BusinessSignupView.class).in(Singleton.class);
@@ -59,7 +66,10 @@ public class ZClientModule extends AbstractGinModule {
 		bind(SignupView.class).in(Singleton.class);
 		bind(BusinessSignupView.class).in(Singleton.class);
 		bind(MainView.class).in(Singleton.class);
-		bind(NavView.class).in(Singleton.class);
+		bind(ResidentsView.class).in(Singleton.class);
+		bind(PersonalAccountSettingsView.class);
+		bind(BusinessAccountSettingsView.class);
+		bind(ConversationView.class);
 		
 		// widgets
 		bind(LoginWidget.class).in(Singleton.class);
@@ -86,6 +96,7 @@ public class ZClientModule extends AbstractGinModule {
 	
 	public static class PlaceControllerProvider implements Provider<PlaceController> {
 		EventBus eventBus;
+		
 		@Inject
 		public PlaceControllerProvider(EventBus eventBus) {
 			this.eventBus = eventBus;

@@ -44,11 +44,9 @@ public class UpdateTweetActionHandler extends AbstractAccountActionHandler<Updat
 		tweet.setSender(session.getAccount());
 		
 		try {
-			tweet = tweetDao.update(tweet);
-			TweetDTO t = new TweetDTO(tweet);
+			TweetDTO tweetDto = tweetDao.update(tweet);
 			UpdateTweetResult result = new UpdateTweetResult();
-			
-			result.setTweet(new TweetDTO(tweet));
+			result.setTweet(tweetDto);
 			return result;
 		} catch(NoResultException nre) {
 			throw nre;

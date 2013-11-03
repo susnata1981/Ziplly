@@ -48,8 +48,7 @@ public class LikeTweetActionHandler extends AbstractAccountActionHandler<LikeTwe
 		like.setAuthor(a);
 		like.setTimeCreated(new Date());
 		try{
-			likeDao.save(like);
-			LoveDTO loveDto = new LoveDTO(like);
+			LoveDTO loveDto = likeDao.save(like);
 			TweetDTO tweetDto = new TweetDTO();
 			tweetDto.setTweetId(action.getTweetId());
 			loveDto.setTweet(tweetDto);

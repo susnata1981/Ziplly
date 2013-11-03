@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style>
+		#residentListId {
+			width: 700px;
+			border: 1px solid #ddd;
+			margin: 10px;
+		}
+	</ui:style>
+	<g:HTMLPanel id="residentListId">
+	    <div>
+		    <cell:SimplePager ui:field="pager"/>
+			<cell:CellList ui:field="residentsList" />
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

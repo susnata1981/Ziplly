@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,15 +25,15 @@ public class Comment implements Serializable {
 	@Column(name="comment_id")
 	private int commentId;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="tweet_id")
 	private Tweet tweet;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="account_id")
 	private Account author;
 	
-	@OneToMany(mappedBy="comment")
+	@OneToMany(mappedBy="comment", fetch = FetchType.LAZY)
 	private Set<Love> likes = new HashSet<Love>();
 	
 	private String content;

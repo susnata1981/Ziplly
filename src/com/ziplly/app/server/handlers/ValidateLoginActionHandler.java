@@ -6,9 +6,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountHandlerUtil;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
@@ -28,9 +26,8 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 			throw new IllegalArgumentException("Invalid argument to ValidateLoginActionHandler");
 		}
 		
-		Account account = accountBli.validateLogin(action.getEmail(), action.getPassword());
-		AccountDTO accountDto = AccountHandlerUtil.getAccountDTO(account);
-		return new ValidateLoginResult(accountDto);
+		AccountDTO account = accountBli.validateLogin(action.getEmail(), action.getPassword());
+		return new ValidateLoginResult(account);
 	}
 
 	@Override

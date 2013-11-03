@@ -2,8 +2,6 @@ package com.ziplly.app.client.activities;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -14,13 +12,14 @@ import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.GetAccountByIdAction;
-import com.ziplly.app.shared.GetAccountByIdResult;
-import com.ziplly.app.shared.GetImageUploadUrlAction;
-import com.ziplly.app.shared.GetImageUploadUrlResult;
+import com.ziplly.app.shared.GetConversationsAction;
+import com.ziplly.app.shared.GetConversationsResult;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
+import com.ziplly.app.shared.SendMessageAction;
+import com.ziplly.app.shared.SendMessageResult;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 import com.ziplly.app.shared.UpdateAccountAction;
@@ -36,6 +35,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			IAccountView<T> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
+		
 		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountUpdateEvent event) {
@@ -96,37 +96,37 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				});
 	}
 
-	public void setImageUploadUrl() {
-		dispatcher.execute(new GetImageUploadUrlAction(),
-				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-					@Override
-					public void onSuccess(GetImageUploadUrlResult result) {
-						// TODO hack for making it work in local environment
-						String url = result.getImageUrl().replace(
-								"susnatas-MacBook-Pro.local:8888",
-								"127.0.0.1:8888");
-						System.out.println("Setting upload image form action to:"+url);
-						view.setImageUploadUrl(url);
-					}
-				});
-	}
-
-	// TODO handle image deletion on multiple file uploads
-	public void setUploadImageHandler() {
-		view.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				String imageUrl = event.getResults();
-				System.out.println("Received uploaded image url:"+imageUrl);
-				view.displayProfileImagePreview(imageUrl);
-				view.resetUploadForm();
-				setImageUploadUrl();
-			}
-		});
-	}
-	
 	@Override
 	public void displayPublicProfile(T account) {
 		view.displayPublicProfile(account);
+	}
+	
+	/*
+	 * Send message
+	 * @see com.ziplly.app.client.activities.AccountPresenter#sendMessage(com.ziplly.app.model.MessageDTO)
+	 */
+	@Override
+	public void sendMessage(ConversationDTO conversation) {
+		if (conversation == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		// make sure user is logged in
+		if (ctx.getAccount() == null) {
+			view.closeSendMessageWidget();
+			goTo(new LoginPlace());
+			return;
+		}
+		
+		int size = conversation.getMessages().size();
+		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.setSender(ctx.getAccount());
+		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
+			@Override
+			public void onSuccess(SendMessageResult result) {
+				view.displayAccountUpdateSuccessfullMessage();
+			}
+		});
+//		System.out.println("sending message to: "+conversation.getReceiver());
 	}
 }

@@ -69,6 +69,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 						System.out.println("Account " + result.getAccount()
 								+ " registered.");
 						eventBus.fireEvent(new LoginEvent(result.getAccount()));
+						view.clear();
 						forward(result.getAccount());
 					}
 				});

@@ -7,8 +7,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountHandlerUtil;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
@@ -27,12 +26,11 @@ public class GetLoggedInUserActionHandler extends
 			ExecutionContext ec) throws DispatchException {
 		
 		try {
-			Account account = accountBli.getLoggedInUser();
+			AccountDTO account = accountBli.getLoggedInUser();
 			if (account == null) {
 				return new GetLoggedInUserResult(null);
 			}
-			
-			return new GetLoggedInUserResult(AccountHandlerUtil.getAccountDTO(account));
+			return new GetLoggedInUserResult(account);
 		} catch (NotFoundException nfe) {
 			return new GetLoggedInUserResult(null);
 		}

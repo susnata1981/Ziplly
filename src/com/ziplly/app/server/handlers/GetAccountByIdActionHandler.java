@@ -7,9 +7,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountHandlerUtil;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -32,9 +30,8 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
-			Account account = accountBli.getAccountById(action.getAccountId());
-			AccountDTO accountDto = AccountHandlerUtil.getAccountDTO(account);
-			result.setAccount(accountDto);
+			AccountDTO account = accountBli.getAccountById(action.getAccountId());
+			result.setAccount(account);
 			return result;
 
 		} catch (NotFoundException nfe) {

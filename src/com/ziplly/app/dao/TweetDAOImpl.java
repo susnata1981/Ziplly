@@ -7,12 +7,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.ziplly.app.model.Tweet;
+import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 
 public class TweetDAOImpl implements TweetDAO {
 
 	@Override
-	public void save(Tweet tweet) {
+	public TweetDTO save(Tweet tweet) {
 		if (tweet == null) {
 			throw new IllegalArgumentException();
 		}
@@ -21,11 +22,13 @@ public class TweetDAOImpl implements TweetDAO {
 				.getEntityManager();
 		em.getTransaction().begin();
 		em.persist(tweet);
+		TweetDTO result = EntityUtil.clone(tweet);
 		em.getTransaction().commit();
+		return result;
 	}
 
 	@Override
-	public List<Tweet> findTweetsByZip(Integer zip) {
+	public List<TweetDTO> findTweetsByZip(Integer zip) {
 		if (zip == null) {
 			throw new IllegalArgumentException();
 		}
@@ -33,11 +36,13 @@ public class TweetDAOImpl implements TweetDAO {
 				.getEntityManager();
 		Query query = (Query) em.createNamedQuery("findTweetsByZip");
 		query.setParameter("zip", zip);
-		return query.getResultList();
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		return EntityUtil.cloneList(tweets);
 	}
 
 	@Override
-	public List<Tweet> findTweetsByTypeAndZip(TweetType type, Integer zip) {
+	public List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip) {
 		if (zip == null) {
 			throw new IllegalArgumentException();
 		}
@@ -46,11 +51,13 @@ public class TweetDAOImpl implements TweetDAO {
 		Query query = (Query) em.createNamedQuery("findTweetsByTypeAndZip");
 		query.setParameter("zip", zip);
 		query.setParameter("type", type);
-		return query.getResultList();
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		return EntityUtil.cloneList(tweets);
 	}
 	
 	@Override
-	public List<Tweet> findTweetsByAccountId(Long accountId) {
+	public List<TweetDTO> findTweetsByAccountId(Long accountId) {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -58,11 +65,13 @@ public class TweetDAOImpl implements TweetDAO {
 				.getEntityManager();
 		Query query = (Query) em.createNamedQuery("findTweetsByAccountId");
 		query.setParameter("accountId", accountId);
-		return query.getResultList();
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		return EntityUtil.cloneList(tweets);
 	}
 
 	@Override
-	public Tweet update(Tweet tweet) {
+	public TweetDTO update(Tweet tweet) {
 		if (tweet == null) {
 			throw new IllegalArgumentException();
 		}
@@ -78,7 +87,7 @@ public class TweetDAOImpl implements TweetDAO {
 			result.setType(tweet.getType());
 			em.merge(result);
 			em.getTransaction().commit();
-			return result;
+			return EntityUtil.clone(result);
 		} catch(NoResultException nre) {
 			throw nre;
 		}

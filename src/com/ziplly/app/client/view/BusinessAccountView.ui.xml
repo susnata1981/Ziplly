@@ -4,14 +4,17 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="businessaccount.css" />
 	<g:HTMLPanel>
-		<dt:LogoutWidget ui:field="logoutWidget" />
+		<!-- <dt:LogoutWidget ui:field="logoutWidget" /> -->
+		<div class="{style.logoutlink}">
+			<dt:LogoutWidget ui:field="logoutWidget" />
+		</div>
 		<div class="{style.businessInfoSection}">
 			<div class="{style.imageSection}">
 				<div class="{style.profileImage}">
 					<b:Image ui:field="profileImageUrl" />
 				</div>
 				<div>
-				    <g:FormPanel ui:field="imageUploadForm">
+					<g:FormPanel ui:field="imageUploadForm">
 						<g:HTMLPanel>
 							<g:FileUpload ui:field="uploadField" name="image" />
 							<b:Button size="MINI" ui:field="uploadBtn">Upload</b:Button>
@@ -20,22 +23,7 @@
 					</g:FormPanel>
 				</div>
 			</div>
-			<div class="{style.businessInfo}">
-				<div class="{style.section}">
-					<div class="{style.businessInfoElement}">
-						<span class="{style.name}" ui:field="name" />
-						<g:Anchor addStyleNames="{style.editlink}" ui:field="editAccountLink">edit</g:Anchor>
-					</div>
-					<div class="{style.businessInfoElement}">
-						<span class="smalltext">
-							<g:Anchor addStyleNames="{style.websiteLink} smalltext" ui:field="websiteUrl"></g:Anchor>
-						</span>
-					</div>
-					<div class="{style.businessInfoElement}">
-						<span class="smalltext">Phone:</span>
-						<span class="smalltext" ui:field="phone"></span>
-					</div>
-				</div>
+			<div class="{style.businessDetails}">
 				<g:HTMLPanel ui:field="tweetFormPanel" addStyleNames="{style.section}">
 					<b:Form ui:field="tweetForm">
 						<b:ControlGroup ui:field="tweetCategoryCg">
@@ -57,11 +45,28 @@
 						</g:HTMLPanel>
 					</b:Form>
 				</g:HTMLPanel>
+				<div class="{style.businessInfo}">
+					<div class="{style.section}">
+						<div class="{style.businessInfoElement}">
+							<span class="{style.name}" ui:field="name" />
+							<g:Anchor addStyleNames="{style.editlink}" ui:field="editAccountLink">edit</g:Anchor>
+						</div>
+						<div class="{style.businessInfoElement}">
+							<span class="smalltext">
+								<g:Anchor addStyleNames="{style.websiteLink} smalltext"
+									ui:field="websiteUrl"></g:Anchor>
+							</span>
+						</div>
+						<div class="{style.businessInfoElement}">
+							<span class="smalltext">Phone:</span>
+							<span class="smalltext" ui:field="phone"></span>
+						</div>
+					</div>
+				</div>
 				<g:HTMLPanel addStyleNames="{style.section}">
 					Endorsements
 				</g:HTMLPanel>
 			</div>
 		</div>
-
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -5,11 +5,13 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HTMLPanel>
+		<!-- <g:HTMLPanel>
 			<b:SimplePager ui:field='pager' />
 			<cell:CellTable ui:field="table"></cell:CellTable>
+		</g:HTMLPanel> -->
+		<g:HTMLPanel ui:field="conversationPanel">
 		</g:HTMLPanel>
-		<g:HTMLPanel>
+		<!-- <g:HTMLPanel>
 			<b:WellForm>
 				<b:ControlGroup>
 					<b:ControlLabel for="subject">Subject</b:ControlLabel>
@@ -24,7 +26,7 @@
 					</b:Controls>
 				</b:ControlGroup>
 				<b:SubmitButton ui:field="sendBtn">Send</b:SubmitButton>
-			</b:WellForm>
-		</g:HTMLPanel>
+			</b:WellForm> 
+		</g:HTMLPanel> -->
 	</g:HTMLPanel>
 </ui:UiBinder> 

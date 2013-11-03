@@ -11,6 +11,7 @@ import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -65,4 +66,14 @@ public class PublicAccountActivity extends AbstractActivity {
 		});
 	}
 
+
+	public void sendMessage(MessageDTO message) {
+		if (message == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		message.setSender(ctx.getAccount());
+		System.out.println("Sending message to : "+message.getReceiver().getEmail());
+		// send message
+	}
 }

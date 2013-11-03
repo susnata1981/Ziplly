@@ -13,11 +13,25 @@
 		<class>com.ziplly.app.model.Tweet</class>
 		<class>com.ziplly.app.model.Comment</class>
 		<class>com.ziplly.app.model.Love</class>
-		
+		<class>com.ziplly.app.model.Message</class>
+		<class>com.ziplly.app.model.Conversation</class>
 		<properties>
-            <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
+            <!-- 
+            <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.GoogleDriver" />
 			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3306/zipllydb" />
+			
+			<property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
+           <property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />				 
+			<property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />
+             -->
+             
+            <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
+ 			<property name="javax.persistence.jdbc.url"
 				value="jdbc:google:rdbms://zipplyrocks:zipplydb1/zipllydb" />
+           
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="hibernate.show_sql" value="true" />

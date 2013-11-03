@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.gwt.json.client.JSONException;
 import com.ziplly.app.client.oauth.AccessToken;
 
 public interface IOAuthFlowManager {

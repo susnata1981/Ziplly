@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.HomePresenter;
+import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PublicAccountPlace;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -65,7 +66,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 		viewProfileBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				getPresenter().goTo(new PublicAccountPlace(account.getAccountId()));
+				getPresenter().goTo(new PersonalAccountPlace(account.getAccountId()));
 				hide();
 			}
 		});

@@ -3,8 +3,8 @@
     xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style" src="tweetwidget.css">
-		
 	</ui:style>
+	
 	<g:HTMLPanel ui:field="tweetPanel">
 		<div class='{style.tweet}'>
 			<div class='{style.tweet_block}'>
@@ -18,7 +18,6 @@
         					<b:NavLink ui:field="reportSpamLink">Report Spam</b:NavLink>
   						</b:Dropdown>
   					</div>
-  					
 					<div class='{style.tweet_text}'>
 					    <span class="mediumtext" ui:field="tweetContentSpan"/>
 					    <b:TextArea ui:field="tweetContentTextArea" addStyleNames="{style.tweetContentTextArea}"/>
@@ -29,6 +28,9 @@
 						<div>
 							<div class='{style.tweet_action_link}'>
 								<g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor>
+							</div>
+							<div class='{style.tweet_action_link}'>
+								<g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor>
 							</div>
 							<div class='{style.tweet_sender_link}'>
 								posted by

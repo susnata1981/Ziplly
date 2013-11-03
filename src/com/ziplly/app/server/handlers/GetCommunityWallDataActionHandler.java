@@ -17,7 +17,9 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
 
-public class GetCommunityWallDataActionHandler extends AbstractTweetActionHandler<GetCommunityWallDataAction, GetCommunityWallDataResult>{
+public class GetCommunityWallDataActionHandler
+		extends
+		AbstractTweetActionHandler<GetCommunityWallDataAction, GetCommunityWallDataResult> {
 
 	@Inject
 	public GetCommunityWallDataActionHandler(AccountDAO accountDao,
@@ -26,29 +28,23 @@ public class GetCommunityWallDataActionHandler extends AbstractTweetActionHandle
 	}
 
 	@Override
-	public GetCommunityWallDataResult execute(GetCommunityWallDataAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetCommunityWallDataResult execute(
+			GetCommunityWallDataAction action, ExecutionContext arg1)
+			throws DispatchException {
+
 		validateSession();
-		
+
 		int zip = session.getAccount().getZip();
 		TweetType type = action.getType();
-		List<Tweet> tweets = null;
-		
-		if (type != null && !type.equals(TweetType.ALL)) {
-			tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
-		} else {
-			tweets = tweetDao.findTweetsByZip(new Integer(zip));
-		}
-		
-		List<TweetDTO> tweetDtos = Lists.newArrayList();
-		for(Tweet t : tweets) {
-			TweetDTO tdto = new TweetDTO(t);
-			tweetDtos.add(tdto);
-		}
-		
+		List<TweetDTO> tweets = null;
+		long time1 = System.currentTimeMillis();
+		System.out.println("Time:"+time1);
+		tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
+		long time2 = System.currentTimeMillis();
+		System.out.println("Time:"+time2);
+		System.out.println("Time elapsed:"+(time2-time1));
 		GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
-		gcwdr.setTweets(tweetDtos);
+		gcwdr.setTweets(tweets);
 		return gcwdr;
 	}
 
@@ -56,6 +52,5 @@ public class GetCommunityWallDataActionHandler extends AbstractTweetActionHandle
 	public Class<GetCommunityWallDataAction> getActionType() {
 		return GetCommunityWallDataAction.class;
 	}
-	
 
 }

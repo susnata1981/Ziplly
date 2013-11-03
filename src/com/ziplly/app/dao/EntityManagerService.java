@@ -13,12 +13,12 @@ public class EntityManagerService {
 //	static {
 //		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
 //			properties.put("javax.persistence.jdbc.driver",
-//					"com.mysql.jdbc.GoogleDriver");
+//					"com.google.appengine.api.rdbms.AppEngineDriver");
 //			properties.put("javax.persistence.jdbc.url",
-//					System.getProperty("jdbc:google:mysql://zipplyrocks:zipllydb/zipllydb"));
+//					System.getProperty("jdbc:google:mysql://zipplyrocks:zipllydb1/zipllydb"));
 //		} else {
 //			properties.put("javax.persistence.jdbc.driver",
-//					"com.mysql.jdbc.Driver");
+//					"com.google.appengine.api.rdbms.AppEngineDriver");
 //			properties.put("javax.persistence.jdbc.url",
 //					System.getProperty("cloudsql.url.dev"));
 //		}
@@ -35,6 +35,11 @@ public class EntityManagerService {
 	}
 	
 	public EntityManager getEntityManager() {
+//		return INSTANCE.getEntityManagerFactory().createEntityManager();
 		return INSTANCE.emf.createEntityManager();
 	}
+	
+//	EntityManagerFactory getEntityManagerFactory() {
+//		return Persistence.createEntityManagerFactory("zipllydb");
+//	}
 }

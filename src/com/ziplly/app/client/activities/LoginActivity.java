@@ -13,6 +13,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.client.view.LoginAccountView;
+import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
@@ -21,7 +22,7 @@ import com.ziplly.app.shared.ValidateLoginResult;
 
 public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	private ILoginAccountView<LoginPresenter> view;
-	private LoginPlace place;
+	LoginPlace place;
 	private AcceptsOneWidget panel;
 	
 	@Inject
@@ -32,7 +33,6 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 		PlaceController placeController, 
 		ApplicationContext ctx,
 		LoginAccountView view)
-		
 	{
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
@@ -78,6 +78,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 					public void onSuccess(ValidateLoginResult result) {
 						if (result != null && result.getAccount() != null) {
 							ctx.setAccount(result.getAccount());
+							eventBus.fireEvent(new LoginEvent(result.getAccount()));
 							forward(result.getAccount());
 						}
 					}
@@ -105,6 +106,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 					@Override
 					public void onSuccess(GetLoggedInUserResult result) {
 						if (result != null && result.getAccount() != null) {
+							eventBus.fireEvent(new LoginEvent(result.getAccount()));
 							forward(result.getAccount());
 						}
 					}
