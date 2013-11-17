@@ -3,11 +3,37 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.profileImage {
-			position: absolute;
-			top: 170px;
-			width: 160px;
-			height: 140px;
-			border: 2px solid #ddd;
+		position: absolute;
+		top: 170px;
+		width: 160px;
+		height: 140px;
+		border: 2px solid #ddd;
+		}
+		.paymentDetailsSection {
+		width: 50%;
+		border: 2px solid #ddd;
+		margin: 2px;
+		}
+		.paymentDetailsSection h4 {
+		border-bottom: 1px solid #ddd;
+		}
+		.paymentDetailsSection table {
+		margin: 2%;
+		border: 2px solid #ddd;
+		width: 94%;
+		}
+		.paymentDetailsSection table thead {
+		background: #CBCCCE;
+		}
+		.paymentDetailsSection table tr {
+		margin: 5px;
+		}
+		.paymentDetailsSection table td {
+		padding: 10px;
+		border-right: 1px solid #ddd;
+		}
+		.subscriptionPlanTablePanel {
+			margin-bottom: 90px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
@@ -61,7 +87,7 @@
 							<g:FileUpload ui:field="uploadField" name="image" />
 							<b:Button ui:field="uploadBtn">Upload</b:Button>
 							<b:Icon type="UPLOAD" />
-							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}"/>
+							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
 						</g:HTMLPanel>
 					</g:FormPanel>
 					<b:ControlGroup ui:field="emailCg">
@@ -77,8 +103,33 @@
 				</g:HTMLPanel>
 			</b:Tab>
 			<b:Tab heading="Payment details">
-				<g:HTMLPanel>
-					Tab 2
+				<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
+					<b:Alert ui:field="paymentStatus" />
+					<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
+						addStyleNames="{style.subscriptionPlanTablePanel}">
+						<h4 ui:field="subscriptionPlanTablePanelHeader">Subscription Plans</h4>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="subscriptionDetailsTable">
+						<h4>Current Subscription</h4>
+						<table>
+							<thead>
+								<tr>
+									<td>Plan</td>
+									<td>Description</td>
+									<td>Fee</td>
+									<td>Status</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td ui:field="subscriptionPlanName"></td>
+									<td ui:field="subscriptionPlanDescription"></td>
+									<td ui:field="subscriptionPlanFee"></td>
+									<td ui:field="subscriptionPlanStatus"></td>
+								</tr>
+							</tbody>
+						</table>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Tab>
 			<b:Tab heading="Password Reset">

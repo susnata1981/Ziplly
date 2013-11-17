@@ -35,7 +35,7 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 			return result;
 
 		} catch (NotFoundException nfe) {
-			return result;
+			throw nfe;
 		}
 	}
 

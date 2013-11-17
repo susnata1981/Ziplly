@@ -27,13 +27,16 @@ public class BusinessAccountPlace extends Place {
 		@Override
 		public BusinessAccountPlace getPlace(String token) {
 			if (token != null && !"".equals(token)) {
-				return new BusinessAccountPlace();
+				return new BusinessAccountPlace(Long.parseLong(token));
 			}
 			return new BusinessAccountPlace();
 		}
 
 		@Override
 		public String getToken(BusinessAccountPlace place) {
+			if (place.getAccountId() != null) {
+				return place.getAccountId().toString();
+			}
 			return "";
 		}
 	}

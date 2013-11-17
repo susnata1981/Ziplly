@@ -7,6 +7,7 @@ public class BusinessAccountDTO extends AccountDTO {
 	private String website;
 	private String street1;
 	private String street2;
+	private TransactionDTO transaction;
 	
 	public BusinessAccountDTO() {
 	}
@@ -46,5 +47,13 @@ public class BusinessAccountDTO extends AccountDTO {
 
 	public void setWebsite(String website) {
 		this.website = website;
+	}
+
+	public TransactionDTO getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(TransactionDTO transaction) {
+		this.transaction = transaction;
 	}
 }

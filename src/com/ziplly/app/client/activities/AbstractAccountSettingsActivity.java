@@ -16,20 +16,23 @@ import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
+import com.ziplly.app.shared.UpdatePasswordAction;
+import com.ziplly.app.shared.UpdatePasswordResult;
 
-public abstract class AbstractAccountSettingsActivity<T extends AccountDTO> extends AbstractActivity {
-	protected ISettingsView<T> view;
+public abstract class AbstractAccountSettingsActivity<T extends AccountDTO, 
+	V extends ISettingsView<T,? extends AccountSettingsPresenter<T>>> extends AbstractActivity {
+	protected V view;
 
 	public AbstractAccountSettingsActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
 			ApplicationContext ctx,
-			ISettingsView<T> view) {
+			V view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
 	}
 	
 	public void save(T account) {
-		// provide implementaiton;
+		// provide implementation;
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
@@ -42,6 +45,10 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO> exte
 				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
 			}
 		});
+	}
+	
+	public void updatePassword(UpdatePasswordAction action, DispatcherCallbackAsync<UpdatePasswordResult> callback) {
+		dispatcher.execute(action, callback);
 	}
 	
 	// TODO centralize url transformation code

@@ -20,7 +20,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import com.ziplly.app.shared.BCrypt;
@@ -219,5 +218,21 @@ public class Account implements Serializable {
 	
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public List<Tweet> getTweets() {
+		return tweets;
+	}
+
+	public void setTweets(List<Tweet> tweets) {
+		this.tweets = tweets;
+	}
+	public String getName() {
+		if (this instanceof PersonalAccount){
+			return ((PersonalAccount)this).getName();
+		} else if (this instanceof BusinessAccount) {
+			return ((BusinessAccount)this).getName();
+		}
+		return "";
 	}
 }

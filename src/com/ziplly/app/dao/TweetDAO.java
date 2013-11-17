@@ -13,4 +13,5 @@ public interface TweetDAO {
 	List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip);
 	TweetDTO update(Tweet tweet);
 	void delete(Tweet tweet);
+	List<TweetDTO> findTweetsByAccountId(Long accountId, int page, int pageSize);
 }

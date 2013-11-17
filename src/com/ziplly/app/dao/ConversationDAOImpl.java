@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import com.google.common.collect.Lists;
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.Message;
 
 public class ConversationDAOImpl implements ConversationDAO {
@@ -60,5 +61,36 @@ public class ConversationDAOImpl implements ConversationDAO {
 		em.merge(conversation);
 		em.getTransaction().commit();
 		em.close();
+	}
+
+	@Override
+	public void markConversationAsRead(Long conversationId) {
+		if (conversationId == null) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createNamedQuery("findConversationById");
+		query.setParameter("id", conversationId);
+		
+		Conversation c = (Conversation) query.getSingleResult();
+		em.getTransaction().begin();
+		c.setStatus(ConversationStatus.READ);
+		em.merge(c);
+		em.getTransaction().commit();
+	}
+
+	@Override
+	public Long getUnreadConversationForAccount(Long accountId) {
+		if (accountId == null) {
+			throw new IllegalArgumentException();
+		}
+
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createNamedQuery("findUnreadConversationByAccountId");
+		query.setParameter("receiverAccountId", accountId);
+		query.setParameter("status", ConversationStatus.UNREAD);
+		return (Long)query.getSingleResult();
 	}
 }

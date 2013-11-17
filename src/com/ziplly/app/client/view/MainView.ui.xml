@@ -37,8 +37,21 @@
 		.transparent {
 		opacity:0.4;
 		}
+		.residentSignupDiv {
+			margin-top:8px;
+			height: 20px;
+			padding: 2px;
+			font-size: 12px;
+			font-style: helvetica;
+		}
+		.residentSignupLink {
+		font-size: 12px;
+		font-style: helvetica;
+		height: 20px !important;
+		background: none !important;
+		}
 	</ui:style>
-	<g:HTMLPanel id="mainViewPanel">
+	<g:HTMLPanel>
 		<div id="mainHeading">
 			<h1>
 				<span class="bigtext">Ziplly</span>
@@ -49,23 +62,42 @@
 			</h1>
 		</div>
 		<div id="mainContent">
-			<!-- <div class="{mainViewStyle.logoutLnk}">
-				<b:Button ui:field="logoutBtn">Logout</b:Button>
-			</div> -->
-			<div id="loginSection">
-				<!-- <dt:LoginWidget ui:field="loginWidget" /> -->
-			</div>
-			<div id="mainPageSingupForm">
-				<b:WellForm>
-					<b:ControlLabel>Resident Signup</b:ControlLabel>
-					<b:TextBox placeholder="email..." />
-					<b:TextBox placeholder="zip..." />
-					<b:TextBox placeholder="username..." />
-					<b:TextBox placeholder="password..." />
-					<b:Button type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
-					<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
-				</b:WellForm>
-			</div>
+			<!-- <div class="{mainViewStyle.logoutLnk}"> <b:Button ui:field="logoutBtn">Logout</b:Button> 
+				</div> -->
+			<g:HTMLPanel>
+				<div id="mainPageSingupForm">
+				    <b:Alert ui:field="message"/>
+					<b:WellForm>
+						<b:ControlGroup ui:field="emailCg">
+							<b:Controls>
+								<b:TextBox ui:field="email" placeholder="email..." />
+								<b:HelpInline ui:field="emailError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="passwordCg">
+							<b:Controls>
+								<b:PasswordTextBox ui:field="password"
+									placeholder="password..." />
+								<b:HelpInline ui:field="passwordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button type="SUCCESS" ui:field="loginBtn">SignIn</b:Button>
+						<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
+						<g:HTMLPanel addStyleNames="{mainViewStyle.residentSignupDiv}">
+							<span>Not already a member, &nbsp;<g:Anchor ui:field="residentSignupLink" styleName="{mainViewStyle.residentSignupLink}">Resident
+								Signup</g:Anchor> here</span>
+						</g:HTMLPanel>
+					</b:WellForm>
+				</div>
+			</g:HTMLPanel>
+
+			<!-- <div id="mainPageSingupForm"> <b:WellForm> <b:ControlLabel>Resident 
+				Signup</b:ControlLabel> <b:TextBox placeholder="firstname..." /> <b:TextBox 
+				placeholder="lastname..." /> <b:TextBox placeholder="zip..." /> <b:TextBox 
+				placeholder="email..." /> <b:TextBox placeholder="password..." /> <b:Button 
+				type="SUCCESS" ui:field="signupBtn">Signup</b:Button> <b:Button type="WARNING" 
+				ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button> </b:WellForm> 
+				</div> -->
 			<div id="mainPageBusinessSingupForm">
 				<b:WellForm>
 					<b:ControlLabel>Business Signup</b:ControlLabel>

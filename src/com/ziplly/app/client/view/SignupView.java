@@ -30,7 +30,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends Composite implements
 		ISignupView<SignupActivityPresenter>, LoginAwareView {
-	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
+//	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
 
@@ -195,7 +195,7 @@ public class SignupView extends Composite implements
 		if (passwordInput != null && confirmPasswordInput != null) {
 			if (!confirmPasswordInput.equals(passwordInput)) {
 				passwordCg.setType(ControlGroupType.ERROR);
-				passwordError.setText(PASSWORD_MISMATCH_ERROR);
+				passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
 				passwordError.setVisible(true);
 			}
 		}

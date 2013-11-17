@@ -14,8 +14,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.web.bindery.event.shared.EventBus;
+import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.client.activities.HomeActivity;
+import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.LoginActivity;
+import com.ziplly.app.client.activities.NavActivity;
+import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
@@ -28,12 +32,12 @@ import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.IAccountView;
-import com.ziplly.app.client.view.IHomeView;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
+import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
@@ -58,7 +62,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(ZipllyController.class).in(Singleton.class);
 		
 		// views
-		bind(NavView.class).in(Singleton.class);
+		bind(INavView.class).to(NavView.class).in(Singleton.class);
 		bind(IAccountView.class).to(AccountView.class).in(Singleton.class);
 		bind(ILoginAccountView.class).to(LoginAccountView.class).in(Singleton.class);
 		bind(ISignupView.class).to(BusinessSignupView.class).in(Singleton.class);
@@ -68,8 +72,9 @@ public class ZClientModule extends AbstractGinModule {
 		bind(MainView.class).in(Singleton.class);
 		bind(ResidentsView.class).in(Singleton.class);
 		bind(PersonalAccountSettingsView.class);
-		bind(BusinessAccountSettingsView.class);
+		bind(IBusinessAccountSettingView.class).to(BusinessAccountSettingsView.class);
 		bind(ConversationView.class);
+		bind(PasswordRecoveryView.class);
 		
 		// widgets
 		bind(LoginWidget.class).in(Singleton.class);
@@ -80,6 +85,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(HomeActivity.class);
 		bind(LoginActivity.class);
 		bind(SignupActivity.class);
+		bind(NavActivity.class);
 		
 		// places
 		bind(HomePlace.class);
@@ -88,9 +94,11 @@ public class ZClientModule extends AbstractGinModule {
 		bind(BusinessAccountPlace.class);
 		
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
+		bind(ActivityMapper.class).annotatedWith(Names.named("nav")).to(NavActivityMapper.class).in(Singleton.class);
 		bind(PlaceHistoryMapper.class).toProvider(PlaceHistoryMapperProvider.class).in(Singleton.class);
 		bind(PlaceHistoryHandler.class).toProvider(PlaceHistoryHandlerProvider.class).in(Singleton.class);
 		bind(ActivityManager.class).toProvider(ActivityManagerProvider.class).in(Singleton.class);
+		bind(ActivityManager.class).annotatedWith(Names.named("nav")).toProvider(NavActivityManagerProvider.class).in(Singleton.class);
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
 	}
 	
@@ -135,6 +143,22 @@ public class ZClientModule extends AbstractGinModule {
 			this.mapper = am;
 			this.eventBus = eventBus;
 		}
+		@Override
+		public ActivityManager get() {
+			ActivityManager manager = new ActivityManager(mapper, eventBus);
+			return manager;
+		}
+	}
+	
+	public static class NavActivityManagerProvider implements Provider<ActivityManager> {
+		EventBus eventBus;
+		NavActivityMapper mapper;
+		@Inject
+		public NavActivityManagerProvider(NavActivityMapper am, EventBus eventBus) {
+			this.mapper = am;
+			this.eventBus = eventBus;
+		}
+		
 		@Override
 		public ActivityManager get() {
 			ActivityManager manager = new ActivityManager(mapper, eventBus);

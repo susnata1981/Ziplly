@@ -3,37 +3,40 @@
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		#communityWallPanel {
+		#cwallId {
 		float: left;
-		width: 700px;
+		width: 1000px;
+		margin-left: 30px;
+		border: 1px solid #ddd;
 		}
+
 		.center {
 		position: absolute;
 		top: 300px;
 		left: 500px;
 		}
 		.profile_info_section {
-			float: left;
-			width: 700px;
-			margin: 12px;
+		float: left;
+		width: 700px;
+		margin: 12px;
 		}
 		.shareTextBox {
-			width: 740px;
-			height: 40px;
+		width: 740px;
+		height: 40px;
 		}
 		.filterheader {
-			width: 140px;
-			height: 30px;
-			background: #ddd;
+		width: 140px;
+		height: 30px;
+		background: #ddd;
 		}
 		.alertMessage {
-			margin-left: 200px;
-			width: 400px;
+		margin-left: 200px;
+		width: 400px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
 		<aside>
-		    <g:HTMLPanel ui:field="filterHeader"></g:HTMLPanel>
+			<g:HTMLPanel ui:field="filterHeader"></g:HTMLPanel>
 			<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
 		</aside>
 		<b:PageHeader subtext="Ziplly connecting the community">Community Wall</b:PageHeader>
@@ -62,10 +65,10 @@
 					</g:HTMLPanel>
 				</b:Form>
 			</div>
-			
-			<g:HTMLPanel ui:field="communityWallPanel">
-			   
-			</g:HTMLPanel>
+			<g:ScrollPanel ui:field="scrollPanel">
+				<g:HTMLPanel ui:field="communityWallPanel">
+				</g:HTMLPanel>
+			</g:ScrollPanel>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

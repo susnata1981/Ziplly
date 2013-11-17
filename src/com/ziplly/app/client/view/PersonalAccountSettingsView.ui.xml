@@ -1,42 +1,51 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.saveBtn {
-			margin-top: 20px;
-			float: right;
+		margin-top: 20px;
+		float: right;
+		}
+		.updatePasswordBtn {
+		margin-top: 20px;
+		float: left;
 		}
 		.mainContent {
-			margin: 20px 0px 0px 40px;
-			width: 900px;
-			border: 1px solid #ddd;
-			padding: 10px;
+		margin: 20px 0px 0px 40px;
+		width: 900px;
+		border:
+		1px solid #ddd;
+		padding: 10px;
 		}
 		.introductionTextBox {
-			float: left;
-			width: 500px;
-			height: 50px;
+		float: left;
+		width: 500px;
+		height:
+		50px;
 		}
 		.label {
-		font-family: Georgia, Times, "Times New Roman", serif;
+		font-family: Georgia, Times, "Times
+		New Roman", serif;
 		font-size:
 		14px;
 		color: #848484;
 		}
 		.non_editable {
-		margin: 6px 2px 12px 2px;
+		margin: 6px 2px 12px
+		2px;
 		}
 		.clear {
-			clear: both;
-		}	
+		clear: both;
+		}
 		.profileImage {
-			position: absolute;
-			top: 190px;
-			left: 700px;
-			width: 160px;
-			height: 140px;
-			border: 2px solid #ddd;
+		position: absolute;
+		top:
+		190px;
+		left: 700px;
+		width: 160px;
+		height: 140px;
+		border: 2px solid #ddd;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.mainContent}">
@@ -63,18 +72,19 @@
 					<b:ControlGroup ui:field="introductionCg">
 						<b:Controls>
 							<g:Label addStyleNames="{style.label}">Introduction</g:Label>
-							<b:TextArea ui:field="introduction" addStyleNames="{style.introductionTextBox}" placeholder="tell us about yourself..." />
+							<b:TextArea ui:field="introduction" addStyleNames="{style.introductionTextBox}"
+								placeholder="tell us about yourself..." />
 							<b:HelpInline ui:field="introductionError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
 					<div class="{style.clear}">
-					<g:FormPanel ui:field="uploadForm">
-						<g:HTMLPanel>
-							<g:FileUpload ui:field="uploadField" name="image" />
-							<b:Button ui:field="uploadBtn">Upload</b:Button>
-							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
-						</g:HTMLPanel>
-					</g:FormPanel>
+						<g:FormPanel ui:field="uploadForm">
+							<g:HTMLPanel>
+								<g:FileUpload ui:field="uploadField" name="image" />
+								<b:Button ui:field="uploadBtn">Upload</b:Button>
+								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
+							</g:HTMLPanel>
+						</g:FormPanel>
 					</div>
 				</g:HTMLPanel>
 			</b:Tab>
@@ -122,10 +132,36 @@
 			</b:Tab>
 			<b:Tab ui:field="notification" heading="Notification">
 			</b:Tab>
+			<b:Tab ui:field="passwordTab" heading="Password Reset">
+				<b:ControlGroup ui:field="passwordCg">
+					<b:Controls>
+						<g:Label addStyleNames="{style.label}">Old Password</g:Label>
+						<b:PasswordTextBox ui:field="password" placeholder="Old password..." />
+						<b:HelpInline ui:field="passwordError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="newPasswordCg">
+					<b:Controls>
+						<g:Label addStyleNames="{style.label}">New Password</g:Label>
+						<b:PasswordTextBox ui:field="newPassword" placeholder="New password..." />
+						<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="confirmNewPasswordCg">
+					<b:Controls>
+						<g:Label addStyleNames="{style.label}">Confirm new password</g:Label>
+						<b:PasswordTextBox ui:field="confirmNewPassword" placeholder="confirm new password..." />
+						<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:Button addStyleNames="{style.updatePasswordBtn}"
+					ui:field="updatePasswordBtn">Update password</b:Button>
+			</b:Tab>
 		</b:TabPanel>
-		<b:Button addStyleNames="{style.saveBtn}" type="PRIMARY"
-			ui:field="saveBtn">Save</b:Button>
-		<b:Button addStyleNames="{style.saveBtn}"
-			ui:field="cancelBtn">Cancel</b:Button>
+		<g:HTMLPanel ui:field="buttonsPanel">
+			<b:Button addStyleNames="{style.saveBtn}" type="PRIMARY"
+				ui:field="saveBtn">Save</b:Button>
+			<b:Button addStyleNames="{style.saveBtn}" ui:field="cancelBtn">Cancel</b:Button>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

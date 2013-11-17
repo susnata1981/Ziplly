@@ -11,8 +11,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.HomePresenter;
+import com.ziplly.app.client.activities.HomePresenter2;
+import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.PublicAccountPlace;
+import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.model.BusinessAccountDTO;
 
 public class BusinessAccountWidgetModal extends Composite implements IAccountWidgetModal<BusinessAccountDTO> {
@@ -52,7 +54,7 @@ public class BusinessAccountWidgetModal extends Composite implements IAccountWid
 		viewProfileBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				getPresenter().goTo(new PublicAccountPlace(account.getAccountId()));
+				presenter.goTo(new BusinessAccountPlace(account.getAccountId()));
 				hide();
 			}
 		});
@@ -86,11 +88,11 @@ public class BusinessAccountWidgetModal extends Composite implements IAccountWid
 		profileImageUrl.setUrl(account.getImageUrl());
 	}
 
+//	public void setPresenter(HomePresenter2 presenter) {
+//		this.presenter = presenter;
+//	}
 
-	public HomePresenter getPresenter() {
-		return presenter;
-	}
-
+	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
 	}

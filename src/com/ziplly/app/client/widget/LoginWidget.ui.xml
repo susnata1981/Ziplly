@@ -2,30 +2,90 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style>
-	.loginBtn {
-		margin: 2px 10px 20px 2px;
-	}
+		.loginSection {
+		width: 29%;
+		margin: auto;
+		padding: 5px;
+		}
+		.button {
+		margin-left: 10px;
+		}
+		.residentSignupDiv {
+		margin-top:8px;
+		height: 20px;
+		padding: 2px;
+		font-size: 12px;
+		font-style: helvetica;
+		}
+		.residentSignupLink {
+		font-size: 12px;
+		font-style:
+		helvetica;
+		height: 20px !important;
+		background: none !important;
+		}
+		.passwordRecoveryLink {
+			margin-top: 10px;
+		font-size: 12px;
+		font-style:
+		helvetica;
+		height: 20px !important;
+		background: none !important;
+		}
 	</ui:style>
-	<g:HTMLPanel>
-		<b:Alert ui:field="message"/>
-		<div class="loginSection">
-			<b:Form>
-				<b:ControlGroup ui:field="emailCg">
-					<b:Controls>
-						<b:TextBox ui:field="email" placeholder="email..." />
-						<b:HelpInline ui:field="emailError"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:ControlGroup ui:field="passwordCg">
-					<b:Controls>
-						<b:PasswordTextBox ui:field="password"
-							placeholder="password..." />
-						<b:HelpInline ui:field="passwordError"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:Button type="SUCCESS" addStyleNames="{style.loginBtn}" ui:field="loginBtn">SignIn</b:Button>
-				<b:Button type="INFO" addStyleNames="{style.loginBtn}" ui:field="fbLoginBtn">Facebook Login</b:Button>
-			</b:Form>
-		</div>
+	<!-- <b:Alert ui:field="message"/> <div class="loginSection"> <b:Form> <b:ControlGroup 
+		ui:field="emailCg"> <b:Controls> <b:TextBox ui:field="email" placeholder="email..." 
+		/> <b:HelpInline ui:field="emailError"></b:HelpInline> </b:Controls> </b:ControlGroup> 
+		<b:ControlGroup ui:field="passwordCg"> <b:Controls> <b:PasswordTextBox ui:field="password" 
+		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:Button type="SUCCESS" addStyleNames="{style.loginBtn}" 
+		ui:field="loginBtn">SignIn</b:Button> <b:Button type="INFO" addStyleNames="{style.loginBtn}" 
+		ui:field="fbLoginBtn">Facebook Login</b:Button> </b:Form> </div> -->
+
+	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
+		<b:Alert ui:field="message" />
+		<b:WellForm>
+			<b:ControlGroup ui:field="emailCg">
+				<b:Controls>
+					<b:TextBox ui:field="email" placeholder="email..." />
+					<b:HelpInline ui:field="emailError"></b:HelpInline>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:ControlGroup ui:field="passwordCg">
+				<b:Controls>
+					<b:PasswordTextBox ui:field="password"
+						placeholder="password..." />
+					<b:HelpInline ui:field="passwordError"></b:HelpInline>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:Button type="SUCCESS" addStyleNames="{style.button}"
+				ui:field="loginBtn">SignIn</b:Button>
+			<b:Button type="WARNING" addStyleNames="{style.button}"
+				ui:field="fbLoginBtn">Facebook Login</b:Button>
+			<g:HTMLPanel addStyleNames="{style.residentSignupDiv}">
+				<g:HTMLPanel ui:field="residentSignupPanel">
+					<span>Not
+						already a member, &nbsp;
+						<g:Anchor ui:field="residentSignupLink" styleName="{style.residentSignupLink}">Resident
+							Signup</g:Anchor>
+						here
+					</span>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="businessSignupPanel">
+					<span>Not
+						already a member, &nbsp;
+						<g:Anchor ui:field="businessSignupLink" styleName="{style.residentSignupLink}">Business
+							Signup</g:Anchor>
+						here
+					</span>
+				</g:HTMLPanel>
+				<g:HTMLPanel>
+					<span>Forgot your password
+						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click here</g:Anchor>
+						here
+					</span>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</b:WellForm>
 	</g:HTMLPanel>
 </ui:UiBinder> 

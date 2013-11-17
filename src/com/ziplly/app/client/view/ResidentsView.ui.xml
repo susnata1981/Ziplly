@@ -9,7 +9,7 @@
 			margin: 10px;
 		}
 	</ui:style>
-	<g:HTMLPanel id="residentListId">
+	<g:HTMLPanel>
 	    <div>
 		    <cell:SimplePager ui:field="pager"/>
 			<cell:CellList ui:field="residentsList" />

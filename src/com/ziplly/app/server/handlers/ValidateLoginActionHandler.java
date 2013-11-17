@@ -8,6 +8,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.EmailService;
+import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
@@ -25,7 +27,6 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 		if (action == null) {
 			throw new IllegalArgumentException("Invalid argument to ValidateLoginActionHandler");
 		}
-		
 		AccountDTO account = accountBli.validateLogin(action.getEmail(), action.getPassword());
 		return new ValidateLoginResult(account);
 	}

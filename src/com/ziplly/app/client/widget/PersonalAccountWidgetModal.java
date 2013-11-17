@@ -13,9 +13,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.HomePresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.places.PublicAccountPlace;
+import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 

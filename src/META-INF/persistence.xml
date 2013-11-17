@@ -15,6 +15,9 @@
 		<class>com.ziplly.app.model.Love</class>
 		<class>com.ziplly.app.model.Message</class>
 		<class>com.ziplly.app.model.Conversation</class>
+		<class>com.ziplly.app.model.Transaction</class>
+		<class>com.ziplly.app.model.SubscriptionPlan</class>
+		<class>com.ziplly.app.model.PasswordRecovery</class>
 		<properties>
             <!-- 
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />

@@ -23,6 +23,10 @@ import com.ziplly.app.model.Message;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.SubscriptionPlan;
+import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.model.Transaction;
+import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 
@@ -38,6 +42,16 @@ public class EntityUtil {
 		throw new IllegalArgumentException();
 	}
 
+	public static Account convert(AccountDTO acct) {
+		if (acct instanceof PersonalAccountDTO) {
+			return new PersonalAccount((PersonalAccountDTO)acct);
+		} else if (acct instanceof BusinessAccountDTO) {
+			return new BusinessAccount((BusinessAccountDTO)acct);
+		}
+
+		throw new IllegalArgumentException();
+	}
+	
 	public static void clone(Account account, AccountDTO acct) {
 		acct.setAccountId(account.getAccountId());
 		acct.setPassword(account.getPassword());
@@ -49,6 +63,12 @@ public class EntityUtil {
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
+		
+//		if (Hibernate.isInitialized(account.getTweets())) {
+//			for(Tweet t : account.getTweets()) {
+//				acct.getTweets().add(clone(t, false));
+//			}
+//		}
 	}
 
 	public static PersonalAccountDTO clone(PersonalAccount account) {
@@ -83,6 +103,7 @@ public class EntityUtil {
 		resp.setWebsite(account.getWebsite());
 		resp.setStreet1(account.getStreet1());
 		resp.setStreet2(account.getStreet2());
+		resp.setTransaction(EntityUtil.clone(account.getTransaction()));
 		return resp;
 	}
 	
@@ -103,6 +124,10 @@ public class EntityUtil {
 	}
 
 	public static TweetDTO clone(Tweet tweet) {
+		return clone(tweet, true);
+	}
+
+	public static TweetDTO clone(Tweet tweet, boolean needSender) {
 		TweetDTO resp = new TweetDTO();
 		resp.setTweetId(tweet.getTweetId());
 		resp.setImageId(tweet.getImageId());
@@ -110,7 +135,9 @@ public class EntityUtil {
 		resp.setContent(tweet.getContent());
 		resp.setStatus(tweet.getStatus());
 		resp.setTimeCreated(tweet.getTimeCreated());
-		resp.setSender(convert(tweet.getSender()));
+		if (needSender) {
+			resp.setSender(convert(tweet.getSender()));
+		}
 
 		if (Hibernate.isInitialized(tweet.getComments())) {
 			for (Comment c : tweet.getComments()) {
@@ -125,7 +152,7 @@ public class EntityUtil {
 		}
 		return resp;
 	}
-
+	
 	public static List<TweetDTO> cloneList(List<Tweet> tweets) {
 		List<TweetDTO> result = Lists.newArrayList();
 		for(Tweet tweet : tweets) {
@@ -157,6 +184,7 @@ public class EntityUtil {
 		resp.setSender(convert(c.getSender()));
 		resp.setTimeUpdated(c.getTimeUpdated());
 		resp.setSubject(c.getSubject());
+		resp.setStatus(c.getStatus());
 		resp.setTimeCreated(c.getTimeCreated());
 		
 		for(Message m : c.getMessages()) {
@@ -165,12 +193,37 @@ public class EntityUtil {
 		return resp;
 	}
 
-	private static MessageDTO clone(Message m) {
+	public static MessageDTO clone(Message m) {
 		MessageDTO resp = new MessageDTO();
 		resp.setMessage(m.getMessage());
 		resp.setSender(convert(m.getSender()));
 		resp.setReceiver(convert(m.getSender()));
 		resp.setTimeCreated(m.getTimeCreated());
 		return resp;
+	}
+	
+	public static SubscriptionPlanDTO clone(SubscriptionPlan plan) {
+		SubscriptionPlanDTO resp = new SubscriptionPlanDTO();
+		resp.setSubscriptionId(plan.getSubscriptionId());
+		resp.setName(plan.getName());
+		resp.setDescription(plan.getDescription());
+		resp.setFee(plan.getFee());
+		resp.setTimeCreated(plan.getTimeCreated());
+		return resp;
+	}
+	
+	public static TransactionDTO clone(Transaction txn) {
+		if (txn != null) {
+			TransactionDTO transaction = new TransactionDTO();
+			transaction.setTransactionId(txn.getTransactionId());
+//			transaction.setSeller(convert(txn.getSeller()));
+			transaction.setPlan(clone(txn.getPlan()));
+			transaction.setAmount(txn.getAmount());
+			transaction.setCurrencyCode(txn.getCurrencyCode());
+			transaction.setStatus(txn.getStatus());
+			transaction.setTimeCreated(txn.getTimeCreated());
+			return transaction;
+		}
+		return null;
 	}
 }

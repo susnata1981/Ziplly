@@ -25,7 +25,7 @@ public class ConversationCell extends AbstractCell<Conversation> {
 			return;
 		}
 		String content = "<div>" +
-				"<a href=''"+value.getMessages().get(0).getSubject()+"</a>"+
+//				"<a href=''"+value.getMessages().get(0).getSubject()+"</a>"+
 				"</div>";
 		sb.appendHtmlConstant(content);
 	}

@@ -8,4 +8,6 @@ import com.ziplly.app.model.ConversationDTO;
 public interface ConversationDAO {
 	void save(Conversation conversation);
 	List<ConversationDTO> getConversationForAccount(Long accountId);
+	void markConversationAsRead(Long conversationId);
+	Long getUnreadConversationForAccount(Long accountId);
 }

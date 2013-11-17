@@ -45,6 +45,7 @@ public class AccountDAOImpl implements AccountDAO {
 		AccountDTO resp = null;
 		try {
 			account = (Account) query.getSingleResult();
+			account.getTweets();
 		} catch (NoResultException ex) {
 			System.out.println("Didn't find account");
 			throw new NotFoundException();
@@ -77,6 +78,7 @@ public class AccountDAOImpl implements AccountDAO {
 		AccountDTO account = null;
 		try {
 			Account acct = (Account) query.getSingleResult();
+			acct.getTweets();
 			account = EntityUtil.convert(acct);
 		} catch (NoResultException ex) {
 			throw new NotFoundException();
@@ -92,9 +94,15 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		Query query = em.createNamedQuery("findAccountById");
+//		Query query = em.createQuery("from Account a join fetch a.tweets t where a.accountId = :accountId");
 		query.setParameter("accountId", accountId);
-		Account account = (Account) query.getSingleResult();
-		return EntityUtil.convert(account);
+		try {
+			Account account = (Account) query.getSingleResult();
+//			account.getTweets();
+			return EntityUtil.convert(account);
+		} catch(NoResultException nre) {
+			throw new NotFoundException();
+		}
 	}
 
 	@Override
@@ -104,23 +112,23 @@ public class AccountDAOImpl implements AccountDAO {
 		em.getTransaction().begin();
 		em.persist(account);
 		em.getTransaction().commit();
+		AccountDTO result = EntityUtil.convert(account);
 		em.close();
-		return EntityUtil.convert(account);
+		return result;
 	}
 
 	@Override
 	public AccountDTO update(Account account) {
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
 		Account acct = null;
 		AccountDTO result = null;
 		try {
 			acct = em.merge(account);
-			result = EntityUtil.convert(acct);
 		} catch (NoResultException ex) {
 			throw new IllegalArgumentException();
 		} finally {
+			result = EntityUtil.convert(acct);
 			em.getTransaction().commit();
 			em.close();
 		}
@@ -159,5 +167,16 @@ public class AccountDAOImpl implements AccountDAO {
 			response.add(EntityUtil.clone(pa));
 		}
 		return response;
+	}
+
+	@Override
+	public void updatePassword(Account account) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createNativeQuery("update Account set password = :password where account_id = :accountId");
+		query.setParameter("password", account.getPassword());
+		query.setParameter("accountId", account.getAccountId());
+		query.executeUpdate();
+		em.getTransaction().commit();
 	}
 }

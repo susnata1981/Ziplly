@@ -10,11 +10,14 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
+import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetConversationsResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
+import com.ziplly.app.shared.ViewConversationAction;
+import com.ziplly.app.shared.ViewConversationResult;
 
 public class ConversationActvity extends AbstractActivity implements ConversationView.ConversationViewPresenter {
 	private IConversationView view;
@@ -83,5 +86,17 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			}
 		});
 		System.out.println("sending message to: "+conversation.getReceiver());
+	}
+
+	@Override
+	public void onView(ConversationDTO conversation) {
+		if (conversation != null) {
+			dispatcher.execute(new ViewConversationAction(conversation.getId()), new DispatcherCallbackAsync<ViewConversationResult>() {
+				@Override
+				public void onSuccess(ViewConversationResult result) {
+					eventBus.fireEvent(new AccountDetailsUpdateEvent());
+				}
+			});
+		}
 	}
 }

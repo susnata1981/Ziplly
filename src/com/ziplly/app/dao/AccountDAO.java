@@ -15,4 +15,5 @@ public interface AccountDAO {
 	AccountDTO update(Account user);
 	List<Account> getAll(int start, int end);
 	List<PersonalAccountDTO> findByZip(int zip);
+	void updatePassword(Account acct);
 }

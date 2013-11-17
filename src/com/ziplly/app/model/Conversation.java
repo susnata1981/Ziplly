@@ -15,11 +15,20 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 @NamedQueries({
 	@NamedQuery(
 		name = "findConversationByAccountId",	
 		query = "from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId"
-	)
+	),
+	@NamedQuery(
+		name = "findUnreadConversationByAccountId",
+		query = "select count(*) from Conversation where receiver.accountId = :receiverAccountId and status = :status"),
+	@NamedQuery(
+		name = "findConversationById",
+		query = "from Conversation where id = :id")
 })
 @Entity
 @Table(name="conversation")
@@ -39,6 +48,8 @@ public class Conversation implements Serializable {
 
 	@ElementCollection
 	private List<Message> messages = new ArrayList<Message>();
+
+	private ConversationStatus status;
 	
 	private Date timeUpdated;
 	private Date timeCreated;
@@ -103,5 +114,12 @@ public class Conversation implements Serializable {
 	}
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+	public ConversationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ConversationStatus status) {
+		this.status = status;
 	}
 }

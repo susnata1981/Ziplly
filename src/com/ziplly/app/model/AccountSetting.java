@@ -42,7 +42,9 @@ public class AccountSetting implements Serializable {
 		this.section = asd.getSection();
 		this.setting = asd.getSetting();
 		this.account = new Account();
-		this.account.setAccountId(asd.getAccount().getAccountId());
+		if (asd.getAccount() != null) {
+			this.account.setAccountId(asd.getAccount().getAccountId());
+		}
 	}
 	
 	public ShareSetting getSetting() {

@@ -24,6 +24,7 @@ public class TweetDAOImpl implements TweetDAO {
 		em.persist(tweet);
 		TweetDTO result = EntityUtil.clone(tweet);
 		em.getTransaction().commit();
+		em.close();
 		return result;
 	}
 
@@ -38,6 +39,7 @@ public class TweetDAOImpl implements TweetDAO {
 		query.setParameter("zip", zip);
 		@SuppressWarnings("unchecked")
 		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		em.close();
 		return EntityUtil.cloneList(tweets);
 	}
 
@@ -53,6 +55,7 @@ public class TweetDAOImpl implements TweetDAO {
 		query.setParameter("type", type);
 		@SuppressWarnings("unchecked")
 		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		em.close();
 		return EntityUtil.cloneList(tweets);
 	}
 	
@@ -67,6 +70,7 @@ public class TweetDAOImpl implements TweetDAO {
 		query.setParameter("accountId", accountId);
 		@SuppressWarnings("unchecked")
 		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		em.close();
 		return EntityUtil.cloneList(tweets);
 	}
 
@@ -87,8 +91,10 @@ public class TweetDAOImpl implements TweetDAO {
 			result.setType(tweet.getType());
 			em.merge(result);
 			em.getTransaction().commit();
+			em.close();
 			return EntityUtil.clone(result);
 		} catch(NoResultException nre) {
+			em.close();
 			throw nre;
 		}
 	}
@@ -97,5 +103,23 @@ public class TweetDAOImpl implements TweetDAO {
 	public void delete(Tweet tweet) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<TweetDTO> findTweetsByAccountId(Long accountId, int page,
+			int pageSize) {
+		if (accountId == null || pageSize == 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = (Query) em.createQuery("from Tweet t where t.sender.accountId = :accountId order by t.timeCreated desc");
+		query.setParameter("accountId", accountId);
+		query.setFirstResult(page*pageSize).setMaxResults(pageSize);
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>)query.getResultList();
+		em.close();
+		return EntityUtil.cloneList(tweets);
 	}
 }

@@ -15,14 +15,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.HomePresenter;
+import com.ziplly.app.client.activities.HomeActivity.IHomeView;
+import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.widget.ITweetWidgetView;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.CommentDTO;
@@ -46,18 +50,99 @@ public class HomeView extends Composite implements IHomeView {
 	private static HomeViewUiBinder uiBinder = GWT
 			.create(HomeViewUiBinder.class);
 	
+	public static interface HomePresenter extends TweetPresenter {
+		void displayTweets(List<TweetDTO> tweets);
+		void displayTweetsForCategory(TweetType type);
+//		void displayProfile(Long accountId);
+//		void postComment(CommentDTO comment);
+//		void likeTweet(Long tweetId);
+//		void updateTweet(TweetDTO tweet);
+//		void deleteTweet(TweetDTO tweet);
+//		void tweet(TweetDTO tweet);
+		void getNext(int i);
+		void onLogin(String emailInput, String passwordInput);
+	}
+	
+	@UiField
+	Alert message;
+	
+	@UiField
+	HTMLPanel filterTweetsPanel;
+	
+	@UiField
+	HTMLPanel communityWallPanel;
+	
+	@UiField
+	TextArea tweetTextBox;
+	@UiField
+	HTMLPanel tweetCategoryPanel;
+	@UiField
+	ListBox tweetCategoryList;
+	
+	@UiField
+	Button tweetBtn;
+	@UiField
+	Button cancelBtn;
+	
 	HomePresenter presenter;
 	List<Anchor> filters = new ArrayList<Anchor>();
+	
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	// tweetId --> TweetWidget
 	Map<Long, ITweetWidgetView> tweetWidgetMap = new HashMap<Long, ITweetWidgetView>();
 	
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
-
+	
+	private int lastScrollPos = 0;
 	public HomeView() {
 		initWidget(uiBinder.createAndBindUi(this));
+		scrollPanel.setHeight("700px");
+		scrollPanel.setWidth("1000px");
+		buildTweetFilters();
 		
+		message.setAnimation(true);
+		scrollPanel.addScrollHandler(new ScrollHandler() {
+			@Override
+			public void onScroll(ScrollEvent event) {
+				int oldPosition = lastScrollPos;
+				lastScrollPos = scrollPanel.getVerticalScrollPosition();
+
+				if (oldPosition > lastScrollPos) {
+					return;
+				}
+				
+				int offsetHeight = scrollPanel.getWidget().getOffsetHeight();
+				int scrollPanelHeight = scrollPanel.getOffsetHeight();
+				System.out.println("lastpost="+lastScrollPos+" offsetHeight="+offsetHeight+" scrollPanel OH="+scrollPanelHeight);
+				
+				if (lastScrollPos >= (offsetHeight - scrollPanelHeight)) {
+					// load more data
+//					Window.alert("load more data...");
+					presenter.getNext(3);
+				}
+			}
+		});
+		
+		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
+		tweetTextBox.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.INLINE);
+			}
+		});
+		
+		cancelBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
+			}
+		});
+	}
+
+	private void buildTweetFilters() {
 		filterHeader.clear();
 		HTMLPanel tweetHeader = new HTMLPanel("<div class='filterheader'>Category</span>");
 		filterHeader.add(tweetHeader);
@@ -82,52 +167,8 @@ public class HomeView extends Composite implements IHomeView {
 			filterTweetsPanel.add(anchor);
 			filters.add(anchor);
 		}
-		
-		message.setAnimation(true);
-//		Window.addWindowScrollHandler(new ScrollHandler() {
-//			@Override
-//			public void onWindowScroll(ScrollEvent event) {
-//				System.out.println("top="+event.getScrollTop()+" clientHeight="+Window.getClientHeight()+
-//						"ch="+Document.get().getScrollHeight());
-//			}
-//		});
-		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-		tweetTextBox.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.INLINE);
-			}
-		});
-		
-		cancelBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-			}
-		});
 	}
 
-	@UiField
-	Alert message;
-	
-	@UiField
-	HTMLPanel filterTweetsPanel;
-	
-	@UiField
-	HTMLPanel communityWallPanel;
-	
-	@UiField
-	TextArea tweetTextBox;
-	@UiField
-	HTMLPanel tweetCategoryPanel;
-	@UiField
-	ListBox tweetCategoryList;
-	
-	@UiField
-	Button tweetBtn;
-	@UiField
-	Button cancelBtn;
-	
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
@@ -146,6 +187,24 @@ public class HomeView extends Composite implements IHomeView {
 		communityWallPanel.clear();
 		message.clear();
 		message.setVisible(false);
+		for(TweetDTO tweet: tweets) {
+			long time11 = System.currentTimeMillis();
+			TweetWidget tw = new TweetWidget();
+			long time12 = System.currentTimeMillis();
+			tw.setPresenter(presenter);
+			tw.displayTweet(tweet);
+			long time13 = System.currentTimeMillis();
+			communityWallPanel.add(tw);
+			long time14 = System.currentTimeMillis();
+			
+			System.out.println("Time to create tweet widget: "+(time12-time11)+" to render: "+(time13-time12)+" to addToPanel: "+(time14-time13));
+			tweetWidgetMap.put(tweet.getTweetId(), tw);
+		}
+	}
+	
+	@Override
+	public void updateTweets(List<TweetDTO> tweets) {
+		long time1 = System.currentTimeMillis();
 		for(TweetDTO tweet: tweets) {
 			long time11 = System.currentTimeMillis();
 			TweetWidget tw = new TweetWidget();
@@ -227,7 +286,7 @@ public class HomeView extends Composite implements IHomeView {
 			throw new IllegalArgumentException();
 		}
 		
-		ITweetWidgetView tw = tweetWidgetMap.get(comment.getTweet().getTweetId());
+		ITweetWidgetView<?> tw = tweetWidgetMap.get(comment.getTweet().getTweetId());
 		tw.updateComment(comment);
 	}
 

@@ -3,6 +3,7 @@ package com.ziplly.app.client.view;
 import java.util.Date;
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
@@ -20,19 +21,21 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.EditAccount;
 import com.ziplly.app.client.widget.EditBusinessAccountWidget;
-import com.ziplly.app.client.widget.LogoutWidget;
+import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.ValidationResult;
 
 public class BusinessAccountView extends Composite implements IAccountView<BusinessAccountDTO> {
@@ -44,17 +47,16 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 	}
 
 	@UiField
-	LogoutWidget logoutWidget;
+	Alert message;
+	
+//	@UiField
+//	LogoutWidget logoutWidget;
 	
 	@UiField
 	Image profileImageUrl;
 	
 	@UiField
-	FormPanel imageUploadForm;
-	@UiField
-	Button uploadBtn;
-	@UiField
-	Button saveImageBtn;
+	Button sendMsgBtn;
 	
 	@UiField
 	Element name;
@@ -91,9 +93,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 	public BusinessAccountView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		editAccountView = new EditBusinessAccountWidget();
-		logoutWidget.setVisible(false);
-		imageUploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-		imageUploadForm.setMethod(FormPanel.METHOD_POST);
+//		logoutWidget.setVisible(false);
 		tweetCategoryList.clear();
 	}
 
@@ -102,14 +102,13 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		tweetTextBox.setText("");
 		tweetCategoryCg.setType(ControlGroupType.NONE);
 		tweetHelpInline.setText("");
-		uploadBtn.setEnabled(false);
-		saveImageBtn.setVisible(false);
+		message.setVisible(false);
 	}
 
-	@Override
-	public void displayLogoutWidget() {
-		logoutWidget.setVisible(true);
-	}
+//	@Override
+//	public void displayLogoutWidget() {
+//		logoutWidget.setVisible(true);
+//	}
 
 	@Override
 	public void displayProfile(BusinessAccountDTO account) {
@@ -132,15 +131,12 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		
 		tweetFormPanel.getElement().getStyle().setDisplay(Display.INLINE);
 		
-		logoutWidget.setVisible(true);
-		uploadBtn.setEnabled(false);
-		saveImageBtn.setVisible(false);
+//		logoutWidget.setVisible(true);
 	}
 
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-		imageUploadForm.setVisible(false);
 		tweetFormPanel.getElement().getStyle().setDisplay(Display.NONE);
 		editAccountLink.setVisible(false);
 	}
@@ -149,7 +145,7 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 	public void setPresenter(AccountPresenter<BusinessAccountDTO> presenter) {
 		this.presenter = presenter;
 		editAccountView.setPresenter(presenter);
-		logoutWidget.setPresenter(presenter);
+//		logoutWidget.setPresenter(presenter);
 	}
 
 	@Override
@@ -198,28 +194,71 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		editAccountView.show();
 	}
 
-	@UiHandler("uploadBtn") 
-	void uploadImage(ClickEvent event) {
-		saveImageBtn.setVisible(false);
-		imageUploadForm.submit();
-	}
-	
-	@UiHandler("saveImageBtn")
-	void saveImage(ClickEvent event) {
-		this.account.setImageUrl(profileImageUrl.getUrl());
-		presenter.save(account);
-		saveImageBtn.setVisible(false);
-	}
-
 	@Override
 	public void closeSendMessageWidget() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	SendMessageWidget smw;
+	@UiHandler("sendMsgBtn")
+	void sendMessage(ClickEvent event) {
+		smw = new SendMessageWidget(account);
+		smw.setPresenter(presenter);
+		smw.show();
+	}
+
 	@Override
-	public void displayConversations(List<ConversationDTO> conversations) {
+	public void displayTweets(List<TweetDTO> tweets) {
+	}
+
+	@Override
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		message.setVisible(true);
+	}
+
+	@Override
+	public com.google.gwt.user.client.Element getTweetSectionElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addTweets(List<TweetDTO> tweets) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayLocationInMap(GetLatLngResult input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateAccountDetails(ApplicationContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateComment(CommentDTO comment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTweetLike(LoveDTO like) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTweet(TweetDTO tweet) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

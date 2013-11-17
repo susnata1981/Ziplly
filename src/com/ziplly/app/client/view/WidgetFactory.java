@@ -1,6 +1,6 @@
 package com.ziplly.app.client.view;
 
-import com.ziplly.app.client.activities.HomePresenter;
+import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.widget.BusinessAccountWidgetModal;
 import com.ziplly.app.client.widget.IAccountWidgetModal;
 import com.ziplly.app.client.widget.PersonalAccountWidgetModal;

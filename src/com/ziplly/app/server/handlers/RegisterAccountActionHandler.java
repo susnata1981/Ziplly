@@ -6,12 +6,10 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountHandlerUtil;
-import com.ziplly.app.model.PersonalAccount;
-import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
@@ -36,8 +34,7 @@ public class RegisterAccountActionHandler
 		}
 		RegisterAccountResult result = new RegisterAccountResult();
 		AccountDTO accountDto = action.getAccount();
-
-		Account account = AccountHandlerUtil.getAccount(accountDto);
+		Account account = EntityUtil.convert(accountDto);
 		try {
 			AccountDTO newAccount = accountBli.register(account);
 			result.setAccount(newAccount);

@@ -39,7 +39,13 @@ public class GetCommunityWallDataActionHandler
 		List<TweetDTO> tweets = null;
 		long time1 = System.currentTimeMillis();
 		System.out.println("Time:"+time1);
-		tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
+		
+		if (type.equals(TweetType.ALL)) {
+			tweets = tweetDao.findTweetsByZip(zip);
+		} else {
+			tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
+		}
+		
 		long time2 = System.currentTimeMillis();
 		System.out.println("Time:"+time2);
 		System.out.println("Time elapsed:"+(time2-time1));

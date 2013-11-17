@@ -14,6 +14,7 @@ public class ConversationDTO implements Serializable {
 	private AccountDTO sender;
 	private AccountDTO receiver;
 	private String subject;
+	private ConversationStatus status;
 	private Date timeUpdated;
 	private Date timeCreated;
 	@Transient
@@ -86,5 +87,12 @@ public class ConversationDTO implements Serializable {
 	@Override
 	public int hashCode() {
 		return (int) (Math.pow(id, 3)*123+124);
+	}
+	
+	public ConversationStatus getStatus() {
+		return status;
+	}
+	public void setStatus(ConversationStatus status) {
+		this.status = status;
 	}
 }

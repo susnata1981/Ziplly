@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.HomePlace;
@@ -18,8 +19,14 @@ import com.ziplly.app.client.view.NavView;
 public class ZipllyController {
 	EventBus eventBus;
 	
+	// main content
 	ActivityMapper activityMapper;	
 	ActivityManager activityManager;
+	
+	// nav area
+	ActivityMapper navActivityMapper;
+	ActivityManager navActivityManager;
+
 	PlaceHistoryMapper placeHistoryMapper;
 	
 	PlaceHistoryHandler historyHandler;
@@ -28,12 +35,15 @@ public class ZipllyController {
 	HomePlace defaultPlace;
 	RootPanel container;
 	SimplePanel panel = new SimplePanel();
+	SimplePanel navPanel = new SimplePanel();
 	NavView navView;
 
 	CachingDispatcherAsync dispatcher;
 	com.google.gwt.event.shared.EventBus appEventBus;
 	ApplicationContext ctx;
-	
+
+	private RootPanel navContainer;
+
 	@Inject
 	public ZipllyController(
 			ApplicationContext ctx,
@@ -42,6 +52,8 @@ public class ZipllyController {
 			com.google.gwt.event.shared.EventBus appEventBus,
 			ActivityMapper activityMapper,
 			ActivityManager activityManager,
+			@Named("nav")ActivityMapper navActivityMapper,
+			@Named("nav")ActivityManager navActivityManager,
 			PlaceController placeController,
 			PlaceHistoryMapper placeHistoryMapper,
 			PlaceHistoryHandler placeHistoryHandler,
@@ -51,11 +63,16 @@ public class ZipllyController {
 		this.eventBus = eventBus;
 		this.appEventBus = appEventBus;
 		this.container = RootPanel.get("main");
-		RootPanel.get("nav").add(navView);
+//		RootPanel.get("nav").add(navView);
 		this.container.add(panel);
+		this.navContainer = RootPanel.get("nav");
+		navContainer.add(navPanel);
 		this.activityMapper = activityMapper;
-		this.activityManager = activityManager;			
+		this.activityManager = activityManager;
 		this.activityManager.setDisplay(panel);
+		this.navActivityMapper = navActivityMapper;
+		this.navActivityManager = navActivityManager;
+		this.navActivityManager.setDisplay(navPanel);
 		this.placeHistoryMapper = placeHistoryMapper; 		
 		this.historyHandler = placeHistoryHandler; 			
 		this.placeController = placeController; 		

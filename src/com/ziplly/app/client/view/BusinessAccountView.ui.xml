@@ -4,23 +4,21 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="businessaccount.css" />
 	<g:HTMLPanel>
-		<!-- <dt:LogoutWidget ui:field="logoutWidget" /> -->
-		<div class="{style.logoutlink}">
-			<dt:LogoutWidget ui:field="logoutWidget" />
-		</div>
-		<div class="{style.businessInfoSection}">
+	    <b:Alert ui:field="message"/>
+	    <g:HTMLPanel>
+	        <dl>
+	            <dt>Inbox</dt>
+	            <dt>Messages</dt>
+	        </dl>
+	    </g:HTMLPanel>
+	        
+		<g:HTMLPanel addStyleNames="{style.businessInfoSection}">
 			<div class="{style.imageSection}">
 				<div class="{style.profileImage}">
 					<b:Image ui:field="profileImageUrl" />
 				</div>
 				<div>
-					<g:FormPanel ui:field="imageUploadForm">
-						<g:HTMLPanel>
-							<g:FileUpload ui:field="uploadField" name="image" />
-							<b:Button size="MINI" ui:field="uploadBtn">Upload</b:Button>
-							<b:Button size="MINI" ui:field="saveImageBtn">Save</b:Button>
-						</g:HTMLPanel>
-					</g:FormPanel>
+					<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
 				</div>
 			</div>
 			<div class="{style.businessDetails}">
@@ -67,6 +65,6 @@
 					Endorsements
 				</g:HTMLPanel>
 			</div>
-		</div>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

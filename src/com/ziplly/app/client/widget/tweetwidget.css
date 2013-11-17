@@ -1,23 +1,14 @@
-#cwallId {
-	float: left;
-	width: 800px;
-	margin-left: 30px;
-	border: 1px solid #ddd;
-}
-
 .smalltext {
 	font-family: sans-serif;
 	font-size: 14px;
 }
 
-.tweet {
-	width: 740px;
-	background: #E0F8E0;
+.tweetPanel {
+	width: 700px;
+	background: #fff;
 	overflow: auto;
-	padding: 4px;
+	padding: 2px;
 	margin: 20px 4px 40px 14px;
-	border: 1px solid #ddd;
-	border-radius: 15px;
 }
 
 .tweet_block {
@@ -26,39 +17,44 @@
 
 .tweet_image {
 	float: left;
-	width: 50px;
-	height: 35px;
+	width: 9%;
+	height: 6%;
 	margin: 8px 0px 0px 6px;
 }
 
 .tweet_image img {
-	width: 60px;
-	height: 40px;
+	width: 90%;
 }
 
-.tweet_content {
+.tweet_content_section {
 	float: left;
-	width: 600px;
+	width: 85%;
 	margin: 0px 10px 0px 10px;
 }
 
+.tweet_content {
+	margin-top: 1%;
+	margin-bottom: 5%;
+}
+
 .tweetContentTextArea {
-	width: 560px;
-	height: 40px;
+	width: 90%;
+	height: 80px;
 	float: left;
 	margin: 0px 5px 5px 10px;
 }
 
 div .tweet_actions {
 	clear: both;
-	margin: 0px 5px 5px 10px;
+	margin: 0px 5px 5px 2px;
+	border-bottom: 1px solid #ddd;
 }
 
 div.tweet_text {
 	font-family: Helvetica;
-	font-size: 14px;
-	padding: 6px;
+	font-size: 11px;
 	line-height: 26px;
+	color: #555;
 }
 
 .tweetActionDropdown {
@@ -76,7 +72,7 @@ div.comment_text {
 .tweet_action_link {
 	float: left;
 	width: 50px;
-	margin: 8px 4px 4px 4px;
+	margin: 8px 4px 4px 0px;
 	font-size: 13px;
 	font-family: sans-serif;
 }
@@ -90,22 +86,26 @@ div.comment_text {
 
 .people_liked_section {
 	clear: both;
-	height: 24px;
 	padding: 3px;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
 }
 
 /*************** Comment Section ***************/
-.tweetCommentSection {
-	clear: both;
-	width: 600px;
-	margin: 20px 5px 5px 20px;
+.commentSectionDiv {
+	width: 100%;
+	background: #E6E6E6;
 }
 
-.comments {
-	margin: 18px 0px 0px 60px;
-	width: 100%;
+.tweetCommentSection {
+	clear: both;
+	padding: 3px;
+	margin: 4px 0px 6px 2%;
+	width: 90%;
+	font-size: 10px;
+}
+
+.comment {
+	margin: 4px 0 8px 0;
+	border-bottom: 1px solid #ddd;
 	overflow: auto;
 }
 
@@ -118,20 +118,19 @@ div.comment_text {
 .tweet_comment {
 	clear: both;
 	margin: 8px 0px 4px 2px;
-	border-bottom: 1px solid #ddd;
 }
 
 .comment_input {
 	margin: 8px 0px 2px 10px;
-	width: 500px;
-	height: 34px;
+	width: 80%;
+	height: 6%;
 	padding: 6px;
 }
 
 .commentInputTextBox {
 	margin: 16px 0px 6px 30px;
-	width: 620px;
-	height: 20px;
+	width: 80%;
+	height: 5%;
 	padding: 4px;
 }
 

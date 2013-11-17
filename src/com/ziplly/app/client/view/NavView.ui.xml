@@ -17,7 +17,10 @@
 				<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
 				<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
 			</b:Dropdown>
-			<b:NavLink ui:field="residentsLink">Resident</b:NavLink>
+			<b:Dropdown text="Community">
+			    <b:NavLink ui:field="residentsLink">Residents</b:NavLink>
+			    <b:NavLink ui:field="businessLink">Businesses</b:NavLink>
+			</b:Dropdown>
 			<b:NavLink ui:field="aboutLink">About</b:NavLink>
 		</b:NavPills>
 	</g:HTMLPanel>

@@ -10,6 +10,9 @@
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
 	<inherits name="com.google.gwt.user.theme.standard.Standard" />
 
+	<!--  Maps -->
+	<inherits name="com.google.maps.gwt.GoogleMaps" />
+	
 	<!-- Activity & Place -->
 	<inherits name='com.google.gwt.activity.Activity'/>
 	<inherits name='com.google.gwt.place.Place'/>
@@ -20,6 +23,7 @@
 	<!-- GWT Dispatch -->
 	<inherits name="net.customware.gwt.dispatch.Dispatch" />
 	
+	<!-- logging configuration -->
 	<inherits name="com.google.gwt.logging.Logging" />
 	<set-property name="gwt.logging.logLevel" value="INFO" />
 	<set-property name="gwt.logging.enabled" value="TRUE" />

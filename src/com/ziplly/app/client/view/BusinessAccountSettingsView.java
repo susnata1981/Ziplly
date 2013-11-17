@@ -1,37 +1,67 @@
 package com.ziplly.app.client.view;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
+import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.model.TransactionDTO;
+import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessAccountSettingsView extends Composite implements ISettingsView<BusinessAccountDTO> {
+public class BusinessAccountSettingsView extends Composite implements IBusinessAccountSettingView {
 
+	private static final Double MEMBERSHIP_FEE_AMOUNT = 5.0;
+	private Logger logger = Logger.getLogger(BusinessAccountSettingsView.class.getName());
 	private static BusinessAccountSettingsViewUiBinder uiBinder = GWT
 			.create(BusinessAccountSettingsViewUiBinder.class);
 
+	public static interface BusinessAccountSettingsPresenter extends AccountSettingsPresenter<BusinessAccountDTO> {
+		void getJwtString();
+
+		void pay(TransactionDTO txn);
+	}
+	
 	interface BusinessAccountSettingsViewUiBinder extends
 			UiBinder<Widget, BusinessAccountSettingsView> {
 	}
-
-	AccountSettingsPresenter<BusinessAccountDTO> presenter;
 
 	@UiField
 	Alert message;
@@ -90,23 +120,44 @@ public class BusinessAccountSettingsView extends Composite implements ISettingsV
 	@UiField
 	Button cancelBtn;
 	
+	// Payment details tab
+	@UiField
+	Alert paymentStatus;
+	@UiField
+	HTMLPanel subscriptionDetailsTable;
+	@UiField
+	HTMLPanel subscriptionPlanTablePanel;
+	
+	// transaction details elements
+	@UiField
+	TableCellElement subscriptionPlanName;
+	@UiField
+	TableCellElement subscriptionPlanDescription;
+	@UiField
+	TableCellElement subscriptionPlanFee;
+	@UiField
+	TableCellElement subscriptionPlanStatus;
+	
+	private CellTable<SubscriptionPlanDTO> subscriptionPlanTable;	
 	private BusinessAccountDTO account;
+
+	private BusinessAccountSettingsPresenter presenter;
+
+	private String jwtToken;
+	private Map<Long,SubscriptionPlanDTO> subscriptionPlanMap = new HashMap<Long, SubscriptionPlanDTO>();
+	private boolean actionEnabled = true;
 	
 	public BusinessAccountSettingsView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
+		clearPaymentStatus();
 	}
 	
 	@Override
-	public void setPresenter(
-			AccountSettingsPresenter<BusinessAccountDTO> presenter) {
-		this.presenter = presenter;
-	}
-
-	@Override
 	public void clear() {
+		this.account = null;
 		message.clear();
 		message.setVisible(false);
 		businessName.setText("");
@@ -115,13 +166,14 @@ public class BusinessAccountSettingsView extends Composite implements ISettingsV
 		zip.setText("");
 		website.setText("");
 		email.setText("");
+		clearPaymentStatus();
 	}
 
 	@Override
 	public void displaySettings(BusinessAccountDTO account) {
-		this.account = account;
 		resetUploadForm();
 		if (account != null) {
+			this.account = account;
 			businessName.setText(account.getName());
 			street1.setText(account.getStreet1());
 			street2.setText(account.getStreet2());
@@ -294,4 +346,176 @@ public class BusinessAccountSettingsView extends Composite implements ISettingsV
 	void uploadImage(ClickEvent event) {
 		onUpload();
 	}
+
+	@Override
+	public void displayPaymentStatus(String msg, AlertType type) {
+		paymentStatus.setVisible(true);
+		paymentStatus.setText(msg);
+		paymentStatus.setType(type);
+	}
+	
+	@Override
+	public void clearPaymentStatus() {
+		paymentStatus.setText("");
+		paymentStatus.setVisible(false);
+	}
+	
+	native void doPay(String jwtToken, int subscriptionPlanId) /*-{
+		var that = this;
+		$wnd.google.payments.inapp.buy({
+			'jwt': jwtToken,
+			'success' : function() { 
+				alert('success');
+				that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onSuccess(I)(subscriptionPlanId);
+			},
+			'failure' : function() { 
+				alert('failure'); 
+				that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure()();
+			}
+		});
+	}-*/;
+	
+	public void onSuccess(int subscriptionId) {
+		logger.log(Level.INFO, "Successfully paid");
+		TransactionDTO txn = new TransactionDTO();
+		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
+		txn.setAmount(new BigDecimal(MEMBERSHIP_FEE_AMOUNT));
+		txn.setTimeCreated(new Date());
+		txn.setStatus(TransactionStatus.ACTIVE);
+		txn.setStatus(TransactionStatus.FAILURE);
+		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
+		presenter.pay(txn);
+	};
+
+	public void onFailure() {
+		logger.log(Level.SEVERE, "Transaction failed.");
+		TransactionDTO txn = new TransactionDTO();
+		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
+		txn.setAmount(new BigDecimal(MEMBERSHIP_FEE_AMOUNT));
+		txn.setTimeCreated(new Date());
+		txn.setStatus(TransactionStatus.FAILURE);		
+		presenter.pay(txn);
+	};
+
+	@Override
+	public void setPresenter(BusinessAccountSettingsPresenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public void setJwtString(String jwt) {
+		this.jwtToken = jwt;
+	}
+
+	@Override
+	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
+		subscriptionPlanMap.clear();
+		for(SubscriptionPlanDTO plan : plans) {
+			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
+		}
+		subscriptionPlanTablePanel.clear();
+		clearPaymentStatus();
+		subscriptionPlanTable = buildSubscriptionTable();
+		subscriptionPlanTable.setRowData(plans);
+		subscriptionPlanTablePanel.add(subscriptionPlanTable);
+	}
+
+	private CellTable<SubscriptionPlanDTO> buildSubscriptionTable() {
+		CellTable<SubscriptionPlanDTO> table = new CellTable<SubscriptionPlanDTO>();
+		TextColumn<SubscriptionPlanDTO> name = new TextColumn<SubscriptionPlanDTO>() {
+			@Override
+			public String getValue(SubscriptionPlanDTO plan) {
+				return plan.getName();
+			}
+		};
+		Header<String> nameHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "name";
+			}
+		};
+		table.addColumn(name, nameHeader);
+		
+		TextColumn<SubscriptionPlanDTO> description = new TextColumn<SubscriptionPlanDTO>() {
+			@Override
+			public String getValue(SubscriptionPlanDTO plan) {
+				return plan.getDescription();
+			}
+		};
+		Header<String> descriptionHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "description";
+			}
+		};
+		table.addColumn(description, descriptionHeader);
+		
+		TextColumn<SubscriptionPlanDTO> fee = new TextColumn<SubscriptionPlanDTO>() {
+			@Override
+			public String getValue(SubscriptionPlanDTO plan) {
+				return plan.getFee().intValue() + "$";
+			}
+		};
+		Header<String> feeHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "fee";
+			}
+		};
+		table.addColumn(fee, feeHeader);
+		
+		ButtonCell buttonCell = new ButtonCell();
+		Column<SubscriptionPlanDTO, String> actionColumn = new Column<SubscriptionPlanDTO, String>(buttonCell) {
+			@Override
+			public String getValue(SubscriptionPlanDTO object) {
+				return "subscribe";
+			}
+		};
+		Header<String> actionHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "action";
+			}
+		};
+		table.addColumn(actionColumn, actionHeader);
+		
+		actionColumn.setFieldUpdater(new FieldUpdater<SubscriptionPlanDTO, String>() {
+
+			@Override
+			public void update(int index, SubscriptionPlanDTO object, String value) {
+				if (actionEnabled) {
+					doPay(jwtToken, object.getSubscriptionId().intValue());
+				} else {
+					Window.alert("You're already subscribed!");
+				}
+			}
+		});
+		return table;
+	}
+
+	@Override
+	public void displayTransactionHistory(TransactionDTO txn) {
+		if (txn != null) {
+			subscriptionPlanName.setInnerHTML(txn.getPlan().getName());
+			subscriptionPlanDescription.setInnerHTML(txn.getPlan().getDescription());
+			subscriptionPlanFee.setInnerHTML(txn.getPlan().getFee().toString());
+			subscriptionPlanStatus.setInnerHTML(StringConstants.TRANSACTION_ACTIVE);
+			showTransactionHistory();
+		}
+	}
+
+	@Override
+	public void disableSubscriptionButton() {
+		actionEnabled = false;
+	}
+
+	@Override
+	public void hideTransactionHistory() {
+		subscriptionDetailsTable.setVisible(false);
+	}
+	
+	public void showTransactionHistory() {
+		subscriptionDetailsTable.setVisible(true);
+	}
+
 }

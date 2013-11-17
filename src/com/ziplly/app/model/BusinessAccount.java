@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 
 @Entity
 public class BusinessAccount extends Account {
@@ -10,6 +12,9 @@ public class BusinessAccount extends Account {
 	private String website;
 	private String street1;
 	private String street2;
+	
+	@OneToOne(fetch=FetchType.EAGER, mappedBy="seller")
+	private Transaction transaction;
 	
 	public BusinessAccount() {
 	}
@@ -54,5 +59,13 @@ public class BusinessAccount extends Account {
 
 	public void setWebsite(String website) {
 		this.website = website;
+	}
+
+	public Transaction getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
 	}
 }

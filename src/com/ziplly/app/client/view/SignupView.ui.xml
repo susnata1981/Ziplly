@@ -12,10 +12,12 @@
 		10px 0px 0px 40px;
 		background: #f1f1f1;
 		}
-		#loginForm {
+		.loginForm {
 		position: absolute;
-		top:400px;
-		right: 40px;
+		top: 60%;
+		right: 10%;
+		width: 28%;
+		background: #fff;
 		}
 		.profileImagePreview {
 		width: 90px !important;
@@ -89,8 +91,8 @@
 					<b:Button type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
 				</b:Form>
 			</div>
-			<div id="loginForm">
-				<dt:LoginWidget ui:field="loginWidget" />
+			<div class="{style.loginForm}">
+				<dt:LoginWidget ui:field="loginWidget" width="90%" residentAccountSignupLink="false" />
 			</div>
 		</div>
 	</g:HTMLPanel>

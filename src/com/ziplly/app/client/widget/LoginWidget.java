@@ -10,18 +10,24 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.LoginPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
+import com.ziplly.app.client.places.BusinessSignupPlace;
+import com.ziplly.app.client.places.PasswordRecoveryPlace;
+import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -43,8 +49,30 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
+		setWidth("90%");
 	}
 
+	public void setWidth(String width) {
+		loginWidgetPanel.setWidth(width);
+	}
+	
+	public void setResidentAccountSignupLink(String display) {
+		Boolean value = Boolean.valueOf(display);
+		if (!value.booleanValue()) {
+			residentSignupPanel.getElement().getStyle().setDisplay(Display.NONE);
+		}
+	}
+	
+	public void setBusinessAccountSignupLink(boolean display) {
+		Boolean value = Boolean.valueOf(display);
+		if (!value.booleanValue()) {
+			businessSignupPanel.getElement().getStyle().setDisplay(Display.NONE);
+		}
+	}
+	
+	@UiField
+	HTMLPanel loginWidgetPanel;
+	
 	@UiField
 	TextBox email;
 	@UiField
@@ -67,6 +95,20 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	Alert message;
+	
+	@UiField
+	Anchor residentSignupLink;
+	@UiField
+	HTMLPanel residentSignupPanel;
+	
+	@UiField
+	Anchor businessSignupLink;
+	@UiField
+	HTMLPanel businessSignupPanel;
+
+	@UiField
+	Anchor passwordRecoveryLink;
+
 	private LoginPresenter presenter;
 
 	@UiHandler("fbLoginBtn")
@@ -142,5 +184,20 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	@Override
 	public void setPresenter(LoginPresenter presenter) {
 		this.presenter = presenter;
+	}
+	
+	@UiHandler("residentSignupLink")
+	public void residentSignupLinkClicked(ClickEvent event) {
+		presenter.goTo(new SignupPlace());
+	}
+	
+	@UiHandler("businessSignupLink")
+	public void businessSignupLinkClicked(ClickEvent event) {
+		presenter.goTo(new BusinessSignupPlace());
+	}
+	
+	@UiHandler("passwordRecoveryLink")
+	public void passwordRecoveryLinkClicked(ClickEvent event) {
+		presenter.goTo(new PasswordRecoveryPlace());
 	}
 }

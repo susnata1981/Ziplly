@@ -4,16 +4,14 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	.loginWidgetSection {
-			width: 260px;
+			width: 80%;
 			margin-left: auto;
 			margin-right: auto;
-			margin-top: 120px;
-			border: 1px solid #ddd;
-			background: #f5f5f5;
+			margin-top: 8%;
 		}
 	</ui:style>
 
 	<g:HTMLPanel ui:field="loginMessagePanel" addStyleNames="{style.loginWidgetSection}">
-		<dt:LoginWidget ui:field="loginWidget" />
+		<dt:LoginWidget ui:field="loginWidget" width="29%" residentAccountSignupLink="false"/>
 	</g:HTMLPanel>
 </ui:UiBinder> 

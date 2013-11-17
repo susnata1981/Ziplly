@@ -18,7 +18,7 @@ public class AccountDTO implements Serializable {
 	private int zip;
 	private Date lastLoginTime;
 	private Date timeCreated;
-	private List<Tweet> tweets = new ArrayList<Tweet>();
+	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	private Long uid;
 	
 	public AccountDTO() {
@@ -127,11 +127,11 @@ public class AccountDTO implements Serializable {
 		this.facebookId = facebookId;
 	}
 
-	public List<Tweet> getTweets() {
+	public List<TweetDTO> getTweets() {
 		return tweets;
 	}
 
-	public void setTweets(List<Tweet> tweets) {
+	public void setTweets(List<TweetDTO> tweets) {
 		this.tweets = tweets;
 	}
 

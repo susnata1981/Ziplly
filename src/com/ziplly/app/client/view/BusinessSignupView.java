@@ -210,7 +210,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		if (passwordInput != null && confirmPasswordInput != null) {
 			if (!confirmPasswordInput.equals(passwordInput)) {
 				passwordCg.setType(ControlGroupType.ERROR);
-				passwordError.setText(SignupView.PASSWORD_MISMATCH_ERROR);
+				passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
 				passwordError.setVisible(true);
 			}
 		}

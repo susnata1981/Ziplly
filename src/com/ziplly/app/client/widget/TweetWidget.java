@@ -32,14 +32,14 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.HomePresenter;
-import com.ziplly.app.client.view.WidgetFactory;
+import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 
-public class TweetWidget extends Composite implements ITweetWidgetView {
+public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {
 
 	private static final int PROFILE_COUNT_FOR_LIKE = 2;
 	private static final int DEFAULT_COMMENT_COUNT = 4;
@@ -53,6 +53,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	interface Style extends CssResource {
 		String tweetCommentSection();
 
+		String comment();
+		
 		String smalltext();
 
 		String profileImageForComment();
@@ -62,6 +64,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	Style style;
 
 	// Tweet Section
+	@UiField
+	HTMLPanel tweetPanel;
 	@UiField
 	Image authorImage;
 	@UiField
@@ -73,6 +77,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 
 	@UiField
 	TextArea tweetContentTextArea;
+	@UiField
+	HTMLPanel tweetEditButtonPanel;
 	@UiField
 	Button saveBtn;
 	@UiField
@@ -106,12 +112,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	@UiField
 	Button cancelCommentBtn;
 
-	private HomePresenter presenter;
+	private TweetPresenter presenter;
 	private TweetDTO tweet;
 	final Modal modal = new Modal();
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
-
+	
 	// private IAccountWidgetModal<PersonalAccountDTO>
 	// personalAccountWidgetModal;
 
@@ -128,7 +134,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	private void setupHandlers() {
-
 		editTweetLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -142,10 +147,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
 				tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
-				tweetContentTextArea.getElement().getStyle()
-						.setVisibility(Visibility.HIDDEN);
-				saveBtn.setVisible(false);
-				cancelBtn.setVisible(false);
+//				tweetContentTextArea.getElement().getStyle()
+//						.setVisibility(Visibility.HIDDEN);
+//				saveBtn.setVisible(false);
+//				cancelBtn.setVisible(false);
 			}
 		});
 
@@ -200,22 +205,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	void hideTweetUpdateButtons() {
-		tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
-		tweetContentTextArea.getElement().getStyle()
-				.setVisibility(Visibility.HIDDEN);
+		tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
+		tweetContentTextArea.getElement().getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setReadOnly(true);
-		saveBtn.setVisible(false);
-		cancelBtn.setVisible(false);
+		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	void showTweetUpdateButtons() {
-		tweetContentSpan.getStyle().setVisibility(Visibility.HIDDEN);
+		tweetContentSpan.getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setText(tweet.getContent());
 		tweetContentTextArea.setReadOnly(false);
-		tweetContentTextArea.getElement().getStyle()
-				.setVisibility(Visibility.VISIBLE);
-		saveBtn.setVisible(true);
-		cancelBtn.setVisible(true);
+		tweetContentTextArea.getElement().getStyle().setDisplay(Display.BLOCK);
+		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
 
 	void hideCommentButtons() {
@@ -263,9 +264,11 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 				return c1.getTimeCreated().before(c2.getTimeCreated()) ? 1 : -1;
 			}
 		});
+		
 		int commentCount = 0;
 		for (final CommentDTO comment : tweet.getComments()) {
 			HorizontalPanel panel = addNextComment(comment);
+//			panel.setStyleName(style.comment());
 			comments.add(panel);
 			tweetCommentSection.add(panel);
 			if (commentCount < DEFAULT_COMMENT_COUNT) {
@@ -335,8 +338,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 		pImage.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				AccountDTO acct = comment.getAuthor();
-				TweetWidget.this.displayAccountModal(acct);
+//				TweetWidget.this.displayAccountModal(acct);
+				displayPublicProfile(comment.getAuthor());
 			}
 		});
 		imageLink.getElement().getFirstChild().appendChild(pImage.getElement());
@@ -344,9 +347,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 		HorizontalPanel panel = new HorizontalPanel();
 		panel.add(imageLink);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		HTMLPanel commentText = new HTMLPanel("<span class='smalltext'>"
+		HTMLPanel commentText = new HTMLPanel("<span class='tinytext'>"
 				+ comment.getContent() + "</span>");
-		commentText.setWidth("400px");
+		commentText.setWidth("80%");
 		panel.add(commentText);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		HTMLPanel commentDate = new HTMLPanel("<span class='datefont'>"
@@ -357,10 +360,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	<T extends AccountDTO> void displayAccountModal(T acct) {
-		@SuppressWarnings("unchecked")
-		IAccountWidgetModal<T> accountWidgetModal = (IAccountWidgetModal<T>) WidgetFactory
-				.getAccountWidgetModal(acct, presenter);
-		accountWidgetModal.show(acct);
+//		@SuppressWarnings("unchecked")
+//		IAccountWidgetModal<T> accountWidgetModal = (IAccountWidgetModal<T>) WidgetFactory
+//				.getAccountWidgetModal(acct, presenter);
+//		accountWidgetModal.show(acct);
 	}
 
 	private void displayLikesSection() {
@@ -391,7 +394,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 			profileLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					displayAccountModal(like.getAuthor());
+//					displayAccountModal(like.getAuthor());
+					displayPublicProfile(like.getAuthor());
 				}
 			});
 
@@ -440,8 +444,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 
 	private void displayTweetSection() {
 		tweetContentSpan.setInnerHTML(tweet.getContent());
-		tweetContentTextArea.getElement().getStyle()
-				.setVisibility(Visibility.HIDDEN);
 		tweet.getTimeCreated();
 
 		String time = getFormattedTime(tweet.getTimeCreated());
@@ -455,13 +457,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 
 	@UiHandler("authorProfileLink")
 	void displayProfile(ClickEvent event) {
-		displayAccountModal(tweet.getSender());
+//		displayAccountModal(tweet.getSender());
+		displayPublicProfile(tweet.getSender());
+	}
+	
+	private void displayPublicProfile(AccountDTO account) {
+		presenter.goTo(new PersonalAccountPlace(account.getAccountId()));
 	}
 
 	@Override
-	public void setPresenter(HomePresenter presenter) {
+	public void setPresenter(TweetPresenter presenter) {
 		this.presenter = presenter;
-		// this.personalAccountWidgetModal.setPresenter(presenter);
 	}
 
 	@Override
@@ -470,8 +476,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	}
 
 	@Override
-	public void updateTweet() {
-		presenter.updateTweet(tweet);
+	public void updateTweet(TweetDTO tweet) {
+		displayTweet(tweet);
 	}
 
 	@Override
@@ -494,5 +500,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView {
 	public void updateLike(LoveDTO like) {
 		tweet.getLikes().add(like);
 		displayLikesSection();
+	}
+
+	@Override
+	public void setWidth(String width) {
+		tweetPanel.setWidth(width);
 	}
 }

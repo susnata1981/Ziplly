@@ -12,31 +12,40 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
+import com.github.gwtbootstrap.client.ui.TabPanel.ShowEvent;
+import com.github.gwtbootstrap.client.ui.TabPanel.ShowEvent.Handler;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
+import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
 import com.ziplly.app.model.AccountSettingDTO;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.UpdatePasswordAction;
+import com.ziplly.app.shared.ValidationResult;
 
-public class PersonalAccountSettingsView extends Composite implements ISettingsView<PersonalAccountDTO>{
+public class PersonalAccountSettingsView extends Composite implements IPersonalAccountSettingsView {
 
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 			.create(PersonalAccountSettingsViewUiBinder.class);
@@ -101,11 +110,42 @@ public class PersonalAccountSettingsView extends Composite implements ISettingsV
 	ShareSettingsWidget locationSetting;
 	
 	@UiField
+	Tab passwordTab;
+	
+	@UiField
 	FormPanel uploadForm;
 	@UiField
 	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
+	
+	@UiField
+	HTMLPanel buttonsPanel;
+	
+	// Reset Password tab
+	@UiField
+	PasswordTextBox password;
+	@UiField
+	ControlGroup passwordCg;
+	@UiField
+	HelpInline passwordError;
+	
+	@UiField
+	PasswordTextBox newPassword;
+	@UiField
+	ControlGroup newPasswordCg;
+	@UiField
+	HelpInline newPasswordError;
+	
+	@UiField
+	PasswordTextBox confirmNewPassword;
+	@UiField
+	ControlGroup confirmNewPasswordCg;
+	@UiField
+	HelpInline confirmNewPasswordError;
+	
+	@UiField
+	Button updatePasswordBtn;
 	
 	Map<AccountDetailsType, Tab> accountDetailsTypeToTabsMap = new HashMap<AccountDetailsType, Tab>();
 	Map<Tab, ShareSettingsWidget> tabsToShareSettingWidgetMap = new HashMap<Tab, ShareSettingsWidget>();
@@ -140,9 +180,39 @@ public class PersonalAccountSettingsView extends Composite implements ISettingsV
 		}
 		
 		message.setVisible(false);
+		
+		setupHandlers();
 	}
 
+	private void setupHandlers() {
+		passwordTab.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showButtonsPanel(false);
+			}
+		});
+		
+		accountDetailsTab.addShowHandler(new Handler() {
+			@Override
+			public void onShow(ShowEvent showEvent) {
+				// sort of hacky
+				String tab = showEvent.getRelativeElement().getInnerHTML();
+				if (tab.contains("Password")) {
+					showButtonsPanel(true);
+				}
+			}
+		});
+	}
+
+	void showButtonsPanel(boolean show) {
+		buttonsPanel.setVisible(show);
+	}
+	
 	void populateFields(PersonalAccountDTO account) {
+		if (account == null) {
+			return;
+		}
+		
 		// basic info
 		if (account.getImageUrl() != null) {
 			displayImagePreview(account.getImageUrl());
@@ -241,12 +311,15 @@ public class PersonalAccountSettingsView extends Composite implements ISettingsV
 		if (!occupation.getText().equals("")) {
 			account.setOccupation(occupation.getText());
 		}
+		
 		// interests
 		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
 		for(Entry<Activity, CheckBox> entry : interestToCheckboxMap.entrySet()) {
 			CheckBox cb = entry.getValue();
 			if (cb.getValue()) {
 				InterestDTO i = new InterestDTO();
+				Activity a = Activity.valueOf(cb.getText().toUpperCase());
+				i.setInterestId(new Long(a.ordinal()+1));
 				i.setName(entry.getKey().name().toLowerCase());
 				selectedInterests.add(i);
 			}
@@ -254,7 +327,6 @@ public class PersonalAccountSettingsView extends Composite implements ISettingsV
 		account.getInterests().clear();
 		account.getInterests().addAll(selectedInterests);
 		
-		// TODO 
 		// call presenter
 		presenter.save(account);
 	}
@@ -280,6 +352,66 @@ public class PersonalAccountSettingsView extends Composite implements ISettingsV
 		onUpload();
 	}
 
+	@UiHandler("updatePasswordBtn")
+	void resetPassword(ClickEvent event) {
+		resetPasswordErrors();
+		if (!validatePasswordInput()) {
+			return;
+		}
+		
+		String oldPasswordInput = FieldVerifier.sanitize(password.getText());
+		String newPasswordInput = FieldVerifier.sanitize(newPassword.getText());
+		UpdatePasswordAction action = new UpdatePasswordAction();
+		action.setOldPassword(oldPasswordInput);
+		action.setNewPassword(newPasswordInput);
+		presenter.updatePassword(action);
+	}
+	
+	boolean validatePassword(String password, ControlGroup cg,
+			HelpInline helpInline) {
+		ValidationResult result = FieldVerifier.validatePassword(password);
+		if (!result.isValid()) {
+			cg.setType(ControlGroupType.ERROR);
+			helpInline.setText(result.getErrors().get(0).getErrorMessage());
+			helpInline.setVisible(true);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean validatePasswordInput() {
+		String passwordInput = password.getText().trim();
+		boolean valid = validatePassword(passwordInput, passwordCg, passwordError);
+
+		String newPasswordInput = newPassword.getText().trim();
+		valid &= validatePassword(newPasswordInput, newPasswordCg,
+				newPasswordError);
+		
+		String confirmPasswordInput = confirmNewPassword.getText().trim();
+		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg,
+				confirmNewPasswordError);
+
+		if (newPasswordInput != null && confirmPasswordInput != null) {
+			if (!confirmPasswordInput.equals(newPasswordInput)) {
+				confirmNewPasswordCg.setType(ControlGroupType.ERROR);
+				confirmNewPasswordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
+				confirmNewPasswordError.setVisible(true);
+			}
+		}
+		return valid;
+	}
+
+	void resetPasswordErrors() {
+		message.clear();
+		message.setVisible(false);
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setVisible(false);
+		newPasswordCg.setType(ControlGroupType.NONE);
+		newPasswordError.setVisible(false);
+		confirmNewPasswordCg.setType(ControlGroupType.NONE);
+		confirmNewPasswordError.setVisible(false);
+	}
+	
 	@Override
 	public void setUploadFormActionUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);

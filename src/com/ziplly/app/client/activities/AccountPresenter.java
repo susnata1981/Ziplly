@@ -2,14 +2,13 @@ package com.ziplly.app.client.activities;
 
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
-import com.ziplly.app.model.TweetDTO;
 
-public interface AccountPresenter<T extends AccountDTO> extends Presenter {
+public interface AccountPresenter<T extends AccountDTO> extends TweetPresenter {
 	void save(T account);
-	void displayPublicProfile();
 	void displayProfile();
-	void tweet(TweetDTO tweet);
+//	public void displayPublicProfile(final Long accountId);
 	void logout();
-	void displayPublicProfile(T account);
 	void sendMessage(ConversationDTO conversation);
+	void settingsLinkClicked();
+	void messagesLinkClicked();
 }

@@ -18,23 +18,6 @@ public class PersonalAccountDTO extends AccountDTO {
 	public PersonalAccountDTO() {
 	}
 
-//	public PersonalAccountDTO(PersonalAccount account) {
-//		super(account);
-//		this.firstName = account.getFirstName();
-//		this.lastName = account.getLastName();
-//		this.introduction = account.getIntroduction();
-//		this.occupation = account.getOccupation();
-//
-//		for (AccountSetting asd : account.getAccountSettings()) {
-//			AccountSettingDTO as = new AccountSettingDTO(asd);
-//			getAccountSettings().add(as);
-//		}
-//
-//		for (Interest interest : account.getInterests()) {
-//			getInterests().add(new InterestDTO(interest));
-//		}
-//	}
-
 	public List<AccountSettingDTO> getAccountSettings() {
 		return accountSettings;
 	}

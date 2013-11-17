@@ -69,6 +69,22 @@ public class FieldVerifier {
 		return result;
 	}
 	
+	/*
+	 * Special purpose: to be used in TweetBox only
+	 */
+	public static ValidationResult validateTweetLength(String tweet) {
+		ValidationResult result = new ValidationResult();
+		if (tweet == null || tweet.equals("")) {
+			return result;
+		}
+		
+		tweet = SafeHtmlUtils.htmlEscape(tweet);
+		if (tweet.length() > MAX_TWEET_LENGTH) {
+			result.addError(TWEET_TOO_LONG_ERROR);
+		}
+		return result;
+	}
+	
 	// TODO length check
 	public static ValidationResult validatePassword(String password) {
 		ValidationResult result = new ValidationResult();

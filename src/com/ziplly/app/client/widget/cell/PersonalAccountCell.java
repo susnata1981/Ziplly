@@ -18,8 +18,9 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO>{
 		
 		if (value != null) {
 			sb.appendHtmlConstant(
-					"<div class='pcell'><img src='"+value.getImageUrl()+"' width=100 height=80/>"+
-							"<a href='>"+GWT.getModuleBaseURL()+"+'>"+value.getDisplayName()+"</a></div>"
+					"<div class='pcell'><img src='"+value.getImageUrl()+"' width=100 height=80>"+
+				"<a href='>Ziplly.html?gwt.codesvr=127.0.0.1:9997#personalaccount:"+value.getAccountId()+"'>"+value.getDisplayName()+"</a>"
+						+ "</img></div>"
 			);
 		}
 	}

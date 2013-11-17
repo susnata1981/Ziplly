@@ -5,8 +5,7 @@ import net.customware.gwt.dispatch.shared.Result;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.ziplly.app.client.exceptions.NeedsLoginException;
-import com.ziplly.app.client.places.LoginPlace;
+import com.google.inject.Inject;
 
 public abstract class DispatcherCallbackAsync<T extends Result> implements AsyncCallback<T> {
 	private PlaceController placeController;
@@ -14,12 +13,13 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 	public DispatcherCallbackAsync() {
 	}
 	
+	// TODO 
 	@Override
 	public void onFailure(Throwable caught) {
-		if (caught instanceof NeedsLoginException) {
-			getPlaceController().goTo(new LoginPlace());
-			return;
-		}
+//		if (caught instanceof NeedsLoginException) {
+//			getPlaceController().goTo(new LoginPlace());
+//			return;
+//		}
 		Window.alert(caught.getLocalizedMessage());
 	}
 
@@ -27,6 +27,7 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 		return placeController;
 	}
 
+	@Inject
 	public void setPlaceController(PlaceController placeController) {
 		this.placeController = placeController;
 	}
