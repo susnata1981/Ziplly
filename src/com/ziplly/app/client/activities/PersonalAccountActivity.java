@@ -100,7 +100,6 @@ public class PersonalAccountActivity extends
 				view.getTweetSectionElement(), this);
 		binder.start();
 		getLatLng(ctx.getAccount().getZip(), new GetLatLngResultHandler());
-		displayProfile();
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
 	}
