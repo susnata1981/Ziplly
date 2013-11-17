@@ -97,4 +97,10 @@ public class BusinessAccountActivity extends
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayPublicProfile(Long accountId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

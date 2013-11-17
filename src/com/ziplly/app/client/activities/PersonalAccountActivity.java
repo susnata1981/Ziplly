@@ -130,7 +130,7 @@ public class PersonalAccountActivity extends
 		if (place.getAccountId() != null) {
 			action = new GetTweetForUserAction(place.getAccountId(),
 					tweetPageIndex, pageSize);
-		} else {
+		} else if (ctx.getAccount() != null){
 			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(),
 					tweetPageIndex, pageSize);
 		}
