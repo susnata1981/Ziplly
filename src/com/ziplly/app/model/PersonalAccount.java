@@ -34,7 +34,7 @@ public class PersonalAccount extends Account {
 	private Set<Interest> interests = new HashSet<Interest>();
 	
 	@OneToMany(mappedBy="account", fetch=FetchType.EAGER)
-	private List<AccountSetting> accountSettings = new ArrayList<AccountSetting>();
+	private List<PrivacySettings> accountSettings = new ArrayList<PrivacySettings>();
 
 	public PersonalAccount() {
 	}
@@ -47,21 +47,16 @@ public class PersonalAccount extends Account {
 		this.introduction = account.getIntroduction();
 		this.occupation = account.getOccupation();
 		
-		for(AccountSettingDTO asd : account.getAccountSettings()) {
-			AccountSetting as = new AccountSetting(asd);
-			getAccountSettings().add(as);
-		}
-		
 		for(InterestDTO interest : account.getInterests()) {
 			getInterests().add(new Interest(interest));
 		}
 	}
 
-	public List<AccountSetting> getAccountSettings() {
+	public List<PrivacySettings> getAccountSettings() {
 		return accountSettings;
 	}
 
-	public void setAccountSettings(List<AccountSetting> accountSettings) {
+	public void setAccountSettings(List<PrivacySettings> accountSettings) {
 		this.accountSettings = accountSettings;
 	}
 

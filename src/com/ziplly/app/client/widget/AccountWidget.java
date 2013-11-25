@@ -104,10 +104,8 @@ public class AccountWidget extends Composite implements
 		this.eadw = new EditAccountDetailsWidget();
 		initWidget(uiBinder.createAndBindUi(this));
 
-		editLinksMap.put(AccountDetailsType.BASICINFO, editBasicInfoLink);
-		editLinksMap.put(AccountDetailsType.LOCATION, editLocationLink);
+		editLinksMap.put(AccountDetailsType.EMAIL, editOccupationLink);
 		editLinksMap.put(AccountDetailsType.OCCUPATION, editOccupationLink);
-		editLinksMap.put(AccountDetailsType.INTEREST, editInterestLink);
 	}
 
 	/*
@@ -143,7 +141,7 @@ public class AccountWidget extends Composite implements
 		}
 
 		for (AccountSettingDTO asd : account.getAccountSettings()) {
-			if (asd.getSection().equals(AccountDetailsType.BASICINFO)
+			if (asd.getSection().equals(AccountDetailsType.EMAIL)
 					|| !asd.getSetting().equals(ShareSetting.PRIVATE)) {
 				populateSection(asd.getSection(), account);
 				editLinksMap.get(asd.getSection()).setVisible(false);
@@ -155,36 +153,36 @@ public class AccountWidget extends Composite implements
 	protected void populateSection(AccountDetailsType section,
 			PersonalAccountDTO account) {
 		switch (section) {
-		case BASICINFO:
+		case EMAIL:
 			populateBasicInfo(account);
 			break;
 		case OCCUPATION:
 			populateOccupation(account);
 			break;
-		case INTEREST:
-			populateInterests(account);
-			break;
-		case LOCATION:
-			populateLocation(account);
-			break;
+//		case INTEREST:
+//			populateInterests(account);
+//			break;
+//		case LOCATION:
+//			populateLocation(account);
+//			break;
 		default:
 		}
 	}
 
 	protected void clearSection(AccountDetailsType section) {
 		switch (section) {
-		case BASICINFO:
+		case EMAIL:
 			clearBasicInfo();
 			break;
 		case OCCUPATION:
 			clearOccupation();
 			break;
-		case INTEREST:
-			clearInterests();
-			break;
-		case LOCATION:
-			clearLocation();
-			break;
+//		case INTEREST:
+//			clearInterests();
+//			break;
+//		case LOCATION:
+//			clearLocation();
+//			break;
 		default:
 		}
 	}
@@ -234,15 +232,15 @@ public class AccountWidget extends Composite implements
 		}
 	}
 
-	@UiHandler("editBasicInfoLink")
-	void editCategory(ClickEvent event) {
-		showAccountInfoFormWidget(AccountDetailsType.BASICINFO);
-	}
-
-	@UiHandler("editInterestLink")
-	void editInterest(ClickEvent event) {
-		showAccountInfoFormWidget(AccountDetailsType.INTEREST);
-	}
+//	@UiHandler("editBasicInfoLink")
+//	void editCategory(ClickEvent event) {
+//		showAccountInfoFormWidget(AccountDetailsType.BASICINFO);
+//	}
+//
+//	@UiHandler("editInterestLink")
+//	void editInterest(ClickEvent event) {
+//		showAccountInfoFormWidget(AccountDetailsType.INTEREST);
+//	}
 
 	@UiHandler("editLocationLink")
 	void editLocation(ClickEvent event) {
@@ -259,7 +257,7 @@ public class AccountWidget extends Composite implements
 	}
 
 	void showAccountInfoFormWidget() {
-		eadw.show(AccountDetailsType.BASICINFO);
+		eadw.show(AccountDetailsType.EMAIL);
 	}
 
 	void showAccountInfoFormWidget(AccountDetailsType tab) {

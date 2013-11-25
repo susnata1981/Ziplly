@@ -21,8 +21,14 @@
 		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
 			<div class="{style.profileSection}">
 				<div class="{style.profileImageSection}">
-					<b:Image ui:field="profileImage" />
+					 <div class="{style.profileImageDiv}">
+						<b:Image ui:field="profileImage" />
+					</div>
 					<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
+					<div>
+						<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
+							Message</b:Button>
+					</div>
 				</div>
 				<div class="{style.profileInfoBox}">
 					<h2 class="heading">About me</h2>
@@ -50,7 +56,12 @@
 				<div class="{style.profileInfoBox}">
 					<div style="width:320px; height:270px" ui:field="locationDiv"></div>    
 				</div>
-				
+				<div class="{style.profileInfoBox}">
+					<h2 class="heading">Activity</h2>
+					<dt:ProfileStatWidget title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}"/>
+					<dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}"/>
+					<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}"/>
+				</div>
 			</div>
 			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 			    <g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">

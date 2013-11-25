@@ -1,10 +1,12 @@
 package com.ziplly.app.client.oauth;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+//import java.net.URLEncoder;
 //import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gwt.http.client.URL;
 
 public class OAuthUtil {
 
@@ -19,7 +21,7 @@ public class OAuthUtil {
 			}
 			sb.append(key);
 			sb.append("=");
-			sb.append(URLEncoder.encode(params.get(key),"utf-8"));
+			sb.append(URL.encode(params.get(key)));
 		}
 		return url + "?" + sb.substring(0, sb.length()).toString();
 	}
@@ -35,7 +37,7 @@ public class OAuthUtil {
 			}
 			sb.append(key);
 			sb.append("=");
-			sb.append(URLEncoder.encode(params.get(key),"utf-8"));
+			sb.append(URL.encode(params.get(key)));
 		}
 		return sb.toString();
 	}

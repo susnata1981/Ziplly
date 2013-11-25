@@ -5,10 +5,10 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountHandlerUtil;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
@@ -33,7 +33,8 @@ public class UpdateAccountActionHandler extends
 		validateSession();
 
 		AccountDTO accountDto = action.getAccount();
-		Account account = AccountHandlerUtil.getAccount(accountDto);
+		Account account = EntityUtil.convert(accountDto);
+		
 		AccountDTO result = accountBli.updateAccount(account);
 		return new UpdateAccountResult(result);
 	}

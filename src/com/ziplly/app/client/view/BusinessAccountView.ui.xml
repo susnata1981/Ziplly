@@ -2,69 +2,77 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="businessaccount.css" />
-	<g:HTMLPanel>
-	    <b:Alert ui:field="message"/>
-	    <g:HTMLPanel>
-	        <dl>
-	            <dt>Inbox</dt>
-	            <dt>Messages</dt>
-	        </dl>
-	    </g:HTMLPanel>
-	        
-		<g:HTMLPanel addStyleNames="{style.businessInfoSection}">
-			<div class="{style.imageSection}">
-				<div class="{style.profileImage}">
-					<b:Image ui:field="profileImageUrl" />
-				</div>
-				<div>
-					<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send Message</b:Button>
-				</div>
-			</div>
-			<div class="{style.businessDetails}">
-				<g:HTMLPanel ui:field="tweetFormPanel" addStyleNames="{style.section}">
-					<b:Form ui:field="tweetForm">
-						<b:ControlGroup ui:field="tweetCategoryCg">
-							<b:ControlLabel>Broadcast to the community</b:ControlLabel>
-							<b:Controls>
-								<b:TextArea placeholder="We're giving…"
-									addStyleNames="{style.shareTextBox}" ui:field="tweetTextBox" />
-								<b:HelpInline ui:field="tweetHelpInline" />
-							</b:Controls>
-						</b:ControlGroup>
-						<g:HTMLPanel ui:field="tweetCategoryPanel">
-							<b:ControlLabel>Select Category</b:ControlLabel>
-							<b:Controls>
-								<b:ListBox ui:field="tweetCategoryList">
-								</b:ListBox>
-							</b:Controls>
-							<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
-								ui:field="tweetBtn">Share</b:Button>
-						</g:HTMLPanel>
-					</b:Form>
-				</g:HTMLPanel>
-				<div class="{style.businessInfo}">
-					<div class="{style.section}">
-						<div class="{style.businessInfoElement}">
-							<span class="{style.name}" ui:field="name" />
-							<g:Anchor addStyleNames="{style.editlink}" ui:field="editAccountLink">edit</g:Anchor>
-						</div>
-						<div class="{style.businessInfoElement}">
-							<span class="smalltext">
-								<g:Anchor addStyleNames="{style.websiteLink} smalltext"
-									ui:field="websiteUrl"></g:Anchor>
-							</span>
-						</div>
-						<div class="{style.businessInfoElement}">
-							<span class="smalltext">Phone:</span>
-							<span class="smalltext" ui:field="phone"></span>
-						</div>
+	<ui:style src="accountview.css" />
+	<g:HTMLPanel addStyleNames="{style.rootPanel}">
+		<b:Alert ui:field="message" />
+		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
+			<dl>
+				<dt>
+					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
+						Inbox
+						<span ui:field="unreadMessageCountField" />
+					</g:Anchor>
+				</dt>
+				<dt>
+					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">Settings</g:Anchor>
+				</dt>
+			</dl>
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
+			<div class="{style.profileSection}">
+				<div class="{style.profileImageSection}">
+				    <div class="{style.profileImageDiv}">
+						<b:Image ui:field="profileImage" />
+					</div>
+					<h2 addStyleNames="{style.profileCaption}" ui:field="name" />
+					<div>
+						<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
+							Message</b:Button>
 					</div>
 				</div>
-				<g:HTMLPanel addStyleNames="{style.section}">
-					Endorsements
-				</g:HTMLPanel>
+				<div class="{style.profileInfoBox}">
+					<h2 class="heading">Business details</h2>
+					<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
+					<div class="{style.businessInfoItem}">
+					    <b:Label>Email</b:Label>
+						<g:Anchor ui:field="emailLink">
+							<span ui:field="email" addStyleNames="{style.description}" />
+						</g:Anchor>
+					</div>
+					<div class="{style.businessInfoItem}">
+					    <b:Label>Website</b:Label>
+						<g:Anchor ui:field="websiteLink">
+							<span ui:field="websiteSpan" addStyleNames="{style.description}" />
+						</g:Anchor>
+					</div>
+					<div class="{style.businessInfoItem}">
+						<span>
+							<b:Label>Last login</b:Label>
+							<span ui:field="lastLoginTime" />
+						</span>
+					</div>
+				</div>
+				<div class="{style.profileInfoBox}">
+					<h2 class="heading">Address</h2>
+					<g:HTMLPanel ui:field="addressPanel">
+					    <span ui:field="formattedAddress"/>
+					</g:HTMLPanel>
+				</div>
+				<div class="{style.profileInfoBox}">
+					<div style="width:320px; height:270px" ui:field="locationDiv"></div>
+				</div>
+				<div class="{style.profileInfoBox}">
+					<h2 class="heading">Activity</h2>
+					<dt:ProfileStatWidget title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}"/>
+					<dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}"/>
+					<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}"/>
+				</div>
 			</div>
+			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
+				<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
+					<dt:TweetBox ui:field="tweetBox" width="60%" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

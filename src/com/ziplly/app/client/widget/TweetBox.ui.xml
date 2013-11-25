@@ -7,11 +7,14 @@
 			padding: 3px;
 		}
 		.tweetActionPanel {
-			background: #f9f9f9;
+			background: #666;
+			width: 100%;
 			height: 0.6%;
-			padding: 2px;
+			padding: 2px 4px;
 		}
 		.tweetActionPanel a {
+			color: #fff;
+			width: 100%;
 			font-size: 10px;
 			font-family: sans-serif;
 		}
@@ -47,7 +50,7 @@
 				</b:Controls>
 				<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
 					ui:field="tweetBtn">Share</b:Button>
-				<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
+				<b:Button size="SMALL" addStyleNames="btn"
 					ui:field="cancelBtn">Cancel</b:Button>
 			</g:HTMLPanel>
 		</b:Form>

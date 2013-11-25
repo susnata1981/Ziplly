@@ -47,6 +47,11 @@ public class Transaction {
 	
 	private TransactionStatus status;
 	private String currencyCode;
+	
+	@Column(name="time_updated")
+	private Date timeUpdated;
+
+	@Column(name="time_created")
 	private Date timeCreated;
 	
 	public Transaction() {

@@ -26,6 +26,7 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AccountBLIImpl;
 import com.ziplly.app.server.EmailService;
 import com.ziplly.app.server.EmailServiceImpl;
+import com.ziplly.app.server.EmailServlet;
 import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.server.PaymentServiceImpl;
 

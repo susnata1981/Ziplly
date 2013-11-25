@@ -24,7 +24,7 @@ public class SignupActivity extends AbstractSignupActivity {
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		bind();
-		view.hideProfileImagePreview();
+//		view.hideProfileImagePreview();
 		view.reset();
 		setImageUploadUrl();
 		setUploadImageHandler();

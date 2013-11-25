@@ -7,8 +7,10 @@ import org.hibernate.Hibernate;
 import com.google.common.collect.Lists;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountSetting;
-import com.ziplly.app.model.AccountSettingDTO;
+import com.ziplly.app.model.AccountNotification;
+import com.ziplly.app.model.AccountNotificationDTO;
+import com.ziplly.app.model.AccountNotificationSettings;
+import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.Comment;
@@ -23,6 +25,8 @@ import com.ziplly.app.model.Message;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PrivacySettings;
+import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.Transaction;
@@ -36,7 +40,7 @@ public class EntityUtil {
 		if (acct instanceof PersonalAccount) {
 			return clone((PersonalAccount) acct);
 		} else if (acct instanceof BusinessAccount) {
-			return clone((BusinessAccount)acct);
+			return clone((BusinessAccount) acct);
 		}
 
 		throw new IllegalArgumentException();
@@ -44,14 +48,14 @@ public class EntityUtil {
 
 	public static Account convert(AccountDTO acct) {
 		if (acct instanceof PersonalAccountDTO) {
-			return new PersonalAccount((PersonalAccountDTO)acct);
+			return new PersonalAccount((PersonalAccountDTO) acct);
 		} else if (acct instanceof BusinessAccountDTO) {
-			return new BusinessAccount((BusinessAccountDTO)acct);
+			return new BusinessAccount((BusinessAccountDTO) acct);
 		}
 
 		throw new IllegalArgumentException();
 	}
-	
+
 	public static void clone(Account account, AccountDTO acct) {
 		acct.setAccountId(account.getAccountId());
 		acct.setPassword(account.getPassword());
@@ -60,15 +64,30 @@ public class EntityUtil {
 		acct.setUrl(account.getUrl());
 		acct.setImageUrl(account.getImageUrl());
 		acct.setZip(account.getZip());
+		acct.setNeighborhood(account.getNeighborhood());
+		acct.setCity(account.getCity());
+		acct.setState(account.getState());
+		acct.setRole(account.getRole());
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
-		
-//		if (Hibernate.isInitialized(account.getTweets())) {
-//			for(Tweet t : account.getTweets()) {
-//				acct.getTweets().add(clone(t, false));
-//			}
-//		}
+
+		if (Hibernate.isInitialized(account.getNotificationSettings())) {
+			for (AccountNotificationSettings ans : account.getNotificationSettings()) {
+				acct.getNotificationSettings().add(clone(ans));
+			}
+		}
+
+		if (Hibernate.isInitialized(account.getPrivacySettings())) {
+			for(PrivacySettings ps : account.getPrivacySettings()) {
+				acct.getPrivacySettings().add(clone(ps));
+			}
+		}
+		// if (Hibernate.isInitialized(account.getTweets())) {
+		// for(Tweet t : account.getTweets()) {
+		// acct.getTweets().add(clone(t, false));
+		// }
+		// }
 	}
 
 	public static PersonalAccountDTO clone(PersonalAccount account) {
@@ -78,13 +97,6 @@ public class EntityUtil {
 		dest.setLastName(account.getLastName());
 		dest.setIntroduction(account.getIntroduction());
 		dest.setOccupation(account.getOccupation());
-
-		if (Hibernate.isInitialized(account.getAccountSettings())) {
-			for (AccountSetting asd : account.getAccountSettings()) {
-				AccountSettingDTO asDto = clone(asd);
-				dest.getAccountSettings().add(asDto);
-			}
-		}
 
 		if (Hibernate.isInitialized(account.getInterests())) {
 			for (Interest interest : account.getInterests()) {
@@ -106,7 +118,7 @@ public class EntityUtil {
 		resp.setTransaction(EntityUtil.clone(account.getTransaction()));
 		return resp;
 	}
-	
+
 	public static InterestDTO clone(Interest interest) {
 		InterestDTO interestDto = new InterestDTO();
 		interestDto.setInterestId(interest.getInterestId());
@@ -115,13 +127,13 @@ public class EntityUtil {
 		return interestDto;
 	}
 
-	public static AccountSettingDTO clone(AccountSetting as) {
-		AccountSettingDTO asd = new AccountSettingDTO();
-		asd.setId(as.getId());
-		asd.setSection(as.getSection());
-		asd.setSetting(as.getSetting());
-		return asd;
-	}
+//	public static AccountSettingDTO clone(PrivacySettings as) {
+//		AccountSettingDTO asd = new AccountSettingDTO();
+//		asd.setId(as.getId());
+//		asd.setSection(as.getSection());
+//		asd.setSetting(as.getSetting());
+//		return asd;
+//	}
 
 	public static TweetDTO clone(Tweet tweet) {
 		return clone(tweet, true);
@@ -152,15 +164,15 @@ public class EntityUtil {
 		}
 		return resp;
 	}
-	
+
 	public static List<TweetDTO> cloneList(List<Tweet> tweets) {
 		List<TweetDTO> result = Lists.newArrayList();
-		for(Tweet tweet : tweets) {
+		for (Tweet tweet : tweets) {
 			result.add(EntityUtil.clone(tweet));
 		}
 		return result;
 	}
-	
+
 	public static CommentDTO clone(Comment comment) {
 		CommentDTO resp = new CommentDTO();
 		resp.setCommentId(comment.getCommentId());
@@ -169,14 +181,14 @@ public class EntityUtil {
 		resp.setTimeCreated(comment.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static LoveDTO clone(Love like) {
 		LoveDTO resp = new LoveDTO();
 		resp.setAuthor(convert(like.getAuthor()));
 		resp.setTimeCreated(like.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static ConversationDTO clone(Conversation c) {
 		ConversationDTO resp = new ConversationDTO();
 		resp.setId(c.getId());
@@ -186,8 +198,8 @@ public class EntityUtil {
 		resp.setSubject(c.getSubject());
 		resp.setStatus(c.getStatus());
 		resp.setTimeCreated(c.getTimeCreated());
-		
-		for(Message m : c.getMessages()) {
+
+		for (Message m : c.getMessages()) {
 			resp.add(clone(m));
 		}
 		return resp;
@@ -201,7 +213,7 @@ public class EntityUtil {
 		resp.setTimeCreated(m.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static SubscriptionPlanDTO clone(SubscriptionPlan plan) {
 		SubscriptionPlanDTO resp = new SubscriptionPlanDTO();
 		resp.setSubscriptionId(plan.getSubscriptionId());
@@ -211,12 +223,12 @@ public class EntityUtil {
 		resp.setTimeCreated(plan.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static TransactionDTO clone(Transaction txn) {
 		if (txn != null) {
 			TransactionDTO transaction = new TransactionDTO();
 			transaction.setTransactionId(txn.getTransactionId());
-//			transaction.setSeller(convert(txn.getSeller()));
+			// transaction.setSeller(convert(txn.getSeller()));
 			transaction.setPlan(clone(txn.getPlan()));
 			transaction.setAmount(txn.getAmount());
 			transaction.setCurrencyCode(txn.getCurrencyCode());
@@ -225,5 +237,38 @@ public class EntityUtil {
 			return transaction;
 		}
 		return null;
+	}
+
+	public static AccountNotificationDTO clone(AccountNotification an) {
+		AccountNotificationDTO resp = new AccountNotificationDTO();
+		resp.setNotificationId(an.getNotificationId());
+		resp.setReceiver(convert(an.getReceiver()));
+		resp.setSender(convert(an.getSender()));
+		resp.setReadStatus(an.getReadStatus());
+		resp.setType(an.getType());
+		resp.setAction(an.getAction());
+		resp.setTimeUpdated(an.getTimeUpdated());
+		resp.setTimeCreated(an.getTimeCreated());
+		return resp;
+	}
+	
+	public static AccountNotificationSettingsDTO clone(AccountNotificationSettings ans) {
+		AccountNotificationSettingsDTO resp = new AccountNotificationSettingsDTO();
+		resp.setNotificationId(ans.getNotificationId());
+		AccountDTO acct = new AccountDTO();
+		acct.setAccountId(ans.getAccount().getAccountId());
+		resp.setAccount(acct);
+		resp.setType(ans.getType());
+		resp.setAction(ans.getAction());
+		resp.setTimeCreated(ans.getTimeCreated());
+		return resp;
+	}
+	
+	public static PrivacySettingsDTO clone(PrivacySettings ps) {
+		PrivacySettingsDTO resp = new PrivacySettingsDTO();
+		resp.setId(ps.getId());
+		resp.setSection(ps.getSection());
+		resp.setSetting(ps.getSetting());
+		return resp;
 	}
 }

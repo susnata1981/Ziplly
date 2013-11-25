@@ -1,13 +1,11 @@
 package com.ziplly.app.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -41,8 +39,8 @@ public class EmailServiceImpl implements EmailService {
 	@Override
 	public void sendEmail(String recipientName, String recipientEmail, EmailTemplate template) {
 		Map<String, String> data = Maps.newHashMap();
-		data.put("name", recipientName);
-		data.put("email", recipientEmail);
+		data.put("recipientName", recipientName);
+		data.put("recipientEmail", recipientEmail);
 		
 		String emailMessage = prepareEmail(data, template);
 //		System.out.println("Email:"+emailMessage);

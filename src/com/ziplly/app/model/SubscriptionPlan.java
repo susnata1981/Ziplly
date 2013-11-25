@@ -16,6 +16,7 @@ public class SubscriptionPlan {
 	private Long subscriptionId;
 	private String name;
 	private String description;
+	private int tweetsAllowed;
 	private Double fee;
 	private Date timeCreated;
 
@@ -70,5 +71,13 @@ public class SubscriptionPlan {
 
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
+	}
+
+	public int getTweetsAllowed() {
+		return tweetsAllowed;
+	}
+
+	public void setTweetsAllowed(int tweetsAllowed) {
+		this.tweetsAllowed = tweetsAllowed;
 	}
 }

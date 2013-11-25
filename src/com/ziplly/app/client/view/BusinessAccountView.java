@@ -1,215 +1,231 @@
 package com.ziplly.app.client.view;
 
-import java.util.Date;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ControlGroup;
-import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.TextArea;
+import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.LatLng;
+import com.google.maps.gwt.client.MapOptions;
+import com.google.maps.gwt.client.MapTypeId;
+import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
-import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.widget.EditAccount;
-import com.ziplly.app.client.widget.EditBusinessAccountWidget;
+import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
+import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
+import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.TweetType;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetLatLngResult;
-import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessAccountView extends Composite implements IAccountView<BusinessAccountDTO> {
-
-	private static BusinessAccountViewUiBinder uiBinder = GWT
-			.create(BusinessAccountViewUiBinder.class);
+public class BusinessAccountView extends Composite implements IBusinessAccountView {
 
 	interface BusinessAccountViewUiBinder extends UiBinder<Widget, BusinessAccountView> {
 	}
 
+	private static BusinessAccountViewUiBinder uiBinder = GWT
+			.create(BusinessAccountViewUiBinder.class);
+
 	@UiField
 	Alert message;
-	
-//	@UiField
-//	LogoutWidget logoutWidget;
-	
 	@UiField
-	Image profileImageUrl;
-	
+	HTMLPanel mainSection;
+	@UiField
+	HTMLPanel asidePanel;
+	@UiField
+	Image profileImage;
 	@UiField
 	Button sendMsgBtn;
+	@UiField
+	HeadingElement name;
+	@UiField
+	Paragraph description;
+	@UiField
+	SpanElement lastLoginTime;
+	@UiField
+	SpanElement email;
+	@UiField
+	Anchor emailLink;
+	@UiField
+	SpanElement websiteSpan;
+	@UiField
+	Anchor websiteLink;
 	
+	// Address section
 	@UiField
-	Element name;
-	
+	HTMLPanel addressPanel;
 	@UiField
-	Anchor websiteUrl;
-	
-	@UiField
-	Element phone;
-	
-	@UiField
-	HTMLPanel tweetFormPanel;
-	
-	@UiField
-	TextArea tweetTextBox;
-	@UiField
-	ControlGroup tweetCategoryCg;
-	@UiField
-	HelpInline tweetHelpInline;
-	@UiField
-	Button tweetBtn;
-	@UiField
-	ListBox tweetCategoryList;
-	
-	@UiField
-	Anchor editAccountLink;
+	SpanElement formattedAddress;
 
-	private BusinessAccountDTO account;
-
-	private AccountPresenter<BusinessAccountDTO> presenter;
-
-	EditAccount<BusinessAccountDTO> editAccountView;
+	@UiField
+	Anchor settingsLink;
+	@UiField
+	Anchor messagesLink;
 	
+	@UiField
+	TweetBox tweetBox;
+	
+	// Account stats
+	@UiField
+	ProfileStatWidget tweetCountWidget;
+	@UiField
+	ProfileStatWidget commentCountWidget;
+	@UiField
+	ProfileStatWidget likeCountWidget;
+
+	ITweetView<TweetPresenter> tview = new TweetView();
+	SendMessageWidget smw;
+	
+	/*
+	 * Tweet section
+	 */
+	@UiField
+	HTMLPanel tweetSection;
+	@UiField
+	HTMLPanel tweetBoxDiv;
+	
+	@UiField
+	SpanElement unreadMessageCountField;
+	
+	AccountPresenter<BusinessAccountDTO> presenter;
+	BusinessAccountDTO account;
+
 	public BusinessAccountView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		editAccountView = new EditBusinessAccountWidget();
-//		logoutWidget.setVisible(false);
-		tweetCategoryList.clear();
 	}
 
-	@Override
-	public void clear() {
-		tweetTextBox.setText("");
-		tweetCategoryCg.setType(ControlGroupType.NONE);
-		tweetHelpInline.setText("");
-		message.setVisible(false);
-	}
-
-//	@Override
-//	public void displayLogoutWidget() {
-//		logoutWidget.setVisible(true);
-//	}
-
+	@UiField
+	DivElement locationDiv;
+	
 	@Override
 	public void displayProfile(BusinessAccountDTO account) {
+		if (account == null) {
+			throw new IllegalArgumentException();
+		}
+		message.setVisible(false);
 		this.account = account;
-		if(account.getImageUrl() != null) {
-			profileImageUrl.setUrl(account.getImageUrl());
-		} else {
-			profileImageUrl.setUrl(ZResources.IMPL.noImage().getSafeUri());
+		
+		// aside
+		asidePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		
+		// image section
+		if (account.getImageUrl() != null) {
+			profileImage.setUrl(account.getImageUrl());
 		}
 		
-		name.setInnerText(account.getName());
+		profileImage.setAltText(account.getDisplayName());
+		name.setInnerHTML(account.getDisplayName());
+
+//		description.setText(account.get);
+		email.setInnerText(account.getEmail());
+		emailLink.setText(account.getEmail());
+
 		if (account.getWebsite() != null) {
-			websiteUrl.setHref(account.getWebsite());
-			websiteUrl.setText("Website: "+account.getWebsite());
+			websiteSpan.setInnerHTML(account.getWebsite());
+			websiteLink.setHref(account.getWebsite());
 		}
-		phone.setInnerText(account.getPhone());
-		
-		tweetCategoryList.clear();
-		tweetCategoryList.addItem(TweetType.OFFERS.name());
-		
-		tweetFormPanel.getElement().getStyle().setDisplay(Display.INLINE);
-		
-//		logoutWidget.setVisible(true);
+		// last login time
+		if (account.getLastLoginTime() != null) {
+			DateTimeFormat fmt = DateTimeFormat.getFormat("MMMM dd, yyyy");
+			lastLoginTime.setInnerText(fmt.format(account.getLastLoginTime()));
+		}
+
+		// display tweets
+		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
+		displayTweets(account.getTweets());
+	}
+
+	@Override
+	public void displayFormattedAddress(String fAddress) {
+		if (account != null) {
+			formattedAddress.setInnerHTML(fAddress);
+		}
+	}
+
+	@Override
+	public void displayLocationInMap(GetLatLngResult input) {
+		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());
+	    MapOptions myOptions = MapOptions.create();
+	    myOptions.setZoom(10.0);
+	    myOptions.setCenter(myLatLng);
+	    myOptions.setMapMaker(true);
+	    myOptions.setMapTypeId(MapTypeId.ROADMAP);
+
+	    GoogleMap map = GoogleMap.create(locationDiv, myOptions);
+		MarkerOptions markerOpts = MarkerOptions.create();
+        markerOpts.setMap(map);
+        markerOpts.setPosition(myLatLng);
+        Marker.create(markerOpts);
+	}
+
+	@Override
+	public void displayTweets(List<TweetDTO> tweets) {
+		tview.displayTweets(tweets);
+		tweetSection.add(tview);
 	}
 
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-		tweetFormPanel.getElement().getStyle().setDisplay(Display.NONE);
-		editAccountLink.setVisible(false);
+		asidePanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	@Override
-	public void setPresenter(AccountPresenter<BusinessAccountDTO> presenter) {
-		this.presenter = presenter;
-		editAccountView.setPresenter(presenter);
-//		logoutWidget.setPresenter(presenter);
+	public void clear() {
+		this.account = null;
 	}
 
-	@Override
-	public void displayAccountUpdateSuccessfullMessage() {
-		editAccountView.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
-	}
-
-	@Override
-	public void displayAccountUpdateFailedMessage() {
-		editAccountView.displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
-	}
-
-	@Override
-	public void clearTweet() {
-		tweetTextBox.setText("");
-		tweetCategoryCg.setType(ControlGroupType.NONE);
+	public void onCloseSendMessageWidgetClick(ClickEvent event) {
+		closeMessageWidget();
 	}
 	
-	boolean validateTweet() {
-		String tweet = tweetTextBox.getText();
-		ValidationResult result = FieldVerifier.validateTweet(tweet);
-		if (!result.isValid()) {
-			tweetCategoryCg.setType(ControlGroupType.ERROR);
-			tweetHelpInline.setText(result.getErrors().get(0).getErrorMessage());
-			return false;
-		}
-		return true;
-	}
-	
-	@UiHandler("tweetBtn")
-	void tweet(ClickEvent event) {
-		if (!validateTweet()) {
-			return;
-		}
-		TweetDTO tweet = new TweetDTO();
-		String content = tweetTextBox.getText().trim();
-		tweet.setContent(content);
-		tweet.setType(TweetType.OFFERS);
-		tweet.setTimeCreated(new Date());
-		presenter.tweet(tweet);
-	}
-	
-	@UiHandler("editAccountLink")
-	void editAccount(ClickEvent event) {
-		editAccountView.display(account);
-		editAccountView.show();
-	}
-
 	@Override
-	public void closeSendMessageWidget() {
-		// TODO Auto-generated method stub
-		
+	public void closeMessageWidget() {
+		smw.hide();
 	}
 
-	SendMessageWidget smw;
 	@UiHandler("sendMsgBtn")
-	void sendMessage(ClickEvent event) {
+	public void onSendMessageWidgetClick(ClickEvent event) {
+		openMessageWidget();
+	}
+	
+	@Override
+	public void openMessageWidget() {
 		smw = new SendMessageWidget(account);
 		smw.setPresenter(presenter);
 		smw.show();
 	}
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets) {
+	public void setPresenter(AccountPresenter<BusinessAccountDTO> presenter) {
+		this.presenter = presenter;
+		tweetBox.setPresenter(presenter);
+		tview.setPresenter(presenter);
 	}
 
 	@Override
@@ -218,47 +234,77 @@ public class BusinessAccountView extends Composite implements IAccountView<Busin
 		message.setType(type);
 		message.setVisible(true);
 	}
-
+	
+	@UiHandler("settingsLink")
+	void settingsLinkClicked(ClickEvent event) {
+		presenter.settingsLinkClicked();
+	}
+	
+	@UiHandler("messagesLink")
+	void messagesLinkClicked(ClickEvent event) {
+		presenter.messagesLinkClicked();
+	}
+	
 	@Override
-	public com.google.gwt.user.client.Element getTweetSectionElement() {
-		// TODO Auto-generated method stub
-		return null;
+	public Element getTweetSectionElement() {
+		return tweetSection.getElement();
 	}
 
 	@Override
 	public void addTweets(List<TweetDTO> tweets) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayLocationInMap(GetLatLngResult input) {
-		// TODO Auto-generated method stub
-		
+		tview.add(tweets);
 	}
 
 	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
-		// TODO Auto-generated method stub
-		
+		if (ctx != null) {
+			if (ctx.getUnreadMessageCount()>0) {
+				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
+			} else {
+				unreadMessageCountField.setInnerHTML("");
+			}
+			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
+			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
+			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());
+		}
 	}
 
 	@Override
 	public void updateComment(CommentDTO comment) {
-		// TODO Auto-generated method stub
-		
+		tview.updateComment(comment);
 	}
 
 	@Override
 	public void updateTweetLike(LoveDTO like) {
+		tview.updateLike(like);
+	}
+
+	@Override
+	public void updateTweet(TweetDTO tweet) {
+		tview.updateTweet(tweet);
+	}
+//
+//	@Override
+//	public void displayAccountUpdateSuccessfullMessage() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void displayAccountUpdateFailedMessage() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+
+	@Override
+	public void clearTweet() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateTweet(TweetDTO tweet) {
+	public void removeTweet(TweetDTO tweet) {
 		// TODO Auto-generated method stub
 		
 	}
-	
 }

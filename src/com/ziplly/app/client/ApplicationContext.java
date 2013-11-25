@@ -23,13 +23,13 @@ public class ApplicationContext {
 		this.account = account;
 	}
 
-	public IHomeView getHomeView() {
-		return homeView;
-	}
-
-	public void setHomeView(IHomeView homeView2) {
-		this.homeView = homeView2;
-	}
+//	public IHomeView getHomeView() {
+//		return homeView;
+//	}
+//
+//	public void setHomeView(IHomeView homeView2) {
+//		this.homeView = homeView2;
+//	}
 
 	public int getUnreadMessageCount() {
 		return unreadMessageCount;

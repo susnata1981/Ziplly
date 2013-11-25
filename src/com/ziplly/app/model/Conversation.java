@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
 	@NamedQuery(
@@ -24,8 +24,8 @@ import org.hibernate.annotations.FetchMode;
 		query = "from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId"
 	),
 	@NamedQuery(
-		name = "findUnreadConversationByAccountId",
-		query = "select count(*) from Conversation where receiver.accountId = :receiverAccountId and status = :status"),
+		name = "findConversationCountByAccountIdAndStatus",
+		query = "select count(*) from Conversation where receiver.accountId = :receiverAccountId and sender.accountId != :receiverAccountId and status = :status"),
 	@NamedQuery(
 		name = "findConversationById",
 		query = "from Conversation where id = :id")
@@ -47,11 +47,15 @@ public class Conversation implements Serializable {
 	private Account receiver;
 
 	@ElementCollection
+	@CollectionTable(name="conversation_messages", joinColumns=@JoinColumn(name="conversation_id"))
 	private List<Message> messages = new ArrayList<Message>();
 
 	private ConversationStatus status;
 	
+	@Column(name="time_updated")
 	private Date timeUpdated;
+	
+	@Column(name="time_created")
 	private Date timeCreated;
 
 	public Conversation() {
@@ -66,6 +70,7 @@ public class Conversation implements Serializable {
 			this.receiver = new Account(conversationDto.getReceiver());
 		}
 		this.subject = conversationDto.getSubject();
+		this.status = conversationDto.getStatus();
 		this.setTimeCreated(conversationDto.getTimeCreated());
 		this.setTimeUpdated(conversationDto.getTimeUpdated());
 	}

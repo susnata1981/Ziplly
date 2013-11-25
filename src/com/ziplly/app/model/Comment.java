@@ -37,6 +37,11 @@ public class Comment implements Serializable {
 	private Set<Love> likes = new HashSet<Love>();
 	
 	private String content;
+	
+	@Column(name="time_updated")
+	private Date timeUpdated;
+	
+	@Column(name="time_created")
 	private Date timeCreated;
 	
 	public Comment() {
@@ -46,6 +51,7 @@ public class Comment implements Serializable {
 		this.setTweet(new Tweet(comment.getTweet()));
 		this.author = new Account(comment.getAuthor());
 		this.content = comment.getContent();
+		this.timeUpdated = comment.getTimeUpdated();
 		this.timeCreated = comment.getTimeCreated();
 	}
 	
@@ -88,5 +94,13 @@ public class Comment implements Serializable {
 
 	public void setLikes(Set<Love> likes) {
 		this.likes = likes;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
 	}
 }

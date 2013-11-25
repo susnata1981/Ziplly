@@ -8,6 +8,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ISettingsView;
@@ -82,5 +83,15 @@ public class PersonalAccountSettingsActivity extends AbstractAccountSettingsActi
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onProfileLinkClick() {
+		placeController.goTo(new PersonalAccountPlace());
+	}
+
+	@Override
+	public void onInboxLinkClick() {
+		placeController.goTo(new ConversationPlace());
 	}
 }

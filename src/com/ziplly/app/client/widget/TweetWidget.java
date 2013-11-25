@@ -23,8 +23,10 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -34,6 +36,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -60,6 +63,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String profileImageForComment();
 	}
 
+	@UiFactory
+	ZResources getResources() {
+		ZResources.IMPL.style().ensureInjected();
+		return ZResources.IMPL;
+	}
+	
 	@UiField
 	Style style;
 
@@ -86,6 +95,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	@UiField
 	NavLink editTweetLink;
+	@UiField
+	NavLink deleteTweetLink;
 	@UiField
 	NavLink reportSpamLink;
 
@@ -128,7 +139,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		setupHandlers();
 		// personalAccountWidgetModal = new PersonalAccountWidgetModal();
 		modal.setAnimation(true);
-		modal.setWidth("400px");
+		modal.setWidth("20%");
 		modal.setCloseVisible(true);
 		modal.setTitle("people who liked this post");
 	}
@@ -141,6 +152,16 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			}
 		});
 
+		deleteTweetLink.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				boolean confirm = Window.confirm("Are you sure you want to delete this?");
+				if (confirm) {
+					presenter.deleteTweet(tweet);
+				}
+			}
+		});
+		
 		saveBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -451,6 +472,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 		if (tweet.getSender().getImageUrl() != null) {
 			authorImage.setUrl(tweet.getSender().getImageUrl());
+		} else {
+			authorImage.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		}
 		authorName.setInnerText(tweet.getSender().getDisplayName());
 	}
@@ -505,5 +528,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@Override
 	public void setWidth(String width) {
 		tweetPanel.setWidth(width);
+	}
+	
+	@Override
+	public void remove() {
+		removeFromParent();
 	}
 }

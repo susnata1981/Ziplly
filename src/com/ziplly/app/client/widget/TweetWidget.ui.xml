@@ -4,7 +4,8 @@
 	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style"
 		src="tweetwidget.css">
 	</ui:style>
-
+	<ui:with type="com.ziplly.app.client.resource.ZResources" field="resources"/>
+	
 	<g:HTMLPanel ui:field="tweetPanel" addStyleNames="{style.tweetPanel}">
 		<div class='{style.tweet_block}'>
 			<div class='{style.tweet_image}'>
@@ -12,8 +13,9 @@
 			</div>
 			<div class='{style.tweet_content_section}'>
 				<div class="{style.tweetActionDropdown}">
-					<b:Dropdown>
+					<b:Dropdown text="edit">
 						<b:NavLink ui:field="editTweetLink">Edit</b:NavLink>
+						<b:NavLink ui:field="deleteTweetLink">Delete</b:NavLink>
 						<b:NavLink ui:field="reportSpamLink">Report Spam</b:NavLink>
 					</b:Dropdown>
 				</div>

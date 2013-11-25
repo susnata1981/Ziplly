@@ -3,72 +3,68 @@
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		#cwallId {
+		.communityWall {
 		float: left;
-		width: 1000px;
-		margin-left: 30px;
-		border: 1px solid #ddd;
+		width: 80%;
+		margin: 1%;
 		}
-
-		.center {
+		.tweetCategoryBox {
+		float: left;
+		width: 14%;
+		margin: 1%;
+		border: 1px
+		solid #ddd;
+		}
+		.tweet_filter {
+			width: 100%;
+			font-size: 16px;
+			margin: 0;
+			padding: 0;
+			font-size: 16px;
+			color: #555;
+			text-align: center;
+			background: #f9f9f9;
+		}
+		.tweetFilterLink {
+			display:block;
+			height: 30px;
+			width: 100%;
+		}
+		.tweetFilterLink a:hover {
+			background: #555;
+		}
+		.communityWallPanel {
+		padding: 1%;
+		height: 1000px;
+		overflow: auto;
 		position: absolute;
-		top: 300px;
-		left: 500px;
+		width: 100%;
+		background: #B2B2B2;
 		}
-		.profile_info_section {
-		float: left;
-		width: 700px;
-		margin: 12px;
+		.tweetBox {
+			margin: 1.3%;
 		}
-		.shareTextBox {
-		width: 740px;
-		height: 40px;
+		.message {
+			clear: both;
 		}
-		.filterheader {
-		width: 140px;
-		height: 30px;
-		background: #ddd;
-		}
-		.alertMessage {
-		margin-left: 200px;
-		width: 400px;
+		footer {
+			display:hidden;
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<aside>
-			<g:HTMLPanel ui:field="filterHeader"></g:HTMLPanel>
+		<div class="{style.tweetCategoryBox}">
+			<h3 class="{style.tweet_filter}">Category</h3>
 			<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
-		</aside>
-		<b:PageHeader subtext="Ziplly connecting the community">Community Wall</b:PageHeader>
-		<b:Alert addStyleNames="{style.alertMessage}" ui:field="message" />
-		<div id="cwallId">
-			<!-- <dt:CommunityWallWidget ui:field="cww"/> -->
-			<div class="{style.profile_info_section}">
-				<b:Form ui:field="tweetForm">
-					<b:ControlGroup ui:field="tweetCategoryCg">
-						<b:Controls>
-							<b:TextArea placeholder="Share what's on your mind…"
-								addStyleNames="{style.shareTextBox}" ui:field="tweetTextBox" />
-							<b:HelpInline ui:field="tweetHelpInline" />
-						</b:Controls>
-					</b:ControlGroup>
-					<g:HTMLPanel ui:field="tweetCategoryPanel">
-						<b:ControlLabel>Select Category</b:ControlLabel>
-						<b:Controls>
-							<b:ListBox ui:field="tweetCategoryList">
-							</b:ListBox>
-						</b:Controls>
-						<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
-							ui:field="tweetBtn">Share</b:Button>
-						<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
-							ui:field="cancelBtn">Cancel</b:Button>
-					</g:HTMLPanel>
-				</b:Form>
-			</div>
-			<g:ScrollPanel ui:field="scrollPanel">
-				<g:HTMLPanel ui:field="communityWallPanel">
-				</g:HTMLPanel>
-			</g:ScrollPanel>
+		</div>
+		<div class="{style.communityWall}">
+			<b:Alert ui:field="message" addStyleNames="{style.message}"/>
+			<g:HTMLPanel ui:field="communityWallPanel" addStyleNames="{style.communityWallPanel}">
+			  <!--   <dt:TweetBox ui:field="tweetBox" addStyleNames="{style.tweetBox}" width="55%" /> -->
+			    
+				<!-- <g:HTMLPanel ui:field="communityWallPanel" addStyleNames="{style.tweetBoxDiv}">
+					
+				</g:HTMLPanel> -->
+			</g:HTMLPanel>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -3,7 +3,9 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +23,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.ziplly.app.shared.BCrypt;
 
@@ -74,15 +79,33 @@ public class Account implements Serializable {
 	@Column(name="image_url")
 	private String imageUrl;
 	
+	@Column(name="zip", nullable=false)
 	private int zip;
+	private String neighborhood;
+	private String city;
+	private String state;
 	
+	@Column(name="role", insertable=true, updatable=false)
+	private Role role;
+
 	@Column(name="last_login")
 	private Date lastLoginTime;
+	
+	@Column(name="time_updated")
+	private Date timeUpdated;
+	
 	@Column(name="time_created")
 	private Date timeCreated;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="sender")
 	private List<Tweet> tweets = new ArrayList<Tweet>();
+	
+	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
+	@Fetch(FetchMode.JOIN)
+	private Set<PrivacySettings> privacySettings = new HashSet<PrivacySettings>();
+	
+	@OneToMany(fetch=FetchType.EAGER, mappedBy="account", cascade = CascadeType.ALL)
+	private Set<AccountNotificationSettings> notificationSettings = new HashSet<AccountNotificationSettings>();
 	
 	private Long uid;
 	
@@ -100,9 +123,21 @@ public class Account implements Serializable {
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
 		setZip(account.getZip());
+		setNeighborhood(account.getNeighborhood());
+		setCity(account.getCity());
+		setState(account.getState());
 		setLastLoginTime(account.getLastLoginTime());
 		setTimeCreated(account.getTimeCreated());
+		setTimeUpdated(account.getTimeUpdated());
 		this.setUid(account.getUid());
+		
+		for(AccountNotificationSettingsDTO an : account.getNotificationSettings()) {
+			notificationSettings.add(new AccountNotificationSettings(an));
+		}
+		
+		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
+			addPrivacySettings(new PrivacySettings(ps));
+		}
 	}
 	
 	public Long getAccountId() {
@@ -234,5 +269,66 @@ public class Account implements Serializable {
 			return ((BusinessAccount)this).getName();
 		}
 		return "";
+	}
+
+	public Set<AccountNotificationSettings> getNotificationSettings() {
+		return notificationSettings;
+	}
+
+	public void setNotificationSettings(Set<AccountNotificationSettings> notifications) {
+		this.notificationSettings = notifications;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
+	}
+
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public Set<PrivacySettings> getPrivacySettings() {
+		return privacySettings;
+	}
+
+	public void setPrivacySettings(Set<PrivacySettings> privacySettings) {
+		this.privacySettings = privacySettings;
+	}
+	
+	public void addPrivacySettings(PrivacySettings privacySetting) {
+		privacySetting.setAccount(this);
+		this.privacySettings.add(privacySetting);
 	}
 }

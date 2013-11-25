@@ -166,4 +166,16 @@ public class BusinessAccountSettingsActivity extends AbstractAccountSettingsActi
 		});		
 	}
 
+	@Override
+	public void onProfileLinkClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInboxLinkClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

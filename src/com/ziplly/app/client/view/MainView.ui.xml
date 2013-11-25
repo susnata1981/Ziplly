@@ -62,8 +62,6 @@
 			</h1>
 		</div>
 		<div id="mainContent">
-			<!-- <div class="{mainViewStyle.logoutLnk}"> <b:Button ui:field="logoutBtn">Logout</b:Button> 
-				</div> -->
 			<g:HTMLPanel>
 				<div id="mainPageSingupForm">
 				    <b:Alert ui:field="message"/>

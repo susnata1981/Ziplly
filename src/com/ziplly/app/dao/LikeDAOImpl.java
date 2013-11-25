@@ -59,4 +59,16 @@ public class LikeDAOImpl implements LikeDAO {
 		em.remove(like);
 		em.getTransaction().commit();
 	}
+
+	@Override
+	public Long findLikeCountByAccoutId(Long accountId) {
+		if (accountId == null) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery("select count(*) from Love where author.accountId = :accountId");
+		query.setParameter("accountId", accountId);
+		Long count = (Long) query.getSingleResult();
+		return count;
+	}
 }

@@ -28,6 +28,7 @@ public class TweetView extends Composite implements
 	@UiField
 	HTMLPanel tweetsSection;
 	TweetPresenter presenter;
+	// TweetId ---> TweetWidget 
 	Map<Long, TweetWidget> tweetWidgetMap = new HashMap<Long, TweetWidget>();
 	
 	public TweetView() {
@@ -72,6 +73,12 @@ public class TweetView extends Composite implements
 		doDisplayTweets(tweets);
 	}
 
+	@Override
+	public void remove(TweetDTO tweet) {
+		TweetWidget widget = tweetWidgetMap.get(tweet.getTweetId());
+		widget.removeFromParent();
+	}
+	
 	@Override
 	public void updateComment(CommentDTO comment) {
 		TweetWidget tweetWidget = tweetWidgetMap.get(comment.getTweet().getTweetId());

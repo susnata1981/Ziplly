@@ -3,6 +3,7 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,6 +46,10 @@ public class Love implements Serializable {
 	@JoinColumn(name="account_id")
 	Account author;
 	
+	@Column(name="time_updated")
+	private Date timeUpdated;
+	
+	@Column(name="time_created")
 	Date timeCreated;
 
 	public Love() {

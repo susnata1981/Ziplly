@@ -2,11 +2,11 @@ package com.ziplly.app.server.guice;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
-import com.ziplly.app.client.activities.PasswordRecoveryActivity;
 import com.ziplly.app.client.view.handler.GetJwtTokenActionHandler;
-import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.server.MyActionHandler;
+import com.ziplly.app.server.handlers.BusinessTweetActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
+import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
 import com.ziplly.app.server.handlers.GetAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetAllSubscriptionPlanActionHandler;
@@ -16,6 +16,7 @@ import com.ziplly.app.server.handlers.GetFacebookDetailsHandler;
 import com.ziplly.app.server.handlers.GetImageUploadUrlActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
+import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetResidentsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetForUserActionHandler;
 import com.ziplly.app.server.handlers.LikeTweetActionHandler;
@@ -32,7 +33,9 @@ import com.ziplly.app.server.handlers.UpdateTweetActionHandler;
 import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
 import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
+import com.ziplly.app.shared.BusinessTweetAction;
 import com.ziplly.app.shared.CommentAction;
+import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
@@ -43,6 +46,7 @@ import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
+import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetResidentsRequest;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.LikeTweetAction;
@@ -51,10 +55,8 @@ import com.ziplly.app.shared.MyAction;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.ResetPasswordAction;
-import com.ziplly.app.shared.ResetPasswordResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
-import com.ziplly.app.shared.SendPasswordRecoveryEmailResult;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -84,7 +86,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		
 		bindHandler(GetImageUploadUrlAction.class, GetImageUploadUrlActionHandler.class);
 		
+		// Tweet handlers
 		bindHandler(TweetAction.class, TweetActionHandler.class);
+		bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
 		bindHandler(UpdateTweetAction.class, UpdateTweetActionHandler.class);
 		bindHandler(GetCommunityWallDataAction.class, GetCommunityWallDataActionHandler.class);
 		bindHandler(CommentAction.class, CommentActionHandler.class);
@@ -92,6 +96,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetResidentsRequest.class, GetResidentsActionHandler.class);
 		bindHandler(GetTweetForUserAction.class, GetTweetForUserActionHandler.class);
 		bindHandler(GetAccountDetailsAction.class, GetAccountDetailsActionHandler.class);
+		bindHandler(DeleteTweetAction.class, DeleteTweetActionHandler.class);
+		
+		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
 		
 		bindHandler(SendMessageAction.class, SendMessageActionHandler.class);
 		bindHandler(GetConversationsAction.class, GetConversationActionHandler.class);

@@ -30,7 +30,7 @@ public class ConversationDAOImpl implements ConversationDAO {
 		@SuppressWarnings("unchecked")
 		List<Conversation> conversations = (List<Conversation>) query
 				.getResultList();
-
+		
 		List<ConversationDTO> result = Lists.newArrayList();
 		for (Conversation c : conversations) {
 			Collections.sort(c.getMessages(), new Comparator<Message>() {
@@ -41,7 +41,6 @@ public class ConversationDAOImpl implements ConversationDAO {
 					}
 					return 1;
 				}
-
 			});
 			ConversationDTO clone = EntityUtil.clone(c);
 			clone.setIsSender(false);
@@ -50,6 +49,7 @@ public class ConversationDAOImpl implements ConversationDAO {
 			}
 			result.add(clone);
 		}
+		em.close();
 		return result;
 	}
 
@@ -78,6 +78,7 @@ public class ConversationDAOImpl implements ConversationDAO {
 		c.setStatus(ConversationStatus.READ);
 		em.merge(c);
 		em.getTransaction().commit();
+		em.close();
 	}
 
 	@Override
@@ -88,9 +89,11 @@ public class ConversationDAOImpl implements ConversationDAO {
 
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
-		Query query = em.createNamedQuery("findUnreadConversationByAccountId");
+		Query query = em.createNamedQuery("findConversationCountByAccountIdAndStatus");
 		query.setParameter("receiverAccountId", accountId);
 		query.setParameter("status", ConversationStatus.UNREAD);
-		return (Long)query.getSingleResult();
+		Long result = (Long)query.getSingleResult();
+		em.close();
+		return result;
 	}
 }

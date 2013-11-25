@@ -8,4 +8,5 @@ public interface LikeDAO {
 	LoveDTO save(Love like) throws DuplicateException;
 	void delete(Love like);
 	LoveDTO findLikeByTweetAndAccountId(Long tweetId, Long accountId);
+	Long findLikeCountByAccoutId(Long accountId);
 }

@@ -1,6 +1,7 @@
 package com.ziplly.app.dao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.ziplly.app.model.Comment;
 
@@ -30,5 +31,19 @@ public class CommentDAOImpl implements CommentDAO {
 		em.getTransaction().begin();
 		em.remove(comment);
 		em.getTransaction().commit();
+	}
+
+	@Override
+	public Long findCommentCountByAccountId(Long accountId) {
+		if (accountId == null) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();		
+		
+	Query query = em.createQuery("select count(*) from Comment where author.accountId = :accountId");
+	query.setParameter("accountId", accountId);
+	Long count = (Long) query.getSingleResult();
+	return count;
 	}
 }

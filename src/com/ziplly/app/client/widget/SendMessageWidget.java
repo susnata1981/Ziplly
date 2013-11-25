@@ -23,6 +23,7 @@ import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -113,11 +114,13 @@ public class SendMessageWidget extends Composite implements View<AccountPresente
 		msg.setMessage(FieldVerifier.getEscapedText(message.getText().trim()));
 		msg.setTimeCreated(new Date());
 		conversation.setSubject(FieldVerifier.getEscapedText(subject.getText().trim()));
+		conversation.setStatus(ConversationStatus.UNREAD);
 		conversation.setReceiver(receiver);
 		conversation.setTimeCreated(new Date());
 		conversation.setTimeUpdated(new Date());
 		conversation.add(msg);
 		presenter.sendMessage(conversation);
+		hide();
 	}
 
 	@UiHandler("closeBtn")

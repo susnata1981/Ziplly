@@ -9,6 +9,7 @@ public class CommentDTO implements Serializable {
 	private TweetDTO tweet;
 	private AccountDTO author;
 	private String content;
+	private Date timeUpdated;
 	private Date timeCreated;
 	
 	public CommentDTO() {
@@ -43,5 +44,13 @@ public class CommentDTO implements Serializable {
 	}
 	public void setTweet(TweetDTO tweet) {
 		this.tweet = tweet;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
 	}
 }

@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ShareSettingsWidget extends Composite {
-
 	private static ShareSettingsWidgetUiBinder uiBinder = GWT
 			.create(ShareSettingsWidgetUiBinder.class);
 
@@ -37,7 +36,7 @@ public class ShareSettingsWidget extends Composite {
 		return ShareSetting.values()[0];
 	}
 	
-	public void setSelection(ShareSetting shareSetting) {
-		shareSettingsList.setSelectedIndex(shareSetting.ordinal());
+	public void setSelection(ShareSetting setting) {
+		shareSettingsList.setSelectedIndex(setting.ordinal());
 	}
 }

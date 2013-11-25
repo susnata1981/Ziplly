@@ -16,10 +16,17 @@ public class AccountDTO implements Serializable {
 	private String url;
 	private String imageUrl;
 	private int zip;
+	private String neighborhood;
+	private String city;
+	private String state;
+	private Role role;
 	private Date lastLoginTime;
+	private Date timeUpdated;
 	private Date timeCreated;
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	private Long uid;
+	private List<AccountNotificationSettingsDTO> notificationSettings = new ArrayList<AccountNotificationSettingsDTO>();
+	private List<PrivacySettingsDTO> privacySettings = new ArrayList<PrivacySettingsDTO>();
 	
 	public AccountDTO() {
 	}
@@ -143,4 +150,63 @@ public class AccountDTO implements Serializable {
 		return "<NAME>";
 	}
 
+	public List<AccountNotificationSettingsDTO> getNotificationSettings() {
+		return notificationSettings;
+	}
+
+	public void setNotificationSettings(List<AccountNotificationSettingsDTO> notifications) {
+		this.notificationSettings = notifications;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
+	}
+
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public List<PrivacySettingsDTO> getPrivacySettings() {
+		return privacySettings;
+	}
+
+	public void setPrivacySettings(List<PrivacySettingsDTO> privacySettings) {
+		this.privacySettings = privacySettings;
+	}
+	
+	public void addPrivacySettings(PrivacySettingsDTO ps) {
+		privacySettings.add(ps);
+	}
 }

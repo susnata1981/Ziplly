@@ -8,7 +8,8 @@
 		<class>com.ziplly.app.model.Account</class>
 		<class>com.ziplly.app.model.PersonalAccount</class>
 		<class>com.ziplly.app.model.BusinessAccount</class>
-		<class>com.ziplly.app.model.AccountSetting</class>
+		<class>com.ziplly.app.model.PrivacySettings</class>
+		<class>com.ziplly.app.model.AccountNotification</class>
 		<class>com.ziplly.app.model.Interest</class>
 		<class>com.ziplly.app.model.Tweet</class>
 		<class>com.ziplly.app.model.Comment</class>
@@ -18,6 +19,7 @@
 		<class>com.ziplly.app.model.Transaction</class>
 		<class>com.ziplly.app.model.SubscriptionPlan</class>
 		<class>com.ziplly.app.model.PasswordRecovery</class>
+		<class>com.ziplly.app.model.AccountNotificationSettings</class>
 		<properties>
             <!-- 
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />

@@ -18,14 +18,12 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 
 	void displayPublicProfile(T account);
 	
-	void displayAccountUpdateSuccessfullMessage();
-	
-	void displayAccountUpdateFailedMessage();
-	
+//	void displayAccountUpdateSuccessfullMessage();
+//	
+//	void displayAccountUpdateFailedMessage();
+//	
 	void clearTweet();
 	
-	void closeSendMessageWidget();
-
 	void displayTweets(List<TweetDTO> tweets);
 
 	void displayMessage(String msg, AlertType type);
@@ -43,4 +41,10 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void updateTweetLike(LoveDTO like);
 
 	void updateTweet(TweetDTO tweet);
+	
+	void openMessageWidget();
+	
+	void closeMessageWidget();
+
+	void removeTweet(TweetDTO tweet);
 }

@@ -1,23 +1,21 @@
 package com.ziplly.app.shared;
 
+import com.ziplly.app.model.AccountDTO;
+
 import net.customware.gwt.dispatch.shared.Action;
 
 public class GetLatLngAction implements Action<GetLatLngResult> {
-	private int zip;
-
+	private AccountDTO account;
+	
 	public GetLatLngAction() {
 	}
 	
-	public GetLatLngAction(int zip) {
-		this.setZip(zip);
+	public AccountDTO getAccount() {
+		return account;
 	}
 
-	public int getZip() {
-		return zip;
-	}
-
-	public void setZip(int zip) {
-		this.zip = zip;
+	public void setAccount(AccountDTO account) {
+		this.account = account;
 	}
 }
 	

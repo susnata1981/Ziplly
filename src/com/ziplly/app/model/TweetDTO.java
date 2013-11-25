@@ -14,7 +14,8 @@ public class TweetDTO implements Serializable {
 	private String content;
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
 	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
-	private int status;
+	private TweetStatus status;
+	private Date timeUpdated;
 	private Date timeCreated;
 	
 	public TweetDTO() {
@@ -32,10 +33,10 @@ public class TweetDTO implements Serializable {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public int getStatus() {
+	public TweetStatus getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(TweetStatus status) {
 		this.status = status;
 	}
 	public List<CommentDTO> getComments() {
@@ -77,5 +78,13 @@ public class TweetDTO implements Serializable {
 	
 	public List<LoveDTO> getLikes() {
 		return likes;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
 	}
 }

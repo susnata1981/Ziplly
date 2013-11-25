@@ -21,4 +21,6 @@ public interface ITweetWidgetView<T extends TweetPresenter> extends View<T> {
 	void updateComment(CommentDTO comment);
 
 	void updateLike(LoveDTO like);
+
+	void remove();
 }

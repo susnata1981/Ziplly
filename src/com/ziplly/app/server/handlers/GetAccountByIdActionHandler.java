@@ -4,10 +4,16 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -31,12 +37,60 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
 			AccountDTO account = accountBli.getAccountById(action.getAccountId());
+			if (account instanceof PersonalAccountDTO) {
+				applyPrivacySettings((PersonalAccountDTO)account);
+			}
 			result.setAccount(account);
 			return result;
 
 		} catch (NotFoundException nfe) {
 			throw nfe;
 		}
+	}
+
+	/*
+	 * Hides AccountDetailsType based on privacy settings;
+	 */
+	private void applyPrivacySettings(PersonalAccountDTO account) {
+		if (account == null) {
+			return;
+		}
+		
+		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
+			switch(ps.getSection()) {
+			case EMAIL:
+				if (!isAttributeVisible(account, ps)) {
+					account.setEmail(StringConstants.NOT_SHARED);
+				}
+				break;
+			case OCCUPATION:
+				if (!isAttributeVisible(account, ps)) {
+					account.setOccupation(StringConstants.NOT_SHARED);
+				}
+			}
+		}
+	}
+
+	private boolean isAttributeVisible(AccountDTO account, PrivacySettingsDTO ps) {
+
+		try {
+			validateSession();
+		} catch (NeedsLoginException e) {
+			return ps.getSetting() == ShareSetting.PUBLIC;
+		}
+		
+		if (session.getAccount() != null) {
+			Account loggedInAccount = session.getAccount();
+			if (belongToSameCommunity(account,loggedInAccount)) {
+				return ps.getSetting() == ShareSetting.COMMUNITY;
+			}
+		}
+		
+		return false;
+	}
+
+	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
+		return account.getZip() == loggedInAccount.getZip();
 	}
 
 	@Override

@@ -33,6 +33,8 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.widget.AccountWidget;
+import com.ziplly.app.client.widget.ProfileStatWidget;
+import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.InterestDTO;
@@ -80,6 +82,14 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@UiField
 	HTMLPanel interestPanel;
 
+	// Account stats
+	@UiField
+	ProfileStatWidget tweetCountWidget;
+	@UiField
+	ProfileStatWidget commentCountWidget;
+	@UiField
+	ProfileStatWidget likeCountWidget;
+	
 	ITweetView<TweetPresenter> tview = new TweetView();
 	
 	/*
@@ -96,7 +106,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	AccountWidget accountWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
-
+	SendMessageWidget smw;
+	
 	public AccountView() {
 		this.accountWidget = new AccountWidget();
 		initWidget(uiBinder.createAndBindUi(this));
@@ -191,21 +202,16 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		accountWidget.clear();
 	}
 
-	public void displayAccountUpdateSuccessfullMessage() {
-		accountWidget.getEditAccountDetailsWidget().displaySuccessMessage();
-	}
-
-	public void displayAccountUpdateFailedMessage() {
-		accountWidget.getEditAccountDetailsWidget().displayErrorMessage();
-	}
+//	public void displayAccountUpdateSuccessfullMessage() {
+//		accountWidget.getEditAccountDetailsWidget().displaySuccessMessage();
+//	}
+//
+//	public void displayAccountUpdateFailedMessage() {
+//		accountWidget.getEditAccountDetailsWidget().displayErrorMessage();
+//	}
 
 	public void clearTweet() {
 		accountWidget.clearTweet();
-	}
-
-	@Override
-	public void closeSendMessageWidget() {
-		accountWidget.closeSendMessageModal();
 	}
 
 	@Override
@@ -243,6 +249,11 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	}
 
 	@Override
+	public void removeTweet(TweetDTO tweet) {
+		tview.remove(tweet);
+	}
+
+	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
 		if (ctx != null) {
 			if (ctx.getUnreadMessageCount()>0) {
@@ -250,6 +261,9 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 			} else {
 				unreadMessageCountField.setInnerHTML("");
 			}
+			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
+			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
+			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());
 		}
 	}
 
@@ -266,5 +280,22 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		tview.updateTweet(tweet);
+	}
+
+	@UiHandler("sendMsgBtn")
+	public void onSendMessageWidgetClick(ClickEvent event) {
+		openMessageWidget();
+	}
+	
+	@Override
+	public void openMessageWidget() {
+		smw = new SendMessageWidget(account);
+		smw.setPresenter(presenter);
+		smw.show();
+	}
+
+	@Override
+	public void closeMessageWidget() {
+		smw.hide();
 	}
 }

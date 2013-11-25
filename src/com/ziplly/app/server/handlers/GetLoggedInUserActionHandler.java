@@ -28,11 +28,11 @@ public class GetLoggedInUserActionHandler extends
 		try {
 			AccountDTO account = accountBli.getLoggedInUser();
 			if (account == null) {
-				return new GetLoggedInUserResult(null);
+				return new GetLoggedInUserResult();
 			}
 			return new GetLoggedInUserResult(account);
 		} catch (NotFoundException nfe) {
-			return new GetLoggedInUserResult(null);
+			return new GetLoggedInUserResult();
 		}
 	}
 

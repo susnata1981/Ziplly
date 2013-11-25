@@ -21,4 +21,12 @@ public class StringConstants {
 	public static final String LIKE_SAVED = "Like updated!";
 	public static final String OPERATION_FAILED = "Operation failed.";
 	public static final String TWEET_UPDATED = "Tweet updated.";
+	public static final String EMAIL_QUEUE_NAME = "emailqueue";
+	public static final String USAGE_LIMIT_EXCEEDED_EXCEPTION = "Usage limit exceeded";
+	public static final String NEEDS_SUBSCRIPTION_EXCEPTION = "You've filled up your quote for the month. Please subscribe to send more tweets.";
+	public static final String TWEET_REMOVED = "Tweet removed successfully";
+	public static final String FAILED_TO_SAVE_LIKE = "Failed to update like";
+	public static final String NO_MESSAGES = "No messages to be displayed.";
+	public static final String MESSAGE_SENT = "Message was sent";
+	public static final String NOT_SHARED = "not shared";
 }

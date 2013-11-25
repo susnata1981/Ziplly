@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -100,6 +101,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	public void setWidth(String width) {
 		this.width = width;
 		tweetTextBox.setWidth(width);
+		tweetActionPanel.setWidth(width);
 	}
 
 	public void setHeight(String height) {
@@ -218,8 +220,9 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		TweetType tweetType = TweetType.values()[tweetCategoryList
 				.getSelectedIndex()];
 		tweet.setType(tweetType);
+		tweet.setStatus(TweetStatus.ACTIVE);
 		tweet.setTimeCreated(new Date());
-		presenter.tweet(tweet);
+		presenter.sendTweet(tweet);
 		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetTextBox.setText("");
 	}

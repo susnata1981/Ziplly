@@ -56,7 +56,6 @@ public class AccountDAOImpl implements AccountDAO {
 			resp = EntityUtil.convert(account);
 			em.close();
 		}
-		System.out.println("Found account with email:" + email);
 		return resp;
 	}
 
@@ -102,6 +101,8 @@ public class AccountDAOImpl implements AccountDAO {
 			return EntityUtil.convert(account);
 		} catch(NoResultException nre) {
 			throw new NotFoundException();
+		} finally {
+			em.close();
 		}
 	}
 
@@ -111,6 +112,9 @@ public class AccountDAOImpl implements AccountDAO {
 				.getEntityManager();
 		em.getTransaction().begin();
 		em.persist(account);
+//		for(PrivacySettings ps : account.getPrivacySettings()) {
+//			em.persist(ps);
+//		}
 		em.getTransaction().commit();
 		AccountDTO result = EntityUtil.convert(account);
 		em.close();
@@ -121,14 +125,13 @@ public class AccountDAOImpl implements AccountDAO {
 	public AccountDTO update(Account account) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
-		Account acct = null;
 		AccountDTO result = null;
 		try {
-			acct = em.merge(account);
+			em.merge(account);
 		} catch (NoResultException ex) {
 			throw new IllegalArgumentException();
 		} finally {
-			result = EntityUtil.convert(acct);
+			result = EntityUtil.convert(account);
 			em.getTransaction().commit();
 			em.close();
 		}
@@ -140,9 +143,14 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		Query query = em.createNamedQuery("findAllAccounts");
-		return query.getResultList();
+		
+		@SuppressWarnings("unchecked")
+		List<Account> result = query.getResultList();
+		em.close();
+		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private Interest getInterest(Activity activity) {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
@@ -150,7 +158,9 @@ public class AccountDAOImpl implements AccountDAO {
 				.createQuery("from Interest where activity = :activity");
 		query.setParameter("activity", activity);
 
-		return (Interest) query.getSingleResult();
+		Interest result = (Interest) query.getSingleResult();
+		em.close();
+		return result;
 	}
 
 	@Override
@@ -166,6 +176,7 @@ public class AccountDAOImpl implements AccountDAO {
 		for(PersonalAccount pa : accounts) {
 			response.add(EntityUtil.clone(pa));
 		}
+		em.close();
 		return response;
 	}
 
@@ -178,5 +189,6 @@ public class AccountDAOImpl implements AccountDAO {
 		query.setParameter("accountId", account.getAccountId());
 		query.executeUpdate();
 		em.getTransaction().commit();
+		em.close();
 	}
 }

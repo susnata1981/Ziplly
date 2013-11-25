@@ -7,11 +7,16 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
+import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetConversationsResult;
 import com.ziplly.app.shared.SendMessageAction;
@@ -42,6 +47,21 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		this.panel = panel;
 		bind();
 		getConversations();
+		setupHandlers();
+	}
+
+	private void setupHandlers() {
+		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
+			@Override
+			public void onEvent(AccountDetailsUpdateEvent event) {
+				dispatcher.execute(new GetConversationsAction(), new DispatcherCallbackAsync<GetConversationsResult>() {
+					@Override
+					public void onSuccess(GetConversationsResult result) {
+						view.setMessageCount(result.getConversations());
+					}
+				});
+			}
+		});
 	}
 
 	@Override
@@ -91,6 +111,11 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 	@Override
 	public void onView(ConversationDTO conversation) {
 		if (conversation != null) {
+			// update the status column only if it's the receiver
+			if (conversation.isSender()) {
+				return;
+			}
+			
 			dispatcher.execute(new ViewConversationAction(conversation.getId()), new DispatcherCallbackAsync<ViewConversationResult>() {
 				@Override
 				public void onSuccess(ViewConversationResult result) {
@@ -98,5 +123,18 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 				}
 			});
 		}
+	}
+
+	@Override
+	public void gotoProfile() {
+		if (ctx.getAccount() instanceof PersonalAccountDTO) {
+			placeController.goTo(new PersonalAccountPlace());
+			return;
+		}
+		else if (ctx.getAccount() instanceof BusinessAccountDTO) {
+			placeController.goTo(new BusinessAccountPlace());
+			return;
+		}
+		throw new IllegalArgumentException("Invalid account type");
 	}
 }

@@ -3,9 +3,11 @@ package com.ziplly.app.server.handlers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
@@ -17,6 +19,9 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
@@ -30,6 +35,7 @@ public class GetLatLngActionHandler extends AbstractAccountActionHandler<GetLatL
 	}
 
 	private final static String GEO_ENCODING_SERVICE_ENDPOINT = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
+	
 	@Override
 	public GetLatLngResult execute(GetLatLngAction action, ExecutionContext arg1)
 			throws DispatchException {
@@ -38,20 +44,52 @@ public class GetLatLngActionHandler extends AbstractAccountActionHandler<GetLatL
 			throw new IllegalArgumentException();
 		}
 		
-		String restUrl = GEO_ENCODING_SERVICE_ENDPOINT + action.getZip();
+		AccountDTO account = action.getAccount();
+		String restUrl ="";
+		try {
+			restUrl = getGeoEncodingServiceEndpoint(account);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		String response = callGeoEncodingService(restUrl);
 		return  parse(response);
+	}
+
+	private String getGeoEncodingServiceEndpoint(AccountDTO acct) throws UnsupportedEncodingException {
+		if (acct == null) {
+			throw new IllegalArgumentException();
+		}
+		StringBuilder response = new StringBuilder("");
+		if (acct instanceof PersonalAccountDTO) {
+			response.append(acct.getZip());
+		} 
+		else if (acct instanceof BusinessAccountDTO) {
+			BusinessAccountDTO baccount = (BusinessAccountDTO)acct;
+			if (baccount.getStreet1() != null) {
+				response.append(baccount.getStreet1());
+			}
+			response.append(" ");
+			
+			if (baccount.getStreet2() != null) {
+				response.append(baccount.getStreet2());
+			}
+			response.append(" "+baccount.getZip());
+		}
+		return GEO_ENCODING_SERVICE_ENDPOINT + URLEncoder.encode(response.toString(),"UTF-8"); 
 	}
 
 	private GetLatLngResult parse(String json) {
 		JsonParser parser = new JsonParser();
 		JsonObject o = (JsonObject) parser.parse(json);
 		JsonArray results = (JsonArray) o.get("results");
-		JsonObject geometry = (JsonObject) ((JsonObject) results.get(0)).get("geometry");
-		JsonObject location = (JsonObject) geometry.get("location");
+		JsonObject jo = (JsonObject) results.get(0);
+		String formattedAddress = jo.get("formatted_address").toString();
+		JsonObject geometry = (JsonObject) jo.get("geometry");
+		JsonObject location = (JsonObject)geometry.get("location");
 		double lat = location.get("lat").getAsDouble();
 		double lng = location.get("lng").getAsDouble();
 		GetLatLngResult result = new GetLatLngResult();
+		result.setFormattedAddress(formattedAddress.replaceAll("\"", ""));
 		result.setLat(lat);
 		result.setLng(lng);
 		return result;
@@ -86,6 +124,5 @@ public class GetLatLngActionHandler extends AbstractAccountActionHandler<GetLatL
 	}
 
 	public static void main(String[] args) {
-		
 	}
 }

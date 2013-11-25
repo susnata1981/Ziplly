@@ -5,7 +5,4 @@ import java.io.Serializable;
 public enum ConversationStatus implements Serializable {
 	UNREAD,
 	READ;
-	
-	private ConversationStatus() {
-	}
 }

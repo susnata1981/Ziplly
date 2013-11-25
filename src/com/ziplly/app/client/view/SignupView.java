@@ -13,6 +13,7 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.FieldVerifier;
@@ -37,6 +39,12 @@ public class SignupView extends Composite implements
 	interface SignupViewUiBinder extends UiBinder<Widget, SignupView> {
 	}
 
+	@UiFactory
+	ZResources resources() {
+		ZResources.IMPL.style().ensureInjected();
+		return ZResources.IMPL;
+	}
+	
 	@UiField
 	TextBox firstname;
 	@UiField
@@ -108,6 +116,7 @@ public class SignupView extends Composite implements
 		initWidget(uiBinder.createAndBindUi(this));
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
+		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
 	}
 
 	public void reset() {

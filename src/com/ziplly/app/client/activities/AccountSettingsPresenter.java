@@ -7,4 +7,6 @@ public interface AccountSettingsPresenter<T extends AccountDTO> extends Presente
 	void save(T account);
 	void cancel();
 	void updatePassword(UpdatePasswordAction action);
+	void onProfileLinkClick();
+	void onInboxLinkClick();
 }

@@ -119,17 +119,17 @@ public class EditAccountDetailsWidget extends Composite implements View<AccountP
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		accountDetailsTypeToTabsMap.put(AccountDetailsType.BASICINFO, basicInfoTab);
-		tabsToShareSettingWidgetMap.put(basicInfoTab, basicInfoSetting);
+//		accountDetailsTypeToTabsMap.put(AccountDetailsType.BASICINFO, basicInfoTab);
+//		tabsToShareSettingWidgetMap.put(basicInfoTab, basicInfoSetting);
 		
 		accountDetailsTypeToTabsMap.put(AccountDetailsType.OCCUPATION, occupationTab);
 		tabsToShareSettingWidgetMap.put(occupationTab, occupationSetting);
 		
-		accountDetailsTypeToTabsMap.put(AccountDetailsType.INTEREST, interestTab);
-		tabsToShareSettingWidgetMap.put(interestTab, interestSetting);
-		
-		accountDetailsTypeToTabsMap.put(AccountDetailsType.LOCATION, locationTab);
-		tabsToShareSettingWidgetMap.put(locationTab, locationSetting);
+//		accountDetailsTypeToTabsMap.put(AccountDetailsType.INTEREST, interestTab);
+//		tabsToShareSettingWidgetMap.put(interestTab, interestSetting);
+//		
+//		accountDetailsTypeToTabsMap.put(AccountDetailsType.LOCATION, locationTab);
+//		tabsToShareSettingWidgetMap.put(locationTab, locationSetting);
 
 		for(Activity activity : Activity.values()) {
 			CheckBox cb = new CheckBox(activity.name().toLowerCase());

@@ -9,7 +9,6 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.StringConstants;
@@ -28,6 +27,7 @@ import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
+import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.LikeResult;
@@ -86,34 +86,28 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				new DispatcherCallbackAsync<UpdateAccountResult>() {
 					@Override
 					public void onSuccess(UpdateAccountResult result) {
-						view.displayAccountUpdateSuccessfullMessage();
+						view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
 						eventBus.fireEvent(new AccountUpdateEvent(result
 								.getAccount()));
 					}
 
 					public void onFailure(Throwable error) {
-						view.displayAccountUpdateFailedMessage();
+						view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 					}
 				});
 	}
 	
 	@Override
-	public void tweet(TweetDTO tweet) {
+	public void sendTweet(TweetDTO tweet) {
 		AccountDTO account = ctx.getAccount();
 		if (account == null) {
 			placeController.goTo(new LoginPlace());
 		}
-		
-		dispatcher.execute(new TweetAction(tweet),
-				new DispatcherCallbackAsync<TweetResult>() {
-					@Override
-					public void onSuccess(TweetResult result) {
-						placeController.goTo(new HomePlace());
-						view.clearTweet();
-					}
-				});
+		dispatcher.execute(new TweetAction(tweet), getTweetHandler());
 	}
 
+	public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();
+	
 	@Override
 	public void postComment(final CommentDTO comment) {
 		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>() {
@@ -178,7 +172,9 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	
 	@Override
 	public void deleteTweet(TweetDTO tweet) {
-		
+//		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
+//			
+//		}
 	}
 	
 	@Override
@@ -190,6 +186,10 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 						eventBus.fireEvent(new LogoutEvent());
 						ctx.setAccount(null);
 						goTo(new LoginPlace());
+					}
+					
+					public void onFailure(Throwable th) {
+						System.out.println("Failed to logout"+th);
 					}
 				});
 	}
@@ -206,7 +206,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
-			view.closeSendMessageWidget();
+			view.closeMessageWidget();
 			goTo(new LoginPlace());
 			return;
 		}
@@ -217,7 +217,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
 			@Override
 			public void onSuccess(SendMessageResult result) {
-				view.displayAccountUpdateSuccessfullMessage();
+				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
 			}
 		});
 	}
@@ -237,13 +237,17 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		placeController.goTo(new ConversationPlace());
 	}
 	
-	void getLatLng(int zip, DispatcherCallbackAsync<GetLatLngResult> handler) {
+	void getLatLng(AccountDTO account, DispatcherCallbackAsync<GetLatLngResult> handler) {
 		GetLatLngAction action = new GetLatLngAction();
-		action.setZip(zip);
+		action.setAccount(account);
 		dispatcher.execute(action, handler);
 	}
 
 	public void getAccountDetails(DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
 		dispatcher.execute(new GetAccountDetailsAction(), callback); 
+	}
+	
+	public void getPublicAccountDetails(Long accountId, DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
+		dispatcher.execute(new GetPublicAccountDetailsAction(accountId), callback); 
 	}
 }

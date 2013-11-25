@@ -1,33 +1,27 @@
 package com.ziplly.app.client.view;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.widget.ITweetWidgetView;
+import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -39,27 +33,13 @@ import com.ziplly.app.model.TweetType;
  */
 public class HomeView extends Composite implements IHomeView {
 
-	private static final String COMMENT_POSTED_SUCCESSFULLY = "Comment posted successfully";
-	private static final String COMMENT_POST_FAILED = "Failed to post comment";
-	private static final String LIKE_SUCCESSFUL = "Saved";
-	private static final String LIKE_UNSUCCESSFUL = "Failed";
-	private static final String INVALID_ACCESS = "Invalid access";
-	private static final String INTERNAL_ERROR = "Internal error";
-	private static final String TWEET_UPDATED_SUCCESSFULLY = "Post updated successfully";
-	
+	private String TWEET_WIDGET_WIDTH = "55%";
 	private static HomeViewUiBinder uiBinder = GWT
 			.create(HomeViewUiBinder.class);
 	
 	public static interface HomePresenter extends TweetPresenter {
 		void displayTweets(List<TweetDTO> tweets);
 		void displayTweetsForCategory(TweetType type);
-//		void displayProfile(Long accountId);
-//		void postComment(CommentDTO comment);
-//		void likeTweet(Long tweetId);
-//		void updateTweet(TweetDTO tweet);
-//		void deleteTweet(TweetDTO tweet);
-//		void tweet(TweetDTO tweet);
-		void getNext(int i);
 		void onLogin(String emailInput, String passwordInput);
 	}
 	
@@ -72,85 +52,24 @@ public class HomeView extends Composite implements IHomeView {
 	@UiField
 	HTMLPanel communityWallPanel;
 	
-	@UiField
-	TextArea tweetTextBox;
-	@UiField
-	HTMLPanel tweetCategoryPanel;
-	@UiField
-	ListBox tweetCategoryList;
-	
-	@UiField
-	Button tweetBtn;
-	@UiField
-	Button cancelBtn;
+	TweetBox tweetBox;
 	
 	HomePresenter presenter;
 	List<Anchor> filters = new ArrayList<Anchor>();
 	
-	@UiField
-	ScrollPanel scrollPanel;
-	
 	// tweetId --> TweetWidget
-	Map<Long, ITweetWidgetView> tweetWidgetMap = new HashMap<Long, ITweetWidgetView>();
+	Map<Long, ITweetWidgetView<?>> tweetWidgetMap = new HashMap<Long, ITweetWidgetView<?>>();
 	
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
 	
-	private int lastScrollPos = 0;
 	public HomeView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		scrollPanel.setHeight("700px");
-		scrollPanel.setWidth("1000px");
 		buildTweetFilters();
-		
 		message.setAnimation(true);
-		scrollPanel.addScrollHandler(new ScrollHandler() {
-			@Override
-			public void onScroll(ScrollEvent event) {
-				int oldPosition = lastScrollPos;
-				lastScrollPos = scrollPanel.getVerticalScrollPosition();
-
-				if (oldPosition > lastScrollPos) {
-					return;
-				}
-				
-				int offsetHeight = scrollPanel.getWidget().getOffsetHeight();
-				int scrollPanelHeight = scrollPanel.getOffsetHeight();
-				System.out.println("lastpost="+lastScrollPos+" offsetHeight="+offsetHeight+" scrollPanel OH="+scrollPanelHeight);
-				
-				if (lastScrollPos >= (offsetHeight - scrollPanelHeight)) {
-					// load more data
-//					Window.alert("load more data...");
-					presenter.getNext(3);
-				}
-			}
-		});
-		
-		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-		tweetTextBox.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.INLINE);
-			}
-		});
-		
-		cancelBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-			}
-		});
 	}
 
 	private void buildTweetFilters() {
-		filterHeader.clear();
-		HTMLPanel tweetHeader = new HTMLPanel("<div class='filterheader'>Category</span>");
-		filterHeader.add(tweetHeader);
-		
-		for(TweetType type : TweetType.values()) {
-			tweetCategoryList.addItem(type.name().toLowerCase());
-		}
-		
 		for(final TweetType type : TweetType.values()) {
 			final Anchor anchor = new Anchor(type.name().toLowerCase());
 			anchor.setStyleName("tweetFilterLink");
@@ -172,24 +91,36 @@ public class HomeView extends Composite implements IHomeView {
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
+//		tweetBox.setPresenter(presenter);
 	}
 
 	@Override
 	public void clear() {
+//		int totalWidgets = communityWallPanel.getWidgetCount();
+//		for(int i=0; i<totalWidgets; i++) {
+//			Widget widget = communityWallPanel.getWidget(i);
+//			if (widget instanceof TweetWidget) {
+//				widget.removeFromParent();
+//			}
+//		}
 	}
 
-	@UiField
-	HTMLPanel filterHeader;
-	
 	@Override
 	public void display(List<TweetDTO> tweets) {
-		long time1 = System.currentTimeMillis();
-		communityWallPanel.clear();
+//		long time1 = System.currentTimeMillis();
 		message.clear();
 		message.setVisible(false);
+		communityWallPanel.clear();
+		tweetBox = new TweetBox();
+		tweetBox.setWidth(TWEET_WIDGET_WIDTH);
+		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
+		tweetBox.setPresenter(presenter);
+		communityWallPanel.add(tweetBox);
+		
 		for(TweetDTO tweet: tweets) {
 			long time11 = System.currentTimeMillis();
 			TweetWidget tw = new TweetWidget();
+			tw.setWidth("55%");
 			long time12 = System.currentTimeMillis();
 			tw.setPresenter(presenter);
 			tw.displayTweet(tweet);
@@ -224,60 +155,17 @@ public class HomeView extends Composite implements IHomeView {
 	}
 	
 	@Override
-	public void displayCommentSuccessfull() {
-		displaySuccessMessage(COMMENT_POSTED_SUCCESSFULLY);
-	}
-	
-	@Override
-	public void displayCommentFailure() {
-		displayErrorMessage(COMMENT_POST_FAILED);
-	}
-
-	@Override
-	public void displayLikeSuccessful() {
-		displaySuccessMessage(LIKE_SUCCESSFUL);
-	}
-
-	@Override
-	public void displayLikeUnsuccessful() {
-		System.out.println("Duplicate like...");
-		displayErrorMessage(LIKE_UNSUCCESSFUL);
-	}
-
-	private void displayErrorMessage(String msg) {
-		message.setText(msg);
-		message.setType(AlertType.ERROR);
-		message.setVisible(true);
-	}
-	
-	private void displaySuccessMessage(String msg) {
-		message.setText(msg);
-		message.setType(AlertType.SUCCESS);
-		message.setVisible(true);	
-	}
-	
-	@Override
 	public void updateTweet(TweetDTO tweet) {
 		if (tweet == null || tweet.getTweetId() == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		ITweetWidgetView tw = tweetWidgetMap.get(tweet.getTweetId());
+		ITweetWidgetView<?> tw = tweetWidgetMap.get(tweet.getTweetId());
 		if (tw == null) {
 			// do nothing
 			return;
 		}
 		tw.displayTweet(tweet);
-	}
-
-	@Override
-	public void displayInvalidAccessMessage() {
-		displayErrorMessage(INVALID_ACCESS);
-	}
-
-	@Override
-	public void displayInternalError() {
-		displayErrorMessage(INTERNAL_ERROR);
 	}
 
 	@Override
@@ -291,33 +179,30 @@ public class HomeView extends Composite implements IHomeView {
 	}
 
 	@Override
-	public void displayTweetUpdated() {
-		displaySuccessMessage(TWEET_UPDATED_SUCCESSFULLY);
-	}
-
-	@Override
 	public void updateTweetLike(LoveDTO like) {
 		if (like == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		ITweetWidgetView tw = tweetWidgetMap.get(like.getTweet().getTweetId());
+		ITweetWidgetView<?> tw = tweetWidgetMap.get(like.getTweet().getTweetId());
 		tw.updateLike(like);
 	}
-	
-	@UiHandler("tweetBtn")
-	void tweet(ClickEvent event) {
-		if (tweetTextBox.getText() != null) {
-			TweetDTO tweet = new TweetDTO();
-			String content = tweetTextBox.getText().trim();
-			tweet.setContent(content);
-			TweetType tweetType = TweetType.values()[tweetCategoryList
-					.getSelectedIndex()];
-			tweet.setType(tweetType);
-			tweet.setTimeCreated(new Date());
-			presenter.tweet(tweet);
-			tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-			tweetTextBox.setText("");
-		}
+
+	@Override
+	public Element getTweetSectionElement() {
+		return communityWallPanel.getElement();
+	}
+
+	@Override
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		message.setVisible(true);
+	}
+
+	@Override
+	public void removeTweet(TweetDTO tweet) {
+		ITweetWidgetView<?> widget = tweetWidgetMap.get(tweet.getTweetId());
+		widget.remove();
 	}
 }

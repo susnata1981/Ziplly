@@ -5,12 +5,10 @@ import java.util.List;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.AccountBLI;
@@ -41,9 +39,9 @@ public class GetCommunityWallDataActionHandler
 		System.out.println("Time:"+time1);
 		
 		if (type.equals(TweetType.ALL)) {
-			tweets = tweetDao.findTweetsByZip(zip);
+			tweets = tweetDao.findTweetsByZip(zip, action.getPage(), action.getPageSize());
 		} else {
-			tweets = tweetDao.findTweetsByTypeAndZip(type, zip);
+			tweets = tweetDao.findTweetsByTypeAndZip(type, zip, action.getPage(), action.getPageSize());
 		}
 		
 		long time2 = System.currentTimeMillis();

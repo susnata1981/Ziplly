@@ -4,6 +4,7 @@ import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -59,11 +60,10 @@ public abstract class AbstractActivity implements Activity {
 	public void checkAccountLogin() {
 		if (ctx.getAccount() != null) {
 			// control shouldn't flow here
-//			forward(ctx.getAccount());
-			return;
+			forward(ctx.getAccount());
 		}
-		
-		dispatcher.execute(new GetLoggedInUserAction(),
+		GetLoggedInUserAction action = new GetLoggedInUserAction();
+		dispatcher.execute(action,
 				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
 					@Override
 					public void onSuccess(GetLoggedInUserResult result) {
@@ -74,6 +74,12 @@ public abstract class AbstractActivity implements Activity {
 							doStart();
 						}
 					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getLocalizedMessage());
+					}
+
 				});
 	}
 	

@@ -48,9 +48,12 @@ import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountSetting;
+import com.ziplly.app.model.AccountNotificationSettings;
+import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.Interest;
+import com.ziplly.app.model.NotificationAction;
+import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.model.PasswordRecoveryStatus;
 import com.ziplly.app.model.PersonalAccount;
@@ -66,6 +69,8 @@ import com.ziplly.app.shared.EmailTemplate;
 
 public class AccountBLIImpl implements AccountBLI {
 	private static final String UPLOAD_SERVICE_ENDPOINT = "/upload";
+	public static final int FREE_TWEET_PER_MONTH_THRESHOLD = 1;
+	
 	protected final long hoursInMillis = 2 * 60 * 60 * 1000;
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
@@ -100,14 +105,15 @@ public class AccountBLIImpl implements AccountBLI {
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
-		// createInterestEntries();
-		// createSubscriptionPlan();
+//		 createInterestEntries();
+//		createSubscriptionPlan();
 	}
 
 	private void createSubscriptionPlan() {
 		SubscriptionPlan plan = new SubscriptionPlan();
 		plan.setName("Basic plan");
 		plan.setDescription("Send upto 5 messages a month");
+		plan.setTweetsAllowed(1);
 		plan.setFee(5.00);
 		plan.setTimeCreated(new Date());
 		subscriptionPlanDao.save(plan);
@@ -169,8 +175,9 @@ public class AccountBLIImpl implements AccountBLI {
 							+ existingAccount.getEmail());
 		}
 
+		createDefaultNotificationSettings(account);
 		if (account instanceof PersonalAccount) {
-			createDefaultAccountSettings((PersonalAccount) account);
+			createDefaultPrivacySettings((PersonalAccount) account);
 		}
 
 		// create account otherwise
@@ -186,13 +193,24 @@ public class AccountBLIImpl implements AccountBLI {
 		return response;
 	}
 
-	private void createDefaultAccountSettings(PersonalAccount account) {
+	private void createDefaultNotificationSettings(Account account) {
+		for(NotificationType type: NotificationType.values()) {
+			AccountNotificationSettings an = new AccountNotificationSettings();
+			an.setAccount(account);
+			an.setType(type);
+			an.setAction(NotificationAction.EMAIL);
+			an.setTimeCreated(new Date());
+			account.getNotificationSettings().add(an);
+		}
+	}
+
+	private void createDefaultPrivacySettings(PersonalAccount account) {
 		for (AccountDetailsType adt : AccountDetailsType.values()) {
-			AccountSetting as = new AccountSetting();
+			PrivacySettings as = new PrivacySettings();
 			as.setSection(adt);
 			as.setSetting(ShareSetting.PUBLIC);
-			// as.setAccount(account);
-			account.getAccountSettings().add(as);
+			as.setAccount(account);
+			account.addPrivacySettings(as);
 		}
 	}
 

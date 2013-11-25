@@ -23,7 +23,7 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements Si
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
 		bind();
-		view.hideProfileImagePreview();
+//		view.hideProfileImagePreview();
 		view.reset();
 		setImageUploadUrl();
 		setUploadImageHandler();
@@ -47,18 +47,10 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements Si
 	@Override
 	public void onFacebookLogin() {
 	}
-
-//	@Override
-//	public void register(AccountDTO account) {
-//		dispatcher.execute(new RegisterAccountAction(account), new DispatcherCallbackAsync<RegisterAccountResult>() {
-//			@Override
-//			public void onSuccess(RegisterAccountResult result) {
-//				System.out.println("Account " + result.getAccount()
-//						+ " registered.");
-//				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-//				placeController.goTo(new LoginPlace());
-//			}
-//		});
-//	}
+	
+	@Override
+	public void onStop() {
+		view.clear();
+	}
 	
 }

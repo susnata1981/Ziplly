@@ -25,21 +25,22 @@ import org.hibernate.annotations.FetchMode;
 @NamedQueries({
 	@NamedQuery(
 		name = "findTweetsByZip",
-		query = "from Tweet t where t.sender.zip = :zip order by timeCreated desc"),
+		query = "from Tweet t where t.sender.zip = :zip and status = :status order by timeCreated desc"),
 	@NamedQuery(
 		name = "findTweetsById",
 		query = "from Tweet t where t.tweetId = :tweetId order by timeCreated desc"),
 	@NamedQuery(
 		name = "findTweetsByAccountId",
-		query = "from Tweet t where t.sender.accountId = :accountId order by timeCreated desc"),
+		query = "from Tweet t where t.sender.accountId = :accountId and status = :status order by timeCreated desc"),
 	@NamedQuery(
 			name = "findTweetsByTypeAndZip",
-			query = "from Tweet t where t.sender.zip = :zip and t.type = :type order by timeCreated desc"),
+			query = "from Tweet t where t.sender.zip = :zip and status = :status and t.type = :type order by timeCreated desc"),
 })
 @Entity
 @Table(name="tweet")
-public class Tweet implements Serializable {
+public class Tweet extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="tweet_id")
@@ -66,8 +67,11 @@ public class Tweet implements Serializable {
 	@BatchSize(size=10)
 	private Set<Love> likes = new HashSet<Love>();
 	
-	private int status;
-	private Date timeCreated;
+	private TweetStatus status;
+//	@Column(name="time_updated")
+//	private Date timeUpdated;
+//	@Column(name="time_created")
+//	private Date timeCreated;
 	
 	public Tweet() {
 	}
@@ -80,6 +84,7 @@ public class Tweet implements Serializable {
 		type = tweet.getType();
 		content = tweet.getContent();
 		status = tweet.getStatus();
+		timeUpdated = tweet.getTimeUpdated();
 		timeCreated = tweet.getTimeCreated();
 	}
 	
@@ -95,10 +100,10 @@ public class Tweet implements Serializable {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public int getStatus() {
+	public TweetStatus getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(TweetStatus status) {
 		this.status = status;
 	}
 	public Date getTime_created() {
@@ -148,5 +153,13 @@ public class Tweet implements Serializable {
 
 	public void setLikes(Set<Love> likes) {
 		this.likes = likes;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
 	}
 }

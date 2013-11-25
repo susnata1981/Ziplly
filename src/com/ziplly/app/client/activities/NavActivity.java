@@ -75,9 +75,9 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			@Override
 			public void onSuccess(LogoutResult result) {
 				ctx.setAccount(null);
-				eventBus.fireEvent(new LogoutEvent());
-				placeController.goTo(new LoginPlace());
+//				eventBus.fireEvent(new LogoutEvent());
 				view.showAccountLinks(false);
+				placeController.goTo(new LoginPlace());
 			}
 			
 			@Override 
