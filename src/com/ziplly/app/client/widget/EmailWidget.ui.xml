@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.emailWidgetPanel {
+			width: 25%;
+		}
+		.emailWidgetModal {
+		}
+		.emailListTextBox {
+			width: 80% !important;
+		}
+		.btn {
+			margin-right: 10px;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.emailWidgetPanel}">
+		<b:Modal ui:field="emailWidgetModal" title="Invite neighbors"
+			backdrop="STATIC" keyboard="true" animation="true">
+			<g:HTMLPanel>
+				<b:Alert animation="true" ui:field="message" />
+				<h4>Enter email (comma separated)</h4>
+				<b:TextBox ui:field="emailList" addStyleNames="{style.emailListTextBox}"/>
+				<br />
+				<div>
+					<b:Button addStyleNames="{style.btn}" size="MINI" type="INFO" ui:field="invitePeopleBtn">Invite people</b:Button>
+					<b:Button addStyleNames="{style.btn}" size="MINI" ui:field="cancelBtn">Cancel</b:Button>
+				</div>
+			</g:HTMLPanel>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -41,6 +41,8 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.view.WidgetFactory;
+import com.ziplly.app.client.widget.BusinessAccountWidgetModal;
 import com.ziplly.app.client.widget.EditAccount;
 import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;

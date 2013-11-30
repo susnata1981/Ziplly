@@ -1,35 +1,11 @@
 package com.ziplly.app.server;
 
-import java.util.Date;
-import java.util.List;
 
-import javax.servlet.http.HttpSession;
+public class ZipllyServiceImpl {
+	
+}
 
-import org.jboss.logging.Logger;
-import org.jboss.logging.Logger.Level;
-
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.restfb.types.User;
-import com.ziplly.app.client.ZipllyService;
-import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.oauth.AccessToken;
-import com.ziplly.app.client.oauth.OAuthConfig;
-import com.ziplly.app.client.oauth.OAuthFactory;
-import com.ziplly.app.client.oauth.OAuthProvider;
-import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.facebook.dao.FUserDAOFactory;
-import com.ziplly.app.facebook.dao.IFUserDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.LatLong;
-import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
-import com.ziplly.app.server.oauth.OAuthFlowManager;
-
+/*
 @Singleton
 public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		ZipllyService {
@@ -216,3 +192,4 @@ public class ZipllyServiceImpl extends RemoteServiceServlet implements
 		return blobstoreService.createUploadUrl("/upload");
 	}
 }
+*/

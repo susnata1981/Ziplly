@@ -26,8 +26,11 @@
 					</div>
 					<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
 					<div>
-						<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
+						<b:Button type="INFO" size="MINI" ui:field="sendMsgBtn">Send
 							Message</b:Button>
+					</div>
+					<div>
+					    <b:Button type="INFO" size="MINI" ui:field="inviteBtn">Invite people</b:Button>
 					</div>
 				</div>
 				<div class="{style.profileInfoBox}">

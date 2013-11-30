@@ -147,7 +147,7 @@ public class EntityUtil {
 		resp.setContent(tweet.getContent());
 		resp.setStatus(tweet.getStatus());
 		resp.setTimeCreated(tweet.getTimeCreated());
-		if (needSender) {
+		if (needSender && Hibernate.isInitialized(tweet.getSender())) {
 			resp.setSender(convert(tweet.getSender()));
 		}
 
@@ -169,6 +169,14 @@ public class EntityUtil {
 		List<TweetDTO> result = Lists.newArrayList();
 		for (Tweet tweet : tweets) {
 			result.add(EntityUtil.clone(tweet));
+		}
+		return result;
+	}
+
+	public static List<AccountDTO> cloneAccountList(List<Account> accounts) {
+		List<AccountDTO> result = Lists.newArrayList();
+		for (Account account : accounts) {
+			result.add(convert(account));
 		}
 		return result;
 	}

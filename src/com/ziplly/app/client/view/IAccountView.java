@@ -18,10 +18,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 
 	void displayPublicProfile(T account);
 	
-//	void displayAccountUpdateSuccessfullMessage();
-//	
-//	void displayAccountUpdateFailedMessage();
-//	
 	void clearTweet();
 	
 	void displayTweets(List<TweetDTO> tweets);

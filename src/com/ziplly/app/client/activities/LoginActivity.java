@@ -13,6 +13,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.client.view.LoginAccountView;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -93,6 +94,8 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 							view.displayMessage(
 									LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
 									AlertType.ERROR);
+						} else {
+							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 						}
 						view.resetLoginForm();
 					}

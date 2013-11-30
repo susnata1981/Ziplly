@@ -1,5 +1,9 @@
 package com.ziplly.app.client.activities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -23,6 +27,7 @@ import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
+import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -34,6 +39,8 @@ import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
+import com.ziplly.app.shared.SendEmailAction;
+import com.ziplly.app.shared.SendEmailResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 import com.ziplly.app.shared.TweetAction;
@@ -43,7 +50,7 @@ import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
-public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements AccountPresenter<T> {
+public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements AccountPresenter<T>, EmailPresenter {
 	protected IAccountView<T> view;
 	
 	public AbstractAccountActivity(CachingDispatcherAsync dispatcher,
@@ -250,4 +257,18 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void getPublicAccountDetails(Long accountId, DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
 		dispatcher.execute(new GetPublicAccountDetailsAction(accountId), callback); 
 	}
+	
+	@Override
+	public void invitePeople(List<String> emails){
+		System.out.println("Email people..."+emails);
+		SendEmailAction action = new SendEmailAction();
+		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
+		action.setEmailList(emails);
+		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>() {
+			@Override
+			public void onSuccess(SendEmailResult result) {
+				view.displayMessage(StringConstants.EMAIL_SENT, AlertType.SUCCESS);
+			}
+		});
+	};
 }

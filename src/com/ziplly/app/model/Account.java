@@ -126,6 +126,7 @@ public class Account implements Serializable {
 		setNeighborhood(account.getNeighborhood());
 		setCity(account.getCity());
 		setState(account.getState());
+		setRole(account.getRole());
 		setLastLoginTime(account.getLastLoginTime());
 		setTimeCreated(account.getTimeCreated());
 		setTimeUpdated(account.getTimeUpdated());

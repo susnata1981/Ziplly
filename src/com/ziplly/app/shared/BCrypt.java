@@ -14,8 +14,7 @@ package com.ziplly.app.shared;
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import java.io.UnsupportedEncodingException;
-
-import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using
@@ -531,8 +530,13 @@ public class BCrypt {
          * Initialise the Blowfish key schedule
          */
         private void init_key() {
-                P = (int[])P_orig.clone();
-                S = (int[])S_orig.clone();
+        	// changed shaan
+//                P = (int[])P_orig.clone();
+        		P = new int[P_orig.length];
+                System.arraycopy(P_orig, 0, P, 0, P_orig.length);
+//                S = (int[])S_orig.clone();
+                S = new int[S_orig.length];
+                System.arraycopy(S_orig, 0, S, 0, S_orig.length);
         }
 
         /**
@@ -605,7 +609,10 @@ public class BCrypt {
          */
         private byte[] crypt_raw(byte password[], byte salt[], int log_rounds) {
                 int rounds, i, j;
-                int cdata[] = (int[])bf_crypt_ciphertext.clone();
+                // TODO shaan
+//                int cdata[] = (int[])bf_crypt_ciphertext.clone();
+                int [] cdata = new int[bf_crypt_ciphertext.length];
+                System.arraycopy(bf_crypt_ciphertext, 0, cdata, 0, bf_crypt_ciphertext.length);
                 int clen = cdata.length;
                 byte ret[];
 
@@ -702,7 +709,7 @@ public class BCrypt {
          * @param random                an instance of SecureRandom to use
          * @return        an encoded salt value
          */
-        public static String gensalt(int log_rounds, SecureRandom random) {
+        public static String gensalt(int log_rounds, Random random) {
                 StringBuffer rs = new StringBuffer();
                 byte rnd[] = new byte[BCRYPT_SALT_LEN];
 
@@ -725,7 +732,7 @@ public class BCrypt {
          * @return        an encoded salt value
          */
         public static String gensalt(int log_rounds) {
-                return gensalt(log_rounds, new SecureRandom());
+                return gensalt(log_rounds, new Random());
         }
 
         /**

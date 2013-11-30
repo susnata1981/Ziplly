@@ -8,6 +8,7 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.DeleteTweetAction;
@@ -32,13 +33,18 @@ public class DeleteTweetActionHandler extends AbstractTweetActionHandler<DeleteT
 		validateSession();
 		
 		Tweet tweet = tweetDao.findTweetById(action.getTweetId());
-		if (session.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
+		if (!hasPermission(tweet)) {
 			throw new AccessError();
 		}
 		
 		tweetDao.delete(tweet);
 		
 		return new DeleteTweetResult();
+	}
+
+	private boolean hasPermission(Tweet tweet) {
+		return (session.getAccount().getAccountId() == tweet.getSender().getAccountId())
+				|| session.getAccount().getRole() == Role.ADMINISTRATOR;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.ziplly.app.client.widget;
 
 import java.util.Date;
+import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -80,15 +81,21 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
-		for (TweetType type : TweetType.values()) {
-			tweetCategoryList.addItem(type.name().toLowerCase());
-		}
+//		for (TweetType type : TweetType.values()) {
+//			tweetCategoryList.addItem(type.name().toLowerCase());
+//		}
 		tweetHelpInline.setVisible(true);
 		embedLinkModal.hide();
 		setupDefaultDimension();
 		setupHandlers();
 	}
 
+	public void setTweetCategory(List<TweetType> tweetTypes) {
+		for (TweetType type : tweetTypes) {
+			tweetCategoryList.addItem(type.name().toLowerCase());
+		}
+	}
+		
 	private void setupDefaultDimension() {
 		tweetTextBox.setHeight(height);
 		tweetTextBox.setWidth(width);
@@ -217,8 +224,8 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		TweetDTO tweet = new TweetDTO();
 		String content = tweetTextBox.getText().trim();
 		tweet.setContent(content);
-		TweetType tweetType = TweetType.values()[tweetCategoryList
-				.getSelectedIndex()];
+		String category = tweetCategoryList.getValue(tweetCategoryList.getSelectedIndex()).toUpperCase();
+		TweetType tweetType = TweetType.valueOf(category);
 		tweet.setType(tweetType);
 		tweet.setStatus(TweetStatus.ACTIVE);
 		tweet.setTimeCreated(new Date());

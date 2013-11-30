@@ -29,4 +29,6 @@ public class StringConstants {
 	public static final String NO_MESSAGES = "No messages to be displayed.";
 	public static final String MESSAGE_SENT = "Message was sent";
 	public static final String NOT_SHARED = "not shared";
+	public static final String EMAIL_SENT = "Email sent";
+	public static final String SENDER_NAME = "senderName";
 }

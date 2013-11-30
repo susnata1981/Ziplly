@@ -19,6 +19,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -37,6 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.WidgetFactory;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -359,7 +362,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		pImage.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-//				TweetWidget.this.displayAccountModal(acct);
 				displayPublicProfile(comment.getAuthor());
 			}
 		});
@@ -381,10 +383,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	<T extends AccountDTO> void displayAccountModal(T acct) {
-//		@SuppressWarnings("unchecked")
-//		IAccountWidgetModal<T> accountWidgetModal = (IAccountWidgetModal<T>) WidgetFactory
-//				.getAccountWidgetModal(acct, presenter);
-//		accountWidgetModal.show(acct);
+		@SuppressWarnings("unchecked")
+		IAccountWidgetModal<T> accountWidgetModal = (IAccountWidgetModal<T>) WidgetFactory
+				.getAccountWidgetModal(acct, presenter);
+		accountWidgetModal.show(acct);
 	}
 
 	private void displayLikesSection() {
@@ -415,11 +417,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			profileLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-//					displayAccountModal(like.getAuthor());
 					displayPublicProfile(like.getAuthor());
 				}
 			});
 
+			profileLink.addMouseOverHandler(new MouseOverHandler() {
+				@Override
+				public void onMouseOver(MouseOverEvent event) {
+					displayAccountModal(like.getAuthor());
+				}
+			});
+			
 			if (likesCounter < PROFILE_COUNT_FOR_LIKE) {
 				if (likesCounter > 0) {
 					hp.add(new HTMLPanel("&nbsp;,"));
@@ -475,12 +483,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		} else {
 			authorImage.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		}
+		authorImage.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new PersonalAccountPlace(tweet.getSender().getAccountId()));
+			}
+		});
 		authorName.setInnerText(tweet.getSender().getDisplayName());
 	}
 
 	@UiHandler("authorProfileLink")
 	void displayProfile(ClickEvent event) {
-//		displayAccountModal(tweet.getSender());
 		displayPublicProfile(tweet.getSender());
 	}
 	

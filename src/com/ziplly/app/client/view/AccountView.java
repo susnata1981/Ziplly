@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -32,7 +33,7 @@ import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
-import com.ziplly.app.client.widget.AccountWidget;
+import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.TweetBox;
@@ -41,6 +42,7 @@ import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class AccountView extends Composite implements IAccountView<PersonalAccountDTO> {
@@ -73,9 +75,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	Anchor settingsLink;
 	@UiField
 	Anchor messagesLink;
-	
 	@UiField
-	TweetBox tweetBox;
+	Button inviteBtn;
 	
 	@UiField
 	SpanElement occupationSpan;
@@ -97,19 +98,25 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	 */
 	@UiField
 	HTMLPanel tweetSection;
+	@UiField(provided = true)
+	TweetBox tweetBox;
 	@UiField
 	HTMLPanel tweetBoxDiv;
 	
 	@UiField
 	SpanElement unreadMessageCountField;
 	
-	AccountWidget accountWidget;
+//	AccountWidget accountWidget;
+	EmailWidget emailWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	SendMessageWidget smw;
 	
 	public AccountView() {
-		this.accountWidget = new AccountWidget();
+//		this.accountWidget = new AccountWidget();
+		tweetBox = new TweetBox();
+		emailWidget = new EmailWidget();
+		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -199,7 +206,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	@Override
 	public void clear() {
-		accountWidget.clear();
+//		accountWidget.clear();
 	}
 
 //	public void displayAccountUpdateSuccessfullMessage() {
@@ -211,7 +218,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 //	}
 
 	public void clearTweet() {
-		accountWidget.clearTweet();
+//		accountWidget.clearTweet();
 	}
 
 	@Override
@@ -219,6 +226,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		this.presenter = presenter;
 		tweetBox.setPresenter(presenter);
 		tview.setPresenter(presenter);
+		emailWidget.setPresenter(presenter);
 	}
 
 	@Override
@@ -297,5 +305,10 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void closeMessageWidget() {
 		smw.hide();
+	}
+	
+	@UiHandler("inviteBtn")
+	public void invite(ClickEvent event){
+		emailWidget.show();
 	}
 }

@@ -273,5 +273,5 @@ public class PersonalAccountActivity extends
 		public void onFailure(Throwable th) {
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 		}
-	};
+	}
 }

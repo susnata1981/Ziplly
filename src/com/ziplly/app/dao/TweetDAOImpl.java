@@ -100,6 +100,7 @@ public class TweetDAOImpl implements TweetDAO {
 			Tweet result = (Tweet) query.getSingleResult();
 			result.setContent(tweet.getContent());
 			result.setType(tweet.getType());
+			result.setStatus(tweet.getStatus());
 			em.merge(result);
 			em.getTransaction().commit();
 			em.close();
@@ -108,6 +109,11 @@ public class TweetDAOImpl implements TweetDAO {
 			em.close();
 			throw nre;
 		}
+//		em.merge(tweet);
+//		em.getTransaction().commit();
+//		TweetDTO result = EntityUtil.clone(tweet, false);
+//		em.close();
+//		return result;
 	}
 
 	@Override
@@ -203,5 +209,37 @@ public class TweetDAOImpl implements TweetDAO {
 
 		System.out.println("M="+(cal.get(Calendar.MONTH)+1));
 		System.out.println("Y="+cal.get(Calendar.YEAR));
+	}
+
+	@Override
+	public List<TweetDTO> findAll() {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery("from Tweet order by timeCreated desc");
+		@SuppressWarnings("unchecked")
+		List<Tweet> result = query.getResultList();
+		em.close();
+		return EntityUtil.cloneList(result);
+	}
+
+	@Override
+	public List<TweetDTO> findTweets(String queryStr, int start, int end) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery(queryStr);
+		query.setFirstResult(start);
+		query.setMaxResults(end-start);
+		@SuppressWarnings("unchecked")
+		List<Tweet> result = query.getResultList();
+		List<TweetDTO> resp = EntityUtil.cloneList(result);
+		em.close();
+		return resp;
+	}
+	
+	@Override
+	public Long findTotalTweetCount(String queryStr) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery(queryStr);
+		Long count = (Long) query.getSingleResult();
+		em.close();
+		return count;
 	}
 }

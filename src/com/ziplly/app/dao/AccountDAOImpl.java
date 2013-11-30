@@ -37,8 +37,7 @@ public class AccountDAOImpl implements AccountDAO {
 					"Invalid arguement to findByEmail");
 		}
 		System.out.println("Looking for account with email:" + email);
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
 		Account account = null;
@@ -190,5 +189,16 @@ public class AccountDAOImpl implements AccountDAO {
 		query.executeUpdate();
 		em.getTransaction().commit();
 		em.close();
+	}
+
+	@Override
+	public List<AccountDTO> findAll() {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("from Account");
+		@SuppressWarnings("unchecked")
+		List<Account> result = query.getResultList();
+		em.close();
+		return EntityUtil.cloneAccountList(result);
 	}
 }

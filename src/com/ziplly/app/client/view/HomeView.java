@@ -112,6 +112,7 @@ public class HomeView extends Composite implements IHomeView {
 		message.setVisible(false);
 		communityWallPanel.clear();
 		tweetBox = new TweetBox();
+		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(TWEET_WIDGET_WIDTH);
 		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
 		tweetBox.setPresenter(presenter);

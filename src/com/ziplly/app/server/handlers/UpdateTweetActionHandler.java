@@ -10,6 +10,7 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
@@ -36,12 +37,12 @@ public class UpdateTweetActionHandler extends AbstractAccountActionHandler<Updat
 		
 		validateSession();
 		
-		if (!session.getAccount().getAccountId().equals(action.getTweet().getSender().getAccountId())) {
+		if (!hasPermission(action.getTweet())) {
 			throw new AccessError();
 		}
 		
 		Tweet tweet = new Tweet(action.getTweet());
-		tweet.setSender(session.getAccount());
+//		tweet.setSender(session.getAccount());
 		
 		try {
 			TweetDTO tweetDto = tweetDao.update(tweet);
@@ -53,6 +54,11 @@ public class UpdateTweetActionHandler extends AbstractAccountActionHandler<Updat
 		} 
 	}
 
+	private boolean hasPermission(TweetDTO tweet) {
+		return (session.getAccount().getAccountId() == tweet.getSender().getAccountId())
+				|| session.getAccount().getRole() == Role.ADMINISTRATOR;
+	}
+	
 	@Override
 	public Class<UpdateTweetAction> getActionType() {
 		return UpdateTweetAction.class;

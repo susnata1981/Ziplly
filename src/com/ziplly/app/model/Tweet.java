@@ -49,7 +49,6 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="sender_id")
 	@Fetch(FetchMode.JOIN)
-	@BatchSize(size=10)
 	private Account sender;
 
 	@Column(name="image_id")

@@ -6,6 +6,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
+import com.ziplly.app.client.activities.AdminActivity;
 import com.ziplly.app.client.activities.BusinessAccountActivity;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
@@ -20,6 +21,7 @@ import com.ziplly.app.client.activities.PublicAccountActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
@@ -34,6 +36,7 @@ import com.ziplly.app.client.places.PublicAccountPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.AdminView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
@@ -63,6 +66,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	private BusinessAccountSettingsView businessAccountSettingsView;
 	private ConversationView conversationView;
 	private PasswordRecoveryView passwordRecoveryView;
+	private AdminView adminView;
 	
 	@Inject
 	public ZipllyActivityMapper(
@@ -78,6 +82,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			BusinessAccountSettingsView businessAccountSettingsView,
 			ConversationView conversationView,
 			PasswordRecoveryView passwordRecoverView,
+			AdminView adminView,
 			CachingDispatcherAsync dispatcher,
 			EventBus eventBus,
 			PlaceController placeController,
@@ -95,6 +100,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		this.businessAccountSettingsView = businessAccountSettingsView;
 		this.conversationView = conversationView;
 		this.passwordRecoveryView = passwordRecoverView;
+		this.adminView = adminView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -141,6 +147,9 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		}
 		else if (place instanceof PasswordRecoveryPlace) {
 			return new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView);
+		}
+		else if (place instanceof AdminPlace) {
+			return new AdminActivity(dispatcher, eventBus, placeController, ctx, adminView);
 		}
 		throw new IllegalArgumentException();
 	}

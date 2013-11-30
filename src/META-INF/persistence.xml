@@ -31,15 +31,16 @@
 			<property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
            <property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />				 
 			<property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />
+			<property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
              -->
              
-            <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" /> 
- 			<property name="javax.persistence.jdbc.url"
+<!--  			<property name="javax.persistence.jdbc.url"
 				value="jdbc:google:rdbms://zipplyrocks:zipplydb1/zipllydb" />
-           
+ -->           
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="hibernate.show_sql" value="true" />
+<!-- 			<property name="javax.persistence.jdbc.password" value="root" />
+ -->			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.connection.pool_size" value="0" />
 			<property name="javax.persistence.validation.mode" value="none"/> 

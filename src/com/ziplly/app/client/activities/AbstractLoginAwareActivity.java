@@ -1,17 +1,5 @@
 package com.ziplly.app.client.activities;
 
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.place.shared.PlaceController;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.InvalidCredentialsException;
-import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.places.LoginPlace;
-import com.ziplly.app.client.view.LoginAwareView;
-import com.ziplly.app.client.widget.LoginWidget;
-import com.ziplly.app.shared.ValidateLoginAction;
-import com.ziplly.app.shared.ValidateLoginResult;
 
 public abstract class AbstractLoginAwareActivity {
 /*	protected T view;

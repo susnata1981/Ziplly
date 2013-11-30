@@ -13,8 +13,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
@@ -51,7 +51,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 	@UiField
 	Button cancelBtn;
 
-	private HomePresenter presenter;
+	private Presenter presenter;
 
 	private PersonalAccountDTO account;
 	
@@ -61,11 +61,15 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 		setupHandlers();
 	}
 
+	public void setWidth(String width) {
+		accountWidgetModal.setWidth(width);
+	}
+	
 	private void setupHandlers() {
 		viewProfileBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				getPresenter().goTo(new PersonalAccountPlace(account.getAccountId()));
+				presenter.goTo(new PersonalAccountPlace(account.getAccountId()));
 				hide();
 			}
 		});
@@ -114,11 +118,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	public HomePresenter getPresenter() {
-		return presenter;
-	}
-
-	public void setPresenter(HomePresenter presenter) {
+	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 	}
 }

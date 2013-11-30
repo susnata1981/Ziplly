@@ -40,6 +40,7 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class BusinessAccountView extends Composite implements IBusinessAccountView {
@@ -86,7 +87,7 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	Anchor messagesLink;
 	
-	@UiField
+	@UiField(provided=true)
 	TweetBox tweetBox;
 	
 	// Account stats
@@ -115,6 +116,8 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	BusinessAccountDTO account;
 
 	public BusinessAccountView() {
+		tweetBox = new TweetBox();
+		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByBusiness());
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -283,18 +286,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	public void updateTweet(TweetDTO tweet) {
 		tview.updateTweet(tweet);
 	}
-//
-//	@Override
-//	public void displayAccountUpdateSuccessfullMessage() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void displayAccountUpdateFailedMessage() {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 	@Override
 	public void clearTweet() {

@@ -6,6 +6,7 @@ import com.ziplly.app.client.view.handler.GetJwtTokenActionHandler;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.BusinessTweetActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
+import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
 import com.ziplly.app.server.handlers.GetAccountDetailsActionHandler;
@@ -18,12 +19,15 @@ import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetResidentsActionHandler;
+import com.ziplly.app.server.handlers.GetTweetActionHandler;
 import com.ziplly.app.server.handlers.GetTweetForUserActionHandler;
 import com.ziplly.app.server.handlers.LikeTweetActionHandler;
 import com.ziplly.app.server.handlers.LogoutActionHandler;
 import com.ziplly.app.server.handlers.PayActionHandler;
 import com.ziplly.app.server.handlers.RegisterAccountActionHandler;
 import com.ziplly.app.server.handlers.ResetPasswordActionHandler;
+import com.ziplly.app.server.handlers.SearchAccountActionHandler;
+import com.ziplly.app.server.handlers.SendEmailActionHandler;
 import com.ziplly.app.server.handlers.SendMessageActionHandler;
 import com.ziplly.app.server.handlers.SendPasswordRecoveryActionHandler;
 import com.ziplly.app.server.handlers.TweetActionHandler;
@@ -35,6 +39,7 @@ import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
 import com.ziplly.app.shared.BusinessTweetAction;
 import com.ziplly.app.shared.CommentAction;
+import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountDetailsAction;
@@ -49,12 +54,15 @@ import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetResidentsRequest;
 import com.ziplly.app.shared.GetTweetForUserAction;
+import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.MyAction;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.ResetPasswordAction;
+import com.ziplly.app.shared.SearchAccountAction;
+import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
 import com.ziplly.app.shared.TweetAction;
@@ -75,6 +83,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetAccountByIdAction.class, GetAccountByIdActionHandler.class);
 		
 		bindHandler(RegisterAccountAction.class, RegisterAccountActionHandler.class);
+		bindHandler(CreateRegistrationAction.class, CreateRegistrationActionHandler.class);
 		bindHandler(UpdatePasswordAction.class, UpdatePasswordActionHandler.class);
 		
 		bindHandler(ValidateLoginAction.class, ValidateLoginActionHandler.class);
@@ -97,6 +106,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetTweetForUserAction.class, GetTweetForUserActionHandler.class);
 		bindHandler(GetAccountDetailsAction.class, GetAccountDetailsActionHandler.class);
 		bindHandler(DeleteTweetAction.class, DeleteTweetActionHandler.class);
+		bindHandler(SendEmailAction.class, SendEmailActionHandler.class);
 		
 		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
 		
@@ -115,5 +125,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(SendPasswordRecoveryEmailAction.class, SendPasswordRecoveryActionHandler.class);
 		bindHandler(VerifyPasswordRecoveryHashAction.class, VerifyPasswordRecoveryHashActionHandler.class);
 		bindHandler(ResetPasswordAction.class, ResetPasswordActionHandler.class);
+		
+		// admin
+		bindHandler(GetTweetsAction.class, GetTweetActionHandler.class);
+		bindHandler(SearchAccountAction.class, SearchAccountActionHandler.class);
 	}
 }

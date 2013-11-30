@@ -27,6 +27,7 @@ import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -107,7 +108,8 @@ public class SignupView extends Composite implements
 
 	@UiField
 	Image profileImagePreview;
-
+	
+	boolean imageUploaded = false;
 	String profileImageUrl;
 	SignupActivityPresenter presenter;
 
@@ -254,12 +256,13 @@ public class SignupView extends Composite implements
 		account.setEmail(emailInput);
 		account.setPassword(password.getText().trim());
 		account.setZip(Integer.parseInt(zipInput));
+		account.setRole(Role.USER);
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
 
-		if (profileImageUrl != null) {
+		if (imageUploaded && profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
-		}
+		} 
 
 		presenter.register(account);
 	}
@@ -282,6 +285,7 @@ public class SignupView extends Composite implements
 	@UiHandler("uploadBtn")
 	void upload(ClickEvent event) {
 		uploadForm.submit();
+		imageUploaded = true;
 	}
 
 	@Override

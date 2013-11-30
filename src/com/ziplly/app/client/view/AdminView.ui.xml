@@ -1,0 +1,95 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.tweetSearchForm {
+		border: 1px solid #ddd;
+		padding: 6px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Alert ui:field="message" />
+		<b:TabPanel tabPosition="left" ui:field="tabPanel">
+			<b:Tab heading="Accounts">
+				<b:FluidRow>
+					<b:Column size="8">
+						<b:FluidRow>
+							<b:Column size="4">
+								<b:TextBox ui:field="emailTextBox" placeholder="Email..."></b:TextBox>
+							</b:Column>
+							<b:Column size="4">
+								<b:ControlGroup>
+									<b:Controls>
+										<b:ListBox ui:field="accountTypeTextBox">
+										    <g:item>Personal</g:item>
+										    <g:item>Business</g:item>
+										</b:ListBox>
+									</b:Controls>
+								</b:ControlGroup>
+							</b:Column>
+						</b:FluidRow>
+						<b:ControlGroup>
+							<b:Controls>
+								<b:TextBox ui:field="nameTextBox" placeholder="Name..."></b:TextBox>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup>
+							<b:Controls>
+								<b:TextBox ui:field="ZipTextBox" placeholder="zip..."></b:TextBox>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:FormActions>
+							<b:Button type="PRIMARY" ui:field="accountSearchBtn">Search</b:Button>
+							<b:Button ui:field="accountCancelBtn">Cancel</b:Button>
+						</b:FormActions>
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column size="8">
+						<g:HTMLPanel ui:field="accountsCellTablePanel">
+						</g:HTMLPanel>
+					</b:Column>
+				</b:FluidRow>
+			</b:Tab>
+			<b:Tab heading="Tweets" active="true">
+				<b:FluidRow>
+					<b:Column size="8">
+						<b:ControlGroup>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:TextBox ui:field="zipCode" placeholder="Zip..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:Controls>
+								<b:ControlLabel for="tweetCategoryListBox">Tweet
+									category&nbsp;
+								</b:ControlLabel>
+								<b:ListBox multipleSelect="true" ui:field="tweetCategoryListBox">
+								</b:ListBox>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup>
+							<b:Controls>
+								<b:ControlLabel for="tweetStatusListBox">Tweet
+									status&nbsp;
+								</b:ControlLabel>
+								<b:ListBox ui:field="tweetStatusListBox">
+								</b:ListBox>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:FormActions>
+							<b:Button type="PRIMARY" ui:field="tweetSearchBtn">Search</b:Button>
+							<b:Button ui:field="cancelBtn">Cancel</b:Button>
+						</b:FormActions>
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column size="8">
+						<g:HTMLPanel ui:field="tweetCellTablePanel">
+						</g:HTMLPanel>
+					</b:Column>
+				</b:FluidRow>
+			</b:Tab>
+		</b:TabPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

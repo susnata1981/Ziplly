@@ -43,7 +43,6 @@ public class EmailServiceImpl implements EmailService {
 		data.put("recipientEmail", recipientEmail);
 		
 		String emailMessage = prepareEmail(data, template);
-//		System.out.println("Email:"+emailMessage);
 		sendEmail(recipientName, recipientEmail, emailMessage);
 	}
 
@@ -66,7 +65,8 @@ public class EmailServiceImpl implements EmailService {
 		return null;		
 	}
 	
-	void sendEmail(String recipientName, String recipientEmail, String emailContent) {
+	// TODO (can recipientName be null)
+	private void sendEmail(String recipientName, String recipientEmail, String emailContent) {
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props);
 		Message msg = new MimeMessage(session);
