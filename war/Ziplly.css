@@ -1,0 +1,244 @@
+/*general style*/
+header,hgroup,nav,section,article,aside,footer {
+	display: block;
+}
+/*header area*/
+header {
+	height: 100px;
+	text-align: center;
+}
+
+#sidebar {
+	width: 140px;
+	padding: 5px;
+	border: 1px solid #ddd;
+	background: #f8f1f6;
+}
+
+h2 {
+	font-family: cursive;
+	font-size: 20px;
+	padding: 4px;
+}
+
+/* nav area
+nav {
+	width: 100%;
+	height: 42px;
+	margin: 10px 0px 0px 0px;
+	background: #f8f6f2;
+	overflow: auto;
+}
+
+nav ul {
+	margin: 0 auto;
+	width: 940px;
+	list-style: none;
+}
+
+nav ul li {
+	float: right;
+}
+
+nav ul li a {
+	display: block;
+	margin-right: 20px;
+	width: 140px;
+	font-size: 12px;
+	font-family: sans-serif;
+	line-height: 44px;
+	text-align: center;
+	text-decoration: none;
+	color: #777;
+}
+
+nav ul li a:hover {
+	color: green;
+}
+
+nav ul li.selected a {
+	color: #fff;
+}
+
+nav ul li.subscribe a {
+	margin-left: 22px;
+	padding-left: 33px;
+	text-align: left;
+	background: url("rss.png") left center no-repeat;
+} 
+*/
+/* .gwt-Anchor {
+	float: left;
+	width: 100px;
+	height: 40px;
+	font-style: Arial;
+	font-size: 16px;
+	margin-right: 5px;
+	padding: 4px;
+} */
+hr {
+	margin: 10px;
+}
+
+.heading {
+	font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia,
+		serif;
+	font-size: 20px;
+	border-bottom: 2px solid #ddd;
+	margin: 2px 0px 20px 0px;
+}
+
+#wrapper {
+	width: 100%;
+	overflow-x: hidden;
+	height: 700px;
+}
+
+.backgroundImage {
+	background: url('neighborhood_large.jpg'); no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+/*section area*/
+section {
+	float: left;
+	width: 100%;
+	margin: auto;
+}
+
+article#main {
+	float: left;
+	width: 100%;
+	margin: 10px;
+}
+
+/*aside area
+aside {
+	width: 160px;
+	height: 400px;
+	background: #f9f9f9;
+	float: left;
+}
+*/
+/*footer area*/
+footer {
+	clear: both;
+	height: 40px;
+	margin-top: 5px;
+	background: #f1f1f1;
+	text-align: center;
+}
+/******** Login **************/
+/*****************************/
+/******** Main View **********/
+#mainHeading {
+	margin: 80px 10px 20px 80px;
+	width: 400px;
+}
+
+.bigtext {
+	font-family: sans-serif;
+	font-size: 38px;
+}
+
+.mediumtext {
+	font-family: sans-serif;
+	font-size: 17px;
+}
+
+.smalltext {
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+.tinytext {
+	font-family: sans-serif;
+	font-size: 12px;
+}
+
+.datefont {
+	font-family: sans-serif;
+	font-size: 11px;
+}
+
+#mainHeading h1 {
+	font-family: cursive;
+	font-size: 28px;
+	font-weight: bold;
+	color: #fff;
+	padding: 4px;
+	text-align: center;
+}
+
+#mainPageSingupForm {
+	position: absolute;
+	width: 300px;
+	top: 200px;
+	right: 40px;
+	float: right;
+	text-align: center;
+}
+
+#mainPageBusinessSingupForm {
+	position: absolute;
+	width: 300px;
+	top: 420px;
+	right: 40px;
+	text-align: center;
+}
+/*********Main View Ends********/
+/******** Account **************/
+.profile_section_heading {
+	font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia,
+		serif;
+	font-size: 20px;
+	height: 30px;
+	border-bottom: 2px solid #ddd;
+	margin: 5px 0px 20px 0px;
+}
+/*************End of Account****************/
+.tweetFilterLink {
+	clear: both;
+	float: left;
+	display: block;
+	font-size: 15px;
+	width: 100%;
+	margin: 3px 2px;
+	padding: 5px 2px;
+	background: #f9f9f9;
+}
+
+.tweetFilterLink:hover {
+	background: #ddd;
+}
+
+#mainContent {
+	margin: 0;
+	width: 100%;
+}
+
+.pcell {
+	width: 420px;
+	height: 100px;
+	float: left;
+	margin: 10px;
+	padding: 3px;
+	border: 1px solid #ddd;
+}
+
+.pcell img {
+	width: 140px;
+	height: 100px;
+}
+
+.filterheader {
+	font-style: sans-serif;
+	font-size: 16px;
+	text-align: center;
+	clear: both;
+	width: 160px;
+	height: 30px;
+	background: #ddd;
+}
