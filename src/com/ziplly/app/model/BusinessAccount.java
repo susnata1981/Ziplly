@@ -12,6 +12,7 @@ public class BusinessAccount extends Account {
 	private String website;
 	private String street1;
 	private String street2;
+	private BusinessType businessType;
 	
 	@OneToOne(fetch=FetchType.EAGER, mappedBy="seller")
 	private Transaction transaction;
@@ -26,6 +27,7 @@ public class BusinessAccount extends Account {
 		this.website = account.getWebsite();
 		this.street1 = account.getStreet1();
 		this.street2 = account.getStreet2();
+		this.businessType = account.getBusinessType();
 	}
 	
 	public String getName() {
@@ -67,5 +69,13 @@ public class BusinessAccount extends Account {
 
 	public void setTransaction(Transaction transaction) {
 		this.transaction = transaction;
+	}
+
+	public BusinessType getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(BusinessType type) {
+		this.businessType = type;
 	}
 }

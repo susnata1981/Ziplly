@@ -1,5 +1,6 @@
 package com.ziplly.app.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -17,6 +18,8 @@ import com.ziplly.app.model.Comment;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.Hashtag;
+import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.Love;
@@ -68,6 +71,7 @@ public class EntityUtil {
 		acct.setCity(account.getCity());
 		acct.setState(account.getState());
 		acct.setRole(account.getRole());
+		acct.setStatus(account.getStatus());
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
@@ -79,15 +83,10 @@ public class EntityUtil {
 		}
 
 		if (Hibernate.isInitialized(account.getPrivacySettings())) {
-			for(PrivacySettings ps : account.getPrivacySettings()) {
+			for (PrivacySettings ps : account.getPrivacySettings()) {
 				acct.getPrivacySettings().add(clone(ps));
 			}
 		}
-		// if (Hibernate.isInitialized(account.getTweets())) {
-		// for(Tweet t : account.getTweets()) {
-		// acct.getTweets().add(clone(t, false));
-		// }
-		// }
 	}
 
 	public static PersonalAccountDTO clone(PersonalAccount account) {
@@ -112,6 +111,7 @@ public class EntityUtil {
 		clone(account, resp);
 		resp.setName(account.getName());
 		resp.setPhone(account.getPhone());
+		resp.setBusinessType(account.getBusinessType());
 		resp.setWebsite(account.getWebsite());
 		resp.setStreet1(account.getStreet1());
 		resp.setStreet2(account.getStreet2());
@@ -127,13 +127,13 @@ public class EntityUtil {
 		return interestDto;
 	}
 
-//	public static AccountSettingDTO clone(PrivacySettings as) {
-//		AccountSettingDTO asd = new AccountSettingDTO();
-//		asd.setId(as.getId());
-//		asd.setSection(as.getSection());
-//		asd.setSetting(as.getSetting());
-//		return asd;
-//	}
+	// public static AccountSettingDTO clone(PrivacySettings as) {
+	// AccountSettingDTO asd = new AccountSettingDTO();
+	// asd.setId(as.getId());
+	// asd.setSection(as.getSection());
+	// asd.setSetting(as.getSetting());
+	// return asd;
+	// }
 
 	public static TweetDTO clone(Tweet tweet) {
 		return clone(tweet, true);
@@ -259,7 +259,7 @@ public class EntityUtil {
 		resp.setTimeCreated(an.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static AccountNotificationSettingsDTO clone(AccountNotificationSettings ans) {
 		AccountNotificationSettingsDTO resp = new AccountNotificationSettingsDTO();
 		resp.setNotificationId(ans.getNotificationId());
@@ -271,12 +271,31 @@ public class EntityUtil {
 		resp.setTimeCreated(ans.getTimeCreated());
 		return resp;
 	}
-	
+
 	public static PrivacySettingsDTO clone(PrivacySettings ps) {
 		PrivacySettingsDTO resp = new PrivacySettingsDTO();
 		resp.setId(ps.getId());
 		resp.setSection(ps.getSection());
 		resp.setSetting(ps.getSetting());
+		return resp;
+	}
+
+	public static HashtagDTO clone(Hashtag h) {
+		HashtagDTO resp = new HashtagDTO();
+		resp.setTag(h.getTag());
+		if (Hibernate.isInitialized(h.getTweets())) {
+			for (Tweet t : h.getTweets()) {
+				resp.add(clone(t));
+			}
+		}
+		return resp;
+	}
+
+	public static List<HashtagDTO> cloneHashtahList(List<Hashtag> result) {
+		List<HashtagDTO> resp = new ArrayList<HashtagDTO>();
+		for (Hashtag h : result) {
+			resp.add(clone(h));
+		}
 		return resp;
 	}
 }

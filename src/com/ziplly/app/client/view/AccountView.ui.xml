@@ -68,7 +68,7 @@
 			</div>
 			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 			    <g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
-			    	<dt:TweetBox ui:field="tweetBox" width="60%"/>
+			    	<dt:TweetBox ui:field="tweetBox"/>
 			    </g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>

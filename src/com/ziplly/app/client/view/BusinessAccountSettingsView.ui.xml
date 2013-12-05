@@ -102,7 +102,7 @@
 					<b:Button ui:field="cancelBtn">Cancel</b:Button>
 				</g:HTMLPanel>
 			</b:Tab>
-			<b:Tab heading="Payment details">
+			<b:Tab heading="Payment details" ui:field="subscriptionTab">
 				<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
 					<b:Alert ui:field="paymentStatus" />
 					<g:HTMLPanel ui:field="subscriptionPlanTablePanel"

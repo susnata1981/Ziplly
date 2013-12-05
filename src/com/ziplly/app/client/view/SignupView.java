@@ -16,6 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -26,6 +27,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
+import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
@@ -160,6 +162,12 @@ public class SignupView extends Composite implements
 		return true;
 	}
 
+	boolean checkEmailInvitationStatus = false;
+	
+	public void verifiedEmailInvitationStatus() {
+		checkEmailInvitationStatus = true;
+	}
+	
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
 		ValidationResult result = FieldVerifier.validateEmail(emailInput);
@@ -169,6 +177,15 @@ public class SignupView extends Composite implements
 			emailError.setVisible(true);
 			return false;
 		}
+		
+//		if (isRegistrationRescricted) {
+//			String code = Window.Location.getParameter("code");
+//			presenter.verifyInvitationForEmail(FieldVerifier.sanitize(email.getText()), code);
+//			while (!checkEmailInvitationStatus) {
+//				
+//			}
+//		}
+		
 		return true;
 	}
 
@@ -253,6 +270,7 @@ public class SignupView extends Composite implements
 		PersonalAccountDTO account = new PersonalAccountDTO();
 		account.setFirstName(firstnameInput);
 		account.setLastName(lastnameInput);
+		account.setStatus(AccountStatus.PENDING_ACTIVATION);
 		account.setEmail(emailInput);
 		account.setPassword(password.getText().trim());
 		account.setZip(Integer.parseInt(zipInput));
@@ -264,7 +282,15 @@ public class SignupView extends Composite implements
 			account.setImageUrl(profileImageUrl);
 		} 
 
-		presenter.register(account);
+		String value = System.getProperty(StringConstants.RESTRICT_REGISTRATION_FEATURE, "false");
+		boolean isRegistrationRescricted = Boolean.valueOf(value);
+		if (isRegistrationRescricted) {
+			System.out.println("Window.Loc="+Window.Location.getParameter("gwt.codesvr"));
+			String code = Window.Location.getParameter("code");
+			presenter.register(account, code);
+		} else {
+			presenter.register(account);
+		}
 	}
 
 	public void displayAccount(PersonalAccountDTO account) {
@@ -319,7 +345,10 @@ public class SignupView extends Composite implements
 		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
 	}
 
-	public void displayMessage(String msg, AlertType error) {
-		loginWidget.displayMessage(msg, error);
+	public void displayMessage(String msg, AlertType type) {
+//		loginWidget.displayMessage(msg, error);
+		infoField.setText(msg);
+		infoField.setType(type);
+		infoField.setVisible(true);
 	}
 }

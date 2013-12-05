@@ -28,12 +28,12 @@ import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 
-/*
+/**
  * Community Wall View
  */
 public class HomeView extends Composite implements IHomeView {
 
-	private String TWEET_WIDGET_WIDTH = "55%";
+	private String tweetWidth = "55%";
 	private static HomeViewUiBinder uiBinder = GWT
 			.create(HomeViewUiBinder.class);
 	
@@ -96,14 +96,9 @@ public class HomeView extends Composite implements IHomeView {
 
 	@Override
 	public void clear() {
-//		int totalWidgets = communityWallPanel.getWidgetCount();
-//		for(int i=0; i<totalWidgets; i++) {
-//			Widget widget = communityWallPanel.getWidget(i);
-//			if (widget instanceof TweetWidget) {
-//				widget.removeFromParent();
-//			}
-//		}
 	}
+
+	ITweetView<TweetPresenter> tview = new TweetView();
 
 	@Override
 	public void display(List<TweetDTO> tweets) {
@@ -113,25 +108,33 @@ public class HomeView extends Composite implements IHomeView {
 		communityWallPanel.clear();
 		tweetBox = new TweetBox();
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
-		tweetBox.setWidth(TWEET_WIDGET_WIDTH);
+		tweetBox.setWidth(tweetWidth);
 		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
 		tweetBox.setPresenter(presenter);
 		communityWallPanel.add(tweetBox);
 		
-		for(TweetDTO tweet: tweets) {
-			long time11 = System.currentTimeMillis();
-			TweetWidget tw = new TweetWidget();
-			tw.setWidth("55%");
-			long time12 = System.currentTimeMillis();
-			tw.setPresenter(presenter);
-			tw.displayTweet(tweet);
-			long time13 = System.currentTimeMillis();
-			communityWallPanel.add(tw);
-			long time14 = System.currentTimeMillis();
-			
-			System.out.println("Time to create tweet widget: "+(time12-time11)+" to render: "+(time13-time12)+" to addToPanel: "+(time14-time13));
-			tweetWidgetMap.put(tweet.getTweetId(), tw);
-		}
+//		for(TweetDTO tweet: tweets) {
+//			long time11 = System.currentTimeMillis();
+//			TweetWidget tw = new TweetWidget();
+//			tw.setWidth(tweetWidth);
+//			long time12 = System.currentTimeMillis();
+//			tw.setPresenter(presenter);
+//			tw.displayTweet(tweet);
+//			long time13 = System.currentTimeMillis();
+//			communityWallPanel.add(tw);
+//			long time14 = System.currentTimeMillis();
+//			
+//			System.out.println("Time to create tweet widget: "+(time12-time11)+" to render: "+(time13-time12)+" to addToPanel: "+(time14-time13));
+//			tweetWidgetMap.put(tweet.getTweetId(), tw);
+//		}
+		tview.setWidth("55%");
+		tview.add(tweets);
+		communityWallPanel.add(tview);
+	}
+	
+	@Override
+	public void addTweet(TweetDTO tweet) {
+		tview.addTweet(tweet);
 	}
 	
 	@Override
@@ -140,6 +143,7 @@ public class HomeView extends Composite implements IHomeView {
 		for(TweetDTO tweet: tweets) {
 			long time11 = System.currentTimeMillis();
 			TweetWidget tw = new TweetWidget();
+			tw.setWidth(tweetWidth);
 			long time12 = System.currentTimeMillis();
 			tw.setPresenter(presenter);
 			tw.displayTweet(tweet);

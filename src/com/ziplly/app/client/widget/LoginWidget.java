@@ -193,7 +193,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	
 	@UiHandler("businessSignupLink")
 	public void businessSignupLinkClicked(ClickEvent event) {
-		presenter.goTo(new BusinessSignupPlace());
+		presenter.goTo(new BusinessSignupPlace(""));
 	}
 	
 	@UiHandler("passwordRecoveryLink")

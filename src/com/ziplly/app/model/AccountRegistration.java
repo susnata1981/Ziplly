@@ -15,6 +15,8 @@ public class AccountRegistration extends AbstractTimestampAwareEntity {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private AccountRegistrationStatus status;
+	private AccountType accountType;
+	private BusinessType businessType;
 	private String email;
 	private long code;
 	
@@ -43,8 +45,23 @@ public class AccountRegistration extends AbstractTimestampAwareEntity {
 		this.status = status;
 	}
 
+	public AccountType getAccountType() {
+		return accountType;
+	}
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
+	}
+
+	public BusinessType getBusinessType() {
+		return businessType;
+	}
+	public void setBusinessType(BusinessType businessType) {
+		this.businessType = businessType;
+	}
+
 	public static enum AccountRegistrationStatus {
 		ACTIVE,
-		INACTIVE
+		INACTIVE, 
+		USED;
 	}
 }

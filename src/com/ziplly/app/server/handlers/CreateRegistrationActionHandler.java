@@ -51,11 +51,14 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 		long code = generateRegistrationCode(action.getEmail());
 		AccountRegistration ar = new AccountRegistration();
 		ar.setEmail(action.getEmail());
+		ar.setAccountType(action.getType());
+		ar.setBusinessType(action.getBusinessType());
 		ar.setCode(code);
 		ar.setStatus(AccountRegistrationStatus.ACTIVE);
 		registrationDao.create(ar);
 		try {
 			String registrationLink = URLEncoder.encode("code="+code+"email="+action.getEmail(),"utf-8");
+			// TODO send email
 			return new CreateRegistrationResult(registrationLink);
 		} catch (UnsupportedEncodingException e) {
 			throw new InternalError("Couldn't create registration link");

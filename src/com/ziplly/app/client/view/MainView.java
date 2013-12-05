@@ -56,7 +56,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 	Button fbLoginButtonOnMainPage;
 
 	@UiField
-	HTMLPanel categoryDetailsSection;
+	HTMLPanel descriptionPanel;
 
 	@UiField
 	MainViewStyle mainViewStyle;
@@ -103,7 +103,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 	
 	@UiHandler("businessSignupBtn")
 	public void businessSignup(ClickEvent event) {
-		presenter.goTo(new BusinessSignupPlace());
+		presenter.goTo(new BusinessSignupPlace(""));
 	}
 	
 	@Override

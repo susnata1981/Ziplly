@@ -17,4 +17,6 @@ public interface AccountDAO {
 	List<PersonalAccountDTO> findByZip(int zip);
 	void updatePassword(Account acct);
 	List<AccountDTO> findAll();
+	List<AccountDTO> findAccounts(String query, int start, int end);
+	Long findTotalAccounts(String countQuery);
 }

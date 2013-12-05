@@ -1,6 +1,5 @@
 package com.ziplly.app.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -51,7 +50,7 @@ import com.ziplly.app.shared.BCrypt;
 @Table(name="account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
-public class Account implements Serializable {
+public class Account extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@NotNull
@@ -84,18 +83,13 @@ public class Account implements Serializable {
 	private String neighborhood;
 	private String city;
 	private String state;
+	private AccountStatus status;
 	
 	@Column(name="role", insertable=true, updatable=false)
 	private Role role;
 
 	@Column(name="last_login")
 	private Date lastLoginTime;
-	
-	@Column(name="time_updated")
-	private Date timeUpdated;
-	
-	@Column(name="time_created")
-	private Date timeCreated;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="sender")
 	private List<Tweet> tweets = new ArrayList<Tweet>();
@@ -127,6 +121,7 @@ public class Account implements Serializable {
 		setCity(account.getCity());
 		setState(account.getState());
 		setRole(account.getRole());
+		setStatus(account.getStatus());
 		setLastLoginTime(account.getLastLoginTime());
 		setTimeCreated(account.getTimeCreated());
 		setTimeUpdated(account.getTimeUpdated());
@@ -243,14 +238,14 @@ public class Account implements Serializable {
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
-
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
-	}
+//
+//	public Date getTimeCreated() {
+//		return timeCreated;
+//	}
+//
+//	public void setTimeCreated(Date timeCreated) {
+//		this.timeCreated = timeCreated;
+//	}
 	
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
@@ -280,13 +275,13 @@ public class Account implements Serializable {
 		this.notificationSettings = notifications;
 	}
 
-	public Date getTimeUpdated() {
-		return timeUpdated;
-	}
-
-	public void setTimeUpdated(Date timeUpdated) {
-		this.timeUpdated = timeUpdated;
-	}
+//	public Date getTimeUpdated() {
+//		return timeUpdated;
+//	}
+//
+//	public void setTimeUpdated(Date timeUpdated) {
+//		this.timeUpdated = timeUpdated;
+//	}
 
 	public String getNeighborhood() {
 		return neighborhood;
@@ -331,5 +326,13 @@ public class Account implements Serializable {
 	public void addPrivacySettings(PrivacySettings privacySetting) {
 		privacySetting.setAccount(this);
 		this.privacySettings.add(privacySetting);
+	}
+
+	public AccountStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccountStatus status) {
+		this.status = status;
 	}
 }

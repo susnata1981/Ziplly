@@ -106,17 +106,19 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@UiField
 	SpanElement unreadMessageCountField;
 	
-//	AccountWidget accountWidget;
 	EmailWidget emailWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
-	SendMessageWidget smw;
+	private SendMessageWidget smw;
+	private String tweetWidgetWidth = "68%";
+	private String tweetBoxWidth = "68%";
 	
 	public AccountView() {
-//		this.accountWidget = new AccountWidget();
 		tweetBox = new TweetBox();
 		emailWidget = new EmailWidget();
+		tweetBox.setWidth(tweetBoxWidth);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
+		tview.setWidth(tweetWidgetWidth);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -156,7 +158,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		populateInterest();
 		
 		// display tweets
-		System.out.println("Displaying personal profile...");
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
 		displayTweets(account.getTweets());
 	}
@@ -206,19 +207,9 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	@Override
 	public void clear() {
-//		accountWidget.clear();
 	}
 
-//	public void displayAccountUpdateSuccessfullMessage() {
-//		accountWidget.getEditAccountDetailsWidget().displaySuccessMessage();
-//	}
-//
-//	public void displayAccountUpdateFailedMessage() {
-//		accountWidget.getEditAccountDetailsWidget().displayErrorMessage();
-//	}
-
 	public void clearTweet() {
-//		accountWidget.clearTweet();
 	}
 
 	@Override

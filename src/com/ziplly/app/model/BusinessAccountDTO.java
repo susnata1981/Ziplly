@@ -8,7 +8,8 @@ public class BusinessAccountDTO extends AccountDTO {
 	private String street1;
 	private String street2;
 	private TransactionDTO transaction;
-	
+	private BusinessType businessType;
+
 	public BusinessAccountDTO() {
 	}
 	
@@ -55,5 +56,12 @@ public class BusinessAccountDTO extends AccountDTO {
 
 	public void setTransaction(TransactionDTO transaction) {
 		this.transaction = transaction;
+	}
+	public BusinessType getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(BusinessType type) {
+		this.businessType = type;
 	}
 }

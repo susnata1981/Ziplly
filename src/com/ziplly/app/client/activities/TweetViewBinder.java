@@ -5,7 +5,7 @@ import com.google.gwt.user.client.Timer;
 
 public class TweetViewBinder {
 	private static final int THRESHOLD = 300;
-	private static final int REFRESH_RATE = 200;
+	private static final int REFRESH_RATE = 50;
 
 	Timer timer;
 	Element elem;
@@ -38,6 +38,10 @@ public class TweetViewBinder {
 	}
 
 	private boolean detectScrollerHitBottom() {
+		int sh = elem.getScrollHeight();
+		int st = elem.getScrollTop();
+		int of = elem.getOffsetHeight();
+		System.out.println("SH="+sh+" ST="+st+" OF="+of);
 		return elem.getScrollHeight() - (elem.getScrollTop() + elem.getOffsetHeight()) < THRESHOLD;
 	}
 

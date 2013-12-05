@@ -17,19 +17,36 @@ public class AbstractTimestampAwareEntity implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="time_created")
-	protected Date timeCreated;
+	private Date timeCreated;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="time_updated")
-	protected Date timeUpdated;
+	private Date timeUpdated;
 	
 	@PrePersist
 	protected void onCreate() {
-		timeCreated = timeUpdated = new Date();
+		setTimeCreated(setTimeUpdated(new Date()));
 	}
 	
 	@PreUpdate
 	protected void onUpdate() {
-		timeUpdated = new Date();
+		setTimeUpdated(new Date());
+	}
+
+	public Date getTimeCreated() {
+		return timeCreated;
+	}
+
+	public void setTimeCreated(Date timeCreated) {
+		this.timeCreated = timeCreated;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public Date setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
+		return timeUpdated;
 	}
 }

@@ -66,9 +66,9 @@
 
 	<g:HTMLPanel>
 		<div id="mainContent">
+			<b:Alert ui:field="infoField" animation="true" />
 			<div class="{style.singupForm}">
 				<div class="heading">Signup</div>
-				<b:Alert ui:field="infoField" animation="true" />
 				<b:Form>
 					<g:HTMLPanel addStyleNames="{style.namePanel}">
 						<b:ControlGroup ui:field="firstnameCg"

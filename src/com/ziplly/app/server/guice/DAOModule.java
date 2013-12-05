@@ -10,6 +10,8 @@ import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.CommentDAOImpl;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.ConversationDAOImpl;
+import com.ziplly.app.dao.HashtagDAO;
+import com.ziplly.app.dao.HashtagDAOImpl;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.InterestDAOImpl;
 import com.ziplly.app.dao.LikeDAO;
@@ -55,6 +57,7 @@ public class DAOModule extends AbstractModule {
 		bind(SubscriptionPlanDAO.class).to(SubscriptionPlanDAOImpl.class).in(Singleton.class);
 		bind(PasswordRecoveryDAO.class).to(PasswordRecoveryDAOImpl.class).in(Singleton.class);
 		bind(AccountRegistrationDAO.class).to(AccountRegistrationDAOImpl.class).in(Singleton.class);
+		bind(HashtagDAO.class).to(HashtagDAOImpl.class).in(Singleton.class);
 	}
 
 //	@Provides

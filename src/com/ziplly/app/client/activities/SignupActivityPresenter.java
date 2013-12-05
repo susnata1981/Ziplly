@@ -7,4 +7,5 @@ public interface SignupActivityPresenter extends LoginPresenter {
 	void register(AccountDTO account);
 	void setImageUploadUrl();
 	void setUploadImageHandler();
+	void register(AccountDTO account, String code);
 }

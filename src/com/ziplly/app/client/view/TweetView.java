@@ -28,8 +28,11 @@ public class TweetView extends Composite implements
 	@UiField
 	HTMLPanel tweetsSection;
 	TweetPresenter presenter;
+	
 	// TweetId ---> TweetWidget 
 	Map<Long, TweetWidget> tweetWidgetMap = new HashMap<Long, TweetWidget>();
+	
+	private String tweetWidgetWidth = "68%";
 	
 	public TweetView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -51,6 +54,11 @@ public class TweetView extends Composite implements
 		doDisplayTweets(tweets);
 	}
 
+	@Override
+	public void setWidth(String width) {
+		tweetWidgetWidth = width;
+	}
+	
 	private void doDisplayTweets(List<TweetDTO> tweets) {
 		if (tweets != null) {
 			for (TweetDTO tweet : tweets) {
@@ -59,9 +67,10 @@ public class TweetView extends Composite implements
 		}
 	}
 	
-	private void addTweet(TweetDTO tweet) {
+	@Override
+	public void addTweet(TweetDTO tweet) {
 		TweetWidget tw = new TweetWidget();
-		tw.setWidth("60%");
+		tw.setWidth(tweetWidgetWidth );
 		tw.setPresenter(presenter);
 		tw.displayTweet(tweet);
 		tweetsSection.add(tw);

@@ -1,10 +1,10 @@
 package com.ziplly.app.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -66,11 +68,11 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@BatchSize(size=10)
 	private Set<Love> likes = new HashSet<Love>();
 	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "tweet_hashtag", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "tweet_id") })
+	private Set<Hashtag> hashtags = new HashSet<Hashtag>();
+	
 	private TweetStatus status;
-//	@Column(name="time_updated")
-//	private Date timeUpdated;
-//	@Column(name="time_created")
-//	private Date timeCreated;
 	
 	public Tweet() {
 	}
@@ -83,8 +85,8 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		type = tweet.getType();
 		content = tweet.getContent();
 		status = tweet.getStatus();
-		timeUpdated = tweet.getTimeUpdated();
-		timeCreated = tweet.getTimeCreated();
+		setTimeUpdated(tweet.getTimeUpdated());
+		setTimeCreated(tweet.getTimeCreated());
 	}
 	
 	public TweetType getType() {
@@ -138,14 +140,6 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		this.tweetId = tweetId;
 	}
 
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
-	}
-
 	public Set<Love> getLikes() {
 		return likes;
 	}
@@ -154,11 +148,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		this.likes = likes;
 	}
 
-	public Date getTimeUpdated() {
-		return timeUpdated;
-	}
-
-	public void setTimeUpdated(Date timeUpdated) {
-		this.timeUpdated = timeUpdated;
+	public void addHashtag(Hashtag h) {
+		hashtags.add(h);
 	}
 }

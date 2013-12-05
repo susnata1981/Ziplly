@@ -5,6 +5,7 @@ import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 import com.ziplly.app.client.view.handler.GetJwtTokenActionHandler;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.BusinessTweetActionHandler;
+import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
@@ -38,6 +39,7 @@ import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
 import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
 import com.ziplly.app.shared.BusinessTweetAction;
+import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.DeleteTweetAction;
@@ -129,5 +131,6 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		// admin
 		bindHandler(GetTweetsAction.class, GetTweetActionHandler.class);
 		bindHandler(SearchAccountAction.class, SearchAccountActionHandler.class);
+		bindHandler(CheckEmailRegistrationAction.class, CheckEmailRegistrationActionHandler.class);
 	}
 }

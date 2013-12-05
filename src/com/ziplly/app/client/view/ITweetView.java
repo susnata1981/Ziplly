@@ -14,4 +14,6 @@ public interface ITweetView<T extends Presenter> extends View<T> {
 	void updateLike(LoveDTO like);
 	void updateTweet(TweetDTO tweet);
 	void remove(TweetDTO tweet);
+	void setWidth(String width);
+	void addTweet(TweetDTO tweet);
 }

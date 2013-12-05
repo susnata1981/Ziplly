@@ -122,7 +122,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			return new OAuthActivity(dispatcher, eventBus, placeController, ctx, (OAuthPlace)place);
 		}
 		else if (place instanceof BusinessSignupPlace) {
-			return new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, businessSignupView);
+			return new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, (BusinessSignupPlace)place, businessSignupView);
 		}
 		else if (place instanceof PersonalAccountPlace) {
 			return new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView, (PersonalAccountPlace)place);

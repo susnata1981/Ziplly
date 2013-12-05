@@ -20,6 +20,7 @@ public class AccountDTO implements Serializable {
 	private String city;
 	private String state;
 	private Role role;
+	private AccountStatus status;
 	private Date lastLoginTime;
 	private Date timeUpdated;
 	private Date timeCreated;
@@ -208,5 +209,13 @@ public class AccountDTO implements Serializable {
 	
 	public void addPrivacySettings(PrivacySettingsDTO ps) {
 		privacySettings.add(ps);
+	}
+
+	public AccountStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccountStatus status) {
+		this.status = status;
 	}
 }

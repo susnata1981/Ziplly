@@ -8,12 +8,18 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.ISignupView;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountType;
+import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.shared.CheckEmailRegistrationAction;
+import com.ziplly.app.shared.CheckEmailRegistrationResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.RegisterAccountAction;
@@ -102,12 +108,49 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 				view.displayProfileImagePreview(imageUrl);
 				view.reset();
 				setImageUploadUrl();
-//				view.setImageUploadUrl(imageUrl);
-//				profileImagePreview.setUrl(imageUrl);
-//				profileImagePreview.setVisible(true);
-//				SignupView.this.profileImageUrl = imageUrl;
 			}
 		});
 	}
 
+	public void verifyInvitationForEmail(final AccountDTO account, long code) {
+		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(), code);
+		dispatcher.execute(action, new DispatcherCallbackAsync<CheckEmailRegistrationResult>() {
+
+			@Override
+			public void onSuccess(CheckEmailRegistrationResult result) {
+				if (account instanceof BusinessAccountDTO) {
+					((BusinessAccountDTO) account).setBusinessType(result.getBusinessType());
+				}
+				register(account);
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				if (th instanceof AccessError) {
+					view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void register(AccountDTO account, String code) {
+		if (code == null) {
+			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+			return;
+		}
+		
+		if (account != null && code != null ) {
+			try {
+				long c = Long.parseLong(code);
+				verifyInvitationForEmail(account, c);
+			} catch(NumberFormatException nf) {
+				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				return;
+			}
+		} else {
+			view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
+		}
+	}
+	
 }

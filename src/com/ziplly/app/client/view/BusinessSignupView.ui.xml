@@ -49,10 +49,10 @@
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
 	<g:HTMLPanel>
+		<b:Alert ui:field="infoField" animation="true" />
 		<div id="mainContent">
 			<div id="signupForm">
 				<div class="heading">Signup</div>
-				<b:Alert ui:field="infoField" animation="true" />
 				<b:Form>
 					<b:ControlGroup ui:field="businessNameCg">
 						<b:Controls>

@@ -31,9 +31,11 @@ public class SearchAccountActionHandler extends AbstractAdminActionHandler<Searc
 			throw new IllegalArgumentException();
 		}
 		
-		List<AccountDTO> accounts = accountDao.findAll();
+		List<AccountDTO> accounts = adminBli.getAccounts(action.getStart(), action.getEnd(), action.getCriteria());
+		Long totalAccounts = adminBli.getTotalAccounts(action.getCriteria());
 		SearchAccountResult result = new SearchAccountResult();
 		result.setAccounts(accounts);
+		result.setTotalAccounts(totalAccounts.intValue());
 		return result;
 	}
 

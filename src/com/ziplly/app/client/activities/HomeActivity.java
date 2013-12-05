@@ -78,6 +78,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		Element getTweetSectionElement();
 
 		void displayMessage(String message, AlertType error);
+
+		void addTweet(TweetDTO tweet);
 	}
 
 	HomePlace place;
@@ -321,7 +323,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
 		@Override
 		public void onSuccess(TweetResult result) {
-			placeController.goTo(new HomePlace());
+//			placeController.goTo(new HomePlace());
+			homeView.addTweet(result.getTweet());
 		}
 
 		@Override

@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class AccountSearchCriteria implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
 	private String email;
 	private int zipCode;
 	private String name;
+	private AccountType type;
 	
 	public int getZipCode() {
 		return zipCode;
@@ -26,5 +26,11 @@ public class AccountSearchCriteria implements Serializable {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public void setType(AccountType type) {
+		this.type = type;
+	}
+	public AccountType getType() {
+		return type;
 	}
 }

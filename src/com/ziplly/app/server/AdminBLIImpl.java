@@ -2,6 +2,8 @@ package com.ziplly.app.server;
 
 import java.util.List;
 
+import org.apache.xerces.dom3.as.ASDataType;
+
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.inject.Inject;
@@ -12,6 +14,9 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
 import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountSearchCriteria;
+import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetSearchCriteria;
 import com.ziplly.app.model.TweetStatus;
@@ -65,7 +70,7 @@ public class AdminBLIImpl implements AdminBLI {
 		return tweetDao.findTotalTweetCount(countQuery);
 	}
 	
-	// Builds the where clause
+	// Builds the where clause for Tweet search
 	private String buildQuery(TweetSearchCriteria tsc) {
 		StringBuilder sb = new StringBuilder("from Tweet t ");
 		boolean addedWhereClause = false;
@@ -105,5 +110,71 @@ public class AdminBLIImpl implements AdminBLI {
 		}
 		
 		return sb.toString();
+	}
+
+	@Override
+	public List<AccountDTO> getAccounts(int start, int end, AccountSearchCriteria asc) {
+		if (asc == null || end <= start) {
+			throw new IllegalArgumentException("Invalid arugments to getTweets");
+		}
+
+		String query = buildQuery(asc);
+		System.out.println("Query = "+query);
+		return accountDao.findAccounts(query, start, end);
+	}
+	
+	@Override
+	public Long getTotalAccounts(AccountSearchCriteria asc) {
+		if (asc == null) {
+			throw new IllegalArgumentException("Invalid arugments to getTweets");
+		}
+
+		String query = buildQuery(asc);
+		String countQuery = "select count(*) " + query;
+		return accountDao.findTotalAccounts(countQuery);
+	}
+	
+	private String buildQuery(AccountSearchCriteria asc) {
+		StringBuilder sb = new StringBuilder("from Account a ");
+		boolean addedWhereClause = false;
+		
+		if (isNonEmpty(asc.getEmail())) {
+			sb.append(" where a.email like '"+asc.getEmail()+"%'");
+			addedWhereClause = true;
+		}
+		
+//		if (isNonEmpty(asc.getName())) {
+//			if (addedWhereClause) {
+//				sb.append(" and ");
+//			} else {
+//				sb.append(" where ");
+//			}
+//			sb.append("a.firstname like '"+asc.getName()+"%'");
+//		}
+		
+		if (asc.getType() != AccountType.NONE) {
+			if (addedWhereClause) {
+				sb.append(" and ");
+			} else {
+				sb.append(" where ");
+			}
+			addedWhereClause = true;
+			sb.append("type = '"+asc.getType().getName()+"'");
+		}
+		
+		if (asc.getZipCode() != 0) {
+			if (addedWhereClause) {
+				sb.append(" and ");
+			} else {
+				sb.append(" where ");
+			}
+			sb.append("zip = "+asc.getZipCode());
+		}
+		
+		return sb.toString();
+	}
+
+	private boolean isNonEmpty(String input) {
+		return input != null && !"".equals(input);
 	}
 }

@@ -14,14 +14,14 @@ import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
@@ -130,6 +131,8 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	
 	// transaction details elements
 	@UiField
+	Tab subscriptionTab;
+	@UiField
 	TableCellElement subscriptionPlanName;
 	@UiField
 	TableCellElement subscriptionPlanDescription;
@@ -182,6 +185,11 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			email.setText(account.getEmail());
 			if (account.getImageUrl() != null) {
 				displayImagePreview(account.getImageUrl());
+			}
+
+			// Don't show subscription tab for non-profits
+			if (account.getBusinessType() == BusinessType.NON_PROFIT) {
+				hideSubscriptionTab();
 			}
 		}
 	}
@@ -517,5 +525,8 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	public void showTransactionHistory() {
 		subscriptionDetailsTable.setVisible(true);
 	}
-
+	
+	public void hideSubscriptionTab() {
+		subscriptionTab.setHideOn(Device.DESKTOP);
+	}
 }

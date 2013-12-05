@@ -20,6 +20,7 @@
 		<class>com.ziplly.app.model.SubscriptionPlan</class>
 		<class>com.ziplly.app.model.PasswordRecovery</class>
 		<class>com.ziplly.app.model.AccountNotificationSettings</class>
+		<class>com.ziplly.app.model.Hashtag</class>
 		<properties>
             <!-- 
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />

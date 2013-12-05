@@ -18,6 +18,8 @@ import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.Tweet;
+import com.ziplly.app.model.TweetDTO;
 
 public class AccountDAOImpl implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class
@@ -200,5 +202,27 @@ public class AccountDAOImpl implements AccountDAO {
 		List<Account> result = query.getResultList();
 		em.close();
 		return EntityUtil.cloneAccountList(result);
+	}
+
+	@Override
+	public List<AccountDTO> findAccounts(String queryStr, int start, int end) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery(queryStr);
+		query.setFirstResult(start);
+		query.setMaxResults(end-start);
+		@SuppressWarnings("unchecked")
+		List<Account> result = query.getResultList();
+		List<AccountDTO> resp = EntityUtil.cloneAccountList(result);
+		em.close();
+		return resp;
+	}
+
+	@Override
+	public Long findTotalAccounts(String countQuery) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery(countQuery);
+		Long count = (Long) query.getSingleResult();
+		em.close();
+		return count;
 	}
 }

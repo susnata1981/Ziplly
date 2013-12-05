@@ -9,7 +9,8 @@ import com.ziplly.app.model.AccountDTO;
 
 public class SearchAccountResult implements Result {
 	private List<AccountDTO> accounts = new ArrayList<AccountDTO>();
-
+	private int totalAccounts;
+	
 	public SearchAccountResult() {
 	}
 	
@@ -19,5 +20,13 @@ public class SearchAccountResult implements Result {
 
 	public void setAccounts(List<AccountDTO> accounts) {
 		this.accounts = accounts;
+	}
+
+	public int getTotalAccounts() {
+		return totalAccounts;
+	}
+
+	public void setTotalAccounts(int totalAccounts) {
+		this.totalAccounts = totalAccounts;
 	}
 }
