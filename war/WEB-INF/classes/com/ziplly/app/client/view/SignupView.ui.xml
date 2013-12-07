@@ -1,0 +1,148 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.singupForm {
+		float: left;
+		width: 30%;
+		padding: 8px;
+		margin: 2% 5%;
+		background: #f1f1f1;
+		}
+		.loginForm {
+		position: absolute;
+		top: 60%;
+		right:
+		10%;
+		width: 28%;
+		background: #fff;
+		}
+		input[type="text"],input[type="password"] {
+		height: 30px;
+		}
+		.uploadImageForm {
+		clear: both;
+		height: 180px;
+		}
+		.chooseFileUploadButton {
+		float: left;
+		width: 20%;
+		}
+		.uploadImageButton {
+		clear: left;
+		display: block;
+		width: 14%;
+		}
+		.profileImagePreviewDiv {
+		float: left;
+		width: 50%;
+		height: 130px;
+		}
+		.profileImagePreview {
+		width: 90% !important;
+		height: 90% !important;
+		border: 1px solid #ddd;
+		}
+		.namePanel {
+		float: left;
+		width: 96%;
+		}
+		.nameField {
+		float: left;
+		width: 45%;
+		margin-right: 3%;
+		}
+		.textBox {
+		width: 94%;
+		}
+		.emailField {
+		clear: both;
+		float: left;
+		}
+	</ui:style>
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="resources" />
+
+	<g:HTMLPanel>
+		<div id="mainContent">
+			<b:Alert ui:field="infoField" animation="true" />
+			<div class="{style.singupForm}">
+				<div class="heading">Signup</div>
+				<b:Form>
+					<g:HTMLPanel addStyleNames="{style.namePanel}">
+						<b:ControlGroup ui:field="firstnameCg"
+							addStyleNames="{style.nameField}">
+							<b:Controls>
+								<b:Label>Firstname</b:Label>
+								<br />
+								<b:TextBox ui:field="firstname" placeholder="firstname..."
+									addStyleNames="{style.textBox}" />
+								<b:HelpInline ui:field="firstnameError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="lastnameCg"
+							addStyleNames="{style.nameField}">
+							<b:Controls>
+								<b:Label>Lastname</b:Label>
+								<br />
+								<b:TextBox ui:field="lastname" placeholder="lastname..."
+									addStyleNames="{style.textBox}" />
+								<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+					</g:HTMLPanel>
+					<b:ControlGroup ui:field="emailCg" addStyleNames="{style.emailField}">
+						<b:Controls>
+							<b:Label>Email</b:Label>
+							<br />
+							<b:TextBox ui:field="email" placeholder="email..." />
+							<b:HelpInline ui:field="emailError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
+						<g:HTMLPanel>
+							<div class="{style.profileImagePreviewDiv}">
+								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+							</div>
+							<g:FileUpload ui:field="uploadField" name="image"
+								addStyleNames="{style.chooseFileUploadButton}" />
+							<b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button>
+						</g:HTMLPanel>
+					</g:FormPanel>
+					<b:ControlGroup ui:field="zipCg">
+						<b:Controls>
+							<b:Label>Zip</b:Label>
+							<br />
+							<b:TextBox ui:field="zip" placeholder="zip..." />
+							<b:HelpInline ui:field="zipError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="passwordCg">
+						<b:Controls>
+							<b:Label>Password</b:Label>
+							<br />
+							<b:PasswordTextBox ui:field="password"
+								placeholder="password..." />
+							<b:HelpInline ui:field="passwordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="confirmPasswordCg">
+						<b:Controls>
+							<b:Label>Confirm password</b:Label>
+							<br />
+							<b:PasswordTextBox ui:field="confirmPassword"
+								placeholder="confirm password..." />
+							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+				</b:Form>
+			</div>
+			<div class="{style.loginForm}">
+				<dt:LoginWidget ui:field="loginWidget" width="90%"
+					residentAccountSignupLink="false" />
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

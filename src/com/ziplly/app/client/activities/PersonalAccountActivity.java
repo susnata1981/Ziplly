@@ -157,7 +157,6 @@ public class PersonalAccountActivity extends
 		}
 		dispatcher.execute(action,
 				new DispatcherCallbackAsync<GetTweetForUserResult>() {
-
 					@Override
 					public void onSuccess(GetTweetForUserResult result) {
 						lastTweetList = result.getTweets();

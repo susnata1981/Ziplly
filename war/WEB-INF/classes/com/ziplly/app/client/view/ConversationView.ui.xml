@@ -1,0 +1,117 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+
+	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
+		.conversation {
+			width: 90%;
+			padding: 3px;
+			margin: 5%;
+			border-bottom: 1px solid #ddd;
+			overflow: auto;
+		} 
+		.conversation:hover {
+			background: #e5e5e5;
+		}
+		.conversationNotRead {
+			backround: #D8DFE6;
+		}
+		.senderBlock {
+			float: left;
+			width: 15%;
+			padding: 4px;
+			margin-right: 2%;
+		}
+		.subjectBlock {
+			float: left;
+			overflow: hidden;
+			width: 52%;
+			padding: 4px;
+			margin-right: 4%;
+		}
+		.subjectHeader {
+			padding: 4px;
+			margin-left: 10px;
+			margin-top: 10px;
+			font-size: 18px;
+			font-family: sans-serif; 
+		}
+		.dateBlock {
+			float:left;
+			width: 20%;
+			font-size: 10px;	
+			padding: 4px;
+		}
+		.replyPanel {
+			clear: both;	
+			width: 65%;
+		}
+		.replyPanel TextArea {
+			padding: 4px;
+			margin: 2% 10%;
+			width: 90%;
+			height: 50px;
+		}
+		.buttonPanel {
+			clear: both;
+			padding: 4px;
+			margin: 2% 10%;
+			width: 50%;
+		}
+		.button{
+			float: left;
+			margin-right: 8px;
+		}
+		.asidePanel {
+		float: left;
+		width: 10%;
+		margin-right: 1%;
+		padding: 6px;
+		background: #faf8f6;
+		}
+		.asidePanel dt {
+		margin: 12px 2px;
+		}
+		.conversationPanel {
+			float: left;
+			width: 60%;
+			border: 1px solid #ddd;
+		}
+		.link {
+			color: #30abd5;
+			display: inline-block;
+			padding: 8px 10px;
+		}
+		.subjectFont {
+			font-size: 13px;
+			padding: 3px;
+			font-family: verdana, sans;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
+			<dl>
+			    <dt>
+					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">Inbox<span ui:field="unreadMessageCountSpan"/></g:Anchor>
+					<ul>
+					    <li>
+					        <g:Anchor addStyleNames="{style.link}" ui:field="receivedMessagesLink">Received<span ui:field="receivedMessageCountSpan"/></g:Anchor>
+					    </li>
+					    <li>
+					        <g:Anchor addStyleNames="{style.link}" ui:field="sentMessagesLink">Sent<span ui:field="sentMessageCountSpan"/></g:Anchor>
+					    </li>
+					</ul>
+				</dt>
+				<dt>
+					<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">Profile</g:Anchor>
+				</dt>
+				<dt>
+					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">Settings</g:Anchor>
+				</dt>
+			</dl>
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="conversationPanel" addStyleNames="{style.conversationPanel}">
+		</g:HTMLPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

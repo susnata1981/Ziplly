@@ -1,0 +1,56 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.profile_section {
+			width: 80%;
+		}
+		.profile_image {
+			width: 90%;
+			margin: 1%;
+		}
+		.profile_info_block {
+			width: 90%;
+		}
+		.profile_info_section {
+			clear: both;
+			width: 90%;
+		}
+		.profile_section p {
+			margin-bottom: 4px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal ui:field="accountWidgetModal" backdrop="STATIC"
+			keyboard="true" animation="true">
+			<g:HTMLPanel ui:field="accountWidgetRoot">
+				<div class="{style.profile_section}">
+					<div class="{style.profile_image}">
+						<b:Image ui:field="profileImageUrl" url="" />
+					</div>
+					<div class="{style.profile_info_block}">
+						<div class="{style.profile_info_section}">
+							<div>
+								<p class="heading" ui:field="name" />
+							</div>
+							<div ui:field="introduction" />
+							<div>
+								<p class="heading">Occupation</p>
+								<span class="smalltext" ui:field="occupation" />
+							</div>
+						</div>
+						<div class="{style.profile_info_section}">
+							<p class="heading">Interest</p>
+							<g:HTMLPanel ui:field="interestListPanel">
+							</g:HTMLPanel>
+						</div>
+					</div> 
+				</div> 
+			</g:HTMLPanel>
+			<b:ModalFooter>
+        		<b:Button type="PRIMARY" ui:field="viewProfileBtn">Goto Profile</b:Button>
+        		<b:Button ui:field="cancelBtn">Cancel</b:Button>
+    		</b:ModalFooter>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -15,6 +15,7 @@ import com.ziplly.app.server.handlers.GetAllSubscriptionPlanActionHandler;
 import com.ziplly.app.server.handlers.GetCommunityWallDataActionHandler;
 import com.ziplly.app.server.handlers.GetConversationActionHandler;
 import com.ziplly.app.server.handlers.GetFacebookDetailsHandler;
+import com.ziplly.app.server.handlers.GetHashtagActionHandler;
 import com.ziplly.app.server.handlers.GetImageUploadUrlActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
@@ -49,6 +50,7 @@ import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
+import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -109,6 +111,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetAccountDetailsAction.class, GetAccountDetailsActionHandler.class);
 		bindHandler(DeleteTweetAction.class, DeleteTweetActionHandler.class);
 		bindHandler(SendEmailAction.class, SendEmailActionHandler.class);
+		bindHandler(GetHashtagAction.class, GetHashtagActionHandler.class);
 		
 		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
 		

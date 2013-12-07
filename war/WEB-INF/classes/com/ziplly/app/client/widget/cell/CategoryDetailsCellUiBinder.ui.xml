@@ -1,0 +1,23 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+    <ui:with field='category' type='java.lang.String'/>
+    <ui:with type="com.ziplly.app.shared.Account" field="account"/>
+    
+    <ui:style>
+		.category {
+			width: 220px;
+			height: 220px;
+			float: left;
+			margin: 20px;
+			border: 1px solid #eee;
+			border-radius: 12px;
+		}
+    </ui:style>
+    <div class='{style.category}' ui:field='cell'>
+        <p>
+            Category: <ui:text from='{category}' />
+            <br/>
+            Name: <ui:text from='{account.getDisplayName}' />
+        </p>
+    </div>
+</ui:UiBinder>

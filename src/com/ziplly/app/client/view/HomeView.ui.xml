@@ -52,12 +52,13 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
+	    <b:Alert ui:field="message" addStyleNames="{style.message}"/>
 		<div class="{style.tweetCategoryBox}">
 			<h3 class="{style.tweet_filter}">Category</h3>
 			<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
+			<g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel>
 		</div>
 		<div class="{style.communityWall}">
-			<b:Alert ui:field="message" addStyleNames="{style.message}"/>
 			<g:HTMLPanel ui:field="communityWallPanel" addStyleNames="{style.communityWallPanel}">
 			  <!--   <dt:TweetBox ui:field="tweetBox" addStyleNames="{style.tweetBox}" width="55%" /> -->
 			    

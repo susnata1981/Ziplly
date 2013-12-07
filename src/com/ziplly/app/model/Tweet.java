@@ -68,8 +68,8 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@BatchSize(size=10)
 	private Set<Love> likes = new HashSet<Love>();
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "tweet_hashtag", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "tweet_id") })
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinTable(name = "tweet_hashtag", joinColumns = { @JoinColumn(name = "tweet_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	private Set<Hashtag> hashtags = new HashSet<Hashtag>();
 	
 	private TweetStatus status;
@@ -150,5 +150,14 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 	public void addHashtag(Hashtag h) {
 		hashtags.add(h);
+	}
+	
+	public void setHashtags(Set<Hashtag> h) {
+		hashtags.clear();
+		hashtags = h;
+	}
+	
+	public Set<Hashtag> getHashtags() {
+		return hashtags;
 	}
 }

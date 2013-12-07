@@ -1,0 +1,140 @@
+.smalltext {
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+.tweetPanel {
+	width: 700px;
+	background: #fff;
+	overflow: auto;
+	padding: 2px;
+	margin: 20px 4px 40px 14px;
+}
+
+.tweet_block {
+	overflow: auto;
+}
+
+.tweet_image {
+	float: left;
+	width: 9%;
+	height: 6%;
+	margin: 8px 0px 0px 6px;
+}
+
+.tweet_image img {
+	width: 90%;
+}
+
+.tweet_content_section {
+	float: left;
+	width: 85%;
+	margin: 0px 10px 0px 10px;
+}
+
+.tweet_content {
+	margin-top: 1%;
+	margin-bottom: 5%;
+}
+
+.tweetContentTextArea {
+	width: 90%;
+	height: 80px;
+	float: left;
+	margin: 0px 5px 5px 10px;
+}
+
+div .tweet_actions {
+	clear: both;
+	margin: 0px 5px 5px 2px;
+	border-bottom: 1px solid #ddd;
+}
+
+div.tweet_text {
+	font-family: Helvetica;
+	font-size: 11px;
+	line-height: 26px;
+	color: #555;
+}
+
+.tweetActionDropdown {
+	float: right;
+	list-style: none;
+}
+
+div.comment_text {
+	font-family: Helvetica;
+	font-size: 12px;
+	padding: 6px;
+	line-height: 26px;
+}
+
+.tweet_action_link {
+	float: left;
+	width: 50px;
+	margin: 8px 4px 4px 0px;
+	font-size: 13px;
+	font-family: sans-serif;
+}
+
+.tweet_sender_link {
+	float: right;
+	margin: 8px 4px 4px 4px;
+	font-size: 13px;
+	font-family: sans-serif;
+}
+
+.people_liked_section {
+	clear: both;
+	padding: 3px;
+}
+
+/*************** Comment Section ***************/
+.commentSectionDiv {
+	width: 100%;
+	background: #E6E6E6;
+}
+
+.tweetCommentSection {
+	clear: both;
+	padding: 3px;
+	margin: 4px 0px 6px 2%;
+	width: 90%;
+	font-size: 10px;
+}
+
+.comment {
+	margin: 4px 0 8px 0;
+	border-bottom: 1px solid #ddd;
+	overflow: auto;
+}
+
+.profileImageForComment {
+	width: 30px !important;
+	height: 25px !important;
+	margin: 0px;
+}
+
+.tweet_comment {
+	clear: both;
+	margin: 8px 0px 4px 2px;
+}
+
+.comment_input {
+	margin: 8px 0px 2px 10px;
+	width: 80%;
+	height: 6%;
+	padding: 6px;
+}
+
+.commentInputTextBox {
+	margin: 16px 0px 6px 30px;
+	width: 80%;
+	height: 5%;
+	padding: 4px;
+}
+
+.commentInputActionSection {
+	clear: both;
+	margin: 0 30px;
+}

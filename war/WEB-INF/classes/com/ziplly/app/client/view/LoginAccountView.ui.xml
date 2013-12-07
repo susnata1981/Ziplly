@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.loginWidgetSection {
+			width: 80%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 8%;
+		}
+	</ui:style>
+
+	<g:HTMLPanel ui:field="loginMessagePanel" addStyleNames="{style.loginWidgetSection}">
+		<dt:LoginWidget ui:field="loginWidget" width="29%" residentAccountSignupLink="false"/>
+	</g:HTMLPanel>
+</ui:UiBinder> 

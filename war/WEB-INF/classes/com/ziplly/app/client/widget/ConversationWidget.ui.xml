@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<!-- <g:HTMLPanel>
+			<b:SimplePager ui:field='pager' />
+			<cell:CellTable ui:field="table"></cell:CellTable>
+		</g:HTMLPanel> -->
+		<g:HTMLPanel ui:field="conversationPanel">
+		</g:HTMLPanel>
+		<!-- <g:HTMLPanel>
+			<b:WellForm>
+				<b:ControlGroup>
+					<b:ControlLabel for="subject">Subject</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox ui:field="subject"></b:TextBox>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup>
+					<b:ControlLabel for="message">Message</b:ControlLabel>
+					<b:Controls>
+						<b:TextArea ui:field="message"></b:TextArea>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:SubmitButton ui:field="sendBtn">Send</b:SubmitButton>
+			</b:WellForm> 
+		</g:HTMLPanel> -->
+	</g:HTMLPanel>
+</ui:UiBinder> 

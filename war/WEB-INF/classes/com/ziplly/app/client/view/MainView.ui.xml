@@ -1,0 +1,106 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dv="urn:import:com.ziplly.app.client.view"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="zresources" />
+	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="resource" />
+	<ui:style field="mainViewStyle"
+		type="com.ziplly.app.client.view.MainView.MainViewStyle">
+		#loginSection {
+		height: 50px;
+		margin: auto;
+		text-align: center;
+		}
+		.categoryHeading {
+		text-align:center;
+		background: #f3f3f3;
+		}
+		.logoutLnk {
+		position: absolute;
+		top: 10px;
+		right:40px;
+		}
+		.individualProfilePerCategory {
+		float: left;
+		width: 330px;
+		margin: 5px
+		10px 20px 5px;
+		}
+		.categoryDetails {
+		width: 800px;
+		margin:
+		auto;
+		}
+		.transparent {
+		opacity:0.4;
+		}
+		.residentSignupDiv {
+			margin-top:8px;
+			height: 20px;
+			padding: 2px;
+			font-size: 12px;
+			font-style: helvetica;
+		}
+		.residentSignupLink {
+		font-size: 12px;
+		font-style: helvetica;
+		height: 20px !important;
+		background: none !important;
+		}
+		.descriptionPanel {
+			width: 80%;
+			padding: 1%;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<div id="mainHeading">
+			<h1>
+				<span class="bigtext">Ziplly</span>
+				<br />
+				connecting
+				<br />
+				local community &amp; businesses
+			</h1>
+		</div>
+		<div id="mainContent">
+			<g:HTMLPanel>
+				<div id="mainPageSingupForm">
+				    <b:Alert ui:field="message"/>
+					<b:WellForm>
+						<b:ControlGroup ui:field="emailCg">
+							<b:Controls>
+								<b:TextBox ui:field="email" placeholder="email..." />
+								<b:HelpInline ui:field="emailError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="passwordCg">
+							<b:Controls>
+								<b:PasswordTextBox ui:field="password"
+									placeholder="password..." />
+								<b:HelpInline ui:field="passwordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button type="SUCCESS" ui:field="loginBtn">SignIn</b:Button>
+						<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
+						<g:HTMLPanel addStyleNames="{mainViewStyle.residentSignupDiv}">
+							<span>Not already a member, &nbsp;<g:Anchor ui:field="residentSignupLink" styleName="{mainViewStyle.residentSignupLink}">Resident
+								Signup</g:Anchor> here</span>
+						</g:HTMLPanel>
+					</b:WellForm>
+				</div>
+			</g:HTMLPanel>
+			<div id="mainPageBusinessSingupForm">
+				<b:WellForm>
+					<b:ControlLabel>Business Signup</b:ControlLabel>
+					<b:Button type="SUCCESS" ui:field="businessSignupBtn">Signup</b:Button>
+				</b:WellForm>
+			</div>
+			<g:HTMLPanel ui:field="descriptionPanel" addStyleNames="{mainViewStyle.descriptionPanel}">
+			</g:HTMLPanel>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>
+ 

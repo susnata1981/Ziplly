@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,6 +30,8 @@ public class TweetView extends Composite implements
 	@UiField
 	HTMLPanel tweetsSection;
 	TweetPresenter presenter;
+	
+	HTMLPanel tempPanel = new HTMLPanel("");
 	
 	// TweetId ---> TweetWidget 
 	Map<Long, TweetWidget> tweetWidgetMap = new HashMap<Long, TweetWidget>();
@@ -64,17 +68,33 @@ public class TweetView extends Composite implements
 			for (TweetDTO tweet : tweets) {
 				addTweet(tweet);
 			}
+			
+			// TODO
+			Scheduler.get().scheduleDeferred(new Command(){
+				@Override
+				public void execute() {
+					tweetsSection.add(tempPanel);
+				}
+			});
 		}
 	}
 	
 	@Override
-	public void addTweet(TweetDTO tweet) {
-		TweetWidget tw = new TweetWidget();
-		tw.setWidth(tweetWidgetWidth );
-		tw.setPresenter(presenter);
-		tw.displayTweet(tweet);
-		tweetsSection.add(tw);
-		tweetWidgetMap.put(tweet.getTweetId(), tw);
+	public void addTweet(final TweetDTO tweet) {
+		Scheduler.get().scheduleDeferred(new Command(){
+			@Override
+			public void execute() {
+				long s1 = System.currentTimeMillis();
+				TweetWidget tw = new TweetWidget();
+				tw.setWidth(tweetWidgetWidth );
+				tw.setPresenter(presenter);
+				tw.displayTweet(tweet);
+				tempPanel.add(tw);
+				long e1 = System.currentTimeMillis();
+//				System.out.println("Time to create widget: "+(e1-s1));
+				tweetWidgetMap.put(tweet.getTweetId(), tw);
+			} 
+		});
 	}
 
 	@Override

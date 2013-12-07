@@ -132,19 +132,36 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
 	
-	// private IAccountWidgetModal<PersonalAccountDTO>
-	// personalAccountWidgetModal;
-
 	public TweetWidget() {
+		long s1,e1;
+		long start1 = System.currentTimeMillis();
+		s1 = System.currentTimeMillis();
 		initWidget(uiBinder.createAndBindUi(this));
+		e1 = System.currentTimeMillis();
+		System.out.println("Time to initWidget"+(e1-s1));
+		s1 = System.currentTimeMillis();
 		hideTweetUpdateButtons();
+		e1 = System.currentTimeMillis();
+		System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
+		s1 = e1;
 		hideCommentButtons();
+		e1 = System.currentTimeMillis();
+		System.out.println("Time to hideCommentButtons"+(e1-s1));
+		s1 = e1;
 		setupHandlers();
-		// personalAccountWidgetModal = new PersonalAccountWidgetModal();
+		e1 = System.currentTimeMillis();
+		System.out.println("Time to setupHandlers"+(e1-s1));
+		s1 = e1;
 		modal.setAnimation(true);
 		modal.setWidth("20%");
 		modal.setCloseVisible(true);
 		modal.setTitle("people who liked this post");
+		e1 = System.currentTimeMillis();
+		System.out.println("Time to modal"+(e1-s1));
+		s1 = e1;
+		
+		long end1 = System.currentTimeMillis();
+		System.out.println("Time to create tweet widget="+(end1-start1));
 	}
 
 	private void setupHandlers() {
@@ -259,6 +276,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	 */
 	@Override
 	public void displayTweet(final TweetDTO tweet) {
+		long start1 = System.currentTimeMillis();
 		if (tweet != null) {
 			this.tweet = tweet;
 
@@ -277,6 +295,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			// comments
 			displayCommentSection();
 		}
+		long end1 = System.currentTimeMillis();
+		System.out.println("Time to display tweet: "+(end1-start1));
 	}
 
 	private void displayCommentSection() {

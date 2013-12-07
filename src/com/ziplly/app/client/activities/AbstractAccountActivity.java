@@ -1,7 +1,5 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -21,6 +19,7 @@ import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
+import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
@@ -271,4 +270,8 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	};
+	
+	public TweetWidget getTweetWidget() {
+		return ctx.getTweetWidget();
+	}
 }

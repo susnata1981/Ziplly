@@ -1,0 +1,31 @@
+@external
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+@sprite .gButton {
+	gwt-image: "googleLoginButton";
+	width: 123px;
+	height: 42px;
+}
+
+@sprite .fbLoginBtn {
+	gwt-image: "fbLoginBtn";
+	width: 230px;
+	height: 36px;
+}
+
+@sprite .fbLogo {
+	gwt-image: "fbLogo";
+	width: 80px;
+	height: 24px;	
+}
+
+.hide {
+	display: hidden;
+}
+
+.heading {
+	font-size: 16px;
+}

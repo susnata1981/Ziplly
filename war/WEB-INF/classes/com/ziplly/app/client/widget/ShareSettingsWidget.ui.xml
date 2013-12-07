@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	.listbox {
+		width: 80px;
+		height: 20px;
+		float: right;
+		font-size: 12px;
+		font-family: Baskerville, "Baskerville Old Face", "Hoefler Text", Garamond, "Times New Roman", serif;
+	}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:ControlGroup>
+			<b:Controls>
+				<b:ListBox addStyleNames="{style.listbox}" ui:field="shareSettingsList">
+<!-- 					<g:item>public</g:item>
+					<g:item>community</g:item>
+					<g:item>private</g:item>
+ -->				</b:ListBox>
+			</b:Controls>
+		</b:ControlGroup>
+	</g:HTMLPanel>
+</ui:UiBinder> 

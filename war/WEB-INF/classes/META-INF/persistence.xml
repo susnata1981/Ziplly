@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+	version="1.0">
+	<persistence-unit name="zipllydb">
+		<class>com.ziplly.app.model.Account</class>
+		<class>com.ziplly.app.model.PersonalAccount</class>
+		<class>com.ziplly.app.model.BusinessAccount</class>
+		<class>com.ziplly.app.model.PrivacySettings</class>
+		<class>com.ziplly.app.model.AccountNotification</class>
+		<class>com.ziplly.app.model.Interest</class>
+		<class>com.ziplly.app.model.Tweet</class>
+		<class>com.ziplly.app.model.Comment</class>
+		<class>com.ziplly.app.model.Love</class>
+		<class>com.ziplly.app.model.Message</class>
+		<class>com.ziplly.app.model.Conversation</class>
+		<class>com.ziplly.app.model.Transaction</class>
+		<class>com.ziplly.app.model.SubscriptionPlan</class>
+		<class>com.ziplly.app.model.PasswordRecovery</class>
+		<class>com.ziplly.app.model.AccountNotificationSettings</class>
+		<class>com.ziplly.app.model.Hashtag</class>
+		<properties>
+            <!-- 
+            <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.GoogleDriver" />
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3306/zipllydb" />
+			
+			<property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
+           <property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />				 
+			<property name="javax.persistence.jdbc.driver" value="com.google.cloud.sql.Driver" />
+			<property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />
+             -->
+             
+<!--  			<property name="javax.persistence.jdbc.url"
+				value="jdbc:google:rdbms://zipplyrocks:zipplydb1/zipllydb" />
+ -->           
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="javax.persistence.jdbc.user" value="root" />
+<!-- 			<property name="javax.persistence.jdbc.password" value="root" />
+ -->			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.connection.pool_size" value="0" />
+			<property name="javax.persistence.validation.mode" value="none"/> 
+		</properties>
+	</persistence-unit>
+</persistence>

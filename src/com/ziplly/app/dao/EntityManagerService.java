@@ -16,6 +16,8 @@ public class EntityManagerService {
 			System.out.println("Setting database properties...");
 			properties.put("javax.persistence.jdbc.driver",
 					"com.google.appengine.api.rdbms.AppEngineDriver");
+//			properties.put("javax.persistence.jdbc.driver",
+//					"com.google.appengine.api.rdbms.AppEngineDriver");
 			properties.put("javax.persistence.jdbc.url", "jdbc:google:rdbms://zipplyrocks:zipplydb1/zipllydb");
 		} else {
 			properties.put("javax.persistence.jdbc.driver", "com.google.appengine.api.rdbms.AppEngineDriver");

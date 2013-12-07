@@ -37,11 +37,16 @@ public class TweetViewBinder {
 		System.out.println("Stopping TweetViewBinder.");
 	}
 
-	private boolean detectScrollerHitBottom() {
+	int scrollTop = 0;
+	protected boolean detectScrollerHitBottom() {
 		int sh = elem.getScrollHeight();
 		int st = elem.getScrollTop();
 		int of = elem.getOffsetHeight();
-		System.out.println("SH="+sh+" ST="+st+" OF="+of);
+////		System.out.println("SH="+sh+" ST="+st+" OF="+of);
+//		if (scrollTop == st) {
+//			return false;
+//		}
+		scrollTop = st;
 		return elem.getScrollHeight() - (elem.getScrollTop() + elem.getOffsetHeight()) < THRESHOLD;
 	}
 

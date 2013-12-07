@@ -1,0 +1,103 @@
+@CHARSET "UTF-8";
+
+.rootPanel {
+	width: 800px;
+	padding: 4px;
+	border: 1px solid #ddd;
+	overflow: auto;
+}
+
+.profile_section {
+	width: 800px;
+}
+
+.profile_image {
+	float: left;
+	width: 170px;
+	padding: 2px;
+}
+
+.profile_image img {
+	max-width: 160px;
+	max-height: 130px;
+}
+
+.profile_image_bottom_section {
+	margin: 20px 2px 2px 2px;
+}
+
+.view_profile_link {
+	width: 160px;
+	float: left;
+	font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-size: 12px;
+	text-align: left;
+}
+
+.profile_info_block {
+	float: left;
+	width: 560px;
+	overflow: auto;
+	margin: 10px 0px 0px 20px;
+	border: 1px solid #ddd;
+}
+
+.profile_info_section {
+	float: left;
+	width: 500px;
+	overflow: auto;
+	margin: 10px 5px 40px 10px;
+}
+
+.profile_info_section ul {
+	list-style: none;
+	margin: 0px;
+}
+
+.profile_section_heading {
+	font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia, serif;
+	font-size: 20px;
+	border-bottom: 2px solid #ddd;
+	margin: 2px 0px 20px 0px;
+}
+
+.name {
+	font-size: 24px;
+	font-family: cursive;
+	font-weight: bold;
+	padding: 2px;
+	margin: 0px 0px 14px 0px;
+}
+
+.right {
+	float: right;
+}
+
+.editlink {
+	float: right;
+	font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-size: 12px;
+	text-align: right;
+}
+
+.smalltext {
+	font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-size: 12px;
+}
+
+.introduction {
+	font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia, serif;
+	font-size: 16px;	
+}
+
+.bigtext {
+	font-family: Baskerville, "Baskerville Old Face", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-size: 18px;
+	padding: 2px;
+	margin: 4px;
+}
+
+.shareTextBox {
+	width: 420px;
+	height: 50px;
+}

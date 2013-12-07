@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.mainPageBackground {
+	gwt-image: 'neighborhoodLargePic';
+	background-repeat:no-repeat;
+}

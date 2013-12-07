@@ -1,0 +1,134 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		#signupForm {
+		float: left;
+		width: 30%;
+		padding: 5px;
+		margin: 10px 0px 0px 40px;
+		background: #f1f1f1;
+		}
+		#signupForm div.controls {
+		width: 90%;
+		}
+		input[type="text"],input[type="password"] {
+		height: 30px;
+		}
+		.loginForm {
+		position: absolute;
+		top: 50%;
+		right: 10%;
+		width: 28%;
+		}
+		.uploadImageForm {
+		clear: both;
+		height: 180px;
+		}
+		.chooseFileUploadButton {
+		float: left;
+		width: 20%;
+		}
+		.uploadImageButton {
+		clear: left;
+		display: block;
+		width: 14%;
+		}
+		.profileImagePreviewDiv {
+		float: left;
+		width: 50%;
+		height: 130px;
+		}
+		.profileImagePreview {
+		width: 90% !important;
+		height: 90% !important;
+		border: 1px solid #ddd;
+		}
+	</ui:style>
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="resources" />
+	<g:HTMLPanel>
+		<b:Alert ui:field="infoField" animation="true" />
+		<div id="mainContent">
+			<div id="signupForm">
+				<div class="heading">Signup</div>
+				<b:Form>
+					<b:ControlGroup ui:field="businessNameCg">
+						<b:Controls>
+							<b:Label>Business name</b:Label>
+							<br />
+							<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
+							<b:HelpInline ui:field="businessNameError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="street1Cg">
+						<b:Controls>
+							<b:Label>Address</b:Label>
+							<br />
+							<b:TextBox ui:field="street1" placeholder="street1..." />
+							<b:HelpInline ui:field="street1Error"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<!-- <b:ControlGroup ui:field="street2Cg"> <b:Controls> <b:Label>Street2</b:Label> 
+						<br /> <b:TextBox ui:field="street2" placeholder="street2..." /> <b:HelpInline 
+						ui:field="street2Error"></b:HelpInline> </b:Controls> </b:ControlGroup> 
+					<b:ControlGroup ui:field="zipCg">
+						<b:Controls>
+							<b:Label>Zip</b:Label>
+							<br />
+							<b:TextBox ui:field="zip" placeholder="zip..." />
+							<b:HelpInline ui:field="zipError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+				    <b:ControlGroup ui:field="websiteCg"> <b:Controls> <b:Label>Website</b:Label> 
+						<br /> <b:TextBox ui:field="website" placeholder="website..." /> <b:HelpInline 
+						ui:field="websiteError"></b:HelpInline> </b:Controls> </b:ControlGroup> 
+					<g:FormPanel ui:field="uploadForm">
+						<g:HTMLPanel>
+							<g:FileUpload ui:field="uploadField" name="image" />
+							<b:Button ui:field="uploadBtn">Upload</b:Button>
+							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+						</g:HTMLPanel>
+					</g:FormPanel> -->
+					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
+						<g:HTMLPanel>
+							<div class="{style.profileImagePreviewDiv}">
+								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+							</div>
+							<g:FileUpload ui:field="uploadField" name="image"
+								addStyleNames="{style.chooseFileUploadButton}" />
+							<b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button>
+						</g:HTMLPanel>
+					</g:FormPanel>
+					<b:ControlGroup ui:field="emailCg">
+						<b:Controls>
+							<b:Label>Email</b:Label>
+							<br />
+							<b:TextBox ui:field="email" placeholder="email..." />
+							<b:HelpInline ui:field="emailError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="passwordCg">
+						<b:Controls>
+							<b:Label>Password</b:Label>
+							<br />
+							<b:PasswordTextBox ui:field="password"
+								placeholder="password..." />
+							<b:HelpInline ui:field="passwordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<!-- <b:ControlGroup ui:field="confirmPasswordCg"> <b:Controls> <b:Label>Confirm 
+						password</b:Label> <br /> <b:PasswordTextBox ui:field="confirmPassword" placeholder="confirm 
+						password..." /> <b:HelpInline ui:field="confirmPasswordError"></b:HelpInline> 
+						</b:Controls> </b:ControlGroup> -->
+					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+				</b:Form>
+			</div>
+			<div class="{style.loginForm}">
+				<dt:LoginWidget ui:field="loginWidget" width="90%"
+					businessAccountSignupLink="false" />
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -33,8 +33,10 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
+import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -44,6 +46,8 @@ import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
+import com.ziplly.app.shared.GetHashtagAction;
+import com.ziplly.app.shared.GetHashtagResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 import com.ziplly.app.shared.LikeResult;
@@ -60,7 +64,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	IHomeView homeView;
 	private List<TweetDTO> lastTweetList;
 	private int tweetPageIndex = 0;
-	private int pageSize = 3;
+	private int pageSize = 5;
 
 	public static interface IHomeView extends View<HomePresenter> {
 		void display(List<TweetDTO> tweets);
@@ -80,6 +84,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayMessage(String message, AlertType error);
 
 		void addTweet(TweetDTO tweet);
+
+		void addTweets(List<TweetDTO> tweets);
+
+		void displayHashtag(List<HashtagDTO> hashtags);
 	}
 
 	HomePlace place;
@@ -141,12 +149,27 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		bind();
 		showLodingIcon();
 		if (ctx.getAccount() != null) {
-			getCommunityWallData(TweetType.ALL);
-			hideFooter();
+			displayCommunityWall();
 		} else {
 			fetchData();
 			panel.setWidget(mainView);
 		}
+	}
+
+	private void displayCommunityWall() {
+		getCommunityWallData(TweetType.ALL);
+		getHashtags();
+		hideFooter();
+	}
+
+	private void getHashtags() {
+		dispatcher.execute(new GetHashtagAction(), new DispatcherCallbackAsync<GetHashtagResult>() {
+
+			@Override
+			public void onSuccess(GetHashtagResult result) {
+				homeView.displayHashtag(result.getHashtags());
+			}
+		});
 	}
 
 	@Override
@@ -191,8 +214,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 					@Override
 					public void onSuccess(GetLoggedInUserResult result) {
 						if (result != null && result.getAccount() != null) {
+							ctx.setAccount(result.getAccount());
 							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-							forward(result.getAccount());
+							displayCommunityWall();
 						} else {
 							displayMainView();
 						}
@@ -210,7 +234,17 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		showLodingIcon();
 		dispatcher.execute(new GetCommunityWallDataAction(type, tweetPageIndex, pageSize),
 				new CommunityDataHandler());
-		TweetViewBinder binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);
+		TweetViewBinder binder = new TweetViewBinder(homeView.getTweetSectionElement(), this) {
+			@Override
+			protected boolean detectScrollerHitBottom() {
+				int sh = elem.getScrollHeight();
+				int st = elem.getScrollTop();
+				int of = elem.getOffsetHeight();
+				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of);
+				return elem.getScrollHeight() - (elem.getOffsetHeight()+elem.getScrollTop()) < 300;
+			}
+		};
+
 		binder.start();
 	}
 
@@ -302,28 +336,28 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void onScrollBottomHit() {
 		tweetPageIndex++;
 		GetCommunityWallDataAction action = null;
+		System.out.println("Hit bottom");
 		if (ctx.getAccount() != null) {
 			action = new GetCommunityWallDataAction(tweetType, tweetPageIndex, pageSize);
+			dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+				@Override
+				public void onSuccess(GetCommunityWallDataResult result) {
+					lastTweetList = result.getTweets();
+					homeView.addTweets(result.getTweets());
+				}
+			});
 		}
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
-
-			@Override
-			public void onSuccess(GetCommunityWallDataResult result) {
-				lastTweetList = result.getTweets();
-				homeView.updateTweets(result.getTweets());
-			}
-		});
 	}
 
-	// ----------------------------------	
-	//	
-	//	Action Handlers are defined here
-	//	
+	// ----------------------------------
+	//
+	// Action Handlers are defined here
+	//
 	// ----------------------------------
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
 		@Override
 		public void onSuccess(TweetResult result) {
-//			placeController.goTo(new HomePlace());
+			// placeController.goTo(new HomePlace());
 			homeView.addTweet(result.getTweet());
 		}
 
@@ -418,14 +452,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 		}
 	}
-	
+
 	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
 		private CommentDTO comment;
 
 		public PostCommentHandler(CommentDTO comment) {
 			this.comment = comment;
 		}
-		
+
 		@Override
 		public void onSuccess(CommentResult result) {
 			homeView.updateComment(comment);
@@ -434,8 +468,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 		@Override
 		public void onFailure(Throwable caught) {
-			homeView.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT,
-					AlertType.SUCCESS);
+			homeView.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.SUCCESS);
 		}
 	};
+
+	public TweetWidget getTweetWidget() {
+		return ctx.getTweetWidget();
+	}
 }

@@ -3,14 +3,16 @@ package com.ziplly.app.dao;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Hashtag;
@@ -36,32 +38,38 @@ public class TweetDAOImpl implements TweetDAO {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
-		em.persist(tweet);
-
+		
 		// save hashtags
-		List<String> hashtags = extractHashtags(tweet.getContent());
+		Set<String> hashtags = extractHashtags(tweet.getContent());
+		Set<Hashtag> existingTags = new HashSet<Hashtag>();
 		for (String hashtag : hashtags) {
 			HashtagDTO existingHashtag = null;
 			try {
 				existingHashtag = hashtagDao.findByName(hashtag);
-				tweet.addHashtag(new Hashtag(existingHashtag));
+				existingTags.add(new Hashtag(existingHashtag));
 			} catch (NoResultException nre) {
 				Hashtag h = new Hashtag();
 				h.setTag(hashtag);
 				h.addTweet(tweet);
-				tweet.addHashtag(h);
+				h.setTimeCreated(new Date());
+				existingTags.add(h);
 			}
 		}
-		TweetDTO result = EntityUtil.clone(tweet);
-
+		
+		if (existingTags.size() > 0) {
+			tweet.setHashtags(existingTags);
+		}
+		
+		em.persist(tweet);
 		em.getTransaction().commit();
+		TweetDTO result = EntityUtil.clone(tweet);
 		em.close();
 		return result;
 	}
 
-	private List<String> extractHashtags(String content) {
+	private Set<String> extractHashtags(String content) {
 		if (content != null) {
-			List<String> result = Lists.newArrayList();
+			Set<String> result = Sets.newHashSet();
 			for (String word : content.split("\\s+")) {
 				if (word.startsWith(StringConstants.HASHTAG_PREFIX)) {
 					result.add(word);
@@ -69,7 +77,7 @@ public class TweetDAOImpl implements TweetDAO {
 			}
 			return result;
 		}
-		return ImmutableList.of();
+		return ImmutableSet.of();
 	}
 
 	@Override
@@ -145,11 +153,6 @@ public class TweetDAOImpl implements TweetDAO {
 			em.close();
 			throw nre;
 		}
-		// em.merge(tweet);
-		// em.getTransaction().commit();
-		// TweetDTO result = EntityUtil.clone(tweet, false);
-		// em.close();
-		// return result;
 	}
 
 	@Override

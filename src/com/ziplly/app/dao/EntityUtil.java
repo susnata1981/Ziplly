@@ -282,6 +282,7 @@ public class EntityUtil {
 
 	public static HashtagDTO clone(Hashtag h) {
 		HashtagDTO resp = new HashtagDTO();
+		resp.setId(h.getId());
 		resp.setTag(h.getTag());
 		if (Hibernate.isInitialized(h.getTweets())) {
 			for (Tweet t : h.getTweets()) {
