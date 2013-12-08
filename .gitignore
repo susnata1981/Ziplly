@@ -1,0 +1,12 @@
+gwt-unitCache/*
+.settings
+.classpath
+
+# java ignore 
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*generated*
