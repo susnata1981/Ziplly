@@ -69,13 +69,13 @@ public class TweetView extends Composite implements
 				addTweet(tweet);
 			}
 			
-			// TODO
-			Scheduler.get().scheduleDeferred(new Command(){
-				@Override
-				public void execute() {
-					tweetsSection.add(tempPanel);
-				}
-			});
+//			// TODO
+//			Scheduler.get().scheduleDeferred(new Command(){
+//				@Override
+//				public void execute() {
+//					tweetsSection.add(tempPanel);
+//				}
+//			});
 		}
 	}
 	
@@ -89,7 +89,7 @@ public class TweetView extends Composite implements
 				tw.setWidth(tweetWidgetWidth );
 				tw.setPresenter(presenter);
 				tw.displayTweet(tweet);
-				tempPanel.add(tw);
+				tweetsSection.add(tw);
 				long e1 = System.currentTimeMillis();
 //				System.out.println("Time to create widget: "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
