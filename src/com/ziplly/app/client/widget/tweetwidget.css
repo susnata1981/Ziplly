@@ -3,6 +3,9 @@
 	font-size: 14px;
 }
 
+.btn {
+	margin-right: 6px;
+}
 .tweetPanel {
 	width: 700px;
 	background: #fff;

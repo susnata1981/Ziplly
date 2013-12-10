@@ -7,10 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.TextArea;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -39,11 +43,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.WidgetFactory;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.ValidationResult;
 
 public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {
 
@@ -120,6 +127,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	HTMLPanel tweetCommentSection;
 	@UiField
+	ControlGroup commentInputTextBoxCg;
+	@UiField
+	HelpInline commentInputHelpInline;
+	@UiField
 	TextArea commentInputTextBox;
 	@UiField
 	Button commentBtn;
@@ -138,30 +149,30 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		s1 = System.currentTimeMillis();
 		initWidget(uiBinder.createAndBindUi(this));
 		e1 = System.currentTimeMillis();
-		System.out.println("Time to initWidget"+(e1-s1));
+//		System.out.println("Time to initWidget"+(e1-s1));
 		s1 = System.currentTimeMillis();
 		hideTweetUpdateButtons();
 		e1 = System.currentTimeMillis();
-		System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
+//		System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
 		s1 = e1;
 		hideCommentButtons();
 		e1 = System.currentTimeMillis();
-		System.out.println("Time to hideCommentButtons"+(e1-s1));
+//		System.out.println("Time to hideCommentButtons"+(e1-s1));
 		s1 = e1;
 		setupHandlers();
 		e1 = System.currentTimeMillis();
-		System.out.println("Time to setupHandlers"+(e1-s1));
+//		System.out.println("Time to setupHandlers"+(e1-s1));
 		s1 = e1;
 		modal.setAnimation(true);
 		modal.setWidth("20%");
 		modal.setCloseVisible(true);
 		modal.setTitle("people who liked this post");
 		e1 = System.currentTimeMillis();
-		System.out.println("Time to modal"+(e1-s1));
+//		System.out.println("Time to modal"+(e1-s1));
 		s1 = e1;
 		
 		long end1 = System.currentTimeMillis();
-		System.out.println("Time to create tweet widget="+(end1-start1));
+//		System.out.println("Time to create tweet widget="+(end1-start1));
 	}
 
 	private void setupHandlers() {
@@ -222,6 +233,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			@Override
 			public void onClick(ClickEvent event) {
 				CommentDTO comment = new CommentDTO();
+				if (!validateComment(commentInputTextBox.getText())) {
+					return;
+				}
+					
 				comment.setContent(commentInputTextBox.getText());
 				comment.setTimeCreated(new Date());
 				comment.setAuthor(tweet.getSender());
@@ -235,12 +250,24 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			@Override
 			public void onClick(ClickEvent event) {
 				hideCommentButtons();
+				clearComment();
 			}
 		});
 	}
 
+	private boolean validateComment(String comment) {
+		ValidationResult result = FieldVerifier.validateComment(comment);
+		if (!result.isValid()) {
+//			presenter.displayMessage(result.getErrors().get(0).getErrorMessage(), AlertType.ERROR);
+			commentInputTextBoxCg.setType(ControlGroupType.ERROR);
+			commentInputHelpInline.setText(StringConstants.COMMENT_LENGTH_EXCEEDED);
+			return false;
+		}
+		return true;
+	}
+	
 	private void focusOnCommentBox() {
-		commentInputTextBox.setHeight("28px");
+		commentInputTextBox.setHeight("50px");
 		commentInputTextBox.setFocus(true);
 		showCommentButtons();
 	}
@@ -387,16 +414,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		});
 		imageLink.getElement().getFirstChild().appendChild(pImage.getElement());
 		imageLink.setWidth("40px");
+		// TODO : user FlowPanel instead
 		HorizontalPanel panel = new HorizontalPanel();
 		panel.add(imageLink);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		HTMLPanel commentText = new HTMLPanel("<span class='tinytext'>"
 				+ comment.getContent() + "</span>");
-		commentText.setWidth("80%");
+//		commentText.setWidth("75%");
 		panel.add(commentText);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		HTMLPanel commentDate = new HTMLPanel("<span class='datefont'>"
 				+ getFormattedTime(comment.getTimeCreated()) + "</span>");
+//		commentDate.setWidth("20%");
 		panel.add(commentDate);
 		panel.setStyleName(style.tweetCommentSection());
 		return panel;
@@ -529,6 +558,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	@Override
 	public void clear() {
+		clearComment();
+	}
+	
+	private void clearComment() {
+		commentInputTextBoxCg.setType(ControlGroupType.NONE);
+		commentInputHelpInline.setVisible(false);
 		commentInputTextBox.setText("");
 	}
 

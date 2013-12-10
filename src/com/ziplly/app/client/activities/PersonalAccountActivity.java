@@ -54,13 +54,6 @@ public class PersonalAccountActivity extends
 	}
 
 	private void setupHandlers() {
-//		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
-//			@Override
-//			public void onEvent(LoginEvent event) {
-//				System.out.println("User " + event.getAccount() + " logged in");
-//			}
-//		});
-		
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {

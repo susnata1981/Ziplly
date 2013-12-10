@@ -1,15 +1,28 @@
 package com.ziplly.app.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
+import com.ziplly.app.model.Tweet;
+import com.ziplly.app.model.TweetDTO;
 
 public class HashtagDAOImpl implements HashtagDAO {
 
+	private TweetDAO tweetDao;
+
+	@Inject
+	public HashtagDAOImpl(TweetDAO tweetDao) {
+		this.tweetDao = tweetDao;
+	}
+	
 	@Override
 	public void create(Hashtag hashtag) {
 		if (hashtag == null) {
@@ -53,11 +66,53 @@ public class HashtagDAOImpl implements HashtagDAO {
 	@Override
 	public List<HashtagDTO> findTopHashtag(int n) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNativeQuery("select * from hashtag h where h.id in (select max(id) "
+		Query query = em.createNativeQuery("select h.id,h.tag,h.time_created from hashtag h where h.id in (select max(id) "
 				+ "from tweet_hashtag group by id order by count(tweet_id))");
 		@SuppressWarnings("unchecked")
-		List<Hashtag> result = query.getResultList();
+		List<Object> result = query.getResultList();
+		List<HashtagDTO> response = Lists.newArrayList();
+		for(Object o : result) {
+			Object [] r = (Object[]) o;
+			System.out.println(r[0]+":"+r[1]+":"+r[2]);
+			HashtagDTO h = new HashtagDTO();
+			BigInteger hId = (BigInteger) r[0];
+			h.setId(hId.longValue());
+			h.setTag((String) r[1]);
+			response.add(h);
+		}
+		
 		em.close();
-		return EntityUtil.cloneHashtahList(result);
+		return response;
 	}
+
+	@Override
+	public List<TweetDTO> getTweetsForTag(String hashtag, int page, int pageSize) {
+		if (hashtag == null) {
+			throw new IllegalArgumentException("Invalid argument");
+		}
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		List<TweetDTO> tweets = Lists.newArrayList();
+		try {
+			HashtagDTO result = findByName(hashtag);
+			int start = page * pageSize;
+			Query query = em.createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
+				.setParameter("id", result.getId())
+				.setFirstResult(start)
+				.setMaxResults(pageSize);
+			
+			List tweetIds = query.getResultList();
+			for(Object tweetId : tweetIds) {
+				BigInteger id = (BigInteger)tweetId;
+				Tweet tweet = tweetDao.findTweetById(id.longValue());
+				tweets.add(EntityUtil.clone(tweet));
+			}
+		} catch (NoResultException nre) {
+			throw nre;
+		} finally {
+			em.close();
+		}
+		
+		return tweets;	
+	}
+		
 }

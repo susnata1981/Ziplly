@@ -1,11 +1,18 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.TweetType;
-
 import net.customware.gwt.dispatch.shared.Action;
 
+import com.ziplly.app.model.TweetType;
+
 public class GetCommunityWallDataAction implements Action<GetCommunityWallDataResult> {
+	public static enum SearchType {
+		CATEGORY,
+		HASHTAG;
+	}
+
+	private GetCommunityWallDataAction.SearchType searchType;
 	private TweetType type;
+	private String hashtag;
 	private int page;
 	private int pageSize;
 
@@ -16,6 +23,14 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 		this.type = type;
 		this.setPage(page);
 		this.setPageSize(pageSize);
+		searchType = GetCommunityWallDataAction.SearchType.CATEGORY;
+	}
+	
+	public GetCommunityWallDataAction(String hashtag, int page, int pageSize) {
+		this.hashtag = hashtag;
+		this.setPage(page);
+		this.setPageSize(pageSize);
+		searchType = GetCommunityWallDataAction.SearchType.HASHTAG;
 	}
 	
 	public TweetType getType() {
@@ -40,5 +55,21 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public GetCommunityWallDataAction.SearchType getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(GetCommunityWallDataAction.SearchType searchType) {
+		this.searchType = searchType;
+	}
+
+	public String getHashtag() {
+		return hashtag;
+	}
+
+	public void setHashtag(String hashtag) {
+		this.hashtag = hashtag;
 	}
 }

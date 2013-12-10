@@ -274,4 +274,8 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public TweetWidget getTweetWidget() {
 		return ctx.getTweetWidget();
 	}
+	
+	public void displayMessage(String message, AlertType type) {
+		view.displayMessage(message, type);
+	}
 }

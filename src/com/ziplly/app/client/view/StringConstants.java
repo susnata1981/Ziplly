@@ -34,4 +34,5 @@ public class StringConstants {
 	public static final String RESTRICT_REGISTRATION_FEATURE = "app.feature.enableRestrictedRegistration";
 	public static final String NEEDS_INVITATION = "Needs invitation.";
 	public static final String HASHTAG_PREFIX = "#";
+	public static final String COMMENT_LENGTH_EXCEEDED = "Comment length exceeded.";
 }

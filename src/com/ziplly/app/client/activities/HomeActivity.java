@@ -45,9 +45,12 @@ import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
+import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
+import com.ziplly.app.shared.GetLatLngAction;
+import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 import com.ziplly.app.shared.LikeResult;
@@ -60,10 +63,13 @@ import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
-	MainView mainView;
-	IHomeView homeView;
+	private MainView mainView;
+	private IHomeView homeView;
+	private GetCommunityWallDataAction lastSearchAction;
 	private List<TweetDTO> lastTweetList;
+	private TweetViewBinder binder;
 	private int tweetPageIndex = 0;
+	private int tweetPageIndexForHashtagSearch = 0;
 	private int pageSize = 5;
 
 	public static interface IHomeView extends View<HomePresenter> {
@@ -88,6 +94,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void addTweets(List<TweetDTO> tweets);
 
 		void displayHashtag(List<HashtagDTO> hashtags);
+
+		void displayMap(GetLatLngResult result);
 	}
 
 	HomePlace place;
@@ -96,6 +104,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	HTMLPanel loadingPanel = new HTMLPanel("<span>Loading</span>");
 	private AcceptsOneWidget panel;
 	private TweetType tweetType;
+	private boolean fetchingData;
 
 	@Inject
 	public HomeActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, HomePlace place,
@@ -158,11 +167,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	private void displayCommunityWall() {
 		getCommunityWallData(TweetType.ALL);
+		getLatLng(ctx.getAccount());
 		getHashtags();
 		hideFooter();
 	}
 
 	private void getHashtags() {
+		tweetPageIndexForHashtagSearch = 0;
 		dispatcher.execute(new GetHashtagAction(), new DispatcherCallbackAsync<GetHashtagResult>() {
 
 			@Override
@@ -176,8 +187,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void onStop() {
 		clearBackgroundImage();
 		modal.hide();
-		mainView.clear();
-		homeView.clear();
+		if (binder != null) {
+			binder.stop();
+		}
 		showFooter();
 	}
 
@@ -224,27 +236,33 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 					}
 				});
 	}
-
+	
 	void getCommunityWallData(TweetType type) {
 		// load first batch of data
+		showLodingIcon();
+		fetchingData = true;
+		lastTweetList = null;
 		this.tweetType = type;
 		tweetPageIndex = 0;
-		lastTweetList = null;
-		// homeView.clear();
-		showLodingIcon();
-		dispatcher.execute(new GetCommunityWallDataAction(type, tweetPageIndex, pageSize),
+		lastSearchAction = new GetCommunityWallDataAction(type, tweetPageIndex, pageSize);
+		
+		dispatcher.execute(lastSearchAction,
 				new CommunityDataHandler());
-		TweetViewBinder binder = new TweetViewBinder(homeView.getTweetSectionElement(), this) {
+		
+		if (binder != null) {
+			binder.stop();
+		}
+		
+		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this) {
 			@Override
 			protected boolean detectScrollerHitBottom() {
 				int sh = elem.getScrollHeight();
 				int st = elem.getScrollTop();
 				int of = elem.getOffsetHeight();
-				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of);
-				return elem.getScrollHeight() - (elem.getOffsetHeight()+elem.getScrollTop()) < 300;
+//				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of);
+				return elem.getScrollHeight() - (elem.getOffsetHeight()+elem.getScrollTop()) < 50;
 			}
 		};
-
 		binder.start();
 	}
 
@@ -334,12 +352,22 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void onScrollBottomHit() {
-		tweetPageIndex++;
-		GetCommunityWallDataAction action = null;
-		System.out.println("Hit bottom");
-		if (ctx.getAccount() != null) {
-			action = new GetCommunityWallDataAction(tweetType, tweetPageIndex, pageSize);
-			dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+		if (fetchingData) {
+			return;
+		}
+		
+		System.out.println("Hit bottom...");
+		if (ctx.getAccount() != null && lastSearchAction != null) {
+			if (lastSearchAction.getSearchType() == SearchType.CATEGORY) {
+				tweetPageIndex++;
+				lastSearchAction.setPage(tweetPageIndex);
+			} else {
+				// TODO: susnata
+				tweetPageIndexForHashtagSearch++;
+				lastSearchAction.setPage(tweetPageIndexForHashtagSearch);
+			}
+			
+			dispatcher.execute(lastSearchAction, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
 				@Override
 				public void onSuccess(GetCommunityWallDataResult result) {
 					lastTweetList = result.getTweets();
@@ -444,6 +472,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				displayTweets(tweets);
 				hideLoadingIcon();
 				clearBackgroundImage();
+				fetchingData = false;
 			}
 		}
 
@@ -474,5 +503,33 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	public TweetWidget getTweetWidget() {
 		return ctx.getTweetWidget();
+	}
+
+	@Override
+	public void displayHashtag(String hashtag) {
+		if (hashtag != null) {
+			tweetPageIndexForHashtagSearch = 0;
+			lastTweetList = null;
+			lastSearchAction = new GetCommunityWallDataAction(hashtag, tweetPageIndexForHashtagSearch, pageSize);
+			lastSearchAction.setSearchType(SearchType.HASHTAG);
+			dispatcher.execute(lastSearchAction, new CommunityDataHandler());
+		}
+	}
+	
+	void getLatLng(AccountDTO account) {
+		GetLatLngAction action = new GetLatLngAction();
+		action.setAccount(account);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetLatLngResult>() {
+
+			@Override
+			public void onSuccess(GetLatLngResult result) {
+				homeView.displayMap(result);
+			}
+		});
+	}
+
+	@Override
+	public void displayMessage(String message, AlertType type) {
+		homeView.displayMessage(message, type);
 	}
 }

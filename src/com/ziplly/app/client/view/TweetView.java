@@ -9,6 +9,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -90,8 +91,9 @@ public class TweetView extends Composite implements
 				tw.setPresenter(presenter);
 				tw.displayTweet(tweet);
 				tweetsSection.add(tw);
+				int sh = tweetsSection.getElement().getScrollHeight();
 				long e1 = System.currentTimeMillis();
-//				System.out.println("Time to create widget: "+(e1-s1));
+				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
 			} 
 		});
@@ -124,5 +126,9 @@ public class TweetView extends Composite implements
 	public void updateTweet(TweetDTO tweet) {
 		TweetWidget tweetWidget = tweetWidgetMap.get(tweet.getTweetId());
 		tweetWidget.updateTweet(tweet);
+	}
+	
+	public Element getTweetSection() {
+		return tweetsSection.getElement();
 	}
 }

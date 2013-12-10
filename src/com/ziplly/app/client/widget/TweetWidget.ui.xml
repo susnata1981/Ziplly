@@ -54,10 +54,13 @@
 			<g:HTMLPanel addStyleNames="{style.tweetCommentSection}" ui:field="tweetCommentSection">
 			</g:HTMLPanel>
 			<div>
-				<b:TextArea ui:field="commentInputTextBox" addStyleNames="{style.commentInputTextBox}" />
+				<b:ControlGroup ui:field="commentInputTextBoxCg">
+					<b:TextArea ui:field="commentInputTextBox" addStyleNames="{style.commentInputTextBox}" />
+					<b:HelpInline ui:field="commentInputHelpInline"></b:HelpInline>
+				</b:ControlGroup>
 				<div class="{style.commentInputActionSection}">
-					<b:Button type="PRIMARY" size="SMALL" ui:field="commentBtn">comment</b:Button>
-					<b:Button size="SMALL" ui:field="cancelCommentBtn">cancel</b:Button>
+					<b:Button type="PRIMARY" addStyleNames="{style.btn}" size="SMALL" ui:field="commentBtn">comment</b:Button>
+					<b:Button size="SMALL" addStyleNames="{style.btn}" ui:field="cancelCommentBtn">cancel</b:Button>
 				</div>
 			</div>
 		</div>
