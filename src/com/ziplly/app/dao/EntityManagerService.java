@@ -11,17 +11,20 @@ import com.google.common.collect.Maps;
 
 public class EntityManagerService {
 	static Map<String, String> properties = Maps.newHashMap();
+	
 	static {
-		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
+		
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 			System.out.println("Setting database properties...");
-			properties.put("javax.persistence.jdbc.driver",
-					"com.google.appengine.api.rdbms.AppEngineDriver");
-//			properties.put("javax.persistence.jdbc.driver",
-//					"com.google.appengine.api.rdbms.AppEngineDriver");
-			properties.put("javax.persistence.jdbc.url", "jdbc:google:rdbms://zipplyrocks:zipplydb1/zipllydb");
+			properties.put("javax.persistence.jdbc.driver","com.mysql.jdbc.GoogleDriver1");
+			properties.put("javax.persistence.jdbc.url", "jdbc:google:mysql://zipplyrocks:zip/zipllydb?user=root");
+//			properties.put("hibernate.connection.url", "jdbc:google:mysql://zipplyrocks:z/zipllydb");
+
+//			properties.put("javax.persistence.jdbc.user", "root");
+//			properties.put("javax.persistence.jdbc.password", "");
 		} else {
-			properties.put("javax.persistence.jdbc.driver", "com.google.appengine.api.rdbms.AppEngineDriver");
-			properties.put("javax.persistence.jdbc.url", "jdbc:google:mysql://zipplyrocks:zipllydb/zipllydb");
+			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
+			properties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/zipllydb");
 			properties.put("javax.persistence.jdbc.user", "root");
 
 //			properties.put("javax.persistence.jdbc.url",

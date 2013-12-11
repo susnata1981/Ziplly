@@ -26,17 +26,14 @@ import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.dao.TransactionDAOImpl;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.dao.TweetDAOImpl;
-import com.ziplly.app.model.AccountRegistration;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AccountBLIImpl;
 import com.ziplly.app.server.AdminBLI;
 import com.ziplly.app.server.AdminBLIImpl;
 import com.ziplly.app.server.EmailService;
 import com.ziplly.app.server.EmailServiceImpl;
-import com.ziplly.app.server.EmailServlet;
 import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.server.PaymentServiceImpl;
-import com.ziplly.app.shared.CreateRegistrationAction;
 
 public class DAOModule extends AbstractModule {
 
