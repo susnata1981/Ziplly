@@ -24,10 +24,11 @@
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
     <property name="app.admin.email" value="zipplyrocks@appspot.gserviceaccount.com" />
     <!-- Restrict registraiton to invitation based -->
-    <property name="app.feature.enableRestrictedRegistration" value="true" />
+    <property name="app.feature.enableRestrictedRegistration" value="false" />
   </system-properties>
 
   
+  <use-google-connector-j>true</use-google-connector-j>
   <sessions-enabled>true</sessions-enabled>
   
 <!-- 
