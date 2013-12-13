@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.HashtagDTO;
@@ -26,7 +27,6 @@ import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
-import com.ziplly.common.widgets.client.CommunitySummaryWidget;
 
 /**
  * Community Wall View

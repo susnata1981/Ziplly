@@ -13,7 +13,6 @@ public class EntityManagerService {
 	static Map<String, String> properties = Maps.newHashMap();
 	
 	static {
-		
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 			System.out.println("Setting database properties...");
 			properties.put("javax.persistence.jdbc.driver","com.mysql.jdbc.GoogleDriver");
@@ -38,6 +37,7 @@ public class EntityManagerService {
 	
 	private static EntityManagerService INSTANCE = new EntityManagerService();
 	private EntityManagerService() {
+//		testDbConnection();
 	}
 	
 	public static EntityManagerService getInstance() {
@@ -45,11 +45,24 @@ public class EntityManagerService {
 	}
 	
 	public EntityManager getEntityManager() {
-//		return INSTANCE.getEntityManagerFactory().createEntityManager();
 		return INSTANCE.emf.createEntityManager();
 	}
 	
-//	EntityManagerFactory getEntityManagerFactory() {
-//		return Persistence.createEntityManagerFactory("zipllydb");
+//	private void testDbConnection() {
+//		try {
+//		      Connection conn = (Connection) DriverManager.getConnection("jdbc:google:mysql://zipplyrocks:zip/zipllydb?user=root");
+//		      try {
+//		        Statement st = conn.createStatement();
+//		        ResultSet rs = st.executeQuery("SHOW DATABASES");
+//		        while (rs.next()) {
+//		          System.out.println(rs.getString(1));
+//		        }
+//		        System.out.println("-- done --");
+//		      } finally {
+//		        conn.close();
+//		      }
+//		    } catch (SQLException e) {
+//		      e.printStackTrace();
+//		    }
 //	}
 }

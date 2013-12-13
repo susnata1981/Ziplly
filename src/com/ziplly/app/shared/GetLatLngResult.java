@@ -5,7 +5,8 @@ import net.customware.gwt.dispatch.shared.Result;
 public class GetLatLngResult implements Result {
 	private double lat, lng;
 	private String formattedAddress;
-
+	private Status status;
+	
 	public GetLatLngResult() {
 	}
 	
@@ -31,5 +32,18 @@ public class GetLatLngResult implements Result {
 
 	public void setFormattedAddress(String formattedAddress) {
 		this.formattedAddress = formattedAddress;
+	}
+	
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public static enum Status {
+		SUCCESS,
+		ERROR;
 	}
 }

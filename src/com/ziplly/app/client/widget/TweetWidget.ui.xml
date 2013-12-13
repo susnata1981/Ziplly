@@ -3,6 +3,15 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style"
 		src="tweetwidget.css">
+	.dropdown-menu2 ul {
+		position: absolute !important;
+		left: -130px !important;
+		width: 80px !important;
+		z-index: 1000px;
+	}`
+	.spannocaret {
+		display: none !important;
+	}
 	</ui:style>
 <!-- 	<ui:with type="com.ziplly.app.client.resource.ZResources" field="resources"/> -->
 	
@@ -13,10 +22,11 @@
 			</div>
 			<div class='{style.tweet_content_section}'>
 				<div class="{style.tweetActionDropdown}">
-					<b:Dropdown text="edit">
-						<b:NavLink ui:field="editTweetLink">Edit</b:NavLink>
-						<b:NavLink ui:field="deleteTweetLink">Delete</b:NavLink>
-						<b:NavLink ui:field="reportSpamLink">Report Spam</b:NavLink>
+					<b:Dropdown addStyleNames="{style.dropdown-menu2}" icon="ASTERISK">
+						<b:NavLink ui:field="editTweetLink" icon="EDIT">
+						Edit</b:NavLink>
+						<b:NavLink ui:field="deleteTweetLink" icon="REMOVE_SIGN">Delete</b:NavLink>
+						<b:NavLink ui:field="reportSpamLink" icon="FLAG">Report Spam</b:NavLink>
 					</b:Dropdown>
 				</div>
 				<div class="{style.tweet_content}">

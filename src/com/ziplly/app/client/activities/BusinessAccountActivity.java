@@ -34,8 +34,7 @@ import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.TweetResult;
 
-public class BusinessAccountActivity extends
-		AbstractAccountActivity<BusinessAccountDTO> implements
+public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAccountDTO> implements
 		InfiniteScrollHandler {
 	private BusinessAccountPlace place;
 	private AcceptsOneWidget panel;
@@ -43,15 +42,13 @@ public class BusinessAccountActivity extends
 	private int pageSize = 3;
 	private List<TweetDTO> lastTweetList;
 
-	public static interface IBusinessAccountView extends
-			IAccountView<BusinessAccountDTO> {
+	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
 		void displayFormattedAddress(String fAddress);
 	}
 
 	@Inject
-	public BusinessAccountActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx, BusinessAccountView view,
+	public BusinessAccountActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
+			PlaceController placeController, ApplicationContext ctx, BusinessAccountView view,
 			BusinessAccountPlace place) {
 
 		super(dispatcher, eventBus, placeController, ctx, view);
@@ -96,8 +93,7 @@ public class BusinessAccountActivity extends
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
 			fetchTweets(place.getAccountId(), tweetPageIndex, pageSize);
-			TweetViewBinder binder = new TweetViewBinder(
-					view.getTweetSectionElement(), this);
+			TweetViewBinder binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 			binder.start();
 			dispatcher.execute(new GetAccountByIdAction(accountId),
 					new GetAccountByIdActionHandler());
@@ -108,8 +104,7 @@ public class BusinessAccountActivity extends
 	@Override
 	public void displayProfile() {
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
-		TweetViewBinder binder = new TweetViewBinder(
-				view.getTweetSectionElement(), this);
+		TweetViewBinder binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
@@ -140,21 +135,19 @@ public class BusinessAccountActivity extends
 		tweetPageIndex++;
 		GetTweetForUserAction action = null;
 		if (place.getAccountId() != null) {
-			action = new GetTweetForUserAction(place.getAccountId(),
-					tweetPageIndex, pageSize);
+			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, pageSize);
 		} else if (ctx.getAccount() != null) {
-			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(),
-					tweetPageIndex, pageSize);
+			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(), tweetPageIndex,
+					pageSize);
 		}
-		dispatcher.execute(action,
-				new DispatcherCallbackAsync<GetTweetForUserResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
 
-					@Override
-					public void onSuccess(GetTweetForUserResult result) {
-						lastTweetList = result.getTweets();
-						view.addTweets(result.getTweets());
-					}
-				});
+			@Override
+			public void onSuccess(GetTweetForUserResult result) {
+				lastTweetList = result.getTweets();
+				view.addTweets(result.getTweets());
+			}
+		});
 	}
 
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
@@ -185,18 +178,17 @@ public class BusinessAccountActivity extends
 		// empty for now
 	}
 
-	private class GetLatLngResultHandler extends
-			DispatcherCallbackAsync<GetLatLngResult> {
+	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
 		@Override
 		public void onSuccess(GetLatLngResult result) {
-			view.displayLocationInMap(result);
-			((BusinessAccountView) view).displayFormattedAddress(result
-					.getFormattedAddress());
+			if (result.getFormattedAddress() != null) {
+				view.displayLocationInMap(result);
+				((BusinessAccountView) view).displayFormattedAddress(result.getFormattedAddress());
+			}
 		}
 	}
 
-	private class GetAccountByIdActionHandler extends
-			DispatcherCallbackAsync<GetAccountByIdResult> {
+	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
 		@Override
 		public void onSuccess(GetAccountByIdResult result) {
@@ -207,8 +199,7 @@ public class BusinessAccountActivity extends
 				go(panel);
 			} else if (account instanceof PersonalAccountDTO) {
 				// take some action here
-				placeController.goTo(new PersonalAccountPlace(account
-						.getAccountId()));
+				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));
 			}
 		}
 	}
@@ -243,12 +234,9 @@ public class BusinessAccountActivity extends
 			if (th instanceof NeedsSubscriptionException) {
 				view.displayMessage(th.getMessage(), AlertType.ERROR);
 			} else if (th instanceof UsageLimitExceededException) {
-				view.displayMessage(
-						StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION,
-						AlertType.ERROR);
+				view.displayMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
 			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR,
-						AlertType.ERROR);
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
 	}

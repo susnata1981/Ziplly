@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-	xmlns:cw="urn:import:com.ziplly.common.widgets.client" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	 xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.rootPanel {
 		position: relative;
@@ -100,7 +100,7 @@
 						width="100%" />
 
 					<div class="{style.communityInfoPanel}">
-						<cw:CommunitySummaryWidget ui:field="communitySummaryWidget" />
+						<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" />
 					</div>
 				</g:HTMLPanel>
 			</div>

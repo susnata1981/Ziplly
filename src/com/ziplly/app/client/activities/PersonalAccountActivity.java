@@ -185,7 +185,9 @@ public class PersonalAccountActivity extends
 			DispatcherCallbackAsync<GetLatLngResult> {
 		@Override
 		public void onSuccess(GetLatLngResult result) {
-			PersonalAccountActivity.this.view.displayLocationInMap(result);
+			if (result != null) {
+				PersonalAccountActivity.this.view.displayLocationInMap(result);
+			}
 		}
 	}
 
