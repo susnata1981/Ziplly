@@ -3,7 +3,9 @@ package com.ziplly.app.dao;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -23,4 +25,5 @@ public interface TweetDAO {
 	List<TweetDTO> findAll();
 	List<TweetDTO> findTweets(String query, int start, int end);
 	Long findTotalTweetCount(String queryStr);
+	Map<TweetType, Integer> findTweetCategoryCounts(Account acct);
 }

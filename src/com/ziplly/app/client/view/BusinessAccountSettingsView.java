@@ -14,6 +14,7 @@ import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -32,6 +33,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -45,6 +47,7 @@ import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
 public class BusinessAccountSettingsView extends Composite implements IBusinessAccountSettingView {
@@ -54,19 +57,25 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	private static BusinessAccountSettingsViewUiBinder uiBinder = GWT
 			.create(BusinessAccountSettingsViewUiBinder.class);
 
-	public static interface BusinessAccountSettingsPresenter extends AccountSettingsPresenter<BusinessAccountDTO> {
+	public static interface BusinessAccountSettingsPresenter extends
+			AccountSettingsPresenter<BusinessAccountDTO> {
 		void getJwtString();
 
 		void pay(TransactionDTO txn);
 	}
-	
+
 	interface BusinessAccountSettingsViewUiBinder extends
 			UiBinder<Widget, BusinessAccountSettingsView> {
 	}
 
 	@UiField
 	Alert message;
-	
+
+	@UiField
+	Anchor profileLink;
+	@UiField
+	Anchor inboxLink;
+
 	@UiField
 	TextBox businessName;
 	@UiField
@@ -87,7 +96,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	ControlGroup street2Cg;
 	@UiField
 	HelpInline street2Error;
-	
+
 	@UiField
 	TextBox zip;
 	@UiField
@@ -101,26 +110,26 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	ControlGroup websiteCg;
 	@UiField
 	HelpInline websiteError;
-	
+
 	@UiField
 	TextBox email;
 	@UiField
 	ControlGroup emailCg;
 	@UiField
 	HelpInline emailError;
-	
+
 	@UiField
 	FormPanel uploadForm;
 	@UiField
 	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
-	
+
 	@UiField
 	Button saveBtn;
 	@UiField
 	Button cancelBtn;
-	
+
 	// Payment details tab
 	@UiField
 	Alert paymentStatus;
@@ -128,7 +137,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	HTMLPanel subscriptionDetailsTable;
 	@UiField
 	HTMLPanel subscriptionPlanTablePanel;
-	
+
 	// transaction details elements
 	@UiField
 	Tab subscriptionTab;
@@ -140,16 +149,41 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	TableCellElement subscriptionPlanFee;
 	@UiField
 	TableCellElement subscriptionPlanStatus;
-	
-	private CellTable<SubscriptionPlanDTO> subscriptionPlanTable;	
+
+	// Reset Password tab
+	@UiField
+	PasswordTextBox password;
+	@UiField
+	ControlGroup passwordCg;
+	@UiField
+	HelpInline passwordError;
+
+	@UiField
+	PasswordTextBox newPassword;
+	@UiField
+	ControlGroup newPasswordCg;
+	@UiField
+	HelpInline newPasswordError;
+
+	@UiField
+	PasswordTextBox confirmNewPassword;
+	@UiField
+	ControlGroup confirmNewPasswordCg;
+	@UiField
+	HelpInline confirmNewPasswordError;
+
+	@UiField
+	Button updatePasswordBtn;
+
+	private CellTable<SubscriptionPlanDTO> subscriptionPlanTable;
 	private BusinessAccountDTO account;
 
 	private BusinessAccountSettingsPresenter presenter;
 
 	private String jwtToken;
-	private Map<Long,SubscriptionPlanDTO> subscriptionPlanMap = new HashMap<Long, SubscriptionPlanDTO>();
+	private Map<Long, SubscriptionPlanDTO> subscriptionPlanMap = new HashMap<Long, SubscriptionPlanDTO>();
 	private boolean actionEnabled = true;
-	
+
 	public BusinessAccountSettingsView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
@@ -157,7 +191,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		clearPaymentStatus();
 	}
-	
+
 	@Override
 	public void clear() {
 		this.account = null;
@@ -229,17 +263,17 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		return true;
 	}
 
-	boolean validatePassword(String password, ControlGroup cg,
-			HelpInline helpInline) {
-		ValidationResult result = FieldVerifier.validatePassword(password);
-		if (!result.isValid()) {
-			cg.setType(ControlGroupType.ERROR);
-			helpInline.setText(result.getErrors().get(0).getErrorMessage());
-			helpInline.setVisible(true);
-			return false;
-		}
-		return true;
-	}
+	// boolean validatePassword(String password, ControlGroup cg,
+	// HelpInline helpInline) {
+	// ValidationResult result = FieldVerifier.validatePassword(password);
+	// if (!result.isValid()) {
+	// cg.setType(ControlGroupType.ERROR);
+	// helpInline.setText(result.getErrors().get(0).getErrorMessage());
+	// helpInline.setVisible(true);
+	// return false;
+	// }
+	// return true;
+	// }
 
 	boolean validateInput() {
 		String businessNameInput = businessName.getText().trim();
@@ -255,7 +289,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 
 		return valid;
 	}
-	
+
 	void resetErrors() {
 		businessNameCg.setType(ControlGroupType.NONE);
 		businessNameError.setVisible(false);
@@ -266,14 +300,14 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
 	}
-	
+
 	@Override
 	public void onSave() {
 		resetErrors();
 		if (!validateInput()) {
 			return;
 		}
-		
+
 		String name = businessName.getText().trim();
 		String streetOne = street1.getText().trim();
 		String streetTwo = street2.getText().trim();
@@ -344,12 +378,12 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		uploadBtn.setEnabled(false);
 		uploadForm.setAction("");
 	}
-	
+
 	@Override
 	public void onUpload() {
 		uploadForm.submit();
 	}
-	
+
 	@UiHandler("uploadBtn")
 	void uploadImage(ClickEvent event) {
 		onUpload();
@@ -361,28 +395,29 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		paymentStatus.setText(msg);
 		paymentStatus.setType(type);
 	}
-	
+
 	@Override
 	public void clearPaymentStatus() {
 		paymentStatus.setText("");
 		paymentStatus.setVisible(false);
 	}
-	
+
 	native void doPay(String jwtToken, int subscriptionPlanId) /*-{
 		var that = this;
-		$wnd.google.payments.inapp.buy({
-			'jwt': jwtToken,
-			'success' : function() { 
-				alert('success');
-				that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onSuccess(I)(subscriptionPlanId);
-			},
-			'failure' : function() { 
-				alert('failure'); 
-				that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure()();
-			}
-		});
+		$wnd.google.payments.inapp
+				.buy({
+					'jwt' : jwtToken,
+					'success' : function() {
+						alert('success');
+						that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onSuccess(I)(subscriptionPlanId);
+					},
+					'failure' : function() {
+						alert('failure');
+						that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure()();
+					}
+				});
 	}-*/;
-	
+
 	public void onSuccess(int subscriptionId) {
 		logger.log(Level.INFO, "Successfully paid");
 		TransactionDTO txn = new TransactionDTO();
@@ -401,7 +436,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
 		txn.setAmount(new BigDecimal(MEMBERSHIP_FEE_AMOUNT));
 		txn.setTimeCreated(new Date());
-		txn.setStatus(TransactionStatus.FAILURE);		
+		txn.setStatus(TransactionStatus.FAILURE);
 		presenter.pay(txn);
 	};
 
@@ -418,7 +453,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	@Override
 	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
 		subscriptionPlanMap.clear();
-		for(SubscriptionPlanDTO plan : plans) {
+		for (SubscriptionPlanDTO plan : plans) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
 		}
 		subscriptionPlanTablePanel.clear();
@@ -443,7 +478,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			}
 		};
 		table.addColumn(name, nameHeader);
-		
+
 		TextColumn<SubscriptionPlanDTO> description = new TextColumn<SubscriptionPlanDTO>() {
 			@Override
 			public String getValue(SubscriptionPlanDTO plan) {
@@ -457,7 +492,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			}
 		};
 		table.addColumn(description, descriptionHeader);
-		
+
 		TextColumn<SubscriptionPlanDTO> fee = new TextColumn<SubscriptionPlanDTO>() {
 			@Override
 			public String getValue(SubscriptionPlanDTO plan) {
@@ -471,9 +506,10 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			}
 		};
 		table.addColumn(fee, feeHeader);
-		
+
 		ButtonCell buttonCell = new ButtonCell();
-		Column<SubscriptionPlanDTO, String> actionColumn = new Column<SubscriptionPlanDTO, String>(buttonCell) {
+		Column<SubscriptionPlanDTO, String> actionColumn = new Column<SubscriptionPlanDTO, String>(
+				buttonCell) {
 			@Override
 			public String getValue(SubscriptionPlanDTO object) {
 				return "subscribe";
@@ -486,7 +522,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			}
 		};
 		table.addColumn(actionColumn, actionHeader);
-		
+
 		actionColumn.setFieldUpdater(new FieldUpdater<SubscriptionPlanDTO, String>() {
 
 			@Override
@@ -521,12 +557,81 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	public void hideTransactionHistory() {
 		subscriptionDetailsTable.setVisible(false);
 	}
-	
+
+	@UiHandler("profileLink")
+	public void onProfileLinkClick(ClickEvent event) {
+		presenter.onProfileLinkClick();
+	}
+
+	@UiHandler("inboxLink")
+	public void onInboxLinkClick(ClickEvent event) {
+		presenter.onInboxLinkClick();
+	}
+
 	public void showTransactionHistory() {
 		subscriptionDetailsTable.setVisible(true);
 	}
-	
+
 	public void hideSubscriptionTab() {
 		subscriptionTab.setHideOn(Device.DESKTOP);
 	}
+
+	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {
+		ValidationResult result = FieldVerifier.validatePassword(password);
+		if (!result.isValid()) {
+			cg.setType(ControlGroupType.ERROR);
+			helpInline.setText(result.getErrors().get(0).getErrorMessage());
+			helpInline.setVisible(true);
+			return false;
+		}
+		return true;
+	}
+
+	private boolean validatePasswordInput() {
+		String passwordInput = password.getText().trim();
+		boolean valid = validatePassword(passwordInput, passwordCg, passwordError);
+
+		String newPasswordInput = newPassword.getText().trim();
+		valid &= validatePassword(newPasswordInput, newPasswordCg, newPasswordError);
+
+		String confirmPasswordInput = confirmNewPassword.getText().trim();
+		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg,
+				confirmNewPasswordError);
+
+		if (newPasswordInput != null && confirmPasswordInput != null) {
+			if (!confirmPasswordInput.equals(newPasswordInput)) {
+				confirmNewPasswordCg.setType(ControlGroupType.ERROR);
+				confirmNewPasswordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
+				confirmNewPasswordError.setVisible(true);
+			}
+		}
+		return valid;
+	}
+	
+	void resetPasswordErrors() {
+		message.clear();
+		message.setVisible(false);
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setVisible(false);
+		newPasswordCg.setType(ControlGroupType.NONE);
+		newPasswordError.setVisible(false);
+		confirmNewPasswordCg.setType(ControlGroupType.NONE);
+		confirmNewPasswordError.setVisible(false);
+	}
+	
+	@UiHandler("updatePasswordBtn")
+	void resetPassword(ClickEvent event) {
+		resetPasswordErrors();
+		if (!validatePasswordInput()) {
+			return;
+		}
+
+		String oldPasswordInput = FieldVerifier.sanitize(password.getText());
+		String newPasswordInput = FieldVerifier.sanitize(newPassword.getText());
+		UpdatePasswordAction action = new UpdatePasswordAction();
+		action.setOldPassword(oldPasswordInput);
+		action.setNewPassword(newPasswordInput);
+		presenter.updatePassword(action);
+	}
+
 }

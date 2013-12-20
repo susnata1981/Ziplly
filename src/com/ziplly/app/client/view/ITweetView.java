@@ -18,4 +18,5 @@ public interface ITweetView<T extends Presenter> extends View<T> {
 	void setWidth(String width);
 	void addTweet(TweetDTO tweet);
 	Element getTweetSection();
+	void insertTweet(TweetDTO tweet);
 }

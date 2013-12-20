@@ -14,12 +14,12 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.Tweet;
-import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.PrivacySettings;
 
 public class AccountDAOImpl implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class
@@ -113,9 +113,15 @@ public class AccountDAOImpl implements AccountDAO {
 				.getEntityManager();
 		em.getTransaction().begin();
 		em.persist(account);
-//		for(PrivacySettings ps : account.getPrivacySettings()) {
-//			em.persist(ps);
-//		}
+		
+		for(PrivacySettings ps : account.getPrivacySettings()) {
+			em.persist(ps);
+		}
+		
+		for(AccountNotificationSettings ans : account.getNotificationSettings()) {
+			em.persist(ans);
+		}
+		
 		em.getTransaction().commit();
 		AccountDTO result = EntityUtil.convert(account);
 		em.close();
@@ -181,6 +187,23 @@ public class AccountDAOImpl implements AccountDAO {
 		return response;
 	}
 
+	@Override
+	public List<AccountDTO> findAllAccountsByZip(int zip) {
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createQuery("from Account where zip = :zip");
+		query.setParameter("zip", zip);
+
+		@SuppressWarnings("unchecked")
+		List<Account> accounts = (List<Account>)query.getResultList();
+		List<AccountDTO> response = Lists.newArrayList();
+		for(Account pa : accounts) {
+			response.add(EntityUtil.convert(pa));
+		}
+		em.close();
+		return response;
+	}
+	
 	@Override
 	public void updatePassword(Account account) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();

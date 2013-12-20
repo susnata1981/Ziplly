@@ -3,9 +3,12 @@ package com.ziplly.app.client.activities;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -23,6 +26,7 @@ import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
@@ -32,6 +36,7 @@ import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
+import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.TweetResult;
 
 public class PersonalAccountActivity extends
@@ -42,7 +47,9 @@ public class PersonalAccountActivity extends
 	private int tweetPageIndex;
 	private int pageSize = 3;
 	private List<TweetDTO> lastTweetList;
-
+	private TweetViewBinder binder;
+	private ScrollBottomHitActionHandler scrollBottomHitActionHandler = new ScrollBottomHitActionHandler();
+	
 	@Inject
 	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
@@ -94,13 +101,35 @@ public class PersonalAccountActivity extends
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
 			fetchTweets(place.getAccountId(), tweetPageIndex, pageSize);
-			TweetViewBinder binder = new TweetViewBinder(
-					view.getTweetSectionElement(), this);
-			binder.start();
+			startInfiniteScrollThread();
 			dispatcher.execute(new GetAccountByIdAction(accountId),
 					new GetAccountByIdActionHandler());
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
 		}
+	}
+
+	private void startInfiniteScrollThread() {
+		if (binder != null) {
+			binder.stop();
+		}
+		binder = new TweetViewBinder(
+				view.getTweetSectionElement(), this) {
+			protected boolean detectScrollerHitBottom() {
+				int sh = elem.getScrollHeight();
+				int st = elem.getScrollTop();
+				int of = elem.getOffsetHeight();
+				int h = Window.getScrollTop();
+				int dh = Document.get().getClientHeight();
+				int wh = Window.getClientHeight();
+				int ch = elem.getClientHeight();
+				int ch1 = Window.getClientHeight();
+//				System.out.println("SH="+sh+" ST="+st+" OF="+of+" h="+h+" ch1="+ch1);
+//				System.out.println("ST="+Window.getScrollTop()+" DH="+dh+" WH="+wh);
+				return elem.getScrollHeight() - (elem.getScrollTop() + elem.getOffsetHeight()) < 100;
+//				return false;
+			}
+		};
+		binder.start();
 	}
 
 	@Override
@@ -110,9 +139,7 @@ public class PersonalAccountActivity extends
 		}
 
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
-		TweetViewBinder binder = new TweetViewBinder(
-				view.getTweetSectionElement(), this);
-		binder.start();
+		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
@@ -148,16 +175,18 @@ public class PersonalAccountActivity extends
 			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(),
 					tweetPageIndex, pageSize);
 		}
-		dispatcher.execute(action,
-				new DispatcherCallbackAsync<GetTweetForUserResult>() {
-					@Override
-					public void onSuccess(GetTweetForUserResult result) {
-						lastTweetList = result.getTweets();
-						view.addTweets(result.getTweets());
-					}
-				});
+		
+		dispatcher.execute(action, scrollBottomHitActionHandler);
 	}
 
+	@Override
+	public void reportTweetAsSpam(TweetDTO tweet) {
+		SpamDTO spam = new SpamDTO();
+		spam.setTweet(tweet);
+		spam.setReporter(ctx.getAccount());
+		reportSpam(spam, new ReportSpamActionHandler());
+	}
+	
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
 		ctx.setUnreadMessageCount(result.getUnreadMessages());
 		ctx.setTotalTweets(result.getTotalTweets());
@@ -178,7 +207,9 @@ public class PersonalAccountActivity extends
 
 	@Override
 	public void onStop() {
-		// empty for now
+		if (binder != null) {
+			binder.stop();
+		}
 	}
 
 	private class GetLatLngResultHandler extends
@@ -266,6 +297,22 @@ public class PersonalAccountActivity extends
 		@Override
 		public void onFailure(Throwable th) {
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+		}
+	}
+	
+
+	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+		@Override
+		public void onSuccess(ReportSpamResult result) {
+			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+		}
+	}
+	
+	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult>{
+		@Override
+		public void onSuccess(GetTweetForUserResult result) {
+			lastTweetList = result.getTweets();
+			view.addTweets(result.getTweets());
 		}
 	}
 }

@@ -1,76 +1,94 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	
+
 	<ui:style src="accountview.css" />
 
-	<g:HTMLPanel addStyleNames="{style.rootPanel}">
-		<b:Alert ui:field="message" />
+	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.rootPanel}">
+		<b:Alert ui:field="message" close="false" />
 		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
 			<dl>
 				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">Inbox<span ui:field="unreadMessageCountField"/></g:Anchor>
+					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
+						INBOX
+						<span ui:field="unreadMessageCountField" />
+					</g:Anchor>
 				</dt>
 				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">Settings</g:Anchor>
+					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
 				</dt>
+				<!-- <dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
+					INBOX </b:NavLink> <span ui:field="unreadMessageCountField" /> </dt> <dt> 
+					<b:NavLink addStyleNames="{style.navlink}" icon="ASTERISK" ui:field="settingsLink">Settings</b:NavLink> 
+					</dt> -->
 			</dl>
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
-			<div class="{style.profileSection}">
-				<div class="{style.profileImageSection}">
-					 <div class="{style.profileImageDiv}">
-						<b:Image ui:field="profileImage" />
+			<div class="{style.profileDiv}">
+				<div class="{style.profileSection}">
+					<div class="{style.profileImageSection}">
+						<div class="{style.profileImageDiv}">
+							<b:Image ui:field="profileImage" />
+						</div>
+						<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
+						<div>
+							<b:Button type="INFO" size="MINI" ui:field="sendMsgBtn">Send
+								Message</b:Button>
+						</div>
+						<div>
+							<b:Button type="INFO" size="MINI" ui:field="inviteBtn">Invite people</b:Button>
+						</div>
 					</div>
-					<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
-					<div>
-						<b:Button type="INFO" size="MINI" ui:field="sendMsgBtn">Send
-							Message</b:Button>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">About me</h2>
+						<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
+						<div addStyleNames="{style.description}">
+						    Email:
+							<g:Anchor ui:field="emailLink">
+								<span ui:field="email" addStyleNames="{style.description}" />
+							</g:Anchor>
+						</div>
+						<div addStyleNames="{style.description}">
+							<span>
+								Last login:
+								<span ui:field="lastLoginTime" />
+							</span>
+						</div>
 					</div>
-					<div>
-					    <b:Button type="INFO" size="MINI" ui:field="inviteBtn">Invite people</b:Button>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Occupation</h2>
+						<span ui:field="occupationSpan" class="{style.occupationSpan}" />
+					</div>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Interests</h2>
+						<g:HTMLPanel ui:field="interestPanel"></g:HTMLPanel>
+					</div>
+					<div class="{style.profileInfoBox}">
+						<div style="width:320px; height:270px" ui:field="locationDiv"></div>
+					</div>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Activity</h2>
+						<dt:ProfileStatWidget title="Tweets"
+							ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
+						<dt:ProfileStatWidget title="Comments"
+							ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" />
+						<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget"
+							addStyleNames="{style.accountStatDiv}" />
 					</div>
 				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">About me</h2>
-					<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
-					<div addStyleNames="{style.description}">
-						<g:Anchor ui:field="emailLink">
-							<span ui:field="email" addStyleNames="{style.description}" />
-						</g:Anchor>
-					</div>
-					<div addStyleNames="{style.description}">
-						<span>
-							Last login:
-							<span ui:field="lastLoginTime" />
-						</span>
-					</div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Occupation</h2>
-					<span ui:field="occupationSpan" class="{style.occupationSpan}"/>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Interests</h2>
-					<g:HTMLPanel ui:field="interestPanel"></g:HTMLPanel>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<div style="width:320px; height:270px" ui:field="locationDiv"></div>    
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Activity</h2>
-					<dt:ProfileStatWidget title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}"/>
+				<!-- <g:HTMLPanel ui:field="rootTweetSection" addStyleNames="{style.rootTweetSection}"> 
+					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}"> 
+					<dt:TweetBox ui:field="tweetBox" /> </g:HTMLPanel> <g:HTMLPanel ui:field="tweetSection" 
+					addStyleNames="{style.tweetSection}"> </g:HTMLPanel> </g:HTMLPanel> -->
+				<div class="{style.tweetSectionDiv}">
+					<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
+						<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
+							<dt:TweetBox ui:field="tweetBox" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
 				</div>
 			</div>
-			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
-			    <g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
-			    	<dt:TweetBox ui:field="tweetBox"/>
-			    </g:HTMLPanel>
-			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

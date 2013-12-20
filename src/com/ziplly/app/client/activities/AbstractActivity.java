@@ -10,7 +10,9 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -77,6 +79,33 @@ public abstract class AbstractActivity implements Activity {
 					
 					@Override
 					public void onFailure(Throwable caught) {
+						Window.alert(caught.getLocalizedMessage());
+					}
+
+				});
+	}
+	
+	public void checkLoginStatus() {
+		if (ctx.getAccount() != null) {
+			// control shouldn't flow here
+			return;
+		}
+		GetLoggedInUserAction action = new GetLoggedInUserAction();
+		dispatcher.execute(action,
+				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+					@Override
+					public void onSuccess(GetLoggedInUserResult result) {
+						if (result != null && result.getAccount() != null) {
+							ctx.setAccount(result.getAccount());
+							eventBus.fireEvent(new LoginEvent(result.getAccount()));
+						} else {
+							placeController.goTo(new LoginPlace());
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO (send them to login page?)
 						Window.alert(caught.getLocalizedMessage());
 					}
 

@@ -1,10 +1,12 @@
 package com.ziplly.app.dao;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -12,9 +14,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Tweet;
@@ -52,6 +56,7 @@ public class TweetDAOImpl implements TweetDAO {
 				h.setTag(hashtag);
 				h.addTweet(tweet);
 				h.setTimeCreated(new Date());
+				em.persist(h);
 				existingTags.add(h);
 			}
 		}
@@ -280,5 +285,29 @@ public class TweetDAOImpl implements TweetDAO {
 		Long count = (Long) query.getSingleResult();
 		em.close();
 		return count;
+	}
+
+	/*
+	 * Finds the count for different tweet types
+	 */
+	@Override
+	public Map<TweetType, Integer> findTweetCategoryCounts(Account acct) {
+		if (acct == null) {
+			throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
+		}
+		
+		Map<TweetType, Integer> result = Maps.newHashMap();
+		
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createNativeQuery("select t.type, count(*) from tweet t, account a where t.sender_id = a.account_id and a.zip = :zip group by t.type")
+				.setParameter("zip", acct.getZip());
+		
+		List resultList = query.getResultList();
+		for(Object r : resultList) {
+			Object [] temp = (Object[]) r;
+			result.put(TweetType.values()[(Integer) temp[0]], ((BigInteger)temp[1]).intValue());
+		}
+		em.close();
+		return result;
 	}
 }

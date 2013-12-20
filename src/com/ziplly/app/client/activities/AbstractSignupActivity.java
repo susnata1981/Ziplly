@@ -16,7 +16,6 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationResult;

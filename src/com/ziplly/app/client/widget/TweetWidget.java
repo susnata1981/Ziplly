@@ -12,6 +12,7 @@ import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
@@ -22,8 +23,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -35,14 +34,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.WidgetFactory;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
@@ -56,8 +52,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	private static final int PROFILE_COUNT_FOR_LIKE = 2;
 	private static final int DEFAULT_COMMENT_COUNT = 4;
 
-	private static TweetWidgetUiBinder uiBinder = GWT
-			.create(TweetWidgetUiBinder.class);
+	private static TweetWidgetUiBinder uiBinder = GWT.create(TweetWidgetUiBinder.class);
 
 	interface TweetWidgetUiBinder extends UiBinder<Widget, TweetWidget> {
 	}
@@ -66,10 +61,22 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String tweetCommentSection();
 
 		String comment();
-		
+
 		String smalltext();
 
 		String profileImageForComment();
+
+		String profileLinkAnchor();
+
+		String commentRow();
+		
+		String commentRowAnchor();
+		
+		String commentRowText();
+		
+		String commentRowDate();
+		
+		String commentsLink();
 	}
 
 	@UiFactory
@@ -77,7 +84,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		ZResources.IMPL.style().ensureInjected();
 		return ZResources.IMPL;
 	}
-	
+
 	@UiField
 	Style style;
 
@@ -112,13 +119,16 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	Element timeCreated;
 
+	@UiField
+	ZAnchor replyAnchor;
+	
 	// Like section
 	@UiField
-	Anchor likeTweetLink;
+	ZAnchor likeAnchor;
 	@UiField
 	HTMLPanel tweetLikePanel;
 	List<LoveDTO> likes = new ArrayList<LoveDTO>();
-	ArrayList<HorizontalPanel> comments = new ArrayList<HorizontalPanel>();
+	ArrayList<Panel> comments = new ArrayList<Panel>();
 
 	// Comment section
 	@UiField
@@ -138,40 +148,36 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private TweetPresenter presenter;
 	private TweetDTO tweet;
-	final Modal modal = new Modal();
+	// final Modal modal = new Modal();
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
-	
+
 	public TweetWidget() {
-		long s1,e1;
+		long s1, e1;
 		long start1 = System.currentTimeMillis();
 		s1 = System.currentTimeMillis();
 		initWidget(uiBinder.createAndBindUi(this));
 		e1 = System.currentTimeMillis();
-//		System.out.println("Time to initWidget"+(e1-s1));
+		// System.out.println("Time to initWidget"+(e1-s1));
 		s1 = System.currentTimeMillis();
 		hideTweetUpdateButtons();
 		e1 = System.currentTimeMillis();
-//		System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
+		// System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
 		s1 = e1;
 		hideCommentButtons();
 		e1 = System.currentTimeMillis();
-//		System.out.println("Time to hideCommentButtons"+(e1-s1));
+		// System.out.println("Time to hideCommentButtons"+(e1-s1));
 		s1 = e1;
 		setupHandlers();
 		e1 = System.currentTimeMillis();
-//		System.out.println("Time to setupHandlers"+(e1-s1));
+		// System.out.println("Time to setupHandlers"+(e1-s1));
 		s1 = e1;
-		modal.setAnimation(true);
-		modal.setWidth("20%");
-		modal.setCloseVisible(true);
-		modal.setTitle("people who liked this post");
 		e1 = System.currentTimeMillis();
-//		System.out.println("Time to modal"+(e1-s1));
+		// System.out.println("Time to modal"+(e1-s1));
 		s1 = e1;
-		
+
 		long end1 = System.currentTimeMillis();
-//		System.out.println("Time to create tweet widget="+(end1-start1));
+		// System.out.println("Time to create tweet widget="+(end1-start1));
 	}
 
 	private void setupHandlers() {
@@ -191,6 +197,16 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				}
 			}
 		});
+
+		reportSpamLink.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				boolean confirm = Window.confirm("Are you sure you want to delete this?");
+				if (confirm) {
+					presenter.reportTweetAsSpam(tweet);
+				}
+			}
+		});
 		
 		saveBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -198,10 +214,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
 				tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
-//				tweetContentTextArea.getElement().getStyle()
-//						.setVisibility(Visibility.HIDDEN);
-//				saveBtn.setVisible(false);
-//				cancelBtn.setVisible(false);
+				// tweetContentTextArea.getElement().getStyle()
+				// .setVisibility(Visibility.HIDDEN);
+				// saveBtn.setVisible(false);
+				// cancelBtn.setVisible(false);
 			}
 		});
 
@@ -232,10 +248,11 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			@Override
 			public void onClick(ClickEvent event) {
 				CommentDTO comment = new CommentDTO();
+				clearErrorOnCommentTextBox();
 				if (!validateComment(commentInputTextBox.getText())) {
 					return;
 				}
-					
+
 				comment.setContent(commentInputTextBox.getText());
 				comment.setTimeCreated(new Date());
 				comment.setAuthor(tweet.getSender());
@@ -252,19 +269,34 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				clearComment();
 			}
 		});
+		
+		replyAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				SendMessageWidget smw = new SendMessageWidget(tweet.getSender());
+				smw.setPresenter(presenter);
+				smw.show();
+			}
+		});
 	}
 
 	private boolean validateComment(String comment) {
 		ValidationResult result = FieldVerifier.validateComment(comment);
 		if (!result.isValid()) {
-//			presenter.displayMessage(result.getErrors().get(0).getErrorMessage(), AlertType.ERROR);
 			commentInputTextBoxCg.setType(ControlGroupType.ERROR);
-			commentInputHelpInline.setText(StringConstants.COMMENT_LENGTH_EXCEEDED);
+			commentInputHelpInline.setText(result.getErrors().get(0).getErrorMessage());
+			commentInputHelpInline.setVisible(true);
 			return false;
 		}
 		return true;
 	}
-	
+
+	private void clearErrorOnCommentTextBox() {
+		commentInputTextBoxCg.setType(ControlGroupType.NONE);
+		commentInputHelpInline.setText("");
+		commentInputHelpInline.setVisible(false);
+	}
+
 	private void focusOnCommentBox() {
 		commentInputTextBox.setHeight("50px");
 		commentInputTextBox.setFocus(true);
@@ -286,15 +318,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
 
+	@UiField
+	HTMLPanel commentInputActionSection;
+
 	void hideCommentButtons() {
-		commentInputTextBox.setHeight("20px");
-		commentBtn.setVisible(false);
-		cancelCommentBtn.setVisible(false);
+		commentInputActionSection.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	void showCommentButtons() {
-		commentBtn.setVisible(true);
-		cancelCommentBtn.setVisible(true);
+		commentInputActionSection.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
 
 	/*
@@ -322,7 +354,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			displayCommentSection();
 		}
 		long end1 = System.currentTimeMillis();
-		System.out.println("Time to display tweet: "+(end1-start1));
+		System.out.println("Time to display tweet: " + (end1 - start1));
 	}
 
 	private void displayCommentSection() {
@@ -334,11 +366,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				return c1.getTimeCreated().before(c2.getTimeCreated()) ? 1 : -1;
 			}
 		});
-		
+
 		int commentCount = 0;
 		for (final CommentDTO comment : tweet.getComments()) {
-			HorizontalPanel panel = addNextComment(comment);
-//			panel.setStyleName(style.comment());
+			Panel panel = addNextComment(comment);
 			comments.add(panel);
 			tweetCommentSection.add(panel);
 			if (commentCount < DEFAULT_COMMENT_COUNT) {
@@ -351,9 +382,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 		// populate show more link
 		if (commentCount > DEFAULT_COMMENT_COUNT) {
-			showMoreCommentsLink
-					.setText(comments.size() + " comments show all");
-			showMoreCommentsLink.setStyleName("smalltext");
+			showMoreCommentsLink.setText(comments.size() + " comments, show all");
+			showMoreCommentsLink.addStyleName(style.commentsLink());
 			showMoreCommentsLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -361,7 +391,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				}
 			});
 
-			hideCommentsLink.setStyleName("smalltext");
+			hideCommentsLink.addStyleName(style.commentsLink());
 			hideCommentsLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -395,39 +425,40 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		displayCommentSection();
 	}
 
-	private HorizontalPanel addNextComment(final CommentDTO comment) {
-		Image pImage = null;
-		if (comment.getAuthor().getImageUrl() != null) {
-			pImage = new Image(comment.getAuthor().getImageUrl());
-		} else {
-			pImage = new Image("");
-		}
-		pImage.addStyleName(style.profileImageForComment());
-		pImage.setSize("30px", "25px");
-		Hyperlink imageLink = new Hyperlink();
-		pImage.addClickHandler(new ClickHandler() {
+	/**
+	 * @param comment
+	 * @return
+	 */
+	private Panel addNextComment(final CommentDTO comment) {
+		HTMLPanel fp = new HTMLPanel("");
+		fp.addStyleName(style.commentRow());
+		AccountDTO acct = comment.getAuthor();
+		String content = "<img src='"+acct.getImageUrl()+"' max-width='50px' max-height='50px'/>&nbsp;"+acct.getDisplayName();
+		// Profile Image link
+		Anchor profileLink = new Anchor();
+		profileLink.addStyleName(style.commentRowAnchor());
+		profileLink.getElement().setInnerHTML(content);
+		profileLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				displayPublicProfile(comment.getAuthor());
+				presenter.goTo(new PersonalAccountPlace(comment.getAuthor().getAccountId()));
 			}
 		});
-		imageLink.getElement().getFirstChild().appendChild(pImage.getElement());
-		imageLink.setWidth("40px");
-		// TODO : user FlowPanel instead
-		HorizontalPanel panel = new HorizontalPanel();
-		panel.add(imageLink);
-		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		HTMLPanel commentText = new HTMLPanel("<span class='tinytext'>"
-				+ comment.getContent() + "</span>");
-//		commentText.setWidth("75%");
-		panel.add(commentText);
-		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		
+		fp.add(profileLink);
+		
+		// Content section
+		HTMLPanel commentText = new HTMLPanel("<span class='tinytext'>" + comment.getContent()
+				+ "</span>");
+		commentText.addStyleName(style.commentRowText());
+		fp.add(commentText);
+		
+		// Date section
 		HTMLPanel commentDate = new HTMLPanel("<span class='datefont'>"
 				+ getFormattedTime(comment.getTimeCreated()) + "</span>");
-//		commentDate.setWidth("20%");
-		panel.add(commentDate);
-		panel.setStyleName(style.tweetCommentSection());
-		return panel;
+		commentDate.addStyleName(style.commentRowDate());
+		fp.add(commentDate);
+		return fp;
 	}
 
 	<T extends AccountDTO> void displayAccountModal(T acct) {
@@ -439,84 +470,74 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private void displayLikesSection() {
 		// like click handler
-		likeTweetLink.addClickHandler(new ClickHandler() {
+		likeAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				System.out.println("Clicked on like tweet:"
-						+ tweet.getTweetId());
+				System.out.println("Clicked on like tweet:" + tweet.getTweetId());
 				presenter.likeTweet(tweet.getTweetId());
 			}
 		});
 
-		if (tweet.getLikes().size() == 0) {
-			tweetLikePanel.getElement().getStyle().setDisplay(Display.NONE);
+		tweetLikePanel.getElement().getStyle().setDisplay(Display.BLOCK);
+		int likesCounter = tweet.getLikes().size();
+
+		if (likesCounter == 0) {
 			return;
 		}
 
-		tweetLikePanel.getElement().getStyle().setDisplay(Display.BLOCK);
-		int likesCounter = 0;
-		modal.hide();
 		tweetLikePanel.clear();
-		HorizontalPanel hp = new HorizontalPanel();
-		HTMLPanel modalPanel = new HTMLPanel("");
+		StringBuilder likeList = new StringBuilder();
+		likes.clear();
 		for (final LoveDTO like : tweet.getLikes()) {
-			Anchor profileLink = new Anchor(like.getAuthor().getDisplayName());
-			profileLink.setStyleName(style.smalltext());
+			likeList.append(like.getAuthor().getDisplayName() + "<br/>");
+			likes.add(like);
+		}
+
+		if (likesCounter > 0) {
+			final Anchor likesCounterAnchor = new Anchor();
+			String word = likesCounter > 1 ? "people" : "person";
+			likesCounterAnchor.getElement().setInnerHTML(
+					likesCounter + "<span class='smalltext'>&nbsp;" + word + " like this</span>");
+			tweetLikePanel.add(likesCounterAnchor);
+			likesCounterAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					displayPeopleLikeListModal();
+				}
+			});
+
+			Popover p = new Popover();
+			p.setWidget(likesCounterAnchor);
+			p.setHeading("People who liked this post");
+			p.setText(likeList.toString());
+			p.setHtml(true);
+			p.reconfigure();
+		}
+	}
+
+	// TODO : profile link doesn't work inside Modal ???
+	private void displayPeopleLikeListModal() {
+		final Modal modal = new Modal();
+		modal.setAnimation(true);
+		modal.setWidth("28%");
+		modal.setCloseVisible(true);
+		modal.setTitle("people who liked this post");
+		for (final LoveDTO like : tweet.getLikes()) {
+			AccountDTO acct = like.getAuthor();
+			String content = "<img src='"+acct.getImageUrl()+"' width='40px' height='40px'/>&nbsp;"+acct.getDisplayName();
+			Anchor profileLink = new Anchor();
+			profileLink.getElement().setInnerHTML(content);
+			profileLink.setStyleName(style.profileLinkAnchor());
 			profileLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					displayPublicProfile(like.getAuthor());
 				}
 			});
-
-			profileLink.addMouseOverHandler(new MouseOverHandler() {
-				@Override
-				public void onMouseOver(MouseOverEvent event) {
-					displayAccountModal(like.getAuthor());
-				}
-			});
-			
-			if (likesCounter < PROFILE_COUNT_FOR_LIKE) {
-				if (likesCounter > 0) {
-					hp.add(new HTMLPanel("&nbsp;,"));
-				}
-				hp.add(profileLink);
-			}
-			likesCounter++;
 			likes.add(like);
-			profileLink = new Anchor(like.getAuthor().getDisplayName());
-
-			// TODO handler not working
-			profileLink.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					modal.hide();
-					displayAccountModal(like.getAuthor());
-				}
-			});
-			modalPanel.add(profileLink);
+			modal.add(profileLink);
 		}
-
-		modal.add(modalPanel);
-
-		if (likesCounter > 0) {
-			hp.add(new HTMLPanel(
-					"<span class='smalltext'>&nbsp;likes this</span>&nbsp;"));
-			tweetLikePanel.add(hp);
-		}
-
-		if (likesCounter >= PROFILE_COUNT_FOR_LIKE) {
-			Anchor moreProfileLikeLink = new Anchor("more");
-			hp.add(new HTMLPanel("&nbsp;"));
-			hp.add(moreProfileLikeLink);
-
-			moreProfileLikeLink.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					modal.toggle();
-				}
-			});
-		}
+		modal.toggle();
 	}
 
 	private void displayTweetSection() {
@@ -545,7 +566,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	void displayProfile(ClickEvent event) {
 		displayPublicProfile(tweet.getSender());
 	}
-	
+
 	private void displayPublicProfile(AccountDTO account) {
 		presenter.goTo(new PersonalAccountPlace(account.getAccountId()));
 	}
@@ -559,7 +580,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	public void clear() {
 		clearComment();
 	}
-	
+
 	private void clearComment() {
 		commentInputTextBoxCg.setType(ControlGroupType.NONE);
 		commentInputHelpInline.setVisible(false);
@@ -577,8 +598,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	String getFormattedTime(Date date) {
-		return DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG)
-				.format(date);
+		return DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(date);
 	}
 
 	@Override
@@ -597,7 +617,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	public void setWidth(String width) {
 		tweetPanel.setWidth(width);
 	}
-	
+
 	@Override
 	public void remove() {
 		removeFromParent();

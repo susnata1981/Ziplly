@@ -6,12 +6,14 @@
 .btn {
 	margin-right: 6px;
 }
+
 .tweetPanel {
 	width: 700px;
 	background: #fff;
 	overflow: auto;
 	padding: 2px;
 	margin: 20px 4px 40px 14px;
+	border: 1px solid #ddd;
 }
 
 .tweet_block {
@@ -91,6 +93,11 @@ div.comment_text {
 	padding: 3px;
 }
 
+.profileLinkAnchor {
+	font-size: 14px;
+	display: block !important;	
+}
+
 /*************** Comment Section ***************/
 .commentSectionDiv {
 	width: 100%;
@@ -100,9 +107,9 @@ div.comment_text {
 .tweetCommentSection {
 	clear: both;
 	padding: 3px;
-	margin: 4px 0px 6px 2%;
-	width: 90%;
-	font-size: 10px;
+	margin: 0;
+	width: 99%;
+	font-size: 12px;
 }
 
 .comment {
@@ -119,7 +126,7 @@ div.comment_text {
 
 .tweet_comment {
 	clear: both;
-	margin: 8px 0px 4px 2px;
+	margin: 0;
 }
 
 .comment_input {
@@ -130,13 +137,63 @@ div.comment_text {
 }
 
 .commentInputTextBox {
-	margin: 16px 0px 6px 30px;
-	width: 80%;
+	margin: 2%;
+	width: 90%;
 	height: 5%;
 	padding: 4px;
 }
 
 .commentInputActionSection {
 	clear: both;
-	margin: 0 30px;
+	margin: 1% 2%;
+}
+
+.commentInputTextBoxCg {
+	margin-bottom: 1px;
+}
+
+.commentRow {
+	clear: both;	
+	overflow: hidden;
+	padding: 4px;
+	background: #E6E6E6;
+	border: 2px solid #fff;
+}
+
+.commentRowAnchor {
+	width: 30%;
+	display: block;
+	float: left;
+	line-height: 50px;
+	padding: 0px 6px;
+}
+
+.commentRowAnchor img {
+	max-height: 50px;
+	max-width: 45px;
+}
+
+.commentRowText {
+	width: 60%;
+	float: left;
+	line-height: 50px;
+	font-family: sans-serif;
+	color: #000;
+	font-size: 12px;
+	padding: 0px 6px;
+}
+
+.commentRowDate {
+	display: inline-block;
+	width: 20%;
+	clear: both;
+	float: right;
+	font-size: 10px;
+}
+
+.commentsLink {
+	clear: both;
+	display: block;
+	font-family: sans-serif;
+	font-size: 14px;	
 }

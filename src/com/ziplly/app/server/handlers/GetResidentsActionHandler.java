@@ -5,11 +5,9 @@ import java.util.List;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetResidentsRequest;
@@ -32,12 +30,7 @@ public class GetResidentsActionHandler extends AbstractAccountActionHandler<GetR
 		}
 		
 		List<PersonalAccountDTO> accountByZip = accountBli.getAccountByZip(action.getAccount());
-		GetResidentsResult result = new GetResidentsResult();
-//		List<PersonalAccountDTO> accounts = Lists.newArrayList();
-//		for(PersonalAccount pa : accountByZip) {
-//			accounts.add(new PersonalAccountDTO(pa));
-//		}
-		
+		GetResidentsResult result = new GetResidentsResult();		
 		result.setAccounts(accountByZip);
 		return result;
 	}

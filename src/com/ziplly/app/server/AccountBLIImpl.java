@@ -486,7 +486,7 @@ public class AccountBLIImpl implements AccountBLI {
 			// send email
 			Map<String, String> emailData = Maps.newHashMap();
 			emailData.put(StringConstants.RECIPIENT_EMAIL, account.getEmail());
-			emailData.put(StringConstants.RECIPIENT_NAME,
+			emailData.put(StringConstants.RECIPIENT_NAME_KEY,
 					account.getDisplayName());
 			String passwordRecoveryUrl = getPasswordRecoveryUrl(hash);
 			System.out

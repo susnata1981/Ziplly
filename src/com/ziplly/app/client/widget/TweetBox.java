@@ -77,7 +77,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	private String height = "40px";
 
-	private String width = "100%";
+	private String width = "40%";
 
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -99,7 +99,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		tweetActionPanel.setWidth(width);
 		tweetHelpInline.setWidth(width);
 		embedLinkModal.setWidth(width);
-		embedLinkTextBox.setWidth(width);
+		embedLinkTextBox.setWidth("90%");
 	}
 
 	public void setWidth(String width) {

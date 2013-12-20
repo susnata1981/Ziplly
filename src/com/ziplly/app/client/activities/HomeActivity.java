@@ -1,6 +1,7 @@
 package com.ziplly.app.client.activities;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Modal;
@@ -36,8 +37,10 @@ import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.CommentAction;
@@ -53,8 +56,14 @@ import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
+import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
+import com.ziplly.app.shared.GetTweetCategoryDetailsResult;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
+import com.ziplly.app.shared.ReportSpamAction;
+import com.ziplly.app.shared.ReportSpamResult;
+import com.ziplly.app.shared.SendMessageAction;
+import com.ziplly.app.shared.SendMessageResult;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 import com.ziplly.app.shared.UpdateTweetAction;
@@ -96,6 +105,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayHashtag(List<HashtagDTO> hashtags);
 
 		void displayMap(GetLatLngResult result);
+
+		void updateTweetCategoryCount(Map<TweetType, Integer> tweetCounts);
+
+		void insertTweet(TweetDTO tweet);
 	}
 
 	HomePlace place;
@@ -169,7 +182,19 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		getCommunityWallData(TweetType.ALL);
 		getLatLng(ctx.getAccount());
 		getHashtags();
+		GetTweetCategoryDetails();
 		hideFooter();
+	}
+
+	private void GetTweetCategoryDetails() {
+		dispatcher.execute(new GetTweetCategoryDetailsAction(), new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>() {
+			@Override
+			public void onSuccess(GetTweetCategoryDetailsResult result) {
+				// do something.
+				Map<TweetType, Integer> tweetCounts = result.getTweetCounts();
+				homeView.updateTweetCategoryCount(result.getTweetCounts());
+			}
+		});
 	}
 
 	private void getHashtags() {
@@ -256,9 +281,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this) {
 			@Override
 			protected boolean detectScrollerHitBottom() {
-				int sh = elem.getScrollHeight();
-				int st = elem.getScrollTop();
-				int of = elem.getOffsetHeight();
+//				int sh = elem.getScrollHeight();
+//				int st = elem.getScrollTop();
+//				int of = elem.getOffsetHeight();
 //				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of);
 				return elem.getScrollHeight() - (elem.getOffsetHeight()+elem.getScrollTop()) < 50;
 			}
@@ -291,21 +316,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void likeTweet(Long tweetId) {
 		LikeTweetAction action = new LikeTweetAction();
 		action.setTweetId(tweetId);
-		dispatcher.execute(action, new DispatcherCallbackAsync<LikeResult>() {
-
-			@Override
-			public void onSuccess(LikeResult result) {
-				homeView.updateTweetLike(result.getLike());
-				homeView.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				if (caught instanceof DuplicateException) {
-					homeView.displayMessage(StringConstants.FAILED_TO_SAVE_LIKE, AlertType.ERROR);
-				}
-			}
-		});
+		dispatcher.execute(action, new TweetLikeActionHandler());
 	}
 
 	@Override
@@ -377,6 +388,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		}
 	}
 
+	@Override
+	public void reportTweetAsSpam(TweetDTO tweet) {
+		SpamDTO spam = new SpamDTO();
+		spam.setTweet(tweet);
+		spam.setReporter(ctx.getAccount());
+		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
+	}
+
 	// ----------------------------------
 	//
 	// Action Handlers are defined here
@@ -385,8 +404,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
 		@Override
 		public void onSuccess(TweetResult result) {
-			// placeController.goTo(new HomePlace());
-			homeView.addTweet(result.getTweet());
+			homeView.insertTweet(result.getTweet());
 		}
 
 		@Override
@@ -532,4 +550,56 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void displayMessage(String message, AlertType type) {
 		homeView.displayMessage(message, type);
 	}
+
+	private class TweetLikeActionHandler extends DispatcherCallbackAsync<LikeResult> {
+		@Override
+		public void onSuccess(LikeResult result) {
+			homeView.updateTweetLike(result.getLike());
+			homeView.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			if (caught instanceof DuplicateException) {
+				homeView.displayMessage(StringConstants.FAILED_TO_SAVE_LIKE, AlertType.ERROR);
+			}
+		}
+	}
+	
+	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+		@Override
+		public void onSuccess(ReportSpamResult result) {
+			homeView.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+		}
+	}
+
+	@Override
+	public void sendMessage(ConversationDTO conversation) {
+		if (conversation == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		// make sure user is logged in
+		if (ctx.getAccount() == null) {
+//			homeView.closeMessageWidget();
+			goTo(new LoginPlace());
+			return;
+		}
+		
+		// TODO check size
+		int size = conversation.getMessages().size();
+		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.setSender(ctx.getAccount());
+		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
+			@Override
+			public void onSuccess(SendMessageResult result) {
+				homeView.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				homeView.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+			}
+		});
+	};
 }

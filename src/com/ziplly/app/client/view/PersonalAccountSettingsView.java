@@ -62,6 +62,7 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	// Aside section
 	@UiField
 	Anchor profileLink;
+	@UiField
 	Anchor inboxLink;
 
 	@UiField
@@ -114,20 +115,14 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 
 	@UiField
 	Tab occupationTab;
-	@UiField
-	ShareSettingsWidget occupationSetting;
 
 	@UiField
 	Tab interestTab;
-	@UiField
-	ShareSettingsWidget interestSetting;
 	@UiField
 	HTMLPanel interestTabPanel;
 
 	@UiField
 	Tab locationTab;
-	@UiField
-	ShareSettingsWidget locationSetting;
 
 	@UiField
 	Tab passwordTab;

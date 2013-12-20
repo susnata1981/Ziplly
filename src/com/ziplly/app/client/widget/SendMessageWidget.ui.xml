@@ -2,19 +2,32 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+		.modalPanel {
+			width: 40%;
+		}
 		.messageBox {
-			width: 400px;
+			width: 70%;
+			height: 80px;
+		}
+		.subject {
+			width: 70%;
 			height: 40px;
+		}
+		.btn {
+			margin-right: 10px;
 		}
 	</ui:style>
 	<g:HTMLPanel ui:field="rootPanel">
-		<b:Modal ui:field="modal">
+		<b:Modal ui:field="modal" addStyleNames="{style.modalPanel}">
 			<b:Alert ui:field="status" />
+			<g:HTMLPanel>
+			   Message to <g:Anchor ui:field="toLink"/>
+			</g:HTMLPanel>
 			<b:WellForm>
 				<b:ControlGroup ui:field="subjectCg">
 					<b:ControlLabel for="subject">Subject</b:ControlLabel>
 					<b:Controls>
-						<b:TextBox ui:field="subject"></b:TextBox>
+						<b:TextBox ui:field="subject" addStyleNames="{style.subject}"></b:TextBox>
 						<b:HelpInline ui:field="subjectHelpInline"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>
@@ -25,8 +38,8 @@
 						<b:HelpInline ui:field="messageHelpInline"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>
-				<b:SubmitButton type="PRIMARY" ui:field="sendBtn">Send Message</b:SubmitButton> 
-				<b:Button ui:field="closeBtn">Close</b:Button>
+				<b:SubmitButton type="PRIMARY" ui:field="sendBtn" addStyleNames="{style.btn}">Send Message</b:SubmitButton> 
+				<b:Button ui:field="closeBtn" addStyleNames="{style.btn}">Close</b:Button>
 			</b:WellForm>
 		</b:Modal>
 	</g:HTMLPanel>

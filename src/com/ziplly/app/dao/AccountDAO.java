@@ -19,4 +19,5 @@ public interface AccountDAO {
 	List<AccountDTO> findAll();
 	List<AccountDTO> findAccounts(String query, int start, int end);
 	Long findTotalAccounts(String countQuery);
+	List<AccountDTO> findAllAccountsByZip(int zip);
 }

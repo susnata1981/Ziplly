@@ -22,11 +22,13 @@ import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetResidentsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetActionHandler;
+import com.ziplly.app.server.handlers.GetTweetCategoryDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetForUserActionHandler;
 import com.ziplly.app.server.handlers.LikeTweetActionHandler;
 import com.ziplly.app.server.handlers.LogoutActionHandler;
 import com.ziplly.app.server.handlers.PayActionHandler;
 import com.ziplly.app.server.handlers.RegisterAccountActionHandler;
+import com.ziplly.app.server.handlers.ReportSpamActionHandler;
 import com.ziplly.app.server.handlers.ResetPasswordActionHandler;
 import com.ziplly.app.server.handlers.SearchAccountActionHandler;
 import com.ziplly.app.server.handlers.SendEmailActionHandler;
@@ -57,6 +59,7 @@ import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetResidentsRequest;
+import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.LikeTweetAction;
@@ -64,6 +67,7 @@ import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.MyAction;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.RegisterAccountAction;
+import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ResetPasswordAction;
 import com.ziplly.app.shared.SearchAccountAction;
 import com.ziplly.app.shared.SendEmailAction;
@@ -112,6 +116,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(DeleteTweetAction.class, DeleteTweetActionHandler.class);
 		bindHandler(SendEmailAction.class, SendEmailActionHandler.class);
 		bindHandler(GetHashtagAction.class, GetHashtagActionHandler.class);
+		bindHandler(GetTweetCategoryDetailsAction.class, GetTweetCategoryDetailsActionHandler.class);
+		bindHandler(ReportSpamAction.class, ReportSpamActionHandler.class);
 		
 		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
 		

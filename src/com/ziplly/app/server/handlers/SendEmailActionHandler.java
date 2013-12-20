@@ -37,8 +37,8 @@ public class SendEmailActionHandler extends AbstractAccountActionHandler<SendEma
 		Map<String, String> data = new HashMap<String, String>();
 		for(String email : action.getEmails()) {
 			data.clear();
-			data.put(StringConstants.SENDER_NAME, session.getAccount().getName());
-			data.put(StringConstants.RECIPIENT_NAME, "");
+			data.put(StringConstants.SENDER_NAME_KEY, session.getAccount().getName());
+			data.put(StringConstants.RECIPIENT_NAME_KEY, "");
 			data.put(StringConstants.RECIPIENT_EMAIL, email);
 			emailService.sendEmail(data, action.getEmailTemplate());
 		}

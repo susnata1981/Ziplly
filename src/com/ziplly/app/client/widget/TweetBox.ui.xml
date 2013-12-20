@@ -35,7 +35,7 @@
 				<b:Controls>
 					<b:TextArea placeholder="Share what's on your mind…" ui:field="tweetTextBox" />
 					<g:HTMLPanel ui:field="tweetActionPanel" addStyleNames="{style.tweetActionPanel}">
-						<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>
+						<b:Icon type="LINK"/>&nbsp;<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>
 					</g:HTMLPanel>
 					<div class="{style.tweetHelpInline}">
 						<b:HelpInline ui:field="tweetHelpInline" />

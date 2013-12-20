@@ -5,7 +5,7 @@ import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.TweetDTO;
 
-public interface TweetPresenter extends Presenter {
+public interface TweetPresenter extends SendMessagePresenter {
 	void postComment(CommentDTO comment);
 	void likeTweet(Long tweetId);
 	void updateTweet(TweetDTO tweet);
@@ -14,4 +14,5 @@ public interface TweetPresenter extends Presenter {
 	void sendTweet(TweetDTO tweet);
 	TweetWidget getTweetWidget();
 	void displayMessage(String errorMessage, AlertType error);
+	void reportTweetAsSpam(TweetDTO tweet);
 }

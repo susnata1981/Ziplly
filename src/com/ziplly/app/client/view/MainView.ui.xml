@@ -85,7 +85,7 @@
 						</b:ControlGroup>
 						<b:Button type="SUCCESS" ui:field="loginBtn">SignIn</b:Button>
 						<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button>
-						<g:HTMLPanel addStyleNames="{mainViewStyle.residentSignupDiv}">
+						<g:HTMLPanel ui:field="residentSignupPanel" addStyleNames="{mainViewStyle.residentSignupDiv}">
 							<span>Not already a member, &nbsp;<g:Anchor ui:field="residentSignupLink" styleName="{mainViewStyle.residentSignupLink}">Resident
 								Signup</g:Anchor> here</span>
 						</g:HTMLPanel>

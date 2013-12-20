@@ -19,60 +19,65 @@
 			</dl>
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
-			<div class="{style.profileSection}">
-				<div class="{style.profileImageSection}">
-				    <div class="{style.profileImageDiv}">
-						<b:Image ui:field="profileImage" />
+			<div class="{style.profileDiv}">
+				<div class="{style.profileSection}">
+					<div class="{style.profileImageSection}">
+						<div class="{style.profileImageDiv}">
+							<b:Image ui:field="profileImage" />
+						</div>
+						<h2 addStyleNames="{style.profileCaption}" ui:field="name" />
+						<div>
+							<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
+								Message</b:Button>
+						</div>
 					</div>
-					<h2 addStyleNames="{style.profileCaption}" ui:field="name" />
-					<div>
-						<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
-							Message</b:Button>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Business details</h2>
+						<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
+						<div class="{style.businessInfoItem}">
+							<b:Label>Email</b:Label>
+							<g:Anchor ui:field="emailLink">
+								<span ui:field="email" addStyleNames="{style.description}" />
+							</g:Anchor>
+						</div>
+						<div class="{style.businessInfoItem}">
+							<b:Label>Website</b:Label>
+							<g:Anchor ui:field="websiteLink">
+								<span ui:field="websiteSpan" addStyleNames="{style.description}" />
+							</g:Anchor>
+						</div>
+						<div class="{style.businessInfoItem}">
+							<span>
+								<b:Label>Last login</b:Label>
+								<span ui:field="lastLoginTime" />
+							</span>
+						</div>
+					</div>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Address</h2>
+						<g:HTMLPanel ui:field="addressPanel">
+							<span ui:field="formattedAddress" />
+						</g:HTMLPanel>
+					</div>
+					<div class="{style.profileInfoBox}">
+						<div style="width:320px; height:270px" ui:field="locationDiv"></div>
+					</div>
+					<div class="{style.profileInfoBox}">
+						<h2 class="heading">Activity</h2>
+						<dt:ProfileStatWidget title="Tweets"
+							ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
+						<dt:ProfileStatWidget title="Comments"
+							ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" />
+						<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget"
+							addStyleNames="{style.accountStatDiv}" />
 					</div>
 				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Business details</h2>
-					<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
-					<div class="{style.businessInfoItem}">
-					    <b:Label>Email</b:Label>
-						<g:Anchor ui:field="emailLink">
-							<span ui:field="email" addStyleNames="{style.description}" />
-						</g:Anchor>
-					</div>
-					<div class="{style.businessInfoItem}">
-					    <b:Label>Website</b:Label>
-						<g:Anchor ui:field="websiteLink">
-							<span ui:field="websiteSpan" addStyleNames="{style.description}" />
-						</g:Anchor>
-					</div>
-					<div class="{style.businessInfoItem}">
-						<span>
-							<b:Label>Last login</b:Label>
-							<span ui:field="lastLoginTime" />
-						</span>
-					</div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Address</h2>
-					<g:HTMLPanel ui:field="addressPanel">
-					    <span ui:field="formattedAddress"/>
+				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
+					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
+						<dt:TweetBox ui:field="tweetBox" width="60%" />
 					</g:HTMLPanel>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<div style="width:320px; height:270px" ui:field="locationDiv"></div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Activity</h2>
-					<dt:ProfileStatWidget title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}"/>
-				</div>
-			</div>
-			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
-				<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
-					<dt:TweetBox ui:field="tweetBox" width="60%" />
 				</g:HTMLPanel>
-			</g:HTMLPanel>
+			</div>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -1,14 +1,15 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style"
-		src="tweetwidget.css">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style" src="tweetwidget.css">
 	.dropdown-menu2 ul {
 		position: absolute !important;
 		left: -130px !important;
 		width: 80px !important;
 		z-index: 1000px;
-	}`
+	}
 	.spannocaret {
 		display: none !important;
 	}
@@ -41,7 +42,11 @@
 				<div class='tweet_actions'>
 					<div>
 						<div class='{style.tweet_action_link}'>
-							<g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor>
+<!-- 							<g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor> -->
+							<dt:ZAnchor ui:field="likeAnchor" icon="THUMBS_UP"/>
+						</div>
+						<div class='{style.tweet_action_link}'>
+							<dt:ZAnchor ui:field="replyAnchor" icon="REPLY"/>
 						</div>
 						<div class='{style.tweet_action_link}'>
 							<g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor>
@@ -64,14 +69,14 @@
 			<g:HTMLPanel addStyleNames="{style.tweetCommentSection}" ui:field="tweetCommentSection">
 			</g:HTMLPanel>
 			<div>
-				<b:ControlGroup ui:field="commentInputTextBoxCg">
+				<b:ControlGroup ui:field="commentInputTextBoxCg" addStyleNames="{style.commentInputTextBoxCg}">
 					<b:TextArea ui:field="commentInputTextBox" addStyleNames="{style.commentInputTextBox}" />
 					<b:HelpInline ui:field="commentInputHelpInline"></b:HelpInline>
 				</b:ControlGroup>
-				<div class="{style.commentInputActionSection}">
+				<g:HTMLPanel ui:field="commentInputActionSection" addStyleNames="{style.commentInputActionSection}">
 					<b:Button type="PRIMARY" addStyleNames="{style.btn}" size="SMALL" ui:field="commentBtn">comment</b:Button>
 					<b:Button size="SMALL" addStyleNames="{style.btn}" ui:field="cancelCommentBtn">cancel</b:Button>
-				</div>
+				</g:HTMLPanel>
 			</div>
 		</div>
 	</g:HTMLPanel>

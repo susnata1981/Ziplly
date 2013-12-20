@@ -20,6 +20,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -55,6 +57,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	@UiField
 	Alert message;
+	@UiField
+	HTMLPanel rootPanel;
 	@UiField
 	HTMLPanel mainSection;
 	@UiField
@@ -110,8 +114,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
-	private String tweetWidgetWidth = "68%";
-	private String tweetBoxWidth = "68%";
+	private String tweetWidgetWidth = "60%";
+	private String tweetBoxWidth = "60%";
 	
 	public AccountView() {
 		tweetBox = new TweetBox();
@@ -122,6 +126,10 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	public void onBrowseEvent(Event event) {
+		Window.alert("Clicked");
+	}
+	
 	@UiField
 	DivElement locationDiv;
 	

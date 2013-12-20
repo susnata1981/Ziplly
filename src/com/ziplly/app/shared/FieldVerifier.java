@@ -45,6 +45,8 @@ public class FieldVerifier {
 	private static final String TWEET_TOO_LONG_ERROR = "Tweet can't be more than 256 characters.";
 	private static final String INVALID_EMAIL_LIST = "Invalid emails";
 	private static final String COMMA_SEPARATOR = ",";
+	private static final int MAX_MESSAGE_LENGTH = 2048;
+	private static final String MESSAGE_TOO_LONG_ERROR = "Message can't be more than 2048 characters.";
 
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
@@ -152,6 +154,19 @@ public class FieldVerifier {
 		comment = SafeHtmlUtils.htmlEscape(comment);
 		if (comment.length() > MAX_COMMENT_LENGTH) {
 			result.addError(TWEET_TOO_LONG_ERROR);
+		}
+		return result;
+	}
+
+	public static ValidationResult validateMessage(String message) {
+		ValidationResult result = new ValidationResult();
+		if (message == null || message.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+		
+		message = SafeHtmlUtils.htmlEscape(message);
+		if (message.length() > MAX_MESSAGE_LENGTH) {
+			result.addError(MESSAGE_TOO_LONG_ERROR);
 		}
 		return result;
 	}

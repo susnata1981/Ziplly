@@ -1,14 +1,19 @@
 package com.ziplly.app.client.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
@@ -18,6 +23,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
+import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.TweetBox;
@@ -37,14 +43,14 @@ public class HomeView extends Composite implements IHomeView {
 	private String tweetWidth = "58%";
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 
-	public static interface HomePresenter extends TweetPresenter {
+	public static interface HomePresenter extends TweetPresenter, SendMessagePresenter {
 		void displayTweets(List<TweetDTO> tweets);
 
 		void displayTweetsForCategory(TweetType type);
 
 		void onLogin(String emailInput, String passwordInput);
 
-		void displayHashtag(String text);
+		void displayHashtag(String text); 
 	}
 
 	@UiField
@@ -65,7 +71,7 @@ public class HomeView extends Composite implements IHomeView {
 	CommunitySummaryWidget communitySummaryWidget;
 
 	HomePresenter presenter;
-	List<Anchor> filters = new ArrayList<Anchor>();
+	Map<TweetType, Anchor> filters = new HashMap<TweetType, Anchor>();
 	ArrayList<Anchor> hashtagAnchors = new ArrayList<Anchor>();
 	ITweetView<TweetPresenter> tview = new TweetView();
 
@@ -76,7 +82,6 @@ public class HomeView extends Composite implements IHomeView {
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
-		// tweetBox = new TweetBox();
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
 		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
@@ -100,13 +105,16 @@ public class HomeView extends Composite implements IHomeView {
 					presenter.displayTweetsForCategory(type);
 				}
 			});
+			Icon icon = new Icon();
+			icon.setType(IconType.TAG);
+			anchor.setHTML(SafeHtmlUtils.fromSafeConstant("<a>"+type.name()+icon+"</a>"));
 			filterTweetsPanel.add(anchor);
-			filters.add(anchor);
+			filters.put(type, anchor);
 		}
 	}
 
 	private void clearTweetFilterSelection() {
-		for (Anchor a : filters) {
+		for (Anchor a : filters.values()) {
 			clearAnchorSelection(a);
 		}
 	}
@@ -123,9 +131,10 @@ public class HomeView extends Composite implements IHomeView {
 
 	@Override
 	public void displayHashtag(List<HashtagDTO> hashtags) {
+		hashtagPanel.clear();
 		for (HashtagDTO h : hashtags) {
 			final Anchor anchor = new Anchor(h.getTag());
-			anchor.setStyleName("tweetFilterLink");
+			anchor.addStyleName("tweetFilterLink");
 			anchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -178,6 +187,11 @@ public class HomeView extends Composite implements IHomeView {
 		tview.addTweet(tweet);
 	}
 
+	@Override
+	public void insertTweet(TweetDTO tweet) {
+		tview.insertTweet(tweet);
+	}
+	
 	@Override
 	public void updateTweets(List<TweetDTO> tweets) {
 		tview.add(tweets);
@@ -235,5 +249,17 @@ public class HomeView extends Composite implements IHomeView {
 			communitySummaryWidget.displayMap(ll);
 		}
 	}
-
+	
+	@Override
+	public void updateTweetCategoryCount(Map<TweetType, Integer> data) {
+		for(Map.Entry<TweetType, Anchor> entry : filters.entrySet()) {
+			Anchor a = entry.getValue();
+			int count = 0;
+			if (data.get(entry.getKey()) != null) {
+				count = data.get(entry.getKey());
+			}
+			String text = entry.getKey().name() +" ("+count+")";
+			a.getElement().setInnerHTML(text);
+		}
+	}
 }

@@ -3,7 +3,9 @@ package com.ziplly.app.shared;
 public enum EmailTemplate {
 	WELCOME_REGISTRATION("welcome.ftl"),
 	INVITE_PEOPLE("invite.ftl"),
-	PASSWORD_RECOVERY("password_recovery.ftl");
+	PASSWORD_RECOVERY("password_recovery.ftl"),
+	PENDING_MESSAGE("pending_message.ftl"),
+	SECURITY_ALERT("security_alert.ftl");
 	
 	EmailTemplate(String filename) {
 		this.setFilename(filename);

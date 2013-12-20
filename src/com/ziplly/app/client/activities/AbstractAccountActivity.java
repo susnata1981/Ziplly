@@ -23,6 +23,7 @@ import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
@@ -38,6 +39,8 @@ import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
+import com.ziplly.app.shared.ReportSpamAction;
+import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendEmailResult;
 import com.ziplly.app.shared.SendMessageAction;
@@ -178,9 +181,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	
 	@Override
 	public void deleteTweet(TweetDTO tweet) {
-//		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
-//			
-//		}
 	}
 	
 	@Override
@@ -212,11 +212,11 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
-			view.closeMessageWidget();
 			goTo(new LoginPlace());
 			return;
 		}
 		
+		// TODO check size
 		int size = conversation.getMessages().size();
 		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
@@ -270,6 +270,14 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	};
+	
+	public void reportSpam(SpamDTO spam, DispatcherCallbackAsync<ReportSpamResult> handler) {
+		if (spam == null) {
+			throw new IllegalArgumentException();
+		}
+		spam.setReporter(ctx.getAccount());
+		dispatcher.execute(new ReportSpamAction(spam), handler);
+	}
 	
 	public TweetWidget getTweetWidget() {
 		return ctx.getTweetWidget();

@@ -1,16 +1,41 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style field="astyle" src="accountview.css" />
 	<ui:style>
+		.settingsPanel {
+	position: relative;
+	float: left;
+	width: 60%;
+	border: 1px solid #ddd;
+	margin-left: 1%;
+	padding: 20px;
+	}
+		.uploadForm {
+		position: absolute;
+		top: 140px;
+		right: 100px;
+		height: 254px;
+		width: 300px;
+		padding: 6px;
+		border: 1px solid #ddd;
+		}
 		.profileImage {
 		position: absolute;
-		top: 170px;
-		width: 160px;
-		height: 140px;
+		top: -170px;
+		left: 10px;
+		width: 180px;
+		height: 160px;
 		border: 2px solid #ddd;
 		}
+		.uploadFormActionPanel {
+			position: absolute;
+			top: 180px;
+			left: 10px;
+			margin: 10px 0px;
+		}
 		.paymentDetailsSection {
-		width: 50%;
+		width: 90%;
 		border: 2px solid #ddd;
 		margin: 2px;
 		}
@@ -18,140 +43,167 @@
 		border-bottom: 1px solid #ddd;
 		}
 		.paymentDetailsSection table {
-		margin: 2%;
+		margin:
+		2%;
 		border: 2px solid #ddd;
 		width: 94%;
 		}
-		.paymentDetailsSection table thead {
+		.paymentDetailsSection table
+		thead {
 		background: #CBCCCE;
 		}
 		.paymentDetailsSection table tr {
-		margin: 5px;
+		margin:
+		5px;
 		}
 		.paymentDetailsSection table td {
 		padding: 10px;
-		border-right: 1px solid #ddd;
+		border-right: 1px
+		solid #ddd;
 		}
 		.subscriptionPlanTablePanel {
-			margin-bottom: 90px;
+		margin-bottom: 90px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<b:TabPanel tabPosition="left" ui:field="settingPanel">
-			<b:Tab heading="Business details" active="true">
-				<g:HTMLPanel>
-					<div class="heading">Account Details</div>
-					<b:Alert ui:field="message" animation="true" />
-					<b:ControlGroup ui:field="businessNameCg">
-						<b:Controls>
-							<b:Label>Business name</b:Label>
-							<br />
-							<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
-							<b:HelpInline ui:field="businessNameError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="street1Cg">
-						<b:Controls>
-							<b:Label>Street1</b:Label>
-							<br />
-							<b:TextBox ui:field="street1" placeholder="street1..." />
-							<b:HelpInline ui:field="street1Error"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="street2Cg">
-						<b:Controls>
-							<b:Label>Street2</b:Label>
-							<br />
-							<b:TextBox ui:field="street2" placeholder="street2..." />
-							<b:HelpInline ui:field="street2Error"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="zipCg">
-						<b:Controls>
-							<b:Label>Zip</b:Label>
-							<br />
-							<b:TextBox ui:field="zip" placeholder="zip..." />
-							<b:HelpInline ui:field="zipError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="websiteCg">
-						<b:Controls>
-							<b:Label>Website</b:Label>
-							<br />
-							<b:TextBox ui:field="website" placeholder="website..." />
-							<b:HelpInline ui:field="websiteError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<g:FormPanel ui:field="uploadForm">
-						<g:HTMLPanel>
-							<g:FileUpload ui:field="uploadField" name="image" />
-							<b:Button ui:field="uploadBtn">Upload</b:Button>
-							<b:Icon type="UPLOAD" />
-							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
+	    <b:Alert ui:field="message" animation="true" />
+		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{astyle.asidePanel}">
+			<dl>
+				<dt>
+					<g:Anchor addStyleNames="{astyle.link}" ui:field="profileLink">Profile</g:Anchor>
+				</dt>
+				<dt>
+					<g:Anchor addStyleNames="{astyle.link}" ui:field="inboxLink">
+						Inbox
+						<span ui:field="unreadMessageCountField" />
+					</g:Anchor>
+				</dt>
+			</dl>
+		</g:HTMLPanel>
+		<g:HTMLPanel addStyleNames="{style.settingsPanel}">
+			<b:TabPanel tabPosition="top" ui:field="settingPanel">
+				<b:Tab heading="Business details" active="true">
+					<g:HTMLPanel>
+						<div class="heading">Account Details</div>
+						<b:ControlGroup ui:field="businessNameCg">
+							<b:Controls>
+								<b:Label>Business name</b:Label>
+								<br />
+								<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
+								<b:HelpInline ui:field="businessNameError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="street1Cg">
+							<b:Controls>
+								<b:Label>Street1</b:Label>
+								<br />
+								<b:TextBox ui:field="street1" placeholder="street1..." />
+								<b:HelpInline ui:field="street1Error"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="street2Cg">
+							<b:Controls>
+								<b:Label>Street2</b:Label>
+								<br />
+								<b:TextBox ui:field="street2" placeholder="street2..." />
+								<b:HelpInline ui:field="street2Error"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="zipCg">
+							<b:Controls>
+								<b:Label>Zip</b:Label>
+								<br />
+								<b:TextBox ui:field="zip" placeholder="zip..." />
+								<b:HelpInline ui:field="zipError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="websiteCg">
+							<b:Controls>
+								<b:Label>Website</b:Label>
+								<br />
+								<b:TextBox ui:field="website" placeholder="website..." />
+								<b:HelpInline ui:field="websiteError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadForm}">
+							<g:HTMLPanel addStyleNames="{style.uploadFormActionPanel}">
+								<g:FileUpload ui:field="uploadField" name="image" />
+								<b:Button ui:field="uploadBtn">Upload</b:Button>
+								<b:Icon type="UPLOAD" />
+								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
+							</g:HTMLPanel>
+						</g:FormPanel>
+						<b:ControlGroup ui:field="emailCg">
+							<b:Controls>
+								<b:Label>Email</b:Label>
+								<br />
+								<b:TextBox ui:field="email" placeholder="email..." />
+								<b:HelpInline ui:field="emailError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
+						<b:Button ui:field="cancelBtn">Cancel</b:Button>
+					</g:HTMLPanel>
+				</b:Tab>
+				<b:Tab heading="Payment details" ui:field="subscriptionTab">
+					<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
+						<b:Alert ui:field="paymentStatus" />
+						<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
+							addStyleNames="{style.subscriptionPlanTablePanel}">
+							<h4 ui:field="subscriptionPlanTablePanelHeader">Subscription Plans</h4>
 						</g:HTMLPanel>
-					</g:FormPanel>
-					<b:ControlGroup ui:field="emailCg">
+						<g:HTMLPanel ui:field="subscriptionDetailsTable">
+							<h4>Current Subscription</h4>
+							<table>
+								<thead>
+									<tr>
+										<td>Plan</td>
+										<td>Description</td>
+										<td>Fee</td>
+										<td>Status</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td ui:field="subscriptionPlanName"></td>
+										<td ui:field="subscriptionPlanDescription"></td>
+										<td ui:field="subscriptionPlanFee"></td>
+										<td ui:field="subscriptionPlanStatus"></td>
+									</tr>
+								</tbody>
+							</table>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</b:Tab>
+				<b:Tab heading="Password Reset">
+					<b:ControlGroup ui:field="passwordCg">
 						<b:Controls>
-							<b:Label>Email</b:Label>
-							<br />
-							<b:TextBox ui:field="email" placeholder="email..." />
-							<b:HelpInline ui:field="emailError"></b:HelpInline>
+							<g:Label addStyleNames="{astyle.label}">Old Password</g:Label>
+							<b:PasswordTextBox ui:field="password"
+								placeholder="Old password..." />
+							<b:HelpInline ui:field="passwordError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
-					<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
-					<b:Button ui:field="cancelBtn">Cancel</b:Button>
-				</g:HTMLPanel>
-			</b:Tab>
-			<b:Tab heading="Payment details" ui:field="subscriptionTab">
-				<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
-					<b:Alert ui:field="paymentStatus" />
-					<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
-						addStyleNames="{style.subscriptionPlanTablePanel}">
-						<h4 ui:field="subscriptionPlanTablePanelHeader">Subscription Plans</h4>
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="subscriptionDetailsTable">
-						<h4>Current Subscription</h4>
-						<table>
-							<thead>
-								<tr>
-									<td>Plan</td>
-									<td>Description</td>
-									<td>Fee</td>
-									<td>Status</td>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td ui:field="subscriptionPlanName"></td>
-									<td ui:field="subscriptionPlanDescription"></td>
-									<td ui:field="subscriptionPlanFee"></td>
-									<td ui:field="subscriptionPlanStatus"></td>
-								</tr>
-							</tbody>
-						</table>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</b:Tab>
-			<b:Tab heading="Password Reset">
-				<b:ControlGroup ui:field="passwordCg">
-					<b:Controls>
-						<b:Label>Password</b:Label>
-						<br />
-						<b:PasswordTextBox ui:field="password"
-							placeholder="password..." />
-						<b:HelpInline ui:field="passwordError"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:ControlGroup ui:field="confirmPasswordCg">
-					<b:Controls>
-						<b:Label>Confirm password</b:Label>
-						<br />
-						<b:PasswordTextBox ui:field="confirmPassword"
-							placeholder="confirm password..." />
-						<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-			</b:Tab>
-		</b:TabPanel>
+					<b:ControlGroup ui:field="newPasswordCg">
+						<b:Controls>
+							<g:Label addStyleNames="{astyle.label}">New Password</g:Label>
+							<b:PasswordTextBox ui:field="newPassword"
+								placeholder="New password..." />
+							<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup ui:field="confirmNewPasswordCg">
+						<b:Controls>
+							<g:Label addStyleNames="{astyle.label}">Confirm new password</g:Label>
+							<b:PasswordTextBox ui:field="confirmNewPassword"
+								placeholder="confirm new password..." />
+							<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button addStyleNames="{astyle.updatePasswordBtn}"
+						ui:field="updatePasswordBtn">Update password</b:Button>
+				</b:Tab>
+			</b:TabPanel>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

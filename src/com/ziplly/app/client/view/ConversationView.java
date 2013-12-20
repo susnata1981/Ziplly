@@ -2,13 +2,18 @@ package com.ziplly.app.client.view;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
@@ -18,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -35,6 +41,8 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.resource.TableResources;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.MessageDTO;
@@ -56,7 +64,9 @@ public class ConversationView extends Composite implements IConversationView {
 	private static final String SENDER_KEY = "Sender";
 	private static final String SUBJECT_KEY = "Subject";
 	private static final String TIME_RECEIVED_KEY = "Time received";
-
+	private static final String RECEIVER_KEY = "Receiver";
+	private static final int MAX_ROW_COUNT = 10;
+	private static final int IMG_SIZE = 40;
 	private static ConversationViewUiBinder uiBinder = GWT
 			.create(ConversationViewUiBinder.class);
 
@@ -84,6 +94,8 @@ public class ConversationView extends Composite implements IConversationView {
 		String conversationNotRead();
 		
 		String subjectFont();
+		
+		String helpinline();
 	}
 
 	@UiField
@@ -118,12 +130,23 @@ public class ConversationView extends Composite implements IConversationView {
 	
 	ConversationViewPresenter presenter;
 
+	Map<INBOXLINK, Anchor> inboxLinks = new HashMap<INBOXLINK, Anchor>();
 	List<ConversationDTO> conversations;
-	CellTable<ConversationDTO> conversationTable = new CellTable<ConversationDTO>();
+	CellTable<ConversationDTO> conversationTable;
+	TableResources tableResources;
+	boolean filterConversation;
+	List<ConversationDTO> filteredConversations = new ArrayList<ConversationDTO>();
 	
 	public ConversationView() {
+		tableResources = GWT.create(TableResources.class);
+		tableResources.cellTableStyle().ensureInjected();
+		conversationTable = new CellTable<ConversationDTO>(MAX_ROW_COUNT, tableResources);
 		initWidget(uiBinder.createAndBindUi(this));
 		buildConversationTable();
+		inboxLinks.put(INBOXLINK.INBOX, messagesLink);
+		inboxLinks.put(INBOXLINK.RECEIVED_MESSAGES, receivedMessagesLink);
+		inboxLinks.put(INBOXLINK.SENT_MESSAGES, sentMessagesLink);
+		setInboxLink(INBOXLINK.INBOX);
 	}
 
 	@Override
@@ -135,21 +158,25 @@ public class ConversationView extends Composite implements IConversationView {
 	public void displayConversations(List<ConversationDTO> conversations) {
 		if (conversations != null) {
 			this.conversations = conversations;
-			internalDisplayConversations(conversations);
+			conversationPanel.add(conversationTable);
+			internalDisplayConversations();
 			setMessageCount(conversations);
 		}
 	}
 
-	private void internalDisplayConversations(List<ConversationDTO> convstns) {
+	private void internalDisplayConversations() {
 		conversationPanel.clear();
+		List<ConversationDTO> convstns;
+		if (filterConversation) {
+			convstns = filteredConversations;
+		} else {
+			convstns = conversations;
+		}
+		
 		if (convstns.size() == 0) {
 			displayNoConversationMessage();
 		}
 		
-//		for (ConversationDTO conversation : convstns) {
-//			conversationPanel.add(buildConversationPanel(conversation));
-//		}
-		conversationPanel.clear();
 		conversationTable.setRowData(convstns);
 		conversationPanel.add(conversationTable);
 	}
@@ -173,8 +200,8 @@ public class ConversationView extends Composite implements IConversationView {
 			}
 		}
 		updateCount(unreadMessageCountSpan, unreadMsgCount, false);
-		updateCount(receivedMessageCountSpan, receivedMessageCount, true);
-		updateCount(sentMessageCountSpan, sentMessageCount, true);
+//		updateCount(receivedMessageCountSpan, receivedMessageCount, true);
+//		updateCount(sentMessageCountSpan, sentMessageCount, true);
 	}
 	
 	@Override
@@ -198,7 +225,7 @@ public class ConversationView extends Composite implements IConversationView {
 
 	/*
 	 * Displays conversation summary
-	 */
+	 *
 	private HTMLPanel buildConversationPanel(final ConversationDTO conversation) {
 		if (conversation == null) {
 			throw new IllegalArgumentException();
@@ -248,7 +275,8 @@ public class ConversationView extends Composite implements IConversationView {
 		panel.setStyleName(style.conversation());
 		return panel;
 	}
-
+	*/
+	
 	Header<String> buildHeader(final String title) {
 		Header<String> header = new Header<String>(new TextCell()) {
 			@Override
@@ -261,15 +289,44 @@ public class ConversationView extends Composite implements IConversationView {
 	
 	void buildConversationTable() {
 		conversationTable.setStyleName(style.conversation());
-		Column<ConversationDTO, String> senderCol = new TextColumn<ConversationDTO>() {
-			@Override
-			public String getValue(ConversationDTO c) {
-				return c.getSender().getDisplayName();
+		Column<ConversationDTO, String> senderColumn = new Column<ConversationDTO, String>(new ClickableTextCell() {
+			public void render(Context context, String value, SafeHtmlBuilder sb) {
+				ConversationDTO c;
+				if (filterConversation) {
+					c = filteredConversations.get(context.getIndex());
+				} else {
+					c = conversations.get(context.getIndex());
+				}
+				sb.appendHtmlConstant(getImageLink(c.getSender()));
 			}
+			}) {
+				@Override
+				public String getValue(ConversationDTO c) {
+					return c.getSender().getImageUrl();
+				}
 		};
-//		senderCol.setCellStyleNames(style.senderBlock());
-		conversationTable.addColumn(senderCol, buildHeader(SENDER_KEY));
-		conversationTable.setColumnWidth(senderCol, 20, Unit.PCT);
+		conversationTable.addColumn(senderColumn, buildHeader(SENDER_KEY));
+		conversationTable.setColumnWidth(senderColumn, 20, Unit.PCT);
+		
+		Column<ConversationDTO, String> receiverColumn = new Column<ConversationDTO, String>(new ClickableTextCell() {
+			public void render(Context context, String value, SafeHtmlBuilder sb) {
+				ConversationDTO c;
+				if (filterConversation) {
+					c = filteredConversations.get(context.getIndex());
+				} else {
+					c = conversations.get(context.getIndex());
+				}
+				sb.appendHtmlConstant(getImageLink(c.getReceiver()));
+			}
+			}) {
+				@Override
+				public String getValue(ConversationDTO c) {
+					return c.getSender().getImageUrl();
+				}
+		};
+		conversationTable.addColumn(receiverColumn, buildHeader(RECEIVER_KEY));
+		conversationTable.setColumnWidth(receiverColumn, 20, Unit.PCT);
+		
 		Column<ConversationDTO, String> subjectCol = new TextColumn<ConversationDTO>() {
 			@Override
 			public String getValue(ConversationDTO c) {
@@ -279,7 +336,7 @@ public class ConversationView extends Composite implements IConversationView {
 //		subjectCol.setCellStyleNames(style.subjectBlock());
 		subjectCol.setCellStyleNames(style.subjectFont());
 		conversationTable.addColumn(subjectCol, buildHeader(SUBJECT_KEY));
-		conversationTable.setColumnWidth(subjectCol, 44, Unit.PCT);
+		conversationTable.setColumnWidth(subjectCol, 30, Unit.PCT);
 		
 		Column<ConversationDTO, String> timeSentCol = new TextColumn<ConversationDTO>() {
 			@Override
@@ -307,6 +364,13 @@ public class ConversationView extends Composite implements IConversationView {
 		});
 	}
 	
+	private String getImageLink(AccountDTO acct) {
+		StringBuilder temp = new StringBuilder();
+		temp.append("<img width='"+IMG_SIZE+"' height='"+IMG_SIZE+"' src='"+acct.getImageUrl()+"'/>");
+		temp.append("&nbsp;"+acct.getDisplayName());
+		return temp.toString();
+	}
+	
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
@@ -330,8 +394,11 @@ public class ConversationView extends Composite implements IConversationView {
 			presenter.onView(conversation);
 			conversationPanel.clear();
 			messagesPanel = new HTMLPanel("");
-			HTMLPanel subjectPanel = new HTMLPanel("<span>Subject:&nbsp;"
-					+ conversation.getSubject() + "</span>");
+			StringBuilder temp = new StringBuilder();
+			temp.append("From:"+getImageLink(conversation.getSender()));
+			temp.append("<br>To:"+getImageLink(conversation.getReceiver()));
+			temp.append("<br><br><span>Subject:&nbsp;"+ conversation.getSubject() + "</span>");
+			HTMLPanel subjectPanel = new HTMLPanel(temp.toString());
 			subjectPanel.setStyleName(style.subjectHeader());
 			conversationPanel.add(subjectPanel);
 
@@ -347,7 +414,10 @@ public class ConversationView extends Composite implements IConversationView {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.conversation());
 		Anchor senderLink = new Anchor();
-		senderLink.setText(msg.getSender().getDisplayName());
+		StringBuilder temp = new StringBuilder();
+		temp.append("<img width='20' height='20' src='"+msg.getSender().getImageUrl()+"'/>");
+		temp.append("&nbsp;"+msg.getSender().getDisplayName());
+		senderLink.setHTML(temp.toString());
 		senderLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -379,9 +449,13 @@ public class ConversationView extends Composite implements IConversationView {
 		final Alert info = new Alert();
 		info.setVisible(false);
 		replyPanel.add(info);
-
+		final ControlGroup replyTextAreaCg = new ControlGroup();
 		final TextArea replyTextArea = new TextArea();
-		replyPanel.add(replyTextArea);
+		final HelpInline replyTextAreaHelpInline = new HelpInline();
+		replyTextAreaHelpInline.setStyleName(style.helpinline());
+		replyTextAreaCg.add(replyTextArea);
+		replyTextAreaCg.add(replyTextAreaHelpInline);
+		replyPanel.add(replyTextAreaCg);
 
 		// buttons
 		HTMLPanel buttonPanel = new HTMLPanel("");
@@ -397,12 +471,15 @@ public class ConversationView extends Composite implements IConversationView {
 				ValidationResult result = FieldVerifier
 						.validateTweet(replyTextArea.getText());
 				if (!result.isValid()) {
-					info.setText(result.getErrors().get(0).getErrorMessage());
-					info.setType(AlertType.ERROR);
-					info.setVisible(true);
+					replyTextAreaCg.setType(ControlGroupType.ERROR);
+					replyTextAreaHelpInline.setText(result.getErrors().get(0).getErrorMessage());
+					replyTextAreaHelpInline.setVisible(true);
 					return;
 				}
 
+				replyTextAreaCg.setType(ControlGroupType.NONE);
+				replyTextAreaHelpInline.setVisible(false);		
+				
 				ConversationDTO conversation = new ConversationDTO();
 				conversation.setId(c.getId());
 				conversation.setSender(c.getSender());
@@ -452,28 +529,50 @@ public class ConversationView extends Composite implements IConversationView {
 	
 	@UiHandler("messagesLink")
 	void onInboxLinkClicked(ClickEvent event) {
-		internalDisplayConversations(conversations);
+		filterConversation = false;
+		setInboxLink(INBOXLINK.INBOX);
+		internalDisplayConversations();
 	}
 	
 	@UiHandler("receivedMessagesLink")
 	void displayRecievedMessages(ClickEvent event) {
-		List<ConversationDTO> receivedMessages = new ArrayList<ConversationDTO>();
+		filteredConversations.clear();
+		setInboxLink(INBOXLINK.RECEIVED_MESSAGES);
 		for(ConversationDTO c : conversations) {
 			if (!c.isSender()) {
-				receivedMessages.add(c);
+				filteredConversations.add(c);
 			}
 		}
-		internalDisplayConversations(receivedMessages);
+		filterConversation = true;
+		internalDisplayConversations();
 	}
 	
 	@UiHandler("sentMessagesLink")
 	void displaySentMessages(ClickEvent event) {
-		List<ConversationDTO> sentMessages = new ArrayList<ConversationDTO>();
+		filteredConversations.clear();
+		setInboxLink(INBOXLINK.SENT_MESSAGES);
 		for(ConversationDTO c : conversations) {
 			if (c.isSender()) {
-				sentMessages.add(c);
+				filteredConversations.add(c);
 			}
 		}
-		internalDisplayConversations(sentMessages);
+		filterConversation = true;
+		internalDisplayConversations();
+	}
+
+	private void setInboxLink(INBOXLINK link) {
+		for(INBOXLINK l : INBOXLINK.values()) {
+			if (l == link) {
+				inboxLinks.get(l).getElement().getParentElement().getStyle().setBackgroundColor("#ddd");
+			} else {
+				inboxLinks.get(l).getElement().getParentElement().getStyle().clearBackgroundColor();
+			}
+		}
+	}
+	
+	public static enum INBOXLINK {
+		INBOX,
+		RECEIVED_MESSAGES,
+		SENT_MESSAGES
 	}
 }

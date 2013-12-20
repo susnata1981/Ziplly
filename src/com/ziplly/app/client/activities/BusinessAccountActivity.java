@@ -25,6 +25,7 @@ import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -32,6 +33,7 @@ import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
+import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.TweetResult;
 
 public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAccountDTO> implements
@@ -108,7 +110,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		binder.start();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
-		view.displayProfile((BusinessAccountDTO) ctx.getAccount());
+		if (ctx.getAccount() instanceof BusinessAccountDTO) {
+			view.displayProfile((BusinessAccountDTO) ctx.getAccount());
+		} else if (ctx.getAccount() instanceof PersonalAccountDTO) {
+			placeController.goTo(new PersonalAccountPlace());
+		}
 	}
 
 	@Override
@@ -140,8 +146,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(), tweetPageIndex,
 					pageSize);
 		}
+		
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				lastTweetList = result.getTweets();
@@ -178,6 +184,14 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		// empty for now
 	}
 
+	@Override
+	public void reportTweetAsSpam(TweetDTO tweet) {
+		SpamDTO spam = new SpamDTO();
+		spam.setTweet(tweet);
+		spam.setReporter(ctx.getAccount());
+		reportSpam(spam, new ReportSpamActionHandler());
+	}
+	
 	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
 		@Override
 		public void onSuccess(GetLatLngResult result) {
@@ -240,4 +254,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			}
 		}
 	}
+	
+	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+		@Override
+		public void onSuccess(ReportSpamResult result) {
+			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+		}
+	};
 }

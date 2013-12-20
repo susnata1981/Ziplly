@@ -30,6 +30,8 @@ import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.PrivacySettingsDTO;
+import com.ziplly.app.model.Spam;
+import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.Transaction;
@@ -297,6 +299,14 @@ public class EntityUtil {
 		for (Hashtag h : result) {
 			resp.add(clone(h));
 		}
+		return resp;
+	}
+
+	public static SpamDTO clone(Spam s) {
+		SpamDTO resp = new SpamDTO();
+		resp.setId(s.getId());
+		resp.setReporter(convert(s.getReporter()));
+		resp.setTweet(clone(s.getTweet()));
 		return resp;
 	}
 }

@@ -11,6 +11,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -29,6 +30,7 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.widget.MyBundle;
+import com.ziplly.app.client.widget.ZAnchor;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -55,6 +57,9 @@ public class MainView extends Composite implements View<HomePresenter> {
 	@UiField
 	Button fbLoginButtonOnMainPage;
 
+	@UiField
+	HTMLPanel residentSignupPanel;
+	
 	@UiField
 	HTMLPanel descriptionPanel;
 
@@ -163,7 +168,6 @@ public class MainView extends Composite implements View<HomePresenter> {
 		if (!validateInput()) {
 			return;
 		}
-
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
 		String passwordInput = FieldVerifier.getEscapedText(password.getText());
 		presenter.onLogin(emailInput, passwordInput);

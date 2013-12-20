@@ -3,6 +3,7 @@ package com.ziplly.app.server;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -19,6 +20,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.shared.EmailTemplate;
 
 import freemarker.template.Configuration;
@@ -65,6 +68,26 @@ public class EmailServiceImpl implements EmailService {
 		return null;		
 	}
 	
+	private void prepareAndSendEmail(Map<String, String> data, EmailTemplate template) {
+		Configuration cfg = new Configuration();
+		cfg.setDefaultEncoding("UTF-8");
+		cfg.setLocale(Locale.US);
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		
+		try {
+			Template emailTemplate = cfg.getTemplate(EMAIL_TEMPLATE_DIR+template.getFilename());
+			StringWriter writer = new StringWriter();
+			emailTemplate.process(data, writer);
+			sendEmail(data.get(StringConstants.RECIPIENT_NAME_KEY),
+					data.get(StringConstants.RECIPIENT_EMAIL) , 
+					writer.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TemplateException te) {
+			te.printStackTrace();
+		}
+	}
+	
 	// TODO (can recipientName be null)
 	private void sendEmail(String recipientName, String recipientEmail, String emailContent) {
 		Properties props = new Properties();
@@ -87,8 +110,27 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void sendEmail(Map<String, String> data, EmailTemplate template) {
-		String emailMessage = prepareEmail(data, template);
-		sendEmail(data.get(StringConstants.RECIPIENT_NAME), data.get(StringConstants.RECIPIENT_EMAIL), emailMessage);
+		if (data == null || !data.containsKey(StringConstants.RECIPIENT_EMAIL)
+				|| !data.containsKey(StringConstants.RECIPIENT_NAME_KEY)) {
+			throw new IllegalArgumentException("Recipient name of email not present.");
+		}
+		
+		prepareAndSendEmail(data, template);
+//		sendEmail(data.get(StringConstants.RECIPIENT_NAME_KEY), data.get(StringConstants.RECIPIENT_EMAIL), emailMessage);
+	}
+
+	@Override
+	public void sendEmail(Account sender, List<AccountDTO> recipients, EmailTemplate template) {
+		if (sender == null || recipients == null || recipients.isEmpty()) {
+			throw new IllegalArgumentException("Invalid accounts passed to sendEmail");
+		}
+		Map<String, String> data = Maps.newHashMap();
+		for(AccountDTO acct : recipients) {
+			data.put(StringConstants.RECIPIENT_EMAIL, acct.getEmail());
+			data.put(StringConstants.RECIPIENT_NAME_KEY, acct.getDisplayName());
+			data.put(StringConstants.SENDER_NAME_KEY, sender.getName());
+			prepareAndSendEmail(data, template);
+		}
 	}
 
 }

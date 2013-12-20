@@ -8,12 +8,13 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
+import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
+import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -35,19 +36,17 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			ConversationView view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
+		setupHandlers();
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		if (ctx.getAccount() == null) {
-			placeController.goTo(new LoginPlace());
-			return;
+		if (ctx.getAccount() != null) {
+			getConversations();
 		}
-		
+		checkLoginStatus();
 		this.panel = panel;
 		bind();
-		getConversations();
-		setupHandlers();
 	}
 
 	private void setupHandlers() {
@@ -62,6 +61,13 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 				});
 			}
 		});
+		
+		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
+			@Override
+			public void onEvent(LoginEvent event) {
+				getConversations();
+			}
+		});
 	}
 
 	@Override
@@ -69,6 +75,11 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		dispatcher.execute(new GetConversationsAction(), new DispatcherCallbackAsync<GetConversationsResult>() {
 			@Override
 			public void onSuccess(GetConversationsResult result) {
+				for(ConversationDTO c : result.getConversations()) {
+					if (c.getSender().getAccountId() == ctx.getAccount().getAccountId()) {
+						c.setIsSender(true);
+					}
+				}
 				view.displayConversations(result.getConversations());
 				go(panel);
 			}

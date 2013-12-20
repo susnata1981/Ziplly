@@ -8,9 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.ConversationDAO;
-import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetConversationsAction;
@@ -24,7 +22,6 @@ public class GetConversationActionHandler extends AbstractAccountActionHandler<G
 			SessionDAO sessionDao, AccountBLI accountBli, ConversationDAO conversationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -51,5 +48,4 @@ public class GetConversationActionHandler extends AbstractAccountActionHandler<G
 	public Class<GetConversationsAction> getActionType() {
 		return GetConversationsAction.class;
 	}
-
 }

@@ -6,7 +6,7 @@
 	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
 		.conversation {
 			width: 90%;
-			padding: 3px;
+			padding: 1%;
 			margin: 5%;
 			border-bottom: 1px solid #ddd;
 			overflow: auto;
@@ -53,6 +53,13 @@
 			width: 90%;
 			height: 50px;
 		}
+		.helpinline {
+			display: inline-block;
+			padding: 4px;
+			color: #b94a48;
+			margin: 2% 10% !important;
+			width: 90%;
+		}
 		.buttonPanel {
 			clear: both;
 			padding: 4px;
@@ -69,6 +76,9 @@
 		margin-right: 1%;
 		padding: 6px;
 		background: #faf8f6;
+		}
+		.asidePanel li {
+			list-style: none;
 		}
 		.asidePanel dt {
 		margin: 12px 2px;
@@ -93,21 +103,22 @@
 		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
 			<dl>
 			    <dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">Inbox<span ui:field="unreadMessageCountSpan"/></g:Anchor>
-					<ul>
-					    <li>
+					<div><g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">INBOX<span ui:field="unreadMessageCountSpan"/></g:Anchor>
+					    </div>
+					<dl>
+					    <dt>
 					        <g:Anchor addStyleNames="{style.link}" ui:field="receivedMessagesLink">Received<span ui:field="receivedMessageCountSpan"/></g:Anchor>
-					    </li>
-					    <li>
+					    </dt>
+					    <dt>
 					        <g:Anchor addStyleNames="{style.link}" ui:field="sentMessagesLink">Sent<span ui:field="sentMessageCountSpan"/></g:Anchor>
-					    </li>
-					</ul>
+					    </dt>
+					</dl>
 				</dt>
 				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">Profile</g:Anchor>
+					<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">PROFILE</g:Anchor>
 				</dt>
 				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">Settings</g:Anchor>
+					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
 				</dt>
 			</dl>
 		</g:HTMLPanel>

@@ -4,7 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="accountview.css" />
 
-	<g:HTMLPanel addStyleNames="{style.mainContent}">
+	<g:HTMLPanel addStyleNames="{style.rootPanel}">
 		<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
 		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
 			<dl>
@@ -22,19 +22,15 @@
 		<g:HTMLPanel addStyleNames="{style.settingsPanel}">
 			<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
 				<b:Tab ui:field="basicInfoTab" heading="About" active="true">
-					<g:HTMLPanel>
+					<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
 						<div class="profile_section_heading">
 							<span>Basic Info</span>
 						</div>
 						<div class="{style.profileInfoBlock}">
 							<div class="{style.profileInfoTextBlock}">
 								<div class="{style.non_editable}">
-									<span class="{style.label}">Firstname</span>
-									<span ui:field="firstname" />
-								</div>
-								<div class="{style.non_editable}">
-									<span class="{style.label}">Lastname</span>
-									<span ui:field="lastname" />
+									<span class="{style.label}">Name</span>
+									<span ui:field="firstname" />&nbsp;<span ui:field="lastname" />
 								</div>
 								<div class="{style.non_editable}">
 									<span class="{style.label}">Email</span>
@@ -43,7 +39,7 @@
 							</div>
 							<div class="{style.profileInfoImageBlock}">
 								<g:FormPanel ui:field="uploadForm">
-									<g:HTMLPanel>
+									<g:HTMLPanel addStyleNames="{style.uploadFormActionPanel}">
 										<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
 										<g:FileUpload ui:field="uploadField" name="image" />
 										<b:Button ui:field="uploadBtn" size="MINI">Upload</b:Button>
@@ -66,7 +62,6 @@
 				<b:Tab ui:field="occupationTab" heading="Occupation">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget ui:field="occupationSetting" />
 							<span>Occupation</span>
 						</div>
 						<b:ControlGroup ui:field="occupationCg">
@@ -81,7 +76,6 @@
 				<b:Tab ui:field="interestTab" heading="Interests">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget ui:field="interestSetting" />
 							<span>Interests</span>
 						</div>
 						<g:HTMLPanel ui:field="interestTabPanel">
@@ -91,7 +85,6 @@
 				<b:Tab ui:field="locationTab" heading="Location">
 					<g:HTMLPanel>
 						<div class="profile_section_heading">
-							<dt:ShareSettingsWidget ui:field="locationSetting" />
 							<span>Location</span>
 						</div>
 						<b:ControlGroup ui:field="zipCg">

@@ -187,7 +187,7 @@ public class MainController implements ValueChangeHandler<String> {
 				display(container, homeView);
 			} else if (token.startsWith("account")) {
 				clearBackgroundImage();
-				MatchResult result = accountPath.exec(token);
+//				MatchResult result = accountPath.exec(token);
 				display(container, accountView);
 			}
 		}

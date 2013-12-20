@@ -1,4 +1,5 @@
 package com.ziplly.app.client.activities;
+
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -13,39 +14,61 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ISettingsView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
-public class PersonalAccountSettingsActivity extends AbstractAccountSettingsActivity<PersonalAccountDTO, PersonalAccountSettingsActivity.IPersonalAccountSettingsView>  
-	implements AccountSettingsPresenter<PersonalAccountDTO>{
+public class PersonalAccountSettingsActivity
+		extends
+		AbstractAccountSettingsActivity<PersonalAccountDTO, PersonalAccountSettingsActivity.IPersonalAccountSettingsView>
+		implements AccountSettingsPresenter<PersonalAccountDTO> {
 
-	public static interface IPersonalAccountSettingsView extends ISettingsView<PersonalAccountDTO, AccountSettingsPresenter<PersonalAccountDTO>> {
+	public static interface IPersonalAccountSettingsView extends
+			ISettingsView<PersonalAccountDTO, AccountSettingsPresenter<PersonalAccountDTO>> {
 	}
-	
-	public PersonalAccountSettingsActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx,
+
+	private AcceptsOneWidget panel;
+
+	public PersonalAccountSettingsActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
+			PlaceController placeController, ApplicationContext ctx,
 			IPersonalAccountSettingsView view) {
 		super(dispatcher, eventBus, placeController, ctx, view);
+		setupHandlers();
+	}
+
+	private void setupHandlers() {
+		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
+			@Override
+			public void onEvent(LoginEvent event) {
+				internalStart();
+			}
+		});
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
 		if (ctx.getAccount() == null) {
-			placeController.goTo(new LoginPlace());
+			checkLoginStatus();
+			return;
+		} else {
+			internalStart();
 		}
-		
+	}
+
+	private void internalStart() {
 		// hack, hate hate hate
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			placeController.goTo(new BusinessAccountSettingsPlace());
 		}
-		
+
 		bind();
 		setImageUploadFormSubmitCompleteHandler();
 		setUploadFormActionUrl();
-		view.displaySettings((PersonalAccountDTO)ctx.getAccount());
+		view.displaySettings((PersonalAccountDTO) ctx.getAccount());
 		panel.setWidget(view);
 	}
 
@@ -74,7 +97,7 @@ public class PersonalAccountSettingsActivity extends AbstractAccountSettingsActi
 			public void onSuccess(UpdatePasswordResult result) {
 				view.displayMessage(StringConstants.PASSWORD_UPDATED, AlertType.SUCCESS);
 			}
-			
+
 			public void onFailure(Throwable th) {
 				if (th instanceof InvalidCredentialsException) {
 					view.displayMessage(th.getMessage(), AlertType.ERROR);

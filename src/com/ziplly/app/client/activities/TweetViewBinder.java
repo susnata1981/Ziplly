@@ -43,7 +43,7 @@ public class TweetViewBinder {
 		int sh = elem.getScrollHeight();
 		int st = elem.getScrollTop();
 		int of = elem.getOffsetHeight();
-////		System.out.println("SH="+sh+" ST="+st+" OF="+of);
+		System.out.println("SH="+sh+" ST="+st+" OF="+of);
 //		if (scrollTop == st) {
 //			return false;
 //		}
