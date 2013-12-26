@@ -30,6 +30,7 @@ import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
+import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
@@ -54,6 +55,7 @@ import com.ziplly.app.shared.UpdateTweetResult;
 
 public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements AccountPresenter<T>, EmailPresenter {
 	protected IAccountView<T> view;
+	protected AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
 	
 	public AbstractAccountActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, 
@@ -113,6 +115,10 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			placeController.goTo(new LoginPlace());
 		}
 		dispatcher.execute(new TweetAction(tweet), getTweetHandler());
+	}
+
+	protected void getAccountNotifications() {
+		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
 	}
 
 	public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();

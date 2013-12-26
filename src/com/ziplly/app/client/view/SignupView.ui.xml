@@ -5,43 +5,54 @@
 	<ui:style>
 		.singupForm {
 		float: left;
-		width: 30%;
+		width: 38%;
 		padding: 8px;
-		margin: 2% 5%;
+		margin: 2%
+		5%;
 		background: #f1f1f1;
 		}
 		.loginForm {
-		position: absolute;
-		top: 60%;
-		right:
-		10%;
+		float: right;
+		margin: 20% 5%;
 		width: 28%;
 		background: #fff;
+		border: 1px solid #ddd;
 		}
+		.loginWidget {
+			margin: 2% auto;
+		}
+
 		input[type="text"],input[type="password"] {
-		height: 30px;
+		height: 32px !important;
+		font-color: #555;
+		font-family: Verdana, Geneva, sans-serif;
+		font-size: 15px;
+		padding: 4px;
 		}
 		.uploadImageForm {
 		clear: both;
 		height: 180px;
 		}
 		.chooseFileUploadButton {
-		float: left;
+		display: block;
+		clear: left;
 		width: 20%;
 		}
 		.uploadImageButton {
 		clear: left;
-		display: block;
+		display:
+		block;
 		width: 14%;
 		}
 		.profileImagePreviewDiv {
 		float: left;
-		width: 50%;
+		width: 140px;
 		height: 130px;
 		}
 		.profileImagePreview {
 		width: 90% !important;
-		height: 90% !important;
+		height: 90%
+		!important;
 		border: 1px solid #ddd;
 		}
 		.namePanel {
@@ -127,7 +138,7 @@
 							<b:HelpInline ui:field="passwordError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
-					<b:ControlGroup ui:field="confirmPasswordCg">
+					<!-- <b:ControlGroup ui:field="confirmPasswordCg">
 						<b:Controls>
 							<b:Label>Confirm password</b:Label>
 							<br />
@@ -135,13 +146,13 @@
 								placeholder="confirm password..." />
 							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
 						</b:Controls>
-					</b:ControlGroup>
+					</b:ControlGroup> -->
 					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
 				</b:Form>
 			</div>
 			<div class="{style.loginForm}">
 				<dt:LoginWidget ui:field="loginWidget" width="90%"
-					residentAccountSignupLink="false" />
+					residentAccountSignupLink="false" addStyleNames="{style.loginWidget}" />
 			</div>
 		</div>
 	</g:HTMLPanel>

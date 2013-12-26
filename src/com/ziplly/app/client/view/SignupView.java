@@ -35,7 +35,6 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends Composite implements
 		ISignupView<SignupActivityPresenter>, LoginAwareView {
-//	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
 
@@ -83,12 +82,12 @@ public class SignupView extends Composite implements
 	@UiField
 	HelpInline passwordError;
 
-	@UiField
-	PasswordTextBox confirmPassword;
-	@UiField
-	ControlGroup confirmPasswordCg;
-	@UiField
-	HelpInline confirmPasswordError;
+//	@UiField
+//	PasswordTextBox confirmPassword;
+//	@UiField
+//	ControlGroup confirmPasswordCg;
+//	@UiField
+//	HelpInline confirmPasswordError;
 
 	@UiField
 	Alert infoField;
@@ -134,6 +133,7 @@ public class SignupView extends Composite implements
 	}
 
 	public void displayProfileImagePreview(String imageUrl) {
+		System.out.println("IMG URL = "+imageUrl);
 		profileImagePreview.setUrl(imageUrl);
 		profileImagePreview.setVisible(true);
 		this.profileImageUrl = imageUrl;
@@ -216,17 +216,17 @@ public class SignupView extends Composite implements
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
-		String confirmPasswordInput = confirmPassword.getText().trim();
-		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg,
-				confirmPasswordError);
-
-		if (passwordInput != null && confirmPasswordInput != null) {
-			if (!confirmPasswordInput.equals(passwordInput)) {
-				passwordCg.setType(ControlGroupType.ERROR);
-				passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
-				passwordError.setVisible(true);
-			}
-		}
+//		String confirmPasswordInput = confirmPassword.getText().trim();
+//		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg,
+//				confirmPasswordError);
+//
+//		if (passwordInput != null && confirmPasswordInput != null) {
+//			if (!confirmPasswordInput.equals(passwordInput)) {
+//				passwordCg.setType(ControlGroupType.ERROR);
+//				passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
+//				passwordError.setVisible(true);
+//			}
+//		}
 		return valid;
 	}
 
@@ -241,7 +241,7 @@ public class SignupView extends Composite implements
 		lastname.setText("");
 		email.setText("");
 		password.setText("");
-		confirmPassword.setText("");
+//		confirmPassword.setText("");
 	}
 
 	void resetErrors() {
@@ -302,6 +302,7 @@ public class SignupView extends Composite implements
 		zip.setText(Integer.toString(account.getZip()));
 		
 		if (account.getImageUrl() != null) {
+			imageUploaded = true;
 			this.profileImageUrl = account.getImageUrl();
 			profileImagePreview.setUrl(account.getImageUrl());
 			profileImagePreview.setVisible(true);
@@ -346,7 +347,6 @@ public class SignupView extends Composite implements
 	}
 
 	public void displayMessage(String msg, AlertType type) {
-//		loginWidget.displayMessage(msg, error);
 		infoField.setText(msg);
 		infoField.setType(type);
 		infoField.setVisible(true);

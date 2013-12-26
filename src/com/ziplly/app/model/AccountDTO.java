@@ -26,6 +26,7 @@ public class AccountDTO implements Serializable {
 	private Date timeCreated;
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	private Long uid;
+	private List<AccountNotificationDTO> accountNotifications = new ArrayList<AccountNotificationDTO>();
 	private List<AccountNotificationSettingsDTO> notificationSettings = new ArrayList<AccountNotificationSettingsDTO>();
 	private List<PrivacySettingsDTO> privacySettings = new ArrayList<PrivacySettingsDTO>();
 	
@@ -217,5 +218,13 @@ public class AccountDTO implements Serializable {
 
 	public void setStatus(AccountStatus status) {
 		this.status = status;
+	}
+
+	public List<AccountNotificationDTO> getAccountNotifications() {
+		return accountNotifications;
+	}
+
+	public void setAccountNotifications(List<AccountNotificationDTO> accountNotifications) {
+		this.accountNotifications = accountNotifications;
 	}
 }

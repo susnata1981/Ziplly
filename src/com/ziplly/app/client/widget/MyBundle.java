@@ -19,6 +19,9 @@ public interface MyBundle extends ClientBundle {
 	@Source("FacebookLogo.jpg")
 	ImageResource fbLogo();
 	
+	@Source("tom.jpeg")
+	ImageResource tom();
+	
 	@Source("MyCss.css")
 	public MyCssResource style(); 
 	

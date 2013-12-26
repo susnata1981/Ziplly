@@ -32,13 +32,8 @@
 							<b:Image ui:field="profileImage" />
 						</div>
 						<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
-						<div>
-							<b:Button type="INFO" size="MINI" ui:field="sendMsgBtn">Send
-								Message</b:Button>
-						</div>
-						<div>
-							<b:Button type="INFO" size="MINI" ui:field="inviteBtn">Invite people</b:Button>
-						</div>
+						<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
+						<b:Button block="true" ui:field="inviteBtn">Invite people</b:Button>
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">About me</h2>

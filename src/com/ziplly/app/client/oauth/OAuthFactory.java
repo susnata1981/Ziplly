@@ -1,5 +1,7 @@
 package com.ziplly.app.client.oauth;
 
+
+
 public class OAuthFactory {
 
 	public static OAuthConfig getAuthConfig(String provider) {
@@ -9,7 +11,7 @@ public class OAuthFactory {
 				.setClientId(OAuthAppProperties.FB_CLIENT_ID)
 				.setKey(OAuthAppProperties.FB_CLIENT_SECRET)
 				.setScope(OAuthAppProperties.FB_SCOPES)
-				.setRedirectUri(OAuthAppProperties.REDIRECT_URL)
+				.setRedirectUri(OAuthAppProperties.REDIRECT_URL_IN_PRODUCTION)
 				.build();
 	}
 }

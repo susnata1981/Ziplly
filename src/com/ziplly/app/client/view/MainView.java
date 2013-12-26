@@ -11,7 +11,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -30,7 +29,6 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.widget.MyBundle;
-import com.ziplly.app.client.widget.ZAnchor;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -95,6 +93,10 @@ public class MainView extends Composite implements View<HomePresenter> {
 	@UiHandler("fbLoginButtonOnMainPage")
 	void fbLogin(ClickEvent event) {
 		try {
+			System.out.println("MODULE BASE URL:"+GWT.getHostPageBaseURL());
+			String url = GWT.getHostPageBaseURL();
+			url = url.replace("127.0.0.1", "localhost") + "Ziplly.html";
+			authConfig.setRedirectUri(url);
 			Window.Location.replace(authConfig.getAuthorizationUrl());
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -196,5 +198,9 @@ public class MainView extends Composite implements View<HomePresenter> {
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
+	}
+
+	public void setRedirectUri(String redirectUrl) {
+		authConfig.setRedirectUri(redirectUrl);
 	}
 }

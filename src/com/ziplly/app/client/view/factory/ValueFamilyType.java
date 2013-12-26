@@ -1,0 +1,9 @@
+package com.ziplly.app.client.view.factory;
+
+public enum ValueFamilyType {
+	BASIC_DATA_VALUE,
+	ACCOUNT_NOTIFICATION,
+	ACCOUNT_INFORMATION,
+	PERSONAL_ACCOUNT_INFORMATION,
+	BUSINESS_ACCOUNT_INFORMATION,
+}

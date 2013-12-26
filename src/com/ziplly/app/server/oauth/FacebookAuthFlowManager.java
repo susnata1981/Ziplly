@@ -3,6 +3,7 @@ package com.ziplly.app.server.oauth;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -11,7 +12,6 @@ import java.util.regex.Pattern;
 import com.google.gwt.json.client.JSONException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
-import com.ziplly.app.client.oauth.OAuthUtil;
 
 public class FacebookAuthFlowManager extends OAuthFlowManager {
 
@@ -32,7 +32,7 @@ public class FacebookAuthFlowManager extends OAuthFlowManager {
 
 	@Override
 	public String doExchange(Map<String,String> params) throws IOException {
-		String exchangeTokenUrl = OAuthUtil.getUrlWithParam(provider.getTokenUrl(), params);
+		String exchangeTokenUrl = getUrlWithParam(provider.getTokenUrl(), params);
 		
 		HttpURLConnection conn = HTTPConnectionProvider.getConnection(
 				exchangeTokenUrl,

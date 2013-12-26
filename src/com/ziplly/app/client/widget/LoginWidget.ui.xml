@@ -3,11 +3,13 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style>
 		.loginSection {
-		width: 29%;
+		width: 320px;
 		margin: auto;
 		padding: 5px;
+		border: 1px solid #ddd;
 		}
-		.button {
+		.button
+		{
 		margin-left: 10px;
 		}
 		.residentSignupDiv {
@@ -21,26 +23,20 @@
 		font-size: 12px;
 		font-style:
 		helvetica;
-		height: 20px !important;
+		height: 20px
+		!important;
 		background: none !important;
 		}
 		.passwordRecoveryLink {
-			margin-top: 10px;
+		margin-top: 10px;
 		font-size: 12px;
 		font-style:
 		helvetica;
-		height: 20px !important;
+		height: 20px
+		!important;
 		background: none !important;
 		}
 	</ui:style>
-	<!-- <b:Alert ui:field="message"/> <div class="loginSection"> <b:Form> <b:ControlGroup 
-		ui:field="emailCg"> <b:Controls> <b:TextBox ui:field="email" placeholder="email..." 
-		/> <b:HelpInline ui:field="emailError"></b:HelpInline> </b:Controls> </b:ControlGroup> 
-		<b:ControlGroup ui:field="passwordCg"> <b:Controls> <b:PasswordTextBox ui:field="password" 
-		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:Button type="SUCCESS" addStyleNames="{style.loginBtn}" 
-		ui:field="loginBtn">SignIn</b:Button> <b:Button type="INFO" addStyleNames="{style.loginBtn}" 
-		ui:field="fbLoginBtn">Facebook Login</b:Button> </b:Form> </div> -->
 
 	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
 		<b:Alert ui:field="message" />
@@ -80,12 +76,15 @@
 					</span>
 				</g:HTMLPanel>
 				<g:HTMLPanel>
-					<span>Forgot your password
-						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click here</g:Anchor>
+					<span>
+						Forgot your password
+						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click
+							here</g:Anchor>
 						here
 					</span>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</b:WellForm>
 	</g:HTMLPanel>
+
 </ui:UiBinder> 

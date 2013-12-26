@@ -118,9 +118,10 @@ h2.heading {
 }
 
 .businessInfoItem {
+	clear: both;
 	display: block;
 	padding: 3px;
-	margin: 10px 3px;
+	margin: 4px 3px;
 	color: #555;
 }
 
@@ -272,4 +273,21 @@ h2.heading {
     text-decoration: inherit;
 }
 .tweetSectionDiv {
+}
+
+.smallfont {
+	font-size: 12px;
+}
+
+.leftAlignedLabel {
+	float: left;
+	width: 50px;
+	margin-right: 5px;
+}
+
+.leftAlignedPanel {
+	float: left;
+}
+.addressPanel {
+	padding: 4px;
 }

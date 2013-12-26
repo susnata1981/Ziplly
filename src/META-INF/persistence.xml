@@ -8,6 +8,7 @@
 		<class>com.ziplly.app.model.Account</class>
 		<class>com.ziplly.app.model.PersonalAccount</class>
 		<class>com.ziplly.app.model.BusinessAccount</class>
+		<class>com.ziplly.app.model.BusinessProperties</class>
 		<class>com.ziplly.app.model.PrivacySettings</class>
 		<class>com.ziplly.app.model.AccountNotification</class>
 		<class>com.ziplly.app.model.Interest</class>

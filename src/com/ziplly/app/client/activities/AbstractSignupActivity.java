@@ -1,5 +1,7 @@
 package com.ziplly.app.client.activities;
 
+import java.util.logging.Logger;
+
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -28,6 +30,9 @@ import com.ziplly.app.shared.ValidateLoginResult;
 
 public abstract class AbstractSignupActivity extends AbstractActivity implements SignupActivityPresenter {
 	ISignupView<SignupActivityPresenter> view;
+	Logger logger = Logger.getLogger("AbstractSignupActivity");
+	ValidateLoginHandler validateLoginHandler = new ValidateLoginHandler();
+	RegisterAccountHandler registerAccountHandler = new RegisterAccountHandler();
 	
 	public AbstractSignupActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
@@ -39,45 +44,14 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 	@Override
 	public void onLogin(String email, String password) {
-		dispatcher.execute(new ValidateLoginAction(email, password),
-				new DispatcherCallbackAsync<ValidateLoginResult>() {
-					@Override
-					public void onSuccess(ValidateLoginResult result) {
-						if (result != null && result.getAccount() != null) {
-							ctx.setAccount(result.getAccount());
-							forward(result.getAccount());
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught instanceof NotFoundException) {
-							view.displayMessage(
-									LoginWidget.ACCOUNT_DOES_NOT_EXIST,
-									AlertType.ERROR);
-						} else if (caught instanceof InvalidCredentialsException) {
-							view.displayMessage(
-									LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
-									AlertType.ERROR);
-						}
-						view.resetLoginForm();
-					}
-		});
+		dispatcher.execute(new ValidateLoginAction(email, password), 
+				validateLoginHandler);
 	}
 
 	@Override
 	public void register(AccountDTO account) {
 		dispatcher.execute(new RegisterAccountAction(account),
-				new DispatcherCallbackAsync<RegisterAccountResult>() {
-					@Override
-					public void onSuccess(RegisterAccountResult result) {
-						System.out.println("Account " + result.getAccount()
-								+ " registered.");
-						eventBus.fireEvent(new LoginEvent(result.getAccount()));
-						view.clear();
-						forward(result.getAccount());
-					}
-				});
+				registerAccountHandler);
 	}
 
 	@Override
@@ -113,23 +87,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {
 		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(), code);
-		dispatcher.execute(action, new DispatcherCallbackAsync<CheckEmailRegistrationResult>() {
-
-			@Override
-			public void onSuccess(CheckEmailRegistrationResult result) {
-				if (account instanceof BusinessAccountDTO) {
-					((BusinessAccountDTO) account).setBusinessType(result.getBusinessType());
-				}
-				register(account);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
-				}
-			}
-		});
+		dispatcher.execute(action, new CheckEmailRegistrationHandler(account));
 	}
 	
 	@Override
@@ -151,5 +109,62 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
 		}
 	}
+
+	public class ValidateLoginHandler extends DispatcherCallbackAsync<ValidateLoginResult> {
+		@Override
+		public void onSuccess(ValidateLoginResult result) {
+			if (result != null && result.getAccount() != null) {
+				ctx.setAccount(result.getAccount());
+				forward(result.getAccount());
+			}
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			if (caught instanceof NotFoundException) {
+				view.displayMessage(
+						LoginWidget.ACCOUNT_DOES_NOT_EXIST,
+						AlertType.ERROR);
+			} else if (caught instanceof InvalidCredentialsException) {
+				view.displayMessage(
+						LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
+						AlertType.ERROR);
+			}
+			view.resetLoginForm();
+		}
+	}
 	
+	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
+		@Override
+		public void onSuccess(RegisterAccountResult result) {
+			System.out.println("Account " + result.getAccount()
+					+ " registered.");
+			eventBus.fireEvent(new LoginEvent(result.getAccount()));
+			view.clear();
+			forward(result.getAccount());
+		}
+	}
+	
+	public class CheckEmailRegistrationHandler extends DispatcherCallbackAsync<CheckEmailRegistrationResult> {
+		private AccountDTO account;
+
+		public CheckEmailRegistrationHandler(AccountDTO account) {
+			this.account = account;
+		}
+		
+		@Override
+		public void onSuccess(CheckEmailRegistrationResult result) {
+			if (account instanceof BusinessAccountDTO) {
+				((BusinessAccountDTO) account).setBusinessType(result.getBusinessType());
+			}
+			register(account);
+		}
+		
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof AccessError) {
+				view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
+			}
+		}
+	}
 }

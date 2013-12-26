@@ -16,8 +16,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.google.appengine.api.backends.BackendServiceFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -50,6 +55,7 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
@@ -62,6 +68,7 @@ import com.ziplly.app.model.Session;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
+import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
 import com.ziplly.app.shared.BCrypt;
@@ -70,7 +77,7 @@ import com.ziplly.app.shared.EmailTemplate;
 public class AccountBLIImpl implements AccountBLI {
 	private static final String UPLOAD_SERVICE_ENDPOINT = "/upload";
 	public static final int FREE_TWEET_PER_MONTH_THRESHOLD = 1;
-	
+
 	protected final long hoursInMillis = 2 * 60 * 60 * 1000;
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
@@ -82,8 +89,7 @@ public class AccountBLIImpl implements AccountBLI {
 	@Inject
 	protected Provider<HttpServletRequest> request;
 
-	private OAuthConfig authConfig = OAuthFactory
-			.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 
 	private InterestDAO interestDao;
@@ -93,9 +99,8 @@ public class AccountBLIImpl implements AccountBLI {
 	private PasswordRecoveryDAO passwordRecoveryDao;
 
 	@Inject
-	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao,
-			InterestDAO interestDao, TransactionDAO transactionDao,
-			SubscriptionPlanDAO subscriptionPlanDao,
+	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, InterestDAO interestDao,
+			TransactionDAO transactionDao, SubscriptionPlanDAO subscriptionPlanDao,
 			PasswordRecoveryDAO passwordRecoveryDao, EmailService emailService) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
@@ -105,16 +110,32 @@ public class AccountBLIImpl implements AccountBLI {
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
-//		 createInterestEntries();
-//		createSubscriptionPlan();
+		// createInterestEntries();
+//		 createSubscriptionPlan();
 	}
 
 	private void createSubscriptionPlan() {
 		SubscriptionPlan plan = new SubscriptionPlan();
 		plan.setName("Basic plan");
-		plan.setDescription("Send upto 5 messages a month");
-		plan.setTweetsAllowed(1);
+		plan.setDescription("Send upto 3 messages a month");
+		plan.setTweetsAllowed(3);
+		plan.setFee(0.0);
+		plan.setTimeCreated(new Date());
+		subscriptionPlanDao.save(plan);
+		
+		plan = new SubscriptionPlan();
+		plan.setName("Pro plan");
+		plan.setDescription("Send upto 6 messages a month");
+		plan.setTweetsAllowed(6);
 		plan.setFee(5.00);
+		plan.setTimeCreated(new Date());
+		subscriptionPlanDao.save(plan);
+		
+		plan = new SubscriptionPlan();
+		plan.setName("Premium plan");
+		plan.setDescription("Send upto 15 messages a month");
+		plan.setTweetsAllowed(15);
+		plan.setFee(15.00);
 		plan.setTimeCreated(new Date());
 		subscriptionPlanDao.save(plan);
 	}
@@ -170,9 +191,8 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		if (existingAccount != null) {
-			throw new AccountExistsException(
-					"Account already exists with this email: "
-							+ existingAccount.getEmail());
+			throw new AccountExistsException("Account already exists with this email: "
+					+ existingAccount.getEmail());
 		}
 
 		createDefaultNotificationSettings(account);
@@ -194,7 +214,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	private void createDefaultNotificationSettings(Account account) {
-		for(NotificationType type: NotificationType.values()) {
+		for (NotificationType type : NotificationType.values()) {
 			AccountNotificationSettings an = new AccountNotificationSettings();
 			an.setAccount(account);
 			an.setType(type);
@@ -233,8 +253,7 @@ public class AccountBLIImpl implements AccountBLI {
 			String storedPassword = account.getPassword();
 			boolean checkpw = BCrypt.checkpw(password, storedPassword);
 			if (!checkpw) {
-				throw new InvalidCredentialsException(
-						"Invalid account credentials");
+				throw new InvalidCredentialsException("Invalid account credentials");
 			}
 		} catch (NotFoundException e) {
 			throw e;
@@ -287,8 +306,7 @@ public class AccountBLIImpl implements AccountBLI {
 		Session session = sessionDao.findSessionByUid(uidInRequest);
 		if (session == null) {
 			logger.log(Level.WARNING, String.format(
-					"Session %l exists in cookie but not in session table",
-					uidInCookie));
+					"Session %l exists in cookie but not in session table", uidInCookie));
 		}
 
 		sessionDao.removeByUid(session.getUid());
@@ -303,16 +321,14 @@ public class AccountBLIImpl implements AccountBLI {
 			return EntityUtil.convert(loggedInAccount);
 		}
 
-		OAuthFlowManager authFlowManager = AuthFlowManagerFactory
-				.get(authConfig);
+		OAuthFlowManager authFlowManager = AuthFlowManagerFactory.get(authConfig);
 		AccessToken token;
 		try {
 			token = authFlowManager.exchange(code);
 		} catch (Exception e) {
 			throw new OAuthException();
 		}
-		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token
-				.getAccess_token());
+		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token.getAccess_token());
 		User fuser = fUserDao.getUser();
 
 		if (fuser == null) {
@@ -333,14 +349,11 @@ public class AccountBLIImpl implements AccountBLI {
 			account.setFacebookId(fuser.getId());
 			account.setUrl(fuser.getLink());
 			account.setIntroduction(fuser.getBio());
-			String imgUrl = "https://graph.facebook.com/" + fuser.getId()
-					+ "/picture"; // ?width=200&height=160
+			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture"; // ?width=200&height=160
 			account.setImageUrl(imgUrl);
 			return account;
 		} catch (Exception e) {
-			System.out
-					.println("Exception caught while getting facebook user details:"
-							+ e);
+			System.out.println("Exception caught while getting facebook user details:" + e);
 		}
 
 		// login user
@@ -373,8 +386,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 	private Account getLoggedInUserBasedOnCookie() {
 		// Do we need to check if session already exists. Probably not?
-		Long existingUid = (Long) httpSession.get().getAttribute(
-				ZipllyServerConstants.SESSION_ID);
+		Long existingUid = (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 		if (existingUid != null) {
 			Session session;
 			try {
@@ -415,8 +427,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	Long getUidFromCookie() {
-		return (Long) httpSession.get().getAttribute(
-				ZipllyServerConstants.SESSION_ID);
+		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 	}
 
 	@Override
@@ -429,12 +440,26 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public TransactionDTO pay(TransactionDTO txn)
-			throws AccountAlreadySubscribedException {
+	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException, DuplicateException, NotFoundException {
 		if (txn == null) {
 			throw new IllegalArgumentException();
 		}
+		
+		AccountDTO accountDto = accountDao.findById(txn.getSeller().getAccountId());
 		Transaction transaction = new Transaction(txn);
+		transaction.setSeller(new Account(accountDto));
+		
+		if (!(accountDto instanceof BusinessAccountDTO)) {
+			throw new IllegalArgumentException("Invalid account type in PAY()");
+		}
+		
+		BusinessAccountDTO account = (BusinessAccountDTO) accountDto;
+		for(TransactionDTO existingTransaction : account.getTransactions()) {
+			if (existingTransaction.getStatus() == TransactionStatus.ACTIVE) {
+				throw new DuplicateException("Already has an active subscription");
+			}
+		}
+		
 		try {
 			TransactionDTO result = transactionDao.save(transaction);
 			return result;
@@ -444,9 +469,8 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public void updatePassword(Account account, String oldPassword,
-			String newPassword) throws InvalidCredentialsException,
-			NotFoundException {
+	public void updatePassword(Account account, String oldPassword, String newPassword)
+			throws InvalidCredentialsException, NotFoundException {
 
 		if (oldPassword == null || newPassword == null || account == null) {
 			throw new IllegalArgumentException();
@@ -466,9 +490,8 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public void sendPasswordRecoveryEmail(String email)
-			throws NotFoundException, UnsupportedEncodingException,
-			NoSuchAlgorithmException, DuplicateException {
+	public void sendPasswordRecoveryEmail(String email) throws NotFoundException,
+			UnsupportedEncodingException, NoSuchAlgorithmException, DuplicateException {
 		if (email == null) {
 			throw new IllegalArgumentException();
 		}
@@ -486,13 +509,10 @@ public class AccountBLIImpl implements AccountBLI {
 			// send email
 			Map<String, String> emailData = Maps.newHashMap();
 			emailData.put(StringConstants.RECIPIENT_EMAIL, account.getEmail());
-			emailData.put(StringConstants.RECIPIENT_NAME_KEY,
-					account.getDisplayName());
+			emailData.put(StringConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
 			String passwordRecoveryUrl = getPasswordRecoveryUrl(hash);
-			System.out
-					.println("Password recovery url = " + passwordRecoveryUrl);
-			emailData.put(StringConstants.PASSWORD_RECOVER_URL,
-					passwordRecoveryUrl);
+			System.out.println("Password recovery url = " + passwordRecoveryUrl);
+			emailData.put(StringConstants.PASSWORD_RECOVER_URL, passwordRecoveryUrl);
 			emailService.sendEmail(emailData, EmailTemplate.PASSWORD_RECOVERY);
 
 		} catch (NotFoundException e) {
@@ -505,8 +525,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO verifyPasswordRecoverLink(String hash)
-			throws AccessError, NotFoundException {
+	public AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError, NotFoundException {
 		if (hash == null) {
 			throw new IllegalArgumentException();
 		}
@@ -516,7 +535,7 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (NoResultException nre) {
 			throw nre;
 		}
-		
+
 		if (pr != null) {
 			if (pr.getStatus() != PasswordRecoveryStatus.PENDING) {
 				throw new AccessError();
@@ -542,8 +561,7 @@ public class AccountBLIImpl implements AccountBLI {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
 			HttpServletRequest req = request.get();
 			passwordRecoveryUrl = req.getScheme() + "://" + req.getServerName()
-					+ req.getContextPath() + ":8888/Ziplly.html"
-					+ "#passwordrecovery:" + hash;
+					+ req.getContextPath() + ":8888/Ziplly.html" + "#passwordrecovery:" + hash;
 		} else {
 
 		}
@@ -552,19 +570,48 @@ public class AccountBLIImpl implements AccountBLI {
 
 	// TODO maintaing transaction???
 	@Override
-	public void resetPassword(Long accountId, String password)
-			throws NotFoundException {
+	public void resetPassword(Long accountId, String password) throws NotFoundException {
 		try {
 			AccountDTO account = accountDao.findById(accountId);
 			Account acct = EntityUtil.convert(account);
 			acct.setPassword(password);
 			accountDao.updatePassword(acct);
-			PasswordRecovery pr = passwordRecoveryDao.findByEmail(acct
-					.getEmail());
+			PasswordRecovery pr = passwordRecoveryDao.findByEmail(acct.getEmail());
 			pr.setStatus(PasswordRecoveryStatus.DONE);
 			passwordRecoveryDao.update(pr);
 		} catch (NotFoundException e) {
 			throw e;
 		}
+	}
+
+	@Override
+	public void sendEmailByZip(Account sender, EmailTemplate template) {
+		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
+		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
+				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
+		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
+				.param("action", EmailAction.BY_ZIP.name())
+				.param("senderAccountId", sender.getAccountId().toString())
+				.param("notificationType", NotificationType.ANNOUNCEMENT.name())
+				.param("zip", Integer.toString(sender.getZip()))
+				.param("emailTemplateId", template.name())
+				.header("Host", backendAddress);
+		queue.add(options);
+	}
+
+	@Override
+	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
+		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
+		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
+				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
+		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
+				.param("action", EmailAction.INDIVIDUAL.name())
+				.param("recipientEmail", receiver.getEmail())
+				.param("recipientName", receiver.getName())
+				.param("emailTemplateId", EmailTemplate.WELCOME_REGISTRATION.name())
+				.header("Host", backendAddress);
+		queue.add(options);
+		
+		
 	}
 }

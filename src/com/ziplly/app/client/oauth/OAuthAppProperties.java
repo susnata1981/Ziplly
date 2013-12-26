@@ -2,6 +2,7 @@ package com.ziplly.app.client.oauth;
 
 
 
+
 public class OAuthAppProperties {
 	
 	/*
@@ -10,8 +11,9 @@ public class OAuthAppProperties {
 	public static final String APP_NAME = "Ziplly";
 	public static final String GOOGLE_CLIENT_ID = "808128945093-oval63pn5kmt7nub9icoiln323n134qg.apps.googleusercontent.com";
 	public static final String GOOGLE_CLIENT_SECRET = "BjIdWVQVrMmLxZ4nqGwD6PR6";
-	//public static final String REDIRECT_URL = "http://localhost:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997";
-	public static final String REDIRECT_URL = "http://localhost:8888/Ziplly.html";
+	
+	public static final String REDIRECT_URL_IN_DEVELOPMENT = "http://localhost:8888/Ziplly.html";
+	public static final String REDIRECT_URL_IN_PRODUCTION = REDIRECT_URL_IN_DEVELOPMENT;
 	
 	public static final String [] SCOPES = {
 		"https://www.googleapis.com/auth/userinfo.email",

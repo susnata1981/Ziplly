@@ -4,12 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum TweetType {
-	ALL,
-	GENERAL,
-	ANNOUNCEMENT,
-	HELP,
-	CLASSIFIEDS,
-	OFFERS;
+	ALL("All"),
+	GENERAL("General"),
+	ANNOUNCEMENT("Announcement"),
+	SECURITY_ALERTS("Security Alerts"),
+	HELP("Help"),
+	CLASSIFIEDS("Classifieds"),
+	OFFERS("offers");
+	
+	private String tweetName;
+
+	TweetType(String name) {
+		this.setTweetName(name);
+	}
 	
 	public static List<TweetType> getAllTweetTypeForPublishingByUser() {
 		ArrayList<TweetType> types = new ArrayList<TweetType>();
@@ -26,5 +33,13 @@ public enum TweetType {
 		types.add(OFFERS);
 		types.add(ANNOUNCEMENT);
 		return types;
+	}
+
+	public String getTweetName() {
+		return tweetName;
+	}
+
+	public void setTweetName(String tweetName) {
+		this.tweetName = tweetName;
 	}
 }

@@ -1,8 +1,15 @@
 package com.ziplly.app.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class BusinessAccount extends Account {
@@ -14,8 +21,12 @@ public class BusinessAccount extends Account {
 	private String street2;
 	private BusinessType businessType;
 	
-	@OneToOne(fetch=FetchType.EAGER, mappedBy="seller")
-	private Transaction transaction;
+	@OneToOne(cascade=CascadeType.ALL)
+	private BusinessProperties properties;
+	
+	@OneToMany(mappedBy="seller")
+	@Fetch(FetchMode.JOIN)
+	private Set<Transaction> transactions = new HashSet<Transaction>();
 	
 	public BusinessAccount() {
 	}
@@ -28,6 +39,11 @@ public class BusinessAccount extends Account {
 		this.street1 = account.getStreet1();
 		this.street2 = account.getStreet2();
 		this.businessType = account.getBusinessType();
+		this.properties = new BusinessProperties(account.getProperties());
+		
+		for(TransactionDTO txn : account.getTransactions()) {
+			this.transactions.add(new Transaction(txn));
+		}
 	}
 	
 	public String getName() {
@@ -63,12 +79,12 @@ public class BusinessAccount extends Account {
 		this.website = website;
 	}
 
-	public Transaction getTransaction() {
-		return transaction;
+	public Set<Transaction> getTransactions() {
+		return transactions;
 	}
 
-	public void setTransaction(Transaction transaction) {
-		this.transaction = transaction;
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	public BusinessType getBusinessType() {
@@ -77,5 +93,13 @@ public class BusinessAccount extends Account {
 
 	public void setBusinessType(BusinessType type) {
 		this.businessType = type;
+	}
+
+	public BusinessProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(BusinessProperties properties) {
+		this.properties = properties;
 	}
 }

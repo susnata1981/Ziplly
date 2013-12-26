@@ -1,0 +1,49 @@
+package com.ziplly.app.dao;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import com.google.common.base.Preconditions;
+import com.ziplly.app.model.AccountNotification;
+import com.ziplly.app.model.AccountNotificationDTO;
+import com.ziplly.app.model.ReadStatus;
+
+public class AccountNotificationDAOImpl implements AccountNotificationDAO {
+
+	@Override
+	public void save(AccountNotification an) {
+		Preconditions.checkArgument(an != null, "Invalid argument to save");
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		em.persist(an);
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Override
+	public List<AccountNotificationDTO> findAccountNotificationByAccountId(Long recipientId) {
+		Preconditions.checkArgument(recipientId != null, "Invalid argument to findAccountNotificationByAccountId");
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		
+		Query query = em.createQuery("from AccountNotification where recipient.accountId = :recipientId and readStatus = :readStatus");
+		query.setParameter("recipientId", recipientId);
+		query.setParameter("readStatus", ReadStatus.UNREAD);
+		
+		@SuppressWarnings("unchecked")
+		List<AccountNotification> result = query.getResultList();
+		em.close();
+		return EntityUtil.cloneAccountNotificationList(result);
+	}
+
+	@Override
+	public void update(AccountNotification an) {
+		Preconditions.checkArgument(an != null, "Invalid argument to save");
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+		em.merge(an);
+		em.getTransaction().commit();
+		em.close();
+	}
+}

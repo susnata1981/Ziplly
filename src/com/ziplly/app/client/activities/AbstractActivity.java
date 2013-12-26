@@ -12,10 +12,12 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 
@@ -24,7 +26,7 @@ public abstract class AbstractActivity implements Activity {
 	protected PlaceController placeController;
 	protected EventBus eventBus;
 	protected ApplicationContext ctx;
-	private static final String BACKGROUND_IMG_URL = "url('neighborhood_large.jpg')";
+	private static final String BACKGROUND_IMG_URL = "url('images/neighborhood_large.jpg')";
 
 	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, PlaceController placeController, ApplicationContext ctx) {
 		this.dispatcher = dispatcher;
@@ -122,6 +124,14 @@ public abstract class AbstractActivity implements Activity {
 			} else if (acct instanceof BusinessAccountDTO) {
 				goTo(new BusinessAccountPlace());
 			}
+		}
+	}
+	
+	public class AccountNotificationHandler extends DispatcherCallbackAsync<GetAccountNotificationResult> {
+
+		@Override
+		public void onSuccess(GetAccountNotificationResult result) {
+			eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
 		}
 	}
 }

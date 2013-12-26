@@ -47,7 +47,11 @@ public class FieldVerifier {
 	private static final String COMMA_SEPARATOR = ",";
 	private static final int MAX_MESSAGE_LENGTH = 2048;
 	private static final String MESSAGE_TOO_LONG_ERROR = "Message can't be more than 2048 characters.";
-
+	private static final int MIN_PASSWORD_LENGTH = 4;
+	private static final int MAX_PASSWORD_LENGTH = 16;
+	private static final String MINIMUN_PASSWORD_LENGTH_ERROR = "Password should be atleast "+MIN_PASSWORD_LENGTH+" characters.";
+	private static final String MAX_PASSWORD_LENGTH_ERROR = "Password can't be more than "+MAX_PASSWORD_LENGTH+" characters.";
+	
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
 		if (email == null || email.equals("")) {
@@ -95,6 +99,15 @@ public class FieldVerifier {
 		ValidationResult result = new ValidationResult();
 		if (password == null || password.equals("")) {
 			result.addError(CANT_BE_EMPTY);
+		}
+		
+		String p = sanitize(password);
+		if (p.length() < MIN_PASSWORD_LENGTH) {
+			result.addError(MINIMUN_PASSWORD_LENGTH_ERROR);
+		}
+		
+		if (p.length() > MAX_PASSWORD_LENGTH) {
+			result.addError(MAX_PASSWORD_LENGTH_ERROR);
 		}
 		return result;
 	}

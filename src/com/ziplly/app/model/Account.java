@@ -98,7 +98,11 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Fetch(FetchMode.JOIN)
 	private Set<PrivacySettings> privacySettings = new HashSet<PrivacySettings>();
 	
-	@OneToMany(fetch=FetchType.EAGER, mappedBy="account", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recipient")
+	private Set<AccountNotification> accountNotifications = new HashSet<AccountNotification>();
+	
+	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
+	@Fetch(FetchMode.JOIN)
 	private Set<AccountNotificationSettings> notificationSettings = new HashSet<AccountNotificationSettings>();
 	
 	private Long uid;
@@ -126,6 +130,10 @@ public class Account extends AbstractTimestampAwareEntity {
 		setTimeCreated(account.getTimeCreated());
 		setTimeUpdated(account.getTimeUpdated());
 		this.setUid(account.getUid());
+		
+		for(AccountNotificationDTO an : account.getAccountNotifications()) {
+			addAccountNotification(new AccountNotification(an));
+		}
 		
 		for(AccountNotificationSettingsDTO an : account.getNotificationSettings()) {
 			notificationSettings.add(new AccountNotificationSettings(an));
@@ -238,15 +246,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
-//
-//	public Date getTimeCreated() {
-//		return timeCreated;
-//	}
-//
-//	public void setTimeCreated(Date timeCreated) {
-//		this.timeCreated = timeCreated;
-//	}
-	
+
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
 	}
@@ -274,14 +274,6 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setNotificationSettings(Set<AccountNotificationSettings> notifications) {
 		this.notificationSettings = notifications;
 	}
-
-//	public Date getTimeUpdated() {
-//		return timeUpdated;
-//	}
-//
-//	public void setTimeUpdated(Date timeUpdated) {
-//		this.timeUpdated = timeUpdated;
-//	}
 
 	public String getNeighborhood() {
 		return neighborhood;
@@ -334,5 +326,17 @@ public class Account extends AbstractTimestampAwareEntity {
 
 	public void setStatus(AccountStatus status) {
 		this.status = status;
+	}
+
+	public Set<AccountNotification> getAccountNotification() {
+		return accountNotifications;
+	}
+
+	public void setAccountNotification(Set<AccountNotification> accountNotification) {
+		this.accountNotifications = accountNotification;
+	}
+	
+	public void addAccountNotification(AccountNotification an) {
+		this.accountNotifications.add(an);
 	}
 }

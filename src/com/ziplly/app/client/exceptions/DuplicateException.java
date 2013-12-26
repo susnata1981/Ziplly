@@ -9,7 +9,7 @@ public class DuplicateException extends DispatchException {
 	public DuplicateException() {
 	}
 	
-	DuplicateException(String msg) {
+	public DuplicateException(String msg) {
 		super(msg);
 	}
 }

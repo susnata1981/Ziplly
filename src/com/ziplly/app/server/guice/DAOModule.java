@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountDAOImpl;
+import com.ziplly.app.dao.AccountNotificationDAO;
+import com.ziplly.app.dao.AccountNotificationDAOImpl;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.AccountRegistrationDAOImpl;
 import com.ziplly.app.dao.CommentDAO;
@@ -56,6 +58,7 @@ public class DAOModule extends AbstractModule {
 		bind(SubscriptionPlanDAO.class).to(SubscriptionPlanDAOImpl.class).in(Singleton.class);
 		bind(PasswordRecoveryDAO.class).to(PasswordRecoveryDAOImpl.class).in(Singleton.class);
 		bind(AccountRegistrationDAO.class).to(AccountRegistrationDAOImpl.class).in(Singleton.class);
+		bind(AccountNotificationDAO.class).to(AccountNotificationDAOImpl.class).in(Singleton.class);
 		bind(HashtagDAO.class).to(HashtagDAOImpl.class).in(Singleton.class);
 		bind(SpamDAO.class).to(SpamDAOImpl.class).in(Singleton.class);
 	}

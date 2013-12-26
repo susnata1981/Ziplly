@@ -1,8 +1,6 @@
 package com.ziplly.app.client.oauth;
 
 import java.io.UnsupportedEncodingException;
-//import java.net.URLEncoder;
-//import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +19,18 @@ public class OAuthUtil {
 			}
 			sb.append(key);
 			sb.append("=");
-			sb.append(URL.encode(params.get(key)));
+			sb.append(encode(params.get(key)));
 		}
 		return url + "?" + sb.substring(0, sb.length()).toString();
 	}
 	
+	public static String encode(String val) throws UnsupportedEncodingException {
+		return URL.encode(val);
+	}
+	
+	/*
+	 * This is for the client side.
+	 */
 	public static String getParamUrl(Map<String,String> params) throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
@@ -37,7 +42,7 @@ public class OAuthUtil {
 			}
 			sb.append(key);
 			sb.append("=");
-			sb.append(URL.encode(params.get(key)));
+			sb.append(encode(params.get(key)));
 		}
 		return sb.toString();
 	}
@@ -48,7 +53,7 @@ public class OAuthUtil {
 		paramsMap.put("client_id","clientId");
 		paramsMap.put("redirect_uri","http://redirect.com");
 		paramsMap.put("response_type","code");
-		String url = OAuthConfigConstants.GOOGLE_AUTH_URL;
+		String url = OAuthConfigConstants.FB_TOKEN_URL;
 		System.out.println(OAuthUtil.getUrlWithParam(url, paramsMap));
 	}
 }

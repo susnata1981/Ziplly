@@ -6,7 +6,7 @@
 .cellTableHeader {
 padding: 4px;
 color: #545454;
-text-align: center;
+text-align: left;
 font-size: 14px;
 background-image: none;
 background-color: #cfcfcf;
@@ -28,7 +28,7 @@ padding: 8px;
 overflow: hidden;
 font-size: 12px;
 color: #454545;
-text-align: center;
+text-align: left;
 }
 .cellTableEvenRow {
 background: #ffffff;

@@ -42,6 +42,10 @@ import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.TableResources;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
@@ -66,10 +70,9 @@ public class ConversationView extends Composite implements IConversationView {
 	private static final String TIME_RECEIVED_KEY = "Time received";
 	private static final String RECEIVER_KEY = "Receiver";
 	private static final int MAX_ROW_COUNT = 10;
-	private static final int IMG_SIZE = 40;
 	private static ConversationViewUiBinder uiBinder = GWT
 			.create(ConversationViewUiBinder.class);
-
+	
 	interface ConversationViewUiBinder extends
 			UiBinder<Widget, ConversationView> {
 	}
@@ -136,7 +139,10 @@ public class ConversationView extends Composite implements IConversationView {
 	TableResources tableResources;
 	boolean filterConversation;
 	List<ConversationDTO> filteredConversations = new ArrayList<ConversationDTO>();
+	Formatter<AccountDTO> accountFormatter;
+	Formatter<Object> basicDataFormatter;
 	
+	@SuppressWarnings("unchecked")
 	public ConversationView() {
 		tableResources = GWT.create(TableResources.class);
 		tableResources.cellTableStyle().ensureInjected();
@@ -147,6 +153,8 @@ public class ConversationView extends Composite implements IConversationView {
 		inboxLinks.put(INBOXLINK.RECEIVED_MESSAGES, receivedMessagesLink);
 		inboxLinks.put(INBOXLINK.SENT_MESSAGES, sentMessagesLink);
 		setInboxLink(INBOXLINK.INBOX);
+		accountFormatter = (Formatter<AccountDTO>) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+		basicDataFormatter = (Formatter<Object>) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	}
 
 	@Override
@@ -341,11 +349,7 @@ public class ConversationView extends Composite implements IConversationView {
 		Column<ConversationDTO, String> timeSentCol = new TextColumn<ConversationDTO>() {
 			@Override
 			public String getValue(ConversationDTO c) {
-				String date = DateTimeFormat.getFormat(
-						PredefinedFormat.DATE_TIME_MEDIUM).format(
-						c.getMessages().get(0).getTimeCreated());
-
-				return date;
+				return basicDataFormatter.format(c.getMessages().get(0).getTimeCreated(), ValueType.DATE_VALUE_SHORT);
 			}
 		};
 //		timeSentCol.setCellStyleNames(style.dateBlock());
@@ -365,10 +369,7 @@ public class ConversationView extends Composite implements IConversationView {
 	}
 	
 	private String getImageLink(AccountDTO acct) {
-		StringBuilder temp = new StringBuilder();
-		temp.append("<img width='"+IMG_SIZE+"' height='"+IMG_SIZE+"' src='"+acct.getImageUrl()+"'/>");
-		temp.append("&nbsp;"+acct.getDisplayName());
-		return temp.toString();
+		return accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE);
 	}
 	
 	@Override
@@ -394,10 +395,12 @@ public class ConversationView extends Composite implements IConversationView {
 			presenter.onView(conversation);
 			conversationPanel.clear();
 			messagesPanel = new HTMLPanel("");
+			
 			StringBuilder temp = new StringBuilder();
 			temp.append("From:"+getImageLink(conversation.getSender()));
 			temp.append("<br>To:"+getImageLink(conversation.getReceiver()));
 			temp.append("<br><br><span>Subject:&nbsp;"+ conversation.getSubject() + "</span>");
+			
 			HTMLPanel subjectPanel = new HTMLPanel(temp.toString());
 			subjectPanel.setStyleName(style.subjectHeader());
 			conversationPanel.add(subjectPanel);

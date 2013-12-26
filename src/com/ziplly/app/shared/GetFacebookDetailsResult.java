@@ -1,10 +1,10 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.AccountDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
 
-public class GetFacebookDetailsResult implements Result{
+import com.ziplly.app.model.AccountDTO;
+
+public class GetFacebookDetailsResult implements Result {
 	
 	private AccountDTO account;
 

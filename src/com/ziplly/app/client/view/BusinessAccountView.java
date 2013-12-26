@@ -7,6 +7,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.HeadingElement;
@@ -15,6 +16,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -33,10 +35,13 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -48,9 +53,20 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	interface BusinessAccountViewUiBinder extends UiBinder<Widget, BusinessAccountView> {
 	}
 
+	interface Style extends CssResource {
+		String smallfont();
+	}
+
+	private static final String TWEET_BOX_WIDTH = "97%";
+
+	private static final String TWEET_WIDGET_WIDTH = "62%";
+	
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
 
+	@UiField
+	Style style;
+	
 	@UiField
 	Alert message;
 	@UiField
@@ -65,6 +81,12 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	HeadingElement name;
 	@UiField
 	Paragraph description;
+	@UiField
+	PriceRangeWidget priceRangeWidget;
+	@UiField
+	HTMLPanel parkingAvailableSpan;
+	@UiField
+	HTMLPanel wifiAvailableSpan;
 	@UiField
 	SpanElement lastLoginTime;
 	@UiField
@@ -82,6 +104,37 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	SpanElement formattedAddress;
 
+	// Hours of operation
+	@UiField
+	SpanElement mondayStart;
+	@UiField
+	SpanElement mondayEnd;
+	@UiField
+	SpanElement tuesdayStart;
+	@UiField
+	SpanElement tuesdayEnd;
+	@UiField
+	SpanElement wednesdayStart;
+	@UiField
+	SpanElement wednesdayEnd;
+	@UiField
+	SpanElement thursdayStart;
+	@UiField
+	SpanElement thursdayEnd;
+	@UiField
+	SpanElement fridayStart;
+	@UiField
+	SpanElement fridayEnd;
+	@UiField
+	SpanElement saturdayStart;
+	@UiField
+	SpanElement saturdayEnd;
+	@UiField
+	SpanElement sundayStart;
+	@UiField
+	SpanElement sundayEnd;
+
+	
 	@UiField
 	Anchor settingsLink;
 	@UiField
@@ -114,9 +167,11 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	
 	AccountPresenter<BusinessAccountDTO> presenter;
 	BusinessAccountDTO account;
-
+	
 	public BusinessAccountView() {
+		tview.setWidth(TWEET_WIDGET_WIDTH);
 		tweetBox = new TweetBox();
+		tweetBox.setWidth(TWEET_BOX_WIDTH);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByBusiness());
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -151,15 +206,63 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 			websiteSpan.setInnerHTML(account.getWebsite());
 			websiteLink.setHref(account.getWebsite());
 		}
+		
+		// price range test
+		BusinessPropertiesDTO props = account.getProperties();
+		
+		priceRangeWidget.clear();
+		if (props.getPriceRange() != null) {
+			priceRangeWidget.setRange(account.getProperties().getPriceRange());
+		}
+		
+		parkingAvailableSpan.clear();
+		if (props.getPartkingFacility() != null) {
+			parkingAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_UP));
+		} else {
+			parkingAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_DOWN));
+		}
+
+		wifiAvailableSpan.clear();
+		if (props.getWifiAvailable()) {
+			wifiAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_UP));
+		} else {
+			wifiAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_DOWN));
+		}
+		
 		// last login time
 		if (account.getLastLoginTime() != null) {
 			DateTimeFormat fmt = DateTimeFormat.getFormat("MMMM dd, yyyy");
 			lastLoginTime.setInnerText(fmt.format(account.getLastLoginTime()));
 		}
 
+		displayHoursOfOperation();
+		
 		// display tweets
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
 		displayTweets(account.getTweets());
+	}
+
+	private void displayHoursOfOperation() {
+		mondayStart.setInnerText(account.getProperties().getMondayEndTime());
+		mondayEnd.setInnerText(account.getProperties().getMondayEndTime());
+		
+		tuesdayStart.setInnerText(account.getProperties().getTuesdayStartTime());
+		tuesdayEnd.setInnerText(account.getProperties().getTuesdayEndTime());
+		
+		wednesdayStart.setInnerText(account.getProperties().getWednesdayStartTime());
+		wednesdayEnd.setInnerText(account.getProperties().getWednesdayEndTime());
+		
+		thursdayStart.setInnerText(account.getProperties().getThursdayStartTime());
+		thursdayEnd.setInnerText(account.getProperties().getThursdayEndTime());
+		
+		fridayStart.setInnerText(account.getProperties().getFridayStartTime());
+		fridayEnd.setInnerText(account.getProperties().getFridayEndTime());
+		
+		saturdayStart.setInnerText(account.getProperties().getSaturdayStartTime());
+		saturdayEnd.setInnerText(account.getProperties().getSaturdayEndTime());
+		
+		sundayStart.setInnerText(account.getProperties().getSundayStartTime());
+		sundayEnd.setInnerText(account.getProperties().getSundayEndTime());
 	}
 
 	@Override

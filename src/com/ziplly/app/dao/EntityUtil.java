@@ -14,6 +14,8 @@ import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessProperties;
+import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.Comment;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.Conversation;
@@ -43,9 +45,19 @@ public class EntityUtil {
 
 	public static AccountDTO convert(Account acct) {
 		if (acct instanceof PersonalAccount) {
-			return clone((PersonalAccount) acct);
+			return clone((PersonalAccount) acct, false);
 		} else if (acct instanceof BusinessAccount) {
-			return clone((BusinessAccount) acct);
+			return clone((BusinessAccount) acct, false);
+		}
+
+		throw new IllegalArgumentException();
+	}
+
+	public static AccountDTO convert(Account acct, boolean topLevelFields) {
+		if (acct instanceof PersonalAccount) {
+			return clone((PersonalAccount) acct, true);
+		} else if (acct instanceof BusinessAccount) {
+			return clone((BusinessAccount) acct, true);
 		}
 
 		throw new IllegalArgumentException();
@@ -61,7 +73,32 @@ public class EntityUtil {
 		throw new IllegalArgumentException();
 	}
 
-	public static void clone(Account account, AccountDTO acct) {
+	public static void clone(Account account, AccountDTO acct, boolean onlyTopLevelFields) {
+		copyCommonAccountFields(account, acct);
+
+		if (onlyTopLevelFields) {
+			return;
+		}
+
+		if (Hibernate.isInitialized(account.getAccountNotification())) {
+			for (AccountNotification an : account.getAccountNotification()) {
+				acct.getAccountNotifications().add(clone(an));
+			}
+		}
+		if (Hibernate.isInitialized(account.getNotificationSettings())) {
+			for (AccountNotificationSettings ans : account.getNotificationSettings()) {
+				acct.getNotificationSettings().add(clone(ans));
+			}
+		}
+
+		if (Hibernate.isInitialized(account.getPrivacySettings())) {
+			for (PrivacySettings ps : account.getPrivacySettings()) {
+				acct.getPrivacySettings().add(clone(ps));
+			}
+		}
+	}
+
+	private static void copyCommonAccountFields(Account account, AccountDTO acct) {
 		acct.setAccountId(account.getAccountId());
 		acct.setPassword(account.getPassword());
 		acct.setFacebookId(account.getFacebookId());
@@ -77,23 +114,36 @@ public class EntityUtil {
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
-
-		if (Hibernate.isInitialized(account.getNotificationSettings())) {
-			for (AccountNotificationSettings ans : account.getNotificationSettings()) {
-				acct.getNotificationSettings().add(clone(ans));
-			}
-		}
-
-		if (Hibernate.isInitialized(account.getPrivacySettings())) {
-			for (PrivacySettings ps : account.getPrivacySettings()) {
-				acct.getPrivacySettings().add(clone(ps));
-			}
-		}
 	}
 
-	public static PersonalAccountDTO clone(PersonalAccount account) {
+	// public static AccountDTO topLevelClone(Account account) {
+	// if (account instanceof PersonalAccountDTO) {
+	//
+	// } else if (account instanceof BusinessAccountDTO){
+	//
+	// }
+	//
+	// acct.setAccountId(account.getAccountId());
+	// acct.setPassword(account.getPassword());
+	// acct.setFacebookId(account.getFacebookId());
+	// acct.setEmail(account.getEmail());
+	// acct.setUrl(account.getUrl());
+	// acct.setImageUrl(account.getImageUrl());
+	// acct.setZip(account.getZip());
+	// acct.setNeighborhood(account.getNeighborhood());
+	// acct.setCity(account.getCity());
+	// acct.setState(account.getState());
+	// acct.setRole(account.getRole());
+	// acct.setStatus(account.getStatus());
+	// acct.setLastLoginTime(account.getLastLoginTime());
+	// acct.setTimeCreated(account.getTimeCreated());
+	// acct.setUid(account.getUid());
+	// return acct;
+	// }
+
+	public static PersonalAccountDTO clone(PersonalAccount account, boolean onlyTopLevelFields) {
 		PersonalAccountDTO dest = new PersonalAccountDTO();
-		clone(account, dest);
+		clone(account, dest, onlyTopLevelFields);
 		dest.setFirstName(account.getFirstName());
 		dest.setLastName(account.getLastName());
 		dest.setIntroduction(account.getIntroduction());
@@ -108,16 +158,23 @@ public class EntityUtil {
 		return dest;
 	}
 
-	public static BusinessAccountDTO clone(BusinessAccount account) {
+	public static BusinessAccountDTO clone(BusinessAccount account, boolean onlyTopLevelFields) {
 		BusinessAccountDTO resp = new BusinessAccountDTO();
-		clone(account, resp);
+		clone(account, resp, onlyTopLevelFields);
 		resp.setName(account.getName());
 		resp.setPhone(account.getPhone());
 		resp.setBusinessType(account.getBusinessType());
 		resp.setWebsite(account.getWebsite());
 		resp.setStreet1(account.getStreet1());
 		resp.setStreet2(account.getStreet2());
-		resp.setTransaction(EntityUtil.clone(account.getTransaction()));
+		resp.setProperties(clone(account.getProperties()));
+		
+		if (Hibernate.isInitialized(account.getTransactions())) {
+			for (Transaction txn : account.getTransactions()) {
+				resp.getTransactions().add(clone(txn));
+			}
+		}
+
 		return resp;
 	}
 
@@ -128,14 +185,6 @@ public class EntityUtil {
 		interestDto.setTimeCreated(interest.getTimeCreated());
 		return interestDto;
 	}
-
-	// public static AccountSettingDTO clone(PrivacySettings as) {
-	// AccountSettingDTO asd = new AccountSettingDTO();
-	// asd.setId(as.getId());
-	// asd.setSection(as.getSection());
-	// asd.setSetting(as.getSetting());
-	// return asd;
-	// }
 
 	public static TweetDTO clone(Tweet tweet) {
 		return clone(tweet, true);
@@ -252,11 +301,10 @@ public class EntityUtil {
 	public static AccountNotificationDTO clone(AccountNotification an) {
 		AccountNotificationDTO resp = new AccountNotificationDTO();
 		resp.setNotificationId(an.getNotificationId());
-		resp.setReceiver(convert(an.getReceiver()));
-		resp.setSender(convert(an.getSender()));
+		resp.setRecipient(convert(an.getRecipient(), true));
+		resp.setSender(convert(an.getSender(), true));
 		resp.setReadStatus(an.getReadStatus());
 		resp.setType(an.getType());
-		resp.setAction(an.getAction());
 		resp.setTimeUpdated(an.getTimeUpdated());
 		resp.setTimeCreated(an.getTimeCreated());
 		return resp;
@@ -308,5 +356,47 @@ public class EntityUtil {
 		resp.setReporter(convert(s.getReporter()));
 		resp.setTweet(clone(s.getTweet()));
 		return resp;
+	}
+
+	public static List<AccountNotificationDTO> cloneAccountNotificationList(
+			List<AccountNotification> result) {
+		// return Lists.transform(result, new Function<AccountNotification,
+		// AccountNotificationDTO>() {
+		// @Override
+		// public AccountNotificationDTO apply(AccountNotification an) {
+		// return EntityUtil.clone(an);
+		// }
+		// });
+		List<AccountNotificationDTO> resp = Lists.newArrayList();
+		for (AccountNotification an : result) {
+			resp.add(clone(an));
+		}
+		return resp;
+	}
+
+	public static BusinessPropertiesDTO clone(BusinessProperties source) {
+		BusinessPropertiesDTO dest = new BusinessPropertiesDTO();
+		dest.setId(source.getId());
+		dest.setSundayStartTime(source.getSundayStartTime());
+		dest.setSundayEndTime(source.getSundayEndTime());
+		dest.setMondayStartTime(source.getMondayStartTime());
+		dest.setMondayEndTime(source.getMondayEndTime());
+		dest.setTuesdayStartTime(source.getTuesdayStartTime());
+		dest.setTuesdayEndTime(source.getTuesdayEndTime());
+		dest.setWednesdayStartTime(source.getWednesdayStartTime());
+		dest.setWednesdayEndTime(source.getWednesdayEndTime());
+		dest.setThursdayStartTime(source.getThursdayStartTime());
+		dest.setThursdayEndTime(source.getThursdayEndTime());
+		dest.setFridayStartTime(source.getFridayStartTime());
+		dest.setFridayEndTime(source.getFridayEndTime());
+		dest.setSaturdayStartTime(source.getSaturdayStartTime());
+		dest.setSaturdayEndTime(source.getSaturdayEndTime());
+		dest.setHolidays(source.getHolidays());
+		dest.setAcceptsCreditCard(source.getAcceptsCreditCard());
+		dest.setPartkingFacility(source.getPartkingFacility());
+		dest.setWifiAvailable(source.getWifiAvailable());
+		dest.setGoodForKids(source.getGoodForKids());
+		dest.setPriceRange(source.getPriceRange());
+		return dest;
 	}
 }

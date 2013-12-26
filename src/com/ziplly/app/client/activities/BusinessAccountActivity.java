@@ -106,6 +106,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void displayProfile() {
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
+		getAccountNotifications();
 		TweetViewBinder binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());

@@ -1,16 +1,18 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style field="astyle" src="accountview.css" />
-	<ui:style>
+	<ui:style
+		type="com.ziplly.app.client.view.BusinessAccountSettingsView.Style">
 		.settingsPanel {
-	position: relative;
-	float: left;
-	width: 60%;
-	border: 1px solid #ddd;
-	margin-left: 1%;
-	padding: 20px;
-	}
+		position: relative;
+		float: left;
+		width: 60%;
+		border: 1px solid #ddd;
+		margin-left: 1%;
+		padding: 20px;
+		}
 		.uploadForm {
 		position: absolute;
 		top: 140px;
@@ -29,44 +31,60 @@
 		border: 2px solid #ddd;
 		}
 		.uploadFormActionPanel {
-			position: absolute;
-			top: 180px;
-			left: 10px;
-			margin: 10px 0px;
+		position: absolute;
+		top: 180px;
+		left: 10px;
+		margin: 10px 0px;
 		}
 		.paymentDetailsSection {
-		width: 90%;
+		width: 96%;
 		border: 2px solid #ddd;
-		margin: 2px;
-		}
-		.paymentDetailsSection h4 {
-		border-bottom: 1px solid #ddd;
-		}
-		.paymentDetailsSection table {
-		margin:
-		2%;
-		border: 2px solid #ddd;
-		width: 94%;
-		}
-		.paymentDetailsSection table
-		thead {
-		background: #CBCCCE;
-		}
-		.paymentDetailsSection table tr {
-		margin:
-		5px;
-		}
-		.paymentDetailsSection table td {
 		padding: 10px;
-		border-right: 1px
-		solid #ddd;
+		overflow: auto;
 		}
 		.subscriptionPlanTablePanel {
 		margin-bottom: 90px;
 		}
+		.subscriptionPlanTable {
+		width: 96%;
+		}
+		.subscriptionPlanTablePanelMessage {
+		color: #555;
+		font-size: 15px;
+		padding: 2px;
+		}
+		.subscriptionPlanWidget {
+		float: left;
+		margin: 10px;
+		margin-bottom: 0;
+		width: 30%;
+		}
+		.horizontalDiv {
+		clear: both;
+		}
+		.timeOpenLabel {
+			diplay: block;
+			float: left;
+			line-height: 20px;
+			margin: 6px 10px;
+			width: 80px;
+		}
+		.timeOpenTextBox {
+		float: left;
+		width: 100px;
+		height: 20px;
+		margin-right: 20px;
+		}
+		.buttonPanel {
+			clear: both;
+		}
+		.verticalDiv {
+			margin: 6px 0;
+			padding: 6px 0;
+		}
 	</ui:style>
 	<g:HTMLPanel>
-	    <b:Alert ui:field="message" animation="true" />
+		<b:Alert ui:field="message" animation="true" />
 		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{astyle.asidePanel}">
 			<dl>
 				<dt>
@@ -141,38 +159,83 @@
 								<b:HelpInline ui:field="emailError"></b:HelpInline>
 							</b:Controls>
 						</b:ControlGroup>
-						<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
-						<b:Button ui:field="cancelBtn">Cancel</b:Button>
+						<b:Controls>
+						    <b:Label>Price Range</b:Label>
+						    <br />
+						    <b:ListBox ui:field="priceRangeListBox"></b:ListBox>
+						</b:Controls>
+						<div class="{style.verticalDiv}">
+							<b:CheckBox ui:field="wifiAvailableCheckbox">Wifi Available</b:CheckBox>
+							<b:CheckBox ui:field="parkingAvailableCheckbox">Parking Available</b:CheckBox>
+						</div>
+						
+						<!-- Hours of operation -->
+						<div class="heading">Hours of operation</div>
+						<div class="{style.horizontalDiv}">
+							<b:Label addStyleNames="{style.timeOpenLabel}">Monday</b:Label>
+							<b:TextBox ui:field="mondayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="mondayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Tuesday</b:Label>
+							<b:TextBox ui:field="tuesdayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="tuesdayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Wednesday</b:Label>
+							<b:TextBox ui:field="wednesdayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="wednesdayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Thursday</b:Label>
+							<b:TextBox ui:field="thursdayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="thursdayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Friday</b:Label>
+							<b:TextBox ui:field="fridayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="fridayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Saturday</b:Label>
+							<b:TextBox ui:field="saturdayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="saturdayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.horizontalDiv}">
+						    <b:Label addStyleNames="{style.timeOpenLabel}">Sunday</b:Label>
+							<b:TextBox ui:field="sundayStart" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="startTime..." />
+							<b:TextBox ui:field="sundayEnd" addStyleNames="{style.timeOpenTextBox}"
+								placeholder="endTime..." />
+						</div>
+						<div class="{style.buttonPanel}">
+							<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
+							<b:Button ui:field="cancelBtn">Cancel</b:Button>
+						</div>
 					</g:HTMLPanel>
 				</b:Tab>
-				<b:Tab heading="Payment details" ui:field="subscriptionTab">
+				<b:Tab heading="Subscription Plans" ui:field="subscriptionTab">
 					<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
 						<b:Alert ui:field="paymentStatus" />
 						<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
 							addStyleNames="{style.subscriptionPlanTablePanel}">
-							<h4 ui:field="subscriptionPlanTablePanelHeader">Subscription Plans</h4>
 						</g:HTMLPanel>
-						<g:HTMLPanel ui:field="subscriptionDetailsTable">
-							<h4>Current Subscription</h4>
-							<table>
-								<thead>
-									<tr>
-										<td>Plan</td>
-										<td>Description</td>
-										<td>Fee</td>
-										<td>Status</td>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td ui:field="subscriptionPlanName"></td>
-										<td ui:field="subscriptionPlanDescription"></td>
-										<td ui:field="subscriptionPlanFee"></td>
-										<td ui:field="subscriptionPlanStatus"></td>
-									</tr>
-								</tbody>
-							</table>
-						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</b:Tab>
+				<b:Tab heading="Transaction Details" ui:field="transactionDetailsTab">
+					<g:HTMLPanel ui:field="transactionDetailsPanel">
 					</g:HTMLPanel>
 				</b:Tab>
 				<b:Tab heading="Password Reset">

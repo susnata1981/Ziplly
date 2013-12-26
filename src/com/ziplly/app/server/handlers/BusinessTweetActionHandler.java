@@ -2,6 +2,7 @@ package com.ziplly.app.server.handlers;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Set;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
@@ -22,7 +23,7 @@ import com.ziplly.app.server.AccountBLIImpl;
 import com.ziplly.app.shared.BusinessTweetAction;
 import com.ziplly.app.shared.BusinessTweetResult;
 
-
+@Deprecated
 public class BusinessTweetActionHandler extends AbstractTweetActionHandler<BusinessTweetAction, BusinessTweetResult> {
 
 	@Inject
@@ -48,7 +49,7 @@ public class BusinessTweetActionHandler extends AbstractTweetActionHandler<Busin
 		}
 		
 		BusinessAccount baccount = (BusinessAccount)account;
-		Transaction transaction = baccount.getTransaction();
+		Set<Transaction> transaction = baccount.getTransactions();
 		
 		if (transaction == null) {
 			// haven't paid yet, check quota

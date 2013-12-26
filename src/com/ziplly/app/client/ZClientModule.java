@@ -26,6 +26,7 @@ import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.SignupPlace;
+import com.ziplly.app.client.view.AboutView;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessSignupView;
@@ -75,6 +76,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(IBusinessAccountSettingView.class).to(BusinessAccountSettingsView.class);
 		bind(ConversationView.class);
 		bind(PasswordRecoveryView.class);
+		bind(AboutView.class);
 		
 		// widgets
 		bind(LoginWidget.class).in(Singleton.class);

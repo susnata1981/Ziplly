@@ -1,7 +1,6 @@
 package com.ziplly.app.model;
 
-import java.util.Date;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,39 +12,46 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="account_notification")
-public class AccountNotification {
+public class AccountNotification extends AbstractTimestampAwareEntity {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="notification_id")
 	private Long notificationId;
+	
+	@ManyToOne
+	@JoinColumn(name="recipient_id")
+	private Account recipient;
 	
 	@OneToOne
 	private Account sender;
-	
-	@ManyToOne
-	@JoinColumn(name="receiver_id")
-	private Account receiver;
-	
+
+	@Column(name="read_status")
 	private ReadStatus readStatus;
 	
+	@Column(name="record_status")
+	private RecordStatus status;
+	
+	@Column(name="notification_type")
 	private NotificationType type;
-	
-	private NotificationAction action;
-	
-	private Date timeUpdated;
-	private Date timeCreated;
 	
 	public AccountNotification() {
 	}
 	
 	public AccountNotification(AccountNotificationDTO an) {
 		this.notificationId = an.getNotificationId();
-		this.receiver = new Account(an.getReceiver());
-		this.sender = new Account(an.getSender());
+		
+		this.recipient = new Account();
+		this.recipient.setAccountId(an.getRecipient().getAccountId());
+		
+		this.sender = new Account();
+		this.sender.setAccountId(an.getSender().getAccountId());
+		
 		this.readStatus = an.getReadStatus();
 		this.type = an.getType();
-		this.action = an.getAction();
-		this.timeUpdated = an.getTimeUpdated();
-		this.timeCreated = an.getTimeCreated();
+		this.setTimeUpdated(an.getTimeUpdated());
+		this.setTimeCreated(an.getTimeCreated());
 	}
 
 	public Long getNotificationId() {
@@ -64,12 +70,12 @@ public class AccountNotification {
 		this.sender = sender;
 	}
 
-	public Account getReceiver() {
-		return receiver;
+	public Account getRecipient() {
+		return recipient;
 	}
 
-	public void setReceiver(Account receiver) {
-		this.receiver = receiver;
+	public void setRecipient(Account receiver) {
+		this.recipient = receiver;
 	}
 
 	public NotificationType getType() {
@@ -80,14 +86,6 @@ public class AccountNotification {
 		this.type = type;
 	}
 
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
-	}
-
 	public ReadStatus getReadStatus() {
 		return readStatus;
 	}
@@ -96,19 +94,11 @@ public class AccountNotification {
 		this.readStatus = readStatus;
 	}
 
-	public NotificationAction getAction() {
-		return action;
+	public RecordStatus getStatus() {
+		return status;
 	}
 
-	public void setAction(NotificationAction action) {
-		this.action = action;
-	}
-
-	public Date getTimeUpdated() {
-		return timeUpdated;
-	}
-
-	public void setTimeUpdated(Date timeUpdated) {
-		this.timeUpdated = timeUpdated;
+	public void setStatus(RecordStatus status) {
+		this.status = status;
 	}
 }

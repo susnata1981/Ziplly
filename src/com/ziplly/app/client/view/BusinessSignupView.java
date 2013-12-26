@@ -34,7 +34,10 @@ import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessProperties;
+import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.overlay.AddressComponent;
 import com.ziplly.app.shared.FieldVerifier;
@@ -55,6 +58,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	private static final String ADMINISTRATIVE_AREA_KEY = "administrative_area_level_1";
 	private static final String POSTAL_CODE_KEY = "postal_code";
 	private static final String INVALID_ADDRESS = "Invalid address";
+	private static final String START_TIME = "9AM";
+	private static final String END_TIME = "9PM";
 	private static BusinessSignupViewUiBinder uiBinder = GWT
 			.create(BusinessSignupViewUiBinder.class);
 
@@ -338,6 +343,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
 
+		account.setProperties(getDefaultProperties());
 		if (profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
 		}
@@ -350,6 +356,31 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		} else {
 			presenter.register(account);
 		}
+	}
+
+	private BusinessPropertiesDTO getDefaultProperties() {
+		BusinessPropertiesDTO properties = new BusinessPropertiesDTO();
+		properties.setAcceptsCreditCard(true);
+		properties.setMondayStartTime(START_TIME);
+		properties.setMondayEndTime(END_TIME);
+		properties.setTuesdayStartTime(START_TIME);
+		properties.setTuesdayEndTime(END_TIME);
+		properties.setWednesdayStartTime(START_TIME);
+		properties.setWednesdayEndTime(END_TIME);
+		properties.setThursdayStartTime(START_TIME);
+		properties.setThursdayEndTime(END_TIME);
+		properties.setFridayStartTime(START_TIME);
+		properties.setFridayEndTime(END_TIME);
+		properties.setSaturdayStartTime(START_TIME);
+		properties.setSaturdayEndTime(END_TIME);
+		properties.setSundayStartTime(START_TIME);
+		properties.setSundayEndTime(END_TIME);
+		
+		properties.setPriceRange(PriceRange.MEDIUM);
+		properties.setWifiAvailable(false);
+		properties.setPartkingFacility("available");
+		properties.setPriceRange(PriceRange.MEDIUM);
+		return properties;
 	}
 
 	@UiHandler("uploadBtn")
@@ -450,7 +481,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	}
 
 	public native JsArray<AddressComponent> getAddressComponents() /*-{
-																	return $wnd.places.address_components;
-																	}-*/;
+		return $wnd.places.address_components;
+	}-*/;
 
 }

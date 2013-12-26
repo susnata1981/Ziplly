@@ -10,7 +10,6 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ISettingsView;
 import com.ziplly.app.client.view.StringConstants;
@@ -43,6 +42,7 @@ public class PersonalAccountSettingsActivity
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
+				ctx.setAccount(event.getAccount());
 				internalStart();
 			}
 		});

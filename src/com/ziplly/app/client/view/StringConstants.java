@@ -37,4 +37,10 @@ public class StringConstants {
 	public static final String COMMENT_LENGTH_EXCEEDED = "Comment length exceeded.";
 	public static final String REPORT_SPAM_SUCCESSFUL = "Thank you for reporting spam";
 	public static final String MESSAGE_NOT_DELIVERED = "Sorry your message couldn't be delivered at this time.";
+	public static final String BACKEND_INSTANCE_NAME_1 = "backend_instance_name_1";
+	public static final String NO_NEW_NOTIFICATION_MESSAGE = "No new notification";
+	public static final String PAYMENT_SUCCESSFULL = "Successfully made payment";
+	public static final String PAYMENT_UNSUCCESSFULL = "Failed to complete payment";
+	public static final String DUPLICATE_SUBSCRIPTION_ATTEMPT = "You already have a subscription. Please cancel the existing one before adding a new one.";
+	public static final String ENABLE_PAYMENT_PLAN = "app.feature.enablePaymentPlan";
 }

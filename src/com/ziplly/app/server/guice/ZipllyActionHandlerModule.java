@@ -2,21 +2,22 @@ package com.ziplly.app.server.guice;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
-import com.ziplly.app.client.view.handler.GetJwtTokenActionHandler;
 import com.ziplly.app.server.MyActionHandler;
-import com.ziplly.app.server.handlers.BusinessTweetActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
 import com.ziplly.app.server.handlers.GetAccountDetailsActionHandler;
+import com.ziplly.app.server.handlers.GetAccountNotificationActionHandler;
 import com.ziplly.app.server.handlers.GetAllSubscriptionPlanActionHandler;
 import com.ziplly.app.server.handlers.GetCommunityWallDataActionHandler;
 import com.ziplly.app.server.handlers.GetConversationActionHandler;
 import com.ziplly.app.server.handlers.GetFacebookDetailsHandler;
+import com.ziplly.app.server.handlers.GetFacebookRedirectUriActionHandler;
 import com.ziplly.app.server.handlers.GetHashtagActionHandler;
 import com.ziplly.app.server.handlers.GetImageUploadUrlActionHandler;
+import com.ziplly.app.server.handlers.GetJwtTokenActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
@@ -41,17 +42,19 @@ import com.ziplly.app.server.handlers.UpdateTweetActionHandler;
 import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
 import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
-import com.ziplly.app.shared.BusinessTweetAction;
+import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountDetailsAction;
+import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
+import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetJwtTokenAction;
@@ -80,6 +83,7 @@ import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.VerifyPasswordRecoveryHashAction;
 import com.ziplly.app.shared.ViewConversationAction;
+import com.ziplly.app.shared.ViewNotificationAction;
 
 public class ZipllyActionHandlerModule extends ActionHandlerModule {
 
@@ -88,6 +92,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(MyAction.class, MyActionHandler.class);
 		
 		bindHandler(GetFacebookDetailsAction.class, GetFacebookDetailsHandler.class);
+		bindHandler(GetFacebookRedirectUriAction.class, GetFacebookRedirectUriActionHandler.class);
 		bindHandler(GetAccountByIdAction.class, GetAccountByIdActionHandler.class);
 		
 		bindHandler(RegisterAccountAction.class, RegisterAccountActionHandler.class);
@@ -105,7 +110,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		
 		// Tweet handlers
 		bindHandler(TweetAction.class, TweetActionHandler.class);
-		bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
+//		bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
 		bindHandler(UpdateTweetAction.class, UpdateTweetActionHandler.class);
 		bindHandler(GetCommunityWallDataAction.class, GetCommunityWallDataActionHandler.class);
 		bindHandler(CommentAction.class, CommentActionHandler.class);
@@ -124,6 +129,10 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(SendMessageAction.class, SendMessageActionHandler.class);
 		bindHandler(GetConversationsAction.class, GetConversationActionHandler.class);
 		bindHandler(ViewConversationAction.class, ViewConversationActionHandler.class);
+		
+		// Account Notification
+		bindHandler(GetAccountNotificationAction.class, GetAccountNotificationActionHandler.class);
+		bindHandler(ViewNotificationAction.class, ViewNotificationActionHandler.class);
 		
 		// Payment service
 		bindHandler(GetJwtTokenAction.class, GetJwtTokenActionHandler.class);

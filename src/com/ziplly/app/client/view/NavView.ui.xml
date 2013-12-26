@@ -1,27 +1,67 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:style>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style type="com.ziplly.app.client.view.NavView.Style">
 		.navPillList {
-			float: right;
-			margin: 15px 100px 5px 0px;
+		float: right;
+		margin: 15px 100px
+		5px 0px;
+		}
+		.notificationLink {
+		display: block;
+		height: 30px;
+		width: 260px;
+		border: 1px solid #ddd;
+		padding: 4px;
+		font-size: 13px;
+		text-align: left;
+		line-height: 30px;
+		}
+		.unreadNotificationCountPanel {
+		position: relative;
+		float: right;
+		width: 18px;
+		min-height: 18px;
+		height: auto;
+		background:
+		#FA5858;
+		top: -10px;
+		color: #fff;
+		font-size: 10px;
+		overflow: auto;
+		}
+		.unreadNotificationCountSpan {
+		display: block;
+		padding: 2px;
+		line-height: 16px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<b:NavPills addStyleNames="{style.navPillList}">
-		    <b:NavLink ui:field="homeLink" icon="HOME">Home</b:NavLink>
-			<b:Dropdown text="Account" icon="USER">
-				<b:NavLink ui:field="accountLink">Profile</b:NavLink>
-				<b:NavLink ui:field="messageLink">Messages</b:NavLink>
-				<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
-				<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
-			</b:Dropdown>
-			<b:Dropdown text="Community">
-			    <b:NavLink ui:field="residentsLink">Residents</b:NavLink>
-			    <b:NavLink ui:field="businessLink">Businesses</b:NavLink>
-			</b:Dropdown>
-			<b:NavLink ui:field="aboutLink">About</b:NavLink>
-		</b:NavPills>
+		<b:ResponsiveNavbar>
+			<!-- <b:NavPills addStyleNames="{style.navPillList}"> -->
+			<b:Nav>
+				<b:NavLink ui:field="homeLink" icon="HOME">Home</b:NavLink>
+				<b:Dropdown text="Account" icon="USER">
+					<b:NavLink ui:field="accountLink">Profile</b:NavLink>
+					<b:NavLink ui:field="messageLink">Messages</b:NavLink>
+					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
+					<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
+				</b:Dropdown>
+				<b:Dropdown icon="BELL" ui:field="notifications">
+					<b:customTrigger>
+						<g:HTMLPanel ui:field="unreadNotificationCountPanel"
+							addStyleNames="{style.unreadNotificationCountPanel}">
+							<span ui:field="unreadNotificationCountSpan" addStyleNames="{style.unreadNotificationCountSpan}" />
+						</g:HTMLPanel>
+					</b:customTrigger>
+				</b:Dropdown>
+				<b:Dropdown text="Community">
+					<b:NavLink ui:field="residentsLink">Residents</b:NavLink>
+					<b:NavLink ui:field="businessLink">Businesses</b:NavLink>
+				</b:Dropdown>
+				<b:NavLink ui:field="aboutLink">About</b:NavLink>
+			</b:Nav>
+			<!-- </b:NavPills> -->
+		</b:ResponsiveNavbar>
 	</g:HTMLPanel>
 </ui:UiBinder> 

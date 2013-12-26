@@ -1,6 +1,5 @@
 package com.ziplly.app.client.view;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,29 +9,30 @@ import java.util.logging.Logger;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonCell;
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -41,8 +41,16 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
+import com.ziplly.app.client.resource.TableResources;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.SubscriptionPlanWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
@@ -53,9 +61,22 @@ import com.ziplly.app.shared.ValidationResult;
 public class BusinessAccountSettingsView extends Composite implements IBusinessAccountSettingView {
 
 	private static final Double MEMBERSHIP_FEE_AMOUNT = 5.0;
+	private static final int MAX_TRANSACTION_TABLE_ROW_COUNT = 100;
+	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	TableResources tableResources;
 	private Logger logger = Logger.getLogger(BusinessAccountSettingsView.class.getName());
+
 	private static BusinessAccountSettingsViewUiBinder uiBinder = GWT
 			.create(BusinessAccountSettingsViewUiBinder.class);
+
+	public interface Style extends CssResource {
+		String subscriptionPlanWidget();
+
+		String subscriptionPlanTablePanelMessage();
+
+		String subscriptionPlanTable();
+	}
 
 	public static interface BusinessAccountSettingsPresenter extends
 			AccountSettingsPresenter<BusinessAccountDTO> {
@@ -67,6 +88,9 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	interface BusinessAccountSettingsViewUiBinder extends
 			UiBinder<Widget, BusinessAccountSettingsView> {
 	}
+
+	@UiField
+	Style style;
 
 	@UiField
 	Alert message;
@@ -119,11 +143,48 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	HelpInline emailError;
 
 	@UiField
+	ListBox priceRangeListBox;
+	@UiField
+	CheckBox wifiAvailableCheckbox;
+	@UiField
+	CheckBox parkingAvailableCheckbox;
+	
+	@UiField
 	FormPanel uploadForm;
 	@UiField
 	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
+
+	// Hours of operation
+	@UiField
+	TextBox mondayStart;
+	@UiField
+	TextBox mondayEnd;
+	@UiField
+	TextBox tuesdayStart;
+	@UiField
+	TextBox tuesdayEnd;
+	@UiField
+	TextBox wednesdayStart;
+	@UiField
+	TextBox wednesdayEnd;
+	@UiField
+	TextBox thursdayStart;
+	@UiField
+	TextBox thursdayEnd;
+	@UiField
+	TextBox fridayStart;
+	@UiField
+	TextBox fridayEnd;
+	@UiField
+	TextBox saturdayStart;
+	@UiField
+	TextBox saturdayEnd;
+	@UiField
+	TextBox sundayStart;
+	@UiField
+	TextBox sundayEnd;
 
 	@UiField
 	Button saveBtn;
@@ -134,21 +195,14 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	@UiField
 	Alert paymentStatus;
 	@UiField
-	HTMLPanel subscriptionDetailsTable;
-	@UiField
 	HTMLPanel subscriptionPlanTablePanel;
 
 	// transaction details elements
+	CellTable<TransactionDTO> transactionTable;
 	@UiField
 	Tab subscriptionTab;
 	@UiField
-	TableCellElement subscriptionPlanName;
-	@UiField
-	TableCellElement subscriptionPlanDescription;
-	@UiField
-	TableCellElement subscriptionPlanFee;
-	@UiField
-	TableCellElement subscriptionPlanStatus;
+	HTMLPanel transactionDetailsPanel;
 
 	// Reset Password tab
 	@UiField
@@ -182,7 +236,8 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 
 	private String jwtToken;
 	private Map<Long, SubscriptionPlanDTO> subscriptionPlanMap = new HashMap<Long, SubscriptionPlanDTO>();
-	private boolean actionEnabled = true;
+	private List<TransactionDTO> transactions;
+	private boolean sellerEligibleForSubscription = true;
 
 	public BusinessAccountSettingsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -217,6 +272,13 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			zip.setText(Integer.toString(account.getZip()));
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
+
+			for(PriceRange range : PriceRange.values()) {
+				priceRangeListBox.addItem(range.name());
+			}
+			
+			displayBusinessProperties();
+
 			if (account.getImageUrl() != null) {
 				displayImagePreview(account.getImageUrl());
 			}
@@ -226,6 +288,37 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 				hideSubscriptionTab();
 			}
 		}
+	}
+
+	private void displayBusinessProperties() {
+		BusinessPropertiesDTO props = account.getProperties();
+		
+		if (props.getPriceRange() != null) {
+			priceRangeListBox.setSelectedIndex(PriceRange.valueOf(props.getPriceRange().name()).ordinal());
+		}
+		wifiAvailableCheckbox.setValue(props.getWifiAvailable());
+		parkingAvailableCheckbox.setValue(props.getPartkingFacility() != null);
+		
+		mondayStart.setText(props.getMondayStartTime());
+		mondayEnd.setText(props.getMondayEndTime());
+		
+		tuesdayStart.setText(props.getTuesdayStartTime());
+		tuesdayEnd.setText(props.getTuesdayEndTime());
+		
+		wednesdayStart.setText(props.getWednesdayStartTime());
+		wednesdayEnd.setText(props.getWednesdayEndTime());
+		
+		thursdayStart.setText(props.getThursdayEndTime());
+		thursdayEnd.setText(props.getThursdayEndTime());
+		
+		fridayStart.setText(props.getFridayStartTime());
+		fridayEnd.setText(props.getFridayEndTime());
+		
+		saturdayStart.setText(props.getSaturdayStartTime());
+		saturdayEnd.setText(props.getSaturdayEndTime());
+		
+		sundayStart.setText(props.getSundayStartTime());
+		sundayEnd.setText(props.getSundayEndTime());
 	}
 
 	boolean validateZip() {
@@ -324,6 +417,29 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		acct.setZip(Integer.parseInt(zipInput));
 		acct.setWebsite(websiteUrl);
 		acct.setEmail(emailInput);
+		
+		BusinessPropertiesDTO props = new BusinessPropertiesDTO();
+		PriceRange priceRange = PriceRange.values()[priceRangeListBox.getSelectedIndex()];
+		props.setPriceRange(priceRange);
+		props.setWifiAvailable(wifiAvailableCheckbox.isEnabled());
+		props.setPartkingFacility(parkingAvailableCheckbox.isEnabled()? "Yes" : null);
+		props.setMondayStartTime(FieldVerifier.sanitize(mondayStart.getText()));
+		props.setMondayEndTime(FieldVerifier.sanitize(mondayEnd.getText()));
+		props.setTuesdayStartTime(FieldVerifier.sanitize(tuesdayStart.getText()));
+		props.setTuesdayEndTime(FieldVerifier.sanitize(tuesdayEnd.getText()));
+		props.setWednesdayStartTime(FieldVerifier.sanitize(wednesdayStart.getText()));
+		props.setWednesdayEndTime(FieldVerifier.sanitize(wednesdayEnd.getText()));
+		props.setThursdayStartTime(FieldVerifier.sanitize(thursdayStart.getText()));
+		props.setThursdayEndTime(FieldVerifier.sanitize(thursdayEnd.getText()));
+		props.setFridayStartTime(FieldVerifier.sanitize(fridayStart.getText()));
+		props.setFridayEndTime(FieldVerifier.sanitize(fridayEnd.getText()));
+		props.setSaturdayStartTime(FieldVerifier.sanitize(saturdayStart.getText()));
+		props.setSaturdayEndTime(FieldVerifier.sanitize(saturdayEnd.getText()));
+		props.setSundayStartTime(FieldVerifier.sanitize(sundayStart.getText()));
+		props.setSundayEndTime(FieldVerifier.sanitize(sundayEnd.getText()));
+		
+		acct.setProperties(props);
+		
 		if (imageUrl != null) {
 			acct.setImageUrl(imageUrl);
 		}
@@ -413,7 +529,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 					},
 					'failure' : function() {
 						alert('failure');
-						that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure()();
+						that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure(I)(subscriptionPlanId);
 					}
 				});
 	}-*/;
@@ -422,21 +538,19 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		logger.log(Level.INFO, "Successfully paid");
 		TransactionDTO txn = new TransactionDTO();
 		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
-		txn.setAmount(new BigDecimal(MEMBERSHIP_FEE_AMOUNT));
 		txn.setTimeCreated(new Date());
 		txn.setStatus(TransactionStatus.ACTIVE);
-		txn.setStatus(TransactionStatus.FAILURE);
 		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
 		presenter.pay(txn);
 	};
 
-	public void onFailure() {
+	public void onFailure(int subscriptionId) {
 		logger.log(Level.SEVERE, "Transaction failed.");
 		TransactionDTO txn = new TransactionDTO();
 		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
-		txn.setAmount(new BigDecimal(MEMBERSHIP_FEE_AMOUNT));
-		txn.setTimeCreated(new Date());
+		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
 		txn.setStatus(TransactionStatus.FAILURE);
+		txn.setTimeCreated(new Date());
 		presenter.pay(txn);
 	};
 
@@ -453,109 +567,146 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	@Override
 	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
 		subscriptionPlanMap.clear();
+		subscriptionPlanTablePanel.clear();
+		int count = 0;
 		for (SubscriptionPlanDTO plan : plans) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
+			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan);
+			// Just to highlight
+			if (count == 1) {
+				widget.setButtonType(ButtonType.INFO);
+			}
+			count++;
+			subscriptionPlanTablePanel.add(widget);
 		}
-		subscriptionPlanTablePanel.clear();
-		clearPaymentStatus();
-		subscriptionPlanTable = buildSubscriptionTable();
-		subscriptionPlanTable.setRowData(plans);
-		subscriptionPlanTablePanel.add(subscriptionPlanTable);
 	}
 
-	private CellTable<SubscriptionPlanDTO> buildSubscriptionTable() {
-		CellTable<SubscriptionPlanDTO> table = new CellTable<SubscriptionPlanDTO>();
-		TextColumn<SubscriptionPlanDTO> name = new TextColumn<SubscriptionPlanDTO>() {
+	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
+		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
+		widget.setStyleName(style.subscriptionPlanWidget());
+		widget.setHeading(plan.getName());
+		widget.setDescription(plan.getDescription());
+		widget.addPayButtonClickHandler(new ClickHandler() {
 			@Override
-			public String getValue(SubscriptionPlanDTO plan) {
-				return plan.getName();
-			}
-		};
-		Header<String> nameHeader = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return "name";
-			}
-		};
-		table.addColumn(name, nameHeader);
-
-		TextColumn<SubscriptionPlanDTO> description = new TextColumn<SubscriptionPlanDTO>() {
-			@Override
-			public String getValue(SubscriptionPlanDTO plan) {
-				return plan.getDescription();
-			}
-		};
-		Header<String> descriptionHeader = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return "description";
-			}
-		};
-		table.addColumn(description, descriptionHeader);
-
-		TextColumn<SubscriptionPlanDTO> fee = new TextColumn<SubscriptionPlanDTO>() {
-			@Override
-			public String getValue(SubscriptionPlanDTO plan) {
-				return plan.getFee().intValue() + "$";
-			}
-		};
-		Header<String> feeHeader = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return "fee";
-			}
-		};
-		table.addColumn(fee, feeHeader);
-
-		ButtonCell buttonCell = new ButtonCell();
-		Column<SubscriptionPlanDTO, String> actionColumn = new Column<SubscriptionPlanDTO, String>(
-				buttonCell) {
-			@Override
-			public String getValue(SubscriptionPlanDTO object) {
-				return "subscribe";
-			}
-		};
-		Header<String> actionHeader = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return "action";
-			}
-		};
-		table.addColumn(actionColumn, actionHeader);
-
-		actionColumn.setFieldUpdater(new FieldUpdater<SubscriptionPlanDTO, String>() {
-
-			@Override
-			public void update(int index, SubscriptionPlanDTO object, String value) {
-				if (actionEnabled) {
-					doPay(jwtToken, object.getSubscriptionId().intValue());
+			public void onClick(ClickEvent event) {
+				if (isEligibleForSubscription()) {
+					doPay(jwtToken, plan.getSubscriptionId().intValue());
 				} else {
-					Window.alert("You're already subscribed!");
+					displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT,
+							AlertType.WARNING);
 				}
 			}
 		});
+		return widget;
+	}
+
+	private CellTable<TransactionDTO> buildTransactionTable() {
+		tableResources = GWT.create(TableResources.class);
+		tableResources.cellTableStyle().ensureInjected();
+
+		CellTable<TransactionDTO> table = new CellTable<TransactionDTO>(
+				MAX_TRANSACTION_TABLE_ROW_COUNT, tableResources);
+		TextColumn<TransactionDTO> planName = new TextColumn<TransactionDTO>() {
+			@Override
+			public String getValue(TransactionDTO txn) {
+				return txn.getPlan().getName();
+			}
+		};
+		Header<String> plaenNameHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "Plan Name";
+			}
+		};
+		table.addColumn(planName, plaenNameHeader);
+
+		TextColumn<TransactionDTO> planDescription = new TextColumn<TransactionDTO>() {
+			@Override
+			public String getValue(TransactionDTO txn) {
+				return txn.getPlan().getDescription();
+			}
+		};
+		Header<String> planDescriptionHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "Plan Description";
+			}
+		};
+		table.addColumn(planDescription, planDescriptionHeader);
+
+		TextColumn<TransactionDTO> status = new TextColumn<TransactionDTO>() {
+			@Override
+			public String getValue(TransactionDTO txn) {
+				return txn.getStatus().name();
+			}
+		};
+		Header<String> statusHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "Plan Status";
+			}
+		};
+		table.addColumn(status, statusHeader);
+
+		TextColumn<TransactionDTO> recurringAmount = new TextColumn<TransactionDTO>() {
+			@Override
+			public String getValue(TransactionDTO txn) {
+				return txn.getPlan().getFee().toString();
+			}
+		};
+		Header<String> recurringAmountHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "Recurring Amount";
+			}
+		};
+		table.addColumn(recurringAmount, recurringAmountHeader);
+
+		TextColumn<TransactionDTO> timeCreated = new TextColumn<TransactionDTO>() {
+			@Override
+			public String getValue(TransactionDTO txn) {
+				return basicDataFormatter.format(txn.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+			}
+		};
+		Header<String> timeCreatedHeader = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return "Time created";
+			}
+		};
+		table.addColumn(timeCreated, timeCreatedHeader);
+
 		return table;
 	}
 
 	@Override
-	public void displayTransactionHistory(TransactionDTO txn) {
-		if (txn != null) {
-			subscriptionPlanName.setInnerHTML(txn.getPlan().getName());
-			subscriptionPlanDescription.setInnerHTML(txn.getPlan().getDescription());
-			subscriptionPlanFee.setInnerHTML(txn.getPlan().getFee().toString());
-			subscriptionPlanStatus.setInnerHTML(StringConstants.TRANSACTION_ACTIVE);
-			showTransactionHistory();
+	public void displayTransactionHistory(List<TransactionDTO> transactions) {
+		transactionDetailsPanel.clear();
+		transactionTable = buildTransactionTable();
+		this.transactions = transactions;
+		transactionTable.addStyleName(style.subscriptionPlanTable());
+		transactionTable.setRowData(transactions);
+		transactionDetailsPanel.add(transactionTable);
+
+		if (transactions.size() == 0) {
+			HTMLPanel panel = new HTMLPanel("<h4>No transactions</h4>");
+			panel.setStyleName(style.subscriptionPlanTablePanelMessage());
+			transactionDetailsPanel.add(panel);
 		}
 	}
 
 	@Override
-	public void disableSubscriptionButton() {
-		actionEnabled = false;
+	public void disableSubscription() {
+		sellerEligibleForSubscription = false;
+	}
+
+	private boolean isEligibleForSubscription() {
+		return sellerEligibleForSubscription == true;
 	}
 
 	@Override
 	public void hideTransactionHistory() {
-		subscriptionDetailsTable.setVisible(false);
+		transactionDetailsPanel.setVisible(false);
 	}
 
 	@UiHandler("profileLink")
@@ -569,7 +720,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	}
 
 	public void showTransactionHistory() {
-		subscriptionDetailsTable.setVisible(true);
+		transactionDetailsPanel.setVisible(true);
 	}
 
 	public void hideSubscriptionTab() {
@@ -607,7 +758,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		}
 		return valid;
 	}
-	
+
 	void resetPasswordErrors() {
 		message.clear();
 		message.setVisible(false);
@@ -618,7 +769,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		confirmNewPasswordCg.setType(ControlGroupType.NONE);
 		confirmNewPasswordError.setVisible(false);
 	}
-	
+
 	@UiHandler("updatePasswordBtn")
 	void resetPassword(ClickEvent event) {
 		resetPasswordErrors();

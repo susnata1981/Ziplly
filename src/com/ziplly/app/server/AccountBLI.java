@@ -16,6 +16,7 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TransactionDTO;
+import com.ziplly.app.shared.EmailTemplate;
 
 public interface AccountBLI {
 	AccountDTO register(Account account) throws AccountExistsException;
@@ -29,9 +30,11 @@ public interface AccountBLI {
 	List<PersonalAccountDTO> getAccountByZip(AccountDTO account);
 	Long doLogin(AccountDTO account);
 	Long doLogin(Account account);
-	TransactionDTO pay(TransactionDTO transaction) throws AccountAlreadySubscribedException;
+	TransactionDTO pay(TransactionDTO transaction) throws AccountAlreadySubscribedException, DuplicateException, NotFoundException;
 	void updatePassword(Account account, String oldPassword, String newPassword) throws InvalidCredentialsException, NotFoundException;
 	void sendPasswordRecoveryEmail(String email) throws NotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, DuplicateException;
 	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError,NotFoundException;
 	void resetPassword(Long accountId, String password) throws NotFoundException;
+	void sendEmailByZip(Account sender, EmailTemplate template);
+	void sendEmail(Account sender, Account receiver, EmailTemplate template);
 }

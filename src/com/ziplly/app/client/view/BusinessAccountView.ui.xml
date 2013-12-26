@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="accountview.css" />
+	<ui:style src="accountview.css"
+		type="com.ziplly.app.client.view.BusinessAccountView.Style" />
 	<g:HTMLPanel addStyleNames="{style.rootPanel}">
 		<b:Alert ui:field="message" />
 		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
@@ -27,8 +28,7 @@
 						</div>
 						<h2 addStyleNames="{style.profileCaption}" ui:field="name" />
 						<div>
-							<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
-								Message</b:Button>
+							<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
 						</div>
 					</div>
 					<div class="{style.profileInfoBox}">
@@ -48,6 +48,22 @@
 						</div>
 						<div class="{style.businessInfoItem}">
 							<span>
+								<b:Label>Price range</b:Label>
+								<dt:PriceRangeWidget ui:field="priceRangeWidget" />
+							</span>
+						</div>
+						<div class="{style.businessInfoItem}">
+							<b:Label addStyleNames="{style.leftAlignedLabel}">Parking</b:Label>
+							<g:HTMLPanel ui:field="parkingAvailableSpan"
+								addStyleNames="{style.leftAlignedPanel}" />
+						</div>
+						<div class="{style.businessInfoItem}">
+							<b:Label addStyleNames="{style.leftAlignedLabel}">Wifi</b:Label>
+							<g:HTMLPanel ui:field="wifiAvailableSpan"
+								addStyleNames="{style.leftAlignedPanel}" />
+						</div>
+						<div class="{style.businessInfoItem}">
+							<span>
 								<b:Label>Last login</b:Label>
 								<span ui:field="lastLoginTime" />
 							</span>
@@ -55,13 +71,53 @@
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Address</h2>
-						<g:HTMLPanel ui:field="addressPanel">
+						<g:HTMLPanel ui:field="addressPanel" addStyleNames="{style.addressPanel}">
 							<span ui:field="formattedAddress" />
 						</g:HTMLPanel>
 					</div>
 					<div class="{style.profileInfoBox}">
 						<div style="width:320px; height:270px" ui:field="locationDiv"></div>
 					</div>
+					<g:HTMLPanel addStyleNames="{style.profileInfoBox} {style.smallfont}">
+						<h2 class="heading">Hours of operation</h2>
+						<span>
+							Monday&nbsp;
+							<span ui:field="mondayStart" />
+							-
+							<span ui:field="mondayEnd" />
+							<br />
+							Tuesday&nbsp;
+							<span ui:field="tuesdayStart" />
+							-
+							<span ui:field="tuesdayEnd" />
+							<br />
+							Wednesday&nbsp;
+							<span ui:field="wednesdayStart" />
+							-
+							<span ui:field="wednesdayEnd" />
+							<br />
+							Thursday&nbsp;
+							<span ui:field="thursdayStart" />
+							-
+							<span ui:field="thursdayEnd" />
+							<br />
+							Friday&nbsp;
+							<span ui:field="fridayStart" />
+							-
+							<span ui:field="fridayEnd" />
+							<br />
+							Saturday&nbsp;
+							<span ui:field="saturdayStart" />
+							-
+							<span ui:field="saturdayEnd" />
+							<br />
+							Sunday&nbsp;
+							<span ui:field="sundayStart" />
+							-
+							<span ui:field="sundayEnd" />
+							<br />
+						</span>
+					</g:HTMLPanel>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Activity</h2>
 						<dt:ProfileStatWidget title="Tweets"

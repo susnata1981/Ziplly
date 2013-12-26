@@ -94,7 +94,9 @@ public class HomeView extends Composite implements IHomeView {
 
 	private void buildTweetFilters() {
 		for (final TweetType type : TweetType.values()) {
-			final Anchor anchor = new Anchor(type.name().toLowerCase());
+			final Anchor anchor = new Anchor();
+			String name = type.getTweetName();
+			anchor.setText(name);
 			anchor.setStyleName("tweetFilterLink");
 			anchor.addClickHandler(new ClickHandler() {
 				@Override
@@ -105,9 +107,9 @@ public class HomeView extends Composite implements IHomeView {
 					presenter.displayTweetsForCategory(type);
 				}
 			});
-			Icon icon = new Icon();
-			icon.setType(IconType.TAG);
-			anchor.setHTML(SafeHtmlUtils.fromSafeConstant("<a>"+type.name()+icon+"</a>"));
+//			Icon icon = new Icon();
+//			icon.setType(IconType.TAG);
+//			anchor.setHTML(SafeHtmlUtils.fromSafeConstant("<a>"+type.name()+icon+"</a>"));
 			filterTweetsPanel.add(anchor);
 			filters.put(type, anchor);
 		}
@@ -252,14 +254,21 @@ public class HomeView extends Composite implements IHomeView {
 	
 	@Override
 	public void updateTweetCategoryCount(Map<TweetType, Integer> data) {
+		int totalTweetCount = 0;
 		for(Map.Entry<TweetType, Anchor> entry : filters.entrySet()) {
 			Anchor a = entry.getValue();
 			int count = 0;
 			if (data.get(entry.getKey()) != null) {
 				count = data.get(entry.getKey());
+				totalTweetCount += count;
 			}
-			String text = entry.getKey().name() +" ("+count+")";
-			a.getElement().setInnerHTML(text);
+			setCountOnAnchor(a, entry.getKey().name(), count);
 		}
+		setCountOnAnchor(filters.get(TweetType.ALL), TweetType.ALL.name(), totalTweetCount);
+	}
+
+	private void setCountOnAnchor(Anchor a, String name, int count) {
+		String text = name +" ("+count+")";
+		a.getElement().setInnerHTML(text);
 	}
 }

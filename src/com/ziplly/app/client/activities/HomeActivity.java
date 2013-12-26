@@ -47,9 +47,12 @@ import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
+import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
+import com.ziplly.app.shared.GetFacebookRedirectUriAction;
+import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -80,7 +83,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private int tweetPageIndex = 0;
 	private int tweetPageIndexForHashtagSearch = 0;
 	private int pageSize = 5;
-
+	protected AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
+	private CommunityDataHandler communityDataHandler = new CommunityDataHandler();
+	private GetLoggedInUserActionHandler getLoggedInUserActionHandler = new GetLoggedInUserActionHandler();
+	private GetFacebookRedirectUriHandler facebookRedirectHandler = new GetFacebookRedirectUriHandler();
+	
 	public static interface IHomeView extends View<HomePresenter> {
 		void display(List<TweetDTO> tweets);
 
@@ -114,6 +121,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	HomePlace place;
 	AccountDTO account;
 	Modal modal = new Modal();
+	
 	HTMLPanel loadingPanel = new HTMLPanel("<span>Loading</span>");
 	private AcceptsOneWidget panel;
 	private TweetType tweetType;
@@ -179,7 +187,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	private void displayCommunityWall() {
-		getCommunityWallData(TweetType.ALL);
+		TweetType type;
+		try {
+			type = TweetType.valueOf(place.getFilter().toUpperCase());
+		} catch (IllegalArgumentException ex) {
+			type = TweetType.ALL;
+		}
+		
+		getCommunityWallData(type);
 		getLatLng(ctx.getAccount());
 		getHashtags();
 		GetTweetCategoryDetails();
@@ -191,7 +206,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			@Override
 			public void onSuccess(GetTweetCategoryDetailsResult result) {
 				// do something.
-				Map<TweetType, Integer> tweetCounts = result.getTweetCounts();
 				homeView.updateTweetCategoryCount(result.getTweetCounts());
 			}
 		});
@@ -246,20 +260,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void fetchData() {
-		dispatcher.execute(new GetLoggedInUserAction(),
-				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-					@Override
-					public void onSuccess(GetLoggedInUserResult result) {
-						if (result != null && result.getAccount() != null) {
-							ctx.setAccount(result.getAccount());
-							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-							displayCommunityWall();
-						} else {
-							displayMainView();
-						}
-						hideLoadingIcon();
-					}
-				});
+//		dispatcher.execute(new GetFacebookRedirectUriAction(), facebookRedirectHandler);
+		dispatcher.execute(new GetLoggedInUserAction(), getLoggedInUserActionHandler);
 	}
 	
 	void getCommunityWallData(TweetType type) {
@@ -271,8 +273,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		tweetPageIndex = 0;
 		lastSearchAction = new GetCommunityWallDataAction(type, tweetPageIndex, pageSize);
 		
-		dispatcher.execute(lastSearchAction,
-				new CommunityDataHandler());
+		dispatcher.execute(lastSearchAction, communityDataHandler);
 		
 		if (binder != null) {
 			binder.stop();
@@ -295,6 +296,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void displayTweets(List<TweetDTO> tweets) {
 		homeView.display(tweets);
 		panel.setWidget(homeView);
+	}
+
+	protected void getAccountNotifications() {
+		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
 	}
 
 	@Override
@@ -602,4 +607,30 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			}
 		});
 	};
+	
+	private class GetLoggedInUserActionHandler extends DispatcherCallbackAsync<GetLoggedInUserResult> {
+		@Override
+		public void onSuccess(GetLoggedInUserResult result) {
+			if (result != null && result.getAccount() != null) {
+				ctx.setAccount(result.getAccount());
+				eventBus.fireEvent(new LoginEvent(result.getAccount()));
+				displayCommunityWall();
+				getAccountNotifications();
+			} else {
+				displayMainView();
+			}
+			hideLoadingIcon();
+		}
+	}
+	
+	private class GetFacebookRedirectUriHandler extends DispatcherCallbackAsync<GetFacebookRedirectUriResult> {
+
+		@Override
+		public void onSuccess(GetFacebookRedirectUriResult result) {
+			if (result != null) {
+				mainView.setRedirectUri(result.getRedirectUrl());
+			}
+		}
+		
+	}
 }

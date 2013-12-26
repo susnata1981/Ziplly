@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,16 +33,15 @@ public class Transaction {
 	@Column(name="transaction_id")
 	private Long transactionId;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name="account_id")
 	private Account seller;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@OneToOne
 	@JoinColumn(name="subscription_id")
 	private SubscriptionPlan plan;
 	
 	private BigDecimal amount;
-//	private BigDecimal recurringAmount;
 	
 	private TransactionStatus status;
 	private String currencyCode;
@@ -60,7 +58,7 @@ public class Transaction {
 	public Transaction(TransactionDTO txn) {
 		if (txn != null) {
 //			transactionId = txn.getTransactionId();
-			seller = new Account(txn.getSeller());
+//			seller = new Account(txn.getSeller());
 			plan = new SubscriptionPlan(txn.getPlan());
 			amount = txn.getAmount();
 			currencyCode = txn.getCurrencyCode();
@@ -75,12 +73,7 @@ public class Transaction {
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-//	public BigDecimal getRecurringAmount() {
-//		return recurringAmount;
-//	}
-//	public void setRecurringAmount(BigDecimal recurringAmount) {
-//		this.recurringAmount = recurringAmount;
-//	}
+
 	public String getCurrencyCode() {
 		return currencyCode;
 	}

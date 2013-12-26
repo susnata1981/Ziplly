@@ -10,7 +10,6 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
@@ -24,12 +23,6 @@ import com.ziplly.app.model.PrivacySettings;
 public class AccountDAOImpl implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class
 			.getCanonicalName());
-
-	@Inject
-	public AccountDAOImpl() {
-		// this.em = EntityManagerService.getInstance().getEntityManager();
-		// this.em = em;
-	}
 
 	@Override
 	public AccountDTO findByEmail(String email) throws NotFoundException {
@@ -96,15 +89,17 @@ public class AccountDAOImpl implements AccountDAO {
 		Query query = em.createNamedQuery("findAccountById");
 //		Query query = em.createQuery("from Account a join fetch a.tweets t where a.accountId = :accountId");
 		query.setParameter("accountId", accountId);
+		AccountDTO result;
 		try {
 			Account account = (Account) query.getSingleResult();
 //			account.getTweets();
-			return EntityUtil.convert(account);
+			 result = EntityUtil.convert(account);
 		} catch(NoResultException nre) {
 			throw new NotFoundException();
 		} finally {
 			em.close();
 		}
+		return result;
 	}
 
 	@Override
@@ -181,7 +176,7 @@ public class AccountDAOImpl implements AccountDAO {
 		List<PersonalAccount> accounts = (List<PersonalAccount>)query.getResultList();
 		List<PersonalAccountDTO> response = Lists.newArrayList();
 		for(PersonalAccount pa : accounts) {
-			response.add(EntityUtil.clone(pa));
+			response.add(EntityUtil.clone(pa, false));
 		}
 		em.close();
 		return response;

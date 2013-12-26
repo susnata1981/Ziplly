@@ -8,12 +8,13 @@ public class AccountNotificationDTO implements Serializable {
 	
 	private Long notificationId;
 	private AccountDTO sender;
-	private AccountDTO receiver;
+	private AccountDTO recipient;
 	private ReadStatus readStatus;
+	private RecordStatus status;
 	private NotificationType type;
-	private NotificationAction action;
 	private Date timeUpdated;
 	private Date timeCreated;
+	
 	public Long getNotificationId() {
 		return notificationId;
 	}
@@ -30,12 +31,12 @@ public class AccountNotificationDTO implements Serializable {
 		this.sender = sender;
 	}
 
-	public AccountDTO getReceiver() {
-		return receiver;
+	public AccountDTO getRecipient() {
+		return recipient;
 	}
 
-	public void setReceiver(AccountDTO receiver) {
-		this.receiver = receiver;
+	public void setRecipient(AccountDTO receiver) {
+		this.recipient = receiver;
 	}
 
 	public NotificationType getType() {
@@ -62,19 +63,19 @@ public class AccountNotificationDTO implements Serializable {
 		this.readStatus = readStatus;
 	}
 
-	public NotificationAction getAction() {
-		return action;
-	}
-
-	public void setAction(NotificationAction action) {
-		this.action = action;
-	}
-
 	public Date getTimeUpdated() {
 		return timeUpdated;
 	}
 
 	public void setTimeUpdated(Date timeUpdated) {
 		this.timeUpdated = timeUpdated;
+	}
+
+	public RecordStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RecordStatus status) {
+		this.status = status;
 	}
 }

@@ -7,44 +7,43 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public class OAuthConfig implements Serializable{
-	private String [] scopes;
+public class OAuthConfig implements Serializable {
+	private String[] scopes;
 	private String redirectUri;
 	private String clientId;
 	private OAuthProvider provider;
 	private String key;
-	
-//	public OAuthConfig() {
-//	}
-	
-	private OAuthConfig(OAuthProvider provider,String clientId,String key, String [] scopes,String redirectUri) {
+
+	private OAuthConfig(OAuthProvider provider, String clientId, String key, String[] scopes,
+			String redirectUri) {
 		this.setProvider(provider);
 		this.setScopes(scopes);
 		this.setRedirectUri(redirectUri);
 		this.setClientId(clientId);
 		this.setKey(key);
 	}
-	
+
 	public String getAuthorizationUrl() throws UnsupportedEncodingException {
-		Map<String,String> paramsMap = new HashMap<String,String>();
-		String scope = Arrays.asList(getScopes()).toString().replaceAll(", ", " &amp; ").replaceAll("^\\[|\\]$", "");
-		paramsMap.put("scope",scope);
-		paramsMap.put("client_id",getClientId());
-		paramsMap.put("redirect_uri",getRedirectUri());
-		paramsMap.put("response_type","code");
+		Map<String, String> paramsMap = new HashMap<String, String>();
+		String scope = Arrays.asList(getScopes()).toString().replaceAll(", ", " &amp; ")
+				.replaceAll("^\\[|\\]$", "");
+		paramsMap.put("scope", scope);
+		paramsMap.put("client_id", getClientId());
+		paramsMap.put("redirect_uri", getRedirectUri());
+		paramsMap.put("response_type", "code");
 		paramsMap.put("app_id", "217425525078759");
 		return OAuthUtil.getUrlWithParam(getProvider().getAuthUrl(), paramsMap);
 	}
-	
+
 	public static Builder newBuilder() {
 		return new Builder();
 	}
-	
-	public String [] getScopes() {
+
+	public String[] getScopes() {
 		return scopes;
 	}
 
-	public void setScopes(String [] scopes) {
+	public void setScopes(String[] scopes) {
 		this.scopes = scopes;
 	}
 
@@ -56,11 +55,19 @@ public class OAuthConfig implements Serializable{
 		this.clientId = clientId;
 	}
 
+	/**********************************************************************
+	 * NEEDS TO CHANGE IN PRODUCTION
+	 * 
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 **********************************************************************/
 	public String getRedirectUri() throws UnsupportedEncodingException {
-		Map<String,String> paramsMap = new HashMap<String,String>();
-		paramsMap.put("gwt.codesvr","127.0.0.1:9997");
-		//System.out.println("RURI="+OAuthUtil.getUrlWithParam(redirectUri, paramsMap));
+		Map<String, String> paramsMap = new HashMap<String, String>();
+		paramsMap.put("gwt.codesvr", "127.0.0.1:9997");
 		return OAuthUtil.getUrlWithParam(redirectUri, paramsMap);
+
+		// IN PROD
+		// return OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT;
 	}
 
 	public void setRedirectUri(String redirectUri) {
@@ -84,24 +91,25 @@ public class OAuthConfig implements Serializable{
 	}
 
 	public static class Builder {
-		private String [] scopes;
+		private String[] scopes;
 		private String redirectUri;
 		private String clientId;
 		private OAuthProvider provider;
 		private String key;
-		
-//		public Builder(OAuthProvider provider, String clientId, String key,String redirectUri) {
-//			this.provider = provider;
-//			this.clientId = clientId;
-//			this.redirectUri = redirectUri;
-//			this.key = key;
-//		}
+
+		// public Builder(OAuthProvider provider, String clientId, String
+		// key,String redirectUri) {
+		// this.provider = provider;
+		// this.clientId = clientId;
+		// this.redirectUri = redirectUri;
+		// this.key = key;
+		// }
 
 		public OAuthConfig build() {
-			return new OAuthConfig(provider,clientId,key,scopes,redirectUri);
+			return new OAuthConfig(provider, clientId, key, scopes, redirectUri);
 		}
 
-		public Builder setScope(String [] scopes) {
+		public Builder setScope(String[] scopes) {
 			this.scopes = scopes;
 			return this;
 		}

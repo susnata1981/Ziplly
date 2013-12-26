@@ -8,7 +8,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -22,6 +21,7 @@ import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
+import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -137,11 +137,12 @@ public class PersonalAccountActivity extends
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			placeController.goTo(new BusinessAccountPlace());
 		}
-
+		
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
+		getAccountNotifications();
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
 	}
 

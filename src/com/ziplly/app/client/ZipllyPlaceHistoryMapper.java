@@ -2,6 +2,7 @@ package com.ziplly.app.client;
 
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.place.shared.WithTokenizers;
+import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
@@ -15,7 +16,7 @@ import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.places.SignupPlace;
 
 @WithTokenizers({
-	HomePlace.Tokenizer.class, 
+	HomePlace.Tokenizer.class,
 	LoginPlace.Tokenizer.class, 
 	SignupPlace.Tokenizer.class, 
 	BusinessSignupPlace.Tokenizer.class,
@@ -26,6 +27,7 @@ import com.ziplly.app.client.places.SignupPlace;
 	ConversationPlace.Tokenizer.class,
 	PasswordRecoveryPlace.Tokenizer.class,
 	AdminPlace.Tokenizer.class,
+	AboutPlace.Tokenizer.class,
 })
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 
