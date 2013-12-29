@@ -21,7 +21,6 @@ import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
-import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;

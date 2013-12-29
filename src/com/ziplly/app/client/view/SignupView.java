@@ -1,17 +1,23 @@
 package com.ziplly.app.client.view;
 
 import java.util.Date;
+import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,13 +27,17 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
+import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
+import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.model.AccountStatus;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
@@ -46,6 +56,11 @@ public class SignupView extends Composite implements
 		ZResources.IMPL.style().ensureInjected();
 		return ZResources.IMPL;
 	}
+	
+	boolean checkEmailInvitationStatus = false;
+	boolean isServiceAvailable;
+	private NeighborhoodDTO selectedNeighborhood;
+	private List<NeighborhoodDTO> neighborhoods;
 	
 	@UiField
 	TextBox firstname;
@@ -76,18 +91,20 @@ public class SignupView extends Composite implements
 	HelpInline zipError;
 
 	@UiField
+	ControlGroup neighborhoodCg;
+	@UiField
+	Controls neighborhoodControl;
+	@UiField
+	HTMLPanel neighborhoodListPanel;
+	@UiField
+	HelpInline neighborhoodError;
+	
+	@UiField
 	PasswordTextBox password;
 	@UiField
 	ControlGroup passwordCg;
 	@UiField
 	HelpInline passwordError;
-
-//	@UiField
-//	PasswordTextBox confirmPassword;
-//	@UiField
-//	ControlGroup confirmPasswordCg;
-//	@UiField
-//	HelpInline confirmPasswordError;
 
 	@UiField
 	Alert infoField;
@@ -112,6 +129,7 @@ public class SignupView extends Composite implements
 	
 	boolean imageUploaded = false;
 	String profileImageUrl;
+	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
 
 	@Inject
@@ -120,8 +138,65 @@ public class SignupView extends Composite implements
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
+		setupHandlers();
+		neighborhoodControl.setVisible(false);
 	}
 
+	private void setupHandlers() {
+		firstname.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				boolean validateName = validateName(firstname.getText(), firstnameCg,
+						firstnameError);
+				if (validateName) {
+					firstnameCg.setType(ControlGroupType.SUCCESS);
+					firstnameError.setVisible(false);
+				}
+			}
+		});
+		
+		zip.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				boolean validateZip = validateZip();
+				if (validateZip) {
+					isServiceAvailable = true;
+					setControlMessageForZipcodeField(null, false, ControlGroupType.SUCCESS);
+					clearNeighborhoodSection();
+					presenter.getNeighborhoodData(FieldVerifier.sanitize(zip.getText()));
+				}
+			}
+		});
+
+		email.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				boolean validateEmail = validateEmail();
+				if (validateEmail) {
+					emailCg.setType(ControlGroupType.SUCCESS);
+					emailError.setVisible(false);
+				}
+			}
+		});
+
+		password.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
+				if (validateName) {
+					passwordCg.setType(ControlGroupType.SUCCESS);
+					passwordError.setVisible(false);
+				}
+			}
+		});
+	}
+	
+	public void clearNeighborhoodSection() {
+		neighborhoodListPanel.clear();
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodControl.setVisible(false);
+	}
+	
 	public void reset() {
 		uploadForm.reset();
 		uploadBtn.setEnabled(false);
@@ -133,7 +208,6 @@ public class SignupView extends Composite implements
 	}
 
 	public void displayProfileImagePreview(String imageUrl) {
-		System.out.println("IMG URL = "+imageUrl);
 		profileImagePreview.setUrl(imageUrl);
 		profileImagePreview.setVisible(true);
 		this.profileImageUrl = imageUrl;
@@ -143,14 +217,20 @@ public class SignupView extends Composite implements
 		String zipInput = zip.getText().trim();
 		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
 		if (!validateZip.isValid()) {
-			zipCg.setType(ControlGroupType.ERROR);
-			zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
-			zipError.setVisible(true);
+			setControlMessageForZipcodeField(validateZip.getErrors().get(0).getErrorMessage(),
+					true,
+					ControlGroupType.ERROR);
 			return false;
 		}
 		return true;
 	}
 
+	void setControlMessageForZipcodeField(String msg, boolean msgVisible, ControlGroupType type) {
+		zipCg.setType(type);
+		zipError.setText(msg);
+		zipError.setVisible(msgVisible);
+	}
+	
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
 		if (!result.isValid()) {
@@ -162,8 +242,6 @@ public class SignupView extends Composite implements
 		return true;
 	}
 
-	boolean checkEmailInvitationStatus = false;
-	
 	public void verifiedEmailInvitationStatus() {
 		checkEmailInvitationStatus = true;
 	}
@@ -185,11 +263,11 @@ public class SignupView extends Composite implements
 //				
 //			}
 //		}
-		
 		return true;
 	}
 
-	boolean validatePassword(String password, ControlGroup cg,
+	boolean validatePassword(String password, 
+			ControlGroup cg,
 			HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validatePassword(password);
 		if (!result.isValid()) {
@@ -216,22 +294,26 @@ public class SignupView extends Composite implements
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
-//		String confirmPasswordInput = confirmPassword.getText().trim();
-//		valid &= validatePassword(confirmPasswordInput, confirmPasswordCg,
-//				confirmPasswordError);
-//
-//		if (passwordInput != null && confirmPasswordInput != null) {
-//			if (!confirmPasswordInput.equals(passwordInput)) {
-//				passwordCg.setType(ControlGroupType.ERROR);
-//				passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
-//				passwordError.setVisible(true);
-//			}
-//		}
+		valid &= validateNeighborhood();
+		
 		return valid;
+	}
+
+	private boolean validateNeighborhood() {
+		selectedNeighborhood = getNeighborhoodSelection();
+		if (selectedNeighborhood == null) {
+			neighborhoodCg.setType(ControlGroupType.ERROR);
+			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
+			neighborhoodError.setVisible(false);
+			return false;
+		}
+		
+		return true;
 	}
 
 	void resetForm() {
 		resetFormFields();
+		clearNeighborhoodSection();
 		resetErrors();
 		infoField.setVisible(false);
 	}
@@ -241,7 +323,7 @@ public class SignupView extends Composite implements
 		lastname.setText("");
 		email.setText("");
 		password.setText("");
-//		confirmPassword.setText("");
+		zip.setText("");
 	}
 
 	void resetErrors() {
@@ -251,6 +333,10 @@ public class SignupView extends Composite implements
 		lastnameError.setVisible(false);
 		zipCg.setType(ControlGroupType.NONE);
 		zipError.setVisible(false);
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setVisible(false);
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodError.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
 	}
@@ -259,6 +345,12 @@ public class SignupView extends Composite implements
 	void signup(ClickEvent event) {
 		System.out.println("Calling submit signup...");
 		resetErrors();
+		
+		if (!isServiceAvailable) {
+			displayMessage(StringConstants.SERVICE_NOT_AVAILABLE, AlertType.ERROR);
+			return;
+		}
+		
 		if (!validateInput()) {
 			return;
 		}
@@ -274,6 +366,7 @@ public class SignupView extends Composite implements
 		account.setEmail(emailInput);
 		account.setPassword(password.getText().trim());
 		account.setZip(Integer.parseInt(zipInput));
+		account.setNeighborhood(selectedNeighborhood);
 		account.setRole(Role.USER);
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
@@ -282,15 +375,29 @@ public class SignupView extends Composite implements
 			account.setImageUrl(profileImageUrl);
 		} 
 
+		//
+		// RESTRICT_REGISTRATION_FEATURE
+		//   
 		String value = System.getProperty(StringConstants.RESTRICT_REGISTRATION_FEATURE, "false");
 		boolean isRegistrationRescricted = Boolean.valueOf(value);
 		if (isRegistrationRescricted) {
-			System.out.println("Window.Loc="+Window.Location.getParameter("gwt.codesvr"));
 			String code = Window.Location.getParameter("code");
 			presenter.register(account, code);
 		} else {
 			presenter.register(account);
 		}
+	}
+
+	private NeighborhoodDTO getNeighborhoodSelection() {
+		int count = neighborhoodListPanel.getWidgetCount();
+		for(int i=0; i<count; i++) {
+			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
+			if (rb.getValue()) {
+				return neighborhoods.get(i);
+			}
+		}
+		
+		return null;
 	}
 
 	public void displayAccount(PersonalAccountDTO account) {
@@ -307,6 +414,9 @@ public class SignupView extends Composite implements
 			profileImagePreview.setUrl(account.getImageUrl());
 			profileImagePreview.setVisible(true);
 		}
+		
+		zip.setText("");
+		neighborhoodControl.setVisible(false);
 	}
 
 	@UiHandler("uploadBtn")
@@ -350,5 +460,40 @@ public class SignupView extends Composite implements
 		infoField.setText(msg);
 		infoField.setType(type);
 		infoField.setVisible(true);
+	}
+	
+	public void clearMessage() {
+		infoField.setText("");
+		infoField.setVisible(false);
+	}
+	
+	@Override
+	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
+		clearMessage();
+		this.neighborhoods = neighborhoods;
+		for(NeighborhoodDTO n : neighborhoods) {
+			RadioButton rb = new RadioButton("neighborhood");
+			rb.setText(n.getName());
+			neighborhoodListPanel.add(rb);
+		}
+		neighborhoodControl.setVisible(true);
+	}
+
+	@Override
+	public void displayNotYetLaunchedWidget() {
+		isServiceAvailable = false;
+		final NotYetLaunchedWidget widget = new NotYetLaunchedWidget();
+		widget.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				String email = widget.getEmail();
+				String postalCode = widget.getPostalCode();
+				presenter.addToInviteList(email, postalCode);
+			}
+			
+		});
+		selectedNeighborhood = null;
+		widget.show(true);
 	}
 }

@@ -18,8 +18,12 @@ import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.InterestDAOImpl;
 import com.ziplly.app.dao.LikeDAO;
 import com.ziplly.app.dao.LikeDAOImpl;
+import com.ziplly.app.dao.NeighborhoodDAO;
+import com.ziplly.app.dao.NeighborhoodDAOImpl;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
 import com.ziplly.app.dao.PasswordRecoveryDAOImpl;
+import com.ziplly.app.dao.PostalCodeDAO;
+import com.ziplly.app.dao.PostalCodeDAOImpl;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SessionDAOImpl;
 import com.ziplly.app.dao.SpamDAO;
@@ -38,6 +42,8 @@ import com.ziplly.app.server.EmailService;
 import com.ziplly.app.server.EmailServiceImpl;
 import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.server.PaymentServiceImpl;
+import com.ziplly.app.server.TweetNotificationBLI;
+import com.ziplly.app.server.TweetNotificationBLIImpl;
 
 public class DAOModule extends AbstractModule {
 
@@ -49,6 +55,7 @@ public class DAOModule extends AbstractModule {
 		bind(InterestDAO.class).to(InterestDAOImpl.class).in(Singleton.class);
 		bind(CommentDAO.class).to(CommentDAOImpl.class).in(Singleton.class);
 		bind(LikeDAO.class).to(LikeDAOImpl.class).in(Singleton.class);
+		bind(TweetNotificationBLI.class).to(TweetNotificationBLIImpl.class).in(Singleton.class);
 		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
 		bind(AdminBLI.class).to(AdminBLIImpl.class).in(Singleton.class);
 		bind(PaymentService.class).to(PaymentServiceImpl.class).in(Singleton.class);
@@ -61,6 +68,8 @@ public class DAOModule extends AbstractModule {
 		bind(AccountNotificationDAO.class).to(AccountNotificationDAOImpl.class).in(Singleton.class);
 		bind(HashtagDAO.class).to(HashtagDAOImpl.class).in(Singleton.class);
 		bind(SpamDAO.class).to(SpamDAOImpl.class).in(Singleton.class);
+		bind(NeighborhoodDAO.class).to(NeighborhoodDAOImpl.class).in(Singleton.class);
+		bind(PostalCodeDAO.class).to(PostalCodeDAOImpl.class).in(Singleton.class);
 	}
 
 //	@Provides

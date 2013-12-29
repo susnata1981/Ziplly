@@ -78,6 +78,11 @@ public class EmailServlet extends HttpServlet {
 		res.getWriter().println("");
 	}
 
+	/**
+	 * Sends 2 types of notification
+	 * 1. Account notification to everybody in the zip
+	 * 2. Email notifications to subscribers in that zip
+	 */
 	private void sendNotification(String senderAccountId, String zip, NotificationType ntype,
 			EmailTemplate emailTemplate) {
 		Preconditions.checkArgument(zip != null && senderAccountId != null,
@@ -103,12 +108,13 @@ public class EmailServlet extends HttpServlet {
 								AccountDTO account = accountDao.findById(acct.getAccountId());
 								for (AccountNotificationSettingsDTO ans : account
 										.getNotificationSettings()) {
-									if (ans.getType() == NotificationType.SECURITY_ALERT) {
-										if (ans.getAction() == NotificationAction.EMAIL) {
-											return true;
-										}
-										return false;
+									// if (ans.getType() ==
+									// NotificationType.SECURITY_ALERT) {
+									if (ans.getAction() == NotificationAction.EMAIL) {
+										return true;
 									}
+									return false;
+									// }
 								}
 							} catch (NotFoundException e) {
 								e.printStackTrace();
@@ -123,7 +129,7 @@ public class EmailServlet extends HttpServlet {
 		}
 	}
 
-	/*
+	/**
 	 * Send security alert email to every subscribe in a zip code.
 	 */
 	private void sendEmails(Iterable<AccountDTO> recipientsNeedingEmailNotification,
@@ -133,8 +139,16 @@ public class EmailServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Sends AccountNotification to a list of user
+	 * 
+	 * @param sender
+	 * @param recipients
+	 * @param ntype
+	 */
 	private void sendNotifications(AccountDTO sender, List<AccountDTO> recipients,
 			NotificationType ntype) {
+
 		for (AccountDTO account : recipients) {
 			AccountNotificationDTO an = new AccountNotificationDTO();
 			an.setRecipient(account);
@@ -163,7 +177,7 @@ public class EmailServlet extends HttpServlet {
 		data.put(StringConstants.RECIPIENT_EMAIL, recipientEmail);
 		emailService.sendEmail(data, emailTemplate);
 	}
-	
+
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		res.setStatus(HttpStatus.SC_OK);
 		res.setHeader("Content-Type", "text/html");

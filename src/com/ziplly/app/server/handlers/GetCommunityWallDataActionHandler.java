@@ -45,35 +45,35 @@ public class GetCommunityWallDataActionHandler
 	}
 
 	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) {
-		long time1 = System.currentTimeMillis();
-		System.out.println("Time:"+time1);
+		Long neighborhoodId = session.getAccount().getNeighborhood().getNeighborhoodId();
+		List<TweetDTO> tweets = hashtagDao.getTweetsForTagAndNeighborhood(
+				action.getHashtag(),
+				neighborhoodId,
+				action.getPage(), 
+				action.getPageSize());
 		
-		List<TweetDTO> tweets = hashtagDao.getTweetsForTag(action.getHashtag(), action.getPage(), action.getPageSize());
-		
-		long time2 = System.currentTimeMillis();
-		System.out.println("Time:"+time2);
-		System.out.println("Time elapsed:"+(time2-time1));
 		GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
 		gcwdr.setTweets(tweets);
 		return gcwdr;
 	}
 
 	private GetCommunityWallDataResult getTweetsByCategory(GetCommunityWallDataAction action) {
-		int zip = session.getAccount().getZip();
 		TweetType type = action.getType();
 		List<TweetDTO> tweets = null;
-		long time1 = System.currentTimeMillis();
-		System.out.println("Time:"+time1);
-		
+		Long neighborhoodId = session.getAccount().getNeighborhood().getNeighborhoodId();
 		if (type.equals(TweetType.ALL)) {
-			tweets = tweetDao.findTweetsByZip(zip, action.getPage(), action.getPageSize());
+			tweets = tweetDao.findTweetsByNeighborhood(
+					neighborhoodId, 
+					action.getPage(), 
+					action.getPageSize());
 		} else {
-			tweets = tweetDao.findTweetsByTypeAndZip(type, zip, action.getPage(), action.getPageSize());
+			tweets = tweetDao.findTweetsByTypeAndNeighborhood(
+					type, 
+					neighborhoodId,
+					action.getPage(), 
+					action.getPageSize());
 		}
 		
-		long time2 = System.currentTimeMillis();
-		System.out.println("Time:"+time2);
-		System.out.println("Time elapsed:"+(time2-time1));
 		GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
 		gcwdr.setTweets(tweets);
 		return gcwdr;

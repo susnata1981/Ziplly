@@ -10,6 +10,7 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -71,7 +72,8 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	public MainView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		message.setVisible(false);
+		displayHelpFields(false);
+		displayMessageField(false);
 	}
 
 	@UiFactory
@@ -148,7 +150,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 		if (!result.isValid()) {
 			emailError.setText(result.getErrors().get(0).getErrorMessage());
 			emailCg.setType(ControlGroupType.ERROR);
-			emailError.setVisible(true);
+//			emailError.setVisible(true);
 			valid = false;
 		}
 
@@ -158,7 +160,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 		if (!result.isValid()) {
 			passwordError.setText(result.getErrors().get(0).getErrorMessage());
 			passwordCg.setType(ControlGroupType.ERROR);
-			passwordError.setVisible(true);
+//			passwordError.setVisible(true);
 			valid = false;
 		}
 
@@ -168,6 +170,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
 		if (!validateInput()) {
+			displayHelpFields(true);
 			return;
 		}
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
@@ -178,7 +181,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
-		message.setVisible(true);
+		displayMessageField(true);
 	}
 
 	public void resetLoginForm() {
@@ -188,13 +191,25 @@ public class MainView extends Composite implements View<HomePresenter> {
 		passwordCg.setType(ControlGroupType.NONE);
 		password.setText("");
 		passwordError.setText("");
+		displayHelpFields(false);
 	}
 
 	public void resetMessage() {
-		message.setVisible(false);
 		message.clear();
+		displayMessageField(false);
 	}
 
+	private void displayMessageField(boolean b) {
+		Display display = b == true ? Display.BLOCK : Display.NONE;
+		message.getElement().getStyle().setDisplay(display);
+	}
+
+	private void displayHelpFields(boolean b) {
+		Display display = b == true ? Display.BLOCK : Display.NONE;
+		emailError.getElement().getStyle().setDisplay(display);
+		passwordError.getElement().getStyle().setDisplay(display);
+	}
+	
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;

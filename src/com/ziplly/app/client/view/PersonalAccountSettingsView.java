@@ -1,6 +1,8 @@
 package com.ziplly.app.client.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +39,18 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountNotificationSettingsFormatter;
+import com.ziplly.app.client.view.factory.PrivacySettingsFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
-import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.shared.FieldVerifier;
@@ -68,6 +75,12 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	@UiField
 	TabPanel accountDetailsTab;
 
+	//
+	// Basic account info 
+	//
+	@UiField
+	Tab basicInfoTab;
+	
 	@UiField
 	Element firstname;
 
@@ -85,59 +98,65 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	HelpInline introductionError;
 
 	@UiField
-	TextBox zip;
-
-	@UiField
-	TextBox occupation;
-
-	@UiField
-	Alert message;
-
-	@UiField
-	Button saveBtn;
-	@UiField
-	Button cancelBtn;
-
-	@UiField
-	Tab basicInfoTab;
-
-	@UiField
-	ShareSettingsWidget emailShareSetting;
-
-	@UiField
-	ShareSettingsWidget occupationShareSetting;
-
-	// Notification settings;
-	@UiField
-	ListBox personalMessageSettingsListBox;
-	@UiField
-	ListBox securitySettingsListBox;
-
-	@UiField
-	Tab occupationTab;
-
-	@UiField
-	Tab interestTab;
-	@UiField
-	HTMLPanel interestTabPanel;
-
-	@UiField
-	Tab locationTab;
-
-	@UiField
-	Tab passwordTab;
-
-	@UiField
 	FormPanel uploadForm;
 	@UiField
 	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
 
+	//
+	// Account Notification settings
+	//
+	@UiField
+	HTMLPanel notificationPanel;
+	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap 
+	  = new HashMap<AccountNotificationSettingsDTO, ListBox>();
+	private AccountNotificationSettingsFormatter accountNotificationFormatter = 
+			(AccountNotificationSettingsFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION_SETTINGS);
+
+	//
+	// Privacy settings
+	//
+	@UiField
+	HTMLPanel privacyPanel;
+	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap = 
+			new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
+	private PrivacySettingsFormatter privacySettingsFormatter = 
+			(PrivacySettingsFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
+
+	//
+	// Occupation
+	//
+	@UiField
+	Tab occupationTab;
+	@UiField
+	TextBox occupation;
+	
+	//
+	// Interest
+	//
+	@UiField
+	Tab interestTab;
+	@UiField
+	HTMLPanel interestTabPanel;
+	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
+	
+	//
+	// Location TODO:(needs to go)
+	//
+	@UiField
+	Tab locationTab;
+	@UiField
+	TextBox zip;
+
 	@UiField
 	HTMLPanel buttonsPanel;
 
+	//
 	// Reset Password tab
+	//
+	@UiField
+	Tab passwordTab;
 	@UiField
 	PasswordTextBox password;
 	@UiField
@@ -162,7 +181,19 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	@UiField
 	Button updatePasswordBtn;
 
-	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
+	//
+	// Alert Message
+	//
+	@UiField
+	Alert message;
+	
+	//
+	// Buttons
+	//
+	@UiField
+	Button saveBtn;
+	@UiField
+	Button cancelBtn;
 
 	private PersonalAccountDTO account;
 	private AccountSettingsPresenter<PersonalAccountDTO> presenter;
@@ -180,7 +211,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		}
 
 		message.setVisible(false);
-
 		setupHandlers();
 	}
 
@@ -208,6 +238,10 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		buttonsPanel.setVisible(show);
 	}
 
+	/**
+	 * Main function responsible for populating the view
+	 * @param account
+	 */
 	void populateFields(PersonalAccountDTO account) {
 		if (account == null) {
 			return;
@@ -241,36 +275,58 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		popoulateNotificationSettings(account);
 	}
 
+	/**
+	 * Populates privacy settings
+	 * @param account
+	 */
 	private void populatePrivacySettings(PersonalAccountDTO account) {
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
-			switch (ps.getSection()) {
-			case EMAIL:
-				emailShareSetting.setSelection(ps.getSetting());
-				break;
-			case OCCUPATION:
-				occupationShareSetting.setSelection(ps.getSetting());
-			default:
-			}
+			HPanel panel = new HPanel();
+			HTMLPanel span = new HTMLPanel(privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
+			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget();
+			shareSettingWidget.setSelection(ps.getSetting());
+			span.setWidth("120px");
+			panel.add(span);
+			panel.add(shareSettingWidget);
+			notificationPanel.add(panel);
+			privacySettingsMap.put(ps, shareSettingWidget);
+			privacyPanel.add(panel);
 		}
 	}
 
+	private ListBox getNotificationActionListBox() {
+		ListBox actionListBox = new ListBox();
+		for (NotificationAction action : NotificationAction.values()) {
+			actionListBox.addItem(action.getName());
+		}
+		return actionListBox;
+	}
+	
+	/**
+	 * Populates account notification settings
+	 * @param account
+	 */
 	private void popoulateNotificationSettings(PersonalAccountDTO account) {
-		securitySettingsListBox.clear();
-		for (NotificationAction action : NotificationAction.values()) {
-			securitySettingsListBox.addItem(action.getName());
-		}
+		accountNotificationSettingsMap.clear();
+		notificationPanel.clear();
+		Collections.sort(account.getNotificationSettings(), new Comparator<AccountNotificationSettingsDTO>() {
 
-		personalMessageSettingsListBox.clear();
-		for (NotificationAction action : NotificationAction.values()) {
-			personalMessageSettingsListBox.addItem(action.getName());
-		}
-
-		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
-			if (ans.getType() == NotificationType.PERSONAL_MESSAGE) {
-				personalMessageSettingsListBox.setSelectedIndex(ans.getAction().ordinal());
-			} else if (ans.getType() == NotificationType.SECURITY_ALERT) {
-				securitySettingsListBox.setSelectedIndex(ans.getAction().ordinal());
+			@Override
+			public int compare(AccountNotificationSettingsDTO o1, AccountNotificationSettingsDTO o2) {
+				return o1.getType().name().compareTo(o2.getType().name());
 			}
+		});
+		
+		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
+			ListBox action = getNotificationActionListBox();
+			action.setSelectedIndex(ans.getAction().ordinal());
+			HPanel panel = new HPanel();
+			HTMLPanel span = new HTMLPanel(accountNotificationFormatter.format(ans, ValueType.ACCOUNT_NOTIFICATION_TYPE));//"<span>"+ans.getType().name().toLowerCase()+"</span>");
+			span.setWidth("120px");
+			panel.add(span);
+			panel.add(action);
+			notificationPanel.add(panel);
+			accountNotificationSettingsMap.put(ans, action);
 		}
 	}
 
@@ -355,35 +411,22 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		}
 		account.getInterests().clear();
 		account.getInterests().addAll(selectedInterests);
-
-		// get privacy settings
-		ShareSetting emailShareSettings = emailShareSetting.getSelection();
-		ShareSetting occupationShareSettings = occupationShareSetting.getSelection();
-		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
-			switch (ps.getSection()) {
-			case EMAIL:
-				ps.setSetting(emailShareSettings);
-				break;
-			case OCCUPATION:
-				ps.setSetting(occupationShareSettings);
-				break;
-			default:
-			}
+		
+		//
+		// Privacy Settings
+		//
+		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
+			ShareSetting shareSettings = privacySettingsMap.get(ps).getSelection();
+			ps.setSetting(shareSettings);
 		}
-
-		// get notification settings
-		NotificationAction securityAlertAction = NotificationAction.values()[securitySettingsListBox
-				.getSelectedIndex()];
-		NotificationAction personalMessageAlertAction = NotificationAction.values()[personalMessageSettingsListBox
-				.getSelectedIndex()];
-
+		
+		//
+		// AccountNotificationSettings
+		//
 		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
-			ans.setAccount(account);
-			if (ans.getType() == NotificationType.SECURITY_ALERT) {
-				ans.setAction(securityAlertAction);
-			} else {
-				ans.setAction(personalMessageAlertAction);
-			}
+			int selectedIndex = accountNotificationSettingsMap.get(ans).getSelectedIndex();
+			NotificationAction action = NotificationAction.values()[selectedIndex];
+			ans.setAction(action);
 		}
 
 		// call presenter

@@ -1,12 +1,15 @@
 package com.ziplly.app.client.view;
 
 import java.util.Date;
+import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -16,7 +19,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.place.shared.Place;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,16 +29,19 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
+import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
+import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.BusinessProperties;
 import com.ziplly.app.model.BusinessPropertiesDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.Role;
@@ -50,7 +56,10 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	String city;
 	String state;
 	String zipCode;
-
+	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
+	NeighborhoodDTO selectedNeighborhood;
+	boolean isServiceAvailable = true;
+	
 	private static final String STREET_NUMBER_KEY = "street_number";
 	private static final String ROUTE_KEY = "route";
 	private static final String NEIGHBORHOOD_KEY = "neighborhood";
@@ -80,6 +89,15 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	@UiField
 	HelpInline street1Error;
 
+	@UiField
+	ControlGroup neighborhoodCg;
+	@UiField
+	Controls neighborhoodControl;
+	@UiField
+	HTMLPanel neighborhoodListPanel;
+	@UiField
+	HelpInline neighborhoodError;
+	
 	@UiField
 	TextBox email;
 	@UiField
@@ -117,6 +135,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 
 	String profileImageUrl;
 	SignupActivityPresenter presenter;
+	private List<NeighborhoodDTO> neighborhoods;
 
 	@Inject
 	public BusinessSignupView() {
@@ -124,6 +143,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
+		neighborhoodControl.setVisible(false);
 		setupHandlers();
 	}
 
@@ -176,8 +196,12 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	}
 
 	void validateAddressField() {
-			boolean validateAddress = validateAddress(street1.getText(), street1Cg, street1Error);
+		boolean validateAddress = validateAddress(street1.getText(), street1Cg, street1Error);
 		if (validateAddress) {
+			// reset isServiceAvailable
+			isServiceAvailable = true;
+			// Call presenter to get Neighborhood data
+			presenter.getNeighborhoodData(FieldVerifier.sanitize(zipCode));
 			street1Cg.setType(ControlGroupType.SUCCESS);
 			street1Error.setVisible(false);
 		}
@@ -265,6 +289,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		String street = street1.getText().trim();
 		valid &= validateAddress(street, street1Cg, street1Error);
 
+		valid &= validateNeighborhood();
+		
 		valid &= validateEmail();
 
 		// valid &= validateZip();
@@ -272,20 +298,20 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
-		// String confirmPasswordInput = confirmPassword.getText().trim();
-		// valid &= validatePassword(confirmPasswordInput, confirmPasswordCg,
-		// confirmPasswordError);
-		//
-		// if (passwordInput != null && confirmPasswordInput != null) {
-		// if (!confirmPasswordInput.equals(passwordInput)) {
-		// passwordCg.setType(ControlGroupType.ERROR);
-		// passwordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
-		// passwordError.setVisible(true);
-		// }
-		// }
 		return valid;
 	}
 
+	private boolean validateNeighborhood() {
+		selectedNeighborhood = getNeighborhoodSelection();
+		if (selectedNeighborhood == null) {
+			neighborhoodCg.setType(ControlGroupType.ERROR);
+			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
+			neighborhoodError.setVisible(false);
+			return false;
+		}
+		return true;
+	}
+	
 	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
 		if (streetName == null || city == null || state == null || zipCode == null) {
 			cg.setType(ControlGroupType.ERROR);
@@ -307,7 +333,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		street1.setText("");
 		email.setText("");
 		password.setText("");
-		// confirmPassword.setText("");
 	}
 
 	void resetErrors() {
@@ -322,6 +347,14 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
 		resetErrors();
+		
+		// checks to see if ziplly is available in the area code.
+		// this is set inside displayNotYetLaunchedWidget function.
+		if (!isServiceAvailable) {
+			displayMessage(StringConstants.SERVICE_NOT_AVAILABLE, AlertType.ERROR);
+			return;
+		}
+		
 		if (!validateInput()) {
 			return;
 		}
@@ -332,7 +365,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		BusinessAccountDTO account = new BusinessAccountDTO();
 		account.setName(name);
 		account.setStreet1(streetOne);
-		account.setNeighborhood(neighborhood);
+		account.setNeighborhood(selectedNeighborhood);
 		account.setCity(city);
 		account.setState(state);
 		account.setZip(Integer.parseInt(zipCode));
@@ -356,6 +389,18 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		} else {
 			presenter.register(account);
 		}
+	}
+
+	private NeighborhoodDTO getNeighborhoodSelection() {
+		int count = neighborhoodListPanel.getWidgetCount();
+		for(int i=0; i<count; i++) {
+			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
+			if (rb.getValue()) {
+				return neighborhoods.get(i);
+			}
+		}
+		
+		return null;
 	}
 
 	private BusinessPropertiesDTO getDefaultProperties() {
@@ -394,6 +439,17 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		resetLoginForm();
 	}
 
+	public void clearMessage() {
+		infoField.setText("");
+		infoField.setVisible(false);
+	}
+	
+	public void clearNeighborhoodSection() {
+		neighborhoodListPanel.clear();
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodControl.setVisible(false);
+	}
+	
 	public void setImageUploadUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
 		uploadBtn.setEnabled(true);
@@ -425,8 +481,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		infoField.setVisible(false);
 	}
 
-	/*
-	 * Google places api
+	/**
+	 * GOOGLE PLACES API INITIALIZATION
 	 */
 	public native void initializePlacesApi(Element elem) /*-{
 		var options = {
@@ -457,6 +513,9 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 						});
 	}-*/;
 
+	/**
+	 * Callback handler to populate Address fields
+	 */
 	public void populateAddressFields() {
 		JsArray<AddressComponent> components = getAddressComponents();
 		for (int i = 0; i < components.length(); i++) {
@@ -477,11 +536,49 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 				zipCode = ac.getLongName();
 			}
 		}
+		clearNeighborhoodSection();
 		validateAddressField();
 	}
 
+	/**
+	 * @return Array of address components in JSON format
+	 */
 	public native JsArray<AddressComponent> getAddressComponents() /*-{
 		return $wnd.places.address_components;
 	}-*/;
 
+	/**
+	 * Displays neighborhood data
+	 */
+	@Override
+	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
+		clearMessage();
+		this.neighborhoods = neighborhoods;
+		for(NeighborhoodDTO n : neighborhoods) {
+			RadioButton rb = new RadioButton("neighborhood");
+			rb.setText(n.getName());
+			neighborhoodListPanel.add(rb);
+		}
+		neighborhoodControl.setVisible(true);
+	}
+
+	/**
+	 * Displays a modal window to get user information 
+	 */
+	@Override
+	public void displayNotYetLaunchedWidget() {
+		isServiceAvailable = false;
+		final NotYetLaunchedWidget widget = new NotYetLaunchedWidget();
+		widget.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String email = widget.getEmail();
+				String postalCode = widget.getPostalCode();
+				presenter.addToInviteList(email, postalCode);
+			}
+			
+		});
+		selectedNeighborhood = null;
+		widget.show(true);
+	}
 }

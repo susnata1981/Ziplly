@@ -14,6 +14,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableSet;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -85,6 +86,7 @@ public class TweetDAOImpl implements TweetDAO {
 		return ImmutableSet.of();
 	}
 
+	@Deprecated
 	@Override
 	public List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize) {
 		if (zip == null) {
@@ -101,7 +103,25 @@ public class TweetDAOImpl implements TweetDAO {
 		em.close();
 		return EntityUtil.cloneList(tweets);
 	}
+	
+	@Override
+	public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) {
+		if (neighborhoodId == null) {
+			throw new IllegalArgumentException();
+		}
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = (Query) em.createNamedQuery("findTweetsByNeighborhood");
+		query.setParameter("neighborhoodId", neighborhoodId);
+		query.setParameter("status", TweetStatus.ACTIVE);
+		query.setFirstResult(page * pageSize).setMaxResults(pageSize);
 
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>) query.getResultList();
+		em.close();
+		return EntityUtil.cloneList(tweets);
+	}
+
+	@Deprecated
 	@Override
 	public List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip, int page, int pageSize) {
 		if (zip == null) {
@@ -121,7 +141,24 @@ public class TweetDAOImpl implements TweetDAO {
 	}
 
 	@Override
-	public List<TweetDTO> findTweetsByAccountId(Long accountId) {
+	public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type, Long neighborhoodId, int page, int pageSize) {
+		Preconditions.checkArgument(neighborhoodId != null);
+		
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = (Query) em.createNamedQuery("findTweetsByTypeAndNeighborhood");
+		query.setParameter("neighborhoodId", neighborhoodId);
+		query.setParameter("type", type);
+		query.setParameter("status", TweetStatus.ACTIVE);
+		query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = (List<Tweet>) query.getResultList();
+		em.close();
+		return EntityUtil.cloneList(tweets);
+	}
+
+	@Override
+	public List<TweetDTO> findAllTweetsByAccountId(Long accountId) {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -299,9 +336,11 @@ public class TweetDAOImpl implements TweetDAO {
 		Map<TweetType, Integer> result = Maps.newHashMap();
 		
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNativeQuery("select t.type, count(*) from tweet t, account a where t.sender_id = a.account_id and a.zip = :zip group by t.type")
-				.setParameter("zip", acct.getZip());
 		
+		Query query = em.createNativeQuery("select t.type, count(*) from tweet t, account a "
+				+ "where t.sender_id = a.account_id and a.neighborhood_id = :neighborhood_id group by t.type")
+				.setParameter("neighborhood_id", acct.getNeighborhood().getNeighborhoodId());
+
 		List resultList = query.getResultList();
 		for(Object r : resultList) {
 			Object [] temp = (Object[]) r;

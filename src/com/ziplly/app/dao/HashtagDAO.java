@@ -12,4 +12,10 @@ public interface HashtagDAO {
 	List<HashtagDTO> findAll();
 	List<HashtagDTO> findTopHashtag(int n);
 	List<TweetDTO> getTweetsForTag(String tag, int page, int pageSize);
+	
+	/*
+	 * Retrieves tweet list based on neighborhood and hashtag
+	 */
+	List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag, Long neighborhoodId, int page,
+			int pageSize);
 }

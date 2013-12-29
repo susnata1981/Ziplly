@@ -11,6 +11,7 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.ISignupView;
@@ -23,6 +24,8 @@ import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
+import com.ziplly.app.shared.GetNeighborhoodAction;
+import com.ziplly.app.shared.GetNeighborhoodResult;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 import com.ziplly.app.shared.ValidateLoginAction;
@@ -70,6 +73,12 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 				});
 	}
 
+	@Override
+	public void getNeighborhoodData(String postalCode) {
+		dispatcher.execute(new GetNeighborhoodAction(postalCode), 
+				new NeighborhoodHandler());
+	}
+	
 	// TODO handle image deletion on multiple file uploads
 	@Override
 	public void setUploadImageHandler() {
@@ -85,6 +94,11 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		});
 	}
 
+	@Override
+	public void addToInviteList(String email, String postalCode) {
+		// need to implement.
+	}
+	
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {
 		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(), code);
 		dispatcher.execute(action, new CheckEmailRegistrationHandler(account));
@@ -92,6 +106,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	
 	@Override
 	public void register(AccountDTO account, String code) {
+		
 		if (code == null) {
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 			return;
@@ -111,6 +126,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 
 	public class ValidateLoginHandler extends DispatcherCallbackAsync<ValidateLoginResult> {
+	
 		@Override
 		public void onSuccess(ValidateLoginResult result) {
 			if (result != null && result.getAccount() != null) {
@@ -135,6 +151,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 	
 	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
+		
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
 			System.out.println("Account " + result.getAccount()
@@ -142,6 +159,14 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			eventBus.fireEvent(new LoginEvent(result.getAccount()));
 			view.clear();
 			forward(result.getAccount());
+		}
+		
+		public void onFailure(Throwable th) {
+			if (th instanceof AccountExistsException) {
+				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
+				return;
+			}
+			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 		}
 	}
 	
@@ -164,6 +189,18 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		public void onFailure(Throwable th) {
 			if (th instanceof AccessError) {
 				view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
+			}
+		}
+	}
+	
+	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
+		@Override
+		public void onSuccess(GetNeighborhoodResult result) {
+			if (result.getNeighbordhoods() != null && result.getNeighbordhoods().size() > 0) {
+				view.displayNeighborhoods(result.getNeighbordhoods());
+			} else {
+				view.displayNotYetLaunchedWidget();
+				view.displayMessage(StringConstants.NOT_AVAILABLE_IN_AREA, AlertType.ERROR);
 			}
 		}
 	}

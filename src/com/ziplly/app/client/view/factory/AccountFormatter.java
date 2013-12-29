@@ -22,6 +22,11 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			content.append("<img src='" + value.getImageUrl()
 					+ "' width='40px' height='40px'/>&nbsp;" + value.getDisplayName());
 			return content.toString();
+		case MEDIUM_IMAGE_VALUE:
+			content.append("<img src='" + value.getImageUrl()
+					+ "' width='60px' height='60px'/>&nbsp;" + value.getDisplayName());
+			return content.toString();
+
 		default:
 			throw new IllegalArgumentException("Invalid value type");
 		}

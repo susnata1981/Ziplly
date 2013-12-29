@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum TweetType {
-	ALL("All"),
-	GENERAL("General"),
-	ANNOUNCEMENT("Announcement"),
-	SECURITY_ALERTS("Security Alerts"),
-	HELP("Help"),
-	CLASSIFIEDS("Classifieds"),
-	OFFERS("offers");
+	ALL("All", NotificationType.NONE),
+	GENERAL("General", NotificationType.NONE),
+	ANNOUNCEMENT("Announcement", NotificationType.ANNOUNCEMENT),
+	SECURITY_ALERTS("Security Alerts", NotificationType.SECURITY_ALERT),
+	HELP("Help", NotificationType.NONE),
+	CLASSIFIEDS("Classifieds", NotificationType.NONE),
+	OFFERS("offers", NotificationType.OFFERS);
 	
 	private String tweetName;
+	private NotificationType notificationType;
 
-	TweetType(String name) {
+	TweetType(String name, NotificationType type) {
 		this.setTweetName(name);
+		this.setNotificationType(type);
 	}
 	
 	public static List<TweetType> getAllTweetTypeForPublishingByUser() {
@@ -41,5 +43,13 @@ public enum TweetType {
 
 	public void setTweetName(String tweetName) {
 		this.tweetName = tweetName;
+	}
+
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
 	}
 }

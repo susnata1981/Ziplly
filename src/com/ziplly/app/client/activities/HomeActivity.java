@@ -40,6 +40,7 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -51,7 +52,6 @@ import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
-import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
@@ -116,6 +116,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void updateTweetCategoryCount(Map<TweetType, Integer> tweetCounts);
 
 		void insertTweet(TweetDTO tweet);
+
+		void displaySummaryData(NeighborhoodDTO neighborhood);
 	}
 
 	HomePlace place;
@@ -193,7 +195,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		} catch (IllegalArgumentException ex) {
 			type = TweetType.ALL;
 		}
-		
+		homeView.displaySummaryData(ctx.getAccount().getNeighborhood());
 		getCommunityWallData(type);
 		getLatLng(ctx.getAccount());
 		getHashtags();

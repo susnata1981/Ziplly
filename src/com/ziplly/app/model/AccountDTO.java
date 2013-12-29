@@ -16,7 +16,7 @@ public class AccountDTO implements Serializable {
 	private String url;
 	private String imageUrl;
 	private int zip;
-	private String neighborhood;
+    private NeighborhoodDTO neighborhood;
 	private String city;
 	private String state;
 	private Role role;
@@ -168,11 +168,11 @@ public class AccountDTO implements Serializable {
 		this.timeUpdated = timeUpdated;
 	}
 
-	public String getNeighborhood() {
+	public NeighborhoodDTO getNeighborhood() {
 		return neighborhood;
 	}
 
-	public void setNeighborhood(String neighborhood) {
+	public void setNeighborhood(NeighborhoodDTO neighborhood) {
 		this.neighborhood = neighborhood;
 	}
 

@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
@@ -30,6 +27,7 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
@@ -270,5 +268,10 @@ public class HomeView extends Composite implements IHomeView {
 	private void setCountOnAnchor(Anchor a, String name, int count) {
 		String text = name +" ("+count+")";
 		a.getElement().setInnerHTML(text);
+	}
+
+	@Override
+	public void displaySummaryData(NeighborhoodDTO neighborhood) {
+		communitySummaryWidget.displaySummaryData(neighborhood);
 	}
 }

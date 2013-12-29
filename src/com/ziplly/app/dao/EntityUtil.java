@@ -28,8 +28,12 @@ import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.Message;
 import com.ziplly.app.model.MessageDTO;
+import com.ziplly.app.model.Neighborhood;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PostalCode;
+import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.model.Spam;
@@ -106,7 +110,7 @@ public class EntityUtil {
 		acct.setUrl(account.getUrl());
 		acct.setImageUrl(account.getImageUrl());
 		acct.setZip(account.getZip());
-		acct.setNeighborhood(account.getNeighborhood());
+		acct.setNeighborhood(clone(account.getNeighborhood()));
 		acct.setCity(account.getCity());
 		acct.setState(account.getState());
 		acct.setRole(account.getRole());
@@ -168,7 +172,7 @@ public class EntityUtil {
 		resp.setStreet1(account.getStreet1());
 		resp.setStreet2(account.getStreet2());
 		resp.setProperties(clone(account.getProperties()));
-		
+
 		if (Hibernate.isInitialized(account.getTransactions())) {
 			for (Transaction txn : account.getTransactions()) {
 				resp.getTransactions().add(clone(txn));
@@ -398,5 +402,48 @@ public class EntityUtil {
 		dest.setGoodForKids(source.getGoodForKids());
 		dest.setPriceRange(source.getPriceRange());
 		return dest;
+	}
+
+	public static NeighborhoodDTO clone(Neighborhood neighborhood) {
+		NeighborhoodDTO dest = new NeighborhoodDTO();
+		dest.setCity(neighborhood.getCity());
+		dest.setState(neighborhood.getState());
+		dest.setPostalCode(clone(neighborhood.getPostalCode()));
+		dest.setName(neighborhood.getName());
+		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
+		return dest;
+	}
+
+	public static List<NeighborhoodDTO> cloneNeighborhoodList(List<Neighborhood> neighborhoods) {
+		List<NeighborhoodDTO> result = Lists.newArrayList();
+		for (Neighborhood neighborhood : neighborhoods) {
+			result.add(clone(neighborhood));
+		}
+
+		return result;
+	}
+
+	public static PostalCodeDTO clone(PostalCode postalCode) {
+		PostalCodeDTO dest = new PostalCodeDTO();
+		dest.setPostalCode(postalCode.getPostalCode());
+		dest.setPostalCodeId(postalCode.getPostalCodeId());
+		return dest;
+	}
+
+	// public static PostalCode clone(PostalCodeDTO postalCode) {
+	// PostalCode dest = new PostalCode();
+	// dest.setPostalCode(postalCode.getPostalCode());
+	// dest.setPostalCodeId(postalCode.getPostalCodeId());
+	//
+	// return dest;
+	// }
+
+	public static List<PostalCodeDTO> clonePostalCodeList(List<PostalCode> postalCodes) {
+		List<PostalCodeDTO> result = Lists.newArrayList();
+		for (PostalCode postalCode : postalCodes) {
+			result.add(clone(postalCode));
+		}
+
+		return result;
 	}
 }

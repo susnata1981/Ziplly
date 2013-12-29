@@ -21,21 +21,25 @@ import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AccountBLIImpl;
+import com.ziplly.app.server.TweetNotificationBLI;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 
 public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, TweetResult> {
 
+	private TweetNotificationBLI tweetNotificationBli;
+
 	@Inject
 	public TweetActionHandler(AccountDAO accountDao, 
 			SessionDAO sessionDao,
 			TweetDAO tweetDao,
-			AccountBLI accountBli) {
+			AccountBLI accountBli,
+			TweetNotificationBLI tweetNotificationBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
+		this.tweetNotificationBli = tweetNotificationBli;
 	}
 
 	@Override
@@ -57,18 +61,13 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		tweet.setSender(session.getAccount());
 		TweetDTO saveTweet = tweetDao.save(tweet);
 		
-		if (shouldNotify(tweet)) {
-			accountBli.sendEmailByZip(tweet.getSender(), EmailTemplate.SECURITY_ALERT);
+		if (tweetNotificationBli.shouldNotification(saveTweet)) {
+			accountBli.sendEmailByZip(tweet.getSender(), tweet.getType().getNotificationType(), EmailTemplate.SECURITY_ALERT);
 		}
 		
 		TweetResult result = new TweetResult();
 		result.setTweet(saveTweet);
 		return result;
-	}
-
-	private boolean shouldNotify(Tweet tweet) {
-		// TODO: change that to security alert
-		return tweet.getType() == TweetType.ANNOUNCEMENT;
 	}
 
 	private void checkUsage() throws NeedsSubscriptionException, InternalError, UsageLimitExceededException {
@@ -101,7 +100,6 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 			}
 		}
 	}
-	
 
 	private SubscriptionPlan findActiveSubscriptionPlan(BusinessAccount account) {
 		for(Transaction txn : account.getTransactions()) {

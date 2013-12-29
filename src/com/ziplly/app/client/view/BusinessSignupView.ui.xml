@@ -70,6 +70,17 @@
 							<b:HelpInline ui:field="street1Error"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<b:ControlGroup ui:field="neighborhoodCg">
+						<b:Controls ui:field="neighborhoodControl">
+							<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+							<g:HTMLPanel ui:field="neighborhoodListPanel">
+								<!-- <b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> -->
+							</g:HTMLPanel>
+							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+							<b:HelpBlock>Pick your neighborhood to learn about whats
+								going on in there</b:HelpBlock>
+						</b:Controls>
+					</b:ControlGroup>
 					<!-- <b:ControlGroup ui:field="street2Cg"> <b:Controls> <b:Label>Street2</b:Label> 
 						<br /> <b:TextBox ui:field="street2" placeholder="street2..." /> <b:HelpInline 
 						ui:field="street2Error"></b:HelpInline> </b:Controls> </b:ControlGroup> 

@@ -78,4 +78,41 @@ public class AccountNotificationDTO implements Serializable {
 	public void setStatus(RecordStatus status) {
 		this.status = status;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((notificationId == null) ? 0 : notificationId.hashCode());
+		result = prime * result + ((readStatus == null) ? 0 : readStatus.hashCode());
+		result = prime * result + ((recipient == null) ? 0 : recipient.hashCode());
+		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((timeCreated == null) ? 0 : timeCreated.hashCode());
+		result = prime * result + ((timeUpdated == null) ? 0 : timeUpdated.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AccountNotificationDTO other = (AccountNotificationDTO) obj;
+		if (notificationId == null) {
+			if (other.notificationId != null)
+				return false;
+		} 
+		else if (notificationId.equals(other.notificationId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 }

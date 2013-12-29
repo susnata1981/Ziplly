@@ -9,7 +9,6 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,6 +26,7 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.client.view.factory.AccountNotificationFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountNotificationDTO;
@@ -161,33 +161,15 @@ public class NavView extends Composite implements INavView {
 		Anchor anchor = new Anchor();
 		anchor.setStyleName(style.notificationLink());
 		notifications.add(anchor);
-		String content = null;
-		switch (an.getType()) {
-		case PERSONAL_MESSAGE:
-			formatter.format(an, ValueType.RECIPIENT_ACCOUNT_NOTIFICATION_VALUE);
-			anchor.getElement().setInnerHTML(content);
-			ClickHandler handler = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					presenter.onNotificationLinkClick(an);
-				}
-			};
-			anchor.addClickHandler(handler);
-			break;
-		case ANNOUNCEMENT:
-			content = formatter.format(an, ValueType.ANNOUNCEMENT_NOTIFICATION_VALUE);
-			anchor.getElement().setInnerHTML(content);
-			handler = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					presenter.goTo(new HomePlace(TweetType.ANNOUNCEMENT.name().toLowerCase()));
-				}
-			};
-			anchor.addClickHandler(handler);
-			break;
-		default:
-			// ;
-		}
+		ValueType valueType = ValueType.valueOf(an.getType().name());
+		anchor.getElement().setInnerHTML(formatter.format(an, valueType));
+		ClickHandler handler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.onNotificationLinkClick(an);
+			}
+		};
+		anchor.addClickHandler(handler);
 	}
 
 	@Override

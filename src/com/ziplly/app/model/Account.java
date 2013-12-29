@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -80,10 +82,14 @@ public class Account extends AbstractTimestampAwareEntity {
 	
 	@Column(name="zip", nullable=false)
 	private int zip;
-	private String neighborhood;
 	private String city;
 	private String state;
 	private AccountStatus status;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="neighborhood_id")
+	private Neighborhood neighborhood;
 	
 	@Column(name="role", insertable=true, updatable=false)
 	private Role role;
@@ -121,7 +127,10 @@ public class Account extends AbstractTimestampAwareEntity {
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
 		setZip(account.getZip());
-		setNeighborhood(account.getNeighborhood());
+		
+		if (account.getNeighborhood() != null) {
+			setNeighborhood(new Neighborhood(account.getNeighborhood()));
+		}
 		setCity(account.getCity());
 		setState(account.getState());
 		setRole(account.getRole());
@@ -275,11 +284,11 @@ public class Account extends AbstractTimestampAwareEntity {
 		this.notificationSettings = notifications;
 	}
 
-	public String getNeighborhood() {
+	public Neighborhood getNeighborhood() {
 		return neighborhood;
 	}
 
-	public void setNeighborhood(String neighborhood) {
+	public void setNeighborhood(Neighborhood neighborhood) {
 		this.neighborhood = neighborhood;
 	}
 

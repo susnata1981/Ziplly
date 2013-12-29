@@ -9,6 +9,9 @@ import java.util.Map;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.FluidContainer;
+import com.github.gwtbootstrap.client.ui.FluidRow;
+import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
@@ -99,6 +102,8 @@ public class ConversationView extends Composite implements IConversationView {
 		String subjectFont();
 		
 		String helpinline();
+		
+		String conversationRow();
 	}
 
 	@UiField
@@ -372,6 +377,20 @@ public class ConversationView extends Composite implements IConversationView {
 		return accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE);
 	}
 	
+	private Anchor getImageAnchor(final AccountDTO acct, ValueType imageValueType) {
+		Anchor anchor = new Anchor();
+		anchor.setHTML(accountFormatter.format(acct, imageValueType));
+		anchor.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new PersonalAccountPlace(acct.getAccountId()));
+			}
+		});
+		
+		return anchor;
+	}
+	
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
@@ -386,8 +405,15 @@ public class ConversationView extends Composite implements IConversationView {
 		}
 	}
 
-	/*
+	Heading getHeading(int size, String text) {
+		Heading heading = new Heading(size);
+		heading.setText(text);
+		return heading;
+	}
+	
+	/**
 	 * Displays the entire conversation
+	 * @param conversation
 	 */
 	@Override
 	public void displayConversation(final ConversationDTO conversation) {
@@ -396,14 +422,41 @@ public class ConversationView extends Composite implements IConversationView {
 			conversationPanel.clear();
 			messagesPanel = new HTMLPanel("");
 			
-			StringBuilder temp = new StringBuilder();
-			temp.append("From:"+getImageLink(conversation.getSender()));
-			temp.append("<br>To:"+getImageLink(conversation.getReceiver()));
-			temp.append("<br><br><span>Subject:&nbsp;"+ conversation.getSubject() + "</span>");
+			FluidRow row = new FluidRow();
+			row.addStyleName(style.conversationRow());
+			com.github.gwtbootstrap.client.ui.Column col1 = new com.github.gwtbootstrap.client.ui.Column(1);
+			col1.add(getHeading(4, SENDER_KEY));
+			row.add(col1);
 			
-			HTMLPanel subjectPanel = new HTMLPanel(temp.toString());
-			subjectPanel.setStyleName(style.subjectHeader());
-			conversationPanel.add(subjectPanel);
+			com.github.gwtbootstrap.client.ui.Column col2 = new com.github.gwtbootstrap.client.ui.Column(5);
+			col2.setOffset(1);
+			col2.add(getImageAnchor(conversation.getSender(), ValueType.SMALL_IMAGE_VALUE));
+			row.add(col2);
+			conversationPanel.add(row);
+			
+			row = new FluidRow();
+			row.addStyleName(style.conversationRow());
+			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
+			col1.add(getHeading(4, RECEIVER_KEY));
+			row.add(col1);
+			
+			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
+			col2.setOffset(1);
+			col2.add(getImageAnchor(conversation.getReceiver(), ValueType.SMALL_IMAGE_VALUE));
+			row.add(col2);
+			conversationPanel.add(row);
+			
+			row = new FluidRow();
+			row.addStyleName(style.conversationRow());
+			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
+			col1.add(getHeading(4, SUBJECT_KEY));
+			row.add(col1);
+			
+			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
+			col2.setOffset(1);
+			col2.add(new HTMLPanel(basicDataFormatter.format(conversation.getSubject(), ValueType.STRING_VALUE)));
+			row.add(col2);
+			conversationPanel.add(row);
 
 			for (MessageDTO msg : conversation.getMessages()) {
 				messagesPanel.add(displayMessage(msg));
@@ -413,38 +466,31 @@ public class ConversationView extends Composite implements IConversationView {
 		}
 	}
 
+	/**
+	 * Displays individual messages of a conversation
+	 * @param msg
+	 * @return
+	 */
 	private HTMLPanel displayMessage(final MessageDTO msg) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.conversation());
-		Anchor senderLink = new Anchor();
-		StringBuilder temp = new StringBuilder();
-		temp.append("<img width='20' height='20' src='"+msg.getSender().getImageUrl()+"'/>");
-		temp.append("&nbsp;"+msg.getSender().getDisplayName());
-		senderLink.setHTML(temp.toString());
-		senderLink.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.goTo(new PersonalAccountPlace(msg.getSender()
-						.getAccountId()));
-			}
-		});
-		senderLink.setStyleName(style.senderBlock());
-		panel.add(senderLink);
+		panel.add(getImageAnchor(msg.getSender(), ValueType.MEDIUM_IMAGE_VALUE));
 
-		HTMLPanel messagePanel = new HTMLPanel("<span class='medium_text'>"
-				+ msg.getMessage() + "</span>");
+		HTMLPanel messagePanel = new HTMLPanel("<span class='medium_text'>" + msg.getMessage() + "</span>");
 		messagePanel.setStyleName(style.subjectBlock());
 		panel.add(messagePanel);
 
-		String date = DateTimeFormat.getFormat(
-				PredefinedFormat.DATE_TIME_MEDIUM).format(msg.getTimeCreated());
-		HTMLPanel timePanel = new HTMLPanel("<span class='medium_text'>" + date
-				+ "</span>");
+		HTMLPanel timePanel = new HTMLPanel(basicDataFormatter.format(msg.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM));
 		timePanel.setStyleName(style.dateBlock());
 		panel.add(timePanel);
 		return panel;
 	}
 
+	/**
+	 * Adds a reply panel
+	 * @param root
+	 * @param c
+	 */
 	private void addReplyPanel(final HTMLPanel root, final ConversationDTO c) {
 		HTMLPanel replyPanel = new HTMLPanel("");
 		replyPanel.addStyleName(style.replyPanel());

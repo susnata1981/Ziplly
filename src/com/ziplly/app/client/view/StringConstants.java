@@ -43,4 +43,8 @@ public class StringConstants {
 	public static final String PAYMENT_UNSUCCESSFULL = "Failed to complete payment";
 	public static final String DUPLICATE_SUBSCRIPTION_ATTEMPT = "You already have a subscription. Please cancel the existing one before adding a new one.";
 	public static final String ENABLE_PAYMENT_PLAN = "app.feature.enablePaymentPlan";
+	public static final String NEIGHBORHOOD_NOT_SELECTED = "Please select a neighborhood.";
+	public static final String EMAIL_ALREADY_EXISTS = "This email address already exists.";
+	public static final String NOT_AVAILABLE_IN_AREA = "Sorry, ziplly is not yet available in your area";
+	public static final String SERVICE_NOT_AVAILABLE = "Sorry Ziplly isn't yet available in your area";
 }

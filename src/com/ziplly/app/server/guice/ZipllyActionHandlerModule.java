@@ -20,6 +20,7 @@ import com.ziplly.app.server.handlers.GetImageUploadUrlActionHandler;
 import com.ziplly.app.server.handlers.GetJwtTokenActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
+import com.ziplly.app.server.handlers.GetNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetResidentsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetActionHandler;
@@ -60,6 +61,7 @@ import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
+import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetResidentsRequest;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
@@ -98,6 +100,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(RegisterAccountAction.class, RegisterAccountActionHandler.class);
 		bindHandler(CreateRegistrationAction.class, CreateRegistrationActionHandler.class);
 		bindHandler(UpdatePasswordAction.class, UpdatePasswordActionHandler.class);
+		
+		// Neighborhood
+		bindHandler(GetNeighborhoodAction.class, GetNeighborhoodActionHandler.class);
 		
 		bindHandler(ValidateLoginAction.class, ValidateLoginActionHandler.class);
 		

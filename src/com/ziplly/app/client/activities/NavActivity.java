@@ -12,6 +12,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.NavView.NavPresenter;
@@ -24,6 +25,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
 import com.ziplly.app.shared.ViewNotificationAction;
@@ -32,7 +34,7 @@ import com.ziplly.app.shared.ViewNotificationResult;
 public class NavActivity extends AbstractActivity implements NavPresenter {
 	private INavView view;
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
-	
+
 	public static interface INavView extends View<NavPresenter> {
 		void showAccountLinks(boolean show);
 
@@ -145,7 +147,20 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	@Override
 	public void onNotificationLinkClick(AccountNotificationDTO an) {
 		markNotificationAsRead(an);
-		goTo(new ConversationPlace());
+		switch (an.getType()) {
+		case PERSONAL_MESSAGE:
+			goTo(new ConversationPlace());
+			return;
+		case SECURITY_ALERT:
+			goTo(new HomePlace(TweetType.SECURITY_ALERTS.name().toLowerCase()));
+			return;
+		case ANNOUNCEMENT:
+			goTo(new HomePlace(TweetType.ANNOUNCEMENT.name().toLowerCase()));
+			return;
+		case OFFERS:
+			goTo(new HomePlace(TweetType.OFFERS.name().toLowerCase()));
+			return;
+		}
 	}
 
 	private class AccountNotificationHandler implements AccountNotificationEventHandler {

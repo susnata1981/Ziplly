@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style type="com.ziplly.app.client.view.NavView.Style">
+		@external notificationDropdown dropdown-menu;
 		.navPillList {
 		float: right;
 		margin: 15px 100px
@@ -35,6 +36,12 @@
 		padding: 2px;
 		line-height: 16px;
 		}
+		.notificationDropdown {
+		}
+		.notificationDropdown .dropdown-menu {
+			max-height: 180px;
+			overflow: auto;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:ResponsiveNavbar>
@@ -47,7 +54,7 @@
 					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
 					<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
 				</b:Dropdown>
-				<b:Dropdown icon="BELL" ui:field="notifications">
+				<b:Dropdown icon="BELL" ui:field="notifications" addStyleNames="{style.notificationDropdown}">
 					<b:customTrigger>
 						<g:HTMLPanel ui:field="unreadNotificationCountPanel"
 							addStyleNames="{style.unreadNotificationCountPanel}">

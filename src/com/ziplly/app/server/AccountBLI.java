@@ -14,6 +14,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.shared.EmailTemplate;
@@ -35,6 +36,6 @@ public interface AccountBLI {
 	void sendPasswordRecoveryEmail(String email) throws NotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, DuplicateException;
 	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError,NotFoundException;
 	void resetPassword(Long accountId, String password) throws NotFoundException;
-	void sendEmailByZip(Account sender, EmailTemplate template);
 	void sendEmail(Account sender, Account receiver, EmailTemplate template);
+	void sendEmailByZip(Account sender, NotificationType type, EmailTemplate template);
 }

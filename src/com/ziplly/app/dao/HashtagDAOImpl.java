@@ -114,5 +114,36 @@ public class HashtagDAOImpl implements HashtagDAO {
 		
 		return tweets;	
 	}
+	
+	@Override
+	public List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag, Long neighborhoodId, int page, int pageSize) {
+		if (hashtag == null) {
+			throw new IllegalArgumentException("Invalid argument");
+		}
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		List<TweetDTO> tweets = Lists.newArrayList();
+		try {
+			HashtagDTO result = findByName(hashtag);
+			int start = page * pageSize;
+			Query query = em.createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
+				.setParameter("id", result.getId())
+				.setFirstResult(start)
+				.setMaxResults(pageSize);
+			
+			for(Object tweetId : query.getResultList()) {
+				BigInteger id = (BigInteger)tweetId;
+				Tweet tweet = tweetDao.findTweetById(id.longValue());
+				if (tweet.getSender().getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+					tweets.add(EntityUtil.clone(tweet));
+				}
+			}
+		} catch (NoResultException nre) {
+			throw nre;
+		} finally {
+			em.close();
+		}
+		
+		return tweets;	
+	}
 		
 }

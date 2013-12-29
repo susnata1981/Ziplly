@@ -19,30 +19,35 @@
 		border: 1px solid #ddd;
 		}
 		.loginWidget {
-			margin: 2% auto;
+		margin: 2% auto;
 		}
 
 		input[type="text"],input[type="password"] {
-		height: 32px !important;
+		height:
+		32px !important;
 		font-color: #555;
-		font-family: Verdana, Geneva, sans-serif;
+		font-family: Verdana, Geneva,
+		sans-serif;
 		font-size: 15px;
 		padding: 4px;
 		}
 		.uploadImageForm {
-		clear: both;
+		clear:
+		both;
 		height: 180px;
 		}
 		.chooseFileUploadButton {
 		display: block;
-		clear: left;
+		clear:
+		left;
 		width: 20%;
 		}
 		.uploadImageButton {
 		clear: left;
 		display:
 		block;
-		width: 14%;
+		width:
+		14%;
 		}
 		.profileImagePreviewDiv {
 		float: left;
@@ -65,7 +70,8 @@
 		margin-right: 3%;
 		}
 		.textBox {
-		width: 94%;
+		width:
+		94%;
 		}
 		.emailField {
 		clear: both;
@@ -129,6 +135,17 @@
 							<b:HelpInline ui:field="zipError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<b:ControlGroup ui:field="neighborhoodCg">
+						<b:Controls ui:field="neighborhoodControl">
+							<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+							<g:HTMLPanel ui:field="neighborhoodListPanel">
+								<!-- <b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> -->
+							</g:HTMLPanel>
+							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+							<b:HelpBlock>Pick your neighborhood to learn about whats
+								going on in there</b:HelpBlock>
+						</b:Controls>
+					</b:ControlGroup>
 					<b:ControlGroup ui:field="passwordCg">
 						<b:Controls>
 							<b:Label>Password</b:Label>
@@ -138,15 +155,6 @@
 							<b:HelpInline ui:field="passwordError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
-					<!-- <b:ControlGroup ui:field="confirmPasswordCg">
-						<b:Controls>
-							<b:Label>Confirm password</b:Label>
-							<br />
-							<b:PasswordTextBox ui:field="confirmPassword"
-								placeholder="confirm password..." />
-							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup> -->
 					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
 				</b:Form>
 			</div>

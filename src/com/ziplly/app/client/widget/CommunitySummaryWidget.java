@@ -13,6 +13,7 @@ import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
+import com.ziplly.app.model.NeighborhoodDTO;
 
 public class CommunitySummaryWidget extends Composite {
 
@@ -37,6 +38,12 @@ public class CommunitySummaryWidget extends Composite {
 	
 	public void setWidth(String width) {
 		communitySummaryPanel.setWidth(width);
+	}
+	
+	public void displaySummaryData(NeighborhoodDTO neighborhood) {
+		if (neighborhood != null) {
+			communityNameSpan.setInnerText(neighborhood.getName()+","+neighborhood.getCity());
+		}
 	}
 	
 	public void displayMap(LatLng ll) {

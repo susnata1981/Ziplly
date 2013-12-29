@@ -8,16 +8,27 @@ public class AccountNotificationFormatter extends AbstractValueFormatter<Account
 	public String format(AccountNotificationDTO value, ValueType type) {
 		StringBuilder content = new StringBuilder();
 		switch(type) {
-		case RECIPIENT_ACCOUNT_NOTIFICATION_VALUE:
+		case PERSONAL_MESSAGE:
 			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
 			content.append(basicValueFormatter.format("&nbsp;has a message for you", ValueType.STRING_VALUE));
 			return content.toString();
-		case ANNOUNCEMENT_NOTIFICATION_VALUE:
+		case SECURITY_ALERT:
 			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
-			content.append(basicValueFormatter.format("&nbsp;has made a security update", ValueType.STRING_VALUE));
+			content.append(basicValueFormatter.format("&nbsp;posted a security alert", ValueType.STRING_VALUE));
+			return content.toString();
+		case ANNOUNCEMENT:
+			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
+			content.append(basicValueFormatter.format("&nbsp;posted an announcement", ValueType.STRING_VALUE));
+			return content.toString();
+		case OFFERS:
+			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
+			content.append(basicValueFormatter.format("&nbsp;posted an offer", ValueType.STRING_VALUE));
 			return content.toString();
 		case ACCOUNT_NOTIFICATION_SENDER_IMAGE:
 			content.append("<img src='"+value.getSender().getImageUrl()+"' width='25px' height='25px'/>&nbsp;"+value.getSender().getDisplayName());
+			return content.toString();
+		case ACCOUNT_NOTIFICATION_TYPE:
+			content.append("<span>"+value.getType().name().toLowerCase()+"</span>");
 			return content.toString();
 		default:
 			throw new IllegalArgumentException("Invalid ValueType to render method");

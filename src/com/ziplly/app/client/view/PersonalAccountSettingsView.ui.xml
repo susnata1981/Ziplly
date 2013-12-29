@@ -97,8 +97,8 @@
 					</g:HTMLPanel>
 				</b:Tab>
 				<b:Tab ui:field="privacyTab" heading="Privacy">
-				    <g:HTMLPanel>
-						<table class="{style.notificationTable}">
+				    <g:HTMLPanel ui:field="privacyPanel">
+						<!-- <table class="{style.notificationTable}">
 							<thead>
 								<tr>
 									<th>Field</th>
@@ -119,43 +119,11 @@
 									</tr>
 								</tbody>
 							</thead>
-						</table>
+						</table> -->
 					</g:HTMLPanel>
 				</b:Tab>
 				<b:Tab ui:field="notification" heading="Notification">
-					<g:HTMLPanel>
-						<table class="{style.notificationTable}">
-							<thead>
-								<tr>
-									<th>Notification Type</th>
-									<th>Action</th>
-								</tr>
-								<tbody>
-									<tr>
-										<td>Security Alerts</td>
-										<td>
-											<b:ControlGroup>
-												<b:Controls>
-													<b:ListBox ui:field="securitySettingsListBox">
-													</b:ListBox>
-												</b:Controls>
-											</b:ControlGroup>
-										</td>
-									</tr>
-									<tr>
-										<td>Personal Message</td>
-										<td>
-											<b:ControlGroup>
-												<b:Controls>
-													<b:ListBox ui:field="personalMessageSettingsListBox">
-													</b:ListBox>
-												</b:Controls>
-											</b:ControlGroup>
-										</td>
-									</tr>
-								</tbody>
-							</thead>
-						</table>
+					<g:HTMLPanel ui:field="notificationPanel">
 					</g:HTMLPanel>
 				</b:Tab>
 				<b:Tab ui:field="passwordTab" heading="Password Reset">

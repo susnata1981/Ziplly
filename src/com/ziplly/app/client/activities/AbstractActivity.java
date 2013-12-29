@@ -53,12 +53,12 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public void setBackgroundImage() {
-		RootPanel.get().getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
-		RootPanel.get().getElement().getStyle().setProperty("backgroundSize", "cover");
+		RootPanel.get("main").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
+		RootPanel.get("main").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 	
 	public void clearBackgroundImage() {
-		RootPanel.get().getElement().getStyle().setBackgroundImage("");
+		RootPanel.get("main").getElement().getStyle().setBackgroundImage("");
 	}
 	
 	public void checkAccountLogin() {

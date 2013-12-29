@@ -23,7 +23,6 @@ public class PriceRangeWidget extends Widget {
 	
 	public void setRange(PriceRange range) {
 		int r = range.ordinal() + 1;
-		System.out.println("ORDINAL:"+r);
 		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<r; i++) {
 			sb.append("$");

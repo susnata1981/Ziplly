@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal ui:field="modal">
+			<g:HTMLPanel>
+				<p>
+					Sorry, we're still running in Beta mode only in certain
+					locations.
+					But we'll love to invite you as soon
+					as we're fully
+					launched. Please
+					provide
+				</p>
+				<b:ControlGroup ui:field="emailCg">
+					<b:Controls>
+						<b:Label>Email</b:Label>
+						<br />
+						<b:TextBox ui:field="email" placeholder="email..." />
+						<b:HelpInline ui:field="emailError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="zipCg">
+					<b:Controls>
+						<b:Label>Zip</b:Label>
+						<br />
+						<b:TextBox ui:field="zip" placeholder="zip..." />
+						<b:HelpInline ui:field="zipError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:Button type="PRIMARY" ui:field="submitBtn">Submit</b:Button>
+				<b:Button ui:field="cancelBtn">No thanks</b:Button>
+			</g:HTMLPanel>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 
