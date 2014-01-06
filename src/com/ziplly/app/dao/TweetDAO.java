@@ -33,7 +33,7 @@ public interface TweetDAO {
 	
 	Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException;
 	Long findTweetsCountByAccountId(Long accountId);
-	Tweet findTweetById(Long tweetId);
+	TweetDTO findTweetById(Long tweetId);
 	List<TweetDTO> findAll();
 	List<TweetDTO> findTweets(String query, int start, int end);
 	

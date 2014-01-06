@@ -240,6 +240,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets());
+				hideLoadingIcon();
 			}
 		});
 	}

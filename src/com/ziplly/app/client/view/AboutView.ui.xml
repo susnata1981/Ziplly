@@ -3,18 +3,14 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="com.ziplly.app.client.widget.MyBundle" field="resource" />
 	<ui:style>
-		.aboutDiv {
-		width: 70%;
-		border: 2px solid #ddd;
-		border-radius:
-		10px;
-		margin: 4% 10%;
-		padding: 4px 8px;
-		overflow: visible;
-		}
-		p.text {
+		<!-- .aboutDiv { width: 70%; border: 2px solid #ddd; border-radius: 10px; 
+			margin: 4% 10%; padding: 4px 8px; overflow: visible; } -->
+
+		.text {
 		font-family: Geneva, Tahoma, Verdana, sans-serif;
-		font-size: 14px;
+		font-size:
+		14px;
+		text-align: justify;
 		}
 		.leftimage {
 		float: left;
@@ -32,78 +28,162 @@
 		clear: both;
 		}
 		.imageSection {
-		float: left;
+		float:
+		left;
 		width: 34%;
-		border: 1px solid #ddd;
+		border: 1px
+		solid #ddd;
 		}
-		.info {
-			float: left;
-			width: 44%;
-			margin-left: 2%;
+		.rowWithMargin {
+			margin: 25px 0;
 		}
-		.peopleSection {
-			clear: both;
-			margin: 20px 10px;
+		.contactForm {
+			margin: 20px 0;
+			padding: 6px;
+			border: 1px solid #ddd;
+			color: #555444;
+		}
+		.contentArea {
+			height: 100px;
+			width: 75%;
+		}
+		.headingWithBorder {
+			border-bottom: 1px solid #ddd;
 		}
 	</ui:style>
-	<g:HTMLPanel addStyleNames="{style.aboutDiv}">
-		<div>
-			<b:Heading size="3">Our story</b:Heading>
-			<hr />
-			<p class="{style.text}">
-				Think industry jargon makes you sound super smart on your
-				'About Us'
-				page?
-				Think again. People want -- and appreciate --
-				straight talk about
-				what your business does. After all, if people
-				can't figure out what
-				you do, how will they know they need your
-				product or service?
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column offset="1" size="9">
+				<g:HTMLPanel>
+					<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Our story</b:Heading>
+					<p class="{style.text}">
+						Think industry jargon makes you sound super smart on
+						your
+						'About Us'
+						page?
+						Think again. People want -- and appreciate --
+						straight talk about
+						what your business does. After all, if people
+						can't figure out what
+						you do, how will they know they need your
+						product or service?
 
-				So, skip the industry lingo like Apptopia does on
-				its 'About Us' page.
-				The startup's simple but polished language
-				effectively communicates
-				the company's offering while still allowing
-				the Average Joe to
-				understand it. Take a look at the last paragraph
-				-- using short and
-				punchy sentences, the paragraph explains a complex
-				product in a very
-				simple way.
-			</p>
-		</div>
-		<hr />
-		<div class="{style.peopleSection}">
-			<div class="{style.imageSection}">
-				<img ui:field="tom" src="images/shaan.jpeg" class="{style.leftimage}" />
-			</div>
-			<div class="{style.info}">
-				So, skip the industry lingo like Apptopia does on its 'About Us'
-				page.
-				The startup's simple but polished language effectively
-				communicates
-				the company's offering while still allowing the Average
-				punchy sentences, the paragraph explains a complex product in a
-				very
-				simple way.
-			</div>
-		</div>
-		<div class="{style.peopleSection}">
-			<div class="{style.imageSection}">
-				<img src="images/shaan.jpeg" class="{style.leftimage}" />
-			</div>
-			<div class="{style.info}">
-				So, skip the industry lingo like Apptopia does on its 'About Us'
-				page.
-				The startup's simple but polished language effectively
-				communicates
-				the company's offering while still allowing the Average
-				punchy sentences, the paragraph explains a complex product in a
-				simple way.
-			</div>
-		</div>
-		<div class="{style.clear}" />
-	</g:HTMLPanel>
+						So, skip the industry lingo like Apptopia does
+						on
+						its 'About Us' page.
+						The startup's simple but polished language
+						effectively communicates
+						the company's offering while still
+						allowing
+						the Average Joe to
+						understand it. Take a look at the last
+						paragraph
+						-- using short and
+						punchy sentences, the paragraph
+						explains a
+						complex
+						product in a very
+						simple way.
+					</p>
+					<br />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.rowWithMargin}">
+			<b:Column offset="1" size="2">
+				<g:HTMLPanel>
+					<img ui:field="tom" src="images/shaan.jpeg" class="{style.leftimage}" />
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="6">
+				<g:HTMLPanel>
+					<p class="{style.text}">
+						So, skip the industry lingo like
+						Apptopia does on its
+						'About Us'
+						page.
+						The startup's simple but polished
+						language
+						effectively
+						communicates
+						the company's offering while still
+						allowing
+						the Average
+						punchy sentences, the paragraph explains a
+						complex
+						product in a
+						very
+						simple way.
+					</p>
+					<br />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.rowWithMargin}">
+			<b:Column offset="1" size="2">
+				<g:HTMLPanel>
+					<img src="images/shaan.jpeg" class="{style.leftimage}" />
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="6">
+				<g:HTMLPanel>
+					<p class="{style.text}">
+						So, skip the industry lingo like
+						Apptopia does on its
+						'About Us'
+						page.
+						The startup's simple but polished
+						language
+						effectively
+						communicates
+						the company's offering while still
+						allowing
+					</p>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+		    <b:Column offset="1" size="3">
+		        <g:HTMLPanel>
+		            <b:Heading size="3" addStyleNames="{style.headingWithBorder}">Contact us</b:Heading>
+		            <Address>
+		                Ziplly Services Inc.<br/>
+		                3006 21st Ave W,
+		                Seattle, WA 98199
+		            </Address>
+		            <span>Telephone: &nbsp; 918-850-7778</span>
+		        </g:HTMLPanel>
+		    </b:Column>
+		 </b:FluidRow>
+		 <b:FluidRow>
+			<b:Column offset="1" size="7">
+				<g:HTMLPanel addStyleNames="{style.contactForm}">
+				    <b:Alert ui:field="message"/>
+					<b:Form>
+					    <b:Fieldset>
+						<b:ControlGroup ui:field="emailCg">
+							<b:Label>Email</b:Label>
+							<br />
+							<b:TextBox ui:field="email" placeholder="email..." />
+							<b:HelpInline ui:field="emailError"></b:HelpInline>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="subjectCg">
+							<b:Label>Subject</b:Label>
+							<br/>
+							<b:TextBox ui:field="subject" placeholder="subject..." />
+							<b:HelpInline ui:field="subjectError"></b:HelpInline>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="contentCg">
+							<b:Label>Content</b:Label>
+							<br />
+							<b:TextArea ui:field="content" placeholder="content..." addStyleNames="{style.contentArea}"/>
+							<b:HelpInline ui:field="contentError"></b:HelpInline>
+						</b:ControlGroup>
+						<b:Button type="PRIMARY" ui:field="contactBtn" addStyleNames="btn">Submit</b:Button>
+						</b:Fieldset>
+					</b:Form>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder>

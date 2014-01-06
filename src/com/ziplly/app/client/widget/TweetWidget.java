@@ -132,7 +132,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	// Comment section
 	@UiField
-	Anchor commentLink;
+	ZAnchor commentLink;
 	@UiField
 	HTMLPanel tweetCommentSection;
 	@UiField

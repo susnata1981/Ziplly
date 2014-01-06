@@ -14,6 +14,7 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.widget.LoadingPanelWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -27,12 +28,21 @@ public abstract class AbstractActivity implements Activity {
 	protected EventBus eventBus;
 	protected ApplicationContext ctx;
 	private static final String BACKGROUND_IMG_URL = "url('images/neighborhood_large.jpg')";
-
+	protected LoadingPanelWidget loadingModal = new LoadingPanelWidget();
+	
 	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, PlaceController placeController, ApplicationContext ctx) {
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
 		this.ctx = ctx;
+	}
+
+	void showLodingIcon() {
+		loadingModal.show(true);
+	}
+
+	void hideLoadingIcon() {
+		loadingModal.show(false);
 	}
 
 	public void goTo(Place place) {
@@ -53,12 +63,12 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public void setBackgroundImage() {
-		RootPanel.get("main").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
-		RootPanel.get("main").getElement().getStyle().setProperty("backgroundSize", "cover");
+		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
+		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 	
 	public void clearBackgroundImage() {
-		RootPanel.get("main").getElement().getStyle().setBackgroundImage("");
+		RootPanel.get("wrapper").getElement().getStyle().clearBackgroundImage();
 	}
 	
 	public void checkAccountLogin() {

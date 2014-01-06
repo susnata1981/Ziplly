@@ -4,161 +4,218 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="accountview.css" />
 
-	<g:HTMLPanel addStyleNames="{style.rootPanel}">
-		<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
-		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
-			<dl>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">Profile</g:Anchor>
-				</dt>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="inboxLink">
-						Inbox
-						<span ui:field="unreadMessageCountField" />
-					</g:Anchor>
-				</dt>
-			</dl>
-		</g:HTMLPanel>
-		<g:HTMLPanel addStyleNames="{style.settingsPanel}">
-			<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
-				<b:Tab ui:field="basicInfoTab" heading="About" active="true">
-					<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
-						<div class="profile_section_heading">
-							<span>Basic Info</span>
-						</div>
-						<div class="{style.profileInfoBlock}">
-							<div class="{style.profileInfoTextBlock}">
-								<div class="{style.non_editable}">
-									<span class="{style.label}">Name</span>
-									<span ui:field="firstname" />&nbsp;<span ui:field="lastname" />
-								</div>
-								<div class="{style.non_editable}">
-									<span class="{style.label}">Email</span>
-									<span ui:field="email" />
-								</div>
-							</div>
-							<div class="{style.profileInfoImageBlock}">
-								<g:FormPanel ui:field="uploadForm">
-									<g:HTMLPanel addStyleNames="{style.uploadFormActionPanel}">
-										<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
-										<g:FileUpload ui:field="uploadField" name="image" />
-										<b:Button ui:field="uploadBtn" size="MINI">Upload</b:Button>
+	<!-- <g:HTMLPanel addStyleNames="{style.rootPanel}"> <b:Alert ui:field="message" 
+		close="false" animation="true"></b:Alert> <g:HTMLPanel ui:field="asidePanel" 
+		addStyleNames="{style.asidePanel}"> <dl> <dt> <g:Anchor addStyleNames="{style.link}" 
+		ui:field="profileLink">Profile</g:Anchor> </dt> <dt> <g:Anchor addStyleNames="{style.link}" 
+		ui:field="inboxLink"> Inbox <span ui:field="unreadMessageCountField" /> </g:Anchor> 
+		</dt> </dl> </g:HTMLPanel> <g:HTMLPanel addStyleNames="{style.settingsPanel}"> 
+		<b:TabPanel tabPosition="top" ui:field="accountDetailsTab"> <b:Tab ui:field="basicInfoTab" 
+		heading="About" active="true"> <g:HTMLPanel addStyleNames="{style.basicInfoPanel}"> 
+		<div class="profile_section_heading"> <span>Basic Info</span> </div> <div 
+		class="{style.profileInfoBlock}"> <div class="{style.profileInfoTextBlock}"> 
+		<div class="{style.non_editable}"> <span class="{style.label}">Name</span> 
+		<span ui:field="firstname" />&nbsp;<span ui:field="lastname" /> </div> <div 
+		class="{style.non_editable}"> <span class="{style.label}">Email</span> <span 
+		ui:field="email" /> </div> </div> <div class="{style.profileInfoImageBlock}"> 
+		<g:FormPanel ui:field="uploadForm"> <g:HTMLPanel addStyleNames="{style.uploadFormActionPanel}"> 
+		<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" 
+		/> <g:FileUpload ui:field="uploadField" name="image" /> <b:Button ui:field="uploadBtn" 
+		size="MINI">Upload</b:Button> </g:HTMLPanel> </g:FormPanel> </div> <div class="{style.profileInfoBlock}"> 
+		<b:ControlGroup ui:field="introductionCg"> <b:Controls> <g:Label addStyleNames="{style.label}">Introduction</g:Label> 
+		<b:TextArea ui:field="introduction" addStyleNames="{style.introductionTextBox}" 
+		placeholder="tell us about yourself..." /> <b:HelpInline ui:field="introductionError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> </div> </div> </g:HTMLPanel> </b:Tab> <b:Tab 
+		ui:field="occupationTab" heading="Occupation"> <g:HTMLPanel> <div class="profile_section_heading"> 
+		<span>Occupation</span> </div> <b:ControlGroup ui:field="occupationCg"> <b:Controls> 
+		<g:Label addStyleNames="{style.label}">Occupation</g:Label> <b:TextBox ui:field="occupation" 
+		placeholder="occupation..." /> <b:HelpInline ui:field="occupationError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> </g:HTMLPanel> </b:Tab> <b:Tab ui:field="interestTab" 
+		heading="Interests"> <g:HTMLPanel> <div class="profile_section_heading"> 
+		<span>Interests</span> </div> <g:HTMLPanel ui:field="interestTabPanel"> </g:HTMLPanel> 
+		</g:HTMLPanel> </b:Tab> <b:Tab ui:field="locationTab" heading="Location"> 
+		<g:HTMLPanel> <div class="profile_section_heading"> <span>Location</span> 
+		</div> <b:ControlGroup ui:field="zipCg"> <b:Controls> <g:Label addStyleNames="{style.label}">Zip</g:Label> 
+		<b:TextBox ui:field="zip" placeholder="zip..." /> <b:HelpInline ui:field="zipError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> </g:HTMLPanel> </b:Tab> <b:Tab ui:field="privacyTab" 
+		heading="Privacy"> <g:HTMLPanel ui:field="privacyPanel"> <table class="{style.notificationTable}"> 
+		<thead> <tr> <th>Field</th> <th>Setting</th> </tr> <tbody> <tr> <td>Email</td> 
+		<td> <dt:ShareSettingsWidget ui:field="emailShareSetting"/> </td> </tr> <tr> 
+		<td>Occupation</td> <td> <dt:ShareSettingsWidget ui:field="occupationShareSetting"/> 
+		</td> </tr> </tbody> </thead> </table> </g:HTMLPanel> </b:Tab> <b:Tab ui:field="notification" 
+		heading="Notification"> <g:HTMLPanel ui:field="notificationPanel"> </g:HTMLPanel> 
+		</b:Tab> <b:Tab ui:field="passwordTab" heading="Password Reset"> <b:ControlGroup 
+		ui:field="passwordCg"> <b:Controls> <g:Label addStyleNames="{style.label}">Old 
+		Password</g:Label> <b:PasswordTextBox ui:field="password" placeholder="Old 
+		password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> </b:Controls> 
+		</b:ControlGroup> <b:ControlGroup ui:field="newPasswordCg"> <b:Controls> 
+		<g:Label addStyleNames="{style.label}">New Password</g:Label> <b:PasswordTextBox 
+		ui:field="newPassword" placeholder="New password..." /> <b:HelpInline ui:field="newPasswordError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:ControlGroup ui:field="confirmNewPasswordCg"> 
+		<b:Controls> <g:Label addStyleNames="{style.label}">Confirm new password</g:Label> 
+		<b:PasswordTextBox ui:field="confirmNewPassword" placeholder="confirm new 
+		password..." /> <b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:Button addStyleNames="{style.updatePasswordBtn}" 
+		ui:field="updatePasswordBtn">Update password</b:Button> </b:Tab> </b:TabPanel> 
+		<g:HTMLPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}"> 
+		<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button> <b:Button ui:field="cancelBtn">Cancel</b:Button> 
+		</g:HTMLPanel> </g:HTMLPanel> </g:HTMLPanel> -->
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column size="10">
+				<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow ui:field="asidePanel" addStyleNames="{style.asidePanel}">
+			<b:Column size="2">
+				<g:HTMLPanel>
+					<dl>
+						<dt>
+							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">Profile</g:Anchor>
+						</dt>
+						<dt>
+							<g:Anchor addStyleNames="{style.link}" ui:field="inboxLink">
+								Inbox
+								<span ui:field="unreadMessageCountField" />
+							</g:Anchor>
+						</dt>
+					</dl>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="8">
+				<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
+					<b:Tab ui:field="basicInfoTab" heading="About" active="true">
+						<b:Container>
+							<b:Row>
+								<b:Column size="6">
+									<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
+										<div class="profile_section_heading">
+											<span>Basic Info</span>
+										</div>
+										<div class="{style.profileInfoBlock}">
+											<div class="{style.profileInfoTextBlock}">
+												<div class="{style.non_editable}">
+													<span class="{style.label}">Name</span>
+													<span ui:field="firstname" />&nbsp;
+													<span ui:field="lastname" />
+												</div>
+												<div class="{style.non_editable}">
+													<span class="{style.label}">Email</span>
+													<span ui:field="email" />
+												</div>
+											</div>
+											<div class="{style.profileInfoBlock}">
+												<b:ControlGroup ui:field="introductionCg">
+													<b:Controls>
+														<g:Label addStyleNames="{style.label}">Introduction</g:Label>
+														<b:TextArea ui:field="introduction"
+															addStyleNames="{style.introductionTextBox}" placeholder="tell us about yourself..." />
+														<b:HelpInline ui:field="introductionError"></b:HelpInline>
+													</b:Controls>
+												</b:ControlGroup>
+											</div>
+										</div>
 									</g:HTMLPanel>
-								</g:FormPanel>
+								</b:Column>
+								<b:Column size="3">
+									<g:HTMLPanel addStyleNames="{style.settingsProfileImageSection}">
+										<g:FormPanel ui:field="uploadForm">
+											<g:HTMLPanel>
+												<b:Image ui:field="profileImagePreview"
+													addStyleNames="{style.profileImage}" />
+												<g:FileUpload ui:field="uploadField" name="image" /><br/>
+												<b:Button ui:field="uploadBtn" size="MINI">Upload</b:Button>
+											</g:HTMLPanel>
+										</g:FormPanel>
+									</g:HTMLPanel>
+								</b:Column>
+							</b:Row>
+						</b:Container>
+					</b:Tab>
+					<b:Tab ui:field="occupationTab" heading="Occupation">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Occupation</span>
 							</div>
-							<div class="{style.profileInfoBlock}">
-								<b:ControlGroup ui:field="introductionCg">
-									<b:Controls>
-										<g:Label addStyleNames="{style.label}">Introduction</g:Label>
-										<b:TextArea ui:field="introduction" addStyleNames="{style.introductionTextBox}"
-											placeholder="tell us about yourself..." />
-										<b:HelpInline ui:field="introductionError"></b:HelpInline>
-									</b:Controls>
-								</b:ControlGroup>
-							</div>
-						</div>
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="occupationTab" heading="Occupation">
-					<g:HTMLPanel>
-						<div class="profile_section_heading">
-							<span>Occupation</span>
-						</div>
-						<b:ControlGroup ui:field="occupationCg">
-							<b:Controls>
-								<g:Label addStyleNames="{style.label}">Occupation</g:Label>
-								<b:TextBox ui:field="occupation" placeholder="occupation..." />
-								<b:HelpInline ui:field="occupationError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="interestTab" heading="Interests">
-					<g:HTMLPanel>
-						<div class="profile_section_heading">
-							<span>Interests</span>
-						</div>
-						<g:HTMLPanel ui:field="interestTabPanel">
+							<b:ControlGroup ui:field="occupationCg">
+								<b:Controls>
+									<g:Label addStyleNames="{style.label}">Occupation</g:Label>
+									<b:TextBox ui:field="occupation" placeholder="occupation..." />
+									<b:HelpInline ui:field="occupationError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="locationTab" heading="Location">
-					<g:HTMLPanel>
-						<div class="profile_section_heading">
-							<span>Location</span>
-						</div>
-						<b:ControlGroup ui:field="zipCg">
+					</b:Tab>
+					<b:Tab ui:field="interestTab" heading="Interests">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Interests</span>
+							</div>
+							<g:HTMLPanel ui:field="interestTabPanel">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Tab>
+					<b:Tab ui:field="locationTab" heading="Location">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Location</span>
+							</div>
+							<b:ControlGroup ui:field="zipCg">
+								<b:Controls>
+									<g:Label addStyleNames="{style.label}">Zip</g:Label>
+									<b:TextBox ui:field="zip" placeholder="zip..." />
+									<b:HelpInline ui:field="zipError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+						</g:HTMLPanel>
+					</b:Tab>
+					<b:Tab ui:field="privacyTab" heading="Privacy">
+						<g:HTMLPanel ui:field="privacyPanel">
+							<!-- <table class="{style.notificationTable}"> <thead> <tr> <th>Field</th> 
+								<th>Setting</th> </tr> <tbody> <tr> <td>Email</td> <td> <dt:ShareSettingsWidget 
+								ui:field="emailShareSetting"/> </td> </tr> <tr> <td>Occupation</td> <td> 
+								<dt:ShareSettingsWidget ui:field="occupationShareSetting"/> </td> </tr> </tbody> 
+								</thead> </table> -->
+						</g:HTMLPanel>
+					</b:Tab>
+					<b:Tab ui:field="notification" heading="Notification">
+						<g:HTMLPanel ui:field="notificationPanel">
+						</g:HTMLPanel>
+					</b:Tab>
+					<b:Tab ui:field="passwordTab" heading="Password Reset">
+						<b:ControlGroup ui:field="passwordCg">
 							<b:Controls>
-								<g:Label addStyleNames="{style.label}">Zip</g:Label>
-								<b:TextBox ui:field="zip" placeholder="zip..." />
-								<b:HelpInline ui:field="zipError"></b:HelpInline>
+								<g:Label addStyleNames="{style.label}">Old Password</g:Label>
+								<b:PasswordTextBox ui:field="password"
+									placeholder="Old password..." />
+								<b:HelpInline ui:field="passwordError"></b:HelpInline>
 							</b:Controls>
 						</b:ControlGroup>
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="privacyTab" heading="Privacy">
-				    <g:HTMLPanel ui:field="privacyPanel">
-						<!-- <table class="{style.notificationTable}">
-							<thead>
-								<tr>
-									<th>Field</th>
-									<th>Setting</th>
-								</tr>
-								<tbody>
-									<tr>
-										<td>Email</td>
-										<td>
-											<dt:ShareSettingsWidget ui:field="emailShareSetting"/>
-										</td>
-									</tr>
-									<tr>
-										<td>Occupation</td>
-										<td>
-											<dt:ShareSettingsWidget ui:field="occupationShareSetting"/>
-										</td>
-									</tr>
-								</tbody>
-							</thead>
-						</table> -->
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="notification" heading="Notification">
-					<g:HTMLPanel ui:field="notificationPanel">
-					</g:HTMLPanel>
-				</b:Tab>
-				<b:Tab ui:field="passwordTab" heading="Password Reset">
-					<b:ControlGroup ui:field="passwordCg">
-						<b:Controls>
-							<g:Label addStyleNames="{style.label}">Old Password</g:Label>
-							<b:PasswordTextBox ui:field="password"
-								placeholder="Old password..." />
-							<b:HelpInline ui:field="passwordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="newPasswordCg">
-						<b:Controls>
-							<g:Label addStyleNames="{style.label}">New Password</g:Label>
-							<b:PasswordTextBox ui:field="newPassword"
-								placeholder="New password..." />
-							<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="confirmNewPasswordCg">
-						<b:Controls>
-							<g:Label addStyleNames="{style.label}">Confirm new password</g:Label>
-							<b:PasswordTextBox ui:field="confirmNewPassword"
-								placeholder="confirm new password..." />
-							<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:Button addStyleNames="{style.updatePasswordBtn}"
-						ui:field="updatePasswordBtn">Update password</b:Button>
-				</b:Tab>
-			</b:TabPanel>
-			<g:HTMLPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
-				<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
-				<b:Button  ui:field="cancelBtn">Cancel</b:Button>
-			</g:HTMLPanel>
-		</g:HTMLPanel>
-	</g:HTMLPanel>
+						<b:ControlGroup ui:field="newPasswordCg">
+							<b:Controls>
+								<g:Label addStyleNames="{style.label}">New Password</g:Label>
+								<b:PasswordTextBox ui:field="newPassword"
+									placeholder="New password..." />
+								<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="confirmNewPasswordCg">
+							<b:Controls>
+								<g:Label addStyleNames="{style.label}">Confirm new password</g:Label>
+								<b:PasswordTextBox ui:field="confirmNewPassword"
+									placeholder="confirm new password..." />
+								<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button addStyleNames="{style.updatePasswordBtn}"
+							ui:field="updatePasswordBtn">Update password</b:Button>
+					</b:Tab>
+				</b:TabPanel>
+				<g:HTMLPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">
+					<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
+					<b:Button ui:field="cancelBtn">Cancel</b:Button>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

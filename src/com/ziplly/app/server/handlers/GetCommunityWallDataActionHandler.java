@@ -1,19 +1,23 @@
 package com.ziplly.app.server.handlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
+import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
 
 public class GetCommunityWallDataActionHandler
@@ -36,12 +40,28 @@ public class GetCommunityWallDataActionHandler
 
 		validateSession();
 
-		if (action.getSearchType() == GetCommunityWallDataAction.SearchType.CATEGORY) {
+		if (action.getSearchType() == SearchType.CATEGORY) {
 			return getTweetsByCategory(action);
-		} else if (action.getSearchType() == GetCommunityWallDataAction.SearchType.HASHTAG) {
+		} else if (action.getSearchType() == SearchType.HASHTAG) {
 			return getTweetsByHashtag(action);
+		} else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
+			return getTweetById(action);
 		}
 		throw new IllegalArgumentException();
+	}
+
+	private GetCommunityWallDataResult getTweetById(GetCommunityWallDataAction action) {
+		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
+		try {
+			Long tweetId = Long.parseLong(action.getTweetId());
+			TweetDTO tweet = tweetDao.findTweetById(tweetId);
+			ArrayList<TweetDTO> tweets = new ArrayList<TweetDTO>();
+			tweets.add(tweet);
+			result.setTweets(tweets);
+		} catch(NumberFormatException nfe) {
+			throw new IllegalArgumentException();
+		}
+		return result;
 	}
 
 	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) {

@@ -7,6 +7,7 @@ import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
+import com.ziplly.app.server.handlers.EmailAdminActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
 import com.ziplly.app.server.handlers.GetAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetAccountNotificationActionHandler;
@@ -21,8 +22,9 @@ import com.ziplly.app.server.handlers.GetJwtTokenActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
 import com.ziplly.app.server.handlers.GetNeighborhoodActionHandler;
+import com.ziplly.app.server.handlers.GetNeighborhoodDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
-import com.ziplly.app.server.handlers.GetResidentsActionHandler;
+import com.ziplly.app.server.handlers.GetEntityActionHandler;
 import com.ziplly.app.server.handlers.GetTweetActionHandler;
 import com.ziplly.app.server.handlers.GetTweetCategoryDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetForUserActionHandler;
@@ -48,6 +50,7 @@ import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.DeleteTweetAction;
+import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountNotificationAction;
@@ -62,8 +65,9 @@ import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetNeighborhoodAction;
+import com.ziplly.app.shared.GetNeighborhoodDetailsAction;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
-import com.ziplly.app.shared.GetResidentsRequest;
+import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetsAction;
@@ -112,6 +116,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(LogoutAction.class, LogoutActionHandler.class);
 		
 		bindHandler(GetImageUploadUrlAction.class, GetImageUploadUrlActionHandler.class);
+		bindHandler(GetNeighborhoodDetailsAction.class, GetNeighborhoodDetailsActionHandler.class);
 		
 		// Tweet handlers
 		bindHandler(TweetAction.class, TweetActionHandler.class);
@@ -120,7 +125,6 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetCommunityWallDataAction.class, GetCommunityWallDataActionHandler.class);
 		bindHandler(CommentAction.class, CommentActionHandler.class);
 		bindHandler(LikeTweetAction.class, LikeTweetActionHandler.class);
-		bindHandler(GetResidentsRequest.class, GetResidentsActionHandler.class);
 		bindHandler(GetTweetForUserAction.class, GetTweetForUserActionHandler.class);
 		bindHandler(GetAccountDetailsAction.class, GetAccountDetailsActionHandler.class);
 		bindHandler(DeleteTweetAction.class, DeleteTweetActionHandler.class);
@@ -150,10 +154,14 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(SendPasswordRecoveryEmailAction.class, SendPasswordRecoveryActionHandler.class);
 		bindHandler(VerifyPasswordRecoveryHashAction.class, VerifyPasswordRecoveryHashActionHandler.class);
 		bindHandler(ResetPasswordAction.class, ResetPasswordActionHandler.class);
+
+		// community
+		bindHandler(GetEntityListAction.class, GetEntityActionHandler.class);
 		
 		// admin
 		bindHandler(GetTweetsAction.class, GetTweetActionHandler.class);
 		bindHandler(SearchAccountAction.class, SearchAccountActionHandler.class);
 		bindHandler(CheckEmailRegistrationAction.class, CheckEmailRegistrationActionHandler.class);
+		bindHandler(EmailAdminAction.class, EmailAdminActionHandler.class);
 	}
 }

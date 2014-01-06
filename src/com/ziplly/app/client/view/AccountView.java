@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Column;
+import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -13,7 +15,6 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -58,15 +59,11 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@UiField
 	Alert message;
 	@UiField
-	HTMLPanel rootPanel;
-	@UiField
-	HTMLPanel mainSection;
-	@UiField
-	HTMLPanel asidePanel;
+	Column asidePanel;
 	@UiField
 	Image profileImage;
 	@UiField
-	HeadingElement name;
+	Heading name;
 	@UiField
 	Paragraph description;
 	@UiField
@@ -114,8 +111,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
-	private String tweetWidgetWidth = "60%";
-	private String tweetBoxWidth = "60%";
+	private String tweetWidgetWidth = "80%";
+	private String tweetBoxWidth = "80%";
 	
 	public AccountView() {
 		tweetBox = new TweetBox();
@@ -142,15 +139,15 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		this.account = account;
 		
 		// aside
-		asidePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		asidePanel.getElement().getStyle().setDisplay(Display.BLOCK);
 		
 		// image section
 		if (account.getImageUrl() != null) {
-			profileImage.setUrl(account.getImageUrl());
+			profileImage.setUrl(account.getImageUrl()+"=s140");
 		}
 		
 		profileImage.setAltText(account.getDisplayName());
-		name.setInnerHTML(account.getDisplayName());
+		name.setText(account.getDisplayName());
 
 		// about me section
 		description.setText(account.getIntroduction());
@@ -209,7 +206,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
-		asidePanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 

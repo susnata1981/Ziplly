@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
-import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;

@@ -15,21 +15,19 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class ResidentsView extends Composite {
-
 	private static final int PAGE_SIZE = 10;
 
-	private static ResidentsViewUiBinder uiBinder = GWT
-			.create(ResidentsViewUiBinder.class);
+	private static ResidentsViewUiBinder uiBinder = GWT.create(ResidentsViewUiBinder.class);
 
 	interface ResidentsViewUiBinder extends UiBinder<Widget, ResidentsView> {
 	}
 
 	@UiField(provided = true)
 	SimplePager pager;
-	
-	@UiField(provided=true)
+
+	@UiField(provided = true)
 	CellList<PersonalAccountDTO> residentsList;
-	
+
 	private AccountDTO account;
 
 	public ResidentsView() {
@@ -40,13 +38,6 @@ public class ResidentsView extends Composite {
 	}
 
 	public void display(List<PersonalAccountDTO> input) {
-//		if (account == null) {
-//			dataProvider.addDataDisplay(getResidentsList());
-//		}
-//		this.account = list;
-//		dataProvider.setAccount(list);
-//		dataProvider.setView(this);
-//		pager.setDisplay(getResidentsList());
 		ListDataProvider<PersonalAccountDTO> provider = new ListDataProvider<PersonalAccountDTO>();
 		provider.addDataDisplay(residentsList);
 		pager.setDisplay(residentsList);

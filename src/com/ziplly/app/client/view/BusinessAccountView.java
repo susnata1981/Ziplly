@@ -38,7 +38,7 @@ import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
-import com.ziplly.app.client.widget.StyleHelper;
+import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
@@ -217,16 +217,16 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		
 		parkingAvailableSpan.clear();
 		if (props.getPartkingFacility() != null) {
-			parkingAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_UP));
+			parkingAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_UP));
 		} else {
-			parkingAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_DOWN));
+			parkingAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_DOWN));
 		}
 
 		wifiAvailableSpan.clear();
 		if (props.getWifiAvailable()) {
-			wifiAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_UP));
+			wifiAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_UP));
 		} else {
-			wifiAvailableSpan.add(StyleHelper.getIcon(IconType.THUMBS_DOWN));
+			wifiAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_DOWN));
 		}
 		
 		// last login time

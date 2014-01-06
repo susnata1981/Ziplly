@@ -3,20 +3,25 @@ package com.ziplly.app.client.places;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+import com.ziplly.app.model.TweetType;
 
 public class HomePlace extends Place {
 	private String filter;
 	
 	public HomePlace() {
-		setFilter("all");
+		setFilter(TweetType.ALL.name());
 	}
 	
-	public HomePlace(String filter) {
-		if (filter != null) {
-			this.setFilter(filter);
-		} else {
-			setFilter("all");
-		}
+	public HomePlace(TweetType type) {
+		setFilter(type.name());
+	}
+	
+	public HomePlace(Long tweetId) {
+		setFilter("tweet:"+tweetId);
+	}
+	
+	protected HomePlace(String filter) {
+		setFilter(filter);
 	}
 	
 	public String getFilter() {
@@ -42,7 +47,7 @@ public class HomePlace extends Place {
 			if (place.getFilter() != null) {
 				return place.getFilter();
 			}
-			return "all";
+			return TweetType.ALL.name();
 		}
 	}
 }

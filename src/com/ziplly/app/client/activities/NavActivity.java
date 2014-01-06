@@ -25,7 +25,6 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
 import com.ziplly.app.shared.ViewNotificationAction;
@@ -152,14 +151,11 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			goTo(new ConversationPlace());
 			return;
 		case SECURITY_ALERT:
-			goTo(new HomePlace(TweetType.SECURITY_ALERTS.name().toLowerCase()));
-			return;
 		case ANNOUNCEMENT:
-			goTo(new HomePlace(TweetType.ANNOUNCEMENT.name().toLowerCase()));
-			return;
 		case OFFERS:
-			goTo(new HomePlace(TweetType.OFFERS.name().toLowerCase()));
-			return;
+		default:
+			HomePlace place = new HomePlace(an.getTweet().getTweetId());
+			goTo(place);
 		}
 	}
 

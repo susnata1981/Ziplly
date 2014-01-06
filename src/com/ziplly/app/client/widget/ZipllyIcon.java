@@ -3,7 +3,9 @@ package com.ziplly.app.client.widget;
 public enum ZipllyIcon {
 	REPLY("fa-reply"),
 	THUMBS_UP("icon-thumbs-up"),
-	EDIT("fa-pencil");
+	EDIT("fa-pencil"),
+	COMMENTS("fa-comments"),
+	SPINNER("fa fa-repeat");
 	
 	private String name;
 

@@ -6,3 +6,6 @@ insert into neighborhood (type,city,name,state,postalcode_id) values ("regular",
 insert into neighborhood (type,city,name,state,postalcode_id) values ("regular", "seattle", "Interbay","WA", 1);
 insert into neighborhood (type,city,name,state,postalcode_id) values ("regular", "seattle", "Queen Ann","WA", 2);
 insert into neighborhood (type,city,name,state,postalcode_id) values ("regular", "seattle", "Ballard","WA", 3);
+
+
+insert into subscription_plan (description,fee,name,timeCreated,tweetsAllowed) values (    -> 'Send upto 5 messages a month', 5, 'Pro plan', now(), 5);

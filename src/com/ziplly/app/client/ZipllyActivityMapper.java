@@ -19,6 +19,7 @@ import com.ziplly.app.client.activities.PasswordRecoveryActivity;
 import com.ziplly.app.client.activities.PersonalAccountActivity;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity;
 import com.ziplly.app.client.activities.PublicAccountActivity;
+import com.ziplly.app.client.activities.BusinessActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -26,6 +27,7 @@ import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -43,6 +45,7 @@ import com.ziplly.app.client.view.AdminView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
+import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.LoginAccountView;
@@ -65,6 +68,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	private ApplicationContext ctx;
 	private BusinessAccountView businessAccountView;
 	private ResidentsView residentsView;
+	private BusinessView businessView;
 	private PersonalAccountSettingsView personalAccountSettingsView;
 	private BusinessAccountSettingsView businessAccountSettingsView;
 	private ConversationView conversationView;
@@ -82,6 +86,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			SignupView signupView,
 			BusinessSignupView businessSignupView,
 			ResidentsView residentsView,
+			BusinessView businessView,
 			PersonalAccountSettingsView personalAccountSettingsView,
 			BusinessAccountSettingsView businessAccountSettingsView,
 			ConversationView conversationView,
@@ -101,6 +106,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		this.signupView = signupView;
 		this.businessSignupView = businessSignupView;
 		this.residentsView = residentsView;
+		this.businessView = businessView;
 		this.personalAccountSettingsView = personalAccountSettingsView;
 		this.businessAccountSettingsView = businessAccountSettingsView;
 		this.conversationView = conversationView;
@@ -151,6 +157,9 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		else if (place instanceof ResidentPlace) {
 			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, residentsView);
 		}
+		else if (place instanceof BusinessPlace) {
+			return new BusinessActivity(dispatcher, eventBus, placeController, ctx, businessView); 
+		}
 		else if (place instanceof PasswordRecoveryPlace) {
 			return new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView);
 		}
@@ -162,5 +171,4 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		}
 		throw new IllegalArgumentException();
 	}
-
 }

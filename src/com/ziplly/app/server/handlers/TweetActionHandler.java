@@ -62,7 +62,11 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		TweetDTO saveTweet = tweetDao.save(tweet);
 		
 		if (tweetNotificationBli.shouldNotification(saveTweet)) {
-			accountBli.sendEmailByZip(tweet.getSender(), tweet.getType().getNotificationType(), EmailTemplate.SECURITY_ALERT);
+			accountBli.sendEmailByZip(
+					tweet.getSender(),
+					tweet.getTweetId(),
+					tweet.getType().getNotificationType(), 
+					EmailTemplate.SECURITY_ALERT);
 		}
 		
 		TweetResult result = new TweetResult();

@@ -5,6 +5,7 @@ import java.util.List;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public interface AccountDAO {
@@ -20,4 +21,6 @@ public interface AccountDAO {
 	List<AccountDTO> findAccounts(String query, int start, int end);
 	Long findTotalAccounts(String countQuery);
 	List<AccountDTO> findAllAccountsByZip(int zip);
+	List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId);
+	Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId);
 }

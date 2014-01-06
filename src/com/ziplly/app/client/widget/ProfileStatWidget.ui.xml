@@ -13,7 +13,7 @@
 		.title {
 			clear: left;
 			padding: 4px;
-			font-size: 13px;
+			font-size: .8em;
 		}
 		.value {
 			padding: 5px;	

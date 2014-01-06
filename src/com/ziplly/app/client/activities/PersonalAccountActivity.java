@@ -80,9 +80,9 @@ public class PersonalAccountActivity extends
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		showLodingIcon();
 		this.panel = panel;
 		bind();
-
 		if (place.getAccountId() != null) {
 			displayPublicProfile(place.getAccountId());
 		} else if (ctx.getAccount() != null) {
@@ -93,7 +93,7 @@ public class PersonalAccountActivity extends
 		}
 	}
 
-	/*
+	/**
 	 * Display people's profile
 	 */
 	@Override
@@ -210,6 +210,7 @@ public class PersonalAccountActivity extends
 		if (binder != null) {
 			binder.stop();
 		}
+		hideLoadingIcon();
 	}
 
 	private class GetLatLngResultHandler extends

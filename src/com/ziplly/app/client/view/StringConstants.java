@@ -47,4 +47,6 @@ public class StringConstants {
 	public static final String EMAIL_ALREADY_EXISTS = "This email address already exists.";
 	public static final String NOT_AVAILABLE_IN_AREA = "Sorry, ziplly is not yet available in your area";
 	public static final String SERVICE_NOT_AVAILABLE = "Sorry Ziplly isn't yet available in your area";
+	public static final String REDIRECT_URI = "app.dev.redirecturl";
+	public static final String APP_ENVIRONMENT = "app.environment";
 }

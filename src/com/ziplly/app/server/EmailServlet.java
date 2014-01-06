@@ -32,6 +32,7 @@ import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.model.RecordStatus;
+import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.EmailTemplate;
 
 @Singleton
@@ -65,8 +66,9 @@ public class EmailServlet extends HttpServlet {
 			String zip = req.getParameter("zip");
 			String senderAccountId = req.getParameter("senderAccountId");
 			String notificationType = req.getParameter("notificationType");
+			String tweetId = req.getParameter("tweetId");
 			NotificationType ntype = NotificationType.valueOf(notificationType);
-			sendNotification(senderAccountId, zip, ntype, emailTemplate);
+			sendNotification(senderAccountId, zip, tweetId, ntype, emailTemplate);
 			break;
 		case INDIVIDUAL:
 			String recipientEmail = req.getParameter("recipientEmail");
@@ -83,7 +85,11 @@ public class EmailServlet extends HttpServlet {
 	 * 1. Account notification to everybody in the zip
 	 * 2. Email notifications to subscribers in that zip
 	 */
-	private void sendNotification(String senderAccountId, String zip, NotificationType ntype,
+	private void sendNotification(
+			String senderAccountId, 
+			String zip, 
+			String tweetId,
+			NotificationType ntype,
 			EmailTemplate emailTemplate) {
 		Preconditions.checkArgument(zip != null && senderAccountId != null,
 				"Invalid argument to sendNotification");
@@ -94,7 +100,7 @@ public class EmailServlet extends HttpServlet {
 			List<AccountDTO> recipients = accountDao.findAllAccountsByZip(zipCode);
 			try {
 				sender = accountDao.findById(accountId);
-				sendNotifications(sender, recipients, ntype);
+				sendNotifications(sender, tweetId, recipients, ntype);
 			} catch (NotFoundException nfe) {
 				logger.log(Level.SEVERE,
 						String.format("Unable to find account with id %d", senderAccountId));
@@ -143,10 +149,11 @@ public class EmailServlet extends HttpServlet {
 	 * Sends AccountNotification to a list of user
 	 * 
 	 * @param sender
+	 * @param tweetId 
 	 * @param recipients
 	 * @param ntype
 	 */
-	private void sendNotifications(AccountDTO sender, List<AccountDTO> recipients,
+	private void sendNotifications(AccountDTO sender, String tweetId, List<AccountDTO> recipients,
 			NotificationType ntype) {
 
 		for (AccountDTO account : recipients) {
@@ -154,6 +161,9 @@ public class EmailServlet extends HttpServlet {
 			an.setRecipient(account);
 			an.setSender(sender);
 			an.setReadStatus(ReadStatus.UNREAD);
+			TweetDTO tweet = new TweetDTO();
+			tweet.setTweetId(Long.parseLong(tweetId));
+			an.setTweet(tweet);
 			an.setType(ntype);
 			an.setStatus(RecordStatus.ACTIVE);
 			an.setTimeCreated(new Date());

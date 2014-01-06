@@ -4,7 +4,7 @@
 	<ui:style>
 		.commnunitySummaryPanel {
 			width: 96%;
-			padding: 2%;
+			padding: 1%;
 			height: auto;
 		}
 		.top {
@@ -13,21 +13,18 @@
 			background: #f9f9f9;
 		}
 		.commnunitySummaryPanel .heading {
-			font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans",
-				Geneva, Verdana, sans-serif;
+			font-family: monospace, sans;
 			display: inline-block;
 			width: 100%;
-			font-size: 20px;
-			color: #555;
+			font-size: 1.2em;
+			color: #555444;
 			padding: 4px;
 			border-bottom: 1px solid #ddd;
 		}
 		
-		.commnunitySummaryPanel .text {
-			font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans",
-				Geneva, Verdana, sans-serif;
-			font-size: 16px;
-			color: #555;
+		.text {
+			font-family: Verdana, sans-serif;
+			font-size: 1em;
 			padding: 4px;
 		}
 		
@@ -35,14 +32,13 @@
 			height: 80%;
 		}
 	</ui:style>
-	<g:HTMLPanel ui:field="communitySummaryPanel"
-		addStyleNames="{style.commnunitySummaryPanel}">
+	<g:HTMLPanel ui:field="communitySummaryPanel" addStyleNames="{style.commnunitySummaryPanel}">
 		<div class="top">
 			<p>
-				<span ui:field="communityNameSpan" class="{style.heading}">Magnolia</span>
+				<span ui:field="communityNameSpan" class="{style.heading}"></span>
 			</p>
 			<p>
-				<span ui:field="memberCountSpan" class="{style.text}">200 Members</span>
+				<g:Anchor ui:field="memberCountSpan" addStyleNames="{style.text}"></g:Anchor>
 			</p>
 		</div>
 		<g:HTMLPanel ui:field="mapPanel" addStyleNames="{style.mapPanel}">

@@ -56,6 +56,7 @@ public class ZAnchor extends Widget implements HasClickHandlers {
 	private void setupWidget() {
 		setElement(anchorElement);
 		anchorElement.addClassName("fontawesome");
+		anchorElement.getStyle().setFontSize(1.2, Unit.EM);
 		sinkEvents(Event.ONCLICK);
 	}
 	

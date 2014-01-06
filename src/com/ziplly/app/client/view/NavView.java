@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.AboutPlace;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -71,6 +72,9 @@ public class NavView extends Composite implements INavView {
 	@UiField
 	NavLink residentsLink;
 	@UiField
+	NavLink businessListLink;
+	
+	@UiField
 	NavLink aboutLink;
 
 	@UiField
@@ -119,6 +123,11 @@ public class NavView extends Composite implements INavView {
 		presenter.goTo(new ResidentPlace());
 	}
 
+	@UiHandler("businessListLink")
+	void viewBusinessList(ClickEvent event) {
+		presenter.goTo(new BusinessPlace());
+	}
+	
 	@UiHandler("settingsLink")
 	void viewSettings(ClickEvent event) {
 		presenter.redirectToSettingsPage();

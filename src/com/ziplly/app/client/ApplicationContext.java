@@ -7,6 +7,12 @@ import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 
 public class ApplicationContext {
+	public enum Environment {
+		DEVEL,
+		PROD;
+	}
+
+	private Environment environment = Environment.DEVEL;
 	private AccountDTO account;
 	private int unreadMessageCount;
 	private int totalTweets;
@@ -62,4 +68,14 @@ public class ApplicationContext {
 	public void setTotalTweets(int totalTweets) {
 		this.totalTweets = totalTweets;
 	}
+
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
 }
+
+

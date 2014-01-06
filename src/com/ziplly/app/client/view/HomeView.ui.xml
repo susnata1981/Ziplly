@@ -1,109 +1,110 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-	 xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-		.rootPanel {
-		position: relative;
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type="com.ziplly.app.client.view.HomeView.Style">
+		.marginTop {
+		margin-top: 15px;
 		}
-		.tweetDiv {
-			clear: both;
-			margin-top: 20px;	
+		.leftnavHeaderContainer {
+		overflow: hidden;
 		}
-		.communityWall {
-		float: left;
-		width: 80%;
-		margin: 1%;
-		}
-		.tweetCategoryBox {
-		float: left;
-		width: 14%;
-		margin: 1%;
-		border: 1px
-		solid
-		#ddd;
-		}
-		.leftnav_header {
+		.leftnavHeaderSpan {
 		display: inline-block;
 		width: 100%;
-		font-size:
-		16px;
 		margin: 0;
-		padding: 2px;
-		font-size: 16px;
-		color: #555;
-		text-align:
-		left;
-		background: #b2b2b2;
+		padding: 4px;
+		font-size: 1em;
+		color: #555444;
+		background: #ddd;
 		border-bottom: 2px solid #555;
 		}
 		.tweetFilterLink {
-		display:block;
-		height: 30px;
+		clear: both;
+		float: left;
+		display: block;
+		font-size: .85em;
 		width: 100%;
-		margin: 0
-		!important;
-		padding: 6px;
+		margin: 3px 2px;
+		padding: 5px 2px;
+		background: #f9f9f9;
 		}
-		.tweetFilterLink a:hover {
-		background: #555;
+		.tweetFilterLink:hover {
+		background: #ccc;
+		}
+		.selectedTweetType {
+		background: #c2c2c2;
 		}
 		.communityWallPanel {
-		clear: both;
-		padding: 1%;
-		height: 1000px;
-		overflow:
-		auto;
-		position: absolute;
-		width: 80%;
-		background: #B2B2B2;
-		border: 1px
-		solid #000;
+		background-color: #ddd;
+		padding-top: 10px;
+		min-height: 100%;
 		}
 		.communityInfoPanel {
-		position: absolute;
-		left: 68%;
-		top:
-		10px;
-		width: 24%;
-		height: 30%;
+		height: 320px;
 		background: #fff;
-		border: 1px solid #555;
+		border:
+		1px solid
+		#555;
 		}
 		.tweetBox {
 		margin: 1.3%;
 		width: 100%;
 		}
 		.message {
-			clear: both;
-			left: 10px;
+		clear: both;
+		left: 10px;
 		}
-		footer {
-		display:hidden;
+		.communitySummaryDiv {
+			border: 1px solid #ddd;
+			padding: 4px;
+			height: 280px;
+			overflow: hidden;
 		}
 	</ui:style>
-	<g:HTMLPanel addStyleNames="{style.rootPanel}">
-		<b:Alert ui:field="message" addStyleNames="{style.message}"
-			close="false" />
-		<div class="{style.tweetDiv}">
-			<div class="{style.tweetCategoryBox}">
-				<span class="{style.leftnav_header}">Category</span>
-				<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
-
-				<span class="{style.leftnav_header}">Hashtags</span>
-				<g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel>
-			</div>
-			<div class="{style.communityWall}">
+	<!-- <g:HTMLPanel addStyleNames="{style.rootPanel}"> <b:Alert ui:field="message" 
+		addStyleNames="{style.message}" close="false" /> <div class="{style.tweetDiv}"> 
+		<div class="{style.tweetCategoryBox}"> <div class="{style.leftnavHeaderContainer}"> 
+		<span class="{style.leftnavHeaderSpan}">Category</span> <g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel> 
+		</div> <div class="{style.leftnavHeaderContainer} {style.marginTop}"> <span 
+		class="{style.leftnavHeaderSpan}">Hashtags</span> <g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel> 
+		</div> </div> <div class="{style.communityWall}"> <g:HTMLPanel ui:field="communityWallPanel" 
+		addStyleNames="{style.communityWallPanel}"> <dt:TweetBox ui:field="tweetBox" 
+		addStyleNames="{style.tweetBox}" width="100%" /> <div class="{style.communityInfoPanel}"> 
+		<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" /> </div> </g:HTMLPanel> 
+		</div> <div class="clearfix"></div> </div> </g:HTMLPanel> -->
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column size="10">
+				<b:Alert ui:field="message" addStyleNames="{style.message}"
+					close="false" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="2">
+				<g:HTMLPanel>
+					<div class="{style.leftnavHeaderContainer}">
+						<span class="{style.leftnavHeaderSpan}">Category</span>
+						<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
+					</div>
+					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
+						<span class="{style.leftnavHeaderSpan}">Hashtags</span>
+						<g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel>
+					</div>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="7">
 				<g:HTMLPanel ui:field="communityWallPanel"
 					addStyleNames="{style.communityWallPanel}">
 					<dt:TweetBox ui:field="tweetBox" addStyleNames="{style.tweetBox}"
 						width="100%" />
-
-					<div class="{style.communityInfoPanel}">
-						<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" />
-					</div>
 				</g:HTMLPanel>
-			</div>
-		</div>
-	</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="3">
+				<g:HTMLPanel addStyleNames="{style.communitySummaryDiv}">
+					<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

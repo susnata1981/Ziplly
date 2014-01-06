@@ -5,33 +5,75 @@
 
 	<ui:style src="accountview.css" />
 
-	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.rootPanel}">
-		<b:Alert ui:field="message" close="false" />
-		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
-			<dl>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
-						INBOX
-						<span ui:field="unreadMessageCountField" />
-					</g:Anchor>
-				</dt>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
-				</dt>
-				<!-- <dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
-					INBOX </b:NavLink> <span ui:field="unreadMessageCountField" /> </dt> <dt> 
-					<b:NavLink addStyleNames="{style.navlink}" icon="ASTERISK" ui:field="settingsLink">Settings</b:NavLink> 
-					</dt> -->
-			</dl>
-		</g:HTMLPanel>
-		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
-			<div class="{style.profileDiv}">
-				<div class="{style.profileSection}">
+	<!-- <g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.rootPanel}"> 
+		<b:Alert ui:field="message" close="false" /> <g:HTMLPanel ui:field="asidePanel" 
+		addStyleNames="{style.asidePanel}"> <dl> <dt> <g:Anchor addStyleNames="{style.link}" 
+		ui:field="messagesLink"> INBOX <span ui:field="unreadMessageCountField" /> 
+		</g:Anchor> </dt> <dt> <g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor> 
+		</dt> <dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
+		INBOX </b:NavLink> <span ui:field="unreadMessageCountField" /> </dt> <dt> 
+		<b:NavLink addStyleNames="{style.navlink}" icon="ASTERISK" ui:field="settingsLink">Settings</b:NavLink> 
+		</dt> </dl> </g:HTMLPanel> <g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}"> 
+		<div class="{style.profileDiv}"> <div class="{style.profileSection}"> <div 
+		class="{style.profileImageSection}"> <div class="{style.profileImageDiv}"> 
+		<b:Image ui:field="profileImage" /> </div> <h2 addStyleNames="{style.profileCaption}" 
+		ui:field="name"></h2> <b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button> 
+		<b:Button block="true" ui:field="inviteBtn">Invite people</b:Button> </div> 
+		<div class="{style.profileInfoBox}"> <h2 class="heading">About me</h2> <b:Paragraph 
+		ui:field="description" addStyleNames="{style.description}" /> <div addStyleNames="{style.description}"> 
+		Email: <g:Anchor ui:field="emailLink"> <span ui:field="email" addStyleNames="{style.description}" 
+		/> </g:Anchor> </div> <div addStyleNames="{style.description}"> <span> Last 
+		login: <span ui:field="lastLoginTime" /> </span> </div> </div> <div class="{style.profileInfoBox}"> 
+		<h2 class="heading">Occupation</h2> <span ui:field="occupationSpan" class="{style.occupationSpan}" 
+		/> </div> <div class="{style.profileInfoBox}"> <h2 class="heading">Interests</h2> 
+		<g:HTMLPanel ui:field="interestPanel"></g:HTMLPanel> </div> <div class="{style.profileInfoBox}"> 
+		<div style="width:320px; height:270px" ui:field="locationDiv"></div> </div> 
+		<div class="{style.profileInfoBox}"> <h2 class="heading">Activity</h2> <dt:ProfileStatWidget 
+		title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" 
+		/> <dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" 
+		/> <dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}" 
+		/> </div> </div> <g:HTMLPanel ui:field="rootTweetSection" addStyleNames="{style.rootTweetSection}"> 
+		<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}"> 
+		<dt:TweetBox ui:field="tweetBox" /> </g:HTMLPanel> <g:HTMLPanel ui:field="tweetSection" 
+		addStyleNames="{style.tweetSection}"> </g:HTMLPanel> </g:HTMLPanel> <div 
+		class="{style.tweetSectionDiv}"> <g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}"> 
+		<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}"> 
+		<dt:TweetBox ui:field="tweetBox" /> </g:HTMLPanel> </g:HTMLPanel> </div> 
+		</div> </g:HTMLPanel> </g:HTMLPanel> -->
+
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column size="10">
+				<b:Alert ui:field="message" close="false" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="2" ui:field="asidePanel">
+				<g:HTMLPanel addStyleNames="{style.asidePanel}">
+					<dl>
+						<dt>
+							<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
+								INBOX
+								<span ui:field="unreadMessageCountField" />
+							</g:Anchor>
+						</dt>
+						<dt>
+							<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
+						</dt>
+						<!-- <dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
+							INBOX </b:NavLink> <span ui:field="unreadMessageCountField" /> </dt> <dt> 
+							<b:NavLink addStyleNames="{style.navlink}" icon="ASTERISK" ui:field="settingsLink">Settings</b:NavLink> 
+							</dt> -->
+					</dl>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="3">
+				<g:HTMLPanel>
 					<div class="{style.profileImageSection}">
 						<div class="{style.profileImageDiv}">
 							<b:Image ui:field="profileImage" />
 						</div>
-						<h2 addStyleNames="{style.profileCaption}" ui:field="name"></h2>
+						<b:Heading size="3" addStyleNames="{style.profileCaption}" ui:field="name"/>
 						<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
 						<b:Button block="true" ui:field="inviteBtn">Invite people</b:Button>
 					</div>
@@ -39,7 +81,7 @@
 						<h2 class="heading">About me</h2>
 						<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 						<div addStyleNames="{style.description}">
-						    Email:
+							Email:
 							<g:Anchor ui:field="emailLink">
 								<span ui:field="email" addStyleNames="{style.description}" />
 							</g:Anchor>
@@ -71,19 +113,15 @@
 						<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget"
 							addStyleNames="{style.accountStatDiv}" />
 					</div>
-				</div>
-				<!-- <g:HTMLPanel ui:field="rootTweetSection" addStyleNames="{style.rootTweetSection}"> 
-					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}"> 
-					<dt:TweetBox ui:field="tweetBox" /> </g:HTMLPanel> <g:HTMLPanel ui:field="tweetSection" 
-					addStyleNames="{style.tweetSection}"> </g:HTMLPanel> </g:HTMLPanel> -->
-				<div class="{style.tweetSectionDiv}">
-					<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
-						<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
-							<dt:TweetBox ui:field="tweetBox" />
-						</g:HTMLPanel>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="7">
+				<g:HTMLPanel ui:field="tweetSection">
+					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
+						<dt:TweetBox ui:field="tweetBox" />
 					</g:HTMLPanel>
-				</div>
-			</div>
-		</g:HTMLPanel>
-	</g:HTMLPanel>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

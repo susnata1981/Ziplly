@@ -12,6 +12,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
+//@DiscriminatorValue("business")
 public class BusinessAccount extends Account {
 	private static final long serialVersionUID = 1L;
 	private String name;

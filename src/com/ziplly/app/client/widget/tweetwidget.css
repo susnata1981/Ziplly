@@ -82,6 +82,7 @@ div.comment_text {
 }
 
 .tweet_sender_link {
+	clear: both;
 	float: right;
 	margin: 8px 4px 4px 4px;
 	font-size: 13px;

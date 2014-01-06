@@ -23,7 +23,6 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -356,18 +355,6 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		return true;
 	}
 
-	// boolean validatePassword(String password, ControlGroup cg,
-	// HelpInline helpInline) {
-	// ValidationResult result = FieldVerifier.validatePassword(password);
-	// if (!result.isValid()) {
-	// cg.setType(ControlGroupType.ERROR);
-	// helpInline.setText(result.getErrors().get(0).getErrorMessage());
-	// helpInline.setVisible(true);
-	// return false;
-	// }
-	// return true;
-	// }
-
 	boolean validateInput() {
 		String businessNameInput = businessName.getText().trim();
 		boolean valid = true;
@@ -411,6 +398,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		BusinessAccountDTO acct = new BusinessAccountDTO();
 		acct.setAccountId(account.getAccountId());
 		acct.setUid(account.getUid());
+		acct.setNeighborhood(account.getNeighborhood());
 		acct.setName(name);
 		acct.setStreet1(streetOne);
 		acct.setStreet2(streetTwo);

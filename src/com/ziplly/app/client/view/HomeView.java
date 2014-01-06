@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
@@ -22,6 +23,7 @@ import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
@@ -37,10 +39,16 @@ import com.ziplly.app.shared.GetLatLngResult;
  */
 public class HomeView extends Composite implements IHomeView {
 
-	private static final String TWEET_WIDGT_WIDTH = "58%";
-	private String tweetWidth = "58%";
+	private static final String TWEET_WIDGET_WIDTH = "80%";
+	private String tweetWidth = "80%";
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 
+	public interface Style extends CssResource {
+		String tweetFilterLink();
+
+		String selectedTweetType();
+	}
+	
 	public static interface HomePresenter extends TweetPresenter, SendMessagePresenter {
 		void displayTweets(List<TweetDTO> tweets);
 
@@ -51,6 +59,9 @@ public class HomeView extends Composite implements IHomeView {
 		void displayHashtag(String text); 
 	}
 
+	@UiField
+	Style style;
+	
 	@UiField
 	Alert message;
 
@@ -85,9 +96,16 @@ public class HomeView extends Composite implements IHomeView {
 		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
 		tweetBox.setPresenter(presenter);
 		communityWallPanel.add(tweetBox);
-		tview.setWidth(TWEET_WIDGT_WIDTH);
+		tview.setWidth(TWEET_WIDGET_WIDTH);
 		communityWallPanel.add(tview);
-		communitySummaryWidget.setHeight("90%");
+		communitySummaryWidget.setHeight("270px");
+		communitySummaryWidget.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new ResidentPlace());
+			}
+		});
 	}
 
 	private void buildTweetFilters() {
@@ -95,13 +113,13 @@ public class HomeView extends Composite implements IHomeView {
 			final Anchor anchor = new Anchor();
 			String name = type.getTweetName();
 			anchor.setText(name);
-			anchor.setStyleName("tweetFilterLink");
+			anchor.setStyleName(style.tweetFilterLink());
 			anchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					clearTweetFilterSelection();
 					clearTagSelection();
-					anchor.getElement().getStyle().setBackgroundColor("#c2c2c2");
+					highlightTweetType(type);
 					presenter.displayTweetsForCategory(type);
 				}
 			});
@@ -113,6 +131,18 @@ public class HomeView extends Composite implements IHomeView {
 		}
 	}
 
+	private void clearHighlightOnTweetType() {
+		for(TweetType type : filters.keySet()) {
+			filters.get(type).removeStyleName(style.selectedTweetType());
+		}
+	}
+	
+	@Override
+	public void highlightTweetType(TweetType type) {
+		clearHighlightOnTweetType();
+		filters.get(type).addStyleName(style.selectedTweetType());
+	}
+	
 	private void clearTweetFilterSelection() {
 		for (Anchor a : filters.values()) {
 			clearAnchorSelection(a);
@@ -273,5 +303,10 @@ public class HomeView extends Composite implements IHomeView {
 	@Override
 	public void displaySummaryData(NeighborhoodDTO neighborhood) {
 		communitySummaryWidget.displaySummaryData(neighborhood);
+	}
+
+	@Override
+	public void displayResidentCount(int totalResidents) {
+		communitySummaryWidget.setResidentCount(totalResidents);
 	}
 }

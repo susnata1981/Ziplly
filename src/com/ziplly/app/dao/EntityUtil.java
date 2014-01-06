@@ -307,6 +307,7 @@ public class EntityUtil {
 		resp.setNotificationId(an.getNotificationId());
 		resp.setRecipient(convert(an.getRecipient(), true));
 		resp.setSender(convert(an.getSender(), true));
+		resp.setTweet(clone(an.getTweet()));
 		resp.setReadStatus(an.getReadStatus());
 		resp.setType(an.getType());
 		resp.setTimeUpdated(an.getTimeUpdated());

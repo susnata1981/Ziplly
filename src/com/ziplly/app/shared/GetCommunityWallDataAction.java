@@ -7,12 +7,14 @@ import com.ziplly.app.model.TweetType;
 public class GetCommunityWallDataAction implements Action<GetCommunityWallDataResult> {
 	public static enum SearchType {
 		CATEGORY,
-		HASHTAG;
+		HASHTAG,
+		TWEET_BY_ID;
 	}
 
 	private GetCommunityWallDataAction.SearchType searchType;
 	private TweetType type;
 	private String hashtag;
+	private String tweetId;
 	private int page;
 	private int pageSize;
 
@@ -71,5 +73,13 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 
 	public void setHashtag(String hashtag) {
 		this.hashtag = hashtag;
+	}
+
+	public String getTweetId() {
+		return tweetId;
+	}
+
+	public void setTweetId(String tweetId) {
+		this.tweetId = tweetId;
 	}
 }

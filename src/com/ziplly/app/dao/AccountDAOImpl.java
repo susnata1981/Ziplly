@@ -1,5 +1,6 @@
 package com.ziplly.app.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -15,6 +16,7 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -182,12 +184,31 @@ public class AccountDAOImpl implements AccountDAO {
 		return response;
 	}
 
+	@Deprecated
 	@Override
 	public List<AccountDTO> findAllAccountsByZip(int zip) {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		Query query = em.createQuery("from Account where zip = :zip");
 		query.setParameter("zip", zip);
+
+		@SuppressWarnings("unchecked")
+		List<Account> accounts = (List<Account>)query.getResultList();
+		List<AccountDTO> response = Lists.newArrayList();
+		for(Account pa : accounts) {
+			response.add(EntityUtil.convert(pa));
+		}
+		em.close();
+		return response;
+	}
+	
+	@Override
+	public List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId) {
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createQuery("from Account a where type = :type and a.neighborhood.neighborhoodId = :neighborhoodId");
+		query.setParameter("type", entityType.getType());
+		query.setParameter("neighborhoodId", neighborhoodId);
 
 		@SuppressWarnings("unchecked")
 		List<Account> accounts = (List<Account>)query.getResultList();
@@ -242,5 +263,17 @@ public class AccountDAOImpl implements AccountDAO {
 		Long count = (Long) query.getSingleResult();
 		em.close();
 		return count;
+	}
+
+	@Override
+	public Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createNativeQuery("select count(*) from account a, neighborhood n where a.neighborhood_id = n.neighborhood_id"
+				+ " and a.type = :type and n.neighborhood_id = :neighborhood_id");
+		query.setParameter("type", type.getType());
+		query.setParameter("neighborhood_id", neighborhoodId);
+		BigInteger count = (BigInteger) query.getSingleResult();
+		em.close();
+		return count.longValue();
 	}
 }

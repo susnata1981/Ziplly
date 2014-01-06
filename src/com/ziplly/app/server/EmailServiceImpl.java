@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
@@ -133,4 +135,22 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 
+	@Override
+	public void sendEmail(String subject, String message, String from, String to) throws MessagingException {
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props);
+		
+		try {
+			Message msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(from));
+			msg.setRecipient(RecipientType.TO, new InternetAddress(to));
+			msg.setSubject(subject);
+			msg.setText(message);
+			Transport.send(msg);
+		} catch(AddressException ae) {
+			throw ae;
+		} catch(MessagingException me) {
+			throw me;
+		}
+	}
 }

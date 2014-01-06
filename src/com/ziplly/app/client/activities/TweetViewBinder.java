@@ -17,14 +17,17 @@ public class TweetViewBinder {
 	}
 	
 	public void start() {
+		System.out.println("Starting tweet view binder...");
 		timer = new Timer() {
 			@Override
 			public void run() {
+				System.out.println("RUNNING TWEETVIEWBINDER...");
 				if (hasMoreData()) {
 					if (detectScrollerHitBottom()) {
 						handler.onScrollBottomHit();
 					}
 				} else {
+					System.out.println("Cancelling TweetViewBinder timer");
 					cancel();
 				}
 			}

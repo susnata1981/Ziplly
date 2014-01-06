@@ -6,6 +6,7 @@ import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
@@ -13,6 +14,7 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PasswordRecoveryPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 
 @WithTokenizers({
@@ -28,6 +30,8 @@ import com.ziplly.app.client.places.SignupPlace;
 	PasswordRecoveryPlace.Tokenizer.class,
 	AdminPlace.Tokenizer.class,
 	AboutPlace.Tokenizer.class,
+	ResidentPlace.Tokenizer.class,
+	BusinessPlace.Tokenizer.class,
 })
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 

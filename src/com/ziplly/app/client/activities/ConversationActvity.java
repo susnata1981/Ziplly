@@ -116,7 +116,6 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 				view.updateConversation(conversation);
 			}
 		});
-		System.out.println("sending message to: "+conversation.getReceiver());
 	}
 
 	@Override

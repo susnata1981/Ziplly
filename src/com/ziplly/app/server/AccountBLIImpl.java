@@ -585,13 +585,14 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public void sendEmailByZip(Account sender, NotificationType type, EmailTemplate template) {
+	public void sendEmailByZip(Account sender, Long tweetId, NotificationType type, EmailTemplate template) {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
 		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
 				.param("senderAccountId", sender.getAccountId().toString())
+				.param("tweetId", tweetId.toString())
 				.param("notificationType", type.name())
 				.param("zip", Integer.toString(sender.getZip()))
 				.param("emailTemplateId", template.name())

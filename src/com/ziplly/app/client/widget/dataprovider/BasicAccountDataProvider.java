@@ -8,8 +8,8 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.shared.GetResidentsRequest;
-import com.ziplly.app.shared.GetResidentsResult;
+import com.ziplly.app.shared.GetEntityListAction;
+import com.ziplly.app.shared.GetEntityResult;
 
 public class BasicAccountDataProvider extends AbstractDataProvider<PersonalAccountDTO>{
 	private ResidentsView view;
@@ -24,12 +24,12 @@ public class BasicAccountDataProvider extends AbstractDataProvider<PersonalAccou
 	
 	@Override
 	protected void onRangeChanged(HasData<PersonalAccountDTO> display) {
-		dispatcher.execute(new GetResidentsRequest(account), new DispatcherCallbackAsync<GetResidentsResult>() {
-			@Override
-			public void onSuccess(GetResidentsResult result) {
-				view.getResidentsList().setRowData(result.getAccounts());
-			}
-		});
+//		dispatcher.execute(new GetEntityListAction(account), new DispatcherCallbackAsync<GetEntityResult>() {
+//			@Override
+//			public void onSuccess(GetEntityResult result) {
+//				view.getResidentsList().setRowData(result.getAccounts());
+//			}
+//		});
 	}
 
 	public void setView(ResidentsView view) {

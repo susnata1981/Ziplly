@@ -271,7 +271,7 @@ public class TweetDAOImpl implements TweetDAO {
 	}
 
 	@Override
-	public Tweet findTweetById(Long tweetId) {
+	public TweetDTO findTweetById(Long tweetId) {
 		if (tweetId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -281,7 +281,7 @@ public class TweetDAOImpl implements TweetDAO {
 		query.setParameter("tweetId", tweetId);
 		Tweet result = (Tweet) query.getSingleResult();
 		em.close();
-		return result;
+		return EntityUtil.clone(result);
 	}
 
 	public static void main(String[] args) throws ParseException {

@@ -27,6 +27,10 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 	@OneToOne
 	private Account sender;
 
+	@OneToOne
+	@JoinColumn(name="tweet_id")
+	private Tweet tweet;
+	
 	@Column(name="read_status")
 	private ReadStatus readStatus;
 	
@@ -48,6 +52,7 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 		this.sender = new Account();
 		this.sender.setAccountId(an.getSender().getAccountId());
 		
+		this.tweet = new Tweet(an.getTweet());
 		this.readStatus = an.getReadStatus();
 		this.type = an.getType();
 		this.setTimeUpdated(an.getTimeUpdated());
@@ -100,5 +105,13 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 
 	public void setStatus(RecordStatus status) {
 		this.status = status;
+	}
+
+	public Tweet getTweet() {
+		return tweet;
+	}
+
+	public void setTweet(Tweet tweet) {
+		this.tweet = tweet;
 	}
 }

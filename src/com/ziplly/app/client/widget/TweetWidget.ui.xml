@@ -49,7 +49,8 @@
 							<dt:ZAnchor ui:field="replyAnchor" icon="REPLY"/>
 						</div>
 						<div class='{style.tweet_action_link}'>
-							<g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor>
+						    <dt:ZAnchor ui:field="commentLink" icon="COMMENTS"/>
+							<!-- <g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor> -->
 						</div>
 						<div class='{style.tweet_sender_link}'>
 							posted by

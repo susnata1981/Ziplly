@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -29,6 +30,7 @@ import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
+import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.MyBundle;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -86,6 +88,12 @@ public class MainView extends Composite implements View<HomePresenter> {
 	ZResources resources() {
 		ZResources.IMPL.style().ensureInjected();
 		return ZResources.IMPL;
+	}
+
+	@Override
+	public void onLoad() {
+		System.out.println("Setting background image");
+		CssStyleHelper.setBackgroundImage(ZResources.IMPL.neighborhoodLargePic());
 	}
 	
 	public void showLogin() {
