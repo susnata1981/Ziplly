@@ -5,24 +5,35 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.FileUpload;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.view.View;
@@ -47,7 +58,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	@UiField
 	TextArea tweetTextBox;
 	@UiField
-	HTMLPanel tweetActionPanel;
+	Panel tweetActionPanel;
 	@UiField
 	HelpInline tweetHelpInline;
 	@UiField
@@ -71,6 +82,30 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	@UiField
 	Button cancelEmbedLinkButton;
 	
+	//
+	// Upload image form
+	//
+	@UiField
+	FormPanel uploadForm;
+	@UiField
+	FileUpload fileUpload;
+	private boolean imageUploaded;
+	//
+	// Preview panel
+	//
+	@UiField
+	Anchor previewLinkAnchor;
+	@UiField
+	HTMLPanel previewPanel;
+	@UiField
+	HTMLPanel previewTweetImagePanel;
+	@UiField
+	Image previewTweetImage;
+	@UiField
+	SpanElement tweetTextPreview;
+	@UiField
+	Button closePreviewBtn;
+	
 	boolean showKeystrokeCounter = true;
 
 	private TweetPresenter presenter;
@@ -79,12 +114,22 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	private String width = "40%";
 
+	private ClickHandler deleteImageHandler;
+
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(true);
 		embedLinkModal.hide();
+		initUploadForm();
 		setupDefaultDimension();
 		setupHandlers();
+	}
+
+	private void initUploadForm() {
+		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+		uploadForm.setMethod(FormPanel.METHOD_POST);
+		fileUpload.setEnabled(false);
+		displayPreview(false);
 	}
 
 	public void setTweetCategory(List<TweetType> tweetTypes) {
@@ -146,6 +191,14 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 			}
 		});
 
+		tweetTextBox.addBlurHandler(new BlurHandler() {
+
+			@Override
+			public void onBlur(BlurEvent event) {
+				tweetTextPreview.setInnerSafeHtml(SafeHtmlUtils.fromString(tweetTextBox.getText()));
+			}
+		});
+		
 		if (showKeystrokeCounter) {
 			tweetTextBox.addKeyUpHandler(new KeyUpHandler() {
 				@Override
@@ -191,6 +244,27 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 				embedLinkModal.hide();
 			}
 		});
+		
+		fileUpload.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				String fname = fileUpload.getFilename();
+				if (fname != null && !fname.equals("")) {
+					// already has an image, need to delete it
+					if (imageUploaded) {
+						presenter.deleteImage(previewTweetImage.getUrl());
+					}
+
+					imageUploaded = true;
+					displayPreview(true);
+					uploadForm.submit();
+				} else {
+					imageUploaded = false;
+					displayPreview(false);
+				}
+			}
+		});
 	}
 
 	boolean validate() {
@@ -207,9 +281,23 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	}
 
 	public void clear() {
+		// clear control errors.
 		tweetCg.setType(ControlGroupType.NONE);
 		tweetHelpInline.setText("");
 		setupDefaultDimension();
+		
+		// clear text
+		tweetTextBox.setText("");
+		
+		// hide category
+		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
+		
+		// clear preview section
+		tweetTextPreview.setInnerText("");
+		previewTweetImage.setUrl("");
+		
+		// hide preview
+		displayPreview(false);
 	}
 
 	@UiHandler("tweetBtn")
@@ -226,13 +314,62 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		tweet.setType(tweetType);
 		tweet.setStatus(TweetStatus.ACTIVE);
 		tweet.setTimeCreated(new Date());
+		if (imageUploaded) {
+			tweet.setImage(previewTweetImage.getUrl());
+		}
 		presenter.sendTweet(tweet);
-		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
-		tweetTextBox.setText("");
+		clear();
 	}
 
+	public void setImageUploadUrl(String imageUrl) {
+		uploadForm.setAction(imageUrl);
+		fileUpload.setEnabled(true);
+	}
+
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
+	}
+	
 	@Override
 	public void setPresenter(TweetPresenter presenter) {
 		this.presenter = presenter;
+	}
+
+	public void previewImage(String imageUrl) {
+		previewTweetImage.setUrl(imageUrl);
+	}
+	
+	public void displayPreview(boolean b) {
+		Display display = b ? Display.BLOCK : Display.NONE;
+		if (b) {
+			System.out.println("IMG UPLOD="+imageUploaded);
+			if (imageUploaded) {
+				displayFileUploadSection(true);
+			} else {
+				displayFileUploadSection(false);
+			}
+		}
+		previewPanel.getElement().getStyle().setDisplay(display);
+	}
+	
+	private void displayFileUploadSection(boolean b) {
+		Display display = b ? Display.BLOCK : Display.NONE;
+		previewTweetImagePanel.getElement().getStyle().setDisplay(display);
+	}
+
+	@UiHandler("closePreviewBtn")
+	void closePreview(ClickEvent event) {
+		displayPreview(false);
+	}
+	
+	@UiHandler("previewLinkAnchor")
+	void togglePreview(ClickEvent event) {
+		boolean b = previewPanel.isVisible();
+		displayPreview(!b);	
+	}
+
+	// Clears upload form
+	public void resetImageUploadUrl() {
+		uploadForm.setAction("");
 	}
 }

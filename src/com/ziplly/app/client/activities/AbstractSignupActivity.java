@@ -64,21 +64,15 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 					@Override
 					public void onSuccess(GetImageUploadUrlResult result) {
 						// TODO hack for making it work in local environment
-						String url = result.getImageUrl().replace(
-								"susnatas-MacBook-Pro.local:8888",
-								"127.0.0.1:8888");
-						System.out.println("Setting upload image form action to:"+url);
-						view.setImageUploadUrl(url);
+//						String url = result.getImageUrl().replace(
+//								"susnatas-MacBook-Pro.local:8888",
+//								"127.0.0.1:8888");
+						System.out.println("Setting upload image form action to:"+result.getImageUrl());
+						view.setImageUploadUrl(result.getImageUrl());
 					}
 				});
 	}
 
-	@Override
-	public void getNeighborhoodData(String postalCode) {
-		dispatcher.execute(new GetNeighborhoodAction(postalCode), 
-				new NeighborhoodHandler());
-	}
-	
 	// TODO handle image deletion on multiple file uploads
 	@Override
 	public void setUploadImageHandler() {
@@ -94,6 +88,12 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		});
 	}
 
+	@Override
+	public void getNeighborhoodData(String postalCode) {
+		dispatcher.execute(new GetNeighborhoodAction(postalCode), 
+				new NeighborhoodHandler());
+	}
+	
 	@Override
 	public void addToInviteList(String email, String postalCode) {
 		// need to implement.

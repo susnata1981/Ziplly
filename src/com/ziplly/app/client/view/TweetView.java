@@ -103,7 +103,7 @@ public class TweetView extends Composite implements
 				tweetsSection.add(tw);
 				int sh = tweetsSection.getElement().getScrollHeight();
 				long e1 = System.currentTimeMillis();
-				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
+//				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
 			} 
 		});
@@ -123,7 +123,7 @@ public class TweetView extends Composite implements
 				tweetsSection.insert(tw,0);
 				int sh = tweetsSection.getElement().getScrollHeight();
 				long e1 = System.currentTimeMillis();
-				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
+//				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
 			} 
 		});

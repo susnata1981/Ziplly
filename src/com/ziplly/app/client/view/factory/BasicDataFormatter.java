@@ -21,9 +21,10 @@ public class BasicDataFormatter implements Formatter<Object> {
 		case DATE_VALUE:
 		case DATE_VALUE_SHORT:
 			date = DateTimeFormat.getFormat(
-					PredefinedFormat.DATE_TIME_SHORT).format((Date)value);
+					PredefinedFormat.DATE_SHORT).format((Date)value);
 			return date;
-	
+		case UNREAD_MESSAGE_COUNT:
+			return "("+ value.toString()+")";
 		default:
 			throw new IllegalArgumentException("Invalid value tyoe to render");
 		}

@@ -15,6 +15,7 @@ public class TweetDTO implements Serializable {
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
 	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
 	private TweetStatus status;
+	private String image;
 	private Date timeUpdated;
 	private Date timeCreated;
 	
@@ -86,5 +87,13 @@ public class TweetDTO implements Serializable {
 
 	public void setTimeUpdated(Date timeUpdated) {
 		this.timeUpdated = timeUpdated;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

@@ -1,47 +1,97 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+		@external tweetImagePreview;
+
 		TextBox {
-			padding: 3px;
+		padding: 3px;
 		}
 		.tweetActionPanel {
-			background: #666;
-			width: 100%;
-			height: 0.6%;
-			padding: 2px 4px;
+		background: #666;
+		width: 100%;
+		height: 0.6%;
+		padding: 2px 4px;
 		}
 		.tweetActionPanel a {
-			color: #fff;
-			width: 100%;
-			font-size: 10px;
-			font-family: sans-serif;
+		color: #fff;
+		width: 100%;
+		font-size: 10px;
+		font-family: sans-serif;
 		}
 		.tweetHelpInline {
-			clear: left;
+		clear: left;
 		}
 		.tweetBoxPanel TextArea {
-			margin-bottom: 0;
-			padding: 4px;
+		margin-bottom: 0;
+		padding: 4px;
 		}
 		.tweetCategoryPanel {
-			clear: both;
+		clear: both;
+		}
+
+		.tweetImagePreview {
+		display: block;
+		max-height: 160px;
+		max-width: 160px;
+		overflow: hidden;
+		margin: 2px;
+		}
+		.tweetImagePreview img {
+			height: 100%;
+		}
+		.previewPanel {
+			width: 80%;
+			border: 1px dotted #555444;
+			margin: 10px 0;
+			padding: 2px;
+		}
+		.previewHeading {
+			color: #666;
+			margin: 0;
+			padding: 2px;
+		}
+		.tweetTextPreview {
+			display: block;
+			padding: 10px 0 2px 4px;
+			color: #666;
+			font-family: Georgia, serif;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.tweetBoxPanel}">
 		<b:Form ui:field="tweetForm">
 			<b:ControlGroup ui:field="tweetCg">
 				<b:Controls>
-					<b:TextArea placeholder="Share what's on your mind…" ui:field="tweetTextBox" />
+					<b:InputAddOn>
+						<b:TextArea placeholder="Share what's on your mind…"
+							ui:field="tweetTextBox" />
+						<g:FormPanel ui:field="uploadForm">
+							<b:FileUpload ui:field="fileUpload" name="image" />
+						</g:FormPanel>
+					</b:InputAddOn>
 					<g:HTMLPanel ui:field="tweetActionPanel" addStyleNames="{style.tweetActionPanel}">
-						<b:Icon type="LINK"/>&nbsp;<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>
+						<b:Icon type="LINK" />&nbsp;
+						<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>&nbsp;
+						<b:Icon type="STAR" />&nbsp;
+						<g:Anchor ui:field="previewLinkAnchor">toggle preview</g:Anchor>&nbsp;
 					</g:HTMLPanel>
 					<div class="{style.tweetHelpInline}">
 						<b:HelpInline ui:field="tweetHelpInline" />
 					</div>
 				</b:Controls>
 			</b:ControlGroup>
+			<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
+			    <b:Heading size="4" addStyleNames="{style.previewHeading}">Preview</b:Heading>
+				<g:HTMLPanel ui:field="previewTweetImagePanel" addStyleNames="{style.tweetImagePreview}">
+					<br />
+					<b:Image ui:field="previewTweetImage" />
+				</g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="{style.tweetTextPreview}">
+					<span ui:field="tweetTextPreview"/>
+				</g:HTMLPanel>
+				<b:Button size="MINI" ui:field="closePreviewBtn">Close preview</b:Button>
+			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="tweetCategoryPanel" addStyleNames="{style.tweetCategoryPanel}">
 				<b:ControlLabel>Select Category</b:ControlLabel>
 				<b:Controls>
@@ -50,12 +100,11 @@
 				</b:Controls>
 				<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
 					ui:field="tweetBtn">Share</b:Button>
-				<b:Button size="SMALL" addStyleNames="btn"
-					ui:field="cancelBtn">Cancel</b:Button>
+				<b:Button size="SMALL" addStyleNames="btn" ui:field="cancelBtn">Cancel</b:Button>
 			</g:HTMLPanel>
 		</b:Form>
 		<b:Modal ui:field="embedLinkModal" backdrop="STATIC" keyboard="true">
-		    <b:ControlGroup ui:field="embedLinkCg">
+			<b:ControlGroup ui:field="embedLinkCg">
 				<b:Controls>
 					<b:TextBox ui:field="embedLinkTextBox" placeholder="enter url..."></b:TextBox>
 					<div class="{style.tweetHelpInline}">
@@ -63,8 +112,8 @@
 					</div>
 				</b:Controls>
 			</b:ControlGroup>
-		    <b:Button ui:field="embedLinkButton" type="INVERSE">Embed</b:Button>
-		    <b:Button ui:field="cancelEmbedLinkButton">Cancel</b:Button>
+			<b:Button ui:field="embedLinkButton" type="INVERSE">Embed</b:Button>
+			<b:Button ui:field="cancelEmbedLinkButton">Cancel</b:Button>
 		</b:Modal>
 	</g:HTMLPanel>
 </ui:UiBinder> 

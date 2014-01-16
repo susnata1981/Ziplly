@@ -131,6 +131,7 @@ public class SignupView extends Composite implements
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
+	private boolean facebookRegistration;
 
 	@Inject
 	public SignupView() {
@@ -343,7 +344,6 @@ public class SignupView extends Composite implements
 
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
-		System.out.println("Calling submit signup...");
 		resetErrors();
 		
 		if (!isServiceAvailable) {
@@ -370,7 +370,11 @@ public class SignupView extends Composite implements
 		account.setRole(Role.USER);
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
-
+		
+		if (facebookRegistration) {
+			account.setFacebookRegistration(true);
+		}
+		
 		if (imageUploaded && profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
 		} 
@@ -417,6 +421,7 @@ public class SignupView extends Composite implements
 		
 		zip.setText("");
 		neighborhoodControl.setVisible(false);
+		facebookRegistration = true;
 	}
 
 	@UiHandler("uploadBtn")

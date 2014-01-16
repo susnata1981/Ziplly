@@ -1,11 +1,15 @@
 package com.ziplly.app.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,8 +53,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@Fetch(FetchMode.JOIN)
 	private Account sender;
 
+	// What is this?
 	@Column(name = "image_id")
 	private long imageId;
+	
 	private TweetType type;
 	private String content;
 
@@ -70,6 +76,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 	private TweetStatus status;
 
+	// Currently supporting only 1 image.
+	@Column(name="image_url")
+	private String image;
+	
 	public Tweet() {
 	}
 
@@ -83,6 +93,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		status = tweet.getStatus();
 		setTimeUpdated(tweet.getTimeUpdated());
 		setTimeCreated(tweet.getTimeCreated());
+		setImage(tweet.getImage());
 	}
 
 	public TweetType getType() {
@@ -168,5 +179,13 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 	public Set<Hashtag> getHashtags() {
 		return hashtags;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

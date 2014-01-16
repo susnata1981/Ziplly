@@ -20,8 +20,6 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
-import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -56,17 +54,17 @@ public class PersonalAccountActivity extends
 
 		super(dispatcher, eventBus, placeController, ctx, view);
 		this.place = place;
-		setupHandlers();
+//		setupHandlers();
 	}
 
-	private void setupHandlers() {
-		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
-			@Override
-			public void onEvent(AccountDetailsUpdateEvent event) {
-				onAccountDetailsUpdate();
-			}
-		});
-	}
+//	private void setupHandlers() {
+//		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
+//			@Override
+//			public void onEvent(AccountDetailsUpdateEvent event) {
+//				onAccountDetailsUpdate();
+//			}
+//		});
+//	}
 
 	@Override
 	public void bind() {
@@ -187,6 +185,10 @@ public class PersonalAccountActivity extends
 		reportSpam(spam, new ReportSpamActionHandler());
 	}
 	
+	/**
+	 * Called in response to AccountDetailsUpdateEvent event
+	 * @param result
+	 */
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
 		ctx.setUnreadMessageCount(result.getUnreadMessages());
 		ctx.setTotalTweets(result.getTotalTweets());

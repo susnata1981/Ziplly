@@ -6,7 +6,8 @@ import com.ziplly.app.model.AccountDTO;
 
 public class RegisterAccountAction implements Action<RegisterAccountResult> {
 	private AccountDTO account;
-
+	private boolean facebookRegistration;
+	
 	public RegisterAccountAction() {
 	}
 	
@@ -20,5 +21,13 @@ public class RegisterAccountAction implements Action<RegisterAccountResult> {
 
 	public void setAccount(AccountDTO account) {
 		this.account = account;
+	}
+
+	public boolean isFacebookRegistration() {
+		return facebookRegistration;
+	}
+
+	public void setFacebookRegistration(boolean facebookRegistration) {
+		this.facebookRegistration = facebookRegistration;
 	}
 }

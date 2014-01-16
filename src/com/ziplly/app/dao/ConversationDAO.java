@@ -4,10 +4,13 @@ import java.util.List;
 
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.ConversationType;
 
 public interface ConversationDAO {
-	void save(Conversation conversation);
-	List<ConversationDTO> getConversationForAccount(Long accountId);
+	Conversation save(Conversation conversation);
+	List<ConversationDTO> getConversationForAccount(Long accountId, ConversationType conversationType, int start, int pageSize);
 	void markConversationAsRead(Long conversationId);
 	Long getUnreadConversationForAccount(Long accountId);
+	Long getTotalConversationCount(Long accountId);
+	ConversationDTO findConversationById(Long conversationId);
 }

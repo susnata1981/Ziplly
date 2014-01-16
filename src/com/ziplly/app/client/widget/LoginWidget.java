@@ -49,6 +49,8 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
+		email.setWidth("90%");
+		password.setWidth("90%");
 		setWidth("90%");
 	}
 

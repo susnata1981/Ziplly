@@ -11,4 +11,6 @@ public interface IConversationView extends View<ConversationViewPresenter>{
 	void updateConversation(ConversationDTO c);
 	void setMessageCount(List<ConversationDTO> conversations);
 	void clearMessageCount();
+	int getConversationPageSize();
+	void setTotalConversation(Long totalConversations);
 }

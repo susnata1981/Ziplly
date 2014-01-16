@@ -13,7 +13,6 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -25,6 +24,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
@@ -35,10 +35,10 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
-import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
@@ -57,9 +57,9 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		String smallfont();
 	}
 
-	private static final String TWEET_BOX_WIDTH = "97%";
+	private static final String TWEET_BOX_WIDTH = "94%";
 
-	private static final String TWEET_WIDGET_WIDTH = "62%";
+	private static final String TWEET_WIDGET_WIDTH = "94%";
 	
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
@@ -69,10 +69,8 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	
 	@UiField
 	Alert message;
-	@UiField
-	HTMLPanel mainSection;
-	@UiField
-	HTMLPanel asidePanel;
+//	@UiField
+//	Column asidePanel;
 	@UiField
 	Image profileImage;
 	@UiField
@@ -89,6 +87,8 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	HTMLPanel wifiAvailableSpan;
 	@UiField
 	SpanElement lastLoginTime;
+	@UiField
+	SpanElement businessCategory;
 	@UiField
 	SpanElement email;
 	@UiField
@@ -135,10 +135,10 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	SpanElement sundayEnd;
 
 	
-	@UiField
-	Anchor settingsLink;
-	@UiField
-	Anchor messagesLink;
+//	@UiField
+//	Anchor settingsLink;
+//	@UiField
+//	Anchor messagesLink;
 	
 	@UiField(provided=true)
 	TweetBox tweetBox;
@@ -162,8 +162,8 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	HTMLPanel tweetBoxDiv;
 	
-	@UiField
-	SpanElement unreadMessageCountField;
+//	@UiField
+//	SpanElement unreadMessageCountField;
 	
 	AccountPresenter<BusinessAccountDTO> presenter;
 	BusinessAccountDTO account;
@@ -188,7 +188,7 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		this.account = account;
 		
 		// aside
-		asidePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+//		asidePanel.getElement().getStyle().setDisplay(Display.BLOCK);
 		
 		// image section
 		if (account.getImageUrl() != null) {
@@ -199,6 +199,11 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		name.setInnerHTML(account.getDisplayName());
 
 //		description.setText(account.get);
+		
+		if (account.getCategory() != null) {
+			businessCategory.setInnerText(account.getCategory().name().toLowerCase());
+		}
+		
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
 
@@ -297,7 +302,7 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-		asidePanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+//		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
@@ -341,15 +346,15 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		message.setVisible(true);
 	}
 	
-	@UiHandler("settingsLink")
-	void settingsLinkClicked(ClickEvent event) {
-		presenter.settingsLinkClicked();
-	}
-	
-	@UiHandler("messagesLink")
-	void messagesLinkClicked(ClickEvent event) {
-		presenter.messagesLinkClicked();
-	}
+//	@UiHandler("settingsLink")
+//	void settingsLinkClicked(ClickEvent event) {
+//		presenter.settingsLinkClicked();
+//	}
+//	
+//	@UiHandler("messagesLink")
+//	void messagesLinkClicked(ClickEvent event) {
+//		presenter.messagesLinkClicked();
+//	}
 	
 	@Override
 	public Element getTweetSectionElement() {
@@ -364,11 +369,11 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
 		if (ctx != null) {
-			if (ctx.getUnreadMessageCount()>0) {
-				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
-			} else {
-				unreadMessageCountField.setInnerHTML("");
-			}
+//			if (ctx.getUnreadMessageCount()>0) {
+//				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
+//			} else {
+//				unreadMessageCountField.setInnerHTML("");
+//			}
 			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
 			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
 			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());
@@ -399,6 +404,25 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@Override
 	public void removeTweet(TweetDTO tweet) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	public void setImageUploadUrl(String imageUrl) {
+		tweetBox.setImageUploadUrl(imageUrl);
+	}
+
+	@Override
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		tweetBox.addUploadFormHandler(submitCompleteHandler);
+	}
+
+	@Override
+	public void displayProfileImagePreview(String imageUrl) {
+		tweetBox.previewImage(imageUrl);
+	}
+
+	@Override
+	public void resetImageUploadUrl() {
+		tweetBox.resetImageUploadUrl();
 	}
 }

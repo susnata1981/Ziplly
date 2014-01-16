@@ -81,6 +81,9 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 	@OneToOne(mappedBy = "properties")
 	private BusinessAccount seller;
 
+	@Column(name = "cuisine")
+	private Cuisine cuisine;
+	
 	public BusinessProperties() {
 	}
 
@@ -107,6 +110,7 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 			this.setWifiAvailable(businessAccountProperties.getWifiAvailable());
 			this.setGoodForKids(businessAccountProperties.getGoodForKids());
 			this.setPriceRange(businessAccountProperties.getPriceRange());
+			this.setCuisine(businessAccountProperties.getCuisine());
 		}
 	}
 
@@ -287,5 +291,13 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 
 	public void setPriceRange(PriceRange priceRange) {
 		this.priceRange = priceRange;
+	}
+
+	public Cuisine getCuisine() {
+		return cuisine;
+	}
+
+	public void setCuisine(Cuisine cuisine) {
+		this.cuisine = cuisine;
 	}
 }

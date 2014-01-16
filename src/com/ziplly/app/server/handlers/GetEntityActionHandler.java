@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.EntityType;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityResult;
@@ -31,20 +30,39 @@ public class GetEntityActionHandler extends
 		validateSession();
 		List<AccountDTO> accounts = Lists.newArrayList();
 		GetEntityResult result = new GetEntityResult();
-		switch (action.getEntityType()) {
-		case BUSINESS_ACCOUNT:
-			result.setEntityType(EntityType.BUSINESS_ACCOUNT);
-			accounts.addAll(accountDao.findAccountsByNeighborhood(EntityType.BUSINESS_ACCOUNT,
-					session.getAccount().getNeighborhood().getNeighborhoodId()));
-			break;
-		case PERSONAL_ACCOUNT:
-		default:
-			result.setEntityType(EntityType.PERSONAL_ACCOUNT);
-			accounts.addAll(accountDao.findAccountsByNeighborhood(EntityType.PERSONAL_ACCOUNT,
-					session.getAccount().getNeighborhood().getNeighborhoodId()));
+//		switch (action.getEntityType()) {
+//		case BUSINESS_ACCOUNT:
+//			result.setEntityType(EntityType.BUSINESS_ACCOUNT);
+//			accounts.addAll(accountDao.findAccountsByNeighborhood(
+//					EntityType.BUSINESS_ACCOUNT,
+//					session.getAccount().getNeighborhood().getNeighborhoodId(),
+//					action.getPage(),
+//					action.getPageSize()));
+//			break;
+//		case PERSONAL_ACCOUNT:
+//		default:
+//			result.setEntityType(EntityType.PERSONAL_ACCOUNT);
+//			accounts.addAll(accountDao.findAccountsByNeighborhood(
+//					EntityType.PERSONAL_ACCOUNT,
+//					session.getAccount().getNeighborhood().getNeighborhoodId(),
+//					action.getPage(),
+//					action.getPageSize()));
+//		}
 
+		accounts.addAll(accountDao.findAccountsByNeighborhood(
+				action.getEntityType(),
+				session.getAccount().getNeighborhood().getNeighborhoodId(),
+				action.getPage(),
+				action.getPageSize()));
+		
+		if (action.isNeedTotalEntityCount()) {
+			Long count = accountDao.getAccountsByNeighborhoodCount(
+					action.getEntityType(), 
+					session.getAccount().getNeighborhood().getNeighborhoodId());
+			result.setEntityCount(count);
 		}
-
+		
+		result.setEntityType(action.getEntityType());
 		result.setAccounts(accounts);
 		return result;
 	}

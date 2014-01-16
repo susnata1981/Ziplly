@@ -1,15 +1,19 @@
 package com.ziplly.app.server.handlers;
 
+import java.util.List;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.LikeDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -19,6 +23,7 @@ public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler
 	private TweetDAO tweetDao;
 	private CommentDAO commentDao;
 	private LikeDAO likeDao;
+	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
 	public GetAccountDetailsActionHandler(AccountDAO accountDao,
@@ -26,12 +31,14 @@ public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler
 			ConversationDAO conversationDao, 
 			TweetDAO tweetDao,
 			CommentDAO commentDao,
-			LikeDAO likeDao) {
+			LikeDAO likeDao,
+			AccountNotificationDAO accountNotificationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.tweetDao = tweetDao;
 		this.commentDao = commentDao;
 		this.likeDao = likeDao;
+		this.accountNotificationDao = accountNotificationDao;
 	}
 
 	@Override
@@ -47,11 +54,15 @@ public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler
 		Long totalComments = commentDao.findCommentCountByAccountId(accountId);
 		Long totalLikes = likeDao.findLikeCountByAccoutId(accountId);
 		
+		List<AccountNotificationDTO> notifications = 
+				accountNotificationDao.findAccountNotificationByAccountId(session.getAccount().getAccountId());
+
 		GetAccountDetailsResult result = new GetAccountDetailsResult();
 		result.setUnreadMessages(unreadMessageCount.intValue());
 		result.setTotalTweets(totalTweets.intValue());
 		result.setTotalComments(totalComments.intValue());
 		result.setTotalLikes(totalLikes.intValue());
+		result.setAccountNotifications(notifications);
 		return result;
 	}
 

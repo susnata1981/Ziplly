@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.model.AccountDTO;
@@ -43,4 +44,12 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void closeMessageWidget();
 
 	void removeTweet(TweetDTO tweet);
+
+	void setImageUploadUrl(String imageUrl);
+
+	void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler);
+
+	void displayProfileImagePreview(String imageUrl);
+
+	void resetImageUploadUrl();
 }

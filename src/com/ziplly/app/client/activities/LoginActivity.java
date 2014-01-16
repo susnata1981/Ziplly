@@ -10,6 +10,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.client.view.LoginAccountView;
@@ -80,7 +81,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 						if (result != null && result.getAccount() != null) {
 							ctx.setAccount(result.getAccount());
 							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-							forward(result.getAccount());
+							goTo(new HomePlace());
 						}
 					}
 

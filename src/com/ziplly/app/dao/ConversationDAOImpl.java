@@ -1,5 +1,6 @@
 package com.ziplly.app.dao;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,22 +12,43 @@ import com.google.common.collect.Lists;
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
+import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.Message;
 
 public class ConversationDAOImpl implements ConversationDAO {
 
 	@Override
-	public List<ConversationDTO> getConversationForAccount(Long accountId) {
+	public List<ConversationDTO> getConversationForAccount(
+			Long accountId,
+			ConversationType type,
+			int start, 
+			int pageSize) {
+		
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
-		Query query = em.createNamedQuery("findConversationByAccountId");
-		query.setParameter("receiverAccountId", accountId);
-		query.setParameter("senderAccountId", accountId);
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = null;
 		
+		switch(type) {
+		case SENT:
+			query = em.createQuery("from Conversation where sender.accountId = :senderAccountId order by timeUpdated desc");
+			query.setParameter("senderAccountId", accountId);
+			break;
+		case RECEIVED:
+			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId order by timeUpdated desc");
+			query.setParameter("receiverAccountId", accountId);
+			break;
+		case ALL:
+		default:
+			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId order by timeUpdated desc");
+			query.setParameter("receiverAccountId", accountId)
+			.setParameter("senderAccountId", accountId);
+		}
+	
+		query.setFirstResult(start).setMaxResults(pageSize);
+	
 		@SuppressWarnings("unchecked")
 		List<Conversation> conversations = (List<Conversation>) query
 				.getResultList();
@@ -54,13 +76,33 @@ public class ConversationDAOImpl implements ConversationDAO {
 	}
 
 	@Override
-	public void save(Conversation conversation) {
+	public Long getTotalConversationCount(Long accountId) {
+		if (accountId == null) {
+			throw new IllegalArgumentException();
+		}
+
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createNativeQuery("select count(*) from Conversation where receiver_account_id = :receiverAccountId "
+				+ "or sender_account_id = :senderAccountId");
+		query.setParameter("receiverAccountId", accountId);
+		query.setParameter("senderAccountId", accountId);
+		BigInteger result = (BigInteger) query.getSingleResult();
+		em.close();
+		return result.longValue();
+	}
+
+	@Override
+	public Conversation save(Conversation conversation) {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		em.getTransaction().begin();
-		em.merge(conversation);
+		Conversation result = em.merge(conversation);
+		em.flush();
+//		em.clear();
 		em.getTransaction().commit();
 		em.close();
+		return result;
 	}
 
 	@Override
@@ -93,6 +135,22 @@ public class ConversationDAOImpl implements ConversationDAO {
 		query.setParameter("receiverAccountId", accountId);
 		query.setParameter("status", ConversationStatus.UNREAD);
 		Long result = (Long)query.getSingleResult();
+		em.close();
+		return result;
+	}
+
+	@Override
+	public ConversationDTO findConversationById(Long conversationId) {
+		if (conversationId == null) {
+			throw new IllegalArgumentException();
+		}
+
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createQuery("from Conversation where id = :conversationId");
+		query.setParameter("conversationId", conversationId);
+		Conversation c = (Conversation) query.getSingleResult();
+		ConversationDTO result = EntityUtil.clone(c);
 		em.close();
 		return result;
 	}

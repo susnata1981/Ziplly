@@ -332,7 +332,9 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		businessName.setText("");
 		street1.setText("");
 		email.setText("");
+		profileImagePreview.setUrl("");
 		password.setText("");
+		neighborhoodListPanel.clear();
 	}
 
 	void resetErrors() {
@@ -342,6 +344,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		street1Error.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodError.setVisible(false);
 	}
 
 	@UiHandler("signupBtn")

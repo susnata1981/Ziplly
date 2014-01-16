@@ -1,5 +1,7 @@
 package com.ziplly.app.client.view;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -23,6 +26,8 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -32,7 +37,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -45,10 +49,13 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.SubscriptionPlanWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.Cuisine;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
@@ -95,11 +102,6 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	Alert message;
 
 	@UiField
-	Anchor profileLink;
-	@UiField
-	Anchor inboxLink;
-
-	@UiField
 	TextBox businessName;
 	@UiField
 	ControlGroup businessNameCg;
@@ -141,6 +143,14 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	@UiField
 	HelpInline emailError;
 
+	@UiField
+	ListBox businessCategory;
+	
+	@UiField
+	Controls cuisineControls;
+	@UiField
+	ListBox cuisineListBox;
+	
 	@UiField
 	ListBox priceRangeListBox;
 	@UiField
@@ -244,6 +254,23 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		clearPaymentStatus();
+		setupHandlers();
+	}
+
+	private void setupHandlers() {
+		businessCategory.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
+				// Display cuisine listbox only for restaurants
+				if (category == BusinessCategory.RESTAURANT) {
+					StyleHelper.show(cuisineControls.getElement(), true);
+				} else {
+					StyleHelper.show(cuisineControls.getElement(), false);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -271,9 +298,22 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			zip.setText(Integer.toString(account.getZip()));
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
+			
+			businessCategory.clear();
+			for(BusinessCategory category : BusinessCategory.values()) {
+				businessCategory.addItem(category.name());
+			}
 
+			if (account.getCategory() != null) {
+				businessCategory.setSelectedIndex(account.getCategory().ordinal());
+			}
+			
 			for(PriceRange range : PriceRange.values()) {
 				priceRangeListBox.addItem(range.name());
+			}
+			
+			for(Cuisine cuisine : Cuisine.values()) {
+				cuisineListBox.addItem(cuisine.name());
 			}
 			
 			displayBusinessProperties();
@@ -405,10 +445,17 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		acct.setZip(Integer.parseInt(zipInput));
 		acct.setWebsite(websiteUrl);
 		acct.setEmail(emailInput);
+		acct.setCategory(BusinessCategory.values()[businessCategory.getSelectedIndex()]);
 		
 		BusinessPropertiesDTO props = new BusinessPropertiesDTO();
 		PriceRange priceRange = PriceRange.values()[priceRangeListBox.getSelectedIndex()];
 		props.setPriceRange(priceRange);
+		
+		if (StyleHelper.isVisible(cuisineControls.getElement())) {
+			Cuisine cuisine = Cuisine.values()[cuisineListBox.getSelectedIndex()];
+			props.setCuisine(cuisine);
+		}
+		
 		props.setWifiAvailable(wifiAvailableCheckbox.isEnabled());
 		props.setPartkingFacility(parkingAvailableCheckbox.isEnabled()? "Yes" : null);
 		props.setMondayStartTime(FieldVerifier.sanitize(mondayStart.getText()));
@@ -556,10 +603,26 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
 		subscriptionPlanMap.clear();
 		subscriptionPlanTablePanel.clear();
+		
+		// sort the subscription plans based on fee (ascending)
+		Collections.sort(plans, new Comparator<SubscriptionPlanDTO>() {
+
+			@Override
+			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
+				return (int)(o1.getFee() - o2.getFee());
+			}
+		});
+		
 		int count = 0;
 		for (SubscriptionPlanDTO plan : plans) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
 			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan);
+			
+			// Free subscription plan
+			if (plan.getFee() == 0) {
+				widget.removeBuyButton();
+			}
+			
 			// Just to highlight
 			if (count == 1) {
 				widget.setButtonType(ButtonType.INFO);
@@ -697,16 +760,6 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		transactionDetailsPanel.setVisible(false);
 	}
 
-	@UiHandler("profileLink")
-	public void onProfileLinkClick(ClickEvent event) {
-		presenter.onProfileLinkClick();
-	}
-
-	@UiHandler("inboxLink")
-	public void onInboxLinkClick(ClickEvent event) {
-		presenter.onInboxLinkClick();
-	}
-
 	public void showTransactionHistory() {
 		transactionDetailsPanel.setVisible(true);
 	}
@@ -772,5 +825,4 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		action.setNewPassword(newPasswordInput);
 		presenter.updatePassword(action);
 	}
-
 }

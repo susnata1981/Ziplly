@@ -29,6 +29,8 @@ public class UploadServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		logger.log(Level.INFO, "doPost method called");
 		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+		
+		// "image" name of the input[type="file"] form field.
 		List<BlobKey> blobKeys = blobs.get("image");
 		
 		if (blobKeys == null || blobKeys.size() == 0) {

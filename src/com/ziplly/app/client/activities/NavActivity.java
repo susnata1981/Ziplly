@@ -1,4 +1,4 @@
-package com.ziplly.app.client.activities;
+	package com.ziplly.app.client.activities;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.NavView.NavPresenter;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountNotificationEventHandler;
@@ -25,6 +26,10 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.GetAccountDetailsAction;
+import com.ziplly.app.shared.GetAccountDetailsResult;
+import com.ziplly.app.shared.GetAccountNotificationAction;
+import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
 import com.ziplly.app.shared.ViewNotificationAction;
@@ -64,13 +69,34 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
-				view.showAccountLinks(true);
+				onLogin();
 			}
 		});
 
 		eventBus.addHandler(AccountNotificationEvent.TYPE, accountNotificationHandler);
 	}
 
+	/**
+	 * Post login does the following
+	 * 1. Rpc to GetAccountNotificationActionHandler and fires AccountNotificationEvent.
+	 */
+	private void onLogin() {
+//		dispatcher.execute(new GetAccountNotificationAction(), new DispatcherCallbackAsync<GetAccountNotificationResult>() {
+//			@Override
+//			public void onSuccess(GetAccountNotificationResult result) {
+//				eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
+//			}
+//		});
+		
+		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+			@Override
+			public void onSuccess(GetAccountDetailsResult result) {
+				eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
+				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			}
+		});
+	}
+	
 	private void markNotificationAsRead(AccountNotificationDTO an) {
 		dispatcher.execute(new ViewNotificationAction(an),
 				new AsyncCallback<ViewNotificationResult>() {
@@ -93,14 +119,6 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			view.showAccountLinks(true);
 		}
 		panel.setWidget(view);
-	}
-
-	@Override
-	public void fetchData() {
-	}
-
-	@Override
-	public void go(AcceptsOneWidget container) {
 	}
 
 	@Override
@@ -148,7 +166,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		markNotificationAsRead(an);
 		switch (an.getType()) {
 		case PERSONAL_MESSAGE:
-			goTo(new ConversationPlace());
+			goTo(new ConversationPlace(an.getConversation().getId()));
 			return;
 		case SECURITY_ALERT:
 		case ANNOUNCEMENT:
@@ -164,5 +182,13 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		public void onEvent(AccountNotificationEvent event) {
 			view.displayAccountNotifications(event.getAccountNotifications());
 		}
+	}
+	
+	@Override
+	public void fetchData() {
+	}
+
+	@Override
+	public void go(AcceptsOneWidget container) {
 	}
 }

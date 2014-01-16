@@ -48,7 +48,7 @@
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column size="2" ui:field="asidePanel">
+			<!-- <b:Column size="2" ui:field="asidePanel">
 				<g:HTMLPanel addStyleNames="{style.asidePanel}">
 					<dl>
 						<dt>
@@ -60,14 +60,14 @@
 						<dt>
 							<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
 						</dt>
-						<!-- <dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
+						<dt> <b:NavLink addStyleNames="{style.navlink}" icon="INBOX" ui:field="messagesLink"> 
 							INBOX </b:NavLink> <span ui:field="unreadMessageCountField" /> </dt> <dt> 
 							<b:NavLink addStyleNames="{style.navlink}" icon="ASTERISK" ui:field="settingsLink">Settings</b:NavLink> 
-							</dt> -->
+							</dt>
 					</dl>
 				</g:HTMLPanel>
-			</b:Column>
-			<b:Column size="3">
+			</b:Column> -->
+			<b:Column offset="1" size="3">
 				<g:HTMLPanel>
 					<div class="{style.profileImageSection}">
 						<div class="{style.profileImageDiv}">
@@ -116,7 +116,7 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="7">
-				<g:HTMLPanel ui:field="tweetSection">
+				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
 						<dt:TweetBox ui:field="tweetBox" />
 					</g:HTMLPanel>

@@ -111,11 +111,17 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		binder.start();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
+		setupImageUpload();
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			view.displayProfile((BusinessAccountDTO) ctx.getAccount());
 		} else if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountPlace());
 		}
+	}
+
+	private void setupImageUpload() {
+		setImageUploadUrl();
+		setUploadImageHandler();
 	}
 
 	@Override
@@ -261,5 +267,5 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		public void onSuccess(ReportSpamResult result) {
 			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
 		}
-	};
+	}
 }

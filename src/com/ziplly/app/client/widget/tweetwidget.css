@@ -11,6 +11,7 @@
 	width: 700px;
 	background: #fff;
 	overflow: auto;
+	position: relative;
 	padding: 2px;
 	margin: 20px 4px 40px 14px;
 	border: 1px solid #ddd;
@@ -30,13 +31,25 @@
 	width: 90%;
 }
 
+.tweetImagePanel {
+	width: 180px;
+	height: 160px;
+	overflow:hidden;
+	margin: 2px;
+	margin-left: 100px;
+}
+
+.tweetImage {
+	width: 100%;
+}
 .tweet_content_section {
-	float: left;
+ 	float: left;
 	width: 85%;
 	margin: 0px 10px 0px 10px;
 }
 
 .tweet_content {
+	clear: both;
 	margin-top: 1%;
 	margin-bottom: 5%;
 }
@@ -62,7 +75,9 @@ div.tweet_text {
 }
 
 .tweetActionDropdown {
-	float: right;
+	position: absolute;
+	top: 10px;
+	right: 10px;
 	list-style: none;
 }
 

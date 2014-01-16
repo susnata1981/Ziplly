@@ -26,15 +26,14 @@ import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
-public class SendMessageActionHandler extends AbstractAccountActionHandler<SendMessageAction, SendMessageResult> {
+public class SendMessageActionHandler extends
+		AbstractAccountActionHandler<SendMessageAction, SendMessageResult> {
 	private ConversationDAO conversationDao;
 	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
-	public SendMessageActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, 
-			AccountBLI accountBli, 
-			ConversationDAO conversationDao,
+	public SendMessageActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
+			AccountBLI accountBli, ConversationDAO conversationDao,
 			AccountNotificationDAO accountNotificationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
@@ -42,47 +41,64 @@ public class SendMessageActionHandler extends AbstractAccountActionHandler<SendM
 	}
 
 	@Override
-	public SendMessageResult execute(SendMessageAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public SendMessageResult execute(SendMessageAction action, ExecutionContext arg1)
+			throws DispatchException {
+
 		if (action == null || action.getConversation() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		ConversationDTO conversationDto = action.getConversation();
 		Conversation conversation = new Conversation(conversationDto);
-		for(MessageDTO m : conversationDto.getMessages()) {
+		for (MessageDTO m : conversationDto.getMessages()) {
 			conversation.getMessages().add(new Message(m));
 		}
-		conversationDao.save(conversation);
-		
+		Conversation newConversation = conversationDao.save(conversation);
+
 		// check notification settings and send email
-		notifyUser(conversation.getReceiver(), conversation.getSender());
-		
+		notifyUser(newConversation);
+
 		SendMessageResult result = new SendMessageResult();
 		return result;
 	}
 
-	private void notifyUser(Account recipient, Account sender) {
+	private void notifyUser(Conversation conversation) {
+		Account recipient = conversation.getReceiver();
+		Account sender = conversation.getSender();
+
+		// Email user
 		Set<AccountNotificationSettings> notificationSettings = recipient.getNotificationSettings();
-		for(AccountNotificationSettings notificationSetting : notificationSettings) {
-			if (notificationSetting.getType() == NotificationType.PERSONAL_MESSAGE &&
-					notificationSetting.getAction() == NotificationAction.EMAIL) {
+		for (AccountNotificationSettings notificationSetting : notificationSettings) {
+			if (notificationSetting.getType() == NotificationType.PERSONAL_MESSAGE
+					&& notificationSetting.getAction() == NotificationAction.EMAIL) {
 				accountBli.sendEmail(sender, recipient, EmailTemplate.PENDING_MESSAGE);
 			}
 		}
-		
+
+		updateAccountNotification(conversation);
+	}
+
+	private void updateAccountNotification(Conversation conversation) {
 		// save account notification
-		AccountNotification an = new AccountNotification();
-		an.setRecipient(recipient);
-		an.setSender(sender);
-		an.setReadStatus(ReadStatus.UNREAD);
-		an.setType(NotificationType.PERSONAL_MESSAGE);
-		an.setTimeCreated(new Date());
-		an.setTimeUpdated(new Date());
-		accountNotificationDao.save(an);
+		AccountNotification result = accountNotificationDao
+				.findAccountNotificationByConversationId(conversation.getId());
+		if (result == null) {
+			AccountNotification an = new AccountNotification();
+			an.setRecipient(conversation.getReceiver());
+			an.setSender(conversation.getSender());
+			an.setConversation(conversation);
+			an.setReadStatus(ReadStatus.UNREAD);
+			an.setType(NotificationType.PERSONAL_MESSAGE);
+			an.setConversation(conversation);
+			an.setTimeCreated(new Date());
+			an.setTimeUpdated(new Date());
+			accountNotificationDao.save(an);
+		} else {
+			result.setReadStatus(ReadStatus.UNREAD);
+			accountNotificationDao.save(result);
+		}
 	}
 
 	@Override

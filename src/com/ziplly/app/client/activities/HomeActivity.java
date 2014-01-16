@@ -8,6 +8,9 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -25,7 +28,9 @@ import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
@@ -39,6 +44,8 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
+import com.ziplly.app.shared.DeleteImageAction;
+import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
 import com.ziplly.app.shared.GetAccountNotificationAction;
@@ -47,6 +54,8 @@ import com.ziplly.app.shared.GetCommunityWallDataResult;
 import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
+import com.ziplly.app.shared.GetImageUploadUrlAction;
+import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -76,7 +85,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private HomePlace place;
 	private AccountDTO account;
 	
-//	private HTMLPanel loadingPanel = new HTMLPanel("<span>Loading</span>");
 	private AcceptsOneWidget panel;
 
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
@@ -119,11 +127,22 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayResidentCount(int totalResidents);
 
 		void highlightTweetType(TweetType type);
+
+		void setUnreadMessageCount(Long count);
+
+		void setImageUploadUrl(String imageUrl);
+
+		void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler);
+
+		void displayProfileImagePreview(String imageUrl);
+
+		void resetImageUploadUrl();
 	}
 
 	@Inject
 	public HomeActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, HomePlace place,
-			PlaceController placeController, MainView mainView, ApplicationContext ctx,
+			PlaceController placeController,ApplicationContext ctx, 
+			MainView mainView, 
 			HomeView homeView) {
 
 		super(dispatcher, eventBus, placeController, ctx);
@@ -139,12 +158,23 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 //		setBackgroundImage();
 		bind();
 		showLodingIcon();
+		setupHandlers();
 		if (ctx.getAccount() != null) {
 			displayCommunityWall();
 		} else {
 			fetchData();
 			panel.setWidget(mainView);
 		}
+	}
+
+	private void setupHandlers() {
+		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
+			@Override
+			public void onEvent(AccountDetailsUpdateEvent event) {
+				ctx.updateAccountDetails(event.getAccountDetails());
+				homeView.setUnreadMessageCount(new Long(ctx.getUnreadMessageCount()));
+			}
+		});
 	}
 
 	/**
@@ -163,6 +193,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		getHashtagList();
 		GetTweetCategoryDetails();
 		getNeighborhoodDetails();
+		setImageUploadUrl();
+		setUploadImageHandler();
 	}
 
 	private void getNeighborhoodDetails() {
@@ -364,6 +396,43 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
 	}
 
+	
+	public void setImageUploadUrl() {
+		dispatcher.execute(new GetImageUploadUrlAction(),
+				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+					@Override
+					public void onSuccess(GetImageUploadUrlResult result) {
+						homeView.setImageUploadUrl(result.getImageUrl());
+					}
+				});
+	}
+
+	// TODO handle image deletion on multiple file uploads
+	public void setUploadImageHandler() {
+		homeView.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				String imageUrl = event.getResults();
+				homeView.displayProfileImagePreview(imageUrl);
+				homeView.resetImageUploadUrl();
+				setImageUploadUrl();
+			}
+		});
+	}
+	
+	/**
+	 * Deletes the image from blobstore based on serving url
+	 */
+	@Override
+	public void deleteImage(String url) {
+		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
+			@Override
+			public void onSuccess(DeleteImageResult result) {
+				// Nothing to do.
+			}
+		});
+	}
+	
 	private void getLatLng(AccountDTO account) {
 		GetLatLngAction action = new GetLatLngAction();
 		action.setAccount(account);
@@ -424,7 +493,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			if (result != null && result.getAccount() != null) {
 				ctx.setAccount(result.getAccount());
 				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-				forward(result.getAccount());
+				displayCommunityWall();
 			}
 		}
 
@@ -589,6 +658,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private class GetFacebookRedirectUriHandler extends DispatcherCallbackAsync<GetFacebookRedirectUriResult> {
 		@Override
 		public void onSuccess(GetFacebookRedirectUriResult result) {

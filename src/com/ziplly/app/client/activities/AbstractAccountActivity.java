@@ -5,6 +5,8 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -27,10 +29,14 @@ import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
+import com.ziplly.app.shared.DeleteImageAction;
+import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetAccountNotificationAction;
+import com.ziplly.app.shared.GetImageUploadUrlAction;
+import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
@@ -163,7 +169,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		if (tweet == null) {
-			// do nothing
 			return;
 		}
 		
@@ -292,5 +297,37 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	
 	public void displayMessage(String message, AlertType type) {
 		view.displayMessage(message, type);
+	}
+	
+	@Override
+	public void deleteImage(String url) {
+		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
+			@Override
+			public void onSuccess(DeleteImageResult result) {
+				// Nothing to do.
+			}
+		});
+	}
+	
+	public void setImageUploadUrl() {
+		dispatcher.execute(new GetImageUploadUrlAction(),
+				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+					@Override
+					public void onSuccess(GetImageUploadUrlResult result) {
+						view.setImageUploadUrl(result.getImageUrl());
+					}
+				});
+	}
+
+	public void setUploadImageHandler() {
+		view.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				String imageUrl = event.getResults();
+				view.displayProfileImagePreview(imageUrl);
+				view.resetImageUploadUrl();
+				setImageUploadUrl();
+			}
+		});
 	}
 }

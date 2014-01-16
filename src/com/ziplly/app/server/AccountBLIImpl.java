@@ -1,6 +1,11 @@
 package com.ziplly.app.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.nio.channels.Channels;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +22,25 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 
 import com.google.appengine.api.backends.BackendServiceFactory;
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.UploadOptions;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.restfb.types.User;
@@ -77,11 +94,14 @@ import com.ziplly.app.shared.EmailTemplate;
 public class AccountBLIImpl implements AccountBLI {
 	private static final String UPLOAD_SERVICE_ENDPOINT = "/upload";
 	public static final int FREE_TWEET_PER_MONTH_THRESHOLD = 1;
+	private static final int BUFFER_SIZE = 512;
 
 	protected final long hoursInMillis = 2 * 60 * 60 * 1000;
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
 	private BlobstoreService blobstoreService;
+	private ImagesService imageService = ImagesServiceFactory.getImagesService();	
+	private BlobstoreService blobService = BlobstoreServiceFactory.getBlobstoreService();
 
 	@Inject
 	protected Provider<HttpSession> httpSession;
@@ -97,7 +117,10 @@ public class AccountBLIImpl implements AccountBLI {
 	private SubscriptionPlanDAO subscriptionPlanDao;
 	private EmailService emailService;
 	private PasswordRecoveryDAO passwordRecoveryDao;
-
+	private final GcsService gcsService = GcsServiceFactory
+			.createGcsService(new RetryParams.Builder().initialRetryDelayMillis(10)
+					.retryMaxAttempts(10).totalRetryPeriodMillis(15000).build());
+	
 	@Inject
 	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, InterestDAO interestDao,
 			TransactionDAO transactionDao, SubscriptionPlanDAO subscriptionPlanDao,
@@ -111,7 +134,7 @@ public class AccountBLIImpl implements AccountBLI {
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
 		// createInterestEntries();
-//		 createSubscriptionPlan();
+		// createSubscriptionPlan();
 	}
 
 	private void createSubscriptionPlan() {
@@ -122,7 +145,7 @@ public class AccountBLIImpl implements AccountBLI {
 		plan.setFee(0.0);
 		plan.setTimeCreated(new Date());
 		subscriptionPlanDao.save(plan);
-		
+
 		plan = new SubscriptionPlan();
 		plan.setName("Pro plan");
 		plan.setDescription("Send upto 6 messages a month");
@@ -130,7 +153,7 @@ public class AccountBLIImpl implements AccountBLI {
 		plan.setFee(5.00);
 		plan.setTimeCreated(new Date());
 		subscriptionPlanDao.save(plan);
-		
+
 		plan = new SubscriptionPlan();
 		plan.setName("Premium plan");
 		plan.setDescription("Send upto 15 messages a month");
@@ -178,7 +201,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO register(Account account) throws AccountExistsException {
+	public AccountDTO register(Account account, boolean saveImage) throws AccountExistsException {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
@@ -200,6 +223,13 @@ public class AccountBLIImpl implements AccountBLI {
 			createDefaultPrivacySettings((PersonalAccount) account);
 		}
 
+		if (saveImage && account.getImageUrl() != null) {
+			BlobKey blobKey = saveImage(account.getImageUrl());
+			String servingUrl = imageService.getServingUrl(
+					ServingUrlOptions.Builder.withBlobKey(blobKey));
+			account.setImageUrl(servingUrl);
+		}
+		
 		// create account otherwise
 		AccountDTO response = accountDao.save(account);
 
@@ -211,6 +241,46 @@ public class AccountBLIImpl implements AccountBLI {
 				EmailTemplate.WELCOME_REGISTRATION);
 		response.setUid(uid);
 		return response;
+	}
+
+
+	/**
+	 * Used to copy image from input url to GCS 
+	 * @param istream
+	 * @param ostream
+	 * @throws IOException
+	 */
+	private BlobKey saveImage(String url) {
+		Preconditions.checkArgument(url != null);
+		String fname = UUID.randomUUID().toString();
+		String bucketName = System.getProperty(StringConstants.BUCKET_NAME);
+		GcsFilename file = new GcsFilename(bucketName, fname);
+		try {
+			GcsOutputChannel outputChannel = gcsService.createOrReplace(file,
+					GcsFileOptions.getDefaultInstance());
+
+			InputStream istream = new URL(url).openStream();
+			copy(istream, Channels.newOutputStream(outputChannel));
+			
+			return blobService.createGsBlobKey("/gs/" + bucketName + "/" + file.getObjectName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private void copy(InputStream istream, OutputStream ostream) throws IOException {
+		byte[] buffer = new byte[BUFFER_SIZE];
+		int bytesRead = istream.read(buffer);
+		try {
+			while (bytesRead != -1) {
+				ostream.write(buffer, 0, bytesRead);
+				bytesRead = istream.read(buffer);
+			}
+		} finally {
+			istream.close();
+			ostream.close();
+		}
 	}
 
 	private void createDefaultNotificationSettings(Account account) {
@@ -349,7 +419,7 @@ public class AccountBLIImpl implements AccountBLI {
 			account.setFacebookId(fuser.getId());
 			account.setUrl(fuser.getLink());
 			account.setIntroduction(fuser.getBio());
-			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture"; // ?width=200&height=160
+			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture?type=large"; // ?width=200&height=160
 			account.setImageUrl(imgUrl);
 			return account;
 		} catch (Exception e) {
@@ -381,7 +451,20 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public String getImageUploadUrl() {
-		return blobstoreService.createUploadUrl(UPLOAD_SERVICE_ENDPOINT);
+		String bucketName = System.getProperty("gcs_bucket_name");
+		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
+		String uploadUrl = blobstoreService.createUploadUrl(UPLOAD_SERVICE_ENDPOINT, options);
+		String result = "";
+		System.out.println("UPLOAD = "+uploadUrl);
+		// Hack to make this work in dev environment
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
+			result = uploadUrl.replace(
+				"susnatas-MacBook-Pro.local:8888",
+//				"susnatas-mbp.bauhauscoffee.net:8888",
+				"127.0.0.1:8888");
+		} 
+		return result;
+		
 	}
 
 	private Account getLoggedInUserBasedOnCookie() {
@@ -440,26 +523,27 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException, DuplicateException, NotFoundException {
+	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException,
+			DuplicateException, NotFoundException {
 		if (txn == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		AccountDTO accountDto = accountDao.findById(txn.getSeller().getAccountId());
 		Transaction transaction = new Transaction(txn);
 		transaction.setSeller(new Account(accountDto));
-		
+
 		if (!(accountDto instanceof BusinessAccountDTO)) {
 			throw new IllegalArgumentException("Invalid account type in PAY()");
 		}
-		
+
 		BusinessAccountDTO account = (BusinessAccountDTO) accountDto;
-		for(TransactionDTO existingTransaction : account.getTransactions()) {
+		for (TransactionDTO existingTransaction : account.getTransactions()) {
 			if (existingTransaction.getStatus() == TransactionStatus.ACTIVE) {
 				throw new DuplicateException("Already has an active subscription");
 			}
 		}
-		
+
 		try {
 			TransactionDTO result = transactionDao.save(transaction);
 			return result;
@@ -585,18 +669,17 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public void sendEmailByZip(Account sender, Long tweetId, NotificationType type, EmailTemplate template) {
+	public void sendEmailByZip(Account sender, Long tweetId, NotificationType type,
+			EmailTemplate template) {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
 		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
 				.param("senderAccountId", sender.getAccountId().toString())
-				.param("tweetId", tweetId.toString())
-				.param("notificationType", type.name())
+				.param("tweetId", tweetId.toString()).param("notificationType", type.name())
 				.param("zip", Integer.toString(sender.getZip()))
-				.param("emailTemplateId", template.name())
-				.header("Host", backendAddress);
+				.param("emailTemplateId", template.name()).header("Host", backendAddress);
 		queue.add(options);
 	}
 
@@ -612,7 +695,6 @@ public class AccountBLIImpl implements AccountBLI {
 				.param("emailTemplateId", EmailTemplate.WELCOME_REGISTRATION.name())
 				.header("Host", backendAddress);
 		queue.add(options);
-		
-		
+
 	}
 }

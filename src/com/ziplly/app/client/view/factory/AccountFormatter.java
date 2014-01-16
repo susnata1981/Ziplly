@@ -16,17 +16,20 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			return basicValueFormatter.format(value.getDisplayName(), ValueType.STRING_VALUE);
 		case TINY_IMAGE_VALUE:
 			content.append("<img src='" + value.getImageUrl()
-					+ "' width='25px' height='25px'/>&nbsp;" + value.getDisplayName());
+					+ "' width='25px' height='25px'/><br/>" + value.getDisplayName());
 			return content.toString();
 		case SMALL_IMAGE_VALUE:
 			content.append("<img src='" + value.getImageUrl()
-					+ "' width='40px' height='40px'/>&nbsp;" + value.getDisplayName());
+					+ "' width='40px' height='40px'/>&nbsp;");// + value.getDisplayName());
 			return content.toString();
+		case MEDIUM_IMAGE_ONLY:
+			content.append("<img src='" + value.getImageUrl()
+					+ "' width='60px' height='60px'/>");
+			return content.toString();	
 		case MEDIUM_IMAGE_VALUE:
 			content.append("<img src='" + value.getImageUrl()
 					+ "' width='60px' height='60px'/>&nbsp;" + value.getDisplayName());
 			return content.toString();
-
 		default:
 			throw new IllegalArgumentException("Invalid value type");
 		}

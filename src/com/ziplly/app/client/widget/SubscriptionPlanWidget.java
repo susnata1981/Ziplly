@@ -51,4 +51,8 @@ public class SubscriptionPlanWidget extends Composite {
 	public void setButtonType(ButtonType type) {
 		buyButton.setType(type);
 	}
+	
+	public void removeBuyButton() {
+		StyleHelper.show(buyButton.getElement(), false);
+	}
 }

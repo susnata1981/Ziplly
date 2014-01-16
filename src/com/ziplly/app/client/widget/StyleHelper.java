@@ -1,12 +1,16 @@
 package com.ziplly.app.client.widget;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.user.client.Element;
 
 public class StyleHelper {
-	public static Icon getIcon(IconType type) {
-		Icon icon = new Icon();
-		icon.setType(type);
-		return icon;
+	
+	public static void show(Element elem, boolean show) {
+		Display display = show ? Display.BLOCK : Display.NONE;
+		elem.getStyle().setDisplay(display);
+	}
+	
+	public static boolean isVisible(Element elem) {
+		return !elem.getStyle().getDisplay().equalsIgnoreCase(Display.NONE.name()); 
 	}
 }

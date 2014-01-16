@@ -46,19 +46,29 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		String imgUrl = value.getImageUrl() != null ? 
 				value.getImageUrl() : "images/no-photo.jpg";
+		
+		String category = value.getCategory() != null ? value.getCategory().name() : "";
+		String website = value.getWebsite() != null ? value.getWebsite() : "website";
+		
 		if (value != null) {
 			sb.appendHtmlConstant(
 					" <div class='pcell'>"
 					+ "<figure>"
 					+ "<img src='"+imgUrl+"'></img>"
 					+ "<figcaption>"
-					+ "<a href='#'><h2 class='heading'>"+value.getDisplayName()+"</h2></a>"
-					+ "</figcaption>");
-
-			sb.appendHtmlConstant(
-					"<p><span class='paragraph'>Located at:&nbsp;</span>"+value.getNeighborhood().getName()+"</p>"
+					+ "<div>"
+					+ "<span class='communityHeading'>"+value.getDisplayName()+"</span>"
+					+ "<span class='communityParagraph'>Website: <a href='#'>"+ website + "</a></span>"
+					+ "<br/><span class='communityParagraph'> Category: "+ category +"</span>"
 					+ "</div>");
 
+			sb.appendHtmlConstant(
+					"<p><span class='communityParagraph'>Located at:&nbsp;</span>"+value.getNeighborhood().getName()+"</p>"
+					+ "</div>"
+					+ "</figcaption>");
+
+			
+			
 			sb.appendHtmlConstant(
 				"</div>"
 				+ "</figure>" 

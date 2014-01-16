@@ -8,22 +8,30 @@ import java.util.Map;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.ResidentPlace;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
@@ -41,6 +49,7 @@ public class HomeView extends Composite implements IHomeView {
 
 	private static final String TWEET_WIDGET_WIDTH = "80%";
 	private String tweetWidth = "80%";
+	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 
 	public interface Style extends CssResource {
@@ -70,6 +79,11 @@ public class HomeView extends Composite implements IHomeView {
 	@UiField
 	HTMLPanel filterTweetsPanel;
 
+	@UiField
+	Anchor messagesLink;
+	@UiField
+	SpanElement unreadMessageCountField;
+	
 	@UiField
 	HTMLPanel communityWallPanel;
 
@@ -123,9 +137,6 @@ public class HomeView extends Composite implements IHomeView {
 					presenter.displayTweetsForCategory(type);
 				}
 			});
-//			Icon icon = new Icon();
-//			icon.setType(IconType.TAG);
-//			anchor.setHTML(SafeHtmlUtils.fromSafeConstant("<a>"+type.name()+icon+"</a>"));
 			filterTweetsPanel.add(anchor);
 			filters.put(type, anchor);
 		}
@@ -294,7 +305,17 @@ public class HomeView extends Composite implements IHomeView {
 		}
 		setCountOnAnchor(filters.get(TweetType.ALL), TweetType.ALL.name(), totalTweetCount);
 	}
+	
+	@Override
+	public void setUnreadMessageCount(Long count) {
+		unreadMessageCountField.setInnerText(basicDataFormatter.format(count, ValueType.UNREAD_MESSAGE_COUNT));
+	}
 
+	@UiHandler("messagesLink")
+	public void onMessageLinkClick(ClickEvent event) {
+		presenter.goTo(new ConversationPlace());
+	}
+	
 	private void setCountOnAnchor(Anchor a, String name, int count) {
 		String text = name +" ("+count+")";
 		a.getElement().setInnerHTML(text);
@@ -308,5 +329,25 @@ public class HomeView extends Composite implements IHomeView {
 	@Override
 	public void displayResidentCount(int totalResidents) {
 		communitySummaryWidget.setResidentCount(totalResidents);
+	}
+
+	@Override
+	public void setImageUploadUrl(String imageUrl) {
+		tweetBox.setImageUploadUrl(imageUrl);
+	}
+
+	@Override
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		tweetBox.addUploadFormHandler(submitCompleteHandler);
+	}
+
+	@Override
+	public void displayProfileImagePreview(String imageUrl) {
+		tweetBox.previewImage(imageUrl);
+	}
+
+	@Override
+	public void resetImageUploadUrl() {
+		tweetBox.resetImageUploadUrl();
 	}
 }

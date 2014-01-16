@@ -3,14 +3,17 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style>
-		#residentListId {
-		width: 700px;
-		border: 1px solid #ddd;
-		margin: 10px;
-		}
 	</ui:style>
 	<b:FluidContainer>
-		<cell:SimplePager ui:field="pager" />
-		<cell:CellList ui:field="residentsList" />
+		<b:FluidRow>
+			<b:Column offset="1" size="10">
+				<cell:SimplePager ui:field="pager" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="1" size="11">
+				<cell:CellList ui:field="residentsList" />
+			</b:Column>
+		</b:FluidRow>
 	</b:FluidContainer>
 </ui:UiBinder> 

@@ -3,6 +3,8 @@
 .rootPanel {
 	width: 100%;
 	height: auto;
+	position: relative;
+	left: 40px;
 }
 
 .asidePanel {
@@ -71,7 +73,7 @@ a.link:hover {
 
 .profileImageSection {
 	float: left;
-	margin: 3% 1%;
+	margin: 0 2px;
 	width: 94%;
 	height: 30%;
 	border: 2px solid #ddd;
@@ -134,12 +136,8 @@ h2.heading {
 }
 
 .tweetSection {
-	height: 1000px;
-	overflow: auto;
-	position: absolute;
-	left: 30%;
-	right: 0%;
-	width: 90%;
+	padding: 6px;
+	border: 1px solid #ddd;
 }
 
 .rootTweetSection {
@@ -220,7 +218,7 @@ h2.heading {
 }
 
 .settingsProfileImageSection {
-	margin: 40px 20px 0 0;	
+	margin: 0 20px 0 0;	
 }
 
 .profileImage {
@@ -280,8 +278,6 @@ h2.heading {
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
-}
-.tweetSectionDiv {
 }
 
 .smallfont {

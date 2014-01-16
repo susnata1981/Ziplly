@@ -10,6 +10,7 @@ public class AccountNotificationDTO implements Serializable {
 	private AccountDTO sender;
 	private AccountDTO recipient;
 	private TweetDTO tweet;
+	private ConversationDTO conversation;
 	private ReadStatus readStatus;
 	private RecordStatus status;
 	private NotificationType type;
@@ -121,6 +122,14 @@ public class AccountNotificationDTO implements Serializable {
 
 	public void setTweet(TweetDTO tweet) {
 		this.tweet = tweet;
+	}
+
+	public ConversationDTO getConversation() {
+		return conversation;
+	}
+
+	public void setConversation(ConversationDTO conversation) {
+		this.conversation = conversation;
 	}
 	
 	

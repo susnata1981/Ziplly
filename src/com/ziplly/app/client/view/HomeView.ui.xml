@@ -14,7 +14,8 @@
 		width: 100%;
 		margin: 0;
 		padding: 4px;
-		font-size: 1em;
+		font-size:
+		1em;
 		color: #555444;
 		background: #ddd;
 		border-bottom: 2px solid #555;
@@ -23,16 +24,19 @@
 		clear: both;
 		float: left;
 		display: block;
-		font-size: .85em;
+		font-size:
+		.85em;
 		width: 100%;
 		margin: 3px 2px;
 		padding: 5px 2px;
-		background: #f9f9f9;
+		background:
+		#f9f9f9;
 		}
 		.tweetFilterLink:hover {
 		background: #ccc;
 		}
-		.selectedTweetType {
+		.selectedTweetType
+		{
 		background: #c2c2c2;
 		}
 		.communityWallPanel {
@@ -41,7 +45,8 @@
 		min-height: 100%;
 		}
 		.communityInfoPanel {
-		height: 320px;
+		height:
+		320px;
 		background: #fff;
 		border:
 		1px solid
@@ -56,10 +61,10 @@
 		left: 10px;
 		}
 		.communitySummaryDiv {
-			border: 1px solid #ddd;
-			padding: 4px;
-			height: 280px;
-			overflow: hidden;
+		border: 1px solid #ddd;
+		padding: 4px;
+		height: 280px;
+		overflow: hidden;
 		}
 	</ui:style>
 	<!-- <g:HTMLPanel addStyleNames="{style.rootPanel}"> <b:Alert ui:field="message" 
@@ -84,12 +89,31 @@
 			<b:Column size="2">
 				<g:HTMLPanel>
 					<div class="{style.leftnavHeaderContainer}">
-						<span class="{style.leftnavHeaderSpan}">Category</span>
+						<span class="{style.leftnavHeaderSpan}">
+							<i class="fa fa-list">&nbsp;Category
+							</i>
+						</span>
 						<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
 					</div>
 					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
-						<span class="{style.leftnavHeaderSpan}">Hashtags</span>
+						<span class="{style.leftnavHeaderSpan}">
+							<i class="fa fa-tags">&nbsp;Hashtags
+							</i>
+						</span>
 						<g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel>
+					</div>
+					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
+						<span class="{style.leftnavHeaderSpan}">
+							<i class='fa fa-inbox'>&nbsp;Personal
+								Messages
+							</i>
+						</span>
+						<g:HTMLPanel>
+							<g:Anchor ui:field="messagesLink" addStyleNames="{style.tweetFilterLink}">
+								Inbox <span ui:field="unreadMessageCountField" />
+								<span ui:field="unreadMessageCountSpan" />
+							</g:Anchor>
+						</g:HTMLPanel>
 					</div>
 				</g:HTMLPanel>
 			</b:Column>

@@ -21,6 +21,7 @@ public interface AccountDAO {
 	List<AccountDTO> findAccounts(String query, int start, int end);
 	Long findTotalAccounts(String countQuery);
 	List<AccountDTO> findAllAccountsByZip(int zip);
-	List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId);
+	List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId, int pageStart, int pageSize);
 	Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId);
+	Long getAccountsByNeighborhoodCount(EntityType entityType, Long neighborhoodId);
 }

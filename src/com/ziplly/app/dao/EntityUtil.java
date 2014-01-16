@@ -172,7 +172,8 @@ public class EntityUtil {
 		resp.setStreet1(account.getStreet1());
 		resp.setStreet2(account.getStreet2());
 		resp.setProperties(clone(account.getProperties()));
-
+		resp.setCategory(account.getCategory());
+		
 		if (Hibernate.isInitialized(account.getTransactions())) {
 			for (Transaction txn : account.getTransactions()) {
 				resp.getTransactions().add(clone(txn));
@@ -201,6 +202,7 @@ public class EntityUtil {
 		resp.setType(tweet.getType());
 		resp.setContent(tweet.getContent());
 		resp.setStatus(tweet.getStatus());
+		resp.setImage(tweet.getImage());
 		resp.setTimeCreated(tweet.getTimeCreated());
 		if (needSender && Hibernate.isInitialized(tweet.getSender())) {
 			resp.setSender(convert(tweet.getSender()));
@@ -307,7 +309,17 @@ public class EntityUtil {
 		resp.setNotificationId(an.getNotificationId());
 		resp.setRecipient(convert(an.getRecipient(), true));
 		resp.setSender(convert(an.getSender(), true));
-		resp.setTweet(clone(an.getTweet()));
+		
+		// Tweet
+		if (an.getTweet() != null) {
+			resp.setTweet(clone(an.getTweet()));
+		}
+		
+		// Conversation
+		if (an.getConversation() != null) {
+			resp.setConversation(clone(an.getConversation()));
+		}
+		
 		resp.setReadStatus(an.getReadStatus());
 		resp.setType(an.getType());
 		resp.setTimeUpdated(an.getTimeUpdated());
@@ -402,6 +414,7 @@ public class EntityUtil {
 		dest.setWifiAvailable(source.getWifiAvailable());
 		dest.setGoodForKids(source.getGoodForKids());
 		dest.setPriceRange(source.getPriceRange());
+		dest.setCuisine(source.getCuisine());
 		return dest;
 	}
 

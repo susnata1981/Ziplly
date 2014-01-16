@@ -2,12 +2,14 @@ package com.ziplly.app.client.activities;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
@@ -17,7 +19,10 @@ import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.GetAccountDetailsAction;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetConversationsResult;
 import com.ziplly.app.shared.SendMessageAction;
@@ -28,25 +33,32 @@ import com.ziplly.app.shared.ViewConversationResult;
 public class ConversationActvity extends AbstractActivity implements ConversationView.ConversationViewPresenter {
 	private IConversationView view;
 	private AcceptsOneWidget panel;
-
+	private GetConversationHandler handler = new GetConversationHandler();
+	private SingleConversationHandler singleConversationHandler = new SingleConversationHandler();
+	private ConversationPlace place;
+	
 	@Inject
 	public ConversationActvity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
+			EventBus eventBus, 
+			PlaceController placeController,
 			ApplicationContext ctx,
+			ConversationPlace place, 
 			ConversationView view) {
 		super(dispatcher, eventBus, placeController, ctx);
+		this.place = place;
 		this.view = view;
 		setupHandlers();
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		if (ctx.getAccount() != null) {
-			getConversations();
-		}
-		checkLoginStatus();
 		this.panel = panel;
 		bind();
+		go(panel);
+		if (ctx.getAccount() != null) {
+			internalStart();
+		}
+		checkLoginStatus();
 	}
 
 	private void setupHandlers() {
@@ -65,25 +77,34 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
-				getConversations();
+				internalStart();
 			}
 		});
 	}
+	
+	private void internalStart() {
+		if (place.getConversationId() != null) {
+			GetConversationsAction action = new GetConversationsAction();
+			action.setType(ConversationType.SINGLE);
+			action.setConversationId(place.getConversationId());
+			dispatcher.execute(action, singleConversationHandler); 
+		} else {
+			GetConversationsAction action = new GetConversationsAction();
+			action.setType(ConversationType.ALL);
+			action.setStart(0);
+			action.setPageSize(0);
+			action.setGetTotalConversation(true);
+			dispatcher.execute(action, handler); 
+		}
+	}
 
 	@Override
-	public void getConversations() {
-		dispatcher.execute(new GetConversationsAction(), new DispatcherCallbackAsync<GetConversationsResult>() {
-			@Override
-			public void onSuccess(GetConversationsResult result) {
-				for(ConversationDTO c : result.getConversations()) {
-					if (c.getSender().getAccountId() == ctx.getAccount().getAccountId()) {
-						c.setIsSender(true);
-					}
-				}
-				view.displayConversations(result.getConversations());
-				go(panel);
-			}
-		});
+	public void getConversations(ConversationType type, int start, int pageSize) {
+		GetConversationsAction action = new GetConversationsAction();
+		action.setType(type);
+		action.setStart(start);
+		action.setPageSize(pageSize);
+		dispatcher.execute(action, handler); 
 	}
 
 	@Override
@@ -95,6 +116,11 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		panel.setWidget(view);
 	}
 
+	@Override
+	public void onStop() {
+		view.clear();
+	}
+	
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -129,12 +155,21 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			dispatcher.execute(new ViewConversationAction(conversation.getId()), new DispatcherCallbackAsync<ViewConversationResult>() {
 				@Override
 				public void onSuccess(ViewConversationResult result) {
-					eventBus.fireEvent(new AccountDetailsUpdateEvent());
+					updateAccountDetails();
 				}
 			});
 		}
 	}
 
+	private void updateAccountDetails() {
+		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+			@Override
+			public void onSuccess(GetAccountDetailsResult result) {
+				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			}
+		});
+	}
+	
 	@Override
 	public void gotoProfile() {
 		if (ctx.getAccount() instanceof PersonalAccountDTO) {
@@ -147,4 +182,28 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		}
 		throw new IllegalArgumentException("Invalid account type");
 	}
+
+	private class GetConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
+		@Override
+		public void onSuccess(GetConversationsResult result) {
+			if (result.getTotalConversations() != null) {
+				view.setTotalConversation(result.getTotalConversations());
+			}
+			view.displayConversations(result.getConversations());
+		}
+	};
+	
+	private class SingleConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
+		@Override
+		public void onSuccess(GetConversationsResult result) {
+			if (result.getConversations().size() == 1) {
+				view.displayConversation(result.getConversations().get(0));
+			}
+		}
+		
+		@Override
+		public void onFailure(Throwable th) {
+			Window.alert(th.getMessage());
+		}
+	};
 }

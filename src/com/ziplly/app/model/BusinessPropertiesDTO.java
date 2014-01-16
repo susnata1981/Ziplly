@@ -41,7 +41,8 @@ public class BusinessPropertiesDTO implements Serializable {
 	private boolean goodForKids;
 
 	private PriceRange priceRange;
-
+	private Cuisine cuisine;
+	
 	public BusinessPropertiesDTO() {
 	}
 
@@ -251,5 +252,13 @@ public class BusinessPropertiesDTO implements Serializable {
 
 	public void setPriceRange(PriceRange priceRange) {
 		this.priceRange = priceRange;
+	}
+
+	public Cuisine getCuisine() {
+		return cuisine;
+	}
+
+	public void setCuisine(Cuisine cuisine) {
+		this.cuisine = cuisine;
 	}
 }

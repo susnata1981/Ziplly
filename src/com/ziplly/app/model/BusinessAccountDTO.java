@@ -13,6 +13,7 @@ public class BusinessAccountDTO extends AccountDTO {
 	private List<TransactionDTO> transactions = new ArrayList<TransactionDTO>();
 	private BusinessType businessType;
 	private BusinessPropertiesDTO properties;
+	private BusinessCategory category;
 	
 	public BusinessAccountDTO() {
 	}
@@ -75,5 +76,13 @@ public class BusinessAccountDTO extends AccountDTO {
 
 	public void setProperties(BusinessPropertiesDTO properties) {
 		this.properties = properties;
+	}
+
+	public BusinessCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(BusinessCategory category) {
+		this.category = category;
 	}
 }

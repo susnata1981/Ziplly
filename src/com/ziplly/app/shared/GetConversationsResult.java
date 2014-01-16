@@ -9,7 +9,8 @@ import net.customware.gwt.dispatch.shared.Result;
 
 public class GetConversationsResult implements Result {
 	private List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();
-
+	private Long totalConversations;
+	
 	public GetConversationsResult() {
 	}
 	
@@ -23,5 +24,13 @@ public class GetConversationsResult implements Result {
 
 	public void setConversations(List<ConversationDTO> conversations) {
 		this.conversations = conversations;
+	}
+
+	public Long getTotalConversations() {
+		return totalConversations;
+	}
+
+	public void setTotalConversations(Long totalConversations) {
+		this.totalConversations = totalConversations;
 	}
 }

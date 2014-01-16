@@ -54,12 +54,12 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 					+ "<figure>"
 					+ "<img src='"+imgUrl+"'></img>"
 					+ "<figcaption>"
-					+ "<a href='#'><h2 class='heading'>"+value.getDisplayName()+"</h2></a>"
-					+ "</figcaption>");
+					+ "<span class='communityHeading'>"+value.getDisplayName()+"</span>");
 
 			sb.appendHtmlConstant(
-					"<p class='paragraph'>Lives at:&nbsp;"+value.getNeighborhood().getName()+"</p>"
-					+ "</div>");
+					"<p class='communityParagraph'>Lives at:&nbsp;"+value.getNeighborhood().getName()+"</p>"
+					+ "</div>"
+					+ "</figcaption>");
 
 			if (value.getIntroduction() != null) {
 				sb.appendHtmlConstant("About:&nbsp"+value.getIntroduction());

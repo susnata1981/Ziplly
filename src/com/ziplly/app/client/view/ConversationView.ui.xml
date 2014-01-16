@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
 		.conversation {
@@ -44,9 +45,10 @@
 		font-size: 10px;
 		padding: 4px;
 		}
-		.replyPanel {
-		clear: both;
-		width: 65%;
+		.replyTextArea {
+		width: 90%;
+		height: 65px;
+		margin: 0;
 		}
 		.replyPanel TextArea {
 		padding: 4px;
@@ -69,8 +71,7 @@
 		width: 50%;
 		}
 		.button{
-		float: left;
-		margin-right: 8px;
+		margin-left: 15px;
 		}
 		.asidePanel {
 		float: left;
@@ -119,11 +120,17 @@
 						<dt>
 							<div>
 								<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
-									INBOX
+									<i class='fa fa-inbox'>&nbsp;INBOX</i>
 									<span ui:field="unreadMessageCountSpan" />
 								</g:Anchor>
 							</div>
 							<dl class="{style.innerDl}">
+							    <dt>
+									<g:Anchor addStyleNames="{style.link}" ui:field="allMessagesLink">
+										All
+										<span ui:field="allMessageCountSpan" />
+									</g:Anchor>
+								</dt>
 								<dt>
 									<g:Anchor addStyleNames="{style.link}" ui:field="receivedMessagesLink">
 										Received
@@ -139,10 +146,12 @@
 							</dl>
 						</dt>
 						<dt>
-							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">PROFILE</g:Anchor>
+							<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">
+							    <i class="fa fa-cog">&nbsp;Settings</i> 
+							</g:Anchor>
 						</dt>
 						<dt>
-							<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">SETTINGS</g:Anchor>
+							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">PROFILE</g:Anchor>
 						</dt>
 					</dl>
 				</g:HTMLPanel>

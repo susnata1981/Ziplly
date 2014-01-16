@@ -21,6 +21,7 @@ public class BusinessAccount extends Account {
 	private String street1;
 	private String street2;
 	private BusinessType businessType;
+	private BusinessCategory category;
 	
 	@OneToOne(cascade=CascadeType.ALL)
 	private BusinessProperties properties;
@@ -40,6 +41,7 @@ public class BusinessAccount extends Account {
 		this.street1 = account.getStreet1();
 		this.street2 = account.getStreet2();
 		this.businessType = account.getBusinessType();
+		this.category = account.getCategory();
 		this.properties = new BusinessProperties(account.getProperties());
 		
 		for(TransactionDTO txn : account.getTransactions()) {
@@ -102,5 +104,13 @@ public class BusinessAccount extends Account {
 
 	public void setProperties(BusinessProperties properties) {
 		this.properties = properties;
+	}
+
+	public BusinessCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(BusinessCategory category) {
+		this.category = category;
 	}
 }

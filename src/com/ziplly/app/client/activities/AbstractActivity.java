@@ -17,6 +17,7 @@ import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoadingPanelWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -143,5 +144,10 @@ public abstract class AbstractActivity implements Activity {
 		public void onSuccess(GetAccountNotificationResult result) {
 			eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
 		}
+	}
+
+	public void getConversations(ConversationType type, int start, int pageSize) {
+		// TODO Auto-generated method stub
+		
 	}
 }

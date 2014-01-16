@@ -10,6 +10,7 @@ import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
@@ -36,7 +37,11 @@ public class RegisterAccountActionHandler
 		AccountDTO accountDto = action.getAccount();
 		Account account = EntityUtil.convert(accountDto);
 		try {
-			AccountDTO newAccount = accountBli.register(account);
+			boolean saveImage = false;
+			if (accountDto instanceof PersonalAccountDTO) {
+				 saveImage = ((PersonalAccountDTO)accountDto).getFacebookRegistration();
+			}
+			AccountDTO newAccount = accountBli.register(account, saveImage);
 			result.setAccount(newAccount);
 			result.setUid(accountDto.getUid());
 			return result;

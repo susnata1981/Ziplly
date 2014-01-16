@@ -10,6 +10,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
+import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
@@ -32,7 +33,9 @@ public class DeleteTweetActionHandler extends AbstractTweetActionHandler<DeleteT
 		
 		validateSession();
 		
-		Tweet tweet = tweetDao.findTweetById(action.getTweetId());
+		TweetDTO tweetDto = tweetDao.findTweetById(action.getTweetId());
+		Tweet tweet = new Tweet(tweetDto);
+		
 		if (!hasPermission(tweet)) {
 			throw new AccessError();
 		}

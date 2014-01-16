@@ -122,7 +122,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	@Override
 	public Activity getActivity(Place place) {
 		if (place instanceof HomePlace) {
-			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, mainView, ctx, homeView);
+			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, mainView, homeView);
 		} 
 		else if (place instanceof LoginPlace) {
 			return new LoginActivity(dispatcher, eventBus, (LoginPlace)place, placeController, ctx, loginAccountView);
@@ -152,7 +152,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			return new PublicAccountActivity(dispatcher, eventBus, placeController, ctx, (PublicAccountPlace)place, accountView, businessAccountView);
 		}
 		else if (place instanceof ConversationPlace) {
-			return new ConversationActvity(dispatcher, eventBus, placeController, ctx, conversationView);
+			return new ConversationActvity(dispatcher, eventBus, placeController, ctx, (ConversationPlace)place, conversationView);
 		}
 		else if (place instanceof ResidentPlace) {
 			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, residentsView);

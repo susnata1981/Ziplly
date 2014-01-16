@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.Timer;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 
 public class ApplicationContext {
 	public enum Environment {
@@ -75,6 +76,17 @@ public class ApplicationContext {
 
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
+	}
+
+	/**
+	 * Updated account details based on the response of GetAccountDetailsAction rpc
+	 * @param result
+	 */
+	public void updateAccountDetails(GetAccountDetailsResult result) {
+		this.unreadMessageCount = result.getUnreadMessages();
+		this.totalComments = result.getTotalComments();
+		this.totalLikes = result.getTotalLikes();
+		this.totalTweets = result.getTotalTweets();
 	}
 }
 

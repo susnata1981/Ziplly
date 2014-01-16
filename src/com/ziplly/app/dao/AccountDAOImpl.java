@@ -29,7 +29,7 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public AccountDTO findByEmail(String email) throws NotFoundException {
 		if (email == null) {
-			logger.log(Level.ERROR, "Invalid arguements to findByEmail");
+			logger.log(Level.ERROR, String.format("Invalid arguements to findByEmail %s", email));
 			throw new IllegalArgumentException(
 					"Invalid arguement to findByEmail");
 		}
@@ -203,13 +203,21 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 	
 	@Override
-	public List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId) {
+	public List<AccountDTO> findAccountsByNeighborhood(
+			EntityType entityType, 
+			Long neighborhoodId,
+			int pageStart,
+			int pageSize) {
+		
+		int start = pageStart;// * pageSize;
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
-		Query query = em.createQuery("from Account a where type = :type and a.neighborhood.neighborhoodId = :neighborhoodId");
+		Query query = em.createQuery("from Account a where type = :type and a.neighborhood.neighborhoodId = :neighborhoodId"
+				+ " order by a.timeCreated");
 		query.setParameter("type", entityType.getType());
 		query.setParameter("neighborhoodId", neighborhoodId);
-
+		query.setFirstResult(start).setMaxResults(pageSize);
+		
 		@SuppressWarnings("unchecked")
 		List<Account> accounts = (List<Account>)query.getResultList();
 		List<AccountDTO> response = Lists.newArrayList();
@@ -218,6 +226,24 @@ public class AccountDAOImpl implements AccountDAO {
 		}
 		em.close();
 		return response;
+	}
+	
+	
+	@Override
+	public Long getAccountsByNeighborhoodCount(
+			EntityType entityType, 
+			Long neighborhoodId) {
+		
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query = em.createNativeQuery("select count(*) from Account a, Neighborhood n where a.type = :type "
+				+ "and a.neighborhood_id = a.neighborhood_id and  n.neighborhood_id = :neighborhoodId");
+		query.setParameter("type", entityType.getType());
+		query.setParameter("neighborhoodId", neighborhoodId);
+		
+		BigInteger count = (BigInteger) query.getSingleResult();
+		em.close();
+		return count.longValue();
 	}
 	
 	@Override

@@ -21,6 +21,9 @@
 			<div class='{style.tweet_image}'>
 				<b:Image ui:field="authorImage" />
 			</div>
+			<g:HTMLPanel ui:field="tweetImagePanel" addStyleNames="{style.tweetImagePanel}">
+				<b:Image ui:field="tweetImage" addStyleNames="{style.tweetImage}"/>
+			</g:HTMLPanel>
 			<div class='{style.tweet_content_section}'>
 				<div class="{style.tweetActionDropdown}">
 					<b:Dropdown addStyleNames="{style.dropdown-menu2}" icon="ASTERISK">

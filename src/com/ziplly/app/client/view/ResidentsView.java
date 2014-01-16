@@ -9,14 +9,20 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.widget.cell.PersonalAccountCell;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
-public class ResidentsView extends Composite {
-	private static final int PAGE_SIZE = 10;
+public class ResidentsView extends Composite implements View<ResidentsView.EntityListViewPresenter>{
+	private static final int PAGE_SIZE = 3;
 
+	public interface EntityListViewPresenter extends Presenter {
+		public void onRangeChangeEvent(int start, int pageSize);
+	}
+	
 	private static ResidentsViewUiBinder uiBinder = GWT.create(ResidentsViewUiBinder.class);
 
 	interface ResidentsViewUiBinder extends UiBinder<Widget, ResidentsView> {
@@ -30,26 +36,51 @@ public class ResidentsView extends Composite {
 
 	private AccountDTO account;
 
+	private EntityListViewPresenter presenter;
+
 	public ResidentsView() {
-		setResidentsList(new CellList<PersonalAccountDTO>(new PersonalAccountCell()));
-		getResidentsList().setPageSize(PAGE_SIZE);
+		residentsList = new CellList<PersonalAccountDTO>(new PersonalAccountCell());
+		residentsList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
+		pager.setDisplay(residentsList);
 		initWidget(uiBinder.createAndBindUi(this));
+		setupHandlers();
+	}
+
+	Range currentRange;
+	private void setupHandlers() {
+		residentsList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				Range r = event.getNewRange();
+				currentRange = r;
+				System.out.println("start="+r.getStart()+" Length="+r.getLength());
+				presenter.onRangeChangeEvent(r.getStart(), PAGE_SIZE);
+			}
+		});
 	}
 
 	public void display(List<PersonalAccountDTO> input) {
-		ListDataProvider<PersonalAccountDTO> provider = new ListDataProvider<PersonalAccountDTO>();
-		provider.addDataDisplay(residentsList);
-		pager.setDisplay(residentsList);
-		residentsList.setRowCount(input.size());
-		provider.setList(input);
+		int start = currentRange == null ? 0 : currentRange.getStart();
+		residentsList.setRowData(start, input);
 	}
 
-	public CellList<PersonalAccountDTO> getResidentsList() {
-		return residentsList;
+	int totalRowCount;
+	public void setTotalRowCount(Long count) {
+		totalRowCount = count.intValue();
+		residentsList.setRowCount(totalRowCount, true);
 	}
 
-	public void setResidentsList(CellList<PersonalAccountDTO> residentsList) {
-		this.residentsList = residentsList;
+	@Override
+	public void setPresenter(EntityListViewPresenter presenter) {
+		this.presenter = presenter;
+	}
+
+	public int getPageSize() {
+		return PAGE_SIZE;
+	}
+	
+	@Override
+	public void clear() {
 	}
 }

@@ -20,7 +20,8 @@ import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface AccountBLI {
-	AccountDTO register(Account account) throws AccountExistsException;
+//	AccountDTO register(Account account) throws AccountExistsException;
+	AccountDTO register(Account account, boolean saveImage) throws AccountExistsException;
 	AccountDTO validateLogin(String email,String password) throws InvalidCredentialsException, NotFoundException;
 	AccountDTO updateAccount(Account account) throws NeedsLoginException;
 	void logout(Long uid) throws NotFoundException;

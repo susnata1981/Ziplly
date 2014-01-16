@@ -10,6 +10,7 @@ import com.ziplly.app.model.EntityType;
 public class GetEntityResult implements Result {
 	private List<AccountDTO> accounts;
 	private EntityType entityType;
+	private Long count;
 	
 	public GetEntityResult(List<AccountDTO> accounts, EntityType type) {
 		this.setAccounts(accounts);
@@ -33,5 +34,17 @@ public class GetEntityResult implements Result {
 
 	public void setEntityType(EntityType entityType) {
 		this.entityType = entityType;
+	}
+
+	public void setEntityCount(Long count) {
+		this.setCount(count);
+	}
+
+	public Long getCount() {
+		return count;
+	}
+
+	public void setCount(Long count) {
+		this.count = count;
 	}
 }

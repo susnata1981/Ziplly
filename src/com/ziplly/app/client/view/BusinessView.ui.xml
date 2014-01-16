@@ -1,13 +1,29 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-    xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	</ui:style>
 
 	<b:FluidContainer>
-		<cell:SimplePager ui:field="pager" />
-		<cell:CellList ui:field="businessList" />
+		<b:FluidRow>
+			<b:Column size="3">
+			    <g:HTMLPanel>
+			        Filter section
+			    </g:HTMLPanel>
+			</b:Column>
+			<b:Column size="8">
+				<b:FluidRow>
+					<b:Column offset="1" size="10">
+						<cell:SimplePager ui:field="pager" />
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column offset="1" size="10">
+						<cell:CellList ui:field="businessList" />
+					</b:Column>
+				</b:FluidRow>
+			</b:Column>
+		</b:FluidRow>
 	</b:FluidContainer>
 </ui:UiBinder> 

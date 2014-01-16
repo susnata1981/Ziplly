@@ -11,7 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 
 public class HashtagDAOImpl implements HashtagDAO {
@@ -100,11 +99,10 @@ public class HashtagDAOImpl implements HashtagDAO {
 				.setFirstResult(start)
 				.setMaxResults(pageSize);
 			
-			List tweetIds = query.getResultList();
-			for(Object tweetId : tweetIds) {
-				BigInteger id = (BigInteger)tweetId;
-				Tweet tweet = tweetDao.findTweetById(id.longValue());
-				tweets.add(EntityUtil.clone(tweet));
+			List<BigInteger> tweetIds = query.getResultList();
+			for(BigInteger tweetId : tweetIds) {
+				TweetDTO tweet = tweetDao.findTweetById(tweetId.longValue());
+				tweets.add(tweet);
 			}
 		} catch (NoResultException nre) {
 			throw nre;
@@ -132,9 +130,9 @@ public class HashtagDAOImpl implements HashtagDAO {
 			
 			for(Object tweetId : query.getResultList()) {
 				BigInteger id = (BigInteger)tweetId;
-				Tweet tweet = tweetDao.findTweetById(id.longValue());
+				TweetDTO tweet = tweetDao.findTweetById(id.longValue());
 				if (tweet.getSender().getNeighborhood().getNeighborhoodId() == neighborhoodId) {
-					tweets.add(EntityUtil.clone(tweet));
+					tweets.add(tweet);
 				}
 			}
 		} catch (NoResultException nre) {

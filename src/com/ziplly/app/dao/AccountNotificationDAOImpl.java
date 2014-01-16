@@ -3,6 +3,7 @@ package com.ziplly.app.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.common.base.Preconditions;
@@ -17,7 +18,7 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 		Preconditions.checkArgument(an != null, "Invalid argument to save");
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		em.getTransaction().begin();
-		em.persist(an);
+		em.merge(an);
 		em.getTransaction().commit();
 		em.close();
 	}
@@ -32,9 +33,10 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 		query.setParameter("readStatus", ReadStatus.UNREAD);
 		
 		@SuppressWarnings("unchecked")
-		List<AccountNotification> result = query.getResultList();
+		List<AccountNotification> anList = query.getResultList();
+		List<AccountNotificationDTO> result = EntityUtil.cloneAccountNotificationList(anList);
 		em.close();
-		return EntityUtil.cloneAccountNotificationList(result);
+		return result;
 	}
 
 	@Override
@@ -45,5 +47,20 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 		em.merge(an);
 		em.getTransaction().commit();
 		em.close();
+	}
+
+	@Override
+	public AccountNotification findAccountNotificationByConversationId(Long conversationId) {
+		Preconditions.checkArgument(conversationId != null, "Invalid argument to findAccountNotificationByAccountId");
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = em.createQuery("from AccountNotification where conversation.id = :conversationId");
+		query.setParameter("conversationId", conversationId);
+		try {
+			AccountNotification result = (AccountNotification)query.getSingleResult();
+			em.close();
+			return result;
+		} catch(NoResultException nre) {
+			return null;
+		}
 	}
 }

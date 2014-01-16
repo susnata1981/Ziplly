@@ -1,12 +1,9 @@
 package com.ziplly.app.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +29,7 @@ import javax.persistence.Table;
 })
 @Entity
 @Table(name="conversation")
-public class Conversation implements Serializable {
+public class Conversation extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = -2238086892572614374L;
 	
 	@Id
@@ -52,12 +49,6 @@ public class Conversation implements Serializable {
 
 	private ConversationStatus status;
 	
-	@Column(name="time_updated")
-	private Date timeUpdated;
-	
-	@Column(name="time_created")
-	private Date timeCreated;
-
 	public Conversation() {
 	}
 	
@@ -101,18 +92,6 @@ public class Conversation implements Serializable {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	public Date getTimeUpdated() {
-		return timeUpdated;
-	}
-	public void setTimeUpdated(Date timeUpdated) {
-		this.timeUpdated = timeUpdated;
-	}
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
 	}
 	public String getSubject() {
 		return subject;

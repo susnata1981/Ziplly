@@ -93,6 +93,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	HTMLPanel tweetPanel;
 	@UiField
 	Image authorImage;
+	
+	//
+	// Tweet Image
+	//
+	@UiField
+	HTMLPanel tweetImagePanel;
+	@UiField
+	Image tweetImage;
+	
 	@UiField
 	Anchor authorProfileLink;
 	@UiField
@@ -560,6 +569,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			}
 		});
 		authorName.setInnerText(tweet.getSender().getDisplayName());
+		
+		if (tweet.getImage() != null) {
+			tweetImage.setUrl(tweet.getImage());
+		} else {
+			displayElement(tweetImagePanel.getElement(), false);
+		}
 	}
 
 	@UiHandler("authorProfileLink")
@@ -621,5 +636,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@Override
 	public void remove() {
 		removeFromParent();
+	}
+	
+	private void displayElement(Element elem, boolean display) {
+		Display d = display ? Display.BLOCK : Display.NONE;
+		elem.getStyle().setDisplay(d);
 	}
 }

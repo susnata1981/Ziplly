@@ -11,7 +11,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Ziplly implements EntryPoint {
-	private Logger logger = Logger.getLogger("ziplly");
+	private Logger logger = Logger.getLogger(Ziplly.class.getName());
 	ZGinInjector injector = GWT.create(ZGinInjector.class);
 	CachingDispatcherAsync dispatcher = injector.getCachingDispatcher();
 	ZipllyController zcontroller = injector.getZipllyController();

@@ -17,17 +17,17 @@ public class TweetViewBinder {
 	}
 	
 	public void start() {
-		System.out.println("Starting tweet view binder...");
+//		System.out.println("Starting tweet view binder...");
 		timer = new Timer() {
 			@Override
 			public void run() {
-				System.out.println("RUNNING TWEETVIEWBINDER...");
+//				System.out.println("RUNNING TWEETVIEWBINDER...");
 				if (hasMoreData()) {
 					if (detectScrollerHitBottom()) {
 						handler.onScrollBottomHit();
 					}
 				} else {
-					System.out.println("Cancelling TweetViewBinder timer");
+//					System.out.println("Cancelling TweetViewBinder timer");
 					cancel();
 				}
 			}
@@ -37,7 +37,7 @@ public class TweetViewBinder {
 
 	public void stop() {
 		timer.cancel();
-		System.out.println("Stopping TweetViewBinder.");
+//		System.out.println("Stopping TweetViewBinder.");
 	}
 
 	int scrollTop = 0;
@@ -46,7 +46,7 @@ public class TweetViewBinder {
 		int sh = elem.getScrollHeight();
 		int st = elem.getScrollTop();
 		int of = elem.getOffsetHeight();
-		System.out.println("SH="+sh+" ST="+st+" OF="+of);
+//		System.out.println("SH="+sh+" ST="+st+" OF="+of);
 //		if (scrollTop == st) {
 //			return false;
 //		}

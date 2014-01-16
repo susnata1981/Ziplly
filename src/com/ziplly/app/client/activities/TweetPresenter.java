@@ -15,4 +15,5 @@ public interface TweetPresenter extends SendMessagePresenter {
 	TweetWidget getTweetWidget();
 	void displayMessage(String errorMessage, AlertType error);
 	void reportTweetAsSpam(TweetDTO tweet);
+	void deleteImage(String url);
 }

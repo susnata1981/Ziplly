@@ -5,14 +5,12 @@ import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,6 +23,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.maps.gwt.client.GoogleMap;
@@ -59,8 +58,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@UiField
 	Alert message;
 	@UiField
-	Column asidePanel;
-	@UiField
 	Image profileImage;
 	@UiField
 	Heading name;
@@ -72,10 +69,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	SpanElement email;
 	@UiField
 	Anchor emailLink;
-	@UiField
-	Anchor settingsLink;
-	@UiField
-	Anchor messagesLink;
 	@UiField
 	Button inviteBtn;
 	
@@ -103,9 +96,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	TweetBox tweetBox;
 	@UiField
 	HTMLPanel tweetBoxDiv;
-	
-	@UiField
-	SpanElement unreadMessageCountField;
 	
 	EmailWidget emailWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
@@ -137,9 +127,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		}
 		message.setVisible(false);
 		this.account = account;
-		
-		// aside
-		asidePanel.getElement().getStyle().setDisplay(Display.BLOCK);
 		
 		// image section
 		if (account.getImageUrl() != null) {
@@ -206,7 +193,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
-		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
+//		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
@@ -232,15 +219,15 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		message.setVisible(true);
 	}
 	
-	@UiHandler("settingsLink")
-	void settingsLinkClicked(ClickEvent event) {
-		presenter.settingsLinkClicked();
-	}
-	
-	@UiHandler("messagesLink")
-	void messagesLinkClicked(ClickEvent event) {
-		presenter.messagesLinkClicked();
-	}
+//	@UiHandler("settingsLink")
+//	void settingsLinkClicked(ClickEvent event) {
+//		presenter.settingsLinkClicked();
+//	}
+//	
+//	@UiHandler("messagesLink")
+//	void messagesLinkClicked(ClickEvent event) {
+//		presenter.messagesLinkClicked();
+//	}
 	
 	@Override
 	public Element getTweetSectionElement() {
@@ -260,11 +247,11 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
 		if (ctx != null) {
-			if (ctx.getUnreadMessageCount()>0) {
-				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
-			} else {
-				unreadMessageCountField.setInnerHTML("");
-			}
+//			if (ctx.getUnreadMessageCount()>0) {
+//				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
+//			} else {
+//				unreadMessageCountField.setInnerHTML("");
+//			}
 			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
 			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
 			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());
@@ -306,5 +293,25 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@UiHandler("inviteBtn")
 	public void invite(ClickEvent event){
 		emailWidget.show();
+	}
+
+	@Override
+	public void setImageUploadUrl(String imageUrl) {
+		tweetBox.setImageUploadUrl(imageUrl);
+	}
+
+	@Override
+	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
+		tweetBox.addUploadFormHandler(submitCompleteHandler);
+	}
+
+	@Override
+	public void displayProfileImagePreview(String imageUrl) {
+		tweetBox.previewImage(imageUrl);
+	}
+
+	@Override
+	public void resetImageUploadUrl() {
+		tweetBox.resetImageUploadUrl();
 	}
 }

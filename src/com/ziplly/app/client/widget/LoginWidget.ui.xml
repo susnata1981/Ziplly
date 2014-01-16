@@ -14,7 +14,7 @@
 		}
 		.residentSignupDiv {
 		margin-top:8px;
-		height: 20px;
+		height: 55px;
 		padding: 2px;
 		font-size: 12px;
 		font-style: helvetica;
@@ -80,7 +80,6 @@
 						Forgot your password
 						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click
 							here</g:Anchor>
-						here
 					</span>
 				</g:HTMLPanel>
 			</g:HTMLPanel>

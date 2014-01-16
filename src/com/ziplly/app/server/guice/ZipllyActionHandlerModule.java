@@ -6,6 +6,7 @@ import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
+import com.ziplly.app.server.handlers.DeleteImageActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
 import com.ziplly.app.server.handlers.EmailAdminActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
@@ -49,6 +50,7 @@ import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
+import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
@@ -163,5 +165,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(SearchAccountAction.class, SearchAccountActionHandler.class);
 		bindHandler(CheckEmailRegistrationAction.class, CheckEmailRegistrationActionHandler.class);
 		bindHandler(EmailAdminAction.class, EmailAdminActionHandler.class);
+		
+		// blobstore
+		bindHandler(DeleteImageAction.class, DeleteImageActionHandler.class);
 	}
 }

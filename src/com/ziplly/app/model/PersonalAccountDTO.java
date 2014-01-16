@@ -14,6 +14,7 @@ public class PersonalAccountDTO extends AccountDTO {
 
 	private Set<InterestDTO> interests = new HashSet<InterestDTO>();
 	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
+	private boolean facebookRegistration;
 
 	public PersonalAccountDTO() {
 	}
@@ -69,5 +70,12 @@ public class PersonalAccountDTO extends AccountDTO {
 	@Override
 	public String getDisplayName() {
 		return firstName + " " + lastName;
+	}
+
+	public void setFacebookRegistration(boolean b) {
+		facebookRegistration = b;
+	}
+	public boolean getFacebookRegistration() {
+		return facebookRegistration;
 	}
 }

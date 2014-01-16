@@ -27,11 +27,9 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
-import com.ziplly.app.client.view.factory.AccountNotificationFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountNotificationDTO;
-import com.ziplly.app.model.TweetType;
 
 public class NavView extends Composite implements INavView {
 	private static NavigationUiBinder uiBinder = GWT.create(NavigationUiBinder.class);
