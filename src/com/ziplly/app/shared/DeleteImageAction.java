@@ -6,6 +6,9 @@ public class DeleteImageAction implements Action<DeleteImageResult>{
 
 	private String imageUrl;
 
+	public DeleteImageAction() {
+	}
+	
 	public DeleteImageAction(String url) {
 		this.setImageUrl(url);
 	}

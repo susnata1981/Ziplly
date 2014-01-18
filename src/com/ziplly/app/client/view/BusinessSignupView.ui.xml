@@ -81,27 +81,6 @@
 								going on in there</b:HelpBlock>
 						</b:Controls>
 					</b:ControlGroup>
-					<!-- <b:ControlGroup ui:field="street2Cg"> <b:Controls> <b:Label>Street2</b:Label> 
-						<br /> <b:TextBox ui:field="street2" placeholder="street2..." /> <b:HelpInline 
-						ui:field="street2Error"></b:HelpInline> </b:Controls> </b:ControlGroup> 
-					<b:ControlGroup ui:field="zipCg">
-						<b:Controls>
-							<b:Label>Zip</b:Label>
-							<br />
-							<b:TextBox ui:field="zip" placeholder="zip..." />
-							<b:HelpInline ui:field="zipError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-				    <b:ControlGroup ui:field="websiteCg"> <b:Controls> <b:Label>Website</b:Label> 
-						<br /> <b:TextBox ui:field="website" placeholder="website..." /> <b:HelpInline 
-						ui:field="websiteError"></b:HelpInline> </b:Controls> </b:ControlGroup> 
-					<g:FormPanel ui:field="uploadForm">
-						<g:HTMLPanel>
-							<g:FileUpload ui:field="uploadField" name="image" />
-							<b:Button ui:field="uploadBtn">Upload</b:Button>
-							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
-						</g:HTMLPanel>
-					</g:FormPanel> -->
 					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
 						<g:HTMLPanel>
 							<div class="{style.profileImagePreviewDiv}">
@@ -109,7 +88,7 @@
 							</div>
 							<g:FileUpload ui:field="uploadField" name="image"
 								addStyleNames="{style.chooseFileUploadButton}" />
-							<b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button>
+							<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
 						</g:HTMLPanel>
 					</g:FormPanel>
 					<b:ControlGroup ui:field="emailCg">

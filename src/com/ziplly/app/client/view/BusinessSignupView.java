@@ -18,8 +18,12 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -66,7 +70,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	private static final String LOCALITY_KEY = "locality";
 	private static final String ADMINISTRATIVE_AREA_KEY = "administrative_area_level_1";
 	private static final String POSTAL_CODE_KEY = "postal_code";
-	private static final String INVALID_ADDRESS = "Invalid address";
 	private static final String START_TIME = "9AM";
 	private static final String END_TIME = "9PM";
 	private static BusinessSignupViewUiBinder uiBinder = GWT
@@ -128,15 +131,13 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	FormPanel uploadForm;
 
 	@UiField
-	Button uploadBtn;
-
-	@UiField
 	Image profileImagePreview;
 
 	String profileImageUrl;
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
-
+	private boolean imageUploaded;
+	
 	@Inject
 	public BusinessSignupView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -160,18 +161,15 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 			}
 		});
 		
-		street1.addBlurHandler(new BlurHandler() {
+		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
-			public void onBlur(BlurEvent event) {
-				boolean validateName = validateAddress(street1.getText(), street1Cg,
-						street1Error);
-				if (validateName) {
-					street1Cg.setType(ControlGroupType.SUCCESS);
-					street1Error.setVisible(false);
-				}
+			public void onValueChange(ValueChangeEvent<String> event) {
+				streetNumber = streetName = neighborhood = city = state = zipCode = null;
+				clearNeighborhoodSection();
+				validateAddressField();
 			}
 		});
-
+		
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -191,6 +189,17 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 					passwordCg.setType(ControlGroupType.SUCCESS);
 					passwordError.setVisible(false);
 				}
+			}
+		});
+		
+		uploadField.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (imageUploaded) {
+					presenter.deleteImage(profileImageUrl);
+				}
+				uploadForm.submit();
 			}
 		});
 	}
@@ -221,7 +230,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 
 	public void reset() {
 		uploadForm.reset();
-		uploadBtn.setEnabled(false);
 		infoField.setVisible(false);
 	}
 
@@ -233,6 +241,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		profileImagePreview.setUrl(imageUrl);
 		profileImagePreview.setVisible(true);
 		this.profileImageUrl = imageUrl;
+		this.imageUploaded = true;
 	}
 
 	// boolean validateZip() {
@@ -315,7 +324,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
 		if (streetName == null || city == null || state == null || zipCode == null) {
 			cg.setType(ControlGroupType.ERROR);
-			helpInline.setText(INVALID_ADDRESS);
+			helpInline.setText(StringConstants.INVALID_ADDRESS);
 			helpInline.setVisible(true);
 			return false;
 		}
@@ -432,11 +441,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		return properties;
 	}
 
-	@UiHandler("uploadBtn")
-	void upload(ClickEvent event) {
-		uploadForm.submit();
-	}
-
 	@Override
 	public void clear() {
 		resetForm();
@@ -456,7 +460,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	
 	public void setImageUploadUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
-		uploadBtn.setEnabled(true);
 	}
 
 	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
@@ -521,6 +524,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	 * Callback handler to populate Address fields
 	 */
 	public void populateAddressFields() {
+//		streetNumber = streetName = neighborhood = city = state = zipCode = "";
 		JsArray<AddressComponent> components = getAddressComponents();
 		for (int i = 0; i < components.length(); i++) {
 			AddressComponent ac = components.get(i);

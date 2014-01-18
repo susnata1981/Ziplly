@@ -22,6 +22,8 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationResult;
+import com.ziplly.app.shared.DeleteImageAction;
+import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetNeighborhoodAction;
@@ -125,6 +127,19 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		}
 	}
 
+	/**
+	 * Deletes the image from blobstore based on serving url
+	 */
+	@Override
+	public void deleteImage(String url) {
+		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
+			@Override
+			public void onSuccess(DeleteImageResult result) {
+				// Nothing to do.
+			}
+		});
+	}
+	
 	public class ValidateLoginHandler extends DispatcherCallbackAsync<ValidateLoginResult> {
 	
 		@Override

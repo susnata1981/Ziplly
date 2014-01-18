@@ -1,7 +1,6 @@
 package com.ziplly.app.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +26,9 @@ import javax.persistence.Table;
 })
 @Entity
 @Table(name="transaction")
-public class Transaction {
+public class Transaction extends AbstractTimestampAwareEntity {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="transaction_id")
@@ -46,30 +47,26 @@ public class Transaction {
 	private TransactionStatus status;
 	private String currencyCode;
 	
-	@Column(name="time_updated")
-	private Date timeUpdated;
-
-	@Column(name="time_created")
-	private Date timeCreated;
-	
 	public Transaction() {
 	}
 	
 	public Transaction(TransactionDTO txn) {
 		if (txn != null) {
-//			transactionId = txn.getTransactionId();
+			transactionId = txn.getTransactionId();
 //			seller = new Account(txn.getSeller());
 			plan = new SubscriptionPlan(txn.getPlan());
 			amount = txn.getAmount();
 			currencyCode = txn.getCurrencyCode();
 			status = txn.getStatus();
-			timeCreated = txn.getTimeCreated();
+			setTimeCreated(txn.getTimeCreated());
+			setTimeUpdated(txn.getTimeUpdated());
 		}
 	}
 	
 	public BigDecimal getAmount() {
 		return amount;
 	}
+	
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -87,14 +84,6 @@ public class Transaction {
 
 	public void setStatus(TransactionStatus status) {
 		this.status = status;
-	}
-
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
 	}
 
 	public Long getTransactionId() {

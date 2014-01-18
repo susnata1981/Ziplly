@@ -15,6 +15,7 @@ public class TransactionDTO implements Serializable {
 	private TransactionStatus status;
 //	private BigDecimal recurringAmount;
 	private String currencyCode;
+	private Date timeUpdated;
 	private Date timeCreated;
 	
 	public TransactionDTO() {
@@ -80,5 +81,13 @@ public class TransactionDTO implements Serializable {
 	}
 	public void setSeller(AccountDTO seller) {
 		this.seller = seller;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
 	}
 }

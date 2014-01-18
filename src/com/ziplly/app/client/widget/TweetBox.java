@@ -114,8 +114,6 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	private String width = "40%";
 
-	private ClickHandler deleteImageHandler;
-
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(true);
@@ -342,12 +340,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	public void displayPreview(boolean b) {
 		Display display = b ? Display.BLOCK : Display.NONE;
 		if (b) {
-			System.out.println("IMG UPLOD="+imageUploaded);
-			if (imageUploaded) {
-				displayFileUploadSection(true);
-			} else {
-				displayFileUploadSection(false);
-			}
+			displayFileUploadSection(imageUploaded);
 		}
 		previewPanel.getElement().getStyle().setDisplay(display);
 	}
@@ -371,5 +364,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	// Clears upload form
 	public void resetImageUploadUrl() {
 		uploadForm.setAction("");
+		fileUpload.getElement().setPropertyString("value", "");
+		imageUploaded = false;
 	}
 }

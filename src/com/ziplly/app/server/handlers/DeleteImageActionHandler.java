@@ -6,7 +6,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.gwt.thirdparty.guava.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -15,6 +15,8 @@ import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
 
 public class DeleteImageActionHandler extends AbstractAccountActionHandler<DeleteImageAction, DeleteImageResult>{
+
+	private static final String BLOBSTORE_KEY_STRING = "encoded_gs_key";
 
 	@Inject
 	public DeleteImageActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
@@ -28,10 +30,9 @@ public class DeleteImageActionHandler extends AbstractAccountActionHandler<Delet
 		
 		Preconditions.checkArgument(action.getImageUrl() != null);
 		
-		validateSession();
-		
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-		BlobKey key = new BlobKey(action.getImageUrl());
+		String imgUrl = action.getImageUrl();
+		BlobKey key = new BlobKey(imgUrl.substring(imgUrl.indexOf(BLOBSTORE_KEY_STRING)));
 		blobstoreService.delete(key);
 		return new DeleteImageResult();
 	}

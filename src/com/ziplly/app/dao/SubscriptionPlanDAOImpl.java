@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.ziplly.app.model.SubscriptionPlan;
+import com.ziplly.app.model.SubscriptionPlanDTO;
 
 public class SubscriptionPlanDAOImpl implements SubscriptionPlanDAO {
 
@@ -25,9 +26,10 @@ public class SubscriptionPlanDAOImpl implements SubscriptionPlanDAO {
 	}
 
 	@Override
-	public List<SubscriptionPlan> getAll() {
+	public List<SubscriptionPlanDTO> getAll() {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		return (List<SubscriptionPlan>)em.createQuery("from SubscriptionPlan").getResultList();
+		@SuppressWarnings("unchecked")
+		List<SubscriptionPlan> plans = (List<SubscriptionPlan>)em.createQuery("from SubscriptionPlan").getResultList();
+		return EntityUtil.cloneSubscriptionPlanList(plans);
 	}
-
 }

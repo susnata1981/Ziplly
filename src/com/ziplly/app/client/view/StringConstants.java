@@ -50,4 +50,5 @@ public class StringConstants {
 	public static final String REDIRECT_URI = "app.dev.redirecturl";
 	public static final String APP_ENVIRONMENT = "app.environment";
 	public static final String BUCKET_NAME = "gcs_bucket_name";
+	public static final String INVALID_ADDRESS = "Please select an address from the list.";
 }

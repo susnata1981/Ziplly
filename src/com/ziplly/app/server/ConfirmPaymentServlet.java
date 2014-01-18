@@ -18,9 +18,6 @@ public class ConfirmPaymentServlet extends HttpServlet {
 	private Logger logger = Logger.getLogger(ConfirmPaymentServlet.class.getCanonicalName());
 	PaymentService paymentService;
 	
-	public ConfirmPaymentServlet() {
-	}
-	
 	@Inject
 	public ConfirmPaymentServlet(PaymentService paymentService) {
 		this.paymentService = paymentService;
@@ -29,6 +26,7 @@ public class ConfirmPaymentServlet extends HttpServlet {
 	@Override 
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		PrintWriter writer = res.getWriter();
+		System.out.println("Received request = "+req.getContentLength());
 		writer.println("ConfirmPaymentServlet...");
 		writer.close();
 	}

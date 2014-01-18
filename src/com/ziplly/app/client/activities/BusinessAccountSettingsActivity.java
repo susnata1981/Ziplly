@@ -1,6 +1,7 @@
 package com.ziplly.app.client.activities;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -27,8 +28,6 @@ import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanResult;
-import com.ziplly.app.shared.GetJwtTokenAction;
-import com.ziplly.app.shared.GetJwtTokenResult;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.PayResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -43,7 +42,7 @@ public class BusinessAccountSettingsActivity
 			ISettingsView<BusinessAccountDTO, BusinessAccountSettingsPresenter> {
 		void displayTransactionHistory(List<TransactionDTO> list);
 
-		void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans);
+		void displaySubscriptionPlans(Map<SubscriptionPlanDTO, String> plans);
 
 		void setJwtString(String jwt);
 
@@ -56,7 +55,6 @@ public class BusinessAccountSettingsActivity
 		void disableSubscription();
 	}
 
-	private String jwt;
 	private AcceptsOneWidget panel;
 
 	@Inject
@@ -113,7 +111,7 @@ public class BusinessAccountSettingsActivity
 	}
 
 	private void displaySubscriptionPlans() {
-		getJwtString();
+//		getJwtString();
 		getSubscriptionPlans();
 	}
 
@@ -139,17 +137,17 @@ public class BusinessAccountSettingsActivity
 		placeController.goTo(new BusinessAccountPlace());
 	}
 
-	@Override
-	public void getJwtString() {
-		dispatcher.execute(new GetJwtTokenAction(),
-				new DispatcherCallbackAsync<GetJwtTokenResult>() {
-					@Override
-					public void onSuccess(GetJwtTokenResult result) {
-						BusinessAccountSettingsActivity.this.jwt = result.getToken();
-						view.setJwtString(jwt);
-					}
-				});
-	}
+//	@Override
+//	public void getJwtString() {
+//		dispatcher.execute(new GetJwtTokenAction(),
+//				new DispatcherCallbackAsync<GetJwtTokenResult>() {
+//					@Override
+//					public void onSuccess(GetJwtTokenResult result) {
+//						BusinessAccountSettingsActivity.this.jwt = result.getToken();
+//						view.setJwtString(jwt);
+//					}
+//				});
+//	}
 
 	@Override
 	public void pay(final TransactionDTO txn) {
@@ -157,6 +155,10 @@ public class BusinessAccountSettingsActivity
 			throw new IllegalArgumentException();
 		}
 
+		if (txn.getStatus() != TransactionStatus.ACTIVE) {
+			return;
+		}
+		
 		dispatcher.execute(new PayAction(txn), new DispatcherCallbackAsync<PayResult>() {
 			@Override
 			public void onSuccess(PayResult result) {

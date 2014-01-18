@@ -1,11 +1,12 @@
 package com.ziplly.app.client.view;
 
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,8 +87,6 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 
 	public static interface BusinessAccountSettingsPresenter extends
 			AccountSettingsPresenter<BusinessAccountDTO> {
-		void getJwtString();
-
 		void pay(TransactionDTO txn);
 	}
 
@@ -247,6 +246,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	private Map<Long, SubscriptionPlanDTO> subscriptionPlanMap = new HashMap<Long, SubscriptionPlanDTO>();
 	private List<TransactionDTO> transactions;
 	private boolean sellerEligibleForSubscription = true;
+	private Map<SubscriptionPlanDTO, String> plans;
 
 	public BusinessAccountSettingsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -574,6 +574,8 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		TransactionDTO txn = new TransactionDTO();
 		txn.setCurrencyCode(StringConstants.CURRENCY_CODE);
 		txn.setTimeCreated(new Date());
+		SubscriptionPlanDTO plan = subscriptionPlanMap.get(new Long(subscriptionId));
+		txn.setAmount(new BigDecimal(plan.getFee()));
 		txn.setStatus(TransactionStatus.ACTIVE);
 		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
 		presenter.pay(txn);
@@ -600,28 +602,23 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	}
 
 	@Override
-	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
+	public void displaySubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
 		subscriptionPlanMap.clear();
 		subscriptionPlanTablePanel.clear();
+		this.plans = plans;
 		
 		// sort the subscription plans based on fee (ascending)
-		Collections.sort(plans, new Comparator<SubscriptionPlanDTO>() {
-
-			@Override
-			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
-				return (int)(o1.getFee() - o2.getFee());
-			}
-		});
-		
+		Map<SubscriptionPlanDTO, String> sortedPlans = sortSubscriptionPlans(plans);
 		int count = 0;
-		for (SubscriptionPlanDTO plan : plans) {
+		
+		for (SubscriptionPlanDTO plan : sortedPlans.keySet()) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
-			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan);
+			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan, sortedPlans.get(plan));
 			
 			// Free subscription plan
-			if (plan.getFee() == 0) {
-				widget.removeBuyButton();
-			}
+//			if (plan.getFee() == 0) {
+//				widget.removeBuyButton();
+//			}
 			
 			// Just to highlight
 			if (count == 1) {
@@ -632,7 +629,19 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		}
 	}
 
-	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
+	private Map<SubscriptionPlanDTO, String> sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
+		TreeMap<SubscriptionPlanDTO, String> sortedPlans = new TreeMap<SubscriptionPlanDTO, String>(
+		    new Comparator<SubscriptionPlanDTO>() {
+			@Override
+			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
+				return (int)(o1.getFee() - o2.getFee());
+			}
+		});
+		sortedPlans.putAll(plans);
+		return sortedPlans;
+	}
+
+	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan, final String token) {
 		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
 		widget.setStyleName(style.subscriptionPlanWidget());
 		widget.setHeading(plan.getName());
@@ -640,8 +649,9 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		widget.addPayButtonClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				clearPaymentStatus();
 				if (isEligibleForSubscription()) {
-					doPay(jwtToken, plan.getSubscriptionId().intValue());
+					doPay(token, plan.getSubscriptionId().intValue());
 				} else {
 					displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT,
 							AlertType.WARNING);

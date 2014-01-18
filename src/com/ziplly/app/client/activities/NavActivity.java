@@ -28,8 +28,6 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetAccountNotificationAction;
-import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
 import com.ziplly.app.shared.ViewNotificationAction;
@@ -81,13 +79,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	 * 1. Rpc to GetAccountNotificationActionHandler and fires AccountNotificationEvent.
 	 */
 	private void onLogin() {
-//		dispatcher.execute(new GetAccountNotificationAction(), new DispatcherCallbackAsync<GetAccountNotificationResult>() {
-//			@Override
-//			public void onSuccess(GetAccountNotificationResult result) {
-//				eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
-//			}
-//		});
-		
+		view.showAccountLinks(true);
 		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
 			@Override
 			public void onSuccess(GetAccountDetailsResult result) {

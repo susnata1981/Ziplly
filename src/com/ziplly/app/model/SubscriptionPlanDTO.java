@@ -47,4 +47,23 @@ public class SubscriptionPlanDTO implements Serializable {
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		
+		if (!(o instanceof SubscriptionPlanDTO)) {
+			return false;
+		}
+		
+		SubscriptionPlanDTO s = (SubscriptionPlanDTO)o;
+		return s.getSubscriptionId() == subscriptionId;
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode() + description.hashCode() + subscriptionId.hashCode();
+	}
 }

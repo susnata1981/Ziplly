@@ -289,6 +289,14 @@ public class EntityUtil {
 		return resp;
 	}
 
+	public static List<SubscriptionPlanDTO> cloneSubscriptionPlanList(List<SubscriptionPlan> plans) {
+		List<SubscriptionPlanDTO> resp = Lists.newArrayList();
+		for(SubscriptionPlan plan : plans) {
+			resp.add(EntityUtil.clone(plan));
+		}
+		return resp;
+	}
+	
 	public static TransactionDTO clone(Transaction txn) {
 		if (txn != null) {
 			TransactionDTO transaction = new TransactionDTO();

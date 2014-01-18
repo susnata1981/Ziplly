@@ -19,10 +19,11 @@ public class TransactionDAOImpl implements TransactionDAO {
 
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
-
-		Query query = em.createNamedQuery("findTransactionByAccount");
+		em.getTransaction().begin();
+		
+		Query query = em.createQuery("from Transaction where seller.accountId = :accountId and status = :status");
 		query.setParameter("accountId", txn.getSeller().getAccountId());
-		query.setParameter("status", TransactionStatus.CANCELLED);
+		query.setParameter("status", TransactionStatus.ACTIVE);
 		
 		boolean isAlreadyPaid = true;
 		try {
@@ -35,7 +36,6 @@ public class TransactionDAOImpl implements TransactionDAO {
 			throw new DuplicateException();
 		}
 
-		em.getTransaction().begin();
 		em.persist(txn);
 		em.getTransaction().commit();
 		TransactionDTO result = EntityUtil.clone(txn);

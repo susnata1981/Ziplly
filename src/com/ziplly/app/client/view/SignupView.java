@@ -16,6 +16,8 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -121,8 +123,8 @@ public class SignupView extends Composite implements
 	@UiField
 	FormPanel uploadForm;
 
-	@UiField
-	Button uploadBtn;
+//	@UiField
+//	Button uploadBtn;
 
 	@UiField
 	Image profileImagePreview;
@@ -190,6 +192,17 @@ public class SignupView extends Composite implements
 				}
 			}
 		});
+		
+
+		uploadField.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (imageUploaded) {
+					presenter.deleteImage(profileImageUrl);
+				}
+				uploadForm.submit();
+			}
+		});
 	}
 	
 	public void clearNeighborhoodSection() {
@@ -200,7 +213,6 @@ public class SignupView extends Composite implements
 	
 	public void reset() {
 		uploadForm.reset();
-		uploadBtn.setEnabled(false);
 		infoField.setVisible(false);
 	}
 
@@ -212,6 +224,7 @@ public class SignupView extends Composite implements
 		profileImagePreview.setUrl(imageUrl);
 		profileImagePreview.setVisible(true);
 		this.profileImageUrl = imageUrl;
+		this.imageUploaded = true;
 	}
 
 	boolean validateZip() {
@@ -427,7 +440,6 @@ public class SignupView extends Composite implements
 	@UiHandler("uploadBtn")
 	void upload(ClickEvent event) {
 		uploadForm.submit();
-		imageUploaded = true;
 	}
 
 	@Override
@@ -454,7 +466,7 @@ public class SignupView extends Composite implements
 
 	public void setImageUploadUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
-		uploadBtn.setEnabled(true);
+//		uploadBtn.setEnabled(true);
 	}
 
 	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
