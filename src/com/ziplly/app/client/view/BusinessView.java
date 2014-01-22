@@ -2,28 +2,41 @@ package com.ziplly.app.client.view;
 
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.BusinessAccountCell;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.EntityType;
+import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.GetEntityListAction;
+import com.ziplly.app.shared.ValidationResult;
 
 public class BusinessView extends Composite implements View<BusinessView.EntityListViewPresenter> {
 
-	private static final int PAGE_SIZE = 2;
+	private static final int PAGE_SIZE = 3;
 
 	private static BusinessViewUiBinder uiBinder = GWT.create(BusinessViewUiBinder.class);
 
 	public interface EntityListViewPresenter extends Presenter {
 		public void onRangeChangeEvent(int start, int pageSize);
+
+		public void getBusinessList(GetEntityListAction currentEntityListAction);
 	}
 	
 	interface BusinessViewUiBinder extends UiBinder<Widget, BusinessView> {
@@ -34,80 +47,101 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 
 	@UiField(provided = true)
 	CellList<BusinessAccountDTO> businessList;
-
-//	private AccountDTO account;
-//
-//	public BusinessView() {
-//		setBusinessList(new CellList<BusinessAccountDTO>(new BusinessAccountCell()));
-//		getBusinessList().setPageSize(PAGE_SIZE);
-//		pager = new SimplePager();
-//		initWidget(uiBinder.createAndBindUi(this));
-//	}
-//
-//	public void display(List<BusinessAccountDTO> input) {
-//		ListDataProvider<BusinessAccountDTO> provider = new ListDataProvider<BusinessAccountDTO>();
-//		provider.addDataDisplay(businessList);
-//		pager.setDisplay(businessList);
-//		businessList.setRowCount(input.size());
-//		provider.setList(input);
-//	}
-//
-//	public CellList<BusinessAccountDTO> getBusinessList() {
-//		return businessList;
-//	}
-//
-//	public void setBusinessList(CellList<BusinessAccountDTO> residentsList) {
-//		this.businessList = residentsList;
-//	}
-//
-//	public void setTotalRowCount(Long count) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 	
-	private AccountDTO account;
-
+	//
+	// Search
+	//
+	@UiField
+	ControlGroup zipCg;
+	@UiField
+	TextBox zipTextBox;
+	@UiField
+	HelpInline zipError;
+	
+	@UiField
+	Button searchBtn;
+	
+	@UiField
+	Button resetBtn;
+	
+	@UiField
+	Alert message;
+	
 	private EntityListViewPresenter presenter;
-
+	private CommunityViewState state;
+	
 	public BusinessView() {
 		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell());
 		businessList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
 		pager.setDisplay(businessList);
 		initWidget(uiBinder.createAndBindUi(this));
+		state = new CommunityViewState(EntityType.BUSINESS_ACCOUNT, PAGE_SIZE);
+		StyleHelper.show(message.getElement(), false);
 		setupHandlers();
 	}
 
-	Range currentRange;
 	private void setupHandlers() {
 		businessList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Range r = event.getNewRange();
-				currentRange = r;
-				System.out.println("start="+r.getStart()+" Length="+r.getLength());
-				presenter.onRangeChangeEvent(r.getStart(), PAGE_SIZE);
+				state.setRange(event.getNewRange());
+				presenter.getBusinessList(state.getCurrentEntityListAction());
 			}
 		});
 	}
 
 	public void display(List<BusinessAccountDTO> input) {
-//		ListDataProvider<PersonalAccountDTO> provider = new ListDataProvider<PersonalAccountDTO>();
-//		provider.addDataDisplay(residentsList);
-//		pager.setDisplay(residentsList);
-//		residentsList.setRowCount(input.size());
-//		provider.setList(input);
-		int start = currentRange == null ? 0 : currentRange.getStart();
-		businessList.setRowData(start, input);
-//		residentsList.setRowCount(totalRowCount, true);
+		enableButtonIfRequired();
+		StyleHelper.show(message.getElement(), false);
+		if (input.size() == 0) {
+			displayNoResult();
+		}
+		businessList.setRowData(state.getStart(), input);
 	}
 
-	int totalRowCount;
+	private void displayNoResult() {
+		businessList.setRowCount(0);
+		message.setAnimation(true);
+		message.setClose(false);
+		message.setText(StringConstants.NO_RESULT_FOUND);
+		StyleHelper.show(message.getElement(), true);
+	}
+
 	public void setTotalRowCount(Long count) {
-		totalRowCount = count.intValue();
-		businessList.setRowCount(totalRowCount, true);
+		businessList.setRowCount(count.intValue(), true);
 	}
 
+	private boolean validateZip() {
+		String zipInput = zipTextBox.getText().trim();
+		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
+		if (!validateZip.isValid()) {
+			zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
+			zipCg.setType(ControlGroupType.ERROR);
+			return false;
+		}
+		return true;
+	}
+
+	@UiHandler("searchBtn")
+	void search(ClickEvent event) {
+		clearErrors();
+		boolean valid = validateZip();
+		if (!valid) {
+			return;
+		}
+		searchBtn.setEnabled(false);
+		state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
+		presenter.getBusinessList(state.getCurrentEntityListAction());
+	}
+	
+	@UiHandler("resetBtn")
+	void resetSearch(ClickEvent event) {
+		state.reset();
+		clear();
+		presenter.getBusinessList(state.getCurrentEntityListAction());
+	}
+	
 	@Override
 	public void setPresenter(EntityListViewPresenter presenter) {
 		this.presenter = presenter;
@@ -117,7 +151,24 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 		return PAGE_SIZE;
 	}
 	
+	private void enableButtonIfRequired() {
+		if (!searchBtn.isEnabled()) {
+			searchBtn.setEnabled(true);
+		}
+		
+		if (!resetBtn.isEnabled()) {
+			resetBtn.setEnabled(true);
+		}
+	}
+	
 	@Override
 	public void clear() {
+		zipTextBox.setText("");
+		clearErrors();
+	}
+	
+	private void clearErrors() {
+		zipCg.setType(ControlGroupType.NONE);
+		zipError.setText("");
 	}
 }

@@ -92,7 +92,6 @@ import com.ziplly.app.shared.BCrypt;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class AccountBLIImpl implements AccountBLI {
-	private static final String UPLOAD_SERVICE_ENDPOINT = "/upload";
 	public static final int FREE_TWEET_PER_MONTH_THRESHOLD = 1;
 	private static final int BUFFER_SIZE = 512;
 
@@ -453,9 +452,12 @@ public class AccountBLIImpl implements AccountBLI {
 	public String getImageUploadUrl() {
 		String bucketName = System.getProperty("gcs_bucket_name");
 		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
-		String uploadUrl = blobstoreService.createUploadUrl(UPLOAD_SERVICE_ENDPOINT, options);
+		String uploadEndpoint = System.getProperty(StringConstants.UPLOAD_ENDPOINT);
+		String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
+		
 		String result = "";
-		System.out.println("UPLOAD = "+uploadUrl);
+		logger.log(Level.INFO, String.format("UPLOAD URL SET to %s", uploadUrl));
+
 		// Hack to make this work in dev environment
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
 			result = uploadUrl.replace(
@@ -463,6 +465,8 @@ public class AccountBLIImpl implements AccountBLI {
 //				"susnatas-mbp.bauhauscoffee.net:8888",
 				"127.0.0.1:8888");
 		} 
+		
+		logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", result));
 		return result;
 		
 	}
@@ -668,13 +672,16 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 	}
 
+	// TODO(shaan) refactor
 	@Override
 	public void sendEmailByZip(Account sender, Long tweetId, NotificationType type,
 			EmailTemplate template) {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
+		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
+		
+		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
 				.param("senderAccountId", sender.getAccountId().toString())
 				.param("tweetId", tweetId.toString()).param("notificationType", type.name())
@@ -688,7 +695,9 @@ public class AccountBLIImpl implements AccountBLI {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
+		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
+		
+		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.INDIVIDUAL.name())
 				.param("recipientEmail", receiver.getEmail())
 				.param("recipientName", receiver.getName())

@@ -35,6 +35,11 @@ import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
@@ -55,6 +60,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
 
+	// Basic account info
 	@UiField
 	Alert message;
 	@UiField
@@ -63,6 +69,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	Heading name;
 	@UiField
 	Paragraph description;
+	@UiField
+	SpanElement gender;
 	@UiField
 	SpanElement lastLoginTime;
 	@UiField
@@ -103,6 +111,10 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	private SendMessageWidget smw;
 	private String tweetWidgetWidth = "80%";
 	private String tweetBoxWidth = "80%";
+	private BasicDataFormatter basicDataFormatter = 
+			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private AccountFormatter accountFormatter = 
+			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 	
 	public AccountView() {
 		tweetBox = new TweetBox();
@@ -140,8 +152,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		description.setText(account.getIntroduction());
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
-		DateTimeFormat fmt = DateTimeFormat.getFormat("MMMM dd, yyyy");
-		lastLoginTime.setInnerText(fmt.format(account.getLastLoginTime()));
+		gender.setInnerHTML(basicDataFormatter.format(account.getGender().name().toLowerCase(), ValueType.STRING_VALUE));
+		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
 
 		// occupation panel
 		occupationSpan.setInnerHTML(account.getOccupation());
@@ -151,7 +163,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		
 		// display tweets
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
-		displayTweets(account.getTweets());
+//		displayTweets(account.getTweets());
 	}
 
 	@Override

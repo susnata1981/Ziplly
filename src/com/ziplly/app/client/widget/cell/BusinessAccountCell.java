@@ -44,35 +44,29 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 	public void render(com.google.gwt.cell.client.Cell.Context context,
 			BusinessAccountDTO value, SafeHtmlBuilder sb) {
 		
+		if (value == null) {
+			return;
+		}
+		
 		String imgUrl = value.getImageUrl() != null ? 
 				value.getImageUrl() : "images/no-photo.jpg";
 		
-		String category = value.getCategory() != null ? value.getCategory().name() : "";
-		String website = value.getWebsite() != null ? value.getWebsite() : "website";
+		String category = value.getCategory() != null ? value.getCategory().name() : StringConstants.UNKNOWN;
+		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
 		
 		if (value != null) {
 			sb.appendHtmlConstant(
 					" <div class='pcell'>"
-					+ "<figure>"
+					+ "<div class='pcell-image'>"
 					+ "<img src='"+imgUrl+"'></img>"
-					+ "<figcaption>"
-					+ "<div>"
-					+ "<span class='communityHeading'>"+value.getDisplayName()+"</span>"
-					+ "<span class='communityParagraph'>Website: <a href='#'>"+ website + "</a></span>"
-					+ "<br/><span class='communityParagraph'> Category: "+ category +"</span>"
-					+ "</div>");
-
-			sb.appendHtmlConstant(
-					"<p><span class='communityParagraph'>Located at:&nbsp;</span>"+value.getNeighborhood().getName()+"</p>"
 					+ "</div>"
-					+ "</figcaption>");
-
-			
-			
-			sb.appendHtmlConstant(
-				"</div>"
-				+ "</figure>" 
-				+ "</div>");
+					+ "<div class='pcell-info'>"
+					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
+					+ "<span class='pcell-row'>Website: <a href='#'>"+ website + "</a></span>"
+					+ "<span class='pcell-row'> Category: "+ category +"</span>"
+					+ "<span class='pcell-row'>Located at:&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "</div>"
+					+ "</div>");
 		}
 	}
 }

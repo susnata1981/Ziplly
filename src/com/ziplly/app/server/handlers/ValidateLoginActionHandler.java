@@ -41,7 +41,9 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 	private void sendMail(AccountDTO account) {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		TaskOptions options = TaskOptions.Builder.withUrl("/sendmail").method(Method.POST)
+		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
+		
+		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
 //				.param("recipientEmail", account.getEmail())
 //				.param("recipientName", account.getDisplayName())

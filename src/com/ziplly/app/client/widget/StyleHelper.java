@@ -10,6 +10,10 @@ public class StyleHelper {
 		elem.getStyle().setDisplay(display);
 	}
 	
+	public static void show(Element elem, Display d) {
+		elem.getStyle().setDisplay(d);
+	}
+	
 	public static boolean isVisible(Element elem) {
 		return !elem.getStyle().getDisplay().equalsIgnoreCase(Display.NONE.name()); 
 	}

@@ -3,13 +3,24 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+		.heading {
+			color: #555;
+		}
 	</ui:style>
 
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="3">
 			    <g:HTMLPanel>
-			        Filter section
+			        <b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
+			        <b:ControlGroup ui:field="zipCg">
+						<b:Controls>
+							<b:TextBox ui:field="zipTextBox" placeholder="zip..." />
+							<b:HelpInline ui:field="zipError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button size="SMALL" ui:field="searchBtn">Search</b:Button>
+					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
 			    </g:HTMLPanel>
 			</b:Column>
 			<b:Column size="8">
@@ -19,9 +30,14 @@
 					</b:Column>
 				</b:FluidRow>
 				<b:FluidRow>
-					<b:Column offset="1" size="10">
+					<b:Column size="10">
 						<cell:CellList ui:field="businessList" />
 					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+				    <b:Column size="10">
+				        <b:Alert ui:field="message" />
+				    </b:Column>
 				</b:FluidRow>
 			</b:Column>
 		</b:FluidRow>

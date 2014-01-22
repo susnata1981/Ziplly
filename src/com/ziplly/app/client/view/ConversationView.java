@@ -23,6 +23,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -41,7 +42,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.CellPreviewEvent.Handler;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.RangeChangeEvent;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
@@ -55,9 +56,9 @@ import com.ziplly.app.client.widget.VPanel;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
-import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.ValidationResult;
 
 public class ConversationView extends Composite implements IConversationView {
@@ -67,9 +68,7 @@ public class ConversationView extends Composite implements IConversationView {
 
 		void onView(ConversationDTO conversation);
 
-		void gotoProfile();
-
-		void getConversations(ConversationType type, int start, int pageSize);
+		void getConversations(GetConversationsAction action);
 	}
 
 	private static final String SENDER_KEY = "Sender";
@@ -77,6 +76,7 @@ public class ConversationView extends Composite implements IConversationView {
 	private static final String TIME_RECEIVED_KEY = "Time received";
 	private static final String RECEIVER_KEY = "Receiver";
 	private static final int PAGE_SIZE = 10;
+	private static final String STATUS_COL_KEY = "Status";
 	private static ConversationViewUiBinder uiBinder = GWT
 			.create(ConversationViewUiBinder.class);
 	
@@ -122,13 +122,12 @@ public class ConversationView extends Composite implements IConversationView {
 
 	@UiField
 	SpanElement unreadMessageCountSpan;
-	@UiField
-	SpanElement sentMessageCountSpan;
-	@UiField
-	SpanElement receivedMessageCountSpan;
 	
 	@UiField
-	Anchor allMessagesLink;
+	SpanElement sentMessageCountSpan;
+	
+	@UiField
+	SpanElement receivedMessageCountSpan;
 	
 	@UiField
 	Anchor receivedMessagesLink;
@@ -151,7 +150,6 @@ public class ConversationView extends Composite implements IConversationView {
 	List<ConversationDTO> conversations;
 	
 	CellTable<ConversationDTO> conversationTable;
-	ListDataProvider<ConversationDTO> dataProvider;
 	SimplePager pager;
 	
 	TableResources tableResources;
@@ -159,8 +157,9 @@ public class ConversationView extends Composite implements IConversationView {
 	List<ConversationDTO> filteredConversations = new ArrayList<ConversationDTO>();
 	Formatter<AccountDTO> accountFormatter;
 	Formatter<Object> basicDataFormatter;
-	protected int pageStart;
-	private ConversationType type;
+//	private int pageStart;
+//	private ConversationType type;
+	private ConversationViewState state;
 	
 	@SuppressWarnings("unchecked")
 	public ConversationView() {
@@ -168,6 +167,15 @@ public class ConversationView extends Composite implements IConversationView {
 		tableResources.cellTableStyle().ensureInjected();
 		conversationTable = new CellTable<ConversationDTO>(PAGE_SIZE, tableResources);
 		conversationTable.setPageSize(PAGE_SIZE);
+		conversationTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				state.onRangeChange(event.getNewRange());
+				presenter.getConversations(state.getSearchCriteria());
+			}
+			
+		});
+			
 		pager = new SimplePager();
 		pager.setDisplay(conversationTable);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -183,16 +191,23 @@ public class ConversationView extends Composite implements IConversationView {
 		basicDataFormatter = (Formatter<Object>) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 
 		addConversationTableToPanel();
-		dataProvider = new ListDataProvider<ConversationDTO>();
-		dataProvider.addDataDisplay(conversationTable);
-		pageStart = 0;
-		type = ConversationType.ALL;
+//		dataProvider = new ListDataProvider<ConversationDTO>() {
+//			protected void onRangeChanged(HasData<ConversationDTO> display) {
+//				super.onRangeChanged(display);
+//				highlightUnreadConversation();
+//			}
+//		};
+//		
+//		dataProvider.addDataDisplay(conversationTable);
+		state = new ConversationViewState(PAGE_SIZE);
+//		pageStart = 0;
+//		type = ConversationType.RECEIVED;
 	}
 
 	private void addConversationTableToPanel() {
 		conversationPanel.clear();
-		conversationPanel.add(conversationTable);
 		conversationPanel.add(pager);
+		conversationPanel.add(conversationTable);
 	}
 
 	@Override
@@ -204,8 +219,10 @@ public class ConversationView extends Composite implements IConversationView {
 				displayNoConversationMessage();
 				return;
 			}
-			dataProvider.setList(conversations);
-			setMessageCount(conversations);
+			System.out.println("S="+state.getStart()+" L="+conversations.size());
+			conversationTable.setRowData(state.getStart(), conversations);
+//			dataProvider.setList(conversations);
+			highlightUnreadConversation();
 		}
 	}
 
@@ -214,35 +231,40 @@ public class ConversationView extends Composite implements IConversationView {
 		StyleHelper.show(pager.getElement(), false);
 	}
 
-	@Override
-	public void setMessageCount(List<ConversationDTO> conversations) {
-		int unreadMsgCount = 0,  receivedMessageCount = 0, sentMessageCount = 0;
-		
-		for (ConversationDTO conversation : conversations) {
-			if (isConversationUnread(conversation)) {
-				unreadMsgCount++;
+	private void highlightUnreadConversation() {
+		int start = state.getStart();
+		int end = start + PAGE_SIZE;
+		if (conversations == null) {
+			return;
+		}
+		int totalConversations = conversations.size();
+			
+		for(int i=start; i<end; i++) {
+			if (i >= totalConversations) {
+				return;
 			}
-			if (conversation.isSender()) {
-				sentMessageCount++;
-			} else {
-				receivedMessageCount++;
+			ConversationDTO c = conversations.get(i);
+			if (!c.isSender() && c.getStatus() == ConversationStatus.UNREAD) {
+				TableRowElement row = conversationTable.getRowElement(i-start);
+				row.getStyle().setBackgroundColor("#e5e5e5");
 			}
 		}
-		updateCount(unreadMessageCountSpan, unreadMsgCount, false);
-//		updateCount(receivedMessageCountSpan, receivedMessageCount, true);
-//		updateCount(sentMessageCountSpan, sentMessageCount, true);
 	}
 	
-
 	@Override
 	public void clear() {
 	}
 	
 	@Override
 	public void clearMessageCount() {
-		
+		updateCount(unreadMessageCountSpan, 0, false);
 	}
 
+	@Override
+	public void setUnreadMessageCount(int count) {
+		updateCount(unreadMessageCountSpan, count, true);
+	}
+	
 	void updateCount(SpanElement elem, int value, boolean setZero) {
 		if (value > 0) {
 			elem.setInnerHTML("("+value+")");
@@ -253,10 +275,6 @@ public class ConversationView extends Composite implements IConversationView {
 		}
 	}
 	
-	private boolean isConversationUnread(ConversationDTO conversation) {
-		return conversation.getStatus()==ConversationStatus.UNREAD && !conversation.isSender();
-	}
-
 	private Header<String> buildHeader(final String title) {
 		Header<String> header = new Header<String>(new TextCell()) {
 			@Override
@@ -275,7 +293,7 @@ public class ConversationView extends Composite implements IConversationView {
 				if (filterConversation) {
 					c = filteredConversations.get(context.getIndex());
 				} else {
-					c = conversations.get(context.getIndex());
+					c = conversations.get(context.getIndex() - state.getStart());
 				}
 				sb.appendHtmlConstant(getImageLink(c.getSender()));
 			}
@@ -294,7 +312,7 @@ public class ConversationView extends Composite implements IConversationView {
 				if (filterConversation) {
 					c = filteredConversations.get(context.getIndex());
 				} else {
-					c = conversations.get(context.getIndex());
+					c = conversations.get(context.getIndex() - state.getStart());
 				}
 				sb.appendHtmlConstant(getImageLink(c.getReceiver()));
 			}
@@ -313,20 +331,28 @@ public class ConversationView extends Composite implements IConversationView {
 				return c.getSubject();
 			}
 		};
-//		subjectCol.setCellStyleNames(style.subjectBlock());
 		subjectCol.setCellStyleNames(style.subjectFont());
 		conversationTable.addColumn(subjectCol, buildHeader(SUBJECT_KEY));
-		conversationTable.setColumnWidth(subjectCol, 30, Unit.PCT);
+		conversationTable.setColumnWidth(subjectCol, 28, Unit.PCT);
+		
+		Column<ConversationDTO, String> statusCol = new TextColumn<ConversationDTO>() {
+
+			@Override
+			public String getValue(ConversationDTO c) {
+				return c.getStatus().name().toLowerCase();
+			}
+		};
+		conversationTable.addColumn(statusCol, buildHeader(STATUS_COL_KEY));
+		conversationTable.setColumnWidth(statusCol, 6, Unit.PCT);
 		
 		Column<ConversationDTO, String> timeSentCol = new TextColumn<ConversationDTO>() {
 			@Override
 			public String getValue(ConversationDTO c) {
-				return basicDataFormatter.format(c.getMessages().get(0).getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+				return basicDataFormatter.format(c.getMessages().get(0).getTimeCreated(), ValueType.DATE_VALUE_MEDIUM);
 			}
 		};
-//		timeSentCol.setCellStyleNames(style.dateBlock());
 		conversationTable.addColumn(timeSentCol, buildHeader(TIME_RECEIVED_KEY));
-		conversationTable.setColumnWidth(timeSentCol, 30, Unit.PCT);
+		conversationTable.setColumnWidth(timeSentCol, 26, Unit.PCT);
 		
 		conversationTable.addCellPreviewHandler(new Handler<ConversationDTO>(){
 
@@ -334,7 +360,7 @@ public class ConversationView extends Composite implements IConversationView {
 			public void onCellPreview(CellPreviewEvent<ConversationDTO> event) {
 				boolean isClick = "click".equals(event.getNativeEvent().getType());
 				if (isClick) {
-					pageStart = pager.getPageStart();
+//					pageStart = pager.getPageStart();
 					displayConversation(event.getValue());
 				}
 			}
@@ -342,7 +368,9 @@ public class ConversationView extends Composite implements IConversationView {
 	}
 	
 	private String getImageLink(AccountDTO acct) {
-		return accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE);
+//		System.out.println("IMAGE LINK="+accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE));
+//		return accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE);
+		return "<div class='tiny-image-div'><img class='tiny-image' src='"+acct.getImageUrl()+"'/></div>";
 	}
 	
 	private Panel getImagePanel(final AccountDTO acct, ValueType imageValueType) {
@@ -374,7 +402,7 @@ public class ConversationView extends Composite implements IConversationView {
 		}
 	}
 
-	Heading getHeading(int size, String text) {
+	private Heading getHeading(int size, String text) {
 		Heading heading = new Heading(size);
 		heading.setText(text);
 		return heading;
@@ -561,7 +589,8 @@ public class ConversationView extends Composite implements IConversationView {
 		backBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				getConversations(type, pageStart);
+//				getConversations(type, pageStart);
+				getConversations();
 				addConversationTableToPanel();
 			}
 		});
@@ -571,7 +600,7 @@ public class ConversationView extends Composite implements IConversationView {
 	
 	@UiHandler("profileLink")
 	void onProfileLinkClick(ClickEvent event) {
-		presenter.gotoProfile();
+		presenter.goTo(new PersonalAccountPlace());
 	}
 	
 	@UiHandler("settingsLink")
@@ -579,32 +608,36 @@ public class ConversationView extends Composite implements IConversationView {
 		presenter.goTo(new PersonalAccountSettingsPlace());
 	}
 	
-	@UiHandler({"allMessagesLink", "messagesLink"})
+	@UiHandler({"messagesLink"})
 	void onInboxLinkClicked(ClickEvent event) {
-		pageStart = 0;
-		type = ConversationType.ALL;
-		getConversations(type, pageStart);
+//		pageStart = 0;
+//		type = ConversationType.RECEIVED;
+		state.getReceivedMessages();
+		getConversations();
 		addConversationTableToPanel();
 	}
 	
 	@UiHandler("receivedMessagesLink")
 	void displayRecievedMessages(ClickEvent event) {
-		pageStart = 0;
-		type = ConversationType.RECEIVED;
-		getConversations(type, pageStart);
+//		pageStart = 0;
+//		type = ConversationType.RECEIVED;
+		state.getReceivedMessages();
+		getConversations();
 		addConversationTableToPanel();
 	}
 	
 	@UiHandler("sentMessagesLink")
 	void displaySentMessages(ClickEvent event) {
-		pageStart = 0;
-		type = ConversationType.SENT;
-		getConversations(type, pageStart);
+//		pageStart = 0;
+//		type = ConversationType.SENT;
+		state.getSentMessages();
+		getConversations();
 		addConversationTableToPanel();
 	}
 
-	private void getConversations(ConversationType type, int pageStart) {
-		presenter.getConversations(type, pageStart, 0);
+	private void getConversations() {
+		//presenter.getConversations(type, pageStart, 0);
+		presenter.getConversations(state.getSearchCriteria());
 	}
 	
 	private void setInboxLink(INBOXLINK link) {

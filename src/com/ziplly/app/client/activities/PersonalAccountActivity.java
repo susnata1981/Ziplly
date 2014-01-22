@@ -140,9 +140,15 @@ public class PersonalAccountActivity extends
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		getAccountNotifications();
+		setupImageUpload();
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
 	}
 
+	private void setupImageUpload() {
+		setImageUploadUrl();
+		setUploadImageHandler();
+	}
+	
 	@Override
 	public void settingsLinkClicked() {
 		placeController.goTo(new PersonalAccountSettingsPlace());

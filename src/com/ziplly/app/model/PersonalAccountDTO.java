@@ -11,7 +11,8 @@ public class PersonalAccountDTO extends AccountDTO {
 	private String lastName;
 	private String introduction;
 	private String occupation;
-
+	private String gender;
+	
 	private Set<InterestDTO> interests = new HashSet<InterestDTO>();
 	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
 	private boolean facebookRegistration;
@@ -77,5 +78,13 @@ public class PersonalAccountDTO extends AccountDTO {
 	}
 	public boolean getFacebookRegistration() {
 		return facebookRegistration;
+	}
+
+	public Gender getGender() {
+		return Gender.valueOf(gender);
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender.name();
 	}
 }

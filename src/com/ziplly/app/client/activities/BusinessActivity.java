@@ -77,6 +77,12 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		dispatcher.execute(action, handler);
 	};
 	
+
+	@Override
+	public void getBusinessList(GetEntityListAction action) {
+		dispatcher.execute(action, handler);
+	}
+	
 	private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
 		@Override
 		public void onSuccess(GetEntityResult result) {
@@ -90,6 +96,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 			if (result.getCount() != null) {
 				view.setTotalRowCount(result.getCount());
 			}
+			
 			view.display(accounts);
 			panel.setWidget(view);
 		}
@@ -112,5 +119,10 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 
 	@Override
 	public void go(AcceptsOneWidget container) {
+	}
+	
+	@Override
+	public void onStop() {
+		view.clear();
 	}
 }

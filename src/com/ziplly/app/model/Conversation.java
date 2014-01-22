@@ -22,7 +22,7 @@ import javax.persistence.Table;
 	),
 	@NamedQuery(
 		name = "findConversationCountByAccountIdAndStatus",
-		query = "select count(*) from Conversation where receiver.accountId = :receiverAccountId and sender.accountId != :receiverAccountId and status = :status"),
+		query = "select count(*) from Conversation where receiver.accountId = :receiverAccountId and status = :status"),
 	@NamedQuery(
 		name = "findConversationById",
 		query = "from Conversation where id = :id")
@@ -47,7 +47,7 @@ public class Conversation extends AbstractTimestampAwareEntity {
 	@CollectionTable(name="conversation_messages", joinColumns=@JoinColumn(name="conversation_id"))
 	private List<Message> messages = new ArrayList<Message>();
 
-	private ConversationStatus status;
+	private String status;
 	
 	public Conversation() {
 	}
@@ -61,7 +61,7 @@ public class Conversation extends AbstractTimestampAwareEntity {
 			this.receiver = new Account(conversationDto.getReceiver());
 		}
 		this.subject = conversationDto.getSubject();
-		this.status = conversationDto.getStatus();
+		this.setStatus(conversationDto.getStatus());
 		this.setTimeCreated(conversationDto.getTimeCreated());
 		this.setTimeUpdated(conversationDto.getTimeUpdated());
 	}
@@ -100,10 +100,10 @@ public class Conversation extends AbstractTimestampAwareEntity {
 		this.subject = subject;
 	}
 	public ConversationStatus getStatus() {
-		return status;
+		return ConversationStatus.valueOf(status);
 	}
 
 	public void setStatus(ConversationStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 }

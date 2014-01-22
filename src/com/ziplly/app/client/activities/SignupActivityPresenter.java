@@ -9,6 +9,6 @@ public interface SignupActivityPresenter extends LoginPresenter {
 	void setUploadImageHandler();
 	void register(AccountDTO account, String code);
 	void getNeighborhoodData(String postalCode);
-	void addToInviteList(String email, String postalCode);
+	void addToInviteList(String email, int zip);
 	void deleteImage(String profileImageUrl);
 }

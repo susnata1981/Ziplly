@@ -89,7 +89,6 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	FormPanel uploadForm;
 	@UiField
 	FileUpload fileUpload;
-	private boolean imageUploaded;
 	//
 	// Preview panel
 	//
@@ -106,6 +105,8 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	@UiField
 	Button closePreviewBtn;
 	
+	TweetBoxState tweetBoxState = new TweetBoxState();
+	
 	boolean showKeystrokeCounter = true;
 
 	private TweetPresenter presenter;
@@ -119,6 +120,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		tweetHelpInline.setVisible(true);
 		embedLinkModal.hide();
 		initUploadForm();
+		StyleHelper.show(tweetCategoryPanel.getElement(), Display.NONE);
 		setupDefaultDimension();
 		setupHandlers();
 	}
@@ -127,7 +129,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		fileUpload.setEnabled(false);
-		displayPreview(false);
+		displayPreview();
 	}
 
 	public void setTweetCategory(List<TweetType> tweetTypes) {
@@ -177,12 +179,10 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	}
 
 	private void setupHandlers() {
-		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetTextBox.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle()
-						.setDisplay(Display.INLINE);
+				StyleHelper.show(tweetCategoryPanel.getElement(), Display.INLINE_BLOCK);
 				updateUsedCharacterMessage();
 				tweetHelpInline.setVisible(true);
 				tweetTextBox.setHeight("60px");
@@ -209,11 +209,13 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				tweetCategoryPanel.getElement().getStyle()
-						.setDisplay(Display.NONE);
+				tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
 				tweetHelpInline.setVisible(false);
 				tweetTextBox.setText("");
 				tweetTextBox.setHeight(height);
+				previewTweetImage.setUrl("");
+				tweetBoxState.cancel();
+				displayPreview();
 			}
 		});
 		
@@ -248,19 +250,14 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 			@Override
 			public void onChange(ChangeEvent event) {
 				String fname = fileUpload.getFilename();
+				StyleHelper.show(tweetCategoryPanel.getElement(), Display.INLINE_BLOCK);
 				if (fname != null && !fname.equals("")) {
 					// already has an image, need to delete it
-					if (imageUploaded) {
+					if (tweetBoxState.isImageUploaded()) {
 						presenter.deleteImage(previewTweetImage.getUrl());
 					}
-
-					imageUploaded = true;
-					displayPreview(true);
 					uploadForm.submit();
-				} else {
-					imageUploaded = false;
-					displayPreview(false);
-				}
+				} 
 			}
 		});
 	}
@@ -295,7 +292,8 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		previewTweetImage.setUrl("");
 		
 		// hide preview
-		displayPreview(false);
+		tweetBoxState.reset();
+		displayPreview();
 	}
 
 	@UiHandler("tweetBtn")
@@ -312,7 +310,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		tweet.setType(tweetType);
 		tweet.setStatus(TweetStatus.ACTIVE);
 		tweet.setTimeCreated(new Date());
-		if (imageUploaded) {
+		if (tweetBoxState.isImageUploaded()) {
 			tweet.setImage(previewTweetImage.getUrl());
 		}
 		presenter.sendTweet(tweet);
@@ -335,14 +333,13 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	public void previewImage(String imageUrl) {
 		previewTweetImage.setUrl(imageUrl);
+		tweetBoxState.preview();
+		displayPreview();
 	}
 	
-	public void displayPreview(boolean b) {
-		Display display = b ? Display.BLOCK : Display.NONE;
-		if (b) {
-			displayFileUploadSection(imageUploaded);
-		}
-		previewPanel.getElement().getStyle().setDisplay(display);
+	public void displayPreview() {
+		displayFileUploadSection(tweetBoxState.isImageUploaded());
+		StyleHelper.show(previewPanel.getElement(), tweetBoxState.isPreviewPanelVisible());
 	}
 	
 	private void displayFileUploadSection(boolean b) {
@@ -352,19 +349,21 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	@UiHandler("closePreviewBtn")
 	void closePreview(ClickEvent event) {
-		displayPreview(false);
+		tweetBoxState.cancel();
+		displayPreview();
 	}
 	
 	@UiHandler("previewLinkAnchor")
 	void togglePreview(ClickEvent event) {
-		boolean b = previewPanel.isVisible();
-		displayPreview(!b);	
+		tweetBoxState.toggle();
+		displayPreview();	
 	}
 
 	// Clears upload form
 	public void resetImageUploadUrl() {
 		uploadForm.setAction("");
 		fileUpload.getElement().setPropertyString("value", "");
-		imageUploaded = false;
+//		imageUploaded = false;
+//		tweetBoxState.reset();
 	}
 }

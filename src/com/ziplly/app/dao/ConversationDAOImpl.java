@@ -33,16 +33,16 @@ public class ConversationDAOImpl implements ConversationDAO {
 		
 		switch(type) {
 		case SENT:
-			query = em.createQuery("from Conversation where sender.accountId = :senderAccountId order by timeUpdated desc");
+			query = em.createQuery("from Conversation where sender.accountId = :senderAccountId order by timeCreated desc");
 			query.setParameter("senderAccountId", accountId);
 			break;
 		case RECEIVED:
-			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId order by timeUpdated desc");
+			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId order by timeCreated desc");
 			query.setParameter("receiverAccountId", accountId);
 			break;
 		case ALL:
 		default:
-			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId order by timeUpdated desc");
+			query = em.createQuery("from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId order by timeCreated desc");
 			query.setParameter("receiverAccountId", accountId)
 			.setParameter("senderAccountId", accountId);
 		}
@@ -93,13 +93,32 @@ public class ConversationDAOImpl implements ConversationDAO {
 	}
 
 	@Override
+	public Long getTotalConversationCountOfType(ConversationType type, Long accountId) {
+		EntityManager em = EntityManagerService.getInstance()
+				.getEntityManager();
+		Query query;
+		switch(type) {
+		case SENT:
+			query = em.createNativeQuery("select count(*) from Conversation where sender_account_id = :senderAccountId");
+			query.setParameter("senderAccountId", accountId);
+			break;
+		case RECEIVED:
+		default:
+			query = em.createNativeQuery("select count(*) from Conversation where receiver_account_id = :receiverAccountId");
+			query.setParameter("receiverAccountId", accountId);
+		}
+		BigInteger result = (BigInteger) query.getSingleResult();
+		em.close();
+		return result.longValue();
+	}
+	
+	@Override
 	public Conversation save(Conversation conversation) {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		em.getTransaction().begin();
 		Conversation result = em.merge(conversation);
 		em.flush();
-//		em.clear();
 		em.getTransaction().commit();
 		em.close();
 		return result;
@@ -124,7 +143,7 @@ public class ConversationDAOImpl implements ConversationDAO {
 	}
 
 	@Override
-	public Long getUnreadConversationForAccount(Long accountId) {
+	public Long getUnreadConversationCountForAccount(Long accountId) {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -132,8 +151,9 @@ public class ConversationDAOImpl implements ConversationDAO {
 		EntityManager em = EntityManagerService.getInstance()
 				.getEntityManager();
 		Query query = em.createNamedQuery("findConversationCountByAccountIdAndStatus");
-		query.setParameter("receiverAccountId", accountId);
-		query.setParameter("status", ConversationStatus.UNREAD);
+		query.setParameter("receiverAccountId", accountId)
+		    .setParameter("status", ConversationStatus.UNREAD.name());
+		
 		Long result = (Long)query.getSingleResult();
 		em.close();
 		return result;

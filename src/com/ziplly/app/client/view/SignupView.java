@@ -8,6 +8,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -39,6 +40,7 @@ import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.model.AccountStatus;
+import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
@@ -60,7 +62,7 @@ public class SignupView extends Composite implements
 	}
 	
 	boolean checkEmailInvitationStatus = false;
-	boolean isServiceAvailable;
+	boolean isServiceAvailable = true;
 	private NeighborhoodDTO selectedNeighborhood;
 	private List<NeighborhoodDTO> neighborhoods;
 	
@@ -86,6 +88,9 @@ public class SignupView extends Composite implements
 	HelpInline emailError;
 
 	@UiField
+	ListBox genderListBox;
+	
+	@UiField
 	TextBox zip;
 	@UiField
 	ControlGroup zipCg;
@@ -98,6 +103,7 @@ public class SignupView extends Composite implements
 	Controls neighborhoodControl;
 	@UiField
 	HTMLPanel neighborhoodListPanel;
+	
 	@UiField
 	HelpInline neighborhoodError;
 	
@@ -123,9 +129,6 @@ public class SignupView extends Composite implements
 	@UiField
 	FormPanel uploadForm;
 
-//	@UiField
-//	Button uploadBtn;
-
 	@UiField
 	Image profileImagePreview;
 	
@@ -134,7 +137,8 @@ public class SignupView extends Composite implements
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
 	private boolean facebookRegistration;
-
+	private boolean doValidation = true;
+	
 	@Inject
 	public SignupView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -143,12 +147,20 @@ public class SignupView extends Composite implements
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		setupHandlers();
 		neighborhoodControl.setVisible(false);
+		
+		for(Gender g : Gender.values()) {
+			genderListBox.addItem(g.name());
+		}
 	}
 
 	private void setupHandlers() {
 		firstname.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				boolean validateName = validateName(firstname.getText(), firstnameCg,
 						firstnameError);
 				if (validateName) {
@@ -161,6 +173,8 @@ public class SignupView extends Composite implements
 		zip.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				doValidation = true;
+				
 				boolean validateZip = validateZip();
 				if (validateZip) {
 					isServiceAvailable = true;
@@ -174,6 +188,9 @@ public class SignupView extends Composite implements
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
 				boolean validateEmail = validateEmail();
 				if (validateEmail) {
 					emailCg.setType(ControlGroupType.SUCCESS);
@@ -185,6 +202,9 @@ public class SignupView extends Composite implements
 		password.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
 				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
@@ -197,6 +217,9 @@ public class SignupView extends Composite implements
 		uploadField.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
+				if (!doValidation) {
+					return;
+				}
 				if (imageUploaded) {
 					presenter.deleteImage(profileImageUrl);
 				}
@@ -377,6 +400,8 @@ public class SignupView extends Composite implements
 		account.setLastName(lastnameInput);
 		account.setStatus(AccountStatus.PENDING_ACTIVATION);
 		account.setEmail(emailInput);
+		Gender selectedGender = Gender.values()[genderListBox.getSelectedIndex()];
+		account.setGender(selectedGender);
 		account.setPassword(password.getText().trim());
 		account.setZip(Integer.parseInt(zipInput));
 		account.setNeighborhood(selectedNeighborhood);
@@ -437,10 +462,10 @@ public class SignupView extends Composite implements
 		facebookRegistration = true;
 	}
 
-	@UiHandler("uploadBtn")
-	void upload(ClickEvent event) {
-		uploadForm.submit();
-	}
+//	@UiHandler("uploadBtn")
+//	void upload(ClickEvent event) {
+//		uploadForm.submit();
+//	}
 
 	@Override
 	public void displayLoginErrorMessage(String msg, AlertType type) {
@@ -499,6 +524,8 @@ public class SignupView extends Composite implements
 	@Override
 	public void displayNotYetLaunchedWidget() {
 		isServiceAvailable = false;
+		doValidation = false;
+		resetErrors();
 		final NotYetLaunchedWidget widget = new NotYetLaunchedWidget();
 		widget.addClickHandler(new ClickHandler() {
 
@@ -506,7 +533,12 @@ public class SignupView extends Composite implements
 			public void onClick(ClickEvent event) {
 				String email = widget.getEmail();
 				String postalCode = widget.getPostalCode();
-				presenter.addToInviteList(email, postalCode);
+				boolean valid = widget.validateInput();
+				if (!valid) {
+					return;
+				}
+				presenter.addToInviteList(email, Integer.parseInt(postalCode));
+				widget.show(false);
 			}
 			
 		});

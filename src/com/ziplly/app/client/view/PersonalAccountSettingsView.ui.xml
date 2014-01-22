@@ -67,70 +67,57 @@
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="asidePanel" addStyleNames="{style.asidePanel}">
-			<b:Column size="2">
-				<g:HTMLPanel>
-					<dl>
-						<dt>
-							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">Profile</g:Anchor>
-						</dt>
-						<dt>
-							<g:Anchor addStyleNames="{style.link}" ui:field="inboxLink">
-								Inbox
-								<span ui:field="unreadMessageCountField" />
-							</g:Anchor>
-						</dt>
-					</dl>
-				</g:HTMLPanel>
-			</b:Column>
-			<b:Column size="8">
+			<!-- <b:Column size="2"> <g:HTMLPanel> <dl> <dt> <g:Anchor addStyleNames="{style.link}" 
+				ui:field="profileLink">Profile</g:Anchor> </dt> <dt> <g:Anchor addStyleNames="{style.link}" 
+				ui:field="inboxLink"> Inbox <span ui:field="unreadMessageCountField" /> </g:Anchor> 
+				</dt> </dl> </g:HTMLPanel> </b:Column> -->
+			<b:Column offset="1" size="9">
 				<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
 					<b:Tab ui:field="basicInfoTab" heading="About" active="true">
-						<b:Container>
-							<b:Row>
-								<b:Column size="6">
-									<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
-										<div class="profile_section_heading">
-											<span>Basic Info</span>
+						<b:Row addStyleNames="{style.basicInfoTab}">
+							<b:Column size="6">
+								<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
+									<div class="profile_section_heading">
+										<span>Basic Info</span>
+									</div>
+									<div class="{style.profileInfoBlock}">
+										<div>
+											<div class="{style.non_editable}">
+												<span class="{style.label}">Name</span>
+												<span ui:field="firstname" />&nbsp;
+												<span ui:field="lastname" />
+											</div>
+											<div class="{style.non_editable}">
+												<span class="{style.label}">Email</span>
+												<span ui:field="email" />
+											</div>
 										</div>
 										<div class="{style.profileInfoBlock}">
-											<div class="{style.profileInfoTextBlock}">
-												<div class="{style.non_editable}">
-													<span class="{style.label}">Name</span>
-													<span ui:field="firstname" />&nbsp;
-													<span ui:field="lastname" />
-												</div>
-												<div class="{style.non_editable}">
-													<span class="{style.label}">Email</span>
-													<span ui:field="email" />
-												</div>
-											</div>
-											<div class="{style.profileInfoBlock}">
-												<b:ControlGroup ui:field="introductionCg">
-													<b:Controls>
-														<g:Label addStyleNames="{style.label}">Introduction</g:Label>
-														<b:TextArea ui:field="introduction"
-															addStyleNames="{style.introductionTextBox}" placeholder="tell us about yourself..." />
-														<b:HelpInline ui:field="introductionError"></b:HelpInline>
-													</b:Controls>
-												</b:ControlGroup>
-											</div>
+											<b:ControlGroup ui:field="introductionCg">
+												<b:Controls>
+													<g:Label addStyleNames="{style.label}">Introduction</g:Label>
+													<b:TextArea ui:field="introduction"
+														addStyleNames="{style.introductionTextBox}" placeholder="tell us about yourself..." />
+													<b:HelpInline ui:field="introductionError"></b:HelpInline>
+												</b:Controls>
+											</b:ControlGroup>
 										</div>
+									</div>
+								</g:HTMLPanel>
+							</b:Column>
+							<b:Column size="4">
+								<g:HTMLPanel addStyleNames="{style.uploadProfileImagePanel}">
+									<g:HTMLPanel addStyleNames="{style.profileImagePanel}">
+										<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
 									</g:HTMLPanel>
-								</b:Column>
-								<b:Column size="3">
-									<g:HTMLPanel addStyleNames="{style.settingsProfileImageSection}">
-										<g:FormPanel ui:field="uploadForm">
-											<g:HTMLPanel>
-												<b:Image ui:field="profileImagePreview"
-													addStyleNames="{style.profileImage}" />
-												<g:FileUpload ui:field="uploadField" name="image" /><br/>
-												<b:Button ui:field="uploadBtn" size="MINI">Upload</b:Button>
-											</g:HTMLPanel>
-										</g:FormPanel>
-									</g:HTMLPanel>
-								</b:Column>
-							</b:Row>
-						</b:Container>
+									<g:FormPanel ui:field="uploadForm">
+										<g:HTMLPanel>
+											<g:FileUpload ui:field="uploadField" name="image" />
+										</g:HTMLPanel>
+									</g:FormPanel>
+								</g:HTMLPanel>
+							</b:Column>
+						</b:Row>
 					</b:Tab>
 					<b:Tab ui:field="occupationTab" heading="Occupation">
 						<g:HTMLPanel>

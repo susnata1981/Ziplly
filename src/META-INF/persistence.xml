@@ -25,6 +25,7 @@
 		<class>com.ziplly.app.model.AccountNotificationSettings</class>
 		<class>com.ziplly.app.model.Hashtag</class>
 		<class>com.ziplly.app.model.Spam</class>
+		<class>com.ziplly.app.model.PendingInvitations</class>
 		<properties>
             <!-- 
             <property name="javax.persistence.jdbc.driver" value="com.google.appengine.api.rdbms.AppEngineDriver" />

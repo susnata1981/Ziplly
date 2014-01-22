@@ -1,5 +1,6 @@
 package com.ziplly.app.client.activities;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -20,6 +21,8 @@ import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.shared.AddInvitationAction;
+import com.ziplly.app.shared.AddInvitationResult;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationResult;
 import com.ziplly.app.shared.DeleteImageAction;
@@ -72,6 +75,11 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 						System.out.println("Setting upload image form action to:"+result.getImageUrl());
 						view.setImageUploadUrl(result.getImageUrl());
 					}
+					
+					@Override
+					public void onFailure(Throwable th) {
+						logger.log(Level.SEVERE, "Failed to get image upload url:"+th.getLocalizedMessage());
+					}
 				});
 	}
 
@@ -82,7 +90,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				String imageUrl = event.getResults();
-				System.out.println("Received uploaded image url:"+imageUrl);
+				logger.log(Level.WARNING,"Received uploaded image url:"+imageUrl);
 				view.displayProfileImagePreview(imageUrl);
 				view.reset();
 				setImageUploadUrl();
@@ -97,8 +105,15 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 	
 	@Override
-	public void addToInviteList(String email, String postalCode) {
-		// need to implement.
+	public void addToInviteList(String email, int postalCode) {
+		AddInvitationAction action = new AddInvitationAction(email, postalCode);
+		dispatcher.execute(action, new DispatcherCallbackAsync<AddInvitationResult>() {
+
+			@Override
+			public void onSuccess(AddInvitationResult result) {
+				view.displayMessage(StringConstants.EMAIL_SAVED_FOR_INVITATION, AlertType.SUCCESS);
+			}
+		});
 	}
 	
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {

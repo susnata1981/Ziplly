@@ -14,7 +14,7 @@ public class ConversationDTO implements Serializable {
 	private AccountDTO sender;
 	private AccountDTO receiver;
 	private String subject;
-	private ConversationStatus status;
+	private String status;
 	private Date timeUpdated;
 	private Date timeCreated;
 	@Transient
@@ -90,9 +90,9 @@ public class ConversationDTO implements Serializable {
 	}
 	
 	public ConversationStatus getStatus() {
-		return status;
+		return ConversationStatus.valueOf(status);
 	}
 	public void setStatus(ConversationStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 }

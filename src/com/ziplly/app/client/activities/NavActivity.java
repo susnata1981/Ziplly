@@ -20,6 +20,7 @@ import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountNotificationEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
@@ -36,7 +37,8 @@ import com.ziplly.app.shared.ViewNotificationResult;
 public class NavActivity extends AbstractActivity implements NavPresenter {
 	private INavView view;
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
-
+	private AccountDetailsEventHandler accountDetailsEventHandler = new AccountDetailsEventHandler();
+	
 	public static interface INavView extends View<NavPresenter> {
 		void showAccountLinks(boolean show);
 
@@ -53,6 +55,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		void displayAccountNotifications(List<AccountNotificationDTO> notifications);
 
 		void updateNotificationCount(int count);
+
+		void setUnreadMessageCount(int count, boolean show);
 	}
 
 	@Inject
@@ -72,6 +76,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		});
 
 		eventBus.addHandler(AccountNotificationEvent.TYPE, accountNotificationHandler);
+		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, accountDetailsEventHandler);
 	}
 
 	/**
@@ -173,6 +178,14 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		@Override
 		public void onEvent(AccountNotificationEvent event) {
 			view.displayAccountNotifications(event.getAccountNotifications());
+		}
+	}
+	
+	private class AccountDetailsEventHandler implements  AccountDetailsUpdateEventHandler {
+
+		@Override
+		public void onEvent(AccountDetailsUpdateEvent event) {
+			view.setUnreadMessageCount(event.getAccountDetails().getUnreadMessages(), true);
 		}
 	}
 	

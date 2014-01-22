@@ -30,6 +30,8 @@ import com.ziplly.app.model.Message;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.PendingInvitations;
+import com.ziplly.app.model.PendingInvitationsDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PostalCode;
@@ -152,7 +154,8 @@ public class EntityUtil {
 		dest.setLastName(account.getLastName());
 		dest.setIntroduction(account.getIntroduction());
 		dest.setOccupation(account.getOccupation());
-
+		dest.setGender(account.getGender());
+		
 		if (Hibernate.isInitialized(account.getInterests())) {
 			for (Interest interest : account.getInterests()) {
 				InterestDTO interestDto = clone(interest);
@@ -468,4 +471,20 @@ public class EntityUtil {
 
 		return result;
 	}
+
+	public static PendingInvitationsDTO clone(PendingInvitations pi) {
+		PendingInvitationsDTO resp = new PendingInvitationsDTO();
+		resp.setEmail(pi.getEmail());
+		resp.setId(pi.getId());
+		resp.setZip(pi.getZip());
+		return resp;
+	}
+
+	public static List<PendingInvitationsDTO> clonePendingInvidationList(List<PendingInvitations> input) {
+		List<PendingInvitationsDTO> result = new ArrayList<PendingInvitationsDTO>();
+		for(PendingInvitations pi : input) {
+			result.add(clone(pi));
+		}
+		return result;
+ 	}
 }

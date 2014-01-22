@@ -26,6 +26,8 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -33,6 +35,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -66,12 +69,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 			UiBinder<Widget, PersonalAccountSettingsView> {
 	}
 
-	// Aside section
-	@UiField
-	Anchor profileLink;
-	@UiField
-	Anchor inboxLink;
-
 	@UiField
 	TabPanel accountDetailsTab;
 
@@ -97,10 +94,13 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	@UiField
 	HelpInline introductionError;
 
+	// image upload section
 	@UiField
 	FormPanel uploadForm;
 	@UiField
-	Button uploadBtn;
+	FileUpload uploadField;
+//	@UiField
+//	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
 
@@ -230,6 +230,14 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 				if (tab.contains("Password")) {
 					showButtonsPanel(true);
 				}
+			}
+		});
+		
+		uploadField.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				onUpload();
 			}
 		});
 	}
@@ -440,7 +448,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 
 	@Override
 	public void resetUploadForm() {
-		uploadBtn.setEnabled(false);
 		uploadForm.setAction("");
 	}
 
@@ -449,10 +456,10 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		uploadForm.submit();
 	}
 
-	@UiHandler("uploadBtn")
-	void uploadImage(ClickEvent event) {
-		onUpload();
-	}
+//	@UiHandler("uploadBtn")
+//	void uploadImage(ClickEvent event) {
+//		onUpload();
+//	}
 
 	@UiHandler("updatePasswordBtn")
 	void resetPassword(ClickEvent event) {
@@ -515,7 +522,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	@Override
 	public void setUploadFormActionUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
-		uploadBtn.setEnabled(true);
 	}
 
 	@Override
@@ -531,15 +537,5 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	@UiHandler("cancelBtn")
 	void cancel(ClickEvent event) {
 		onCancel();
-	}
-
-	@UiHandler("profileLink")
-	void profileLinkClicked(ClickEvent event) {
-		presenter.onProfileLinkClick();
-	}
-
-	@UiHandler("inboxLink")
-	void messagesLinkClicked(ClickEvent event) {
-		presenter.onInboxLinkClick();
 	}
 }

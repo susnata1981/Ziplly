@@ -5,6 +5,8 @@
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
+		@external tiny-image-div, tiny-image;
+
 		.conversation {
 		width: 90%;
 		padding: 1%;
@@ -14,10 +16,13 @@
 		overflow: auto;
 		}
 		.conversation:hover {
-		background: #e5e5e5;
+		background: #0081c2;
 		}
 		.conversationNotRead {
-		backround: #D8DFE6;
+			backround: #ccc;
+		}
+		.conversationNotRead:hover {
+			backround: #0081c2;
 		}
 		.senderBlock {
 		float: left;
@@ -89,7 +94,7 @@
 		}
 		.conversationPanel {
 		float: left;
-		width: 70%;
+		width: 80%;
 		border: 1px solid #ddd;
 		}
 		.link {
@@ -111,6 +116,15 @@
 			position: relative;
 			left: 16px;
 		}
+		.tiny-image-div {
+			width: 40px;
+			height: 40px;
+			overflow: hidden;
+		}
+		.tiny-image {
+			height: 40px;
+			width: 40px;
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
@@ -125,12 +139,12 @@
 								</g:Anchor>
 							</div>
 							<dl class="{style.innerDl}">
-							    <dt>
+							   <!--  <dt>
 									<g:Anchor addStyleNames="{style.link}" ui:field="allMessagesLink">
 										All
 										<span ui:field="allMessageCountSpan" />
 									</g:Anchor>
-								</dt>
+								</dt> -->
 								<dt>
 									<g:Anchor addStyleNames="{style.link}" ui:field="receivedMessagesLink">
 										Received

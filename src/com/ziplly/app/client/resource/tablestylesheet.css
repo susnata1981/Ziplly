@@ -34,7 +34,8 @@ text-align: left;
 background: #ffffff;
 }
 .cellTableOddRow {
-background: #ECECEC;
+/* background: #ECECEC; */
+background: #ffffff;
 }
 .cellTableSelectedRow {
 background: #628cd5;

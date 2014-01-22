@@ -43,12 +43,14 @@ a.link:hover {
 	background: #faf8f6;
 	font-size: 100%;
 }
+
 .profileDiv {
-	position:absolute;
+	position: absolute;
 	left: 0;
 	top: 0;
 	width: 1000px
 }
+
 .profileSection {
 	float: left;
 	width: 30%;
@@ -74,8 +76,10 @@ a.link:hover {
 .profileImageSection {
 	float: left;
 	margin: 0 2px;
-	width: 94%;
+	width: 92%;
+	margin: 5px;
 	height: 30%;
+	padding: 6px;
 	border: 2px solid #ddd;
 }
 
@@ -83,21 +87,21 @@ a.link:hover {
 	margin: auto;
 	background: #fff;
 	padding-top: 6px;
+	width: 200px;
+	height: 220px;
+	overflow: hidden;
 }
 
 .profileImageSection img {
-	margin: auto;
-	display: block;
-	width: 80%;
-	height: auto;
+	min-height: 100%;
 }
 
 .profileInfoBox {
 	clear: both;
 	width: 92%;
-	margin: 3% 1%;
-	padding: 1%;
-	border: 1px solid #ddd;
+	margin: 5px;
+	padding: 6px;
+	border: 2px solid #ddd;
 	background: #fff;
 	overflow: hidden;
 }
@@ -149,6 +153,7 @@ h2.heading {
 }
 
 .occupationSpan {
+	
 }
 
 .accountStatDiv {
@@ -165,6 +170,7 @@ h2.heading {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
+
 .settingsPanel {
 	position: relative;
 	float: left;
@@ -172,6 +178,7 @@ h2.heading {
 	margin-left: 1%;
 	padding: 20px;
 }
+
 .updatePasswordBtn {
 	margin-top: 20px;
 	float: left;
@@ -179,12 +186,13 @@ h2.heading {
 
 .introductionTextBox {
 	float: left;
-	width: 60%;
-	height: 50px;
+	width: 90%;
+	height: 60px;
+	margin-bottom: 30px;
 }
 
 .label {
-	font-family: Georgia, Times," Times New Roman ", serif;
+	font-family: Georgia, Times, " Times New Roman ", serif;
 	font-size: 14px;
 	color: #848484;
 }
@@ -218,7 +226,7 @@ h2.heading {
 }
 
 .settingsProfileImageSection {
-	margin: 0 20px 0 0;	
+	margin: 0 20px 0 0;
 }
 
 .profileImage {
@@ -229,7 +237,7 @@ h2.heading {
 
 .uploadFormActionPanel {
 	position: absolute;
-	top: 100px; 
+	top: 100px;
 }
 
 .buttonsPanel {
@@ -265,19 +273,19 @@ h2.heading {
 }
 
 .navlink {
-	list-style:none !important;
+	list-style: none !important;
 }
 
 .navlink2 {
-	position: relative;	
+	position: relative;
 }
 
 .navlink2:before {
-    content: "\f000"; 
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
+	content: "\f000";
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: inherit;
 }
 
 .smallfont {
@@ -293,6 +301,27 @@ h2.heading {
 .leftAlignedPanel {
 	float: left;
 }
+
 .addressPanel {
 	padding: 4px;
+}
+
+.basicInfoTab {
+	min-height: 320px;
+	padding: 10px;
+}
+
+.uploadProfileImagePanel {
+	position: relative;
+	top: 50px;
+}
+
+.profileImagePanel {
+	width: 180px;
+	height: 190px;
+	overflow: hidden;
+}
+
+.profileImage {
+	height: 100%;
 }

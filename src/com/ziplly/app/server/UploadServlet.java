@@ -18,6 +18,7 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.inject.Singleton;
+import com.ziplly.app.client.view.StringConstants;
 
 @Singleton
 public class UploadServlet extends HttpServlet {
@@ -27,18 +28,19 @@ public class UploadServlet extends HttpServlet {
 	
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		logger.log(Level.INFO, "doPost method called");
 		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
 		
 		// "image" name of the input[type="file"] form field.
 		List<BlobKey> blobKeys = blobs.get("image");
+
+		logger.log(Level.INFO, "doPost method called with blobKey: "+blobKeys);
 		
 		if (blobKeys == null || blobKeys.size() == 0) {
 			logger.log(Level.ERROR, "Didn't get the blob key");
 		}
-		
+		String uploadEndpoint = System.getProperty(StringConstants.UPLOAD_ENDPOINT);
 		ImagesService imageService = ImagesServiceFactory.getImagesService();
-		res.sendRedirect("/upload?imageUrl="+imageService.getServingUrl(
+		res.sendRedirect(uploadEndpoint+"?imageUrl="+imageService.getServingUrl(
 				ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
 	}
 

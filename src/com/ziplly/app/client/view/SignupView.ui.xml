@@ -117,6 +117,10 @@
 							<b:HelpInline ui:field="emailError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<g:HTMLPanel>
+						<b:ListBox ui:field="genderListBox">
+						</b:ListBox>
+					</g:HTMLPanel>
 					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
 						<g:HTMLPanel>
 							<div class="{style.profileImagePreviewDiv}">
@@ -124,7 +128,7 @@
 							</div>
 							<g:FileUpload ui:field="uploadField" name="image"
 								addStyleNames="{style.chooseFileUploadButton}" />
-							<b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button>
+							<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
 						</g:HTMLPanel>
 					</g:FormPanel>
 					<b:ControlGroup ui:field="zipCg">
@@ -143,7 +147,8 @@
 							</g:HTMLPanel>
 							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
 							<b:HelpBlock>Pick your neighborhood to learn about whats
-								going on in there</b:HelpBlock>
+								going on
+								in there</b:HelpBlock>
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="passwordCg">

@@ -28,8 +28,12 @@ public class GetNeighborhoodDetailsActionHandler extends AbstractAccountActionHa
 		Long totalResidents = accountDao.findTotalAccountsByNeighborhood(EntityType.PERSONAL_ACCOUNT, 
 				session.getAccount().getNeighborhood().getNeighborhoodId());
 		
+		Long totalBusinesses = accountDao.findTotalAccountsByNeighborhood(EntityType.BUSINESS_ACCOUNT, 
+				session.getAccount().getNeighborhood().getNeighborhoodId());
+		
 		GetNeighborhoodDetailsResult result = new GetNeighborhoodDetailsResult();
 		result.setTotalResidents(totalResidents.intValue());
+		result.setTotalBusinesses(totalBusinesses.intValue());
 		return result;
 	}
 

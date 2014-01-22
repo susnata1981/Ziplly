@@ -48,6 +48,8 @@ import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
+import com.ziplly.app.shared.GetAccountDetailsAction;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
@@ -124,8 +126,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 		void displaySummaryData(NeighborhoodDTO neighborhood);
 
-		void displayResidentCount(int totalResidents);
-
 		void highlightTweetType(TweetType type);
 
 		void setUnreadMessageCount(Long count);
@@ -137,6 +137,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayProfileImagePreview(String imageUrl);
 
 		void resetImageUploadUrl();
+
+		void displayCommunitySummaryDetails(GetNeighborhoodDetailsResult result);
 	}
 
 	@Inject
@@ -155,7 +157,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-//		setBackgroundImage();
 		bind();
 		showLodingIcon();
 		setupHandlers();
@@ -195,6 +196,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		getNeighborhoodDetails();
 		setImageUploadUrl();
 		setUploadImageHandler();
+		getAccountDetails();
 	}
 
 	private void getNeighborhoodDetails() {
@@ -221,6 +223,16 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		});
 	}
 
+	private void getAccountDetails() {
+		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+
+			@Override
+			public void onSuccess(GetAccountDetailsResult result) {
+				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			}
+		});
+	}
+	
 	@Override
 	public void onStop() {
 		clearBackgroundImage();
@@ -671,7 +683,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private class GetNeighborhoodDetailsHandler extends DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
-			homeView.displayResidentCount(result.getTotalResidents());
+			homeView.displayCommunitySummaryDetails(result);
 		}
 	}
 }

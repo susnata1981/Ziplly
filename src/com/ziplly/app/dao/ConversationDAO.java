@@ -10,7 +10,8 @@ public interface ConversationDAO {
 	Conversation save(Conversation conversation);
 	List<ConversationDTO> getConversationForAccount(Long accountId, ConversationType conversationType, int start, int pageSize);
 	void markConversationAsRead(Long conversationId);
-	Long getUnreadConversationForAccount(Long accountId);
+	Long getUnreadConversationCountForAccount(Long accountId);
 	Long getTotalConversationCount(Long accountId);
 	ConversationDTO findConversationById(Long conversationId);
+	Long getTotalConversationCountOfType(ConversationType type, Long accountId);
 }

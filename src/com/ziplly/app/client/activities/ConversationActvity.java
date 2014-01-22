@@ -19,6 +19,7 @@ import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
@@ -65,12 +66,7 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
-				dispatcher.execute(new GetConversationsAction(), new DispatcherCallbackAsync<GetConversationsResult>() {
-					@Override
-					public void onSuccess(GetConversationsResult result) {
-						view.setMessageCount(result.getConversations());
-					}
-				});
+				updateMessageCount(event.getAccountDetails());
 			}
 		});
 		
@@ -78,10 +74,19 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			@Override
 			public void onEvent(LoginEvent event) {
 				internalStart();
+				getAccountDetails();
 			}
 		});
 	}
 	
+	/**
+	 * Updated unread message count.
+	 * @param result
+	 */
+	private void updateMessageCount(GetAccountDetailsResult result) {
+		view.setUnreadMessageCount(result.getUnreadMessages());
+	}
+
 	private void internalStart() {
 		if (place.getConversationId() != null) {
 			GetConversationsAction action = new GetConversationsAction();
@@ -90,7 +95,7 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			dispatcher.execute(action, singleConversationHandler); 
 		} else {
 			GetConversationsAction action = new GetConversationsAction();
-			action.setType(ConversationType.ALL);
+			action.setType(ConversationType.RECEIVED);
 			action.setStart(0);
 			action.setPageSize(0);
 			action.setGetTotalConversation(true);
@@ -99,14 +104,20 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 	}
 
 	@Override
-	public void getConversations(ConversationType type, int start, int pageSize) {
-		GetConversationsAction action = new GetConversationsAction();
-		action.setType(type);
-		action.setStart(start);
-		action.setPageSize(pageSize);
+	public void getConversations(GetConversationsAction action) {
 		dispatcher.execute(action, handler); 
 	}
+	
+	private void getAccountDetails() {
+		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
 
+			@Override
+			public void onSuccess(GetAccountDetailsResult result) {
+				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			}
+		});
+	}
+	
 	@Override
 	public void fetchData() {
 	}
@@ -127,7 +138,7 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 	}
 
 	/*
-	 * Send message
+	 * Sends message
 	 * @see com.ziplly.app.client.activities.AccountPresenter#sendMessage(com.ziplly.app.model.MessageDTO)
 	 */
 	@Override
@@ -144,11 +155,14 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		});
 	}
 
+	/**
+	 * Called when a conversation is viewed
+	 */
 	@Override
 	public void onView(ConversationDTO conversation) {
 		if (conversation != null) {
 			// update the status column only if it's the receiver
-			if (conversation.isSender()) {
+			if (conversation.getStatus() == ConversationStatus.READ) {
 				return;
 			}
 			
@@ -168,19 +182,6 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
 			}
 		});
-	}
-	
-	@Override
-	public void gotoProfile() {
-		if (ctx.getAccount() instanceof PersonalAccountDTO) {
-			placeController.goTo(new PersonalAccountPlace());
-			return;
-		}
-		else if (ctx.getAccount() instanceof BusinessAccountDTO) {
-			placeController.goTo(new BusinessAccountPlace());
-			return;
-		}
-		throw new IllegalArgumentException("Invalid account type");
 	}
 
 	private class GetConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {

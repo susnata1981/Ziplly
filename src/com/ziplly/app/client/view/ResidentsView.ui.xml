@@ -3,16 +3,40 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style>
+	.heading {
+			color: #555;
+		}
+	.genderListBox {
+		display: block;
+		width: 65%;
+	}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="1" size="10">
-				<cell:SimplePager ui:field="pager" />
+			<b:Column size="3">
+			    <g:HTMLPanel>
+			        <b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
+					<b:ListBox ui:field="genderListBox" addStyleNames="{style.genderListBox}" />
+					<b:Button size="SMALL" ui:field="searchBtn">Search</b:Button>
+					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
+			    </g:HTMLPanel>
 			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow>
-			<b:Column offset="1" size="11">
-				<cell:CellList ui:field="residentsList" />
+			<b:Column size="8">
+				<b:FluidRow>
+					<b:Column offset="1" size="10">
+						<cell:SimplePager ui:field="pager" />
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column size="10">
+						<cell:CellList ui:field="residentList" />
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+				    <b:Column size="10">
+				        <b:Alert ui:field="message" />
+				    </b:Column>
+				</b:FluidRow>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

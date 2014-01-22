@@ -24,6 +24,7 @@ import com.ziplly.app.shared.GetEntityResult;
 
 public class ResidentActivity extends AbstractActivity implements EntityListViewPresenter {
 	private ResidentsView view;
+	@SuppressWarnings("unused")
 	private ResidentPlace place;
 	private EntityListHandler handler = new EntityListHandler();
 	private AcceptsOneWidget panel;
@@ -47,6 +48,18 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		});
 	}
 
+	@Override
+	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
+		bind();
+		if (ctx.getAccount() != null) {
+			displayInitalRange();
+		} else {
+			checkLoginStatus();
+			this.panel = panel;
+		}
+	}
+
 	protected void displayInitalRange() {
 		GetEntityListAction action = new GetEntityListAction(EntityType.PERSONAL_ACCOUNT);
 		action.setPage(0);
@@ -56,31 +69,15 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		this.panel = panel;
-		bind();
-		if (ctx.getAccount() != null) {
-			onRangeChangeEvent(0, view.getPageSize());
-		} else {
-			checkLoginStatus();
-			this.panel = panel;
-		}
-	}
-
-	@Override
 	public void bind() {
 		view.setPresenter(this);
 	}
 
 	@Override
-	public void onRangeChangeEvent(int start, int pageSize) {
-		System.out.println("Calling range change event: start="+start+" size="+pageSize);
-		GetEntityListAction action = new GetEntityListAction(EntityType.PERSONAL_ACCOUNT);
-		action.setNeedTotalEntityCount(true);
-		action.setPage(start);
-		action.setPageSize(pageSize);
+	public void getPersonalAccountList(GetEntityListAction action) {
 		dispatcher.execute(action, handler);
-	}
+	};
+
 	
 	@Override
 	public void fetchData() {
@@ -101,6 +98,7 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 			}
 			
 			if (result.getCount() != null) {
+				System.out.println("COUNT="+result.getCount());
 				view.setTotalRowCount(result.getCount());
 			}
 			view.display(accounts);
@@ -111,5 +109,6 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 			// TODO
 			Window.alert(caught.getLocalizedMessage());
 		}
-	};
+	}
+
 }

@@ -60,6 +60,7 @@ public class NavView extends Composite implements INavView {
 	NavLink accountLink;
 	@UiField
 	NavLink messageLink;
+	
 	@UiField
 	NavLink settingsLink;
 	@UiField
@@ -71,7 +72,7 @@ public class NavView extends Composite implements INavView {
 	NavLink residentsLink;
 	@UiField
 	NavLink businessListLink;
-	
+
 	@UiField
 	NavLink aboutLink;
 
@@ -82,10 +83,10 @@ public class NavView extends Composite implements INavView {
 	SpanElement unreadNotificationCountSpan;
 	@UiField
 	HTMLPanel unreadNotificationCountPanel;
-	
+
 	NavPresenter presenter;
 	List<AccountNotificationDTO> accountNotifications;
-	
+
 	public NavView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		showAccountLinks(false);
@@ -125,7 +126,7 @@ public class NavView extends Composite implements INavView {
 	void viewBusinessList(ClickEvent event) {
 		presenter.goTo(new BusinessPlace());
 	}
-	
+
 	@UiHandler("settingsLink")
 	void viewSettings(ClickEvent event) {
 		presenter.redirectToSettingsPage();
@@ -143,6 +144,21 @@ public class NavView extends Composite implements INavView {
 
 	@Override
 	public void clear() {
+	}
+
+	@Override
+	public void setUnreadMessageCount(int count, boolean show) {
+		if (count == 0) {
+			if (show) {
+				displayUnreadMessageCount(count);
+			}
+		} else if (count > 0){
+			displayUnreadMessageCount(count);
+		}
+	}
+
+	private void displayUnreadMessageCount(int count) {
+		messageLink.setText("Messages (" + count + ")");
 	}
 
 	@Override
@@ -206,10 +222,11 @@ public class NavView extends Composite implements INavView {
 
 	@Override
 	public void displayNoNewNotification() {
-		HTMLPanel panel = new HTMLPanel("<span>"+StringConstants.NO_NEW_NOTIFICATION_MESSAGE+"</span>");
+		HTMLPanel panel = new HTMLPanel("<span>" + StringConstants.NO_NEW_NOTIFICATION_MESSAGE
+				+ "</span>");
 		notifications.add(panel);
 	}
-	
+
 	@UiHandler("aboutLink")
 	public void displayAboutView(ClickEvent event) {
 		presenter.goTo(new AboutPlace());

@@ -41,6 +41,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
+import com.ziplly.app.shared.GetNeighborhoodDetailsResult;
 
 /**
  * Community Wall View
@@ -327,10 +328,11 @@ public class HomeView extends Composite implements IHomeView {
 	}
 
 	@Override
-	public void displayResidentCount(int totalResidents) {
-		communitySummaryWidget.setResidentCount(totalResidents);
+	public void displayCommunitySummaryDetails(GetNeighborhoodDetailsResult result) {
+		communitySummaryWidget.setResidentCount(result.getTotalResidents());
+		communitySummaryWidget.setBusinessCount(result.getTotalBusinesses());
 	}
-
+	
 	@Override
 	public void setImageUploadUrl(String imageUrl) {
 		tweetBox.setImageUploadUrl(imageUrl);

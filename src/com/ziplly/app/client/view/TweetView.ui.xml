@@ -1,15 +1,18 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.ziplly.app.client.view.TweetView.Style">
 		.tweetsSection {
-			overflow-y: auto;
+		overflow-y: auto;
 		}
 		.tweetWidget {
-			clear: both;
-			display: block;
+		clear: both;
+		display: block;
 		}
 	</ui:style>
-	<g:FlowPanel ui:field="tweetsSection" addStyleNames="{style.tweetsSection}">
-	</g:FlowPanel>
+	<g:HTMLPanel>
+		<b:Alert ui:field="message" />
+		<g:FlowPanel ui:field="tweetsSection" addStyleNames="{style.tweetsSection}">
+		</g:FlowPanel>
+	</g:HTMLPanel>
 </ui:UiBinder> 

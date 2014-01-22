@@ -69,8 +69,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	
 	@UiField
 	Alert message;
-//	@UiField
-//	Column asidePanel;
 	@UiField
 	Image profileImage;
 	@UiField
@@ -134,11 +132,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	SpanElement sundayEnd;
 
-	
-//	@UiField
-//	Anchor settingsLink;
-//	@UiField
-//	Anchor messagesLink;
 	
 	@UiField(provided=true)
 	TweetBox tweetBox;

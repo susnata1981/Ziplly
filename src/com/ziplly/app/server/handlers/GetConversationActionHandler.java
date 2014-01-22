@@ -52,7 +52,9 @@ public class GetConversationActionHandler extends AbstractAccountActionHandler<G
 		}
 		
 		if (action.isGetTotalConversation()) {
-			Long total = conversationDao.getTotalConversationCount(session.getAccount().getAccountId());
+			Long total = conversationDao.getTotalConversationCountOfType(
+					action.getType(),
+					session.getAccount().getAccountId());
 			result.setTotalConversations(total);
 		}
 		return result;

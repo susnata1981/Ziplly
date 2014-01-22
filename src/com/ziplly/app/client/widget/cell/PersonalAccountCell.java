@@ -38,37 +38,34 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 	
 	public PersonalAccountCell() {
 		super(BrowserEvents.CLICK);
-//		injector = GWT.create(ZGinInjector.class);
-//		placeController = injector.getPlaceController();
 	}
 	
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context,
 			PersonalAccountDTO value, SafeHtmlBuilder sb) {
 		
+		if (value == null) {
+			return;
+		}
+		
 		String imgUrl = value.getImageUrl() != null ? 
 				value.getImageUrl() : "images/no-photo.jpg";
+		
+		String introduction = value.getIntroduction() != null ? value.getIntroduction() : "Not Available";
+		
 		if (value != null) {
 			sb.appendHtmlConstant(
 					" <div class='pcell'>"
-					+ "<figure>"
+					+ "<div class='pcell-image'>"
 					+ "<img src='"+imgUrl+"'></img>"
-					+ "<figcaption>"
-					+ "<span class='communityHeading'>"+value.getDisplayName()+"</span>");
-
-			sb.appendHtmlConstant(
-					"<p class='communityParagraph'>Lives at:&nbsp;"+value.getNeighborhood().getName()+"</p>"
 					+ "</div>"
-					+ "</figcaption>");
-
-			if (value.getIntroduction() != null) {
-				sb.appendHtmlConstant("About:&nbsp"+value.getIntroduction());
-			}
-			
-			sb.appendHtmlConstant(
-				"</div>"
-				+ "</figure>" 
-				+ "</div>");
+					+ "<div class='pcell-info'>"
+					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
+					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Gender:</span>&nbsp;"+ value.getGender().name().toLowerCase() + "</span>"
+					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Introduction:</span>&nbsp;"+ introduction +"</span>"
+					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Location:</span>&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "</div>"
+					+ "</div>");
 		}
 	}
 }

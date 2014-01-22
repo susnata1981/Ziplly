@@ -38,6 +38,8 @@ public class CommunitySummaryWidget extends Composite implements HasClickHandler
 	
 	@UiField
 	Anchor memberCountSpan;
+	@UiField
+	Anchor businessCountSpan;
 	
 	public CommunitySummaryWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -69,6 +71,10 @@ public class CommunitySummaryWidget extends Composite implements HasClickHandler
 
 	public void setResidentCount(int count) {
 		memberCountSpan.setText(count+" members");
+	}
+	
+	public void setBusinessCount(int count) {
+		businessCountSpan.setText(count+" businesses");
 	}
 	
 	public void setNeighborhoodName(String name) {

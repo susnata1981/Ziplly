@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.jboss.logging.Logger;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -23,14 +24,13 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 
 	@Override
 	public NeighborhoodDTO findById(Long neighborhoodId) throws NotFoundException {
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findNeighborhoodById");
 		query.setParameter("neighborhoodId", neighborhoodId);
 		try {
 			Neighborhood neighborhood = (Neighborhood) query.getSingleResult();
 			return EntityUtil.clone(neighborhood);
-		} catch(NoResultException nre) {
+		} catch (NoResultException nre) {
 			throw new NotFoundException();
 		} finally {
 			em.close();
@@ -39,38 +39,43 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 
 	@Override
 	public List<Neighborhood> getAll(int start, int end) {
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAllNeighborhoods");
-		
+
 		@SuppressWarnings("unchecked")
 		List<Neighborhood> result = query.getResultList();
 		em.close();
 		return result;
 	}
 
-	@Override
-	public NeighborhoodDTO findFirstByPostalCode(int postalCode) {
-		return this.findByPostalCode(postalCode).get(0);
-	}
+	// @Override
+	// public NeighborhoodDTO findFirstByPostalCode(int postalCode) {
+	// return findByPostalCode(postalCode).get(0);
+	// }
 
 	@Override
 	public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
-		Query query = em.createQuery("select n from Neighborhood n, PostalCode p " +
-		        "where n.postalCode.postalCodeId = p.postalCodeId " +
-		        "and p.postalCode = :postalCode");
-				query.setParameter("postalCode", postalCode);
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
-		@SuppressWarnings("unchecked")
-		List<Neighborhood> neighborhoods = (List<Neighborhood>)query.getResultList();
-		List<NeighborhoodDTO> response = Lists.newArrayList();
-		for(Neighborhood neighborhood : neighborhoods) {
-			response.add(EntityUtil.clone(neighborhood));
+		Query query = em.createQuery("select n from Neighborhood n, PostalCode p "
+				+ "where n.postalCode.postalCodeId = p.postalCodeId "
+				+ "and p.postalCode = :postalCode");
+		query.setParameter("postalCode", postalCode);
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<Neighborhood> neighborhoods = (List<Neighborhood>) query.getResultList();
+			List<NeighborhoodDTO> response = Lists.newArrayList();
+			for (Neighborhood neighborhood : neighborhoods) {
+				response.add(EntityUtil.clone(neighborhood));
+			}
+			return response;
+		} catch (NoResultException nre) {
+			return ImmutableList.of();
+		} finally {
+			em.close();
 		}
-		em.close();
-		return response;
+
 	}
 
 	@Override
@@ -91,11 +96,5 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		Long count = (Long) query.getSingleResult();
 		em.close();
 		return count;
-	}
-
-	@Override
-	public List<NeighborhoodDTO> findByPostalCode(int postalCode) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -63,6 +63,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	NeighborhoodDTO selectedNeighborhood;
 	boolean isServiceAvailable = true;
+	boolean doValidation = true;
 	
 	private static final String STREET_NUMBER_KEY = "street_number";
 	private static final String ROUTE_KEY = "route";
@@ -152,6 +153,10 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		businessName.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				boolean validateName = validateName(businessName.getText(), businessNameCg,
 						businessNameError);
 				if (validateName) {
@@ -164,6 +169,10 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				streetNumber = streetName = neighborhood = city = state = zipCode = null;
 				clearNeighborhoodSection();
 				validateAddressField();
@@ -173,6 +182,10 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				boolean validateName = validateName(email.getText(), emailCg, emailError);
 				if (validateName) {
 					emailCg.setType(ControlGroupType.SUCCESS);
@@ -184,6 +197,10 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		password.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
@@ -193,9 +210,12 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		});
 		
 		uploadField.addChangeHandler(new ChangeHandler() {
-
 			@Override
 			public void onChange(ChangeEvent event) {
+				if (!doValidation) {
+					return;
+				}
+				
 				if (imageUploaded) {
 					presenter.deleteImage(profileImageUrl);
 				}
@@ -205,6 +225,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	}
 
 	void validateAddressField() {
+		doValidation = true;
 		boolean validateAddress = validateAddress(street1.getText(), street1Cg, street1Error);
 		if (validateAddress) {
 			// reset isServiceAvailable
@@ -355,6 +376,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		emailError.setVisible(false);
 		neighborhoodCg.setType(ControlGroupType.NONE);
 		neighborhoodError.setVisible(false);
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setVisible(false);
 	}
 
 	@UiHandler("signupBtn")
@@ -576,13 +599,15 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	@Override
 	public void displayNotYetLaunchedWidget() {
 		isServiceAvailable = false;
+		doValidation = false;
+		resetErrors();
 		final NotYetLaunchedWidget widget = new NotYetLaunchedWidget();
 		widget.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				String email = widget.getEmail();
 				String postalCode = widget.getPostalCode();
-				presenter.addToInviteList(email, postalCode);
+				presenter.addToInviteList(email, Integer.parseInt(postalCode));
 			}
 			
 		});

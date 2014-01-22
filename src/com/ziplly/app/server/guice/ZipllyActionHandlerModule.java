@@ -3,6 +3,7 @@ package com.ziplly.app.server.guice;
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
 import com.ziplly.app.server.MyActionHandler;
+import com.ziplly.app.server.handlers.AddInvitationActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
@@ -47,6 +48,7 @@ import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
 import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
 import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
+import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
@@ -168,5 +170,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		
 		// blobstore
 		bindHandler(DeleteImageAction.class, DeleteImageActionHandler.class);
+		
+		// invitation
+		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);
 	}
 }
