@@ -30,16 +30,17 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -60,7 +61,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class PersonalAccountSettingsView extends Composite implements IPersonalAccountSettingsView {
+public class PersonalAccountSettingsView extends AbstractView implements IPersonalAccountSettingsView {
 
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 			.create(PersonalAccountSettingsViewUiBinder.class);
@@ -99,8 +100,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	FormPanel uploadForm;
 	@UiField
 	FileUpload uploadField;
-//	@UiField
-//	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
 
@@ -198,7 +197,9 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	private PersonalAccountDTO account;
 	private AccountSettingsPresenter<PersonalAccountDTO> presenter;
 
-	public PersonalAccountSettingsView() {
+	@Inject
+	public PersonalAccountSettingsView(EventBus eventBus) {
+		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
@@ -256,9 +257,8 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		}
 
 		// basic info
-		if (account.getImageUrl() != null) {
-			displayImagePreview(account.getImageUrl());
-		}
+		displayImagePreview(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+		
 		firstname.setInnerText(account.getFirstName());
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
@@ -274,6 +274,7 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 		}
 
 		// location
+		zip.setReadOnly(true);
 		zip.setText(Integer.toString(account.getZip()));
 
 		// privacy settings
@@ -455,11 +456,6 @@ public class PersonalAccountSettingsView extends Composite implements IPersonalA
 	public void onUpload() {
 		uploadForm.submit();
 	}
-
-//	@UiHandler("uploadBtn")
-//	void uploadImage(ClickEvent event) {
-//		onUpload();
-//	}
 
 	@UiHandler("updatePasswordBtn")
 	void resetPassword(ClickEvent event) {

@@ -3,44 +3,54 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.modalPanel {
-			width: 40%;
+		width: 40%;
 		}
 		.messageBox {
-			width: 70%;
-			height: 80px;
+		width: 80%;
+		height: 80px;
+		font-size: 14px;
+		font-family: sans-serif;
+		padding: 4px;
 		}
 		.subject {
-			width: 70%;
-			height: 40px;
+		width: 50%;
+		height: 40px;
+		font-family: sans-serif;
+		font-size: 14px !important;
+		padding: 4px;
 		}
 		.btn {
-			margin-right: 10px;
+		margin-right: 10px;
+		}
+		.receiverProfileImage {
+			width: 30px;
+			height: 30px;
 		}
 	</ui:style>
 	<g:HTMLPanel ui:field="rootPanel">
 		<b:Modal ui:field="modal" addStyleNames="{style.modalPanel}">
 			<b:Alert ui:field="status" />
 			<g:HTMLPanel>
-			   Message to <g:Anchor ui:field="toLink"/>
+				Message to <span ui:field="receiverName" />
+				<b:Image ui:field="receiverProfileImage" addStyleNames="{style.receiverProfileImage}"/>
 			</g:HTMLPanel>
-			<b:WellForm>
-				<b:ControlGroup ui:field="subjectCg">
-					<b:ControlLabel for="subject">Subject</b:ControlLabel>
-					<b:Controls>
-						<b:TextBox ui:field="subject" addStyleNames="{style.subject}"></b:TextBox>
-						<b:HelpInline ui:field="subjectHelpInline"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:ControlGroup ui:field="messageCg">
-					<b:ControlLabel for="message">Message</b:ControlLabel>
-					<b:Controls>
-						<b:TextArea ui:field="message" addStyleNames="{style.messageBox}"></b:TextArea>
-						<b:HelpInline ui:field="messageHelpInline"></b:HelpInline>
-					</b:Controls>
-				</b:ControlGroup>
-				<b:SubmitButton type="PRIMARY" ui:field="sendBtn" addStyleNames="{style.btn}">Send Message</b:SubmitButton> 
-				<b:Button ui:field="closeBtn" addStyleNames="{style.btn}">Close</b:Button>
-			</b:WellForm>
-		</b:Modal>
+			<b:ControlGroup ui:field="subjectCg">
+				<b:ControlLabel for="subject">Subject</b:ControlLabel>
+				<b:Controls>
+					<b:TextBox ui:field="subject" addStyleNames="{style.subject}"></b:TextBox>
+					<b:HelpInline ui:field="subjectHelpInline"></b:HelpInline>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:ControlGroup ui:field="messageCg">
+				<b:ControlLabel for="message">Message</b:ControlLabel>
+				<b:Controls>
+					<b:TextArea ui:field="message" addStyleNames="{style.messageBox}"></b:TextArea>
+					<b:HelpInline ui:field="messageHelpInline"></b:HelpInline>
+				</b:Controls>
+			</b:ControlGroup>
+			<b:SubmitButton type="PRIMARY" ui:field="sendBtn"
+				addStyleNames="{style.btn}">Send Message</b:SubmitButton>
+			<b:Button ui:field="closeBtn" addStyleNames="{style.btn}">Close</b:Button>
+ 		</b:Modal>
 	</g:HTMLPanel>
 </ui:UiBinder> 

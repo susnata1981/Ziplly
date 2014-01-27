@@ -3,6 +3,7 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -14,6 +15,7 @@ public class Message implements Serializable {
 	public Message() {
 	}
 	
+	@Column(length = 1024)
 	private String message;
 	
 	@OneToOne

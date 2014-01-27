@@ -71,9 +71,7 @@ import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
-import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PasswordRecovery;
@@ -82,7 +80,6 @@ import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.Session;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
@@ -99,7 +96,7 @@ public class AccountBLIImpl implements AccountBLI {
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
 	private BlobstoreService blobstoreService;
-	private ImagesService imageService = ImagesServiceFactory.getImagesService();	
+	private ImagesService imageService = ImagesServiceFactory.getImagesService();
 	private BlobstoreService blobService = BlobstoreServiceFactory.getBlobstoreService();
 
 	@Inject
@@ -119,7 +116,7 @@ public class AccountBLIImpl implements AccountBLI {
 	private final GcsService gcsService = GcsServiceFactory
 			.createGcsService(new RetryParams.Builder().initialRetryDelayMillis(10)
 					.retryMaxAttempts(10).totalRetryPeriodMillis(15000).build());
-	
+
 	@Inject
 	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, InterestDAO interestDao,
 			TransactionDAO transactionDao, SubscriptionPlanDAO subscriptionPlanDao,
@@ -136,40 +133,40 @@ public class AccountBLIImpl implements AccountBLI {
 		// createSubscriptionPlan();
 	}
 
-	private void createSubscriptionPlan() {
-		SubscriptionPlan plan = new SubscriptionPlan();
-		plan.setName("Basic plan");
-		plan.setDescription("Send upto 3 messages a month");
-		plan.setTweetsAllowed(3);
-		plan.setFee(0.0);
-		plan.setTimeCreated(new Date());
-		subscriptionPlanDao.save(plan);
-
-		plan = new SubscriptionPlan();
-		plan.setName("Pro plan");
-		plan.setDescription("Send upto 6 messages a month");
-		plan.setTweetsAllowed(6);
-		plan.setFee(5.00);
-		plan.setTimeCreated(new Date());
-		subscriptionPlanDao.save(plan);
-
-		plan = new SubscriptionPlan();
-		plan.setName("Premium plan");
-		plan.setDescription("Send upto 15 messages a month");
-		plan.setTweetsAllowed(15);
-		plan.setFee(15.00);
-		plan.setTimeCreated(new Date());
-		subscriptionPlanDao.save(plan);
-	}
-
-	private void createInterestEntries() {
-		for (Activity a : Activity.values()) {
-			Interest i = new Interest();
-			i.setName(a.name().toLowerCase());
-			i.setTimeCreated(new Date());
-			interestDao.save(i);
-		}
-	}
+//	private void createSubscriptionPlan() {
+//		SubscriptionPlan plan = new SubscriptionPlan();
+//		plan.setName("Basic plan");
+//		plan.setDescription("Send upto 3 messages a month");
+//		plan.setTweetsAllowed(3);
+//		plan.setFee(0.0);
+//		plan.setTimeCreated(new Date());
+//		subscriptionPlanDao.save(plan);
+//
+//		plan = new SubscriptionPlan();
+//		plan.setName("Pro plan");
+//		plan.setDescription("Send upto 6 messages a month");
+//		plan.setTweetsAllowed(6);
+//		plan.setFee(5.00);
+//		plan.setTimeCreated(new Date());
+//		subscriptionPlanDao.save(plan);
+//
+//		plan = new SubscriptionPlan();
+//		plan.setName("Premium plan");
+//		plan.setDescription("Send upto 15 messages a month");
+//		plan.setTweetsAllowed(15);
+//		plan.setFee(15.00);
+//		plan.setTimeCreated(new Date());
+//		subscriptionPlanDao.save(plan);
+//	}
+//
+//	private void createInterestEntries() {
+//		for (Activity a : Activity.values()) {
+//			Interest i = new Interest();
+//			i.setName(a.name().toLowerCase());
+//			i.setTimeCreated(new Date());
+//			interestDao.save(i);
+//		}
+//	}
 
 	// TODO should we throw exception for invalid attempt?
 	@Override
@@ -181,7 +178,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 		Session session = null;
 		session = sessionDao.findSessionByUid(uid);
-		System.out.println("Found session : " + session.getId());
+		logger.log(Level.INFO, String.format("Found session : %s",session.getId()));
 		if (isValidSession(session)) {
 			Account account = session.getAccount();
 			account.setUid(uid);
@@ -224,11 +221,11 @@ public class AccountBLIImpl implements AccountBLI {
 
 		if (saveImage && account.getImageUrl() != null) {
 			BlobKey blobKey = saveImage(account.getImageUrl());
-			String servingUrl = imageService.getServingUrl(
-					ServingUrlOptions.Builder.withBlobKey(blobKey));
+			String servingUrl = imageService.getServingUrl(ServingUrlOptions.Builder
+					.withBlobKey(blobKey));
 			account.setImageUrl(servingUrl);
 		}
-		
+
 		// create account otherwise
 		AccountDTO response = accountDao.save(account);
 
@@ -242,9 +239,9 @@ public class AccountBLIImpl implements AccountBLI {
 		return response;
 	}
 
-
 	/**
-	 * Used to copy image from input url to GCS 
+	 * Used to copy image from input url to GCS
+	 * 
 	 * @param istream
 	 * @param ostream
 	 * @throws IOException
@@ -260,7 +257,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 			InputStream istream = new URL(url).openStream();
 			copy(istream, Channels.newOutputStream(outputChannel));
-			
+
 			return blobService.createGsBlobKey("/gs/" + bucketName + "/" + file.getObjectName());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -284,12 +281,14 @@ public class AccountBLIImpl implements AccountBLI {
 
 	private void createDefaultNotificationSettings(Account account) {
 		for (NotificationType type : NotificationType.values()) {
-			AccountNotificationSettings an = new AccountNotificationSettings();
-			an.setAccount(account);
-			an.setType(type);
-			an.setAction(NotificationAction.EMAIL);
-			an.setTimeCreated(new Date());
-			account.getNotificationSettings().add(an);
+			if (type.isVisible()) {
+				AccountNotificationSettings an = new AccountNotificationSettings();
+				an.setAccount(account);
+				an.setType(type);
+				an.setAction(NotificationAction.EMAIL);
+				an.setTimeCreated(new Date());
+				account.getNotificationSettings().add(an);
+			}
 		}
 	}
 
@@ -450,25 +449,25 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public String getImageUploadUrl() {
+
 		String bucketName = System.getProperty("gcs_bucket_name");
 		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
 		String uploadEndpoint = System.getProperty(StringConstants.UPLOAD_ENDPOINT);
 		String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
-		
-		String result = "";
+
+		String result = uploadUrl;
 		logger.log(Level.INFO, String.format("UPLOAD URL SET to %s", uploadUrl));
 
 		// Hack to make this work in dev environment
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-			result = uploadUrl.replace(
-				"susnatas-MacBook-Pro.local:8888",
-//				"susnatas-mbp.bauhauscoffee.net:8888",
-				"127.0.0.1:8888");
-		} 
-		
+			result = uploadUrl.replace("susnatas-MacBook-Pro.local:8888",
+			// "susnatas-mbp.bauhauscoffee.net:8888",
+					"127.0.0.1:8888");
+		}
+
 		logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", result));
 		return result;
-		
+
 	}
 
 	private Account getLoggedInUserBasedOnCookie() {
@@ -680,7 +679,7 @@ public class AccountBLIImpl implements AccountBLI {
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
 		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
-		
+
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
 				.param("senderAccountId", sender.getAccountId().toString())
@@ -696,7 +695,7 @@ public class AccountBLIImpl implements AccountBLI {
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
 		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
-		
+
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.INDIVIDUAL.name())
 				.param("recipientEmail", receiver.getEmail())

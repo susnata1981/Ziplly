@@ -1,5 +1,8 @@
 package com.ziplly.app.server.handlers;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -12,7 +15,8 @@ import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 
 public class GetImageUploadUrlActionHandler extends AbstractAccountActionHandler<GetImageUploadUrlAction, GetImageUploadUrlResult>{
-
+	private Logger logger = Logger.getLogger(GetImageUploadUrlAction.class.getSimpleName());
+	
 	@Inject
 	public GetImageUploadUrlActionHandler(AccountDAO accountDao,
 			SessionDAO sessionDao, AccountBLI accountBli) {
@@ -27,7 +31,8 @@ public class GetImageUploadUrlActionHandler extends AbstractAccountActionHandler
 		if (imageUploadUrl == null) {
 			throw new InternalError("Failed to create image upload url");
 		}
-		
+		logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", imageUploadUrl));
+
 		GetImageUploadUrlResult result = new GetImageUploadUrlResult(imageUploadUrl);
 		return result;
 	}

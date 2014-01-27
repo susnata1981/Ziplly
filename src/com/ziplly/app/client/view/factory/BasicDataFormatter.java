@@ -5,6 +5,7 @@ import java.util.Date;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.model.Gender;
 
 public class BasicDataFormatter implements Formatter<Object> {
 
@@ -25,6 +26,8 @@ public class BasicDataFormatter implements Formatter<Object> {
 			return date;
 		case UNREAD_MESSAGE_COUNT:
 			return "("+ value.toString()+")";
+		case GENDER:
+			return ((Gender)value).getName();
 		default:
 			throw new IllegalArgumentException("Invalid value tyoe to render");
 		}

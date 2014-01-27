@@ -5,15 +5,15 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
-import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
-	boolean devel = true;
 	
 	@Override
 	public void onBrowserEvent(Context context, Element parent, PersonalAccountDTO value,
@@ -23,16 +23,26 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 			return;
 		}
 
-		String redirectUrl = "";
 		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
-		if (environment.equalsIgnoreCase(Environment.DEVEL.name())) {
+		String accountId = value.getAccountId().toString();
+		String redirectUrl = "";
+		
+		if (environment.equalsIgnoreCase("DEVEL")) {
 			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, ""); 
 		} else {
 			redirectUrl = GWT.getHostPageBaseURL();
 		}
+
+		NodeList<Element> buttons = parent.getElementsByTagName("button");
+		Element button = buttons.getItem(0);
+		EventTarget target = event.getEventTarget();
 		
-		String accountId = value.getAccountId().toString();
-		redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+		if (button.isOrHasChild(Element.as(target))) {
+			redirectUrl = redirectUrl + "#residents:" + StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
+//			Window.alert("Button clicked: "+redirectUrl);
+		} else {
+			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+		}
 		Window.Location.replace(redirectUrl);
 	}
 	
@@ -64,6 +74,7 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Gender:</span>&nbsp;"+ value.getGender().name().toLowerCase() + "</span>"
 					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Introduction:</span>&nbsp;"+ introduction +"</span>"
 					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Location:</span>&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>" 
 					+ "</div>"
 					+ "</div>");
 		}

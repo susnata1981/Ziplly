@@ -2,11 +2,15 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -43,7 +47,16 @@ public class GetConversationActionHandler extends AbstractAccountActionHandler<G
 				action.getStart(),
 				action.getPageSize()));
 		} else {
-			conversations.add(conversationDao.findConversationById(action.getConversationId()));
+			try {
+				ConversationDTO conversation = conversationDao.findConversationById(action.getConversationId());
+				long accountId = session.getAccount().getAccountId();
+				if (conversation.getSender().getAccountId() != accountId || conversation.getReceiver().getAccountId() != accountId) {
+					throw new AccessError();
+				}
+				conversations.add(conversation);
+			} catch(NoResultException nre) {
+				throw new NotFoundException();
+			}
 		}
 		
 		GetConversationsResult result = new GetConversationsResult();

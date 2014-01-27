@@ -2,6 +2,7 @@ package com.ziplly.app.client.view;
 
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.ziplly.app.client.view.ConversationView.ConversationViewPresenter;
 import com.ziplly.app.model.ConversationDTO;
 
@@ -14,4 +15,5 @@ public interface IConversationView extends View<ConversationViewPresenter>{
 	int getConversationPageSize();
 	void setTotalConversation(Long totalConversations);
 	void setUnreadMessageCount(int unreadMessageCount);
+	void displayMessage(String internalError, AlertType error);
 }

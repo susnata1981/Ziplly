@@ -18,6 +18,8 @@ import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
@@ -70,11 +72,12 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			IAccountView<T> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
-		
-		setupEventHandlers();
+		setupHandlers();
 	}
 
-	private void setupEventHandlers() {
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
 		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountUpdateEvent event) {
@@ -211,7 +214,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				});
 	}
 
-	/*
+	/**
 	 * Send message
 	 * @see com.ziplly.app.client.activities.AccountPresenter#sendMessage(com.ziplly.app.model.MessageDTO)
 	 */
@@ -236,19 +239,49 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			public void onSuccess(SendMessageResult result) {
 				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
 			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+			}
 		});
 	}
 	
-	void fetchTweets(long accountId, int page, int pageSize) {
+	protected void fetchTweets(long accountId, int page, int pageSize) {
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
+		eventBus.fireEvent(new LoadingEventStart());
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets());
-				hideLoadingIcon();
+				eventBus.fireEvent(new LoadingEventEnd());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				eventBus.fireEvent(new LoadingEventEnd());
 			}
 		});
 	}
+
+	protected void fetchTweets(long accountId, int page, int pageSize, final boolean displayNoTweetsMessage) {
+		eventBus.fireEvent(new LoadingEventStart());
+		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
+			@Override
+			public void onSuccess(GetTweetForUserResult result) {
+				view.displayTweets(result.getTweets(), displayNoTweetsMessage);
+				eventBus.fireEvent(new LoadingEventEnd());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			}
+		});
+	}
+
 	
 	@Override
 	public void messagesLinkClicked() {

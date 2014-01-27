@@ -14,6 +14,7 @@ import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -59,6 +60,8 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	TextArea tweetTextBox;
 	@UiField
 	Panel tweetActionPanel;
+	@UiField
+	DivElement tweetHelpDiv;
 	@UiField
 	HelpInline tweetHelpInline;
 	@UiField
@@ -117,7 +120,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
-		tweetHelpInline.setVisible(true);
+		tweetHelpInline.setVisible(false);
 		embedLinkModal.hide();
 		initUploadForm();
 		StyleHelper.show(tweetCategoryPanel.getElement(), Display.NONE);
@@ -182,6 +185,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		tweetTextBox.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				StyleHelper.show(tweetHelpInline.getElement(), true);
 				StyleHelper.show(tweetCategoryPanel.getElement(), Display.INLINE_BLOCK);
 				updateUsedCharacterMessage();
 				tweetHelpInline.setVisible(true);
@@ -279,6 +283,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		// clear control errors.
 		tweetCg.setType(ControlGroupType.NONE);
 		tweetHelpInline.setText("");
+		StyleHelper.show(tweetHelpInline.getElement(), false);
 		setupDefaultDimension();
 		
 		// clear text

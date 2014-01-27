@@ -19,4 +19,5 @@ public interface ITweetView<T extends Presenter> extends View<T> {
 	void addTweet(TweetDTO tweet);
 	Element getTweetSection();
 	void insertTweet(TweetDTO tweet);
+	void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage);
 }

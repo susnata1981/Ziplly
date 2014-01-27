@@ -418,4 +418,9 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
 	}
+
+	@Override
+	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
+		displayTweets(tweets, true);
+	}
 }

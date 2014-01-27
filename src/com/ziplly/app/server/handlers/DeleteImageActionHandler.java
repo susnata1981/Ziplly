@@ -32,8 +32,10 @@ public class DeleteImageActionHandler extends AbstractAccountActionHandler<Delet
 		
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		String imgUrl = action.getImageUrl();
-		BlobKey key = new BlobKey(imgUrl.substring(imgUrl.indexOf(BLOBSTORE_KEY_STRING)));
-		blobstoreService.delete(key);
+		if (imgUrl.indexOf(BLOBSTORE_KEY_STRING) != -1) {
+			BlobKey key = new BlobKey(imgUrl.substring(imgUrl.indexOf(BLOBSTORE_KEY_STRING)));
+			blobstoreService.delete(key);
+		}
 		return new DeleteImageResult();
 	}
 

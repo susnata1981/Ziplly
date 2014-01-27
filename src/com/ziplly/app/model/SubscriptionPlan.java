@@ -1,7 +1,6 @@
 package com.ziplly.app.model;
 
-import java.util.Date;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,15 +9,18 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "subscription_plan")
-public class SubscriptionPlan {
+public class SubscriptionPlan extends AbstractTimestampAwareEntity {
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="subscription_id")
 	private Long subscriptionId;
 	private String name;
 	private String description;
+	@Column(name="tweets_allowed")
 	private int tweetsAllowed;
 	private Double fee;
-	private Date timeCreated;
 
 	public SubscriptionPlan() {
 	}
@@ -29,7 +31,7 @@ public class SubscriptionPlan {
 			this.name = plan.getName();
 			this.description = plan.getDescription();
 			this.fee = plan.getFee();
-			this.timeCreated = plan.getTimeCreated();
+			setTimeCreated(plan.getTimeCreated());
 		}
 	}
 
@@ -63,14 +65,6 @@ public class SubscriptionPlan {
 
 	public void setFee(Double fee) {
 		this.fee = fee;
-	}
-
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
 	}
 
 	public int getTweetsAllowed() {

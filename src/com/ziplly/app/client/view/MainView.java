@@ -21,7 +21,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -76,6 +75,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 		initWidget(uiBinder.createAndBindUi(this));
 		displayHelpFields(false);
 		displayMessageField(false);
+		message.setClose(false);
 	}
 
 	@UiFactory
@@ -92,7 +92,6 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	@Override
 	public void onLoad() {
-		System.out.println("Setting background image");
 		CssStyleHelper.setBackgroundImage(ZResources.IMPL.neighborhoodLargePic());
 	}
 	
@@ -177,6 +176,8 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
+		clearErrors();
+		resetMessage();
 		if (!validateInput()) {
 			displayHelpFields(true);
 			return;
@@ -184,6 +185,15 @@ public class MainView extends Composite implements View<HomePresenter> {
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
 		String passwordInput = FieldVerifier.getEscapedText(password.getText());
 		presenter.onLogin(emailInput, passwordInput);
+		loginBtn.setEnabled(false);
+	}
+
+	private void clearErrors() {
+		emailCg.setType(ControlGroupType.NONE);
+		emailError.setText("");
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setText("");
+		displayHelpFields(false);
 	}
 
 	public void displayMessage(String msg, AlertType type) {
@@ -193,13 +203,20 @@ public class MainView extends Composite implements View<HomePresenter> {
 	}
 
 	public void resetLoginForm() {
-		emailCg.setType(ControlGroupType.NONE);
+//		emailCg.setType(ControlGroupType.NONE);
 		email.setText("");
-		emailError.setText("");
-		passwordCg.setType(ControlGroupType.NONE);
+//		emailError.setText("");
+//		passwordCg.setType(ControlGroupType.NONE);
 		password.setText("");
-		passwordError.setText("");
-		displayHelpFields(false);
+//		passwordError.setText("");
+//		displayHelpFields(false);
+		clearErrors();
+		enableButtons();
+	}
+
+	private void enableButtons() {
+		loginBtn.setEnabled(true);
+		fbLoginButtonOnMainPage.setEnabled(true);
 	}
 
 	public void resetMessage() {

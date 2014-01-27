@@ -67,17 +67,6 @@
 		overflow: hidden;
 		}
 	</ui:style>
-	<!-- <g:HTMLPanel addStyleNames="{style.rootPanel}"> <b:Alert ui:field="message" 
-		addStyleNames="{style.message}" close="false" /> <div class="{style.tweetDiv}"> 
-		<div class="{style.tweetCategoryBox}"> <div class="{style.leftnavHeaderContainer}"> 
-		<span class="{style.leftnavHeaderSpan}">Category</span> <g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel> 
-		</div> <div class="{style.leftnavHeaderContainer} {style.marginTop}"> <span 
-		class="{style.leftnavHeaderSpan}">Hashtags</span> <g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel> 
-		</div> </div> <div class="{style.communityWall}"> <g:HTMLPanel ui:field="communityWallPanel" 
-		addStyleNames="{style.communityWallPanel}"> <dt:TweetBox ui:field="tweetBox" 
-		addStyleNames="{style.tweetBox}" width="100%" /> <div class="{style.communityInfoPanel}"> 
-		<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" /> </div> </g:HTMLPanel> 
-		</div> <div class="clearfix"></div> </div> </g:HTMLPanel> -->
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="10">

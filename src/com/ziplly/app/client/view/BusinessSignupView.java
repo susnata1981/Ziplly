@@ -8,6 +8,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -34,7 +35,6 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
@@ -42,6 +42,7 @@ import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
@@ -92,7 +93,9 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	ControlGroup street1Cg;
 	@UiField
 	HelpInline street1Error;
-
+	@UiField
+	Image neighborhoodLoadingImage;
+	
 	@UiField
 	ControlGroup neighborhoodCg;
 	@UiField
@@ -146,6 +149,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		neighborhoodControl.setVisible(false);
+		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 	}
 
@@ -613,5 +617,15 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		});
 		selectedNeighborhood = null;
 		widget.show(true);
+	}
+
+	@Override
+	public void displayNeighborhoodListLoading(boolean display) {
+		if (display) {
+			neighborhoodLoadingImage.setUrl(StringConstants.SMALL_IMAGE_LOADER);
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
+		} else {
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		}
 	}
 }

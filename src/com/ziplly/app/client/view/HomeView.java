@@ -216,7 +216,7 @@ public class HomeView extends Composite implements IHomeView {
 		message.clear();
 		hideMessage(true);
 		tview.clear();
-		tview.displayTweets(tweets);
+		tview.displayTweets(tweets, false);
 	}
 
 	@Override

@@ -99,6 +99,7 @@ public class HashtagDAOImpl implements HashtagDAO {
 				.setFirstResult(start)
 				.setMaxResults(pageSize);
 			
+			@SuppressWarnings("unchecked")
 			List<BigInteger> tweetIds = query.getResultList();
 			for(BigInteger tweetId : tweetIds) {
 				TweetDTO tweet = tweetDao.findTweetById(tweetId.longValue());
@@ -140,8 +141,6 @@ public class HashtagDAOImpl implements HashtagDAO {
 		} finally {
 			em.close();
 		}
-		
 		return tweets;	
 	}
-		
 }

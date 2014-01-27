@@ -1,5 +1,7 @@
 package com.ziplly.app.client.view;
 
+import com.google.gwt.safehtml.shared.SafeUri;
+
 public class StringConstants {
 	public static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
 	public static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
@@ -53,10 +55,15 @@ public class StringConstants {
 	public static final String INVALID_ADDRESS = "Please select an address from the list.";
 	public static final String EMAIL_SAVED_FOR_INVITATION = "Thanks, your email has been saved.";
 	public static final String UNKNOWN = "Unknown";
-	public static final String NO_RESULT_FOUND = "Sorry no results were found, please try a different query.";
+	public static final String NO_RESULT_FOUND = "Sorry no results were found.";
 	public static final String PERSONAL_ACCOUNT_DISCRIMINATOR = "personal";
 	public static final String BUSINESS_ACCOUNT_DISCRIMINATOR = "business";
 	public static final String NO_TWEETS = "User hasn't shared any tweets yet.";
 	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
 	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
+	public static final String LOGIN_ERROR = "Sorry there was an error login in. Please try again later.";
+	public static final String INVALID_CREDENTIALS_ERROR = "Account with this email/password doesn't exist";
+	public static final String PLACE_SEPARATOR = ":";
+	public static final String SEND_MESSAGE_TOKEN = "sm";
+	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
 }

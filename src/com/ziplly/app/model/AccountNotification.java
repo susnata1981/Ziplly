@@ -36,13 +36,13 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 	private Conversation conversation;
 	
 	@Column(name="read_status")
-	private ReadStatus readStatus;
+	private String readStatus;
 	
 	@Column(name="record_status")
 	private RecordStatus status;
 	
 	@Column(name="notification_type")
-	private NotificationType type;
+	private String type;
 	
 	public AccountNotification() {
 	}
@@ -64,8 +64,8 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 			this.conversation = new Conversation(an.getConversation());
 		}
 		
-		this.readStatus = an.getReadStatus();
-		this.type = an.getType();
+		this.setReadStatus(an.getReadStatus());
+		this.setType(an.getType());
 		this.setTimeUpdated(an.getTimeUpdated());
 		this.setTimeCreated(an.getTimeCreated());
 	}
@@ -95,19 +95,19 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 	}
 
 	public NotificationType getType() {
-		return type;
+		return NotificationType.valueOf(type);
 	}
 
 	public void setType(NotificationType type) {
-		this.type = type;
+		this.type = type.name();
 	}
 
 	public ReadStatus getReadStatus() {
-		return readStatus;
+		return ReadStatus.valueOf(readStatus);
 	}
 
 	public void setReadStatus(ReadStatus readStatus) {
-		this.readStatus = readStatus;
+		this.readStatus = readStatus.name();
 	}
 
 	public RecordStatus getStatus() {

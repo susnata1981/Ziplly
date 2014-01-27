@@ -13,7 +13,11 @@ import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.handler.LoadingEventEndHandler;
+import com.ziplly.app.client.view.handler.LoadingEventStartHandler;
 import com.ziplly.app.client.widget.LoadingPanelWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -29,13 +33,32 @@ public abstract class AbstractActivity implements Activity {
 	protected EventBus eventBus;
 	protected ApplicationContext ctx;
 	private static final String BACKGROUND_IMG_URL = "url('images/neighborhood_large.jpg')";
-	protected LoadingPanelWidget loadingModal = new LoadingPanelWidget();
+	protected LoadingPanelWidget loadingModal;
 	
 	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, PlaceController placeController, ApplicationContext ctx) {
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
 		this.ctx = ctx;
+		loadingModal =  new LoadingPanelWidget();
+	}
+
+	protected void setupHandlers() {
+		eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
+			
+			@Override
+			public void onEvent(LoadingEventStart event) {
+				showLodingIcon();
+			}
+		});
+		
+		eventBus.addHandler(LoadingEventEnd.TYPE, new LoadingEventEndHandler() {
+
+			@Override
+			public void onEvent(LoadingEventEnd event) {
+				hideLoadingIcon();
+			}
+		});		
 	}
 
 	void showLodingIcon() {
@@ -76,6 +99,7 @@ public abstract class AbstractActivity implements Activity {
 		if (ctx.getAccount() != null) {
 			// control shouldn't flow here
 			forward(ctx.getAccount());
+			return;
 		}
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
 		dispatcher.execute(action,

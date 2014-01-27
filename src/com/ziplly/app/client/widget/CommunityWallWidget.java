@@ -8,13 +8,11 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.web.bindery.event.shared.EventBus;
-import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.view.AbstractAccountView;
+import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.widget.cell.TweetCell;
-import com.ziplly.app.client.widget.dataprovider.TweetDataProvider;
 import com.ziplly.app.model.TweetDTO;
 
-public class CommunityWallWidget extends AbstractAccountView {
+public class CommunityWallWidget extends AbstractView {
 	private static final int PAGE_SIZE = 10;
 
 	private static CommunityWallWidgetUiBinder uiBinder = GWT
@@ -24,8 +22,12 @@ public class CommunityWallWidget extends AbstractAccountView {
 			UiBinder<Widget, CommunityWallWidget> {
 	}
 
-	public CommunityWallWidget(CachingDispatcherAsync dispatcher, EventBus eventBus) {
-		super(dispatcher, eventBus);
+	public CommunityWallWidget(EventBus eventBus) {
+		super(eventBus);
+		tweetList = new CellList<TweetDTO>(new TweetCell(eventBus));
+		tweetList.setPageSize(PAGE_SIZE);
+		pager = new SimplePager();
+		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	@UiField(provided = true)
@@ -36,29 +38,22 @@ public class CommunityWallWidget extends AbstractAccountView {
 	
 	AsyncDataProvider<TweetDTO> dataProvider;
 	
-	@Override
-	protected void internalOnUserLogin() {
-		dataProvider = new TweetDataProvider(this);
-		dataProvider.addDataDisplay(tweetList);
-		pager.setDisplay(tweetList);
-	}
+//	@Override
+//	protected void internalOnUserLogin() {
+//		dataProvider = new TweetDataProvider(this);
+//		dataProvider.addDataDisplay(tweetList);
+//		pager.setDisplay(tweetList);
+//	}
+//
+//	@Override
+//	protected void initWidget() {
+//		
+//	}
 
-	@Override
-	protected void initWidget() {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@Override
-	protected void postInitWidget() {
-		dataProvider = new TweetDataProvider(this);
-	}
-
-	@Override
-	protected void setupUiElements() {
-		tweetList = new CellList<TweetDTO>(new TweetCell(eventBus));
-		tweetList.setPageSize(PAGE_SIZE);
-		pager = new SimplePager();
-	}
+//	@Override
+//	protected void setupUiElements() {
+//		
+//	}
 
 	public CellList<TweetDTO> getTweetList() {
 		return tweetList;

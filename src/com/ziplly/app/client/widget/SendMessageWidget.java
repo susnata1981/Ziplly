@@ -5,6 +5,7 @@ import java.util.Date;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.SubmitButton;
 import com.github.gwtbootstrap.client.ui.TextArea;
@@ -12,17 +13,22 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
@@ -63,13 +69,17 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	HTMLPanel rootPanel;
 	
 	@UiField
-	Anchor toLink;
+	SpanElement receiverName;
+	@UiField
+	Image receiverProfileImage;
 	
 	@UiField
 	Modal modal;
 	private SendMessagePresenter presenter;
 	private AccountDTO receiver;
-	
+	private AccountFormatter accountFormatter = 
+			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+
 	public SendMessageWidget(AccountDTO receiver) {
 		this.receiver = receiver;
 		initWidget(uiBinder.createAndBindUi(this));
@@ -78,8 +88,19 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	
 	private void setup() {
 		modal.hide();
-		String temp = "<img width='50' height='50' src='"+receiver.getImageUrl()+"'/>&nbsp;"+receiver.getDisplayName();
-		toLink.getElement().setInnerHTML(temp);
+		
+		// Receiver profile image
+		receiverName.setInnerText(receiver.getDisplayName());
+		receiverProfileImage.setAltText(receiver.getDisplayName());
+		receiverProfileImage.setUrl(accountFormatter.format(receiver, ValueType.PROFILE_IMAGE_URL));
+		receiverProfileImage.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				displayProfile();
+			}
+		});
+		
 		subjectHelpInline.setVisible(false);
 		messageHelpInline.setVisible(false);
 		status.setVisible(false);
@@ -164,9 +185,15 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		this.presenter = presenter;
 	}
 	
-	@UiHandler("toLink")
-	public void displayProfile(ClickEvent event) {
+	public void displayProfile() {
 		modal.hide();
 		presenter.goTo(new PersonalAccountPlace(this.receiver.getAccountId()));
+	}
+
+	public void updateAccountInformation(AccountDTO account) {
+		this.receiver = account;
+		receiverName.setInnerText(receiver.getDisplayName());
+		receiverProfileImage.setAltText(receiver.getDisplayName());
+		receiverProfileImage.setUrl(accountFormatter.format(receiver, ValueType.PROFILE_IMAGE_URL));
 	}
 }

@@ -22,7 +22,7 @@ public class AccountNotificationSettings {
 	@JoinColumn(name="account_id")
 	private Account account;
 	
-	private NotificationType type;
+	private String type;
 	
 	private NotificationAction action;
 
@@ -38,7 +38,7 @@ public class AccountNotificationSettings {
 		Account acct = new Account();
 		acct.setAccountId(an.getAccount().getAccountId());
 		this.account = acct;
-		this.type = an.getType();
+		this.setType(an.getType());
 		this.action = an.getAction();
 		this.timeCreated = an.getTimeCreated();
 	}
@@ -52,11 +52,11 @@ public class AccountNotificationSettings {
 	}
 
 	public NotificationType getType() {
-		return type;
+		return NotificationType.valueOf(type);
 	}
 
 	public void setType(NotificationType type) {
-		this.type = type;
+		this.type = type.name();
 	}
 
 	public Date getTimeCreated() {

@@ -137,13 +137,13 @@
 							<br />
 							<b:TextBox ui:field="zip" placeholder="zip..." />
 							<b:HelpInline ui:field="zipError"></b:HelpInline>
+							<b:Image ui:field="neighborhoodLoadingImage" />
 						</b:Controls>
 					</b:ControlGroup>
 					<b:ControlGroup ui:field="neighborhoodCg">
 						<b:Controls ui:field="neighborhoodControl">
 							<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
 							<g:HTMLPanel ui:field="neighborhoodListPanel">
-								<!-- <b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> -->
 							</g:HTMLPanel>
 							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
 							<b:HelpBlock>Pick your neighborhood to learn about whats

@@ -174,9 +174,10 @@ h2.heading {
 .settingsPanel {
 	position: relative;
 	float: left;
-	width: 60%;
-	margin-left: 1%;
-	padding: 20px;
+	width: 90%;
+	margin-left: 2px;
+	padding: 10px;
+	border: 1px solid #ddd;
 }
 
 .updatePasswordBtn {
@@ -187,7 +188,8 @@ h2.heading {
 .introductionTextBox {
 	float: left;
 	width: 90%;
-	height: 60px;
+	height: 80px;
+	padding: 4px;
 	margin-bottom: 30px;
 }
 
@@ -320,8 +322,20 @@ h2.heading {
 	width: 180px;
 	height: 190px;
 	overflow: hidden;
+	margin-bottom: 12px;
 }
 
 .profileImage {
 	height: 100%;
+	border: none;
+}
+.tab-heading {
+	font-family: sans-serif, sans;
+	font-size: .8em;
+	list-style: none;
+}
+
+.locationTab {
+	position: relative;
+	left: 20px;
 }

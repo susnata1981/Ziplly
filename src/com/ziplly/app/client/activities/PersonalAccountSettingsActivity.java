@@ -38,7 +38,9 @@ public class PersonalAccountSettingsActivity
 		setupHandlers();
 	}
 
-	private void setupHandlers() {
+	protected void setupHandlers() {
+		super.setupHandlers();
+		
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {

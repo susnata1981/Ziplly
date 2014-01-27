@@ -45,6 +45,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		if (ctx.getAccount() != null) {
 			forward(ctx.getAccount());
+			return;
 		}
 		
 		this.panel = panel;

@@ -29,9 +29,10 @@ import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
-import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
@@ -86,7 +87,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private TweetViewBinder binder;
 	private HomePlace place;
 	private AccountDTO account;
-	
+	private ValidateLoginHandler loginHandler = new ValidateLoginHandler();
 	private AcceptsOneWidget panel;
 
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
@@ -152,14 +153,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		this.homeView = homeView;
 		this.mainView = mainView;
 		state = new HomeViewState();
+		setupHandlers();
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
 		bind();
-		showLodingIcon();
-		setupHandlers();
+		eventBus.fireEvent(new LoadingEventStart());
 		if (ctx.getAccount() != null) {
 			displayCommunityWall();
 		} else {
@@ -168,8 +169,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		}
 	}
 
-	private void setupHandlers() {
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
+			
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
 				ctx.updateAccountDetails(event.getAccountDetails());
@@ -360,7 +364,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	@Override
 	public void onLogin(String email, String password) {
 		mainView.clear();
-		dispatcher.execute(new ValidateLoginAction(email, password), new ValidateLoginHandler());
+		eventBus.fireEvent(new LoadingEventStart());
+		dispatcher.execute(new ValidateLoginAction(email, password), loginHandler);
 	}
 
 	@Override
@@ -506,17 +511,21 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				ctx.setAccount(result.getAccount());
 				eventBus.fireEvent(new LoginEvent(result.getAccount()));
 				displayCommunityWall();
+				eventBus.fireEvent(new LoadingEventEnd());
 			}
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			if (caught instanceof NotFoundException) {
-				mainView.displayMessage(LoginWidget.ACCOUNT_DOES_NOT_EXIST, AlertType.ERROR);
+				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
 			} else if (caught instanceof InvalidCredentialsException) {
-				mainView.displayMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS, AlertType.ERROR);
+				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
+			} else {
+				mainView.displayMessage(StringConstants.LOGIN_ERROR, AlertType.ERROR);
 			}
 			mainView.resetLoginForm();
+			eventBus.fireEvent(new LoadingEventEnd());
 		}
 	}
 

@@ -20,6 +20,7 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -54,17 +55,7 @@ public class PersonalAccountActivity extends
 
 		super(dispatcher, eventBus, placeController, ctx, view);
 		this.place = place;
-//		setupHandlers();
 	}
-
-//	private void setupHandlers() {
-//		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
-//			@Override
-//			public void onEvent(AccountDetailsUpdateEvent event) {
-//				onAccountDetailsUpdate();
-//			}
-//		});
-//	}
 
 	@Override
 	public void bind() {
@@ -78,7 +69,6 @@ public class PersonalAccountActivity extends
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		showLodingIcon();
 		this.panel = panel;
 		bind();
 		if (place.getAccountId() != null) {
@@ -133,15 +123,16 @@ public class PersonalAccountActivity extends
 	public void displayProfile() {
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			placeController.goTo(new BusinessAccountPlace());
+			return;
 		}
 		
-		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
+		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
+		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize, false);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		getAccountNotifications();
 		setupImageUpload();
-		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
 	}
 
 	private void setupImageUpload() {
@@ -218,7 +209,7 @@ public class PersonalAccountActivity extends
 		if (binder != null) {
 			binder.stop();
 		}
-		hideLoadingIcon();
+		eventBus.fireEvent(new LoadingEventEnd());
 	}
 
 	private class GetLatLngResultHandler extends

@@ -1,17 +1,25 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
 		@external tiny-image-div, tiny-image;
 
-		.conversation {
+		.leftnavHeaderSpan {
+		margin: 0;
+		padding: 2px;
+		font-size: 1em;
+		color:
+		#555444;
+		background: #ddd;
+		border-bottom: 1px solid #555;
+		}
+		.conversation
+		{
 		width: 90%;
-		padding: 1%;
-		margin:
-		5%;
+		padding: 8px;
+		margin: 5%;
 		border-bottom: 1px solid #ddd;
 		overflow: auto;
 		}
@@ -19,10 +27,10 @@
 		background: #0081c2;
 		}
 		.conversationNotRead {
-			backround: #ccc;
+		backround: #ccc;
 		}
 		.conversationNotRead:hover {
-			backround: #0081c2;
+		backround: #0081c2;
 		}
 		.senderBlock {
 		float: left;
@@ -33,7 +41,8 @@
 		.subjectBlock {
 		float: left;
 		overflow: hidden;
-		width: 52%;
+		width:
+		52%;
 		padding: 4px;
 		margin-right: 4%;
 		}
@@ -42,7 +51,8 @@
 		margin-left: 10px;
 		margin-top: 10px;
 		font-size: 18px;
-		font-family: sans-serif;
+		font-family:
+		sans-serif;
 		}
 		.dateBlock {
 		float:left;
@@ -60,7 +70,8 @@
 		margin: 2%
 		10%;
 		width: 90%;
-		height: 50px;
+		height:
+		50px;
 		}
 		.helpinline {
 		display: inline-block;
@@ -89,18 +100,22 @@
 		.asidePanel li {
 		list-style: none;
 		}
-		.asidePanel dt {
+		.asidePanel dt
+		{
 		margin: 12px 2px;
 		}
 		.conversationPanel {
 		float: left;
 		width: 80%;
-		border: 1px solid #ddd;
+		border:
+		1px solid #ddd;
 		}
 		.link {
-		color: #30abd5;
 		display: inline-block;
-		padding: 8px 10px;
+		color: #30abd5;
+		padding:
+		4px 10px;
+		font-size: 1em;
 		}
 		.subjectFont {
 		font-size: 13px;
@@ -113,17 +128,21 @@
 		color: #424242;
 		}
 		.innerDl {
-			position: relative;
-			left: 16px;
+		position: relative;
+		left: 16px;
 		}
 		.tiny-image-div {
-			width: 40px;
-			height: 40px;
-			overflow: hidden;
+		width: 40px;
+		height: 40px;
+		overflow: hidden;
 		}
 		.tiny-image {
-			height: 40px;
-			width: 40px;
+		height: 40px;
+		width: 40px;
+		}
+		.message {
+		width: 82%;
+		margin: 5%;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -132,19 +151,16 @@
 				<g:HTMLPanel>
 					<dl>
 						<dt>
-							<div>
+							<div class="{style.leftnavHeaderSpan}">
 								<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
-									<i class='fa fa-inbox'>&nbsp;INBOX</i>
+									<i class='fa fa-inbox'>&nbsp;Inbox
+									</i>
 									<span ui:field="unreadMessageCountSpan" />
 								</g:Anchor>
 							</div>
 							<dl class="{style.innerDl}">
-							   <!--  <dt>
-									<g:Anchor addStyleNames="{style.link}" ui:field="allMessagesLink">
-										All
-										<span ui:field="allMessageCountSpan" />
-									</g:Anchor>
-								</dt> -->
+								<!-- <dt> <g:Anchor addStyleNames="{style.link}" ui:field="allMessagesLink"> 
+									All <span ui:field="allMessageCountSpan" /> </g:Anchor> </dt> -->
 								<dt>
 									<g:Anchor addStyleNames="{style.link}" ui:field="receivedMessagesLink">
 										Received
@@ -159,20 +175,34 @@
 								</dt>
 							</dl>
 						</dt>
-						<dt>
+						<dt class="{style.leftnavHeaderSpan}">
 							<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">
-							    <i class="fa fa-cog">&nbsp;Settings</i> 
+								<i class="fa fa-cog">&nbsp;Settings
+								</i>
 							</g:Anchor>
 						</dt>
-						<dt>
-							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">PROFILE</g:Anchor>
+						<dt class="{style.leftnavHeaderSpan}">
+							<g:Anchor addStyleNames="{style.link}" ui:field="profileLink">
+								<i class="fa fa-user">&nbsp;Profile
+								</i>
+							</g:Anchor>
 						</dt>
 					</dl>
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="10">
-				<g:HTMLPanel ui:field="conversationPanel" addStyleNames="{style.conversationPanel}">
-				</g:HTMLPanel>
+			    <b:Row>
+					<b:Column offset="1" size="9">
+					    <b:Alert ui:field="message" close="false" />
+					</b:Column>
+				</b:Row>	    
+				<b:Row ui:field="conversationRow">
+					<b:Column size="11">
+						<g:HTMLPanel ui:field="conversationPanel"
+							addStyleNames="{style.conversationPanel}">
+						</g:HTMLPanel>
+					</b:Column>
+				</b:Row>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

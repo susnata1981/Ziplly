@@ -38,7 +38,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		setupHandlers();
 	}
 
-	private void setupHandlers() {
+	protected void setupHandlers() {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {

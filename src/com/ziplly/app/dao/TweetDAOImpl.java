@@ -189,11 +189,11 @@ public class TweetDAOImpl implements TweetDAO {
 			result.setStatus(tweet.getStatus());
 			em.merge(result);
 			em.getTransaction().commit();
-			em.close();
 			return EntityUtil.clone(result);
 		} catch (NoResultException nre) {
-			em.close();
 			throw nre;
+		} finally {
+			em.close();
 		}
 	}
 
@@ -341,6 +341,7 @@ public class TweetDAOImpl implements TweetDAO {
 				+ "where t.sender_id = a.account_id and a.neighborhood_id = :neighborhood_id group by t.type")
 				.setParameter("neighborhood_id", acct.getNeighborhood().getNeighborhoodId());
 
+		@SuppressWarnings("rawtypes")
 		List resultList = query.getResultList();
 		for(Object r : resultList) {
 			Object [] temp = (Object[]) r;

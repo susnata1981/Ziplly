@@ -69,13 +69,15 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	}
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets) {
+	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
 		if (tweets != null) {
 			tweetsSection.clear();
 			StyleHelper.show(message.getElement(), false);
 			
 			if (tweets.isEmpty()) {
-				displayNoTweetsMessage();
+				if (displayNoTweetsMessage) {
+					displayNoTweetsMessage();
+				}
 				return;
 			}
 			
@@ -83,6 +85,13 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		}
 	}
 
+	@Override
+	public void displayTweets(List<TweetDTO> tweets) {
+		if (tweets != null) {
+			displayTweets(tweets, true);
+		}
+	}
+	
 	private void displayNoTweetsMessage() {
 		message.setText(StringConstants.NO_TWEETS);
 		StyleHelper.show(message.getElement(), true);
@@ -94,18 +103,9 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	}
 
 	private void doDisplayTweets(List<TweetDTO> tweets) {
-
 		for (TweetDTO tweet : tweets) {
 			addTweet(tweet);
 		}
-
-		// // TODO
-		// Scheduler.get().scheduleDeferred(new Command(){
-		// @Override
-		// public void execute() {
-		// tweetsSection.add(tempPanel);
-		// }
-		// });
 	}
 
 	@Override

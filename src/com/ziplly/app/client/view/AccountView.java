@@ -14,7 +14,6 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -43,6 +42,7 @@ import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.InterestDTO;
@@ -123,6 +123,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tview.setWidth(tweetWidgetWidth);
 		initWidget(uiBinder.createAndBindUi(this));
+		tweetSection.add(tview);
 	}
 
 	public void onBrowseEvent(Event event) {
@@ -141,11 +142,9 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		this.account = account;
 		
 		// image section
-		if (account.getImageUrl() != null) {
-			profileImage.setUrl(account.getImageUrl()+"=s140");
-		}
-		
+		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
+		
 		name.setText(account.getDisplayName());
 
 		// about me section
@@ -162,8 +161,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		populateInterest();
 		
 		// display tweets
-		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
-//		displayTweets(account.getTweets());
+		StyleHelper.show(tweetBoxDiv.getElement(), true);
 	}
 
 	@Override
@@ -198,14 +196,17 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
-		tview.displayTweets(tweets);
-		tweetSection.add(tview);
+		displayTweets(tweets, true);
+	}
+
+	@Override
+	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
+		tview.displayTweets(tweets, displayNoTweetsMessage);
 	}
 
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
-//		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
@@ -231,16 +232,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		message.setVisible(true);
 	}
 	
-//	@UiHandler("settingsLink")
-//	void settingsLinkClicked(ClickEvent event) {
-//		presenter.settingsLinkClicked();
-//	}
-//	
-//	@UiHandler("messagesLink")
-//	void messagesLinkClicked(ClickEvent event) {
-//		presenter.messagesLinkClicked();
-//	}
-	
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -259,11 +250,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
 		if (ctx != null) {
-//			if (ctx.getUnreadMessageCount()>0) {
-//				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
-//			} else {
-//				unreadMessageCountField.setInnerHTML("");
-//			}
 			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
 			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
 			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());

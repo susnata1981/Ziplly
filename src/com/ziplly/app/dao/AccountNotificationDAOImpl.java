@@ -30,7 +30,7 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 		
 		Query query = em.createQuery("from AccountNotification where recipient.accountId = :recipientId and readStatus = :readStatus");
 		query.setParameter("recipientId", recipientId);
-		query.setParameter("readStatus", ReadStatus.UNREAD);
+		query.setParameter("readStatus", ReadStatus.UNREAD.name());
 		
 		@SuppressWarnings("unchecked")
 		List<AccountNotification> anList = query.getResultList();

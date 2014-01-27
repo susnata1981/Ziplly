@@ -1,15 +1,11 @@
 package com.ziplly.app.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,9 +53,11 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@Column(name = "image_id")
 	private long imageId;
 	
-	private TweetType type;
+	@Column(length = 512)
 	private String content;
 
+	private TweetType type;
+	
 	@OneToMany(mappedBy = "tweet")
 	@Fetch(FetchMode.JOIN)
 	@BatchSize(size = 10)

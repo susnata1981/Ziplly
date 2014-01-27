@@ -21,12 +21,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -36,9 +36,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -47,7 +49,7 @@ import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class SignupView extends Composite implements
+public class SignupView extends AbstractView implements
 		ISignupView<SignupActivityPresenter>, LoginAwareView {
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
@@ -103,9 +105,10 @@ public class SignupView extends Composite implements
 	Controls neighborhoodControl;
 	@UiField
 	HTMLPanel neighborhoodListPanel;
-	
 	@UiField
 	HelpInline neighborhoodError;
+	@UiField
+	Image neighborhoodLoadingImage;
 	
 	@UiField
 	PasswordTextBox password;
@@ -140,16 +143,18 @@ public class SignupView extends Composite implements
 	private boolean doValidation = true;
 	
 	@Inject
-	public SignupView() {
+	public SignupView(EventBus eventBus) {
+		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
+		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 		neighborhoodControl.setVisible(false);
 		
-		for(Gender g : Gender.values()) {
-			genderListBox.addItem(g.name());
+		for(Gender g : Gender.getValuesForSignup()) {
+			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
 	}
 
@@ -544,5 +549,14 @@ public class SignupView extends Composite implements
 		});
 		selectedNeighborhood = null;
 		widget.show(true);
+	}
+	
+	public void displayNeighborhoodListLoading(boolean display) {
+		if (display) {
+			neighborhoodLoadingImage.setUrl(StringConstants.SMALL_IMAGE_LOADER);
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
+		} else {
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		}
 	}
 }

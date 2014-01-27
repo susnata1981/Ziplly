@@ -1,27 +1,26 @@
 package com.ziplly.app.client.activities;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.ConversationType;
-import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetConversationsAction;
@@ -62,7 +61,8 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		checkLoginStatus();
 	}
 
-	private void setupHandlers() {
+	protected void setupHandlers() {
+		super.setupHandlers();
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
@@ -192,11 +192,17 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 			}
 			view.displayConversations(result.getConversations());
 		}
+		
+		@Override
+		public void onFailure(Throwable th) {
+			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+		}
 	};
 	
 	private class SingleConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
 		@Override
 		public void onSuccess(GetConversationsResult result) {
+			view.clear();
 			if (result.getConversations().size() == 1) {
 				view.displayConversation(result.getConversations().get(0));
 			}
@@ -204,7 +210,14 @@ public class ConversationActvity extends AbstractActivity implements Conversatio
 		
 		@Override
 		public void onFailure(Throwable th) {
-			Window.alert(th.getMessage());
+			view.clear();
+			if (th instanceof AccessError) {
+				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+			} else if (th instanceof NotFoundException){
+				view.displayMessage(StringConstants.NO_RESULT_FOUND, AlertType.ERROR);
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			}
 		}
 	};
 }

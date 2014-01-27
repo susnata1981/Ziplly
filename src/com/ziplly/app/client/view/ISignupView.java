@@ -21,4 +21,5 @@ public interface ISignupView<T extends SignupActivityPresenter> extends View<T> 
 	void resetLoginForm();
 	void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods);
 	void displayNotYetLaunchedWidget();
+	void displayNeighborhoodListLoading(boolean b);
 }

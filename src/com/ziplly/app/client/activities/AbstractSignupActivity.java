@@ -38,7 +38,7 @@ import com.ziplly.app.shared.ValidateLoginResult;
 
 public abstract class AbstractSignupActivity extends AbstractActivity implements SignupActivityPresenter {
 	ISignupView<SignupActivityPresenter> view;
-	Logger logger = Logger.getLogger("AbstractSignupActivity");
+	Logger logger = Logger.getLogger(AbstractSignupActivity.class.getName());
 	ValidateLoginHandler validateLoginHandler = new ValidateLoginHandler();
 	RegisterAccountHandler registerAccountHandler = new RegisterAccountHandler();
 	
@@ -48,6 +48,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			ISignupView<SignupActivityPresenter> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
+		setupHandlers();
 	}
 
 	@Override
@@ -58,6 +59,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 	@Override
 	public void register(AccountDTO account) {
+		showLodingIcon();
 		dispatcher.execute(new RegisterAccountAction(account),
 				registerAccountHandler);
 	}
@@ -100,6 +102,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 	@Override
 	public void getNeighborhoodData(String postalCode) {
+		view.displayNeighborhoodListLoading(true);
 		dispatcher.execute(new GetNeighborhoodAction(postalCode), 
 				new NeighborhoodHandler());
 	}
@@ -184,19 +187,20 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
-			System.out.println("Account " + result.getAccount()
-					+ " registered.");
 			eventBus.fireEvent(new LoginEvent(result.getAccount()));
 			view.clear();
 			forward(result.getAccount());
+			hideLoadingIcon();
 		}
 		
 		public void onFailure(Throwable th) {
+			hideLoadingIcon();
 			if (th instanceof AccountExistsException) {
 				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
 				return;
 			}
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			
 		}
 	}
 	
@@ -232,6 +236,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 				view.displayNotYetLaunchedWidget();
 				view.displayMessage(StringConstants.NOT_AVAILABLE_IN_AREA, AlertType.ERROR);
 			}
+			view.displayNeighborhoodListLoading(false);
 		}
 	}
 }

@@ -46,7 +46,6 @@ import com.ziplly.app.client.widget.EditAccount;
 import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.LogoutWidget;
-import com.ziplly.app.client.widget.dataprovider.BasicAccountDataProvider;
 
 public class ZClientModule extends AbstractGinModule {
 
@@ -56,7 +55,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
-		bind(BasicAccountDataProvider.class);
+//		bind(BasicAccountDataProvider.class);
 		
 		// main presenter
 		bind(MainController.class).in(Singleton.class);

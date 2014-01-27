@@ -11,7 +11,7 @@ import com.ziplly.app.model.TweetDTO;
 @RemoteServiceRelativePath("zipllyservice")
 public interface ZipllyService extends RemoteService {
 	/* OAuth 2*/
-//	AccountDetails getAccessToken(String code) throws Exception;
+	//	AccountDetails getAccessToken(String code) throws Exception;
 	
 	/* Account */
 	AccountDTO getLoggedInUser();

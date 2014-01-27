@@ -67,7 +67,9 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		setupHandlers();
 	}
 
-	private void setupHandlers() {
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
@@ -104,7 +106,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 					@Override
 					public void onSuccess(ViewNotificationResult result) {
-						//
+						view.displayAccountNotifications(result.getAccountNotifications());
 					}
 				});
 	}

@@ -73,8 +73,7 @@
 		auto;
 		padding: 2px;
 		font-size: 12px;
-		font-style:
-		helvetica;
+		font-family: helvetica;
 		}
 		.residentSignupLink {
 		font-size: 12px;
@@ -116,24 +115,6 @@
 		padding: 4px;
 		}
 	</ui:style>
-	<!-- <g:HTMLPanel> <div id="mainHeading"> <h1> <span class="bigtext">Ziplly</span> 
-		<br /> connecting <br /> local community &amp; businesses </h1> </div> <div 
-		class="{mainViewStyle.mainContent}"> <div class="{mainViewStyle.mainPageSingupForm}"> 
-		<b:Alert ui:field="message" /> <b:WellForm> <b:ControlGroup ui:field="emailCg"> 
-		<b:Controls> <b:TextBox ui:field="email" placeholder="email..." /> <b:HelpInline 
-		ui:field="emailError"></b:HelpInline> </b:Controls> </b:ControlGroup> <b:ControlGroup 
-		ui:field="passwordCg"> <b:Controls> <b:PasswordTextBox ui:field="password" 
-		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:Button type="SUCCESS" ui:field="loginBtn">SignIn</b:Button> 
-		<b:Button type="WARNING" ui:field="fbLoginButtonOnMainPage">Facebook Login</b:Button> 
-		<g:HTMLPanel ui:field="residentSignupPanel" addStyleNames="{mainViewStyle.residentSignupDiv}"> 
-		<span>Not already a member, &nbsp; <g:Anchor ui:field="residentSignupLink" 
-		styleName="{mainViewStyle.residentSignupLink}">Resident Signup</g:Anchor> 
-		here </span> </g:HTMLPanel> </b:WellForm> </div> <div class="{mainViewStyle.mainPageBusinessSingupForm}"> 
-		<b:WellForm> <b:ControlLabel>Business Signup</b:ControlLabel> <b:Button type="SUCCESS" 
-		ui:field="businessSignupBtn">Signup</b:Button> </b:WellForm> </div> <g:HTMLPanel 
-		ui:field="descriptionPanel" addStyleNames="{mainViewStyle.descriptionPanel}"> 
-		</g:HTMLPanel> </div> </g:HTMLPanel> -->
 	<b:FluidContainer addStyleNames="{mainViewStyle.mainViewPanel}">
 		<b:FluidRow>
 			<b:Column offset="2" size="4" addStyleNames="{mainViewStyle.mainHeading}">
@@ -148,7 +129,7 @@
 			<b:Column size="6">
 				<b:WellForm addStyleNames="{mainViewStyle.form}">
 					<b:FluidRow>
-						<b:Column size="6">
+						<b:Column size="11">
 							<b:Alert ui:field="message" />
 							<b:ControlGroup ui:field="emailCg">
 								<b:Controls>

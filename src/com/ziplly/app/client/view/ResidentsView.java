@@ -5,25 +5,30 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ListBox;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.PersonalAccountCell;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetEntityListAction;
 
-public class ResidentsView extends Composite implements View<ResidentsView.EntityListViewPresenter>{
+public class ResidentsView extends AbstractView implements View<ResidentsView.EntityListViewPresenter>{
 	private static final int PAGE_SIZE = 10;
 
 	public interface EntityListViewPresenter extends Presenter {
@@ -51,20 +56,30 @@ public class ResidentsView extends Composite implements View<ResidentsView.Entit
 	Button resetBtn;
 	
 	@UiField
+	Alert status;
+	
+	@UiField
 	Alert message;
 	
 	private EntityListViewPresenter presenter;
+	private SendMessageWidget smw;
 	private ResidentViewState state = new ResidentViewState(EntityType.PERSONAL_ACCOUNT, PAGE_SIZE);
 	
-	public ResidentsView() {
+	@Inject
+	public ResidentsView(EventBus eventBus) {
+		super(eventBus);
 		residentList = new CellList<PersonalAccountDTO>(new PersonalAccountCell());
 		residentList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
 		pager.setDisplay(residentList);
 		initWidget(uiBinder.createAndBindUi(this));
+		message.setAnimation(true);
+		message.setClose(false);
+		StyleHelper.show(status.getElement(), false);
+		status.setClose(false);
 		setupHandlers();
 		
-		for(Gender g : Gender.getAllValues()) {
+		for(Gender g : Gender.getValuesForSearch()) {
 			genderListBox.addItem(g.name().toLowerCase());
 		}
 		
@@ -82,12 +97,17 @@ public class ResidentsView extends Composite implements View<ResidentsView.Entit
 	}
 
 	public void display(List<PersonalAccountDTO> input) {
-		enableButtonIfRequired();
-		StyleHelper.show(message.getElement(), false);
+		resetUiElements();
 		if (input.size() == 0) {
 			displayNoResult();
 		}
 		residentList.setRowData(state.getStart(), input);
+	}
+
+	private void resetUiElements() {
+		enableButtonIfRequired();
+		StyleHelper.show(message.getElement(), false);
+		StyleHelper.show(status.getElement(), false);
 	}
 
 	private void enableButtonIfRequired() {
@@ -102,9 +122,8 @@ public class ResidentsView extends Composite implements View<ResidentsView.Entit
 
 	private void displayNoResult() {
 		residentList.setRowCount(0);
-		message.setAnimation(true);
-		message.setClose(false);
 		message.setText(StringConstants.NO_RESULT_FOUND);
+		message.setType(AlertType.WARNING);
 		StyleHelper.show(message.getElement(), true);
 	}
 
@@ -140,5 +159,26 @@ public class ResidentsView extends Composite implements View<ResidentsView.Entit
 	@Override
 	public void clear() {
 		genderListBox.setSelectedIndex(Gender.ALL.ordinal());
+		resetUiElements();
+	}
+
+	public void displaySendMessageWidget(Long receiverAccountId) {
+		AccountDTO receiver = new AccountDTO();
+		receiver.setAccountId(receiverAccountId);
+		smw = new SendMessageWidget(receiver);
+		smw.setPresenter((SendMessagePresenter) presenter);
+		smw.show();
+	}
+
+	public void updateMessageWidget(AccountDTO account) {
+		if (smw != null) {
+			smw.updateAccountInformation(account);
+		}
+	}
+
+	public void displayMessage(String msg, AlertType type) {
+		status.setText(msg);
+		status.setType(type);
+		StyleHelper.show(status.getElement(), true);
 	}
 }
