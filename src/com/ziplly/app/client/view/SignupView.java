@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
@@ -14,6 +15,7 @@ import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -135,6 +137,9 @@ public class SignupView extends AbstractView implements
 	@UiField
 	Image profileImagePreview;
 	
+	@UiField
+	Container loginWidgetContainer;
+	
 	boolean imageUploaded = false;
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
@@ -156,6 +161,8 @@ public class SignupView extends AbstractView implements
 		for(Gender g : Gender.getValuesForSignup()) {
 			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
+		
+		loginWidgetContainer.setShowOn(Device.DESKTOP);
 	}
 
 	private void setupHandlers() {
@@ -466,11 +473,6 @@ public class SignupView extends AbstractView implements
 		neighborhoodControl.setVisible(false);
 		facebookRegistration = true;
 	}
-
-//	@UiHandler("uploadBtn")
-//	void upload(ClickEvent event) {
-//		uploadForm.submit();
-//	}
 
 	@Override
 	public void displayLoginErrorMessage(String msg, AlertType type) {

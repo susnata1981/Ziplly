@@ -10,8 +10,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
-import com.ziplly.app.client.Fragment;
-import com.ziplly.app.client.SendMessageFragment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.LoginPlace;

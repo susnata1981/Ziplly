@@ -9,11 +9,11 @@ public class HomePlace extends Place {
 	private String filter;
 	
 	public HomePlace() {
-		setFilter(TweetType.ALL.name());
+		setFilter(TweetType.ALL.name().toLowerCase());
 	}
 	
 	public HomePlace(TweetType type) {
-		setFilter(type.name());
+		setFilter(type.name().toLowerCase());
 	}
 	
 	public HomePlace(Long tweetId) {

@@ -29,7 +29,6 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
 		bind();
-		// view.hideProfileImagePreview();
 		view.reset();
 		setImageUploadUrl();
 		setUploadImageHandler();
@@ -57,20 +56,21 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	}
 
 	@Override
-	public void fetchData() {
-	}
-
-	@Override
 	public void go(AcceptsOneWidget container) {
 		container.setWidget(view);
 	}
 
 	@Override
-	public void onFacebookLogin() {
+	public void onStop() {
+		view.clear();
 	}
 
 	@Override
-	public void onStop() {
-		view.clear();
+	public void onFacebookLogin() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void fetchData() {
 	}
 }

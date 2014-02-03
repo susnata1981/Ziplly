@@ -4,15 +4,18 @@ import java.io.UnsupportedEncodingException;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
@@ -28,6 +31,7 @@ import com.ziplly.app.client.oauth.OAuthProvider;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.PasswordRecoveryPlace;
 import com.ziplly.app.client.places.SignupPlace;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -54,6 +58,12 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		setWidth("90%");
 	}
 
+	@UiFactory
+	ZResources resources() {
+		ZResources.IMPL.style().ensureInjected();
+		return ZResources.IMPL;
+	}
+	
 	public void setWidth(String width) {
 		loginWidgetPanel.setWidth(width);
 	}
@@ -90,7 +100,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	HelpInline passwordError;
 
 	@UiField
-	Button fbLoginBtn;
+	com.google.gwt.user.client.ui.Button fbLoginBtn;
 
 	@UiField
 	Button loginBtn;
@@ -110,7 +120,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	Anchor passwordRecoveryLink;
-
+	
 	private LoginPresenter presenter;
 
 	@UiHandler("fbLoginBtn")
@@ -120,6 +130,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		fbLoginBtn.setEnabled(false);
 	}
 
 	boolean validateInput() {
@@ -156,12 +167,15 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
 		String passwordInput = FieldVerifier.getEscapedText(password.getText());
 		presenter.onLogin(emailInput, passwordInput);
+		loginBtn.setEnabled(false);
 	}
 
 	@Override
 	public void clear() {
 		resetLoginForm();
 		resetMessage();
+		loginBtn.setEnabled(true);
+		fbLoginBtn.setEnabled(true);
 	}
 
 	@Override
@@ -175,6 +189,8 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public void resetLoginForm() {
 		email.setText("");
 		password.setText("");	
+		loginBtn.setEnabled(true);
+		fbLoginBtn.setEnabled(true);
 	}
 
 	@Override

@@ -298,6 +298,7 @@ public class AccountBLIImpl implements AccountBLI {
 			as.setSection(adt);
 			as.setSetting(ShareSetting.PUBLIC);
 			as.setAccount(account);
+			as.setTimeCreated(new Date());
 			account.addPrivacySettings(as);
 		}
 	}
@@ -559,9 +560,7 @@ public class AccountBLIImpl implements AccountBLI {
 	public void updatePassword(Account account, String oldPassword, String newPassword)
 			throws InvalidCredentialsException, NotFoundException {
 
-		if (oldPassword == null || newPassword == null || account == null) {
-			throw new IllegalArgumentException();
-		}
+		Preconditions.checkArgument(oldPassword != null && newPassword != null && account != null);
 
 		try {
 			doValidateLogin(account.getEmail(), oldPassword);
@@ -569,11 +568,10 @@ public class AccountBLIImpl implements AccountBLI {
 			throw e;
 		} catch (NotFoundException e) {
 			// shouldn't get in here
-			e.printStackTrace();
 			throw e;
 		}
 		account.setPassword(newPassword);
-		accountDao.update(account);
+		accountDao.updatePassword(account);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public class GetConversationActionHandler extends AbstractAccountActionHandler<G
 			try {
 				ConversationDTO conversation = conversationDao.findConversationById(action.getConversationId());
 				long accountId = session.getAccount().getAccountId();
-				if (conversation.getSender().getAccountId() != accountId || conversation.getReceiver().getAccountId() != accountId) {
+				if (conversation.getSender().getAccountId() != accountId && conversation.getReceiver().getAccountId() != accountId) {
 					throw new AccessError();
 				}
 				conversations.add(conversation);

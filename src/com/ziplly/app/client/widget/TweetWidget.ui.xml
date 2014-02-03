@@ -1,38 +1,31 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-	xmlns:dt="urn:import:com.ziplly.app.client.widget" 
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style" src="tweetwidget.css">
-	.dropdown-menu2 ul {
+	<ui:style type="com.ziplly.app.client.widget.TweetWidget.Style"
+		src="tweetwidget.css">
+		.dropdown-menu2 ul {
 		position: absolute !important;
 		left: -130px !important;
-		width: 80px !important;
+		width: 80px
+		!important;
 		z-index: 1000px;
-	}
-	.spannocaret {
-		display: none !important;
-	}
+		}
+		.spannocaret {
+			display: none !important;
+		}
 	</ui:style>
-<!-- 	<ui:with type="com.ziplly.app.client.resource.ZResources" field="resources"/> -->
-	
+	<!-- <ui:with type="com.ziplly.app.client.resource.ZResources" field="resources"/> -->
+
 	<g:HTMLPanel ui:field="tweetPanel" addStyleNames="{style.tweetPanel}">
 		<div class='{style.tweet_block}'>
 			<div class='{style.tweet_image}'>
 				<b:Image ui:field="authorImage" />
 			</div>
-			<g:HTMLPanel ui:field="tweetImagePanel" addStyleNames="{style.tweetImagePanel}">
-				<b:Image ui:field="tweetImage" addStyleNames="{style.tweetImage}"/>
-			</g:HTMLPanel>
-			<div class='{style.tweet_content_section}'>
-				<div class="{style.tweetActionDropdown}">
-					<b:Dropdown addStyleNames="{style.dropdown-menu2}" icon="ASTERISK">
-						<b:NavLink ui:field="editTweetLink" icon="EDIT">
-						Edit</b:NavLink>
-						<b:NavLink ui:field="deleteTweetLink" icon="REMOVE_SIGN">Delete</b:NavLink>
-						<b:NavLink ui:field="reportSpamLink" icon="FLAG">Report Spam</b:NavLink>
-					</b:Dropdown>
-				</div>
+			<div>
+				<g:HTMLPanel ui:field="tweetImagePanel" addStyleNames="{style.tweetImagePanel}">
+					<b:Image ui:field="tweetImage" addStyleNames="{style.tweetImage}" />
+				</g:HTMLPanel>
 				<div class="{style.tweet_content}">
 					<span class='{style.tweet_text}' ui:field="tweetContentSpan" />
 					<b:TextArea ui:field="tweetContentTextArea"
@@ -42,17 +35,33 @@
 						<b:Button size="SMALL" ui:field="cancelBtn">cancel</b:Button>
 					</g:HTMLPanel>
 				</div>
+			</div>
+			<div class='{style.tweet_content_section}'>
+				<div class="{style.tweetActionDropdown}">
+					<b:Dropdown addStyleNames="{style.dropdown-menu2}" icon="ASTERISK">
+						<b:NavLink ui:field="editTweetLink" icon="EDIT">
+							Edit</b:NavLink>
+						<b:NavLink ui:field="deleteTweetLink" icon="REMOVE_SIGN">Delete</b:NavLink>
+						<b:NavLink ui:field="reportSpamLink" icon="FLAG">Report Spam</b:NavLink>
+					</b:Dropdown>
+				</div>
+				<!-- <div class="{style.tweet_content}"> <span class='{style.tweet_text}' 
+					ui:field="tweetContentSpan" /> <b:TextArea ui:field="tweetContentTextArea" 
+					addStyleNames="{style.tweetContentTextArea}" /> <g:HTMLPanel ui:field="tweetEditButtonPanel"> 
+					<b:Button type="PRIMARY" size="SMALL" ui:field="saveBtn">save</b:Button> 
+					<b:Button size="SMALL" ui:field="cancelBtn">cancel</b:Button> </g:HTMLPanel> 
+					</div> -->
 				<div class='tweet_actions'>
 					<div>
 						<div class='{style.tweet_action_link}'>
-<!-- 							<g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor> -->
-							<dt:ZAnchor ui:field="likeAnchor" icon="THUMBS_UP"/>
+							<!-- <g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor> -->
+							<dt:ZAnchor ui:field="likeAnchor" icon="THUMBS_UP" />
 						</div>
 						<div class='{style.tweet_action_link}'>
-							<dt:ZAnchor ui:field="replyAnchor" icon="REPLY"/>
+							<dt:ZAnchor ui:field="replyAnchor" icon="REPLY" />
 						</div>
 						<div class='{style.tweet_action_link}'>
-						    <dt:ZAnchor ui:field="commentLink" icon="COMMENTS"/>
+							<dt:ZAnchor ui:field="commentLink" icon="COMMENTS" />
 							<!-- <g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor> -->
 						</div>
 						<div class='{style.tweet_sender_link}'>
@@ -67,19 +76,26 @@
 				</div>
 			</div>
 		</div>
-		<g:HTMLPanel addStyleNames="{style.people_liked_section}" ui:field="tweetLikePanel">
+		<g:HTMLPanel addStyleNames="{style.people_liked_section}"
+			ui:field="tweetLikePanel">
 		</g:HTMLPanel>
 		<div class="{style.commentSectionDiv}">
-			<g:HTMLPanel addStyleNames="{style.tweetCommentSection}" ui:field="tweetCommentSection">
+			<g:HTMLPanel addStyleNames="{style.tweetCommentSection}"
+				ui:field="tweetCommentSection">
 			</g:HTMLPanel>
 			<div>
-				<b:ControlGroup ui:field="commentInputTextBoxCg" addStyleNames="{style.commentInputTextBoxCg}">
-					<b:TextArea ui:field="commentInputTextBox" addStyleNames="{style.commentInputTextBox}" />
+				<b:ControlGroup ui:field="commentInputTextBoxCg"
+					addStyleNames="{style.commentInputTextBoxCg}">
+					<b:TextArea ui:field="commentInputTextBox"
+						addStyleNames="{style.commentInputTextBox}" />
 					<b:HelpInline ui:field="commentInputHelpInline"></b:HelpInline>
 				</b:ControlGroup>
-				<g:HTMLPanel ui:field="commentInputActionSection" addStyleNames="{style.commentInputActionSection}">
-					<b:Button type="PRIMARY" addStyleNames="{style.btn}" size="SMALL" ui:field="commentBtn">comment</b:Button>
-					<b:Button size="SMALL" addStyleNames="{style.btn}" ui:field="cancelCommentBtn">cancel</b:Button>
+				<g:HTMLPanel ui:field="commentInputActionSection"
+					addStyleNames="{style.commentInputActionSection}">
+					<b:Button type="PRIMARY" addStyleNames="{style.btn}" size="SMALL"
+						ui:field="commentBtn">comment</b:Button>
+					<b:Button size="SMALL" addStyleNames="{style.btn}"
+						ui:field="cancelCommentBtn">cancel</b:Button>
 				</g:HTMLPanel>
 			</div>
 		</div>

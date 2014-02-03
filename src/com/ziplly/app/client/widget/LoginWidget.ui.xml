@@ -1,12 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="zresources" />
 	<ui:style>
 		.loginSection {
 		width: 320px;
 		margin: auto;
 		padding: 5px;
-		border: 1px solid #ddd;
 		}
 		.button
 		{
@@ -56,8 +57,8 @@
 			</b:ControlGroup>
 			<b:Button type="SUCCESS" addStyleNames="{style.button}"
 				ui:field="loginBtn">SignIn</b:Button>
-			<b:Button type="WARNING" addStyleNames="{style.button}"
-				ui:field="fbLoginBtn">Facebook Login</b:Button>
+			<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"
+				ui:field="fbLoginBtn"></g:Button>
 			<g:HTMLPanel addStyleNames="{style.residentSignupDiv}">
 				<g:HTMLPanel ui:field="residentSignupPanel">
 					<span>Not

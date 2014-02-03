@@ -24,9 +24,12 @@ import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountNotificationDTO;
@@ -53,6 +56,12 @@ public class NavView extends Composite implements INavView {
 	Formatter<AccountNotificationDTO> formatter = (Formatter<AccountNotificationDTO>) AbstractValueFormatterFactory
 			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION);
 
+	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) 
+			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	
+	AccountFormatter accountFormatter = (AccountFormatter) 
+			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	
 	@UiField
 	Style style;
 
@@ -109,7 +118,7 @@ public class NavView extends Composite implements INavView {
 
 	@UiHandler("accountLink")
 	void accountDetails(ClickEvent event) {
-		presenter.goTo(new LoginPlace());
+		presenter.goTo(new PersonalAccountPlace());
 	}
 
 	@UiHandler("homeLink")
@@ -185,6 +194,7 @@ public class NavView extends Composite implements INavView {
 		anchor.setStyleName(style.notificationLink());
 		notifications.add(anchor);
 		ValueType valueType = ValueType.valueOf(an.getType().name());
+		String imageUrl = accountFormatter.format(an.getSender(), ValueType.TINY_IMAGE_VALUE);
 		anchor.getElement().setInnerHTML(formatter.format(an, valueType));
 		ClickHandler handler = new ClickHandler() {
 			@Override

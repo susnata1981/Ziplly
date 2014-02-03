@@ -39,7 +39,6 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 		
 		if (button.isOrHasChild(Element.as(target))) {
 			redirectUrl = redirectUrl + "#residents:" + StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
-//			Window.alert("Button clicked: "+redirectUrl);
 		} else {
 			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
 		}

@@ -1,5 +1,6 @@
 package com.ziplly.app.client.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -19,6 +20,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.PersonalAccountCell;
@@ -64,6 +66,7 @@ public class ResidentsView extends AbstractView implements View<ResidentsView.En
 	private EntityListViewPresenter presenter;
 	private SendMessageWidget smw;
 	private ResidentViewState state = new ResidentViewState(EntityType.PERSONAL_ACCOUNT, PAGE_SIZE);
+	private List<Gender> genderList = new ArrayList<Gender>();
 	
 	@Inject
 	public ResidentsView(EventBus eventBus) {
@@ -80,7 +83,8 @@ public class ResidentsView extends AbstractView implements View<ResidentsView.En
 		setupHandlers();
 		
 		for(Gender g : Gender.getValuesForSearch()) {
-			genderListBox.addItem(g.name().toLowerCase());
+			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));//g.name().toLowerCase());
+			genderList.add(g);
 		}
 		
 		genderListBox.setSelectedIndex(state.getGender().ordinal());
@@ -134,7 +138,7 @@ public class ResidentsView extends AbstractView implements View<ResidentsView.En
 	@UiHandler("searchBtn")
 	void search(ClickEvent event) {
 		searchBtn.setEnabled(false);
-		Gender gender = Gender.values()[genderListBox.getSelectedIndex()];
+		Gender gender = genderList.get(genderListBox.getSelectedIndex());
 		state.searchByGender(gender);
 		presenter.getPersonalAccountList(state.getCurrentEntityListAction());
 	}

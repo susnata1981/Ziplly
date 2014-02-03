@@ -7,6 +7,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,8 +20,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.BusinessAccountCell;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -30,7 +34,7 @@ import com.ziplly.app.shared.ValidationResult;
 public class BusinessView extends Composite implements View<BusinessView.EntityListViewPresenter> {
 
 	private static final int PAGE_SIZE = 3;
-
+	private SendMessageWidget smw;
 	private static BusinessViewUiBinder uiBinder = GWT.create(BusinessViewUiBinder.class);
 
 	public interface EntityListViewPresenter extends Presenter {
@@ -170,5 +174,25 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 	private void clearErrors() {
 		zipCg.setType(ControlGroupType.NONE);
 		zipError.setText("");
+	}
+
+	public void displaySendMessageWidget(Long accountId) {
+		AccountDTO receiver = new AccountDTO();
+		receiver.setAccountId(accountId);
+		smw = new SendMessageWidget(receiver);
+		smw.setPresenter((SendMessagePresenter) presenter);
+		smw.show();
+	}
+
+	public void updateMessageWidget(AccountDTO account) {
+		if (smw != null) {
+			smw.updateAccountInformation(account);
+		}
+	}
+	
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		StyleHelper.show(message.getElement(), true);
 	}
 }

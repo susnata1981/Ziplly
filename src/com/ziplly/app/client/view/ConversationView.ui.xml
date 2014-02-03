@@ -106,7 +106,7 @@
 		}
 		.conversationPanel {
 		float: left;
-		width: 80%;
+		width: 90%;
 		border:
 		1px solid #ddd;
 		}
@@ -141,8 +141,8 @@
 		width: 40px;
 		}
 		.message {
-		width: 82%;
-		margin: 5%;
+			width: 80%;
+			margin: 10px auto;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -192,12 +192,12 @@
 			</b:Column>
 			<b:Column size="10">
 			    <b:Row>
-					<b:Column offset="1" size="9">
-					    <b:Alert ui:field="message" close="false" />
+					<b:Column offset="1" size="8">
+					    <b:Alert ui:field="message" close="false" addStyleNames="{style.message}"/>
 					</b:Column>
 				</b:Row>	    
 				<b:Row ui:field="conversationRow">
-					<b:Column size="11">
+					<b:Column offset="1" size="9">
 						<g:HTMLPanel ui:field="conversationPanel"
 							addStyleNames="{style.conversationPanel}">
 						</g:HTMLPanel>

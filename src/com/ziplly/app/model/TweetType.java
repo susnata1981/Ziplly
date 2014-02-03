@@ -18,7 +18,7 @@ public enum TweetType {
 	private boolean canBusinessPublish;
 	
 	TweetType(String name, NotificationType type, boolean canUsersPublish, boolean canBusinessPublish) {
-		this.setTweetName(name);
+		this.tweetName = name;
 		this.setNotificationType(type);
 		this.setCanUsersPublish(canUsersPublish);
 		this.setCanBusinessPublish(canBusinessPublish);
@@ -46,10 +46,6 @@ public enum TweetType {
 
 	public String getTweetName() {
 		return tweetName;
-	}
-
-	public void setTweetName(String tweetName) {
-		this.tweetName = tweetName;
 	}
 
 	public NotificationType getNotificationType() {

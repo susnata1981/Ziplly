@@ -5,23 +5,20 @@
 	<ui:style>
 		.singupForm {
 		float: left;
-		width: 38%;
+		min-width: 340px;
+		max-width: 360px;
 		padding: 8px;
-		margin: 2%
-		5%;
+		margin-left: 20px;
 		background: #f1f1f1;
 		}
 		.loginForm {
+		position: absolute;
+		top: 37%;
+		right: 26px;
 		float: right;
-		margin: 20% 5%;
-		width: 28%;
+		width: 360px;
 		background: #fff;
-		border: 1px solid #ddd;
 		}
-		.loginWidget {
-		margin: 2% auto;
-		}
-
 		input[type="text"],input[type="password"] {
 		height:
 		32px !important;
@@ -69,6 +66,10 @@
 		width: 45%;
 		margin-right: 3%;
 		}
+		.genderPanel {
+		display: block;
+		float: left;
+		}
 		.textBox {
 		width:
 		94%;
@@ -82,91 +83,89 @@
 		field="resources" />
 
 	<g:HTMLPanel>
-		<div id="mainContent">
-			<b:Alert ui:field="infoField" animation="true" />
-			<div class="{style.singupForm}">
-				<div class="heading">Signup</div>
-				<b:Form>
-					<g:HTMLPanel addStyleNames="{style.namePanel}">
-						<b:ControlGroup ui:field="firstnameCg"
-							addStyleNames="{style.nameField}">
-							<b:Controls>
-								<b:Label>Firstname</b:Label>
-								<br />
-								<b:TextBox ui:field="firstname" placeholder="firstname..."
-									addStyleNames="{style.textBox}" />
-								<b:HelpInline ui:field="firstnameError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="lastnameCg"
-							addStyleNames="{style.nameField}">
-							<b:Controls>
-								<b:Label>Lastname</b:Label>
-								<br />
-								<b:TextBox ui:field="lastname" placeholder="lastname..."
-									addStyleNames="{style.textBox}" />
-								<b:HelpInline ui:field="lastnameError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-					</g:HTMLPanel>
-					<b:ControlGroup ui:field="emailCg" addStyleNames="{style.emailField}">
+		<b:Alert ui:field="infoField" animation="true" />
+		<div class="{style.singupForm}">
+			<div class="heading">Signup</div>
+			<b:Form>
+				<g:HTMLPanel addStyleNames="{style.namePanel}">
+					<b:ControlGroup ui:field="firstnameCg"
+						addStyleNames="{style.nameField}">
 						<b:Controls>
-							<b:Label>Email</b:Label>
+							<b:Label>Firstname</b:Label>
 							<br />
-							<b:TextBox ui:field="email" placeholder="email..." />
-							<b:HelpInline ui:field="emailError"></b:HelpInline>
+							<b:TextBox ui:field="firstname" placeholder="firstname..."
+								addStyleNames="{style.textBox}" />
+							<b:HelpInline ui:field="firstnameError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<b:ControlGroup ui:field="lastnameCg" addStyleNames="{style.nameField}">
+						<b:Controls>
+							<b:Label>Lastname</b:Label>
+							<br />
+							<b:TextBox ui:field="lastname" placeholder="lastname..."
+								addStyleNames="{style.textBox}" />
+							<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+				</g:HTMLPanel>
+				<b:ControlGroup ui:field="emailCg" addStyleNames="{style.emailField}">
+					<b:Controls>
+						<b:Label>Email</b:Label>
+						<br />
+						<b:TextBox ui:field="email" placeholder="email..." />
+						<b:HelpInline ui:field="emailError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<g:HTMLPanel addStyleNames="{style.genderPanel}">
+					<b:Label>Gender</b:Label>
+					<br />
+					<b:ListBox ui:field="genderListBox">
+					</b:ListBox>
+				</g:HTMLPanel>
+				<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
 					<g:HTMLPanel>
-						<b:ListBox ui:field="genderListBox">
-						</b:ListBox>
+						<div class="{style.profileImagePreviewDiv}">
+							<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+						</div>
+						<g:FileUpload ui:field="uploadField" name="image"
+							addStyleNames="{style.chooseFileUploadButton}" />
+						<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
 					</g:HTMLPanel>
-					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
-						<g:HTMLPanel>
-							<div class="{style.profileImagePreviewDiv}">
-								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
-							</div>
-							<g:FileUpload ui:field="uploadField" name="image"
-								addStyleNames="{style.chooseFileUploadButton}" />
-							<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
+				</g:FormPanel>
+				<b:ControlGroup ui:field="zipCg">
+					<b:Controls>
+						<b:Label>Zip</b:Label>
+						<br />
+						<b:TextBox ui:field="zip" placeholder="zip..." />
+						<b:HelpInline ui:field="zipError"></b:HelpInline>
+						<b:Image ui:field="neighborhoodLoadingImage" />
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="neighborhoodCg">
+					<b:Controls ui:field="neighborhoodControl">
+						<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+						<g:HTMLPanel ui:field="neighborhoodListPanel">
 						</g:HTMLPanel>
-					</g:FormPanel>
-					<b:ControlGroup ui:field="zipCg">
-						<b:Controls>
-							<b:Label>Zip</b:Label>
-							<br />
-							<b:TextBox ui:field="zip" placeholder="zip..." />
-							<b:HelpInline ui:field="zipError"></b:HelpInline>
-							<b:Image ui:field="neighborhoodLoadingImage" />
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="neighborhoodCg">
-						<b:Controls ui:field="neighborhoodControl">
-							<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
-							<g:HTMLPanel ui:field="neighborhoodListPanel">
-							</g:HTMLPanel>
-							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
-							<b:HelpBlock>Pick your neighborhood to learn about whats
-								going on
-								in there</b:HelpBlock>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="passwordCg">
-						<b:Controls>
-							<b:Label>Password</b:Label>
-							<br />
-							<b:PasswordTextBox ui:field="password"
-								placeholder="password..." />
-							<b:HelpInline ui:field="passwordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
-				</b:Form>
-			</div>
-			<div class="{style.loginForm}">
-				<dt:LoginWidget ui:field="loginWidget" width="90%"
-					residentAccountSignupLink="false" addStyleNames="{style.loginWidget}" />
-			</div>
+						<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+						<b:HelpBlock>Pick your neighborhood to learn about whats
+							going on
+							in there</b:HelpBlock>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="passwordCg">
+					<b:Controls>
+						<b:Label>Password</b:Label>
+						<br />
+						<b:PasswordTextBox ui:field="password"
+							placeholder="password..." />
+						<b:HelpInline ui:field="passwordError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+			</b:Form>
 		</div>
+		<b:Container ui:field="loginWidgetContainer" addStyleNames="{style.loginForm}">
+			<dt:LoginWidget ui:field="loginWidget" width="90%" residentAccountSignupLink="false"  />
+		</b:Container>
 	</g:HTMLPanel>
 </ui:UiBinder> 

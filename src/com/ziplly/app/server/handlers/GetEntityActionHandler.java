@@ -15,7 +15,6 @@ import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.EntityType;
-import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetEntityListAction;

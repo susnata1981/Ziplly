@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.panel {
+		width: 230px;
+		}
+		.label {
+		display: block;
+		margin-left: 10px;
+		margin-bottom: 6px;
+		}
+		.btn {
+		margin-left:
+		10px;
+		}
+	</ui:style>
+	<g:HTMLPanel ui:field="panel" addStyleNames="{style.panel}">
+		<g:Label addStyleNames="{style.label}">
+			You can review and complete your account details
+			by going to
+		</g:Label>
+		<b:Button type="PRIMARY" size="MINI" ui:field="accountSettingsBtn"
+			addStyleNames="{style.btn}">Account
+			settings</b:Button>
+		<b:Button size="MINI" ui:field="closeBtn" addStyleNames="{style.btn}">Close</b:Button>
+	</g:HTMLPanel>
+</ui:UiBinder> 

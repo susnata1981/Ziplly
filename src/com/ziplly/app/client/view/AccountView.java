@@ -18,8 +18,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -104,7 +102,9 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	TweetBox tweetBox;
 	@UiField
 	HTMLPanel tweetBoxDiv;
-	
+	@UiField
+	DivElement locationDiv;
+
 	EmailWidget emailWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
@@ -125,13 +125,6 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetSection.add(tview);
 	}
-
-	public void onBrowseEvent(Event event) {
-		Window.alert("Clicked");
-	}
-	
-	@UiField
-	DivElement locationDiv;
 	
 	@Override
 	public void displayProfile(PersonalAccountDTO account) {
@@ -151,7 +144,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		description.setText(account.getIntroduction());
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
-		gender.setInnerHTML(basicDataFormatter.format(account.getGender().name().toLowerCase(), ValueType.STRING_VALUE));
+		gender.setInnerHTML(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
 		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
 
 		// occupation panel
@@ -215,6 +208,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	}
 
 	public void clearTweet() {
+		tview.clear();
 	}
 
 	@Override
@@ -259,6 +253,11 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void updateComment(CommentDTO comment) {
 		tview.updateComment(comment);
+	}
+
+	@Override
+	public void addComment(CommentDTO comment) {
+		tview.addComment(comment);
 	}
 
 	@Override
@@ -311,5 +310,16 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
+	}
+	
+	@Override
+	public void displayTweetViewMessage(String msg, AlertType type) {
+		tview.displayMessage(msg, type);
+	}
+
+	@Override
+	public void displayNotificationWidget(boolean show) {
+		// TODO Auto-generated method stub
+		
 	}
 }

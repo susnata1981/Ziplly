@@ -42,6 +42,7 @@ import com.ziplly.app.server.handlers.SendMessageActionHandler;
 import com.ziplly.app.server.handlers.SendPasswordRecoveryActionHandler;
 import com.ziplly.app.server.handlers.TweetActionHandler;
 import com.ziplly.app.server.handlers.UpdateAccountActionHandler;
+import com.ziplly.app.server.handlers.UpdateCommentActionHandler;
 import com.ziplly.app.server.handlers.UpdatePasswordActionHandler;
 import com.ziplly.app.server.handlers.UpdateTweetActionHandler;
 import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
@@ -88,6 +89,7 @@ import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.UpdateAccountAction;
+import com.ziplly.app.shared.UpdateCommentAction;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.ValidateLoginAction;
@@ -136,6 +138,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetHashtagAction.class, GetHashtagActionHandler.class);
 		bindHandler(GetTweetCategoryDetailsAction.class, GetTweetCategoryDetailsActionHandler.class);
 		bindHandler(ReportSpamAction.class, ReportSpamActionHandler.class);
+		bindHandler(UpdateCommentAction.class, UpdateCommentActionHandler.class);
 		
 		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
 		

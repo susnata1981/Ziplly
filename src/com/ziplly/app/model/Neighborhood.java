@@ -99,4 +99,23 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.postalCode = postalCode;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		
+		if (!(o instanceof Neighborhood)) {
+			return false;
+		}
+		
+		Neighborhood n = (Neighborhood)o;
+		
+		return n.getNeighborhoodId() == neighborhoodId;
+	}
+	
+	@Override
+	public int hashCode() {
+		return neighborhoodId.hashCode();
+	}
 }

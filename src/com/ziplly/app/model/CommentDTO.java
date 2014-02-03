@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class CommentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private int commentId;
+	private Long commentId;
 	private TweetDTO tweet;
 	private AccountDTO author;
 	private String content;
@@ -33,10 +33,10 @@ public class CommentDTO implements Serializable {
 	public void setAuthor(AccountDTO author) {
 		this.author = author;
 	}
-	public int getCommentId() {
+	public Long getCommentId() {
 		return commentId;
 	}
-	public void setCommentId(int commentId) {
+	public void setCommentId(Long commentId) {
 		this.commentId = commentId;
 	}
 	public TweetDTO getTweet() {

@@ -4,3 +4,8 @@
 	gwt-image: 'neighborhoodLargePic';
 	background-repeat:no-repeat;
 }
+
+@sprite .fbBtnImage {
+	gwt-image: 'facebookLoginButtonImage';
+	background-repeat: no-repeat;
+}

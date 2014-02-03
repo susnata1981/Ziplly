@@ -1,0 +1,23 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.editTextArea {
+			width: 120%;
+			font-size: 1em;
+			font-family: sans;
+			color: #666;
+			height: 45px;
+			padding: 2px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+	    <b:Alert ui:field="message" close="false"/>
+		<b:TextArea ui:field="editTextArea" addStyleNames="{style.editTextArea}"/>
+		<dt:HPanel>
+			<b:Button ui:field="saveBtn">Save</b:Button>
+			<b:Button ui:field="cancelBtn">Cancel</b:Button>
+		</dt:HPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

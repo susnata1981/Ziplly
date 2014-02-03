@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -14,17 +15,21 @@ import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
@@ -35,7 +40,10 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CssStyleHelper;
+import com.ziplly.app.client.widget.NotificationWidget;
 import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
@@ -48,7 +56,7 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class BusinessAccountView extends Composite implements IBusinessAccountView {
+public class BusinessAccountView extends AbstractView implements IBusinessAccountView {
 
 	interface BusinessAccountViewUiBinder extends UiBinder<Widget, BusinessAccountView> {
 	}
@@ -60,6 +68,8 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	private static final String TWEET_BOX_WIDTH = "94%";
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
+
+	private static final String TWEET_WIDGET_HEIGHT = "1100px";
 	
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
@@ -132,7 +142,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	SpanElement sundayEnd;
 
-	
 	@UiField(provided=true)
 	TweetBox tweetBox;
 	
@@ -144,8 +153,12 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	ProfileStatWidget likeCountWidget;
 
+	@UiField
+	DivElement locationDiv;
+	
 	ITweetView<TweetPresenter> tview = new TweetView();
 	SendMessageWidget smw;
+	NotificationWidget notificationWidget;
 	
 	/*
 	 * Tweet section
@@ -155,23 +168,41 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@UiField
 	HTMLPanel tweetBoxDiv;
 	
-//	@UiField
-//	SpanElement unreadMessageCountField;
+	@UiField
+	Column messageSection;
 	
 	AccountPresenter<BusinessAccountDTO> presenter;
 	BusinessAccountDTO account;
+	PopupPanel popupPanel;
 	
-	public BusinessAccountView() {
+	@Inject
+	public BusinessAccountView(EventBus eventBus) {
+		super(eventBus);
 		tview.setWidth(TWEET_WIDGET_WIDTH);
+		tview.setHeight(TWEET_WIDGET_HEIGHT);
 		tweetBox = new TweetBox();
 		tweetBox.setWidth(TWEET_BOX_WIDTH);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByBusiness());
 		initWidget(uiBinder.createAndBindUi(this));
+		tweetSection.add(tview);
+		notificationWidget = new NotificationWidget();
+		notificationWidget.getAccountSettingButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (presenter != null) {
+					presenter.goTo(new BusinessAccountSettingsPlace());
+				}
+			}
+		});
+		notificationWidget.getCloseButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				popupPanel.hide();
+				messageSection.remove(popupPanel);
+			}
+		});
 	}
 
-	@UiField
-	DivElement locationDiv;
-	
 	@Override
 	public void displayProfile(BusinessAccountDTO account) {
 		if (account == null) {
@@ -180,15 +211,10 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		message.setVisible(false);
 		this.account = account;
 		
-		// aside
-//		asidePanel.getElement().getStyle().setDisplay(Display.BLOCK);
-		
 		// image section
-		if (account.getImageUrl() != null) {
-			profileImage.setUrl(account.getImageUrl());
-		}
-		
+		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
+		
 		name.setInnerHTML(account.getDisplayName());
 
 //		description.setText(account.get);
@@ -289,19 +315,23 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
 		tview.displayTweets(tweets);
-		tweetSection.add(tview);
 	}
 
 	@Override
+	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
+		tview.displayTweets(tweets, displayNoTweetsMessage);
+	}
+	
+	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-//		asidePanel.getElement().getStyle().setDisplay(Display.NONE);
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	@Override
 	public void clear() {
-		this.account = null;
+//		this.account = null;
+		clearTweet();
 	}
 
 	public void onCloseSendMessageWidgetClick(ClickEvent event) {
@@ -339,16 +369,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 		message.setVisible(true);
 	}
 	
-//	@UiHandler("settingsLink")
-//	void settingsLinkClicked(ClickEvent event) {
-//		presenter.settingsLinkClicked();
-//	}
-//	
-//	@UiHandler("messagesLink")
-//	void messagesLinkClicked(ClickEvent event) {
-//		presenter.messagesLinkClicked();
-//	}
-	
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -362,11 +382,6 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	@Override
 	public void updateAccountDetails(ApplicationContext ctx) {
 		if (ctx != null) {
-//			if (ctx.getUnreadMessageCount()>0) {
-//				unreadMessageCountField.setInnerHTML("("+ctx.getUnreadMessageCount()+")");
-//			} else {
-//				unreadMessageCountField.setInnerHTML("");
-//			}
 			tweetCountWidget.setValue(new Integer(ctx.getTotalTweets()).toString());
 			commentCountWidget.setValue(new Integer(ctx.getTotalComments()).toString());
 			likeCountWidget.setValue(new Integer(ctx.getTotalLikes()).toString());
@@ -375,9 +390,14 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 
 	@Override
 	public void updateComment(CommentDTO comment) {
-		tview.updateComment(comment);
+		tview.addComment(comment);
 	}
 
+	@Override
+	public void addComment(CommentDTO comment) {
+		tview.addComment(comment);
+	}
+	
 	@Override
 	public void updateTweetLike(LoveDTO like) {
 		tview.updateLike(like);
@@ -390,13 +410,12 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 
 	@Override
 	public void clearTweet() {
-		// TODO Auto-generated method stub
-		
+		tview.clear();
 	}
 
 	@Override
 	public void removeTweet(TweetDTO tweet) {
-		// TODO Auto-generated method stub
+		tview.remove(tweet);
 	}
 	
 	@Override
@@ -418,9 +437,25 @@ public class BusinessAccountView extends Composite implements IBusinessAccountVi
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
 	}
-
+	
 	@Override
-	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
-		displayTweets(tweets, true);
+	public void displayTweetViewMessage(String msg, AlertType type) {
+		tview.displayMessage(msg, type);
+	}
+	
+	@Override
+	public void displayNotificationWidget(boolean show) {
+		if (show) {
+			popupPanel = new PopupPanel();
+			popupPanel.setWidget(notificationWidget);
+			popupPanel.setPopupPosition(Window.getClientWidth()-270,70);
+			messageSection.add(popupPanel);
+			popupPanel.show();
+		} else {
+			if (popupPanel != null) {
+				popupPanel.hide();
+				messageSection.remove(popupPanel);
+			}
+		}
 	}
 }

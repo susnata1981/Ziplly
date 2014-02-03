@@ -20,6 +20,8 @@ public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 	private String description;
 	@Column(name="tweets_allowed")
 	private int tweetsAllowed;
+	@Column(name="status")
+	private String status;
 	private Double fee;
 
 	public SubscriptionPlan() {
@@ -73,5 +75,13 @@ public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 
 	public void setTweetsAllowed(int tweetsAllowed) {
 		this.tweetsAllowed = tweetsAllowed;
+	}
+
+	public SubscriptionPlanStatus getStatus() {
+		return SubscriptionPlanStatus.valueOf(status);
+	}
+
+	public void setStatus(SubscriptionPlanStatus subscriptionPlanStatus) {
+		this.status = subscriptionPlanStatus.name();
 	}
 }

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -15,6 +17,7 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -23,8 +26,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -33,6 +40,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,6 +48,11 @@ import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.WidgetFactory;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -77,6 +90,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String commentRowDate();
 		
 		String commentsLink();
+		
+		String commentEditLink();
 	}
 
 	@UiFactory
@@ -137,7 +152,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	HTMLPanel tweetLikePanel;
 	List<LoveDTO> likes = new ArrayList<LoveDTO>();
-	ArrayList<Panel> comments = new ArrayList<Panel>();
+	Map<Long, Panel> commentsToWidgetMap = new HashMap<Long, Panel>();
 
 	// Comment section
 	@UiField
@@ -160,7 +175,14 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	// final Modal modal = new Modal();
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
-
+	private AccountFormatter accountFormatter = 
+			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	private BasicDataFormatter basicDataFormatter =
+			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	
+	// Used by comment edit widget to display the edit link
+	private boolean commentEditLinkClicked = false;
+	
 	public TweetWidget() {
 		long s1, e1;
 		long start1 = System.currentTimeMillis();
@@ -276,6 +298,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				hideCommentButtons();
 				clearComment();
+				commentInputTextBox.setHeight("20px");
 			}
 		});
 		
@@ -363,12 +386,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			displayCommentSection();
 		}
 		long end1 = System.currentTimeMillis();
-		System.out.println("Time to display tweet: " + (end1 - start1));
+//		System.out.println("Time to display tweet: " + (end1 - start1));
 	}
 
 	private void displayCommentSection() {
 		tweetCommentSection.clear();
-		comments.clear();
+		commentsToWidgetMap.clear();
 		Collections.sort(tweet.getComments(), new Comparator<CommentDTO>() {
 			@Override
 			public int compare(CommentDTO c1, CommentDTO c2) {
@@ -379,7 +402,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		int commentCount = 0;
 		for (final CommentDTO comment : tweet.getComments()) {
 			Panel panel = addNextComment(comment);
-			comments.add(panel);
+			commentsToWidgetMap.put(comment.getCommentId(), panel);
 			tweetCommentSection.add(panel);
 			if (commentCount < DEFAULT_COMMENT_COUNT) {
 				;
@@ -391,7 +414,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 		// populate show more link
 		if (commentCount > DEFAULT_COMMENT_COUNT) {
-			showMoreCommentsLink.setText(comments.size() + " comments, show all");
+			showMoreCommentsLink.setText(commentsToWidgetMap.size() + " comments, show all");
 			showMoreCommentsLink.addStyleName(style.commentsLink());
 			showMoreCommentsLink.addClickHandler(new ClickHandler() {
 				@Override
@@ -413,60 +436,103 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void showMoreComments() {
-		for (int i = DEFAULT_COMMENT_COUNT; i < comments.size(); i++) {
-			comments.get(i).setVisible(true);
+		for (int i = DEFAULT_COMMENT_COUNT; i < commentsToWidgetMap.size(); i++) {
+			commentsToWidgetMap.get(i).setVisible(true);
 		}
 		showMoreCommentsLink.setVisible(false);
 		hideCommentsLink.setVisible(true);
 	}
 
 	void hideMoreComments() {
-		for (int i = DEFAULT_COMMENT_COUNT; i < comments.size(); i++) {
-			comments.get(i).setVisible(false);
+		for (int i = DEFAULT_COMMENT_COUNT; i < commentsToWidgetMap.size(); i++) {
+			commentsToWidgetMap.get(i).setVisible(false);
 		}
 		showMoreCommentsLink.setVisible(true);
 		hideCommentsLink.setVisible(false);
 	}
 
-	@Override
-	public void addComment(final CommentDTO comment) {
-		tweet.getComments().add(comment);
-		displayCommentSection();
-	}
-
-	/**
-	 * @param comment
-	 * @return
-	 */
 	private Panel addNextComment(final CommentDTO comment) {
-		HTMLPanel fp = new HTMLPanel("");
-		fp.addStyleName(style.commentRow());
-		AccountDTO acct = comment.getAuthor();
-		String content = "<img src='"+acct.getImageUrl()+"' max-width='50px' max-height='50px'/>&nbsp;"+acct.getDisplayName();
-		// Profile Image link
-		Anchor profileLink = new Anchor();
-		profileLink.addStyleName(style.commentRowAnchor());
-		profileLink.getElement().setInnerHTML(content);
-		profileLink.addClickHandler(new ClickHandler() {
+		FlowPanel fp = new FlowPanel();
+		final CommentWidget commentWidget = new CommentWidget();
+		commentWidget.setImage(accountFormatter.format(comment.getAuthor(), ValueType.PROFILE_IMAGE_URL));
+		commentWidget.setText(comment.getContent());
+		commentWidget.setProfileName(comment.getAuthor().getDisplayName());
+		commentWidget.setPostingDate(basicDataFormatter.format(comment.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM));
+		
+		commentWidget.getProfileAnchor().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				presenter.goTo(new PersonalAccountPlace(comment.getAuthor().getAccountId()));
 			}
 		});
 		
-		fp.add(profileLink);
+		final NavLink editLink = new NavLink();
+		editLink.setStyleName(style.commentEditLink());
+		editLink.setIcon(IconType.EDIT);
+		editLink.setVisible(false);
+		MouseHoverPanel contentPanel = commentWidget.getContentPanel();
+		contentPanel.add(editLink);
+
+		contentPanel.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				if (!commentEditLinkClicked) {
+					editLink.setVisible(true);
+				}
+			}
+		});
 		
-		// Content section
-		HTMLPanel commentText = new HTMLPanel("<span class='tinytext'>" + comment.getContent()
-				+ "</span>");
-		commentText.addStyleName(style.commentRowText());
-		fp.add(commentText);
+		contentPanel.addMouseOutHandler(new MouseOutHandler() {
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				editLink.setVisible(false);
+			}
+		});
 		
-		// Date section
-		HTMLPanel commentDate = new HTMLPanel("<span class='datefont'>"
-				+ getFormattedTime(comment.getTimeCreated()) + "</span>");
-		commentDate.addStyleName(style.commentRowDate());
-		fp.add(commentDate);
+		editLink.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				commentEditLinkClicked = true;
+				final Element contentElem = commentWidget.getContentElement();
+				final MouseHoverPanel contentPanel = commentWidget.getContentPanel();
+				final CommentEditWidget editWidget = new CommentEditWidget();
+				editWidget.setText(comment.getContent());
+				
+				StyleHelper.show(contentElem, false);
+				contentPanel.add(editWidget);
+				
+				editWidget.getSaveButton().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						editWidget.showMessage(false);
+						if (!editWidget.validateInput()) {
+							return;
+						}
+						// Save and cancel
+						StyleHelper.show(editLink.getElement(), false);
+						StyleHelper.show(contentElem, true);
+						contentPanel.remove(editWidget);
+						commentEditLinkClicked = false;
+						comment.setContent(editWidget.getText());
+						comment.setTweet(TweetWidget.this.tweet);
+						comment.setTimeUpdated(new Date());
+						presenter.updateComment(comment);
+					}
+				});
+				
+				editWidget.getCancelButton().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						StyleHelper.show(editLink.getElement(), false);
+						StyleHelper.show(contentElem, true);
+						contentPanel.remove(editWidget);
+						commentEditLinkClicked = false;
+					}
+				});
+			}
+		});
+		
+		fp.add(commentWidget);
 		return fp;
 	}
 
@@ -553,14 +619,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		tweetContentSpan.setInnerHTML(tweet.getContent());
 		tweet.getTimeCreated();
 
-		String time = getFormattedTime(tweet.getTimeCreated());
-		timeCreated.setInnerText(time);
+		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+		timeCreated.setInnerHTML(time);
 
-		if (tweet.getSender().getImageUrl() != null) {
-			authorImage.setUrl(tweet.getSender().getImageUrl());
-		} else {
-			authorImage.setUrl(ZResources.IMPL.noImage().getSafeUri());
-		}
+		authorImage.setUrl(accountFormatter.format(tweet.getSender(), ValueType.PROFILE_IMAGE_URL));
 		authorImage.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -568,10 +630,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				presenter.goTo(new PersonalAccountPlace(tweet.getSender().getAccountId()));
 			}
 		});
-		authorName.setInnerText(tweet.getSender().getDisplayName());
+		authorName.setInnerHTML(tweet.getSender().getDisplayName());
 		
 		if (tweet.getImage() != null) {
 			tweetImage.setUrl(tweet.getImage());
+			tweetImage.addLoadHandler(new LoadHandler() {
+				
+				@Override
+				public void onLoad(LoadEvent event) {
+					int height = tweetImage.getHeight() + 20;
+					tweetImagePanel.setHeight(height+"px");
+				}
+			});
 		} else {
 			displayElement(tweetImagePanel.getElement(), false);
 		}
@@ -612,12 +682,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		presenter.deleteTweet(tweet);
 	}
 
-	String getFormattedTime(Date date) {
-		return DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(date);
+	@Override
+	public void updateComment(CommentDTO comment) {
+		FlowPanel panel = (FlowPanel) commentsToWidgetMap.get(comment.getCommentId());
+		if (panel != null) {
+			CommentWidget commentWidget = (CommentWidget) panel.getWidget(0);
+			commentWidget.setText(comment.getContent());
+		}
 	}
 
 	@Override
-	public void updateComment(CommentDTO comment) {
+	public void addComment(final CommentDTO comment) {
 		tweet.getComments().add(comment);
 		displayCommentSection();
 	}

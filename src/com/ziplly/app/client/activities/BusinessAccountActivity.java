@@ -1,6 +1,7 @@
 package com.ziplly.app.client.activities;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -11,6 +12,7 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
@@ -20,13 +22,14 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.LoginEvent;
-import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
+import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -41,9 +44,12 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private BusinessAccountPlace place;
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
-	private int pageSize = 3;
 	private List<TweetDTO> lastTweetList;
-
+	private Logger logger = Logger.getLogger(BusinessAccountActivity.class.getName());
+	private TweetViewBinder binder;
+	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler();
+	private TweetHandler tweetHandler = new TweetHandler();
+	
 	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
 		void displayFormattedAddress(String fAddress);
 	}
@@ -55,14 +61,21 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 		super(dispatcher, eventBus, placeController, ctx, view);
 		this.place = place;
-		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
+		setupHandlers();
+	}
+
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
+		eventBus.addHandler(TweetNotAvailableEvent.TYPE, new TweetNotAvailableEventHandler() {
+			
 			@Override
-			public void onEvent(LoginEvent event) {
-				System.out.println("User " + event.getAccount() + " logged in");
+			public void onEvent(TweetNotAvailableEvent event) {
+				binder.stop();
 			}
 		});
 	}
-
+	
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -94,8 +107,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
-			fetchTweets(place.getAccountId(), tweetPageIndex, pageSize);
-			TweetViewBinder binder = new TweetViewBinder(view.getTweetSectionElement(), this);
+			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
+			binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 			binder.start();
 			dispatcher.execute(new GetAccountByIdAction(accountId),
 					new GetAccountByIdActionHandler());
@@ -105,18 +118,31 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public void displayProfile() {
-		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize);
-		getAccountNotifications();
-		TweetViewBinder binder = new TweetViewBinder(view.getTweetSectionElement(), this);
-		binder.start();
-		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
-		getAccountDetails(new GetAccountDetailsActionHandler());
-		setupImageUpload();
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			view.displayProfile((BusinessAccountDTO) ctx.getAccount());
 		} else if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountPlace());
 		}
+		
+		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
+		getAccountNotifications();
+		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
+		binder.start();
+		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
+		getAccountDetails(new GetAccountDetailsActionHandler());
+		setupImageUpload();
+		if (accountNotComplete()) {
+			System.out.println("SHOW POPUP");
+			view.displayNotificationWidget(true);
+		}
+	}
+
+	private boolean accountNotComplete() {
+		BusinessAccountDTO ba = (BusinessAccountDTO) ctx.getAccount();
+		if (FieldVerifier.isEmpty(ba.getWebsite())) {
+			return true;
+		}
+		return false;
 	}
 
 	private void setupImageUpload() {
@@ -137,7 +163,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		if (lastTweetList == null) {
 			return true;
 		}
-		return lastTweetList.size() == pageSize;
+		return lastTweetList.size() == TWEETS_PER_PAGE;
 	}
 
 	/*
@@ -148,19 +174,12 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		tweetPageIndex++;
 		GetTweetForUserAction action = null;
 		if (place.getAccountId() != null) {
-			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, pageSize);
+			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE);
 		} else if (ctx.getAccount() != null) {
 			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(), tweetPageIndex,
-					pageSize);
+					TWEETS_PER_PAGE);
 		}
-		
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-			@Override
-			public void onSuccess(GetTweetForUserResult result) {
-				lastTweetList = result.getTweets();
-				view.addTweets(result.getTweets());
-			}
-		});
+		dispatcher.execute(action, scrollBottomHitHandler);
 	}
 
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
@@ -183,12 +202,13 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public DispatcherCallbackAsync<TweetResult> getTweetHandler() {
-		return new TweetHandler();
+		return tweetHandler;
 	}
 
 	@Override
 	public void onStop() {
-		// empty for now
+		view.clearTweet();
+		view.displayNotificationWidget(false);
 	}
 
 	@Override
@@ -221,6 +241,15 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			} else if (account instanceof PersonalAccountDTO) {
 				// take some action here
 				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));
+			}
+		}
+		
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof NotFoundException) {
+				view.displayMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
 	}
@@ -266,6 +295,21 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		@Override
 		public void onSuccess(ReportSpamResult result) {
 			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+		}
+	}
+	
+	@Override
+	void stopThreads() {
+		if (binder != null) {
+			binder.stop();
+		}
+	}
+	
+	private class ScrollBottomHitActionHandler extends	DispatcherCallbackAsync<GetTweetForUserResult> {
+		@Override
+		public void onSuccess(GetTweetForUserResult result) {
+			lastTweetList = result.getTweets();
+			view.addTweets(result.getTweets());
 		}
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
@@ -14,6 +15,7 @@ import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
@@ -137,6 +139,9 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	@UiField
 	Image profileImagePreview;
 
+	@UiField
+	Container loginWidgetPanel;
+	
 	String profileImageUrl;
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
@@ -149,6 +154,7 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		neighborhoodControl.setVisible(false);
+		loginWidgetPanel.setShowOn(Device.DESKTOP);
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 	}

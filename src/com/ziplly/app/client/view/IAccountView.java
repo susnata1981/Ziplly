@@ -54,4 +54,10 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayProfileImagePreview(String imageUrl);
 
 	void resetImageUploadUrl();
+
+	void addComment(CommentDTO comment);
+
+	void displayTweetViewMessage(String msg, AlertType type);
+
+	void displayNotificationWidget(boolean b);
 }

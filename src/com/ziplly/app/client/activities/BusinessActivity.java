@@ -3,6 +3,7 @@ package com.ziplly.app.client.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
@@ -12,17 +13,24 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.BusinessView;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.BusinessView.EntityListViewPresenter;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
+import com.ziplly.app.shared.GetAccountByIdAction;
+import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityResult;
+import com.ziplly.app.shared.SendMessageAction;
+import com.ziplly.app.shared.SendMessageResult;
 
-public class BusinessActivity extends AbstractActivity implements EntityListViewPresenter {
+public class BusinessActivity extends AbstractActivity implements EntityListViewPresenter, SendMessagePresenter {
 	private BusinessView view;
 	private BusinessPlace place;
 	private EntityListHandler handler = new EntityListHandler();
@@ -32,9 +40,10 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	public BusinessActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
 			ApplicationContext ctx,
-			BusinessView view) {
+			BusinessPlace place, BusinessView view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
+		this.place = place;
 		setupHandlers();
 	}
 
@@ -60,6 +69,11 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	}
 
 	void displayBusinessList() {
+		if (place.getAccountId() != null) {
+			view.displaySendMessageWidget(place.getAccountId());
+			updateMessageWidgetWithAccountDetails(place.getAccountId());
+		}
+
 		GetEntityListAction action = new GetEntityListAction(EntityType.BUSINESS_ACCOUNT);
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
@@ -69,7 +83,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	
 	@Override
 	public void onRangeChangeEvent(int start, int pageSize) {
-		System.out.println("Calling range change event: start="+start+" size="+pageSize);
+//		System.out.println("Calling range change event: start="+start+" size="+pageSize);
 		GetEntityListAction action = new GetEntityListAction(EntityType.BUSINESS_ACCOUNT);
 		action.setNeedTotalEntityCount(true);
 		action.setPage(start);
@@ -107,6 +121,40 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		}
 	}
 	
+	@Override
+	public void sendMessage(ConversationDTO conversation) {
+		if (conversation == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		// make sure user is logged in
+		if (ctx.getAccount() == null) {
+			goTo(new LoginPlace());
+			return;
+		}
+		
+		// TODO check size
+		int size = conversation.getMessages().size();
+		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.setSender(ctx.getAccount());
+		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
+			@Override
+			public void onSuccess(SendMessageResult result) {
+				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			}
+		});
+	}
+	
+	private void updateMessageWidgetWithAccountDetails(Long accountId) {
+		dispatcher.execute(new GetAccountByIdAction(accountId), new DispatcherCallbackAsync<GetAccountByIdResult>() {
+
+			@Override
+			public void onSuccess(GetAccountByIdResult result) {
+				view.updateMessageWidget(result.getAccount());
+			}
+			
+		});
+	}
 
 	@Override
 	public void bind() {

@@ -8,7 +8,7 @@
 		}
 		.genderListBox {
 		display: block;
-		width: 65%;
+		width: 140px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -39,7 +39,7 @@
 				</b:FluidRow>
 				<b:FluidRow>
 					<b:Column size="10">
-						<b:Alert ui:field="message" />
+						<b:Alert ui:field="message" close="false"/>
 					</b:Column>
 				</b:FluidRow>
 			</b:Column>

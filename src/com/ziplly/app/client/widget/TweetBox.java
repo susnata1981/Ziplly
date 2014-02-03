@@ -38,6 +38,10 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
@@ -52,7 +56,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	interface TweetBoxUiBinder extends UiBinder<Widget, TweetBox> {
 	}
 
-	private int maxCharacters = 255;
+	private int maxCharacters = FieldVerifier.MAX_TWEET_LENGTH;
 
 	@UiField
 	ControlGroup tweetCg;
@@ -111,12 +115,14 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	TweetBoxState tweetBoxState = new TweetBoxState();
 	
 	boolean showKeystrokeCounter = true;
-
 	private TweetPresenter presenter;
+	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(
+			ValueFamilyType.BASIC_DATA_VALUE);
 
 	private String height = "40px";
-
 	private String width = "40%";
+
+	private List<TweetType> tweetTypes;
 
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -136,8 +142,9 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 	}
 
 	public void setTweetCategory(List<TweetType> tweetTypes) {
+		this.tweetTypes = tweetTypes;
 		for (TweetType type : tweetTypes) {
-			tweetCategoryList.addItem(type.name().toLowerCase());
+			tweetCategoryList.addItem(basicDataFormatter.format(type, ValueType.TWEET_TYPE));
 		}
 	}
 		
@@ -310,7 +317,7 @@ public class TweetBox extends Composite implements View<TweetPresenter>{
 		TweetDTO tweet = new TweetDTO();
 		String content = tweetTextBox.getText().trim();
 		tweet.setContent(content);
-		String category = tweetCategoryList.getValue(tweetCategoryList.getSelectedIndex()).toUpperCase();
+		String category = tweetTypes.get(tweetCategoryList.getSelectedIndex()).name();
 		TweetType tweetType = TweetType.valueOf(category);
 		tweet.setType(tweetType);
 		tweet.setStatus(TweetStatus.ACTIVE);

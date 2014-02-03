@@ -3,16 +3,15 @@ package com.ziplly.app.client.activities;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -21,6 +20,8 @@ import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
+import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -37,26 +38,36 @@ import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.TweetResult;
 
-public class PersonalAccountActivity extends
-		AbstractAccountActivity<PersonalAccountDTO> implements
-		InfiniteScrollHandler {
+public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements InfiniteScrollHandler {
 	private PersonalAccountPlace place;
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
-	private int pageSize = 3;
 	private List<TweetDTO> lastTweetList;
 	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitActionHandler = new ScrollBottomHitActionHandler();
-	
+
 	@Inject
-	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx, AccountView view, PersonalAccountPlace place) {
+	public PersonalAccountActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
+			PlaceController placeController, ApplicationContext ctx, AccountView view,
+			PersonalAccountPlace place) {
 
 		super(dispatcher, eventBus, placeController, ctx, view);
 		this.place = place;
+		setupHandlers();
 	}
-
+	
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
+		eventBus.addHandler(TweetNotAvailableEvent.TYPE, new TweetNotAvailableEventHandler() {
+			
+			@Override
+			public void onEvent(TweetNotAvailableEvent event) {
+				binder.stop();
+			}
+		});
+	}
+	
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -87,10 +98,10 @@ public class PersonalAccountActivity extends
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
-			fetchTweets(place.getAccountId(), tweetPageIndex, pageSize);
-			startInfiniteScrollThread();
 			dispatcher.execute(new GetAccountByIdAction(accountId),
 					new GetAccountByIdActionHandler());
+			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
+			startInfiniteScrollThread();
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
 		}
 	}
@@ -99,23 +110,7 @@ public class PersonalAccountActivity extends
 		if (binder != null) {
 			binder.stop();
 		}
-		binder = new TweetViewBinder(
-				view.getTweetSectionElement(), this) {
-			protected boolean detectScrollerHitBottom() {
-				int sh = elem.getScrollHeight();
-				int st = elem.getScrollTop();
-				int of = elem.getOffsetHeight();
-				int h = Window.getScrollTop();
-				int dh = Document.get().getClientHeight();
-				int wh = Window.getClientHeight();
-				int ch = elem.getClientHeight();
-				int ch1 = Window.getClientHeight();
-//				System.out.println("SH="+sh+" ST="+st+" OF="+of+" h="+h+" ch1="+ch1);
-//				System.out.println("ST="+Window.getScrollTop()+" DH="+dh+" WH="+wh);
-				return elem.getScrollHeight() - (elem.getScrollTop() + elem.getOffsetHeight()) < 100;
-//				return false;
-			}
-		};
+		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
 	}
 
@@ -125,9 +120,9 @@ public class PersonalAccountActivity extends
 			placeController.goTo(new BusinessAccountPlace());
 			return;
 		}
-		
+
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
-		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, pageSize, false);
+		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
@@ -139,7 +134,7 @@ public class PersonalAccountActivity extends
 		setImageUploadUrl();
 		setUploadImageHandler();
 	}
-	
+
 	@Override
 	public void settingsLinkClicked() {
 		placeController.goTo(new PersonalAccountSettingsPlace());
@@ -153,7 +148,7 @@ public class PersonalAccountActivity extends
 		if (lastTweetList == null) {
 			return true;
 		}
-		return lastTweetList.size() == pageSize;
+		return lastTweetList.size() == TWEETS_PER_PAGE;
 	}
 
 	/*
@@ -164,13 +159,12 @@ public class PersonalAccountActivity extends
 		tweetPageIndex++;
 		GetTweetForUserAction action = null;
 		if (place.getAccountId() != null) {
-			action = new GetTweetForUserAction(place.getAccountId(),
-					tweetPageIndex, pageSize);
+			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE);
 		} else if (ctx.getAccount() != null) {
-			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(),
-					tweetPageIndex, pageSize);
+			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(), tweetPageIndex,
+					TWEETS_PER_PAGE);
 		}
-		
+
 		dispatcher.execute(action, scrollBottomHitActionHandler);
 	}
 
@@ -181,9 +175,10 @@ public class PersonalAccountActivity extends
 		spam.setReporter(ctx.getAccount());
 		reportSpam(spam, new ReportSpamActionHandler());
 	}
-	
+
 	/**
 	 * Called in response to AccountDetailsUpdateEvent event
+	 * 
 	 * @param result
 	 */
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
@@ -210,10 +205,10 @@ public class PersonalAccountActivity extends
 			binder.stop();
 		}
 		eventBus.fireEvent(new LoadingEventEnd());
+		view.clearTweet();
 	}
 
-	private class GetLatLngResultHandler extends
-			DispatcherCallbackAsync<GetLatLngResult> {
+	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
 		@Override
 		public void onSuccess(GetLatLngResult result) {
 			if (result != null) {
@@ -222,8 +217,7 @@ public class PersonalAccountActivity extends
 		}
 	}
 
-	private class GetAccountByIdActionHandler extends
-			DispatcherCallbackAsync<GetAccountByIdResult> {
+	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
 		@Override
 		public void onSuccess(GetAccountByIdResult result) {
@@ -234,8 +228,16 @@ public class PersonalAccountActivity extends
 				go(panel);
 			} else {
 				// take some action here
-				placeController.goTo(new BusinessAccountPlace(account
-						.getAccountId()));
+				placeController.goTo(new BusinessAccountPlace(account.getAccountId()));
+			}
+		}
+
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof NotFoundException) {
+				view.displayMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
 	}
@@ -259,23 +261,24 @@ public class PersonalAccountActivity extends
 		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
-		
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DispatcherCallbackAsync<DeleteTweetResult>() {
-			@Override
-			public void onSuccess(DeleteTweetResult result) {
-				view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
-				view.removeTweet(tweet);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				} else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
-		});
+
+		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()),
+				new DispatcherCallbackAsync<DeleteTweetResult>() {
+					@Override
+					public void onSuccess(DeleteTweetResult result) {
+						view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+						view.removeTweet(tweet);
+					}
+
+					@Override
+					public void onFailure(Throwable th) {
+						if (th instanceof AccessError) {
+							view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+						} else {
+							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+						}
+					}
+				});
 	}
 
 	private class GetPublicAccountDetailsActionHandler extends
@@ -299,7 +302,6 @@ public class PersonalAccountActivity extends
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 		}
 	}
-	
 
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
 		@Override
@@ -307,12 +309,19 @@ public class PersonalAccountActivity extends
 			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
 		}
 	}
-	
-	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult>{
+
+	private class ScrollBottomHitActionHandler extends	DispatcherCallbackAsync<GetTweetForUserResult> {
 		@Override
 		public void onSuccess(GetTweetForUserResult result) {
 			lastTweetList = result.getTweets();
 			view.addTweets(result.getTweets());
+		}
+	}
+
+	@Override
+	void stopThreads() {
+		if (binder != null) {
+			binder.stop();
 		}
 	}
 }

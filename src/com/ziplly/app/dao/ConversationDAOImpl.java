@@ -85,7 +85,7 @@ public class ConversationDAOImpl implements ConversationDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			Query query = em
-					.createNativeQuery("select count(*) from Conversation where receiver_account_id = :receiverAccountId "
+					.createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId "
 							+ "or sender_account_id = :senderAccountId");
 			query.setParameter("receiverAccountId", accountId);
 			query.setParameter("senderAccountId", accountId);
@@ -104,13 +104,13 @@ public class ConversationDAOImpl implements ConversationDAO {
 			switch (type) {
 			case SENT:
 				query = em
-						.createNativeQuery("select count(*) from Conversation where sender_account_id = :senderAccountId");
+						.createNativeQuery("select count(*) from conversation where sender_account_id = :senderAccountId");
 				query.setParameter("senderAccountId", accountId);
 				break;
 			case RECEIVED:
 			default:
 				query = em
-						.createNativeQuery("select count(*) from Conversation where receiver_account_id = :receiverAccountId");
+						.createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId");
 				query.setParameter("receiverAccountId", accountId);
 			}
 			BigInteger result = (BigInteger) query.getSingleResult();

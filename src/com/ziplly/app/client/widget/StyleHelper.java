@@ -17,4 +17,9 @@ public class StyleHelper {
 	public static boolean isVisible(Element elem) {
 		return !elem.getStyle().getDisplay().equalsIgnoreCase(Display.NONE.name()); 
 	}
+
+	public static void show(com.google.gwt.dom.client.Element contentElem, boolean show) {
+		Display display = show ? Display.BLOCK : Display.NONE;
+		contentElem.getStyle().setDisplay(display);
+	}
 }

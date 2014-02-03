@@ -11,13 +11,14 @@ public class MessageDAOImpl implements MessageDAO {
 		if (msg == null) {
 			throw new IllegalArgumentException();
 		}
-		
-		EntityManager em = EntityManagerService.getInstance()
-				.getEntityManager();
-		em.getTransaction().begin();
-		em.persist(msg);
-		em.getTransaction().commit();
-		em.close();
-	}
 
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		try {
+			em.getTransaction().begin();
+			em.persist(msg);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
+	}
 }

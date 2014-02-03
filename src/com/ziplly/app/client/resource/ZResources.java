@@ -10,6 +10,8 @@ public interface ZResources extends ClientBundle {
 
 	interface Styles extends CssResource {
 		String mainPageBackground();
+		
+		String fbBtnImage();
 	}
 	
 	@Source("No_person.jpg")
@@ -17,6 +19,9 @@ public interface ZResources extends ClientBundle {
 	
 	@Source("neighborhood_large.jpg")
 	ImageResource neighborhoodLargePic();
+	
+	@Source("rsz_1rsz_active_6002x.png")
+	ImageResource facebookLoginButtonImage();
 	
 	@Source("zstyle.css")
 	Styles style();

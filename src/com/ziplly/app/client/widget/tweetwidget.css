@@ -12,8 +12,8 @@
 	background: #fff;
 	overflow: auto;
 	position: relative;
-	padding: 2px;
-	margin: 20px 4px 40px 14px;
+	padding: 8px;
+	margin: 20px 4px 40px 10px;
 	border: 1px solid #ddd;
 }
 
@@ -22,13 +22,13 @@
 
 .tweet_image {
 	float: left;
-	width: 9%;
-	height: 6%;
+	width: 50px;
+	height: 50px;
 	margin: 8px 0px 0px 6px;
 }
 
 .tweet_image img {
-	width: 90%;
+	max-height: 100%;
 }
 
 .tweetImagePanel {
@@ -43,15 +43,16 @@
 	width: 100%;
 }
 .tweet_content_section {
+	clear: left;
  	float: left;
-	width: 85%;
-	margin: 0px 10px 0px 10px;
+	width: 80%;
+	margin: 8px;
+	padding: 2px 8px;
 }
 
 .tweet_content {
-	clear: both;
-	margin-top: 1%;
-	margin-bottom: 5%;
+	margin: 6px;
+	overflow: hidden;
 }
 
 .tweetContentTextArea {
@@ -61,17 +62,19 @@
 	margin: 0px 5px 5px 10px;
 }
 
-div .tweet_actions {
+.tweet_actions {
 	clear: both;
 	margin: 0px 5px 5px 2px;
 	border-bottom: 1px solid #ddd;
 }
 
-div.tweet_text {
+.tweet_text {
 	font-family: Helvetica;
-	font-size: 11px;
-	line-height: 26px;
+	font-size: 1em;
 	color: #555;
+	width: 90%;
+	margin-left: 10px;
+	margin-top: 4px;
 }
 
 .tweetActionDropdown {
@@ -155,7 +158,7 @@ div.comment_text {
 .commentInputTextBox {
 	margin: 2%;
 	width: 90%;
-	height: 5%;
+	height: 20px;
 	padding: 4px;
 }
 
@@ -177,11 +180,11 @@ div.comment_text {
 }
 
 .commentRowAnchor {
-	width: 30%;
+	width: 100px;
 	display: block;
 	float: left;
-	line-height: 50px;
 	padding: 0px 6px;
+	overflow: hidden;
 }
 
 .commentRowAnchor img {
@@ -190,9 +193,8 @@ div.comment_text {
 }
 
 .commentRowText {
-	width: 60%;
+	width: 65%;
 	float: left;
-	line-height: 50px;
 	font-family: sans-serif;
 	color: #000;
 	font-size: 12px;
@@ -212,4 +214,9 @@ div.comment_text {
 	display: block;
 	font-family: sans-serif;
 	font-size: 14px;	
+}
+
+.commentEditLink {
+	float: right;
+	list-style: none;
 }

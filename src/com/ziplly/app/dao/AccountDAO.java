@@ -16,10 +16,10 @@ public interface AccountDAO {
 	AccountDTO findByEmailAndPassword(String email, String password) throws NotFoundException;
 	AccountDTO findById(Long accountId) throws NotFoundException;
 	AccountDTO save(Account user);
+	void updatePassword(Account account);
 	AccountDTO update(Account user);
 	List<Account> getAll(int start, int end);
 	List<PersonalAccountDTO> findByZip(int zip);
-	void updatePassword(Account acct);
 	List<AccountDTO> findAll();
 	List<AccountDTO> findAccounts(String query, int start, int end);
 	Long findTotalAccounts(String countQuery);

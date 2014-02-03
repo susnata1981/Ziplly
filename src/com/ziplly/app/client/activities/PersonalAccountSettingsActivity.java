@@ -65,6 +65,7 @@ public class PersonalAccountSettingsActivity
 		// hack, hate hate hate
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			placeController.goTo(new BusinessAccountSettingsPlace());
+			return;
 		}
 
 		bind();

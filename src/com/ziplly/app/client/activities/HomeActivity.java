@@ -7,6 +7,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -75,6 +76,8 @@ import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
+import com.ziplly.app.shared.UpdateCommentAction;
+import com.ziplly.app.shared.UpdateCommentResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 import com.ziplly.app.shared.ValidateLoginAction;
@@ -140,6 +143,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void resetImageUploadUrl();
 
 		void displayCommunitySummaryDetails(GetNeighborhoodDetailsResult result);
+
+		void addComment(CommentDTO comment);
 	}
 
 	@Inject
@@ -160,7 +165,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
 		bind();
-		eventBus.fireEvent(new LoadingEventStart());
 		if (ctx.getAccount() != null) {
 			displayCommunityWall();
 		} else {
@@ -278,7 +282,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 	
 	void getCommunityWallData(TweetType type) {
-		showLodingIcon();
+		eventBus.fireEvent(new LoadingEventStart());
 		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
 		state.setFetchingData(true);
 		dispatcher.execute(searchCriteria, communityDataHandler);
@@ -287,13 +291,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			binder.stop();
 		}
 		
-		binder = getDefaultTweetBinder();
+		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);
 		binder.start();
 	}
 
 	void getCommunityWallData(GetCommunityWallDataAction action) {
 		// load first batch of data
-		showLodingIcon();
+		eventBus.fireEvent(new LoadingEventStart());
 		state.setFetchingData(true);
 		dispatcher.execute(action, communityDataHandler);
 		
@@ -301,7 +305,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			binder.stop();
 		}
 		
-		binder = getDefaultTweetBinder();
+		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);//getDefaultTweetBinder();
 		binder.start();
 	}
 	
@@ -348,8 +352,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
 
-		dispatcher
-				.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
+		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
 	}
 
 	@Override
@@ -379,7 +382,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			return;
 		}
 
-		System.out.println("Hit bottom...");
 		if (ctx.getAccount() != null && state.hasMorePages()) {
 			GetCommunityWallDataAction nextSearchAction = state.getNextSearchAction();
 			dispatcher.execute(nextSearchAction, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
@@ -395,8 +397,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	@Override
 	public void displayHashtag(String hashtag) {
 		if (hashtag != null) {
+			eventBus.fireEvent(new LoadingEventStart());
 			GetCommunityWallDataAction searchCriteriaForHashtag = state.getSearchCriteriaForHashtag(hashtag);
-			dispatcher.execute(searchCriteriaForHashtag, new CommunityDataHandler());
+			dispatcher.execute(searchCriteriaForHashtag, communityDataHandler);
 		}
 	}
 	
@@ -450,6 +453,26 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		});
 	}
 	
+	@Override
+	public void updateComment(CommentDTO comment) {
+		dispatcher.execute(new UpdateCommentAction(comment), new DispatcherCallbackAsync<UpdateCommentResult>() {
+			@Override
+			public void onSuccess(UpdateCommentResult result) {
+				homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				homeView.updateComment(result.getComment());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				if (th instanceof AccessError) {
+					homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				} else {
+					homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				}
+			}
+		});
+	}
+	
 	private void getLatLng(AccountDTO account) {
 		GetLatLngAction action = new GetLatLngAction();
 		action.setAccount(account);
@@ -467,11 +490,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		{
 			@Override
 			protected boolean detectScrollerHitBottom() {
-//				int sh = elem.getScrollHeight();
-//				int st = elem.getScrollTop();
-//				int of = elem.getOffsetHeight();
-//				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of);
-				return elem.getScrollHeight() - (elem.getOffsetHeight() + elem.getScrollTop()) < 50;
+				int sh = elem.getScrollHeight();
+				int st = elem.getScrollTop();
+				int of = elem.getOffsetHeight();
+				int dh = Window.getClientHeight();
+				int wst = Window.getScrollTop();
+				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of +" WST="+ wst);
+				return elem.getScrollHeight() - (elem.getOffsetHeight() + elem.getScrollTop()) < 100;
+//				return elem.getScrollHeight() - elem.getScrollTop() < 200;
 			}
 		};
 	}
@@ -581,11 +607,18 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				hideLoadingIcon();
 				clearBackgroundImage();
 			}
+			eventBus.fireEvent(new LoadingEventEnd());
 		}
 
 		@Override
 		public void onFailure(Throwable th) {
-			homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			if (th instanceof IllegalArgumentException) {
+				homeView.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+			} else if (th instanceof NotFoundException) {
+				getCommunityWallData(TweetType.ALL);
+				homeView.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+			}
+			eventBus.fireEvent(new LoadingEventEnd());
 		}
 	}
 
@@ -598,7 +631,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 		@Override
 		public void onSuccess(CommentResult result) {
-			homeView.updateComment(comment);
+			homeView.addComment(comment);
 			homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 		}
 

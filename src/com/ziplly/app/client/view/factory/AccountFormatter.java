@@ -16,13 +16,18 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			return basicValueFormatter.format(value.getDisplayName(), ValueType.STRING_VALUE);
 		case PROFILE_IMAGE_URL:
 			if (value.getImageUrl() != null) {
-				return value.getImageUrl() + "=s140";
+				return value.getImageUrl();// + "=s140";
 			} else {
 				return "images/no-photo.jpg";
 			}
 		case TINY_IMAGE_VALUE:
-			content.append("<img src='" + value.getImageUrl()
-					+ "' width='25px' height='25px'/>");//<br/>" + value.getDisplayName());
+			String imgUrl = "";
+			if (value.getImageUrl() != null) {
+				imgUrl = value.getImageUrl();
+			} else {
+				imgUrl = "images/no-photo.jpg";
+			}
+			content.append("<img src='" + imgUrl + "' width='25px' height='25px'/>");
 			return content.toString();
 		case SMALL_IMAGE_VALUE:
 			content.append("<img src='" + value.getImageUrl()

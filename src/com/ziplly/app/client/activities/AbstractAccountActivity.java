@@ -12,6 +12,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
+import com.ziplly.app.client.exceptions.NotSharedError;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.IAccountView;
@@ -21,6 +22,7 @@ import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LogoutEvent;
+import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.widget.TweetWidget;
@@ -33,6 +35,8 @@ import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
+import com.ziplly.app.shared.DeleteTweetAction;
+import com.ziplly.app.shared.DeleteTweetResult;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -58,10 +62,13 @@ import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
+import com.ziplly.app.shared.UpdateCommentAction;
+import com.ziplly.app.shared.UpdateCommentResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
 public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements AccountPresenter<T>, EmailPresenter {
+	protected static final int TWEETS_PER_PAGE = 5;
 	protected IAccountView<T> view;
 	protected AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
 	
@@ -194,7 +201,23 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 	
 	@Override
-	public void deleteTweet(TweetDTO tweet) {
+	public void deleteTweet(final TweetDTO tweet) {
+		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DispatcherCallbackAsync<DeleteTweetResult>() {
+			@Override
+			public void onSuccess(DeleteTweetResult result) {
+				view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+				view.removeTweet(tweet);
+			}
+
+			@Override
+			public void onFailure(Throwable th) {
+				if (th instanceof AccessError) {
+					view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				} else {
+					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -247,23 +270,29 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 	
-	protected void fetchTweets(long accountId, int page, int pageSize) {
-		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
-		eventBus.fireEvent(new LoadingEventStart());
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-			@Override
-			public void onSuccess(GetTweetForUserResult result) {
-				view.displayTweets(result.getTweets());
-				eventBus.fireEvent(new LoadingEventEnd());
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				eventBus.fireEvent(new LoadingEventEnd());
-			}
-		});
-	}
+//	@Deprecated
+//	protected void fetchTweets(long accountId, int page, int pageSize) {
+//		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
+//		eventBus.fireEvent(new LoadingEventStart());
+//		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
+//			@Override
+//			public void onSuccess(GetTweetForUserResult result) {
+//				view.displayTweets(result.getTweets());
+//				eventBus.fireEvent(new LoadingEventEnd());
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable th) {
+//				if (th instanceof NotSharedError) {
+//					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
+//				} else {
+//					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+//				}
+//				stopThreads();
+//				eventBus.fireEvent(new LoadingEventEnd());
+//			}
+//		});
+//	}
 
 	protected void fetchTweets(long accountId, int page, int pageSize, final boolean displayNoTweetsMessage) {
 		eventBus.fireEvent(new LoadingEventStart());
@@ -275,9 +304,18 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
 			
+			/* (non-Javadoc)
+			 * @see com.ziplly.app.client.dispatcher.DispatcherCallbackAsync#onFailure(java.lang.Throwable)
+			 */
 			@Override
 			public void onFailure(Throwable th) {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				if (th instanceof NotSharedError) {
+					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
+				} else {
+					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				}
+				eventBus.fireEvent(new LoadingEventEnd());
+				eventBus.fireEvent(new TweetNotAvailableEvent());
 			}
 		});
 	}
@@ -297,7 +335,8 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void getAccountDetails(DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
 		dispatcher.execute(new GetAccountDetailsAction(), callback); 
 	}
-	
+
+	// TODO (combine this with getAccountDetails)
 	public void getPublicAccountDetails(Long accountId, DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
 		dispatcher.execute(new GetPublicAccountDetailsAction(accountId), callback); 
 	}
@@ -363,4 +402,26 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	}
+	
+	public void updateComment(CommentDTO comment) {
+		dispatcher.execute(new UpdateCommentAction(comment), new DispatcherCallbackAsync<UpdateCommentResult>() {
+
+			@Override
+			public void onSuccess(UpdateCommentResult result) {
+				view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				view.updateComment(result.getComment());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				if (th instanceof AccessError) {
+					view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				} else {
+					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				}
+			}
+		});
+	}
+	
+	abstract void stopThreads();
 }

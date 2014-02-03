@@ -55,7 +55,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 	Anchor residentSignupLink;
 	
 	@UiField
-	Button fbLoginButtonOnMainPage;
+	com.google.gwt.user.client.ui.Button fbLoginButtonOnMainPage;
 
 	@UiField
 	HTMLPanel residentSignupPanel;
@@ -68,7 +68,10 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	@UiField
 	Button businessSignupBtn;
-	
+
+	@UiField
+	Button businessSignupBtn2;
+
 	HomePresenter presenter;
 
 	public MainView() {
@@ -117,7 +120,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 		presenter.goTo(new SignupPlace());
 	}
 	
-	@UiHandler("businessSignupBtn")
+	@UiHandler({"businessSignupBtn", "businessSignupBtn2"})
 	public void businessSignup(ClickEvent event) {
 		presenter.goTo(new BusinessSignupPlace(""));
 	}

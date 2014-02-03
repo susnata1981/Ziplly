@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
@@ -8,9 +10,10 @@ import com.ziplly.app.client.widget.ShareSetting;
 public class PrivacySettingsDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private AccountDetailsType section;
-	private ShareSetting setting;
+	private String section;
+	private String setting;
 	private Account account;
+	
 	public Long getId() {
 		return id;
 	}
@@ -18,16 +21,16 @@ public class PrivacySettingsDTO implements Serializable {
 		this.id = id;
 	}
 	public AccountDetailsType getSection() {
-		return section;
+		return AccountDetailsType.valueOf(section);
 	}
 	public void setSection(AccountDetailsType section) {
-		this.section = section;
+		this.section = section.name();
 	}
 	public ShareSetting getSetting() {
-		return setting;
+		return ShareSetting.valueOf(setting);
 	}
 	public void setSetting(ShareSetting setting) {
-		this.setting = setting;
+		this.setting = setting.name();
 	}
 	public Account getAccount() {
 		return account;
@@ -64,5 +67,25 @@ public class PrivacySettingsDTO implements Serializable {
 			return true;
 		}
 		return false;
+	}
+	
+	public ShareSetting[] getAllowedShareSettings() {
+		List<ShareSetting> result = new ArrayList<ShareSetting>();
+		AccountDetailsType adt = AccountDetailsType.valueOf(section);
+		
+		if (adt.isAllowedPublic()) {
+			result.add(ShareSetting.PUBLIC);
+		}
+		
+		if (adt.isAllowedCommunity()) {
+			result.add(ShareSetting.COMMUNITY);
+		}
+		
+		if (adt.isAllowedPrivate()) {
+			result.add(ShareSetting.PRIVATE);
+		}
+		
+		ShareSetting response [] = new ShareSetting[result.size()];
+		return result.toArray(response);
 	}
 }

@@ -5,10 +5,11 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
-import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.BusinessAccountDTO;
 
@@ -23,16 +24,36 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		super.onBrowserEvent(context, parent, value, event, valueUpdater);
 		
-		String redirectUrl = "";
+//		String redirectUrl = "";
+//		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
+//		if (environment.equalsIgnoreCase(Environment.DEVEL.name())) {
+//			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, ""); 
+//		} else {
+//			redirectUrl = GWT.getHostPageBaseURL();
+//		}
+//		
+//		String accountId = value.getAccountId().toString();
+//		redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+//		Window.Location.replace(redirectUrl);
 		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
-		if (environment.equalsIgnoreCase(Environment.DEVEL.name())) {
+		String accountId = value.getAccountId().toString();
+		String redirectUrl = "";
+		
+		if (environment.equalsIgnoreCase("DEVEL")) {
 			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, ""); 
 		} else {
 			redirectUrl = GWT.getHostPageBaseURL();
 		}
+
+		NodeList<Element> buttons = parent.getElementsByTagName("button");
+		Element button = buttons.getItem(0);
+		EventTarget target = event.getEventTarget();
 		
-		String accountId = value.getAccountId().toString();
-		redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+		if (button.isOrHasChild(Element.as(target))) {
+			redirectUrl = redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
+		} else {
+			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+		}
 		Window.Location.replace(redirectUrl);
 	}
 
@@ -65,6 +86,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 					+ "<span class='pcell-row'>Website: <a href='#'>"+ website + "</a></span>"
 					+ "<span class='pcell-row'> Category: "+ category +"</span>"
 					+ "<span class='pcell-row'>Located at:&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
 					+ "</div>"
 					+ "</div>");
 		}

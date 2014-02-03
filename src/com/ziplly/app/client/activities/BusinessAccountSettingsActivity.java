@@ -1,7 +1,9 @@
 package com.ziplly.app.client.activities;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -24,6 +26,7 @@ import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.model.SubscriptionPlanStatus;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
@@ -126,12 +129,36 @@ public class BusinessAccountSettingsActivity
 					@Override
 					public void onSuccess(GetAllSubscriptionPlanResult result) {
 						if (result != null) {
+							boolean introductoryPeriod = true;
+							Map<SubscriptionPlanDTO, String> plans = sortSubscriptionPlans(result.getPlans());
 							view.displaySubscriptionPlans(result.getPlans());
+							for(SubscriptionPlanDTO plan : plans.keySet()) {
+								if (plan.getStatus() != SubscriptionPlanStatus.DISABLED) {
+									introductoryPeriod = false;
+								}
+							}
+							
+							// If none of the plans are active
+							if (introductoryPeriod) {
+								view.displayPaymentStatus(StringConstants.FREE_INTRODUCTORY_PLAN, AlertType.INFO);
+							}
 						}
 					}
 				});
 	}
 
+	private Map<SubscriptionPlanDTO, String> sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
+		TreeMap<SubscriptionPlanDTO, String> sortedPlans = new TreeMap<SubscriptionPlanDTO, String>(
+		    new Comparator<SubscriptionPlanDTO>() {
+			@Override
+			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
+				return (int)(o1.getFee() - o2.getFee());
+			}
+		});
+		sortedPlans.putAll(plans);
+		return sortedPlans;
+	}
+	
 	@Override
 	public void cancel() {
 		placeController.goTo(new BusinessAccountPlace());

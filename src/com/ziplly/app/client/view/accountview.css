@@ -60,6 +60,7 @@ a.link:hover {
 .profileImageSection h2 {
 	text-align: center;
 	padding: 4px;
+	padding-top: 0px;
 	background: #fff;
 	border-right: 1px solid #ddd;
 	border-left: 1px solid #ddd;
@@ -136,12 +137,13 @@ h2.heading {
 }
 
 .tweetBoxDiv {
-	margin-left: 14px;
+	margin-left: 12px;
 }
 
 .tweetSection {
-	padding: 6px;
-	border: 1px solid #ddd;
+	margin-top: 6px;
+	padding: 8px;
+	background: #ddd;
 }
 
 .rootTweetSection {
@@ -329,6 +331,7 @@ h2.heading {
 	height: 100%;
 	border: none;
 }
+
 .tab-heading {
 	font-family: sans-serif, sans;
 	font-size: .8em;
@@ -338,4 +341,8 @@ h2.heading {
 .locationTab {
 	position: relative;
 	left: 20px;
+}
+
+.alertMsg {
+	margin-top:8px;
 }

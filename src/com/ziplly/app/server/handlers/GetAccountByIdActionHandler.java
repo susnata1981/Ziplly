@@ -4,7 +4,6 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
-import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.ShareSetting;
@@ -33,6 +32,8 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();
 		}
+		
+//		validateSession();
 		
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
@@ -67,30 +68,39 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 				if (!isAttributeVisible(account, ps)) {
 					account.setOccupation(StringConstants.NOT_SHARED);
 				}
+			case TWEETS:
+				// nothing to do
 			}
 		}
 	}
 
 	private boolean isAttributeVisible(AccountDTO account, PrivacySettingsDTO ps) {
 
-		try {
-			validateSession();
-		} catch (NeedsLoginException e) {
+//		try {
+//			validateSession();
+//		} catch (NeedsLoginException e) {
+//			return ps.getSetting() == ShareSetting.PUBLIC;
+//		}
+
+		if (session == null || session.getAccount() == null) {
 			return ps.getSetting() == ShareSetting.PUBLIC;
 		}
 		
 		if (session.getAccount() != null) {
-			Account loggedInAccount = session.getAccount();
+			if (ps.getSetting() == ShareSetting.PUBLIC) {
+				return true;
+			}
+			
+			Account loggedInAccount = session.getAccount();			
 			if (belongToSameCommunity(account,loggedInAccount)) {
 				return ps.getSetting() == ShareSetting.COMMUNITY;
 			}
 		}
-		
 		return false;
 	}
 
 	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
-		return account.getZip() == loggedInAccount.getZip();
+		return account.getNeighborhood().equals(loggedInAccount.getNeighborhood());
 	}
 
 	@Override

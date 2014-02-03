@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
@@ -33,7 +34,7 @@ public interface TweetDAO {
 	
 	Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException;
 	Long findTweetsCountByAccountId(Long accountId);
-	TweetDTO findTweetById(Long tweetId);
+	TweetDTO findTweetById(Long tweetId) throws NotFoundException;
 	List<TweetDTO> findAll();
 	List<TweetDTO> findTweets(String query, int start, int end);
 	

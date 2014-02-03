@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.resources.client.CssResource;
@@ -53,7 +54,6 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	public TweetView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		message.setClose(false);
 		message.setAnimation(true);
 		StyleHelper.show(message.getElement(), false);
 	}
@@ -65,6 +65,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	@Override
 	public void clear() {
+		StyleHelper.show(message.getElement(), false);
 		tweetsSection.clear();
 	}
 
@@ -102,6 +103,11 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		tweetWidgetWidth = width;
 	}
 
+	@Override
+	public void setHeight(String tweetWidgetHeight) {
+		tweetsSection.setHeight(tweetWidgetHeight);
+	}
+	
 	private void doDisplayTweets(List<TweetDTO> tweets) {
 		for (TweetDTO tweet : tweets) {
 			addTweet(tweet);
@@ -160,11 +166,17 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	}
 
 	@Override
+	public void addComment(CommentDTO comment) {
+		TweetWidget tweetWidget = tweetWidgetMap.get(comment.getTweet().getTweetId());
+		tweetWidget.addComment(comment);
+	}
+
+	@Override
 	public void updateComment(CommentDTO comment) {
 		TweetWidget tweetWidget = tweetWidgetMap.get(comment.getTweet().getTweetId());
 		tweetWidget.updateComment(comment);
 	}
-
+	
 	@Override
 	public void updateLike(LoveDTO like) {
 		TweetWidget tweetWidget = tweetWidgetMap.get(like.getTweet().getTweetId());
@@ -179,5 +191,12 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	public Element getTweetSection() {
 		return tweetsSection.getElement();
+	}
+
+	@Override
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		StyleHelper.show(message.getElement(), true);
 	}
 }

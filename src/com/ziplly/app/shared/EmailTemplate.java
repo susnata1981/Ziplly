@@ -1,14 +1,17 @@
 package com.ziplly.app.shared;
 
 public enum EmailTemplate {
-	WELCOME_REGISTRATION("welcome.ftl"),
-	INVITE_PEOPLE("invite.ftl"),
-	PASSWORD_RECOVERY("password_recovery.ftl"),
-	PENDING_MESSAGE("pending_message.ftl"),
-	SECURITY_ALERT("security_alert.ftl");
+	WELCOME_REGISTRATION("welcome.ftl", "Welcome to ziplly.com"),
+	INVITE_PEOPLE("invite.ftl", "Invitation to join ziplly.com"),
+	PASSWORD_RECOVERY("password_recovery.ftl", "Reset your password on ziplly.com"),
+	PENDING_MESSAGE("pending_message.ftl", "Pending message"),
+	SECURITY_ALERT("security_alert.ftl", "Security alert");
 	
-	EmailTemplate(String filename) {
+	private String subject;
+
+	EmailTemplate(String filename, String subject) {
 		this.setFilename(filename);
+		this.setSubject(subject);
 	}
 	
 	public String getFilename() {
@@ -17,6 +20,14 @@ public enum EmailTemplate {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	private String filename;

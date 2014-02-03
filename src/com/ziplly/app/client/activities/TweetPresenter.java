@@ -16,4 +16,5 @@ public interface TweetPresenter extends SendMessagePresenter {
 	void displayMessage(String errorMessage, AlertType error);
 	void reportTweetAsSpam(TweetDTO tweet);
 	void deleteImage(String url);
+	void updateComment(CommentDTO comment);
 }

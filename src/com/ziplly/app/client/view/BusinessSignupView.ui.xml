@@ -3,28 +3,19 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		#signupForm {
-		float: left;
-		width: 30%;
-		padding: 5px;
-		margin: 10px 0px 0px 40px;
-		background: #f1f1f1;
-		}
-		#signupForm div.controls {
-		width: 90%;
-		}
 		input[type="text"],input[type="password"] {
 		height: 30px;
 		}
 		.loginForm {
 		position: absolute;
-		top: 50%;
+		top: 40%;
 		right: 10%;
-		width: 28%;
+		width: 370px;
 		}
 		.uploadImageForm {
 		clear: both;
-		height: 180px;
+		display: block;
+		height: auto;
 		}
 		.chooseFileUploadButton {
 		float: left;
@@ -37,89 +28,142 @@
 		}
 		.profileImagePreviewDiv {
 		float: left;
-		width: 50%;
-		height: 130px;
+		width: 120px;
+		height: 120px;
 		}
 		.profileImagePreview {
-		width: 90% !important;
-		height: 90% !important;
+		width:
+		94% !important;
+		height: 94% !important;
 		border: 1px solid #ddd;
+		}
+		.signupPanel {
+			border: 1px solid #ddd;
+			background: #f1f1f1;
+			padding: 6px;
+			min-width: 300px;
+			max-width: 320px;
+		}
+		.row {
+		clear: left;
+		display: block;
+		margin-top: 8px;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
-	<g:HTMLPanel>
-		<b:Alert ui:field="infoField" animation="true" />
-		<div id="mainContent">
-			<div id="signupForm">
-				<div class="heading">Signup</div>
-				<b:Form>
-					<b:ControlGroup ui:field="businessNameCg">
-						<b:Controls>
-							<b:Label>Business name</b:Label>
-							<br />
-							<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
-							<b:HelpInline ui:field="businessNameError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="street1Cg">
-						<b:Controls>
-							<b:Label>Address</b:Label>
-							<br />
-							<b:TextBox ui:field="street1" placeholder="street1..." />
-							<b:HelpInline ui:field="street1Error"></b:HelpInline>
-							<b:Image ui:field="neighborhoodLoadingImage" />
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="neighborhoodCg">
-						<b:Controls ui:field="neighborhoodControl">
-							<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
-							<g:HTMLPanel ui:field="neighborhoodListPanel">
-								<!-- <b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> -->
+	<!-- <g:HTMLPanel> <b:Alert ui:field="infoField" animation="true" /> <div 
+		id="mainContent"> <div id="signupForm"> <div class="heading">Signup</div> 
+		<b:Form> <b:ControlGroup ui:field="businessNameCg" addStyleNames="{style.row}"> 
+		<b:Controls> <b:Label>Business name</b:Label> <br /> <b:TextBox ui:field="businessName" 
+		placeholder="BusinessName..." /> <b:HelpInline ui:field="businessNameError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:ControlGroup ui:field="street1Cg" addStyleNames="{style.row}"> 
+		<b:Controls> <b:Label>Address</b:Label> <br /> <b:TextBox ui:field="street1" 
+		placeholder="street1..." /> <b:HelpInline ui:field="street1Error"></b:HelpInline> 
+		<b:Image ui:field="neighborhoodLoadingImage" /> </b:Controls> </b:ControlGroup> 
+		<b:ControlGroup ui:field="neighborhoodCg" addStyleNames="{style.row}"> <b:Controls 
+		ui:field="neighborhoodControl"> <b:ControlLabel for="neighborhood">Select 
+		Neighborhood</b:ControlLabel> <g:HTMLPanel ui:field="neighborhoodListPanel"> 
+		<b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> 
+		</g:HTMLPanel> <b:HelpInline ui:field="neighborhoodError"></b:HelpInline> 
+		<b:HelpBlock>Pick your neighborhood to learn about whats going on in there</b:HelpBlock> 
+		</b:Controls> </b:ControlGroup> <g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}"> 
+		<g:HTMLPanel> <div class="{style.profileImagePreviewDiv}"> <b:Image ui:field="profileImagePreview" 
+		addStyleNames="{style.profileImagePreview}" /> </div> <g:FileUpload ui:field="uploadField" 
+		name="image" addStyleNames="{style.chooseFileUploadButton}" /> <b:Button 
+		ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> 
+		</g:HTMLPanel> </g:FormPanel> <b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}"> 
+		<b:Controls> <b:Label>Email</b:Label> <br /> <b:TextBox ui:field="email" 
+		placeholder="email..." /> <b:HelpInline ui:field="emailError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:ControlGroup ui:field="passwordCg" addStyleNames="{style.row}"> 
+		<b:Controls> <b:Label>Password</b:Label> <br /> <b:PasswordTextBox ui:field="password" 
+		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
+		</b:Controls> </b:ControlGroup> <b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button> 
+		</b:Form> </div> <div class="{style.loginForm}"> <dt:LoginWidget ui:field="loginWidget" 
+		width="90%" businessAccountSignupLink="false" /> </div> </div> </g:HTMLPanel> -->
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column offset="1" size="8">
+				<b:Alert ui:field="infoField" animation="true" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="1" size="4">
+				<g:HTMLPanel addStyleNames="{style.signupPanel}">
+					<div class="heading">Signup</div>
+					<hr/>
+					<b:Form>
+						<b:ControlGroup ui:field="businessNameCg"
+							addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Business name</b:Label>
+								<br />
+								<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
+								<b:HelpInline ui:field="businessNameError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="street1Cg" addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Address</b:Label>
+								<br />
+								<b:TextBox ui:field="street1" placeholder="street1..." />
+								<b:HelpInline ui:field="street1Error"></b:HelpInline>
+								<b:Image ui:field="neighborhoodLoadingImage" />
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="neighborhoodCg"
+							addStyleNames="{style.row}">
+							<b:Controls ui:field="neighborhoodControl">
+								<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+								<g:HTMLPanel ui:field="neighborhoodListPanel">
+									<!-- <b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> -->
+								</g:HTMLPanel>
+								<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+								<b:HelpBlock>Pick your neighborhood to learn about whats
+									going on
+									in there</b:HelpBlock>
+							</b:Controls>
+						</b:ControlGroup>
+						<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
+							<g:HTMLPanel>
+								<div class="{style.profileImagePreviewDiv}">
+									<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+								</div>
+								<g:FileUpload ui:field="uploadField" name="image"
+									addStyleNames="{style.chooseFileUploadButton}" />
+								<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
 							</g:HTMLPanel>
-							<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
-							<b:HelpBlock>Pick your neighborhood to learn about whats
-								going on in there</b:HelpBlock>
-						</b:Controls>
-					</b:ControlGroup>
-					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
-						<g:HTMLPanel>
-							<div class="{style.profileImagePreviewDiv}">
-								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
-							</div>
-							<g:FileUpload ui:field="uploadField" name="image"
-								addStyleNames="{style.chooseFileUploadButton}" />
-							<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
-						</g:HTMLPanel>
-					</g:FormPanel>
-					<b:ControlGroup ui:field="emailCg">
-						<b:Controls>
-							<b:Label>Email</b:Label>
-							<br />
-							<b:TextBox ui:field="email" placeholder="email..." />
-							<b:HelpInline ui:field="emailError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="passwordCg">
-						<b:Controls>
-							<b:Label>Password</b:Label>
-							<br />
-							<b:PasswordTextBox ui:field="password"
-								placeholder="password..." />
-							<b:HelpInline ui:field="passwordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<!-- <b:ControlGroup ui:field="confirmPasswordCg"> <b:Controls> <b:Label>Confirm 
-						password</b:Label> <br /> <b:PasswordTextBox ui:field="confirmPassword" placeholder="confirm 
-						password..." /> <b:HelpInline ui:field="confirmPasswordError"></b:HelpInline> 
-						</b:Controls> </b:ControlGroup> -->
-					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
-				</b:Form>
-			</div>
-			<div class="{style.loginForm}">
-				<dt:LoginWidget ui:field="loginWidget" width="90%"
-					businessAccountSignupLink="false" />
-			</div>
-		</div>
-	</g:HTMLPanel>
+						</g:FormPanel>
+						<b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Email</b:Label>
+								<br />
+								<b:TextBox ui:field="email" placeholder="email..." />
+								<b:HelpInline ui:field="emailError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="passwordCg"
+							addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Password</b:Label>
+								<br />
+								<b:PasswordTextBox ui:field="password"
+									placeholder="password..." />
+								<b:HelpInline ui:field="passwordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+					</b:Form>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="6">
+				<b:Container ui:field="loginWidgetPanel" addStyleNames="{style.loginForm}">
+					<dt:LoginWidget ui:field="loginWidget" width="90%"
+						businessAccountSignupLink="false" />
+				</b:Container>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

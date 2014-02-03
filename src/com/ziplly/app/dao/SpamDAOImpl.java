@@ -16,23 +16,31 @@ public class SpamDAOImpl implements SpamDAO {
 		if (spam == null) {
 			throw new IllegalArgumentException("Invalid argument to save(...)");
 		}
+		
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		em.persist(spam);
-		em.getTransaction().commit();
-		em.close();
+		try {
+			em.getTransaction().begin();
+			em.persist(spam);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
 	}
-	
+
 	@Override
 	public List<SpamDTO> getAll() {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createQuery("from Spam order by timeCreated desc");
-		List<Spam> result = query.getResultList();
-		List<SpamDTO> response = Lists.newArrayList();
-		for(Spam s : result) {
-			response.add(EntityUtil.clone(s));
+		try {
+			Query query = em.createQuery("from Spam order by timeCreated desc");
+			@SuppressWarnings("unchecked")
+			List<Spam> result = query.getResultList();
+			List<SpamDTO> response = Lists.newArrayList();
+			for (Spam s : result) {
+				response.add(EntityUtil.clone(s));
+			}
+			return response;
+		} finally {
+			em.close();
 		}
-		
-		return response;
 	}
 }

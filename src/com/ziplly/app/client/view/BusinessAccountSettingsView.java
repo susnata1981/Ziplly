@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,11 +39,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.client.resource.TableResources;
@@ -59,13 +60,14 @@ import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.Cuisine;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.model.SubscriptionPlanStatus;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessAccountSettingsView extends Composite implements IBusinessAccountSettingView {
+public class BusinessAccountSettingsView extends AbstractView implements IBusinessAccountSettingView {
 
 	private static final Double MEMBERSHIP_FEE_AMOUNT = 5.0;
 	private static final int MAX_TRANSACTION_TABLE_ROW_COUNT = 100;
@@ -114,12 +116,12 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	@UiField
 	HelpInline street1Error;
 
-	@UiField
-	TextBox street2;
-	@UiField
-	ControlGroup street2Cg;
-	@UiField
-	HelpInline street2Error;
+//	@UiField
+//	TextBox street2;
+//	@UiField
+//	ControlGroup street2Cg;
+//	@UiField
+//	HelpInline street2Error;
 
 	@UiField
 	TextBox zip;
@@ -248,7 +250,9 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 	private boolean sellerEligibleForSubscription = true;
 	private Map<SubscriptionPlanDTO, String> plans;
 
-	public BusinessAccountSettingsView() {
+	@Inject
+	public BusinessAccountSettingsView(EventBus eventBus) {
+		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
@@ -280,7 +284,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		message.setVisible(false);
 		businessName.setText("");
 		street1.setText("");
-		street2.setText("");
+//		street2.setText("");
 		zip.setText("");
 		website.setText("");
 		email.setText("");
@@ -294,8 +298,11 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			this.account = account;
 			businessName.setText(account.getName());
 			street1.setText(account.getStreet1());
-			street2.setText(account.getStreet2());
+//			street2.setText(account.getStreet2());
+			
 			zip.setText(Integer.toString(account.getZip()));
+			zip.setReadOnly(true);
+			
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
 			
@@ -318,9 +325,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 			
 			displayBusinessProperties();
 
-			if (account.getImageUrl() != null) {
-				displayImagePreview(account.getImageUrl());
-			}
+			displayImagePreview(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 
 			// Don't show subscription tab for non-profits
 			if (account.getBusinessType() == BusinessType.NON_PROFIT) {
@@ -430,7 +435,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 
 		String name = businessName.getText().trim();
 		String streetOne = street1.getText().trim();
-		String streetTwo = street2.getText().trim();
+//		String streetTwo = street2.getText().trim();
 		String websiteUrl = website.getText().trim();
 		String emailInput = email.getText().trim();
 		String zipInput = zip.getText().trim();
@@ -441,7 +446,7 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		acct.setNeighborhood(account.getNeighborhood());
 		acct.setName(name);
 		acct.setStreet1(streetOne);
-		acct.setStreet2(streetTwo);
+//		acct.setStreet2(streetTwo);
 		acct.setZip(Integer.parseInt(zipInput));
 		acct.setWebsite(websiteUrl);
 		acct.setEmail(emailInput);
@@ -607,19 +612,16 @@ public class BusinessAccountSettingsView extends Composite implements IBusinessA
 		subscriptionPlanTablePanel.clear();
 		this.plans = plans;
 		
-		// sort the subscription plans based on fee (ascending)
-		Map<SubscriptionPlanDTO, String> sortedPlans = sortSubscriptionPlans(plans);
 		int count = 0;
 		
-		for (SubscriptionPlanDTO plan : sortedPlans.keySet()) {
+		for (SubscriptionPlanDTO plan : plans.keySet()) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
-			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan, sortedPlans.get(plan));
+			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan, plans.get(plan));
 			
-			// Free subscription plan
-//			if (plan.getFee() == 0) {
-//				widget.removeBuyButton();
-//			}
-			
+			if (plan.getStatus() == SubscriptionPlanStatus.DISABLED) {
+				widget.enableBuyButton(false);
+			}
+
 			// Just to highlight
 			if (count == 1) {
 				widget.setButtonType(ButtonType.INFO);

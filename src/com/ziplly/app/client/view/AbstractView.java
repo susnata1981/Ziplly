@@ -32,6 +32,4 @@ public abstract class AbstractView extends Composite {
 		this(eventBus);
 		this.placeController = placeController;
 	}
-
-	
 }

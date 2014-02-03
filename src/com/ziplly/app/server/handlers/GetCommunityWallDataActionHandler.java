@@ -2,11 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -23,6 +25,7 @@ public class GetCommunityWallDataActionHandler
 		AbstractTweetActionHandler<GetCommunityWallDataAction, GetCommunityWallDataResult> {
 
 	private HashtagDAO hashtagDao;
+	private Logger logger = Logger.getLogger(GetCommunityWallDataAction.class.getName());
 
 	@Inject
 	public GetCommunityWallDataActionHandler(AccountDAO accountDao,
@@ -48,7 +51,7 @@ public class GetCommunityWallDataActionHandler
 		throw new IllegalArgumentException();
 	}
 
-	private GetCommunityWallDataResult getTweetById(GetCommunityWallDataAction action) {
+	private GetCommunityWallDataResult getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
 		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
 		try {
 			Long tweetId = Long.parseLong(action.getTweetId());
@@ -56,13 +59,17 @@ public class GetCommunityWallDataActionHandler
 			ArrayList<TweetDTO> tweets = new ArrayList<TweetDTO>();
 			tweets.add(tweet);
 			result.setTweets(tweets);
-		} catch(NumberFormatException nfe) {
+		} catch(NotFoundException nfe) {
+			logger.severe(String.format("Couldn't find tweets for tweetId %d",action.getTweetId()));
+			throw nfe;
+		}
+		catch(NumberFormatException nfe) {
 			throw new IllegalArgumentException();
 		}
 		return result;
 	}
 
-	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) {
+	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) throws NotFoundException {
 		Long neighborhoodId = session.getAccount().getNeighborhood().getNeighborhoodId();
 		List<TweetDTO> tweets = hashtagDao.getTweetsForTagAndNeighborhood(
 				action.getHashtag(),

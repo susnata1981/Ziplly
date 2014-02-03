@@ -158,7 +158,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, ((ResidentPlace)place), residentsView);
 		}
 		else if (place instanceof BusinessPlace) {
-			return new BusinessActivity(dispatcher, eventBus, placeController, ctx, businessView); 
+			return new BusinessActivity(dispatcher, eventBus, placeController, ctx, ((BusinessPlace)place), businessView); 
 		}
 		else if (place instanceof PasswordRecoveryPlace) {
 			return new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView);

@@ -11,7 +11,7 @@
 		.notificationLink {
 		display: block;
 		height: 30px;
-		width: 260px;
+		width: 300px;
 		border: 1px solid #ddd;
 		padding: 4px;
 		font-size: 13px;
@@ -40,7 +40,7 @@
 		}
 		.notificationDropdown .dropdown-menu {
 			max-height: 180px;
-			overflow: auto;
+			text-overflow: ellipsis;
 		}
 	</ui:style>
 	<g:HTMLPanel>

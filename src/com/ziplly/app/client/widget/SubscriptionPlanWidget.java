@@ -55,4 +55,8 @@ public class SubscriptionPlanWidget extends Composite {
 	public void removeBuyButton() {
 		StyleHelper.show(buyButton.getElement(), false);
 	}
+
+	public void enableBuyButton(boolean enable) {
+		buyButton.setEnabled(enable);
+	}
 }

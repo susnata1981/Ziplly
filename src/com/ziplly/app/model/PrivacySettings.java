@@ -23,10 +23,10 @@ public class PrivacySettings extends AbstractTimestampAwareEntity {
 	private Long id;
 
 	@Column(name="section")
-	private AccountDetailsType section;
+	private String section;
 	
 	@Column(name="setting")
-	private ShareSetting setting;
+	private String setting;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="account_id")
@@ -37,8 +37,8 @@ public class PrivacySettings extends AbstractTimestampAwareEntity {
 	
 	public PrivacySettings(PrivacySettingsDTO asd) {
 		this.id = asd.getId();
-		this.section = asd.getSection();
-		this.setting = asd.getSetting();
+		this.setSection(asd.getSection());
+		this.setSetting(asd.getSetting());
 		this.account = new Account();
 		if (asd.getAccount() != null) {
 			this.account.setAccountId(asd.getAccount().getAccountId());
@@ -46,19 +46,19 @@ public class PrivacySettings extends AbstractTimestampAwareEntity {
 	}
 	
 	public ShareSetting getSetting() {
-		return setting;
+		return ShareSetting.valueOf(setting);
 	}
 
 	public void setSetting(ShareSetting setting) {
-		this.setting = setting;
+		this.setting = setting.name();
 	}
 
 	public AccountDetailsType getSection() {
-		return section;
+		return AccountDetailsType.valueOf(section);
 	}
 
 	public void setSection(AccountDetailsType section) {
-		this.section = section;
+		this.section = section.name();
 	}
 
 	public Long getId() {

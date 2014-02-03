@@ -17,12 +17,18 @@ public class ShareSettingsWidget extends Composite {
 
 	@UiField(provided=true)
 	ListBox shareSettingsList;
+	private ShareSetting[] shareSettings;
 	
-	public ShareSettingsWidget() {
+	public ShareSettingsWidget(ShareSetting [] settings) {
 		shareSettingsList = new ListBox();
-		for(ShareSetting shareSetting : ShareSetting.values()) {
+//		for(ShareSetting shareSetting : ShareSetting.values()) {
+//			shareSettingsList.addItem(shareSetting.name().toLowerCase());
+//		}
+		this.shareSettings = settings;
+		for(ShareSetting shareSetting : settings) {
 			shareSettingsList.addItem(shareSetting.name().toLowerCase());
 		}
+
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -37,6 +43,17 @@ public class ShareSettingsWidget extends Composite {
 	}
 	
 	public void setSelection(ShareSetting setting) {
-		shareSettingsList.setSelectedIndex(setting.ordinal());
+		shareSettingsList.setSelectedIndex(getIndex(setting));
+	}
+	
+	private int getIndex(ShareSetting ss) {
+		int index = 0;
+		for(ShareSetting setting : shareSettings) {
+			if (ss == setting) {
+				return index; 
+			}
+			index++;
+		}
+		throw new IllegalArgumentException();
 	}
 }

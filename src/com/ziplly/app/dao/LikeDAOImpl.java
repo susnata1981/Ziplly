@@ -15,37 +15,46 @@ public class LikeDAOImpl implements LikeDAO {
 		if (tweetId == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNamedQuery("findLikeByTweetAndUserId");
-		query.setParameter("tweetId", tweetId);
-		query.setParameter("accountId", accountId);
-		Love result = (Love) query.getSingleResult();
-		return EntityUtil.clone(result);
+		try {
+			Query query = em.createNamedQuery("findLikeByTweetAndUserId");
+			query.setParameter("tweetId", tweetId);
+			query.setParameter("accountId", accountId);
+			Love result = (Love) query.getSingleResult();
+			return EntityUtil.clone(result);
+		} finally {
+			em.close();
+		}
 	}
-	
+
 	@Override
 	public LoveDTO save(Love like) throws DuplicateException {
 		if (like == null) {
 			throw new IllegalArgumentException();
 		}
-		
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		
-		if (like.getTweet() != null) {
-			try {
-				findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor().getAccountId());
-				throw new DuplicateException();
-			} catch(NoResultException nre) {
-				// ignore it
-			}
-		} 
-		// else check the Comment
 
-		em.getTransaction().begin();
-		em.persist(like);
-		em.getTransaction().commit();
-		return EntityUtil.clone(like);
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		try {
+			if (like.getTweet() != null) {
+				try {
+					findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor()
+							.getAccountId());
+					throw new DuplicateException();
+				} catch (NoResultException nre) {
+					// ignore it
+				}
+			}
+			// else check the Comment
+
+			em.getTransaction().begin();
+			em.persist(like);
+			em.getTransaction().commit();
+			return EntityUtil.clone(like);
+		} finally {
+			em.close();
+		}
 	}
 
 	@Override
@@ -53,11 +62,15 @@ public class LikeDAOImpl implements LikeDAO {
 		if (like == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		em.remove(like);
-		em.getTransaction().commit();
+		try {
+			em.getTransaction().begin();
+			em.remove(like);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
 	}
 
 	@Override
@@ -66,9 +79,14 @@ public class LikeDAOImpl implements LikeDAO {
 			throw new IllegalArgumentException();
 		}
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createQuery("select count(*) from Love where author.accountId = :accountId");
-		query.setParameter("accountId", accountId);
-		Long count = (Long) query.getSingleResult();
-		return count;
+		try {
+			Query query = em
+					.createQuery("select count(*) from Love where author.accountId = :accountId");
+			query.setParameter("accountId", accountId);
+			Long count = (Long) query.getSingleResult();
+			return count;
+		} finally {
+			em.close();
+		}
 	}
 }

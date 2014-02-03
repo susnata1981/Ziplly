@@ -12,24 +12,36 @@ public class SubscriptionPlanDAOImpl implements SubscriptionPlanDAO {
 	@Override
 	public void save(SubscriptionPlan plan) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		em.persist(plan);
-		em.getTransaction().commit();
-		em.close();
+		try {
+			em.getTransaction().begin();
+			em.persist(plan);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
 	}
-	
+
 	@Override
 	public SubscriptionPlan get(Long planId) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		SubscriptionPlan plan = em.find(SubscriptionPlan.class, planId);
-		return plan;
+		try {
+			SubscriptionPlan plan = em.find(SubscriptionPlan.class, planId);
+			return plan;
+		} finally {
+			em.close();
+		}
 	}
 
 	@Override
 	public List<SubscriptionPlanDTO> getAll() {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		@SuppressWarnings("unchecked")
-		List<SubscriptionPlan> plans = (List<SubscriptionPlan>)em.createQuery("from SubscriptionPlan").getResultList();
-		return EntityUtil.cloneSubscriptionPlanList(plans);
+		try {
+			@SuppressWarnings("unchecked")
+			List<SubscriptionPlan> plans = (List<SubscriptionPlan>) em.createQuery(
+					"from SubscriptionPlan").getResultList();
+			return EntityUtil.cloneSubscriptionPlanList(plans);
+		} finally {
+			em.close();
+		}
 	}
 }

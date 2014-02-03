@@ -8,6 +8,10 @@ public enum ValueType {
 	INTEGER_VALUE,
 	DATE_VALUE_MEDIUM,
 	UNREAD_MESSAGE_COUNT,
+	NOTIFICATION_TYPE,
+	
+	// Tweet
+	TWEET_TYPE,
 	
 	// Account Notification
 	PERSONAL_MESSAGE,
@@ -41,5 +45,5 @@ public enum ValueType {
 	PRIVACY_FIELD_NAME,
 	
 	// Account Notification Settings
-	ACCOUNT_NOTIFICATION_TYPE,
+	ACCOUNT_NOTIFICATION_TYPE, 
 }

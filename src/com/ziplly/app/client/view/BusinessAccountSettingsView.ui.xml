@@ -101,14 +101,6 @@
 											<b:HelpInline ui:field="street1Error"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
-									<b:ControlGroup ui:field="street2Cg">
-										<b:Controls>
-											<b:Label>Street2</b:Label>
-											<br />
-											<b:TextBox ui:field="street2" placeholder="street2..." />
-											<b:HelpInline ui:field="street2Error"></b:HelpInline>
-										</b:Controls>
-									</b:ControlGroup>
 									<b:ControlGroup ui:field="zipCg">
 										<b:Controls>
 											<b:Label>Zip</b:Label>
@@ -235,7 +227,7 @@
 					</b:Tab>
 					<b:Tab heading="Subscription Plans" ui:field="subscriptionTab">
 						<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
-							<b:Alert ui:field="paymentStatus" />
+							<b:Alert ui:field="paymentStatus" close="false"/>
 							<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
 								addStyleNames="{style.subscriptionPlanTablePanel}">
 							</g:HTMLPanel>

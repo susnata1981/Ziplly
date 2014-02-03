@@ -23,7 +23,7 @@ public class Comment implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="comment_id")
-	private int commentId;
+	private Long commentId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="tweet_id")
@@ -48,7 +48,10 @@ public class Comment implements Serializable {
 	}
 	
 	public Comment(CommentDTO comment) {
-		this.setTweet(new Tweet(comment.getTweet()));
+		this.commentId = comment.getCommentId();
+		if (comment.getTweet() != null) {
+			this.setTweet(new Tweet(comment.getTweet()));
+		}
 		this.author = new Account(comment.getAuthor());
 		this.content = comment.getContent();
 		this.timeUpdated = comment.getTimeUpdated();
@@ -74,11 +77,11 @@ public class Comment implements Serializable {
 		this.author = author;
 	}
 
-	public int getCommentId() {
+	public Long getCommentId() {
 		return commentId;
 	}
 
-	public void setCommentId(int commentId) {
+	public void setCommentId(Long commentId) {
 		this.commentId = commentId;
 	}
 	public Tweet getTweet() {

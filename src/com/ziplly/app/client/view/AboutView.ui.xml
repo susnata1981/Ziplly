@@ -56,69 +56,35 @@
 				<g:HTMLPanel>
 					<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Our story</b:Heading>
 					<p class="{style.text}">
-						Think industry jargon makes you sound super smart on
-						your
-						'About Us'
-						page?
-						Think again. People want -- and appreciate --
-						straight talk about
-						what your business does. After all, if people
-						can't figure out what
-						you do, how will they know they need your
-						product or service?
-
-						So, skip the industry lingo like Apptopia does
-						on
-						its 'About Us' page.
-						The startup's simple but polished language
-						effectively communicates
-						the company's offering while still
-						allowing
-						the Average Joe to
-						understand it. Take a look at the last
-						paragraph
-						-- using short and
-						punchy sentences, the paragraph
-						explains a
-						complex
-						product in a very
-						simple way.
+						Ziplly, was a product of an unfortunate flat tyre, lonely ponderings following that and 
+						a bit of hard work to give life to the unborn idea. One fine day, I tried to pull 
+						my car out of the street infront of our house and noticed I'd a flat tyre. When I tried to
+						replace the bolts in one of my tyre, I realized I didn't have the right tool. Fortunately, one 
+						of my neighbor noticed me struggling and stepped in and lended me his tools. This got me 
+						thinking as to how can I get quick help if I'm caught in a similar situation - if I needed
+						a heavy equipment like a ladder for fixing up my roof or needed a hand to stop water leakage
+						or if I needed to spot a hit an run case. If you live in the city of Seattle, you're probably
+						like me, very familiar with hit and run cases. The list of things where you can use your neighbors
+						help goes on and on.
 					</p>
-					<br />
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow addStyleNames="{style.rowWithMargin}">
-			<b:Column offset="1" size="2">
-				<g:HTMLPanel>
-					<img ui:field="tom" src="images/shaan.jpeg" class="{style.leftimage}" />
-				</g:HTMLPanel>
-			</b:Column>
-			<b:Column size="6">
-				<g:HTMLPanel>
 					<p class="{style.text}">
-						So, skip the industry lingo like
-						Apptopia does on its
-						'About Us'
-						page.
-						The startup's simple but polished
-						language
-						effectively
-						communicates
-						the company's offering while still
-						allowing
-						the Average
-						punchy sentences, the paragraph explains a
-						complex
-						product in a
-						very
-						simple way.
+						Knowing your neighbor is great but it can be better! Think of all the businesses around you, and if
+						you're anyone like me, you know very few of them. I was completely oblivious of some of the great
+						restaurants in my own neighborhood until I heard about it from someone.
+						This is where Ziplly differentiates itself from the crowd by getting all those businesses on our platform.
+						My premise is that for most businesses their primary customers are the residents who live around them.
+						The primary way to attract business today is through coupons and deals.Businesses today lack the means
+						for communicating with their customers, getting meaninful feedback, making annoucements and above all
+						pay attention of their primary customers. 
 					</p>
-					<br />
+					<p class="{style.text}">
+					    Ziplly is a platform which ties all the residents and businesses together thereby 
+					    promoting communication and raising awareness within small communities. 
+					</p>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>
-		<b:FluidRow addStyleNames="{style.rowWithMargin}">
+		<!-- <b:FluidRow addStyleNames="{style.rowWithMargin}">
 			<b:Column offset="1" size="2">
 				<g:HTMLPanel>
 					<img src="images/shaan.jpeg" class="{style.leftimage}" />
@@ -140,7 +106,7 @@
 					</p>
 				</g:HTMLPanel>
 			</b:Column>
-		</b:FluidRow>
+		</b:FluidRow> -->
 		<b:FluidRow>
 		    <b:Column offset="1" size="3">
 		        <g:HTMLPanel>
@@ -157,7 +123,7 @@
 		 <b:FluidRow>
 			<b:Column offset="1" size="7">
 				<g:HTMLPanel addStyleNames="{style.contactForm}">
-				    <b:Alert ui:field="message"/>
+				    <b:Alert ui:field="message" close="false"/>
 					<b:Form>
 					    <b:Fieldset>
 						<b:ControlGroup ui:field="emailCg">

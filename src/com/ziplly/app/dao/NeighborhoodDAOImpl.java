@@ -31,6 +31,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			Neighborhood neighborhood = (Neighborhood) query.getSingleResult();
 			return EntityUtil.clone(neighborhood);
 		} catch (NoResultException nre) {
+			logger.warn(String.format("Couldn't find neighborhood with id: %d", neighborhoodId));
 			throw new NotFoundException();
 		} finally {
 			em.close();
@@ -40,18 +41,16 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	@Override
 	public List<Neighborhood> getAll(int start, int end) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNamedQuery("findAllNeighborhoods");
 
-		@SuppressWarnings("unchecked")
-		List<Neighborhood> result = query.getResultList();
-		em.close();
-		return result;
+		try {
+			Query query = em.createNamedQuery("findAllNeighborhoods");
+			@SuppressWarnings("unchecked")
+			List<Neighborhood> result = query.getResultList();
+			return result;
+		} finally {
+			em.close();
+		}
 	}
-
-	// @Override
-	// public NeighborhoodDTO findFirstByPostalCode(int postalCode) {
-	// return findByPostalCode(postalCode).get(0);
-	// }
 
 	@Override
 	public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
@@ -71,30 +70,37 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			}
 			return response;
 		} catch (NoResultException nre) {
+			logger.warn(String.format("Couldn't find neighborhood with postal code: %d", postalCode));
 			return ImmutableList.of();
 		} finally {
 			em.close();
 		}
-
 	}
 
 	@Override
 	public List<NeighborhoodDTO> findAll() {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		Query query = em.createQuery("from Neighborhood");
-		@SuppressWarnings("unchecked")
-		List<Neighborhood> result = query.getResultList();
-		em.close();
-		return EntityUtil.cloneNeighborhoodList(result);
+		try {
+			em.getTransaction().begin();
+			Query query = em.createQuery("from Neighborhood");
+			@SuppressWarnings("unchecked")
+			List<Neighborhood> result = query.getResultList();
+			return EntityUtil.cloneNeighborhoodList(result);
+		} finally {
+			em.close();
+		}
 	}
 
+	@Deprecated
 	@Override
 	public Long findTotalNeighborhoods(String countQuery) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createQuery(countQuery);
-		Long count = (Long) query.getSingleResult();
-		em.close();
-		return count;
+		try {
+			Query query = em.createQuery(countQuery);
+			Long count = (Long) query.getSingleResult();
+			return count;
+		} finally {
+			em.close();
+		}
 	}
 }

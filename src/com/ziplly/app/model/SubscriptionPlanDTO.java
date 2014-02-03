@@ -10,6 +10,7 @@ public class SubscriptionPlanDTO implements Serializable {
 	private String name;
 	private String description;
 	private Double fee;
+	private String status;
 	private Date timeCreated;
 	
 	public SubscriptionPlanDTO() {
@@ -65,5 +66,13 @@ public class SubscriptionPlanDTO implements Serializable {
 	@Override
 	public int hashCode() {
 		return name.hashCode() + description.hashCode() + subscriptionId.hashCode();
+	}
+
+	public SubscriptionPlanStatus getStatus() {
+		return SubscriptionPlanStatus.valueOf(status);
+	}
+
+	public void setStatus(SubscriptionPlanStatus status) {
+		this.status = status.name();
 	}
 }

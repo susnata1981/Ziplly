@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.commentPanel {
+			margin-top: 6px;
+			border-bottom: 1px dotted #777;
+		}
+		.block {
+		display: block;
+		}
+		.profileImage {
+		width: 40px;
+		height: 40px;
+		}
+		.content {
+			font-size: .9em;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.commentPanel}">
+		<b:Row>
+			<b:Column offset="1" size="2">
+				<g:HTMLPanel>
+					<b:Image ui:field="profileImage" addStyleNames="{style.profileImage}" />
+					<g:Anchor ui:field="profileNameAnchor" addStyleNames="{style.block}" />
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="7">
+				<dt:MouseHoverPanel ui:field="contentPanel">
+					<span ui:field="content" addStyleNames="{style.content}" />
+				</dt:MouseHoverPanel>
+			</b:Column>
+		</b:Row>
+		<b:Row>
+			<b:Column offset="8" size="4">
+				<g:HTMLPanel>
+					<span ui:field="postingDate" class="datefont"/>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:Row>
+	</g:HTMLPanel>
+</ui:UiBinder> 

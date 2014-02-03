@@ -9,7 +9,6 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -106,12 +105,13 @@ public class HomeView extends Composite implements IHomeView {
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
+		
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
-		tweetBox.getElement().getStyle().setMarginLeft(1.2, Unit.PCT);
 		tweetBox.setPresenter(presenter);
-		communityWallPanel.add(tweetBox);
+		
 		tview.setWidth(TWEET_WIDGET_WIDTH);
+		
 		communityWallPanel.add(tview);
 		communitySummaryWidget.setHeight("270px");
 		communitySummaryWidget.addClickHandler(new ClickHandler() {
@@ -258,6 +258,15 @@ public class HomeView extends Composite implements IHomeView {
 	}
 
 	@Override
+	public void addComment(CommentDTO comment) {
+		if (comment == null) {
+			throw new IllegalArgumentException();
+		}
+		hideMessage(true);
+		tview.addComment(comment);
+	}
+
+	@Override
 	public void updateTweetLike(LoveDTO like) {
 		if (like == null) {
 			throw new IllegalArgumentException();
@@ -266,9 +275,11 @@ public class HomeView extends Composite implements IHomeView {
 		tview.updateLike(like);
 	}
 
+	
 	@Override
 	public Element getTweetSectionElement() {
-		return communityWallPanel.getElement();
+//		return communityWallPanel.getElement();
+		return tview.getTweetSection();
 	}
 
 	@Override
@@ -302,9 +313,9 @@ public class HomeView extends Composite implements IHomeView {
 				count = data.get(entry.getKey());
 				totalTweetCount += count;
 			}
-			setCountOnAnchor(a, entry.getKey().name(), count);
+			setCountOnAnchor(a, entry.getKey().getTweetName(), count);
 		}
-		setCountOnAnchor(filters.get(TweetType.ALL), TweetType.ALL.name(), totalTweetCount);
+		setCountOnAnchor(filters.get(TweetType.ALL), TweetType.ALL.getTweetName(), totalTweetCount);
 	}
 	
 	@Override
@@ -345,7 +356,9 @@ public class HomeView extends Composite implements IHomeView {
 
 	@Override
 	public void displayProfileImagePreview(String imageUrl) {
-		tweetBox.previewImage(imageUrl);
+		if (imageUrl != null) {
+			tweetBox.previewImage(imageUrl);
+		}
 	}
 
 	@Override

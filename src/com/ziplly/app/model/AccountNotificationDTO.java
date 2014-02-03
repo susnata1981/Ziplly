@@ -11,9 +11,9 @@ public class AccountNotificationDTO implements Serializable {
 	private AccountDTO recipient;
 	private TweetDTO tweet;
 	private ConversationDTO conversation;
-	private ReadStatus readStatus;
-	private RecordStatus status;
-	private NotificationType type;
+	private String readStatus;
+	private String status;
+	private String type;
 	private Date timeUpdated;
 	private Date timeCreated;
 	
@@ -42,11 +42,11 @@ public class AccountNotificationDTO implements Serializable {
 	}
 
 	public NotificationType getType() {
-		return type;
+		return NotificationType.valueOf(type);
 	}
 
 	public void setType(NotificationType type) {
-		this.type = type;
+		this.type = type.name();
 	}
 
 	public Date getTimeCreated() {
@@ -58,11 +58,11 @@ public class AccountNotificationDTO implements Serializable {
 	}
 
 	public ReadStatus getReadStatus() {
-		return readStatus;
+		return ReadStatus.valueOf(readStatus);
 	}
 
 	public void setReadStatus(ReadStatus readStatus) {
-		this.readStatus = readStatus;
+		this.readStatus = readStatus.name();
 	}
 
 	public Date getTimeUpdated() {
@@ -74,11 +74,11 @@ public class AccountNotificationDTO implements Serializable {
 	}
 
 	public RecordStatus getStatus() {
-		return status;
+		return RecordStatus.valueOf(status);
 	}
 
 	public void setStatus(RecordStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	@Override

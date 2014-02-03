@@ -40,7 +40,7 @@ public class FieldVerifier {
 	
 	private static final RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
 	private static final RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
-	private static final int MAX_TWEET_LENGTH = 512;
+	public static final int MAX_TWEET_LENGTH = 512;
 	private static final int MAX_COMMENT_LENGTH = 256;
 	private static final String TWEET_TOO_LONG_ERROR = "Tweet can't be more than "+ MAX_TWEET_LENGTH +" characters.";
 	private static final String INVALID_EMAIL_LIST = "Invalid emails";
@@ -137,7 +137,7 @@ public class FieldVerifier {
 		if (input == null) {
 			return null;
 		}
-		return SafeHtmlUtils.htmlEscape(input.toLowerCase().trim());
+		return SafeHtmlUtils.htmlEscape(input.trim());
 	}
 
 	public static ValidationResult validateEmailList(String emailList) {
@@ -182,5 +182,12 @@ public class FieldVerifier {
 			result.addError(MESSAGE_TOO_LONG_ERROR);
 		}
 		return result;
+	}
+
+	public static boolean isEmpty(String input) {
+		if (input == null || "".equals(input)) {
+			return true;
+		}
+		return false;
 	}
 }

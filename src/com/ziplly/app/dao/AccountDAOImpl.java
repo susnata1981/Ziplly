@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
@@ -127,20 +128,37 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public AccountDTO update(Account account) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		AccountDTO result = null;
 		try {
+			em.getTransaction().begin();
 			em.merge(account);
+			em.getTransaction().commit();
+//			em.flush();
+			return EntityUtil.convert(account);
 		} catch (NoResultException ex) {
 			throw new IllegalArgumentException();
 		} finally {
-			result = EntityUtil.convert(account);
-			em.getTransaction().commit();
 			em.close();
 		}
-		return result;
 	}
 
+	@Override
+	public void updatePassword(Account account) {
+		Preconditions.checkNotNull(account);
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		try {
+			Query query = em.createNativeQuery("update account set password = :password where account_id = :accountId");
+			query.setParameter("accountId", account.getAccountId())
+			    .setParameter("password", account.getPassword());
+			em.getTransaction().begin();
+			query.executeUpdate();
+			em.getTransaction().commit();
+		} catch (NoResultException ex) {
+			throw new IllegalArgumentException();
+		} finally {
+			em.close();
+		}
+	}
+	
 	@Override
 	public List<Account> getAll(int start, int end) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
@@ -263,7 +281,7 @@ public class AccountDAOImpl implements AccountDAO {
 		List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
-				.createNativeQuery("select count(n.neighborhood_id) from Account a, Neighborhood n where a.type = :type "
+				.createNativeQuery("select count(n.neighborhood_id) from account a, neighborhood n where a.type = :type "
 						+ "and a.neighborhood_id = n.neighborhood_id and  n.neighborhood_id in :neighborhoodIds");
 		query.setParameter("type", entityType.getType());
 		query.setParameter("neighborhoodIds", neighborhoodIds);
@@ -271,19 +289,6 @@ public class AccountDAOImpl implements AccountDAO {
 		BigInteger count = (BigInteger) query.getSingleResult();
 		em.close();
 		return count.longValue();
-	}
-
-	@Override
-	public void updatePassword(Account account) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		em.getTransaction().begin();
-		Query query = em
-				.createNativeQuery("update Account set password = :password where account_id = :accountId");
-		query.setParameter("password", account.getPassword());
-		query.setParameter("accountId", account.getAccountId());
-		query.executeUpdate();
-		em.getTransaction().commit();
-		em.close();
 	}
 
 	@Override

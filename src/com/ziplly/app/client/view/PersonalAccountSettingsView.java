@@ -34,7 +34,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -289,18 +288,31 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	 * @param account
 	 */
 	private void populatePrivacySettings(PersonalAccountDTO account) {
+		privacyPanel.clear();
+		sortPrivacySettings(account.getPrivacySettings());
+		
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			HPanel panel = new HPanel();
 			HTMLPanel span = new HTMLPanel(privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
-			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget();
+			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(ps.getAllowedShareSettings());
 			shareSettingWidget.setSelection(ps.getSetting());
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(shareSettingWidget);
-			notificationPanel.add(panel);
+//			notificationPanel.add(panel);
 			privacySettingsMap.put(ps, shareSettingWidget);
 			privacyPanel.add(panel);
 		}
+	}
+
+	private void sortPrivacySettings(List<PrivacySettingsDTO> privacySettings) {
+		Collections.sort(account.getPrivacySettings(), new Comparator<PrivacySettingsDTO>() {
+
+			@Override
+			public int compare(PrivacySettingsDTO ps1, PrivacySettingsDTO ps2) {
+				return ps1.getSection().name().compareTo(ps2.getSection().name());
+			}
+		});
 	}
 
 	private ListBox getNotificationActionListBox() {
@@ -330,7 +342,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			ListBox action = getNotificationActionListBox();
 			action.setSelectedIndex(ans.getAction().ordinal());
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(accountNotificationFormatter.format(ans, ValueType.ACCOUNT_NOTIFICATION_TYPE));//"<span>"+ans.getType().name().toLowerCase()+"</span>");
+			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(action);
@@ -470,6 +482,13 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		action.setOldPassword(oldPasswordInput);
 		action.setNewPassword(newPasswordInput);
 		presenter.updatePassword(action);
+		clearPasswordFields();
+	}
+
+	private void clearPasswordFields() {
+		password.setText("");
+		newPassword.setText("");
+		confirmNewPassword.setText("");
 	}
 
 	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {

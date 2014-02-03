@@ -40,9 +40,6 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	MyBundle resource;
 	
 	@UiField
-	ImageElement tom;
-
-	@UiField
 	Alert message;
 	
 	@UiField
@@ -79,7 +76,7 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	
 	public AboutView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		tom.setSrc(resource.tom().getSafeUri().asString());
+//		tom.setSrc(resource.tom().getSafeUri().asString());
 		clear();
 		message.setVisible(false);
 	}

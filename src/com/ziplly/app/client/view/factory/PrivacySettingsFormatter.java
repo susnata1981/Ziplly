@@ -9,7 +9,7 @@ public class PrivacySettingsFormatter extends AbstractValueFormatter<PrivacySett
 		StringBuilder content = new StringBuilder();
 		switch (type) {
 		case PRIVACY_FIELD_NAME:
-			content.append("<span>"+value.getSection().name().toLowerCase()+"</span>");
+			content.append(value.getSection().name().toLowerCase());
 			return basicValueFormatter.format(content.toString(), ValueType.STRING_VALUE);
 		default:
 			throw new IllegalArgumentException("invalid type to format method");

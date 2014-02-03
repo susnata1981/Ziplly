@@ -288,6 +288,7 @@ public class EntityUtil {
 		resp.setName(plan.getName());
 		resp.setDescription(plan.getDescription());
 		resp.setFee(plan.getFee());
+		resp.setStatus(plan.getStatus());
 		resp.setTimeCreated(plan.getTimeCreated());
 		return resp;
 	}

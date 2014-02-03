@@ -6,6 +6,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
 import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.NotificationType;
+import com.ziplly.app.model.TweetType;
 
 public class BasicDataFormatter implements Formatter<Object> {
 
@@ -28,8 +30,18 @@ public class BasicDataFormatter implements Formatter<Object> {
 			return "("+ value.toString()+")";
 		case GENDER:
 			return ((Gender)value).getName();
+		case TWEET_TYPE:
+			return ((TweetType)value).getTweetName();
+		case NOTIFICATION_TYPE:
+			return ((NotificationType)value).getNotificationName();
+		case PROFILE_IMAGE_URL:
+			String imgUrl = (String) value;
+			if (imgUrl == null) {
+				imgUrl = "images/no-photo.jpg";
+			}
+			return imgUrl;
 		default:
-			throw new IllegalArgumentException("Invalid value tyoe to render");
+			throw new IllegalArgumentException("Invalid value type to render");
 		}
 	}
 
