@@ -1,8 +1,9 @@
 @CHARSET "UTF-8";
 
-.mainPageBackground {
+@sprite .mainPageBackground {
 	gwt-image: 'neighborhoodLargePic';
 	background-repeat:no-repeat;
+	background-size: 960px 1000px;
 }
 
 @sprite .fbBtnImage {

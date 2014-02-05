@@ -8,7 +8,7 @@
 	<b:FluidContainer addStyleNames="{style.rootPanel}">
 		<b:FluidRow>
 			<b:Column size="10" ui:field="messageSection">
-				<b:Alert ui:field="message" />
+				<b:Alert ui:field="message" close="false"/>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>

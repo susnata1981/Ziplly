@@ -73,7 +73,7 @@
 	</ui:style>
 	<b:FluidContainer addStyleNames="{style.settingsPanel}">
 		<b:FluidRow>
-			<b:Column size="10">
+			<b:Column size="9">
 				<b:Alert ui:field="message" animation="true" />
 			</b:Column>
 		</b:FluidRow>

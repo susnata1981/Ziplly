@@ -1,11 +1,11 @@
 package com.ziplly.app.client.view;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
@@ -15,12 +15,10 @@ import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -28,18 +26,21 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
+import com.ziplly.app.client.oauth.OAuthConfig;
+import com.ziplly.app.client.oauth.OAuthFactory;
+import com.ziplly.app.client.oauth.OAuthProvider;
+import com.ziplly.app.client.places.BusinessSignupPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -52,7 +53,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends AbstractView implements
-		ISignupView<SignupActivityPresenter>, LoginAwareView {
+		ISignupView<SignupActivityPresenter> {
 	private static SignupViewUiBinder uiBinder = GWT
 			.create(SignupViewUiBinder.class);
 
@@ -69,6 +70,9 @@ public class SignupView extends AbstractView implements
 	boolean isServiceAvailable = true;
 	private NeighborhoodDTO selectedNeighborhood;
 	private List<NeighborhoodDTO> neighborhoods;
+	
+	@UiField
+	Anchor howItWorksAnchor;
 	
 	@UiField
 	TextBox firstname;
@@ -126,34 +130,36 @@ public class SignupView extends AbstractView implements
 	Button signupBtn;
 
 	@UiField
-	LoginWidget loginWidget;
-
-	@UiField
-	FileUpload uploadField;
-
-	@UiField
-	FormPanel uploadForm;
-
-	@UiField
-	Image profileImagePreview;
+	Anchor signInAnchor;
 	
 	@UiField
-	Container loginWidgetContainer;
+	Anchor facebookSignupAnchor;
 	
-	boolean imageUploaded = false;
+	@UiField
+	Button businessSignupBtn;
+	
+	// How it works section
+	@UiField
+	Button createProfileBtn;
+	@UiField
+	Button exploreBtn;
+	@UiField
+	Button postMessageBtn;
+
+//	boolean imageUploaded = false;
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
 	private boolean facebookRegistration;
 	private boolean doValidation = true;
-	
+	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
+
 	@Inject
 	public SignupView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
-		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-		uploadForm.setMethod(FormPanel.METHOD_POST);
-		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
+		StyleHelper.show(firstnameError.getElement(), false);
+		StyleHelper.show(lastnameError.getElement(), false);
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 		neighborhoodControl.setVisible(false);
@@ -161,8 +167,11 @@ public class SignupView extends AbstractView implements
 		for(Gender g : Gender.getValuesForSignup()) {
 			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
-		
-		loginWidgetContainer.setShowOn(Device.DESKTOP);
+	}
+
+	@Override
+	public void onLoad() {
+		setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 	}
 
 	private void setupHandlers() {
@@ -224,20 +233,6 @@ public class SignupView extends AbstractView implements
 				}
 			}
 		});
-		
-
-		uploadField.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				if (!doValidation) {
-					return;
-				}
-				if (imageUploaded) {
-					presenter.deleteImage(profileImageUrl);
-				}
-				uploadForm.submit();
-			}
-		});
 	}
 	
 	public void clearNeighborhoodSection() {
@@ -247,19 +242,7 @@ public class SignupView extends AbstractView implements
 	}
 	
 	public void reset() {
-		uploadForm.reset();
 		infoField.setVisible(false);
-	}
-
-	public void hideProfileImagePreview() {
-		profileImagePreview.setVisible(false);
-	}
-
-	public void displayProfileImagePreview(String imageUrl) {
-		profileImagePreview.setUrl(imageUrl);
-		profileImagePreview.setVisible(true);
-		this.profileImageUrl = imageUrl;
-		this.imageUploaded = true;
 	}
 
 	boolean validateZip() {
@@ -425,7 +408,7 @@ public class SignupView extends AbstractView implements
 			account.setFacebookRegistration(true);
 		}
 		
-		if (imageUploaded && profileImageUrl != null) {
+		if (profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
 		} 
 
@@ -463,10 +446,7 @@ public class SignupView extends AbstractView implements
 		zip.setText(Integer.toString(account.getZip()));
 		
 		if (account.getImageUrl() != null) {
-			imageUploaded = true;
 			this.profileImageUrl = account.getImageUrl();
-			profileImagePreview.setUrl(account.getImageUrl());
-			profileImagePreview.setVisible(true);
 		}
 		
 		zip.setText("");
@@ -475,36 +455,25 @@ public class SignupView extends AbstractView implements
 	}
 
 	@Override
-	public void displayLoginErrorMessage(String msg, AlertType type) {
-		loginWidget.displayMessage(msg, type);
-	}
-
-	@Override
-	public void resetLoginForm() {
-		loginWidget.resetLoginForm();
-	}
-
-	@Override
 	public void clear() {
 		resetForm();
-		loginWidget.clear();
 	}
 
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
 		this.presenter = (SignupActivityPresenter) presenter;
-		loginWidget.setPresenter(presenter);
 	}
 
-	public void setImageUploadUrl(String imageUrl) {
-		uploadForm.setAction(imageUrl);
-//		uploadBtn.setEnabled(true);
+	@UiHandler("businessSignupBtn")
+	public void businessSignup(ClickEvent event) {
+		presenter.goTo(new BusinessSignupPlace());
 	}
-
-	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
-		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
+	
+	@UiHandler("signInAnchor")
+	public void signIn(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
 	}
-
+	
 	public void displayMessage(String msg, AlertType type) {
 		infoField.setText(msg);
 		infoField.setType(type);
@@ -559,6 +528,50 @@ public class SignupView extends AbstractView implements
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
 		} else {
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		}
+	}
+	
+	/**
+	 * Signup/Login using facebook
+	 * @param event
+	 */
+	@UiHandler("facebookSignupAnchor")
+	void signupUsingFacebook(ClickEvent event) {
+		try {
+			Window.Location.replace(authConfig.getAuthorizationUrl());
+		} catch (UnsupportedEncodingException e) {
+			// It should never get here.
+		}
+	}
+	
+	/**
+	 * Link within page.
+	 */
+	@UiHandler("howItWorksAnchor")
+	void learnMore(ClickEvent event) {
+		event.preventDefault();
+		Element elem = DOM.getElementById("howItWorksLink");
+		navigateToElement(elem);
+	}
+
+	/**
+	 * Link within page.
+	 */
+	@UiHandler("createProfileBtn")
+	void createAccount(ClickEvent event) {
+		event.preventDefault();
+		Element elem = DOM.getElementById("signupFormLink");
+		navigateToElement(elem);
+	}
+	
+	@UiHandler({"exploreBtn","postMessageBtn"})
+	void exploreNeighborhod(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
+	}
+	
+	private void navigateToElement(Element elem) {
+		if (elem != null) {
+			elem.scrollIntoView();
 		}
 	}
 }

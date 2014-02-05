@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
@@ -15,33 +14,30 @@ import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -56,7 +52,7 @@ import com.ziplly.app.model.overlay.AddressComponent;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessSignupView extends Composite implements ISignupView<SignupActivityPresenter> {
+public class BusinessSignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
 	String streetNumber;
 	String streetName;
 	String neighborhood;
@@ -128,37 +124,36 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	Button signupBtn;
 
 	@UiField
-	LoginWidget loginWidget;
-
-	@UiField
-	FileUpload uploadField;
-
-	@UiField
-	FormPanel uploadForm;
-
-	@UiField
-	Image profileImagePreview;
-
-	@UiField
-	Container loginWidgetPanel;
+	Anchor signInAnchor;
 	
-	String profileImageUrl;
+	// how it works section
+	@UiField
+	Anchor learnMoreAnchor;
+	@UiField
+	Button createProfileBtn;
+	@UiField
+	Button exploreBtn;
+	@UiField
+	Button postMessageBtn;
+	
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
 	private boolean imageUploaded;
 	
 	@Inject
-	public BusinessSignupView() {
+	public BusinessSignupView(EventBus eventBus) {
+		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
-		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-		uploadForm.setMethod(FormPanel.METHOD_POST);
-		profileImagePreview.setUrl(ZResources.IMPL.noImage().getSafeUri());
 		neighborhoodControl.setVisible(false);
-		loginWidgetPanel.setShowOn(Device.DESKTOP);
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 	}
 
+	@Override
+	public void onLoad() {
+		setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
+	}
+	
 	private void setupHandlers() {
 		businessName.addBlurHandler(new BlurHandler() {
 			@Override
@@ -218,20 +213,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 				}
 			}
 		});
-		
-		uploadField.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				if (!doValidation) {
-					return;
-				}
-				
-				if (imageUploaded) {
-					presenter.deleteImage(profileImageUrl);
-				}
-				uploadForm.submit();
-			}
-		});
 	}
 
 	void validateAddressField() {
@@ -260,32 +241,8 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	}
 
 	public void reset() {
-		uploadForm.reset();
 		infoField.setVisible(false);
 	}
-
-	public void hideProfileImagePreview() {
-		profileImagePreview.setVisible(false);
-	}
-
-	public void displayProfileImagePreview(String imageUrl) {
-		profileImagePreview.setUrl(imageUrl);
-		profileImagePreview.setVisible(true);
-		this.profileImageUrl = imageUrl;
-		this.imageUploaded = true;
-	}
-
-	// boolean validateZip() {
-	// String zipInput = zip.getText().trim();
-	// ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-	// if (!validateZip.isValid()) {
-	// zipCg.setType(ControlGroupType.ERROR);
-	// zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
-	// zipError.setVisible(true);
-	// return false;
-	// }
-	// return true;
-	// }
 
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
@@ -372,7 +329,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		businessName.setText("");
 		street1.setText("");
 		email.setText("");
-		profileImagePreview.setUrl("");
 		password.setText("");
 		neighborhoodListPanel.clear();
 	}
@@ -423,9 +379,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		account.setTimeCreated(new Date());
 
 		account.setProperties(getDefaultProperties());
-		if (profileImageUrl != null) {
-			account.setImageUrl(profileImageUrl);
-		}
 
 		String value = System.getProperty(StringConstants.RESTRICT_REGISTRATION_FEATURE, "false");
 		boolean isRegistrationRescricted = Boolean.valueOf(value);
@@ -477,7 +430,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 	@Override
 	public void clear() {
 		resetForm();
-		resetLoginForm();
 	}
 
 	public void clearMessage() {
@@ -491,14 +443,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		neighborhoodControl.setVisible(false);
 	}
 	
-	public void setImageUploadUrl(String imageUrl) {
-		uploadForm.setAction(imageUrl);
-	}
-
-	public void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler) {
-		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
-	}
-
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
 		this.presenter = presenter;
@@ -514,11 +458,6 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 		infoField.setText(msg);
 		infoField.setType(type);
 		infoField.setVisible(true);
-	}
-
-	@Override
-	public void resetLoginForm() {
-		infoField.setVisible(false);
 	}
 
 	/**
@@ -632,6 +571,41 @@ public class BusinessSignupView extends Composite implements ISignupView<SignupA
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
 		} else {
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		}
+	}
+	
+	@UiHandler("signInAnchor")
+	public void signIn(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
+	}
+	
+	@UiHandler("learnMoreAnchor")
+	public void learnMore(ClickEvent event) {
+		event.preventDefault();
+		Element elem = DOM.getElementById("howItWorksLink");
+		navigateToElement(elem);
+	}
+
+	@UiHandler("createProfileBtn") 
+	public void createProfile(ClickEvent event) {
+		event.preventDefault();
+		Element elem = DOM.getElementById("signupFormLink");
+		navigateToElement(elem);
+	}
+	
+	@UiHandler("postMessageBtn")
+	public void postMessage(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
+	}
+	
+	@UiHandler("exploreBtn") 
+	public void explore(ClickEvent event) {
+		presenter.goTo(new BusinessAccountSettingsPlace());
+	}
+	
+	private void navigateToElement(Element elem) {
+		if (elem != null) {
+			elem.scrollIntoView();
 		}
 	}
 }

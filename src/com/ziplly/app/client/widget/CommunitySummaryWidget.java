@@ -85,4 +85,8 @@ public class CommunitySummaryWidget extends Composite implements HasClickHandler
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return memberCountSpan.addClickHandler(handler);
 	}
+	
+	public HandlerRegistration addClickHandlerForBusinessLink(ClickHandler handler) {
+		return businessCountSpan.addClickHandler(handler);
+	}
 }

@@ -10,6 +10,7 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -21,7 +22,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sun.xml.internal.ws.message.RootElementSniffer;
+import com.ziplly.app.client.activities.LoginPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
@@ -30,6 +34,7 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.widget.CssStyleHelper;
+import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.MyBundle;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
@@ -51,14 +56,14 @@ public class MainView extends Composite implements View<HomePresenter> {
 	@UiField
 	MyBundle resource;
 
-	@UiField
-	Anchor residentSignupLink;
-	
-	@UiField
-	com.google.gwt.user.client.ui.Button fbLoginButtonOnMainPage;
-
-	@UiField
-	HTMLPanel residentSignupPanel;
+//	@UiField
+//	Anchor residentSignupLink;
+//	
+//	@UiField
+//	com.google.gwt.user.client.ui.Button fbLoginButtonOnMainPage;
+//
+//	@UiField
+//	HTMLPanel residentSignupPanel;
 	
 	@UiField
 	HTMLPanel descriptionPanel;
@@ -95,14 +100,19 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	@Override
 	public void onLoad() {
-		CssStyleHelper.setBackgroundImage(ZResources.IMPL.neighborhoodLargePic());
+//		CssStyleHelper.setBackgroundImage(ZResources.IMPL.neighborhoodLargePic());
+//		Document.get().getBody().addClassName(ZResources.IMPL.neighborhoodLargePic().
+//		RootPanel.getBodyElement().setClassName(ZResources.IMPL.style().mainPageBackground());
+		RootPanel.getBodyElement().getStyle().setProperty("background", 
+				"url("+ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString()+") no-repeat center center fixed");
+		RootPanel.getBodyElement().getStyle().setProperty("backGroundSize", "cover");
 	}
 	
 	public void showLogin() {
-		fbLoginButtonOnMainPage.setVisible(true);
+//		fbLoginButtonOnMainPage.setVisible(true);
 	}
 
-	@UiHandler("fbLoginButtonOnMainPage")
+//	@UiHandler("fbLoginButtonOnMainPage")
 	void fbLogin(ClickEvent event) {
 		try {
 			System.out.println("MODULE BASE URL:"+GWT.getHostPageBaseURL());
@@ -115,7 +125,7 @@ public class MainView extends Composite implements View<HomePresenter> {
 		}
 	}
 
-	@UiHandler("residentSignupLink")
+//	@UiHandler("residentSignupLink")
 	void signup(ClickEvent event) {
 		presenter.goTo(new SignupPlace());
 	}
@@ -127,77 +137,80 @@ public class MainView extends Composite implements View<HomePresenter> {
 	
 	@Override
 	public void clear() {
-		resetLoginForm();
+//		resetLoginForm();
 		resetMessage();
 	}
 	
-	@UiField
-	TextBox email;
-	@UiField
-	ControlGroup emailCg;
-	@UiField
-	HelpInline emailError;
+//	@UiField
+//	TextBox email;
+//	@UiField
+//	ControlGroup emailCg;
+//	@UiField
+//	HelpInline emailError;
+//
+//	@UiField
+//	TextBox password;
+//	@UiField
+//	ControlGroup passwordCg;
+//	@UiField
+//	HelpInline passwordError;
+
+//	@UiField
+//	Button loginBtn;
 
 	@UiField
-	TextBox password;
-	@UiField
-	ControlGroup passwordCg;
-	@UiField
-	HelpInline passwordError;
-
-	@UiField
-	Button loginBtn;
-
+	LoginWidget loginWidget;
+	
 	@UiField
 	Alert message;
 
 
-	boolean validateInput() {
-		String emailInput = email.getText();
-		ValidationResult result = FieldVerifier.validateEmail(emailInput);
-		boolean valid = true;
+//	boolean validateInput() {
+//		String emailInput = email.getText();
+//		ValidationResult result = FieldVerifier.validateEmail(emailInput);
+//		boolean valid = true;
+//
+//		if (!result.isValid()) {
+//			emailError.setText(result.getErrors().get(0).getErrorMessage());
+//			emailCg.setType(ControlGroupType.ERROR);
+////			emailError.setVisible(true);
+//			valid = false;
+//		}
+//
+//		String passwordInput = password.getText();
+//		result = FieldVerifier.validatePassword(passwordInput);
+//
+//		if (!result.isValid()) {
+//			passwordError.setText(result.getErrors().get(0).getErrorMessage());
+//			passwordCg.setType(ControlGroupType.ERROR);
+////			passwordError.setVisible(true);
+//			valid = false;
+//		}
+//
+//		return valid;
+//	}
 
-		if (!result.isValid()) {
-			emailError.setText(result.getErrors().get(0).getErrorMessage());
-			emailCg.setType(ControlGroupType.ERROR);
-//			emailError.setVisible(true);
-			valid = false;
-		}
-
-		String passwordInput = password.getText();
-		result = FieldVerifier.validatePassword(passwordInput);
-
-		if (!result.isValid()) {
-			passwordError.setText(result.getErrors().get(0).getErrorMessage());
-			passwordCg.setType(ControlGroupType.ERROR);
-//			passwordError.setVisible(true);
-			valid = false;
-		}
-
-		return valid;
-	}
-
-	@UiHandler("loginBtn")
-	void login(ClickEvent event) {
-		clearErrors();
-		resetMessage();
-		if (!validateInput()) {
-			displayHelpFields(true);
-			return;
-		}
-		String emailInput = FieldVerifier.getEscapedText(email.getText());
-		String passwordInput = FieldVerifier.getEscapedText(password.getText());
-		presenter.onLogin(emailInput, passwordInput);
-		loginBtn.setEnabled(false);
-	}
-
-	private void clearErrors() {
-		emailCg.setType(ControlGroupType.NONE);
-		emailError.setText("");
-		passwordCg.setType(ControlGroupType.NONE);
-		passwordError.setText("");
-		displayHelpFields(false);
-	}
+//	@UiHandler("loginBtn")
+//	void login(ClickEvent event) {
+//		clearErrors();
+//		resetMessage();
+//		if (!validateInput()) {
+//			displayHelpFields(true);
+//			return;
+//		}
+//		String emailInput = FieldVerifier.getEscapedText(email.getText());
+//		String passwordInput = FieldVerifier.getEscapedText(password.getText());
+//		presenter.onLogin(emailInput, passwordInput);
+////		loginBtn.setEnabled(false);
+//	}
+//
+//	private void clearErrors() {
+//		emailCg.setType(ControlGroupType.NONE);
+//		emailError.setText("");
+//		passwordCg.setType(ControlGroupType.NONE);
+//		passwordError.setText("");
+//		displayHelpFields(false);
+//	}
 
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
@@ -205,21 +218,21 @@ public class MainView extends Composite implements View<HomePresenter> {
 		displayMessageField(true);
 	}
 
-	public void resetLoginForm() {
-//		emailCg.setType(ControlGroupType.NONE);
-		email.setText("");
-//		emailError.setText("");
-//		passwordCg.setType(ControlGroupType.NONE);
-		password.setText("");
-//		passwordError.setText("");
-//		displayHelpFields(false);
-		clearErrors();
-		enableButtons();
-	}
+//	public void resetLoginForm() {
+////		emailCg.setType(ControlGroupType.NONE);
+//		email.setText("");
+////		emailError.setText("");
+////		passwordCg.setType(ControlGroupType.NONE);
+//		password.setText("");
+////		passwordError.setText("");
+////		displayHelpFields(false);
+//		clearErrors();
+//		enableButtons();
+//	}
 
 	private void enableButtons() {
-		loginBtn.setEnabled(true);
-		fbLoginButtonOnMainPage.setEnabled(true);
+//		loginBtn.setEnabled(true);
+//		fbLoginButtonOnMainPage.setEnabled(true);
 	}
 
 	public void resetMessage() {
@@ -234,13 +247,14 @@ public class MainView extends Composite implements View<HomePresenter> {
 
 	private void displayHelpFields(boolean b) {
 		Display display = b == true ? Display.BLOCK : Display.NONE;
-		emailError.getElement().getStyle().setDisplay(display);
-		passwordError.getElement().getStyle().setDisplay(display);
+//		emailError.getElement().getStyle().setDisplay(display);
+//		passwordError.getElement().getStyle().setDisplay(display);
 	}
 	
 	@Override
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
+		loginWidget.setPresenter((LoginPresenter) presenter);
 	}
 
 	public void setRedirectUri(String redirectUrl) {

@@ -24,9 +24,12 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
 import com.ziplly.app.client.view.MainView;
+import com.ziplly.app.client.view.ResidentsView;
+import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
@@ -84,13 +87,13 @@ import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
-	private MainView mainView;
+//	private MainView mainView;
 	private IHomeView homeView;
 	private HomeViewState state;
 	private TweetViewBinder binder;
 	private HomePlace place;
 	private AccountDTO account;
-	private ValidateLoginHandler loginHandler = new ValidateLoginHandler();
+//	private ValidateLoginHandler loginHandler = new ValidateLoginHandler();
 	private AcceptsOneWidget panel;
 
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
@@ -150,13 +153,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	@Inject
 	public HomeActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, HomePlace place,
 			PlaceController placeController,ApplicationContext ctx, 
-			MainView mainView, 
+//			MainView mainView, 
 			HomeView homeView) {
 
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.homeView = homeView;
-		this.mainView = mainView;
+//		this.mainView = mainView;
 		state = new HomeViewState();
 		setupHandlers();
 	}
@@ -169,7 +172,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			displayCommunityWall();
 		} else {
 			fetchData();
-			panel.setWidget(mainView);
 		}
 	}
 
@@ -205,6 +207,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		setImageUploadUrl();
 		setUploadImageHandler();
 		getAccountDetails();
+		displayHomeView();
 	}
 
 	private void getNeighborhoodDetails() {
@@ -262,13 +265,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void bind() {
-		mainView.setPresenter(this);
+//		mainView.setPresenter(this);
 		homeView.setPresenter(this);
 	}
 
-	void displayMainView() {
-		panel.setWidget(mainView);
-	}
+//	void displayMainView() {
+//		panel.setWidget(mainView);
+//	}
 
 	void displayHomeView() {
 		hideLoadingIcon();
@@ -364,12 +367,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		dispatcher.execute(new TweetAction(tweet), new TweetHandler());
 	}
 
-	@Override
-	public void onLogin(String email, String password) {
-		mainView.clear();
-		eventBus.fireEvent(new LoadingEventStart());
-		dispatcher.execute(new ValidateLoginAction(email, password), loginHandler);
-	}
+//	@Override
+//	public void onLogin(String email, String password) {
+////		mainView.clear();
+//		eventBus.fireEvent(new LoadingEventStart());
+//		dispatcher.execute(new ValidateLoginAction(email, password), loginHandler);
+//	}
 
 	@Override
 	public boolean hasMoreElements() {
@@ -530,30 +533,30 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		}
 	}
 
-	private class ValidateLoginHandler extends DispatcherCallbackAsync<ValidateLoginResult> {
-		@Override
-		public void onSuccess(ValidateLoginResult result) {
-			if (result != null && result.getAccount() != null) {
-				ctx.setAccount(result.getAccount());
-				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-				displayCommunityWall();
-				eventBus.fireEvent(new LoadingEventEnd());
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			if (caught instanceof NotFoundException) {
-				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
-			} else if (caught instanceof InvalidCredentialsException) {
-				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
-			} else {
-				mainView.displayMessage(StringConstants.LOGIN_ERROR, AlertType.ERROR);
-			}
-			mainView.resetLoginForm();
-			eventBus.fireEvent(new LoadingEventEnd());
-		}
-	}
+//	private class ValidateLoginHandler extends DispatcherCallbackAsync<ValidateLoginResult> {
+//		@Override
+//		public void onSuccess(ValidateLoginResult result) {
+//			if (result != null && result.getAccount() != null) {
+//				ctx.setAccount(result.getAccount());
+//				eventBus.fireEvent(new LoginEvent(result.getAccount()));
+//				displayCommunityWall();
+//				eventBus.fireEvent(new LoadingEventEnd());
+//			}
+//		}
+//
+//		@Override
+//		public void onFailure(Throwable caught) {
+//			if (caught instanceof NotFoundException) {
+//				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
+//			} else if (caught instanceof InvalidCredentialsException) {
+//				mainView.displayMessage(StringConstants.INVALID_CREDENTIALS_ERROR, AlertType.ERROR);
+//			} else {
+//				mainView.displayMessage(StringConstants.LOGIN_ERROR, AlertType.ERROR);
+//			}
+////			mainView.resetLoginForm();
+//			eventBus.fireEvent(new LoadingEventEnd());
+//		}
+//	}
 
 	private class DeleteTweetHandler extends DispatcherCallbackAsync<DeleteTweetResult> {
 		private TweetDTO tweet;
@@ -706,21 +709,22 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				displayCommunityWall();
 				getAccountNotifications();
 			} else {
-				displayMainView();
+//				displayMainView();
+				goTo(new SignupPlace());
 			}
 			hideLoadingIcon();
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private class GetFacebookRedirectUriHandler extends DispatcherCallbackAsync<GetFacebookRedirectUriResult> {
-		@Override
-		public void onSuccess(GetFacebookRedirectUriResult result) {
-			if (result != null) {
-				mainView.setRedirectUri(result.getRedirectUrl());
-			}
-		}
-	}
+//	@SuppressWarnings("unused")
+//	private class GetFacebookRedirectUriHandler extends DispatcherCallbackAsync<GetFacebookRedirectUriResult> {
+//		@Override
+//		public void onSuccess(GetFacebookRedirectUriResult result) {
+//			if (result != null) {
+//				mainView.setRedirectUri(result.getRedirectUrl());
+//			}
+//		}
+//	}
 	
 	private class GetNeighborhoodDetailsHandler extends DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
 		@Override

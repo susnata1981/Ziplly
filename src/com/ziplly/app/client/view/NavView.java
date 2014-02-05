@@ -66,6 +66,11 @@ public class NavView extends Composite implements INavView {
 	Style style;
 
 	@UiField
+	NavLink loginLink;
+	
+	@UiField
+	Dropdown accountDropdown;
+	@UiField
 	NavLink accountLink;
 	@UiField
 	NavLink messageLink;
@@ -110,10 +115,14 @@ public class NavView extends Composite implements INavView {
 
 	@Override
 	public void showAccountLinks(boolean value) {
+		accountLink.setVisible(value);
 		messageLink.setVisible(value);
 		settingsLink.setVisible(value);
 		notifications.setVisible(value);
 		logoutLink.setVisible(value);
+		
+		accountDropdown.setVisible(value);
+		loginLink.setVisible(!value);
 	}
 
 	@UiHandler("accountLink")
@@ -151,6 +160,11 @@ public class NavView extends Composite implements INavView {
 		presenter.goTo(new ConversationPlace());
 	}
 
+	@UiHandler("loginLink")
+	void login(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
+	}
+	
 	@Override
 	public void clear() {
 	}

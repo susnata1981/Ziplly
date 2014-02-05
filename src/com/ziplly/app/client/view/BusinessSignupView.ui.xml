@@ -4,7 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		input[type="text"],input[type="password"] {
-		height: 30px;
+		height: 40px;
 		}
 		.loginForm {
 		position: absolute;
@@ -40,58 +40,63 @@
 		.signupPanel {
 			border: 1px solid #ddd;
 			background: #f1f1f1;
-			padding: 6px;
+			padding: 12px;
 			min-width: 300px;
 			max-width: 320px;
+		}
+		.button {
+			height: 40px;
+			line-height: 30px;
+			font-size: 1.2em;
+			font-weight: bold;
 		}
 		.row {
 		clear: left;
 		display: block;
 		margin-top: 8px;
+		margin-bottom: 20px;
+		}
+		.fluid-row {
+			diplay: block;
+			margin-top: 40px;
+		}
+		.tinytext {
+			font-size: .75em;
+			font-weight: normal;
+		}
+		.promotionPanel {
+			margin-top: 200px;
+			padding: 6px;
+		}
+		.heading {
+			font-family: Verdana, sans-serif;
+			font-size: 2em;
+			color : #fff;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
-	<!-- <g:HTMLPanel> <b:Alert ui:field="infoField" animation="true" /> <div 
-		id="mainContent"> <div id="signupForm"> <div class="heading">Signup</div> 
-		<b:Form> <b:ControlGroup ui:field="businessNameCg" addStyleNames="{style.row}"> 
-		<b:Controls> <b:Label>Business name</b:Label> <br /> <b:TextBox ui:field="businessName" 
-		placeholder="BusinessName..." /> <b:HelpInline ui:field="businessNameError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:ControlGroup ui:field="street1Cg" addStyleNames="{style.row}"> 
-		<b:Controls> <b:Label>Address</b:Label> <br /> <b:TextBox ui:field="street1" 
-		placeholder="street1..." /> <b:HelpInline ui:field="street1Error"></b:HelpInline> 
-		<b:Image ui:field="neighborhoodLoadingImage" /> </b:Controls> </b:ControlGroup> 
-		<b:ControlGroup ui:field="neighborhoodCg" addStyleNames="{style.row}"> <b:Controls 
-		ui:field="neighborhoodControl"> <b:ControlLabel for="neighborhood">Select 
-		Neighborhood</b:ControlLabel> <g:HTMLPanel ui:field="neighborhoodListPanel"> 
-		<b:RadioButton b:id="controlRadio" name="controlRadio">1</b:RadioButton> 
-		</g:HTMLPanel> <b:HelpInline ui:field="neighborhoodError"></b:HelpInline> 
-		<b:HelpBlock>Pick your neighborhood to learn about whats going on in there</b:HelpBlock> 
-		</b:Controls> </b:ControlGroup> <g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}"> 
-		<g:HTMLPanel> <div class="{style.profileImagePreviewDiv}"> <b:Image ui:field="profileImagePreview" 
-		addStyleNames="{style.profileImagePreview}" /> </div> <g:FileUpload ui:field="uploadField" 
-		name="image" addStyleNames="{style.chooseFileUploadButton}" /> <b:Button 
-		ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> 
-		</g:HTMLPanel> </g:FormPanel> <b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}"> 
-		<b:Controls> <b:Label>Email</b:Label> <br /> <b:TextBox ui:field="email" 
-		placeholder="email..." /> <b:HelpInline ui:field="emailError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:ControlGroup ui:field="passwordCg" addStyleNames="{style.row}"> 
-		<b:Controls> <b:Label>Password</b:Label> <br /> <b:PasswordTextBox ui:field="password" 
-		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button> 
-		</b:Form> </div> <div class="{style.loginForm}"> <dt:LoginWidget ui:field="loginWidget" 
-		width="90%" businessAccountSignupLink="false" /> </div> </div> </g:HTMLPanel> -->
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="1" size="8">
+			<b:Column offset="2" size="8">
 				<b:Alert ui:field="infoField" animation="true" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column offset="1" size="4">
+		    <b:Column size="5">
+		        <g:HTMLPanel addStyleNames="{style.promotionPanel}">
+		            <span class="{style.heading}">
+		                Free trial till May, 2014!
+					</span>
+		        </g:HTMLPanel>
+		    </b:Column>
+			<b:Column offset="1" size="5">
 				<g:HTMLPanel addStyleNames="{style.signupPanel}">
-					<div class="heading">Signup</div>
+					<div class="heading">Business Signup
+					    <g:Anchor ui:field="learnMoreAnchor" addStyleNames="{style.tinytext}">learn more</g:Anchor>
+					</div>
 					<hr/>
+					<a id="signupFormLink"/>
 					<b:Form>
 						<b:ControlGroup ui:field="businessNameCg"
 							addStyleNames="{style.row}">
@@ -124,16 +129,6 @@
 									in there</b:HelpBlock>
 							</b:Controls>
 						</b:ControlGroup>
-						<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
-							<g:HTMLPanel>
-								<div class="{style.profileImagePreviewDiv}">
-									<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
-								</div>
-								<g:FileUpload ui:field="uploadField" name="image"
-									addStyleNames="{style.chooseFileUploadButton}" />
-								<!-- <b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button> -->
-							</g:HTMLPanel>
-						</g:FormPanel>
 						<b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}">
 							<b:Controls>
 								<b:Label>Email</b:Label>
@@ -152,17 +147,64 @@
 								<b:HelpInline ui:field="passwordError"></b:HelpInline>
 							</b:Controls>
 						</b:ControlGroup>
-						<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
+ 						<b:Button block="true" type="SUCCESS" ui:field="signupBtn" addStyleNames="{style.button}">Signup Now</b:Button>
+ 						<g:HTMLPanel addStyleNames="{style.row}">
+							<span class="tiny_text">
+								By joining, you agree to our
+								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
+							</span>
+						</g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.row}">
+							<span class="tiny_text">
+								Already a member
+								<g:Anchor ui:field="signInAnchor">Sign in</g:Anchor>
+								here
+							</span>
+						</g:HTMLPanel> 
 					</b:Form>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>
-		<b:FluidRow>
-			<b:Column size="6">
-				<b:Container ui:field="loginWidgetPanel" addStyleNames="{style.loginForm}">
-					<dt:LoginWidget ui:field="loginWidget" width="90%"
-						businessAccountSignupLink="false" />
-				</b:Container>
+		<b:FluidRow addStyleNames="{style.fluid-row}">
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero>
+						<b:Heading size="3" ui:field="heading">Create your profile</b:Heading>
+						<b:Paragraph>
+						    Complete your profile and upload a photo.
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="createProfileBtn">Signup</b:Button>
+					</b:Hero>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero>
+						<b:Heading size="3">Pick a messaging plan</b:Heading>
+						<b:Paragraph>
+						    Basic, Pro and Premium plans, pricing based on usage. 
+						</b:Paragraph>
+						<b:Paragraph>
+						    Basic plan is completely free. Send upto 3 messages/month. 
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="exploreBtn">Explore</b:Button>
+					</b:Hero>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero>
+						<b:Heading size="3">Reach local customers</b:Heading>
+						<b:Paragraph>
+						    Post messages to inform local customers about specials. 
+						</b:Paragraph>
+						<b:Paragraph>
+						    Get instant results. 
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="postMessageBtn">Post message</b:Button>
+					</b:Hero>
+					<a id="howItWorksLink"/>
+				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

@@ -101,6 +101,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	com.google.gwt.user.client.ui.Button fbLoginBtn;
+//	Button fbLoginBtn;
 
 	@UiField
 	Button loginBtn;

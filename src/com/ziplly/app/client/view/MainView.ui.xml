@@ -99,7 +99,7 @@
 		!important;
 		}
 		.form {
-		width: 275px;
+			width: 280px;
 		}
 		.mainViewPanel {
 		margin-top: 8%;
@@ -124,7 +124,7 @@
 		padding: 4px;
 		}
 	</ui:style>
-	<b:FluidContainer addStyleNames="{mainViewStyle.mainViewPanel}">
+<!-- 	<b:FluidContainer addStyleNames="{mainViewStyle.mainViewPanel}">
 		<b:FluidRow>
 			<b:Column offset="2" size="4" addStyleNames="{mainViewStyle.mainHeading}">
 				<b:Heading size="2">
@@ -159,7 +159,7 @@
 						<b:Column size="3">
 							<b:Button type="SUCCESS" ui:field="loginBtn">SignIn</b:Button>
 						</b:Column>
-						<b:Column size="8">
+						<b:Column size="7">
 							<g:Button ui:field="fbLoginButtonOnMainPage"
 								addStyleNames="{mainViewStyle.fbLoginBtn} {zresources.style.fbBtnImage}"></g:Button>
 						</b:Column>
@@ -183,6 +183,74 @@
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column offset="6" size="6">
+				<b:WellForm addStyleNames="{mainViewStyle.form}">
+					<b:ControlLabel>Business Signup</b:ControlLabel>
+					<b:Button type="SUCCESS" ui:field="businessSignupBtn">Signup</b:Button>
+				</b:WellForm>
+				<g:HTMLPanel ui:field="descriptionPanel">
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{mainViewStyle.descriptionRow}">
+			<b:Column size="4">
+				<b:Hero addStyleNames="{mainViewStyle.smallHeroUnit}">
+				    <b:Icon type="FLAG" />
+					<b:Heading size="3">
+					      Private secure network
+					</b:Heading>
+				</b:Hero>
+			</b:Column>
+			<b:Column size="4">
+				<b:Hero addStyleNames="{mainViewStyle.smallHeroUnit}">
+				    <b:Icon type="FLAG" />
+					<b:Heading size="3">
+					      Meet your neighbor
+					</b:Heading>
+				</b:Hero>
+			</b:Column>
+			<b:Column size="4">
+				<g:HTMLPanel addStyleNames="{mainViewStyle.box}">
+					<b:Icon type="FLAG" />
+					<b:Heading size="3">Get local business deals</b:Heading>
+				</g:HTMLPanel>
+				<b:Hero addStyleNames="{mainViewStyle.smallHeroUnit}">
+				    <b:Icon type="FLAG" />
+					<b:Heading size="3">
+					      Get local business deals
+					</b:Heading>
+				</b:Hero>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="3" size="6">
+				<b:Hero>
+					<b:Heading size="4">Free signup for businesses untill July, 2014</b:Heading>
+					<b:Paragraph>Basic plan allows 3 messages free/month</b:Paragraph>
+					<b:Button type="SUCCESS" ui:field="businessSignupBtn2">Signup</b:Button>
+				</b:Hero>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer> -->
+		<b:FluidContainer addStyleNames="{mainViewStyle.mainViewPanel}">
+		<b:FluidRow>
+			<b:Column offset="2" size="4" addStyleNames="{mainViewStyle.mainHeading}">
+				<b:Heading size="2">
+					Ziplly,
+				</b:Heading>
+				<b:Heading size="3">
+					connecting local community &amp;
+					businesses
+				</b:Heading>
+			</b:Column>
+			<b:Column size="6">
+			    <g:HTMLPanel>
+			    <b:Alert ui:field="message" />
+				<dt:LoginWidget ui:field="loginWidget" width="340px" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="7" size="6">
 				<b:WellForm addStyleNames="{mainViewStyle.form}">
 					<b:ControlLabel>Business Signup</b:ControlLabel>
 					<b:Button type="SUCCESS" ui:field="businessSignupBtn">Signup</b:Button>

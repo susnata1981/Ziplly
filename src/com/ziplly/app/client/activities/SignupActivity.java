@@ -25,9 +25,6 @@ public class SignupActivity extends AbstractSignupActivity {
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		bind();
 		view.reset();
-		setImageUploadUrl();
-		setUploadImageHandler();
-		
 		if (place.getAccount() != null) {
 			AccountDTO a = place.getAccount();
 			if (a instanceof PersonalAccountDTO ) {
@@ -35,10 +32,6 @@ public class SignupActivity extends AbstractSignupActivity {
 			}
 		}
 		panel.setWidget(view);
-	}
-
-	@Override
-	public void fetchData() {
 	}
 
 	@Override
@@ -52,11 +45,13 @@ public class SignupActivity extends AbstractSignupActivity {
 	}
 
 	@Override
-	public void onFacebookLogin() {
-	}
-
-	@Override
 	public void onStop() {
 		view.clear();
+		clearBackgroundImage();
 	}
+	
+	@Override
+	public void fetchData() {
+	}
+
 }

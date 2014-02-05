@@ -25,6 +25,7 @@ import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -32,6 +33,7 @@ import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.HashtagDTO;
@@ -62,8 +64,6 @@ public class HomeView extends Composite implements IHomeView {
 		void displayTweets(List<TweetDTO> tweets);
 
 		void displayTweetsForCategory(TweetType type);
-
-		void onLogin(String emailInput, String passwordInput);
 
 		void displayHashtag(String text); 
 	}
@@ -105,6 +105,7 @@ public class HomeView extends Composite implements IHomeView {
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
+		StyleHelper.show(message.getElement(), false);
 		
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
@@ -119,6 +120,14 @@ public class HomeView extends Composite implements IHomeView {
 			@Override
 			public void onClick(ClickEvent event) {
 				presenter.goTo(new ResidentPlace());
+			}
+		});
+		
+		communitySummaryWidget.addClickHandlerForBusinessLink(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new BusinessPlace());
 			}
 		});
 	}

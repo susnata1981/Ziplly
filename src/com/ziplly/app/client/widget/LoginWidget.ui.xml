@@ -5,13 +5,16 @@
 		field="zresources" />
 	<ui:style>
 		.loginSection {
-		width: 320px;
+		width: 340px;
 		margin: auto;
 		padding: 5px;
 		}
 		.button
 		{
-		margin-left: 10px;
+		display: block;
+		height: 30px;
+		line-height: 30px;
+		font-size: 1.12em;
 		}
 		.residentSignupDiv {
 		margin-top:8px;
@@ -55,10 +58,12 @@
 					<b:HelpInline ui:field="passwordError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
-			<b:Button type="SUCCESS" addStyleNames="{style.button}"
-				ui:field="loginBtn">SignIn</b:Button>
-			<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"
-				ui:field="fbLoginBtn"></g:Button>
+			<b:Button type="SUCCESS" ui:field="loginBtn" addStyleNames="{style.button}">Signin</b:Button>
+			<g:HTMLPanel>
+			    <hr/>
+				<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"
+					ui:field="fbLoginBtn" />
+			</g:HTMLPanel>
 			<g:HTMLPanel addStyleNames="{style.residentSignupDiv}">
 				<g:HTMLPanel ui:field="residentSignupPanel">
 					<span>Not

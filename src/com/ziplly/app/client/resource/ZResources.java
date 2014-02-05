@@ -20,7 +20,8 @@ public interface ZResources extends ClientBundle {
 	@Source("neighborhood_large.jpg")
 	ImageResource neighborhoodLargePic();
 	
-	@Source("rsz_1rsz_active_6002x.png")
+//	@Source("rsz_1rsz_active_6002x.png")
+	@Source("active_600.png")
 	ImageResource facebookLoginButtonImage();
 	
 	@Source("zstyle.css")

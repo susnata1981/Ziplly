@@ -122,7 +122,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	@Override
 	public Activity getActivity(Place place) {
 		if (place instanceof HomePlace) {
-			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, mainView, homeView);
+			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, homeView);
 		} 
 		else if (place instanceof LoginPlace) {
 			return new LoginActivity(dispatcher, eventBus, (LoginPlace)place, placeController, ctx, loginAccountView);

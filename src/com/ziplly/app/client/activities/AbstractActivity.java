@@ -92,7 +92,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 	
 	public void clearBackgroundImage() {
-		RootPanel.get("wrapper").getElement().getStyle().clearBackgroundImage();
+		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
 	
 	public void checkAccountLogin() {

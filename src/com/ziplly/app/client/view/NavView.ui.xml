@@ -48,7 +48,8 @@
 			<!-- <b:NavPills addStyleNames="{style.navPillList}"> -->
 			<b:Nav>
 				<b:NavLink ui:field="homeLink" icon="HOME">Home</b:NavLink>
-				<b:Dropdown text="Account" icon="USER">
+				<b:NavLink ui:field="loginLink" icon="USER">Login</b:NavLink>
+				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER">
 					<b:NavLink ui:field="accountLink">Profile</b:NavLink>
 					<b:NavLink ui:field="messageLink">Messages</b:NavLink>
 					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>

@@ -70,5 +70,5 @@ public class StringConstants {
 	public static final String TWEET_NOT_SHARED = "User hasn't shared his tweets.";
 	public static final String INVALID_URL = "Invalid url";
 	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
-	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of July, 2014!";
+	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
 }

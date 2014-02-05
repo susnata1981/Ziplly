@@ -30,8 +30,6 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 		this.panel = panel;
 		bind();
 		view.reset();
-		setImageUploadUrl();
-		setUploadImageHandler();
 		go(panel);
 	}
 
@@ -63,11 +61,7 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	@Override
 	public void onStop() {
 		view.clear();
-	}
-
-	@Override
-	public void onFacebookLogin() {
-		throw new UnsupportedOperationException();
+		clearBackgroundImage();
 	}
 
 	@Override
