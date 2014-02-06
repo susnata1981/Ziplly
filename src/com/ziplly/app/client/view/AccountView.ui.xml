@@ -7,11 +7,11 @@
 
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="4" size="8">
+			<b:Column size="10">
 				<b:Alert ui:field="message" close="false" addStyleNames="{style.alertMsg}"/>
 			</b:Column>
 		</b:FluidRow>
-		<b:FluidRow>
+		<b:FluidRow ui:field="profileSectionRow">
 			<b:Column offset="1" size="3">
 				<g:HTMLPanel>
 					<div class="{style.profileImageSection}">

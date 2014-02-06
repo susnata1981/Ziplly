@@ -94,7 +94,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	}
 	
 	private void displayNoTweetsMessage() {
-		message.setText(StringConstants.NO_TWEETS);
+		message.setText(StringConstants.TWEET_NOT_POSTED);
 		StyleHelper.show(message.getElement(), true);
 	}
 
@@ -119,16 +119,16 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override
 			public void execute() {
-				long s1 = System.currentTimeMillis();
+//				long s1 = System.currentTimeMillis();
 				TweetWidget tw = new TweetWidget();
 				tw.setWidth(tweetWidgetWidth);
 				tw.setPresenter(presenter);
 				tw.displayTweet(tweet);
 				tw.addStyleName(style.tweetWidget());
 				tweetsSection.add(tw);
-				int sh = tweetsSection.getElement().getScrollHeight();
-				long e1 = System.currentTimeMillis();
-				// System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
+//				int sh = tweetsSection.getElement().getScrollHeight();
+//				long e1 = System.currentTimeMillis();
+//				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
 			}
 		});
@@ -139,15 +139,15 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override
 			public void execute() {
-				long s1 = System.currentTimeMillis();
+//				long s1 = System.currentTimeMillis();
 				TweetWidget tw = new TweetWidget();
 				tw.setWidth(tweetWidgetWidth);
 				tw.setPresenter(presenter);
 				tw.displayTweet(tweet);
 				tw.addStyleName(style.tweetWidget());
 				tweetsSection.insert(tw, 0);
-				int sh = tweetsSection.getElement().getScrollHeight();
-				long e1 = System.currentTimeMillis();
+//				int sh = tweetsSection.getElement().getScrollHeight();
+//				long e1 = System.currentTimeMillis();
 				// System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
 				tweetWidgetMap.put(tweet.getTweetId(), tw);
 			}

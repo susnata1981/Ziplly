@@ -60,4 +60,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayTweetViewMessage(String msg, AlertType type);
 
 	void displayNotificationWidget(boolean b);
+
+	void hideProfileSection();
 }

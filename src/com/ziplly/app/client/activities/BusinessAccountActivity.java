@@ -71,7 +71,9 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			
 			@Override
 			public void onEvent(TweetNotAvailableEvent event) {
-				binder.stop();
+				if (binder != null) {
+					binder.stop();
+				}
 			}
 		});
 	}
@@ -107,12 +109,13 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
+			dispatcher.execute(new GetAccountByIdAction(accountId),
+					new GetAccountByIdActionHandler());
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 			binder.start();
-			dispatcher.execute(new GetAccountByIdAction(accountId),
-					new GetAccountByIdActionHandler());
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
+			go(panel);
 		}
 	}
 
@@ -237,7 +240,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			if (account instanceof BusinessAccountDTO) {
 				view.displayPublicProfile((BusinessAccountDTO) account);
 				getLatLng(account, new GetLatLngResultHandler());
-				go(panel);
 			} else if (account instanceof PersonalAccountDTO) {
 				// take some action here
 				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));
@@ -251,6 +253,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			} else {
 				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
+			view.hideProfileSection();
 		}
 	}
 

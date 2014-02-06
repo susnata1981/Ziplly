@@ -2,6 +2,8 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -9,6 +11,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.NotSharedError;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
@@ -40,39 +43,43 @@ public class GetTweetForUserActionHandler extends
 		// apply privacy settings
 		try {
 			applyPrivacySettings(action.getAccountId());
-		} catch(NotSharedError ex) {
+		} catch (NotSharedError ex) {
 			throw ex;
 		}
-		
-		List<TweetDTO> tweets = tweetDao.findTweetsByAccountId(action.getAccountId(),
-				action.getPage(), action.getPageSize());
-		GetTweetForUserResult result = new GetTweetForUserResult(tweets);
-		return result;
+
+		try {
+			List<TweetDTO> tweets = tweetDao.findTweetsByAccountId(action.getAccountId(),
+					action.getPage(), action.getPageSize());
+			GetTweetForUserResult result = new GetTweetForUserResult(tweets);
+			return result;
+		} catch (NoResultException nre) {
+			throw new NotFoundException();
+		}
 	}
 
 	private void applyPrivacySettings(long accountId) throws NotFoundException, NotSharedError {
 		boolean userLoggedIn = false;
 		try {
 			validateSession();
+			if (session.getAccount() != null && session.getAccount().getAccountId() == accountId) {
+				return;
+			}
 			userLoggedIn = true;
 		} catch (NeedsLoginException ex) {
+			userLoggedIn = false;
 		}
 
-		if (session.getAccount().getAccountId() == accountId) {
-			return;
-		}
-		
 		AccountDTO account = accountDao.findById(accountId);
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			if (ps.getSection() == AccountDetailsType.TWEETS) {
 				if (!userLoggedIn) {
 					if (ps.getSetting() != ShareSetting.PUBLIC) {
-						throw new NotSharedError("Tweets not shared");
+						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				} else {
 					Account requestingAccount = session.getAccount();
-					if (account.getNeighborhood().equals(requestingAccount.getNeighborhood())) {
-						throw new NotSharedError("Tweets not shared");
+					if (!account.getNeighborhood().equals(requestingAccount.getNeighborhood())) {
+						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				}
 			}

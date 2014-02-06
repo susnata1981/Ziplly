@@ -488,4 +488,13 @@ public class EntityUtil {
 		}
 		return result;
  	}
+
+	
+	public static List<InterestDTO> cloneInterestList(List<Interest> result) {
+		List<InterestDTO> resp = new ArrayList<InterestDTO>();
+		for(Interest i : result) {
+			resp.add(clone(i));
+		}
+		return resp;
+	}
 }

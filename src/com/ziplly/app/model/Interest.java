@@ -38,6 +38,8 @@ public class Interest implements Serializable {
 	
 	@ManyToMany(mappedBy = "interests", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	private Set<PersonalAccount> accounts = new HashSet<PersonalAccount>();
+	
+	@Column(name="time_created")
 	private Date timeCreated;	
 
 	public Interest() {

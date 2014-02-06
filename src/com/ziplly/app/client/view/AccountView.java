@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
@@ -58,6 +59,9 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
 
+	@UiField
+	FluidRow profileSectionRow;
+	
 	// Basic account info
 	@UiField
 	Alert message;
@@ -155,6 +159,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		
 		// display tweets
 		StyleHelper.show(tweetBoxDiv.getElement(), true);
+		StyleHelper.show(profileSectionRow.getElement(), true);
 	}
 
 	@Override
@@ -321,5 +326,10 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	public void displayNotificationWidget(boolean show) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void hideProfileSection() {
+		StyleHelper.show(profileSectionRow.getElement(), false);
 	}
 }

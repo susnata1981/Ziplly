@@ -7,6 +7,15 @@ insert into neighborhood (type,city,name,state, postalcode_id) values ("regular"
 insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Queen Ann","WA", 2);
 insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Ballard","WA", 3);
 
+insert into interest (name) values ("Outdoor");
+insert into interest (name) values ("Indoor");
+insert into interest (name) values ("Sports");
+insert into interest (name) values ("Cooking");
+insert into interest (name) values ("Hiking");
+insert into interest (name) values ("Running");
+insert into interest (name) values ("Biking");
+insert into interest (name) values ("Electronics");
+insert into interest (name) values ("Movies");
 
 insert into subscription_plan (description,fee,name,time_created,status, tweets_allowed) values ('Send upto 3 messages a month for free', 3, 'Basic plan', now(),"DISABLED", 3);
 insert into subscription_plan (description,fee,name,time_created,status, tweets_allowed) values ('Send upto 5 messages a month', 5, 'Pro plan', now(), "DISABLED", 5);

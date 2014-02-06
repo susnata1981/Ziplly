@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
+import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -47,6 +48,7 @@ import com.ziplly.app.client.widget.NotificationWidget;
 import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
@@ -79,6 +81,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	
 	@UiField
 	Alert message;
+	@UiField
+	FluidRow profileSectionRow;
 	@UiField
 	Image profileImage;
 	@UiField
@@ -264,6 +268,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		// display tweets
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
 		displayTweets(account.getTweets());
+		
+		StyleHelper.show(profileSectionRow.getElement(), true);
 	}
 
 	private void displayHoursOfOperation() {
@@ -457,5 +463,10 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 				messageSection.remove(popupPanel);
 			}
 		}
+	}
+
+	@Override
+	public void hideProfileSection() {
+		StyleHelper.show(profileSectionRow.getElement(), false);
 	}
 }

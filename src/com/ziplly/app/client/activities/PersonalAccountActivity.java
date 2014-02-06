@@ -63,7 +63,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			
 			@Override
 			public void onEvent(TweetNotAvailableEvent event) {
-				binder.stop();
+				if (binder != null) {
+					binder.stop();
+				}
 			}
 		});
 	}
@@ -103,6 +105,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			startInfiniteScrollThread();
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
+			go(panel);
 		}
 	}
 
@@ -225,7 +228,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			if (account instanceof PersonalAccountDTO) {
 				view.displayPublicProfile((PersonalAccountDTO) account);
 				getLatLng(account, new GetLatLngResultHandler());
-				go(panel);
 			} else {
 				// take some action here
 				placeController.goTo(new BusinessAccountPlace(account.getAccountId()));
@@ -236,6 +238,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		public void onFailure(Throwable th) {
 			if (th instanceof NotFoundException) {
 				view.displayMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
+				view.hideProfileSection();
 			} else {
 				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}

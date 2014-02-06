@@ -132,7 +132,6 @@ public class AccountDAOImpl implements AccountDAO {
 			em.getTransaction().begin();
 			em.merge(account);
 			em.getTransaction().commit();
-//			em.flush();
 			return EntityUtil.convert(account);
 		} catch (NoResultException ex) {
 			throw new IllegalArgumentException();

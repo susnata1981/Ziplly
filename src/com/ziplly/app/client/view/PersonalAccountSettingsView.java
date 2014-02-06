@@ -60,7 +60,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class PersonalAccountSettingsView extends AbstractView implements IPersonalAccountSettingsView {
+public class PersonalAccountSettingsView extends AbstractView implements IPersonalAccountSettingsView{
 
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 			.create(PersonalAccountSettingsViewUiBinder.class);
@@ -137,7 +137,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	Tab interestTab;
 	@UiField
 	HTMLPanel interestTabPanel;
-	Map<Activity, CheckBox> interestToCheckboxMap = new HashMap<Activity, CheckBox>();
+	Map<InterestDTO, CheckBox> interestToCheckboxMap = new HashMap<InterestDTO, CheckBox>();
 	
 	//
 	// Location TODO:(needs to go)
@@ -204,11 +204,11 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 
-		for (Activity activity : Activity.values()) {
-			CheckBox cb = new CheckBox(activity.name().toLowerCase());
-			interestToCheckboxMap.put(activity, cb);
-			interestTabPanel.add(cb);
-		}
+//		for (Activity activity : Activity.values()) {
+//			CheckBox cb = new CheckBox(activity.getActivityName());
+//			interestToCheckboxMap.put(activity, cb);
+//			interestTabPanel.add(cb);
+//		}
 
 		message.setVisible(false);
 		setupHandlers();
@@ -255,6 +255,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			return;
 		}
 
+		this.account = account;
+		
 		// basic info
 		displayImagePreview(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		
@@ -265,12 +267,6 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 		// occupation
 		occupation.setText(account.getOccupation());
-
-		// interests
-		for (InterestDTO interest : account.getInterests()) {
-			Activity activity = Activity.valueOf(interest.getName().toUpperCase());
-			interestToCheckboxMap.get(activity).setValue(true);
-		}
 
 		// location
 		zip.setReadOnly(true);
@@ -420,14 +416,10 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 		// interests
 		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
-		for (Entry<Activity, CheckBox> entry : interestToCheckboxMap.entrySet()) {
+		for (Entry<InterestDTO, CheckBox> entry : interestToCheckboxMap.entrySet()) {
 			CheckBox cb = entry.getValue();
 			if (cb.getValue()) {
-				InterestDTO i = new InterestDTO();
-				Activity a = Activity.valueOf(cb.getText().toUpperCase());
-				i.setInterestId(new Long(a.ordinal() + 1));
-				i.setName(entry.getKey().name().toLowerCase());
-				selectedInterests.add(i);
+				selectedInterests.add(entry.getKey());
 			}
 		}
 		account.getInterests().clear();
@@ -552,5 +544,23 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@UiHandler("cancelBtn")
 	void cancel(ClickEvent event) {
 		onCancel();
+	}
+
+	@Override
+	public void displayAllInterests(List<InterestDTO> interests) {
+		interestTabPanel.clear();
+		interestToCheckboxMap.clear();
+		for (InterestDTO interest : interests) {
+			CheckBox cb = new CheckBox(interest.getName());
+			interestToCheckboxMap.put(interest, cb);
+			interestTabPanel.add(cb);
+		}
+		markSelectedInterest();
+	}
+	
+	private void markSelectedInterest() {
+		for(InterestDTO interest : account.getInterests()) {
+			interestToCheckboxMap.get(interest).setEnabled(true);
+		}
 	}
 }

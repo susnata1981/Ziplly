@@ -1,5 +1,7 @@
 package com.ziplly.app.client.activities;
 
+import java.util.List;
+
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -16,7 +18,10 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.GetInterestAction;
+import com.ziplly.app.shared.GetInterestResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
@@ -27,6 +32,8 @@ public class PersonalAccountSettingsActivity
 
 	public static interface IPersonalAccountSettingsView extends
 			ISettingsView<PersonalAccountDTO, AccountSettingsPresenter<PersonalAccountDTO>> {
+
+		void displayAllInterests(List<InterestDTO> interests);
 	}
 
 	private AcceptsOneWidget panel;
@@ -72,15 +79,18 @@ public class PersonalAccountSettingsActivity
 		setImageUploadFormSubmitCompleteHandler();
 		setUploadFormActionUrl();
 		view.displaySettings((PersonalAccountDTO) ctx.getAccount());
+		fetchInterestList();
 		panel.setWidget(view);
 	}
 
-	@Override
-	public void fetchData() {
-	}
+	private void fetchInterestList() {
+		dispatcher.execute(new GetInterestAction(), new DispatcherCallbackAsync<GetInterestResult>() {
 
-	@Override
-	public void go(AcceptsOneWidget container) {
+			@Override
+			public void onSuccess(GetInterestResult result) {
+				view.displayAllInterests(result.getInterests());
+			}
+		});
 	}
 
 	@Override
@@ -120,4 +130,13 @@ public class PersonalAccountSettingsActivity
 	public void onInboxLinkClick() {
 		placeController.goTo(new ConversationPlace());
 	}
+	
+	@Override
+	public void fetchData() {
+	}
+
+	@Override
+	public void go(AcceptsOneWidget container) {
+	}
+
 }

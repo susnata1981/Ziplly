@@ -11,7 +11,7 @@
 				<b:Alert ui:field="message" close="false"/>
 			</b:Column>
 		</b:FluidRow>
-		<b:FluidRow>
+		<b:FluidRow ui:field="profileSectionRow">
 			<b:Column size="3">
 				<g:HTMLPanel>
 					<div>

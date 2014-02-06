@@ -12,6 +12,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.NotSharedError;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -270,30 +271,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 	
-//	@Deprecated
-//	protected void fetchTweets(long accountId, int page, int pageSize) {
-//		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
-//		eventBus.fireEvent(new LoadingEventStart());
-//		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-//			@Override
-//			public void onSuccess(GetTweetForUserResult result) {
-//				view.displayTweets(result.getTweets());
-//				eventBus.fireEvent(new LoadingEventEnd());
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable th) {
-//				if (th instanceof NotSharedError) {
-//					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
-//				} else {
-//					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-//				}
-//				stopThreads();
-//				eventBus.fireEvent(new LoadingEventEnd());
-//			}
-//		});
-//	}
-
 	protected void fetchTweets(long accountId, int page, int pageSize, final boolean displayNoTweetsMessage) {
 		eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
@@ -304,16 +281,18 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
 			
-			/* (non-Javadoc)
-			 * @see com.ziplly.app.client.dispatcher.DispatcherCallbackAsync#onFailure(java.lang.Throwable)
-			 */
 			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof NotSharedError) {
 					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
-				} else {
+				} 
+				else if (th instanceof NotFoundException) {
+//					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+				}
+				else {
 					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
+				stopThreads();
 				eventBus.fireEvent(new LoadingEventEnd());
 				eventBus.fireEvent(new TweetNotAvailableEvent());
 			}

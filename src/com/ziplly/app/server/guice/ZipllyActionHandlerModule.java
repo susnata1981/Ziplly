@@ -20,6 +20,7 @@ import com.ziplly.app.server.handlers.GetFacebookDetailsHandler;
 import com.ziplly.app.server.handlers.GetFacebookRedirectUriActionHandler;
 import com.ziplly.app.server.handlers.GetHashtagActionHandler;
 import com.ziplly.app.server.handlers.GetImageUploadUrlActionHandler;
+import com.ziplly.app.server.handlers.GetInterestActionHandler;
 import com.ziplly.app.server.handlers.GetJwtTokenActionHandler;
 import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
@@ -66,6 +67,7 @@ import com.ziplly.app.shared.GetFacebookDetailsAction;
 import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
+import com.ziplly.app.shared.GetInterestAction;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -145,6 +147,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(SendMessageAction.class, SendMessageActionHandler.class);
 		bindHandler(GetConversationsAction.class, GetConversationActionHandler.class);
 		bindHandler(ViewConversationAction.class, ViewConversationActionHandler.class);
+		
+		// Interest
+		bindHandler(GetInterestAction.class, GetInterestActionHandler.class);
 		
 		// Account Notification
 		bindHandler(GetAccountNotificationAction.class, GetAccountNotificationActionHandler.class);

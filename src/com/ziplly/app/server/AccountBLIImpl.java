@@ -422,17 +422,14 @@ public class AccountBLIImpl implements AccountBLI {
 			account.setImageUrl(imgUrl);
 			return account;
 		} catch (Exception e) {
-			System.out.println("Exception caught while getting facebook user details:" + e);
+			logger.severe("Exception caught while getting facebook user details:" + e);
 		}
 
 		// login user
 		Long uid = doLogin(response);
 		// AccountDTO result = new AccountDTO(response);
 		if (response instanceof PersonalAccountDTO) {
-			// PersonalAccountDTO result = new
-			// PersonalAccountDTO((PersonalAccount)response);
 			response.setUid(uid);
-			System.out.println("Returning existing account:" + response);
 			return response;
 		}
 

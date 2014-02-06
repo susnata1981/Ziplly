@@ -67,7 +67,8 @@ public class StringConstants {
 	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
 	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
-	public static final String TWEET_NOT_SHARED = "User hasn't shared his tweets.";
+	public static final String TWEET_NOT_POSTED = "User hasn't posted any tweets";
+	public static final String TWEET_NOT_SHARED = "User hasn't shared his tweets";
 	public static final String INVALID_URL = "Invalid url";
 	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
 	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
