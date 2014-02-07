@@ -41,8 +41,7 @@
 			border: 1px solid #ddd;
 			background: #f1f1f1;
 			padding: 12px;
-			min-width: 300px;
-			max-width: 320px;
+			width: 340px;
 		}
 		.button {
 			height: 40px;
@@ -72,6 +71,10 @@
 			font-family: Verdana, sans-serif;
 			font-size: 2em;
 			color : #fff;
+		}
+		.signup-hero-unit {
+			padding: 60px 30px !important;
+			height: 160px;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
@@ -168,10 +171,13 @@
 		<b:FluidRow addStyleNames="{style.fluid-row}">
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3" ui:field="heading">Create your profile</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
 						<b:Paragraph>
 						    Complete your profile and upload a photo.
+						</b:Paragraph>
+						<b:Paragraph>
+						    Say a bit about your business.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="createProfileBtn">Signup</b:Button>
 					</b:Hero>
@@ -179,13 +185,13 @@
 			</b:Column>
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3">Pick a messaging plan</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Pick a messaging plan</b:Heading>
 						<b:Paragraph>
 						    Basic, Pro and Premium plans, pricing based on usage. 
 						</b:Paragraph>
 						<b:Paragraph>
-						    Basic plan is completely free. Send upto 3 messages/month. 
+						    Send 3 messages/month for free. 
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="exploreBtn">Explore</b:Button>
 					</b:Hero>
@@ -193,8 +199,8 @@
 			</b:Column>
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3">Reach local customers</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Reach local customers</b:Heading>
 						<b:Paragraph>
 						    Post messages to inform local customers about specials. 
 						</b:Paragraph>

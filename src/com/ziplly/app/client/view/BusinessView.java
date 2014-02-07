@@ -33,7 +33,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class BusinessView extends Composite implements View<BusinessView.EntityListViewPresenter> {
 
-	private static final int PAGE_SIZE = 3;
+	private static final int PAGE_SIZE = 10;
 	private SendMessageWidget smw;
 	private static BusinessViewUiBinder uiBinder = GWT.create(BusinessViewUiBinder.class);
 

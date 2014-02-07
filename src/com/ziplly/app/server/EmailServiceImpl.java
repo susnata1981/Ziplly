@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -18,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 
+import com.google.appengine.repackaged.com.google.api.client.http.MultipartContent;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -65,7 +67,8 @@ public class EmailServiceImpl implements EmailService {
 			msg.setFrom(new InternetAddress(System.getProperty(APP_ADMING_EMAIL_PROP, "Ziplly.com, Admin")));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail, recipientName));
 			msg.setSubject(subject);
-			msg.setText(emailContent);
+			msg.setContent(emailContent, "text/html; charset=utf-8");
+			
 //			System.out.println("Sending email from:"+System.getProperty(APP_ADMING_EMAIL_PROP)+" to:"+recipientEmail);
 			
 			// Email enabled flag needs to be turned on.

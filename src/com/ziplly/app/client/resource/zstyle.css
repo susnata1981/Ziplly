@@ -10,3 +10,8 @@
 	gwt-image: 'facebookLoginButtonImage';
 	background-repeat: no-repeat;
 }
+
+@sprite .zipllyLogo {
+	gwt-image: 'zipllyLogo';
+	background-repeat: no-repeat;
+}

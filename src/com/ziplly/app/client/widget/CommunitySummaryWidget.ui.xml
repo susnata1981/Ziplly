@@ -3,8 +3,8 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.commnunitySummaryPanel {
-			width: 96%;
-			padding: 1%;
+			width: 98%;
+			padding: 2px;
 			height: auto;
 		}
 		.top {

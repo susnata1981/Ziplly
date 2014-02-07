@@ -8,7 +8,7 @@
 		margin-top: 110px;
 		}
 		.heading1 {
-		font-size: 2.8em;
+		font-size: 36px;
 		font-weight: bold;
 		font-family:
 		fantasy,cursive, sans;
@@ -21,7 +21,7 @@
 		.heading2 {
 		display: block;
 		clear: both;
-		font-size: 1.8em;
+		font-size: 20px;
 		font-weight: bold;
 		font-family: Tahoma,
 		Verdana, Segoe, sans-serif;
@@ -38,8 +38,7 @@
 		}
 		.singupForm {
 		float: left;
-		min-width: 340px;
-		max-width: 360px;
+		width: 360px;
 		padding: 12px;
 		margin-left: 20px;
 		background: #f1f1f1;
@@ -135,6 +134,9 @@
 			diplay: block;
 			margin-top: 40px;
 		}
+		.signup-hero-unit {
+			padding: 60px 30px !important;
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
@@ -147,7 +149,7 @@
 				<g:HTMLPanel addStyleNames="{style.mainPageHeadingPanel}">
 					<span class="{style.heading1}">
 						Ziplly
-						<sup class="mediumtext">BETA</sup>
+						<sup class="smalltext">beta</sup>
 						<br />
 					</span>
 					<span class="{style.heading2}">connecting local residents</span>
@@ -268,8 +270,8 @@
 		<b:FluidRow addStyleNames="{style.fluid-row}">
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3" ui:field="heading">Create your profile</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
 						<b:Paragraph>
 						    Complete your profile and upload a photo.
 						</b:Paragraph>
@@ -279,8 +281,8 @@
 			</b:Column>
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3">Explore your neighborhood</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Explore your neighborhood</b:Heading>
 						<b:Paragraph>
 						    Find residents and local businesses in your neighborhood. 
 						</b:Paragraph>
@@ -290,8 +292,8 @@
 			</b:Column>
 			<b:Column size="4">
 				<g:HTMLPanel>
-					<b:Hero>
-						<b:Heading size="3">Broadcast to your neighbors</b:Heading>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Broadcast to your neighbors</b:Heading>
 						<b:Paragraph>
 						    Share with your neighbors and local businesses. 
 						</b:Paragraph>

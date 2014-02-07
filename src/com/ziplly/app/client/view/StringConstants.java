@@ -72,4 +72,7 @@ public class StringConstants {
 	public static final String INVALID_URL = "Invalid url";
 	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
 	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
+	public static final String FEEDBACK = "Feedback";
+	public static final String FEEDBACK_SENT_SUCCESS = "Thanks for your feedback";
+	public static final String FEEDBACK_SENT_FAILURE = "Sorry, there was a problem sending the feedback";
 }

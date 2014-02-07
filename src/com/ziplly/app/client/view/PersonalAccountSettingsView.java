@@ -51,7 +51,6 @@ import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
-import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PersonalAccountDTO;

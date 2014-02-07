@@ -9,6 +9,9 @@
 		margin: auto;
 		padding: 5px;
 		}
+		.inputTextBox {
+			width: 96%;
+		}
 		.button
 		{
 		display: block;
@@ -40,6 +43,9 @@
 		!important;
 		background: none !important;
 		}
+		.hr {
+			margin: 10px 0;
+		}
 	</ui:style>
 
 	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
@@ -47,20 +53,19 @@
 		<b:WellForm>
 			<b:ControlGroup ui:field="emailCg">
 				<b:Controls>
-					<b:TextBox ui:field="email" placeholder="email..." />
+					<b:TextBox ui:field="email" placeholder="email..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="emailError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
 			<b:ControlGroup ui:field="passwordCg">
 				<b:Controls>
-					<b:PasswordTextBox ui:field="password"
-						placeholder="password..." />
+					<b:PasswordTextBox ui:field="password" placeholder="password..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="passwordError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
 			<b:Button type="SUCCESS" ui:field="loginBtn" addStyleNames="{style.button}">Signin</b:Button>
 			<g:HTMLPanel>
-			    <hr/>
+			    <hr class="{style.hr}"/>
 				<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"
 					ui:field="fbLoginBtn" />
 			</g:HTMLPanel>

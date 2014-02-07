@@ -114,7 +114,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
 	private String tweetWidgetWidth = "80%";
-	private String tweetBoxWidth = "80%";
+	private String tweetBoxWidth = "82%";
 	private BasicDataFormatter basicDataFormatter = 
 			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private AccountFormatter accountFormatter = 

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Container;
+import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,6 +36,7 @@ import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
+import com.ziplly.app.client.widget.FeedbackWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
@@ -43,6 +47,7 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetNeighborhoodDetailsResult;
+import com.ziplly.app.shared.ValidationResult;
 
 /**
  * Community Wall View
@@ -53,7 +58,8 @@ public class HomeView extends Composite implements IHomeView {
 	private String tweetWidth = "80%";
 	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
-
+	private FeedbackWidget feedbackWidget = new FeedbackWidget();
+	
 	public interface Style extends CssResource {
 		String tweetFilterLink();
 
@@ -65,7 +71,9 @@ public class HomeView extends Composite implements IHomeView {
 
 		void displayTweetsForCategory(TweetType type);
 
-		void displayHashtag(String text); 
+		void displayHashtag(String text);
+
+		void sendFeedback(String content); 
 	}
 
 	@UiField
@@ -91,6 +99,10 @@ public class HomeView extends Composite implements IHomeView {
 	TweetBox tweetBox;
 
 	@UiField
+	NavLink feedbackLink;
+	@UiField
+	Container communitySummaryContainer;
+	@UiField
 	CommunitySummaryWidget communitySummaryWidget;
 
 	HomePresenter presenter;
@@ -113,6 +125,7 @@ public class HomeView extends Composite implements IHomeView {
 		
 		tview.setWidth(TWEET_WIDGET_WIDTH);
 		
+		communitySummaryContainer.setShowOn(Device.DESKTOP);
 		communityWallPanel.add(tview);
 		communitySummaryWidget.setHeight("270px");
 		communitySummaryWidget.addClickHandler(new ClickHandler() {
@@ -129,6 +142,22 @@ public class HomeView extends Composite implements IHomeView {
 			public void onClick(ClickEvent event) {
 				presenter.goTo(new BusinessPlace());
 			}
+		});
+		
+		feedbackWidget.getSubmitButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				feedbackWidget.clear();
+				ValidationResult result = feedbackWidget.validate();
+				if (!result.isValid()) {
+					feedbackWidget.displayMessage(result.getErrors().get(0).getErrorMessage(), AlertType.ERROR);
+					return;
+				}
+				presenter.sendFeedback(feedbackWidget.getContent());
+				feedbackWidget.show(false);
+			}
+			
 		});
 	}
 
@@ -373,5 +402,10 @@ public class HomeView extends Composite implements IHomeView {
 	@Override
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
+	}
+	
+	@UiHandler("feedbackLink")
+	public void feedbackLinkClicked(ClickEvent event) {
+		feedbackWidget.show(true);
 	}
 }

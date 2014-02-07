@@ -4,13 +4,11 @@ import java.io.UnsupportedEncodingException;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.Container;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -53,8 +51,8 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
-		email.setWidth("90%");
-		password.setWidth("90%");
+//		email.setWidth("90%");
+//		password.setWidth("90%");
 		setWidth("90%");
 	}
 
@@ -189,7 +187,11 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	@Override
 	public void resetLoginForm() {
 		email.setText("");
+		emailError.setText("");
+		emailCg.setType(ControlGroupType.NONE);
 		password.setText("");	
+		passwordError.setText("");
+		passwordCg.setType(ControlGroupType.NONE);
 		loginBtn.setEnabled(true);
 		fbLoginBtn.setEnabled(true);
 	}

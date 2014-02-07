@@ -42,11 +42,19 @@
 			max-height: 180px;
 			text-overflow: ellipsis;
 		}
+		.logo {
+			float: left;
+			width: 84px;
+			height: 50px;
+		}
+		.feedbackLink {
+			float: right;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:ResponsiveNavbar>
-			<!-- <b:NavPills addStyleNames="{style.navPillList}"> -->
 			<b:Nav>
+			    <b:Image ui:field="logo" addStyleNames="{style.logo}" />
 				<b:NavLink ui:field="homeLink" icon="HOME">Home</b:NavLink>
 				<b:NavLink ui:field="loginLink" icon="USER">Login</b:NavLink>
 				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER">

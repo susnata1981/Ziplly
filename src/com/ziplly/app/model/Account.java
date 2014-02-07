@@ -84,7 +84,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	private int zip;
 	private String city;
 	private String state;
-	private AccountStatus status;
+	private String status;
 
 	@NotNull
 	@ManyToOne
@@ -92,7 +92,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	private Neighborhood neighborhood;
 	
 	@Column(name="role", insertable=true, updatable=false)
-	private Role role;
+	private String role;
 
 	@Column(name="last_login")
 	private Date lastLoginTime;
@@ -309,11 +309,11 @@ public class Account extends AbstractTimestampAwareEntity {
 	}
 
 	public Role getRole() {
-		return role;
+		return Role.valueOf(role);
 	}
 
 	public void setRole(Role role) {
-		this.role = role;
+		this.role = role.name();
 	}
 
 	public Set<PrivacySettings> getPrivacySettings() {
@@ -330,11 +330,11 @@ public class Account extends AbstractTimestampAwareEntity {
 	}
 
 	public AccountStatus getStatus() {
-		return status;
+		return AccountStatus.valueOf(status);
 	}
 
 	public void setStatus(AccountStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	public Set<AccountNotification> getAccountNotification() {

@@ -19,8 +19,8 @@ public class AccountDTO implements Serializable {
     private NeighborhoodDTO neighborhood;
 	private String city;
 	private String state;
-	private Role role;
-	private AccountStatus status;
+	private String role;
+	private String status;
 	private Date lastLoginTime;
 	private Date timeUpdated;
 	private Date timeCreated;
@@ -193,11 +193,11 @@ public class AccountDTO implements Serializable {
 	}
 
 	public Role getRole() {
-		return role;
+		return Role.valueOf(role);
 	}
 
 	public void setRole(Role role) {
-		this.role = role;
+		this.role = role.name();
 	}
 
 	public List<PrivacySettingsDTO> getPrivacySettings() {
@@ -213,11 +213,11 @@ public class AccountDTO implements Serializable {
 	}
 
 	public AccountStatus getStatus() {
-		return status;
+		return AccountStatus.valueOf(status);
 	}
 
 	public void setStatus(AccountStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	public List<AccountNotificationDTO> getAccountNotifications() {

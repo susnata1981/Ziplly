@@ -3,7 +3,7 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.ziplly.app.client.view.TweetView.Style">
 		.tweetsSection {
- 		height: 700px;
+ 		height: 960px;
 		overflow-y: auto;
 		}
 		.tweetWidget {

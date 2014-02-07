@@ -16,6 +16,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.activities.Presenter;
@@ -26,6 +27,7 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.ResidentPlace;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
 import com.ziplly.app.client.view.factory.AccountFormatter;
@@ -65,6 +67,9 @@ public class NavView extends Composite implements INavView {
 	@UiField
 	Style style;
 
+	@UiField
+	Image logo;
+	
 	@UiField
 	NavLink loginLink;
 	
@@ -106,6 +111,14 @@ public class NavView extends Composite implements INavView {
 		showAccountLinks(false);
 		showAccountNotificationPanel(false);
 		notifications.clear();
+		
+		logo.setUrl(ZResources.IMPL.zipllyLogo().getSafeUri().asString());
+		logo.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new HomePlace());
+			}
+		});
 	}
 
 	private void showAccountNotificationPanel(boolean b) {

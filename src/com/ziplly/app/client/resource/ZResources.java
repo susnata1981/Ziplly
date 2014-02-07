@@ -12,6 +12,8 @@ public interface ZResources extends ClientBundle {
 		String mainPageBackground();
 		
 		String fbBtnImage();
+		
+		String zipllyLogo();
 	}
 	
 	@Source("No_person.jpg")
@@ -20,9 +22,11 @@ public interface ZResources extends ClientBundle {
 	@Source("neighborhood_large.jpg")
 	ImageResource neighborhoodLargePic();
 	
-//	@Source("rsz_1rsz_active_6002x.png")
 	@Source("active_600.png")
 	ImageResource facebookLoginButtonImage();
+
+	@Source("ziplly-logo.png")
+	ImageResource zipllyLogo();
 	
 	@Source("zstyle.css")
 	Styles style();

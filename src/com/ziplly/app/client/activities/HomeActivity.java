@@ -7,7 +7,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -18,7 +17,6 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
@@ -27,9 +25,6 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
-import com.ziplly.app.client.view.MainView;
-import com.ziplly.app.client.view.ResidentsView;
-import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
@@ -53,12 +48,13 @@ import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
+import com.ziplly.app.shared.EmailAdminAction;
+import com.ziplly.app.shared.EmailAdminResult;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
-import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
@@ -83,17 +79,13 @@ import com.ziplly.app.shared.UpdateCommentAction;
 import com.ziplly.app.shared.UpdateCommentResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
-import com.ziplly.app.shared.ValidateLoginAction;
-import com.ziplly.app.shared.ValidateLoginResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
-//	private MainView mainView;
 	private IHomeView homeView;
 	private HomeViewState state;
 	private TweetViewBinder binder;
 	private HomePlace place;
 	private AccountDTO account;
-//	private ValidateLoginHandler loginHandler = new ValidateLoginHandler();
 	private AcceptsOneWidget panel;
 
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
@@ -488,22 +480,22 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		});
 	}
 
-	private TweetViewBinder getDefaultTweetBinder() {
-		return new TweetViewBinder(homeView.getTweetSectionElement(), this)
-		{
-			@Override
-			protected boolean detectScrollerHitBottom() {
-				int sh = elem.getScrollHeight();
-				int st = elem.getScrollTop();
-				int of = elem.getOffsetHeight();
-				int dh = Window.getClientHeight();
-				int wst = Window.getScrollTop();
-				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of +" WST="+ wst);
-				return elem.getScrollHeight() - (elem.getOffsetHeight() + elem.getScrollTop()) < 100;
-//				return elem.getScrollHeight() - elem.getScrollTop() < 200;
-			}
-		};
-	}
+//	private TweetViewBinder getDefaultTweetBinder() {
+//		return new TweetViewBinder(homeView.getTweetSectionElement(), this)
+//		{
+//			@Override
+//			protected boolean detectScrollerHitBottom() {
+//				int sh = elem.getScrollHeight();
+//				int st = elem.getScrollTop();
+//				int of = elem.getOffsetHeight();
+//				int dh = Window.getClientHeight();
+//				int wst = Window.getScrollTop();
+////				System.out.println("SH=" + sh + " ST=" + st + " OF=" + of +" WST="+ wst);
+//				return elem.getScrollHeight() - (elem.getOffsetHeight() + elem.getScrollTop()) < 100;
+////				return elem.getScrollHeight() - elem.getScrollTop() < 200;
+//			}
+//		};
+//	}
 	
 	private void getAccountNotifications() {
 		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
@@ -731,5 +723,24 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
 			homeView.displayCommunitySummaryDetails(result);
 		}
+	}
+
+	@Override
+	public void sendFeedback(String content) {
+		EmailAdminAction action = new EmailAdminAction();
+		action.setContent(content);
+		action.setSubject(StringConstants.FEEDBACK+" from "+ctx.getAccount().getEmail());
+		action.setFrom(ctx.getAccount().getEmail());
+		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
+			@Override
+			public void onSuccess(EmailAdminResult result) {
+				homeView.displayMessage(StringConstants.FEEDBACK_SENT_SUCCESS, AlertType.SUCCESS);	
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				homeView.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
+			}
+		});
 	}
 }
