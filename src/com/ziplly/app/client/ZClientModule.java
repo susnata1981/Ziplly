@@ -36,7 +36,6 @@ import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.ILoginAccountView;
 import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.LoginAccountView;
-import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
@@ -58,8 +57,8 @@ public class ZClientModule extends AbstractGinModule {
 //		bind(BasicAccountDataProvider.class);
 		
 		// main presenter
-		bind(MainController.class).in(Singleton.class);
-		bind(ZipllyController.class).in(Singleton.class);
+//		bind(MainController.class).in(Singleton.class);
+//		bind(ZipllyController.class).in(Singleton.class);
 		
 		// views
 		bind(INavView.class).to(NavView.class).in(Singleton.class);
@@ -69,7 +68,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(IHomeView.class).to(HomeView.class).in(Singleton.class);
 		bind(SignupView.class).in(Singleton.class);
 		bind(BusinessSignupView.class).in(Singleton.class);
-		bind(MainView.class).in(Singleton.class);
+//		bind(MainView.class).in(Singleton.class);
 		bind(ResidentsView.class).in(Singleton.class);
 		bind(PersonalAccountSettingsView.class);
 		bind(IBusinessAccountSettingView.class).to(BusinessAccountSettingsView.class);

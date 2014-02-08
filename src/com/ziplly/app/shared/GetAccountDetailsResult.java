@@ -2,9 +2,9 @@ package com.ziplly.app.shared;
 
 import java.util.List;
 
-import com.ziplly.app.model.AccountNotificationDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.AccountNotificationDTO;
 
 public class GetAccountDetailsResult implements Result {
 	private int unreadMessages;

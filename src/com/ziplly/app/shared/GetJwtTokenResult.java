@@ -2,10 +2,10 @@ package com.ziplly.app.shared;
 
 import java.util.Map;
 
+import net.customware.gwt.dispatch.shared.Result;
+
 import com.google.common.collect.Maps;
 import com.ziplly.app.model.SubscriptionPlanDTO;
-
-import net.customware.gwt.dispatch.shared.Result;
 
 public class GetJwtTokenResult implements Result {
 	private Map<SubscriptionPlanDTO, String> tokens = Maps.newHashMap();

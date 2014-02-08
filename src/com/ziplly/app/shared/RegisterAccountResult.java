@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.AccountDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.AccountDTO;
 
 public class RegisterAccountResult implements Result{
 	private AccountDTO account;

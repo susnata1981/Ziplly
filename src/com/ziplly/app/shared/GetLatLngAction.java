@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.AccountDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.AccountDTO;
 
 public class GetLatLngAction implements Action<GetLatLngResult> {
 	private AccountDTO account;

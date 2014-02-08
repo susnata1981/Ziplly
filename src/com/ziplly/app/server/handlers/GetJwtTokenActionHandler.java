@@ -11,7 +11,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.PaymentService;

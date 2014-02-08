@@ -1,8 +1,10 @@
 package com.ziplly.app.dao;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import com.google.common.base.Preconditions;
 import com.ziplly.app.model.PendingInvitations;
 import com.ziplly.app.model.PendingInvitationsDTO;

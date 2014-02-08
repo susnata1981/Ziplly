@@ -2,7 +2,6 @@ package com.ziplly.app.client.view;
 
 import com.google.gwt.view.client.Range;
 import com.ziplly.app.model.EntityType;
-import com.ziplly.app.model.Gender;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityListAction.SearchType;
 

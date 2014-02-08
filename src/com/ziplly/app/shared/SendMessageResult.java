@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.MessageDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.MessageDTO;
 
 public class SendMessageResult implements Result {
 	private MessageDTO msg;

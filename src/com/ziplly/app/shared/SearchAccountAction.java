@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.AccountSearchCriteria;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.AccountSearchCriteria;
 
 public class SearchAccountAction implements Action<SearchAccountResult>{
 	private AccountSearchCriteria criteria;

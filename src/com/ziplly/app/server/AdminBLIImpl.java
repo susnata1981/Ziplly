@@ -2,8 +2,6 @@ package com.ziplly.app.server;
 
 import java.util.List;
 
-import org.apache.xerces.dom3.as.ASDataType;
-
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.inject.Inject;

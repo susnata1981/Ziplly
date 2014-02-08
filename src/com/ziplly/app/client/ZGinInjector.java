@@ -16,7 +16,7 @@ import com.ziplly.app.client.widget.LoginWidget;
 @GinModules({StandardDispatchModule.class, ZClientModule.class})
 public interface ZGinInjector extends Ginjector{
 	CachingDispatcherAsync getCachingDispatcher();
-	MainController getMainController();
+//	MainController getMainController();
 	ZipllyController getZipllyController();
 	SimpleEventBus getEventBus();
 	

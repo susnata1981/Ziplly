@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.TweetDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.TweetDTO;
 
 public class TweetResult implements Result {
 	private TweetDTO tweet;

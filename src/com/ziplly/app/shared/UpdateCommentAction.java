@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.CommentDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.CommentDTO;
 
 public class UpdateCommentAction implements Action<UpdateCommentResult>{
 	private CommentDTO comment;

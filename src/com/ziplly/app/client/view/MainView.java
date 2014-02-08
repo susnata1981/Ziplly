@@ -4,13 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ControlGroup;
-import com.github.gwtbootstrap.client.ui.HelpInline;
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -19,12 +14,10 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sun.xml.internal.ws.message.RootElementSniffer;
 import com.ziplly.app.client.activities.LoginPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -33,11 +26,8 @@ import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
-import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.MyBundle;
-import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.ValidationResult;
 
 public class MainView extends Composite implements View<HomePresenter> {
 	private static MainViewUiBinder uiBinder = GWT

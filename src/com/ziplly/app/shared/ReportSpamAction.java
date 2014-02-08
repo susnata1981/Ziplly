@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.SpamDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.SpamDTO;
 
 public class ReportSpamAction implements Action<ReportSpamResult>{
 	private SpamDTO spam;

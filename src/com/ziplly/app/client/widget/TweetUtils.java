@@ -19,7 +19,7 @@ public class TweetUtils {
 //				String grp4 = matcher.getGroup(4);
 //				System.out.println("G1="+grp1+" G2="+grp2+" G3="+grp3+" G4="+grp4);
 				newContent.append(grp1);
-				newContent.append("<a href='" + grp2 + "'>" + grp2 + "</a>");
+				newContent.append("<a class='link' href='" + grp2 + "' target='_blank'>" + grp2 + "</a>");
 				newContent.append(grp3);
 //				System.out.println("COUNT="+count);
 				count -= 3;

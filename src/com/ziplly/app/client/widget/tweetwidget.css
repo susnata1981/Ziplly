@@ -117,6 +117,10 @@ div.comment_text {
 	display: block !important;	
 }
 
+.tweetLink {
+	color: #2E9AFE !important; 
+}
+
 /*************** Comment Section ***************/
 .commentSectionDiv {
 	width: 100%;

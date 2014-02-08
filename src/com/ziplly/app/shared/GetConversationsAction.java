@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.ConversationType;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.ConversationType;
 
 public class GetConversationsAction implements Action<GetConversationsResult>{
 	private ConversationType type = ConversationType.ALL;

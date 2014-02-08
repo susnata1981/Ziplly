@@ -12,8 +12,8 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AdminBLI;
-import com.ziplly.app.shared.GetTweetsResult;
 import com.ziplly.app.shared.GetTweetsAction;
+import com.ziplly.app.shared.GetTweetsResult;
 
 public class GetTweetActionHandler extends AbstractTweetActionHandler<GetTweetsAction, GetTweetsResult>{
 

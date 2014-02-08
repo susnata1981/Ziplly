@@ -3,9 +3,9 @@ package com.ziplly.app.shared;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ziplly.app.model.ConversationDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.ConversationDTO;
 
 public class GetConversationsResult implements Result {
 	private List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();

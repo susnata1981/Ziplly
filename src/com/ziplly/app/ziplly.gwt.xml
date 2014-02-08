@@ -9,7 +9,6 @@
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
 	<inherits name="com.google.gwt.user.theme.standard.Standard" />
-	
 	<inherits name="com.google.gwt.http.HTTP"/>
 	
 	<!--  Maps -->

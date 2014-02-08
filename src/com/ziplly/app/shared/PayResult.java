@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.TransactionDTO;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.model.TransactionDTO;
 
 public class PayResult implements Result {
 	private TransactionDTO transaction;

@@ -1,9 +1,9 @@
 package com.ziplly.app.shared;
 
+import net.customware.gwt.dispatch.shared.Result;
+
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessType;
-
-import net.customware.gwt.dispatch.shared.Result;
 
 public class CheckEmailRegistrationResult implements Result {
 	private AccountType accountType;

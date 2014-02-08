@@ -63,7 +63,6 @@ public class ZipllyController {
 		this.eventBus = eventBus;
 		this.appEventBus = appEventBus;
 		this.container = RootPanel.get("main");
-//		RootPanel.get("nav").add(navView);
 		this.container.add(panel);
 		this.navContainer = RootPanel.get("nav");
 		navContainer.add(navPanel);

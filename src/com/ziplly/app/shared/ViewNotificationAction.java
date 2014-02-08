@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.AccountNotificationDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.AccountNotificationDTO;
 
 public class ViewNotificationAction implements Action<ViewNotificationResult>{
 	private AccountNotificationDTO accountNotification;

@@ -1,9 +1,9 @@
 package com.ziplly.app.shared;
 
+import net.customware.gwt.dispatch.shared.Action;
+
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
-
-import net.customware.gwt.dispatch.shared.Action;
 
 public class GetEntityListAction implements Action<GetEntityResult> {
 	public enum SearchType {

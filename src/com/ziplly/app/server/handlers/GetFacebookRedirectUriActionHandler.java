@@ -1,6 +1,5 @@
 package com.ziplly.app.server.handlers;
 
-import net.customware.gwt.dispatch.server.AbstractActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 

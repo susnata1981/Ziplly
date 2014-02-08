@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.TweetDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.TweetDTO;
 
 public class BusinessTweetAction implements Action<BusinessTweetResult> {
 	private TweetDTO tweet;
