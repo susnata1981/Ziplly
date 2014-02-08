@@ -122,7 +122,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	Element authorName;
 	@UiField
-	Element tweetContentSpan;
+	HTMLPanel tweetContentSpan;
 
 	@UiField
 	TextArea tweetContentTextArea;
@@ -244,7 +244,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
-				tweetContentSpan.getStyle().setVisibility(Visibility.VISIBLE);
+				tweetContentSpan.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 				// tweetContentTextArea.getElement().getStyle()
 				// .setVisibility(Visibility.HIDDEN);
 				// saveBtn.setVisible(false);
@@ -336,14 +336,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void hideTweetUpdateButtons() {
-		tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
+//		tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setReadOnly(true);
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	void showTweetUpdateButtons() {
-		tweetContentSpan.getStyle().setDisplay(Display.NONE);
+//		tweetContentSpan.getStyle().setDisplay(Display.NONE);
+		StyleHelper.show(tweetContentSpan.getElement(), false);
 		tweetContentTextArea.setText(tweet.getContent());
 		tweetContentTextArea.setReadOnly(false);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.BLOCK);
@@ -616,7 +617,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	private void displayTweetSection() {
-		tweetContentSpan.setInnerHTML(tweet.getContent());
+		tweetContentSpan.getElement().setInnerHTML(TweetUtils.getContent(tweet.getContent()));
 		tweet.getTimeCreated();
 
 		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_SHORT);

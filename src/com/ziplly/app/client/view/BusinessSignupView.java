@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
+import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
@@ -135,6 +136,11 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	Button exploreBtn;
 	@UiField
 	Button postMessageBtn;
+	
+	@UiField
+	Anchor privacyPolicyAnchor;
+	@UiField
+	Anchor termsOfUseAnchor;
 	
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
@@ -607,5 +613,15 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		if (elem != null) {
 			elem.scrollIntoView();
 		}
+	}
+	
+	@UiHandler("privacyPolicyAnchor")
+	public void privacyPolicyLinkClicked(ClickEvent event) {
+		presenter.goTo(new AboutPlace(AboutViewSection.PRIVACY));
+	}
+	
+	@UiHandler("termsOfUseAnchor")
+	public void tosLinkClicked(ClickEvent event) {
+		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
 }

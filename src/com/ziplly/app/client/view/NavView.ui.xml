@@ -45,25 +45,28 @@
 		.logo {
 			float: left;
 			width: 84px;
-			height: 50px;
+			height: 40px;
 		}
 		.feedbackLink {
 			float: right;
+		}
+		.navlink {
+			line-height: 20px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:ResponsiveNavbar>
 			<b:Nav>
 			    <b:Image ui:field="logo" addStyleNames="{style.logo}" />
-				<b:NavLink ui:field="homeLink" icon="HOME">Home</b:NavLink>
-				<b:NavLink ui:field="loginLink" icon="USER">Login</b:NavLink>
-				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER">
+				<b:NavLink ui:field="homeLink" icon="HOME" addStyleNames="{style.navlink}">Home</b:NavLink>
+				<b:NavLink ui:field="loginLink" icon="USER" addStyleNames="{style.navlink}">Login</b:NavLink>
+				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER" addStyleNames="{style.navlink}">
 					<b:NavLink ui:field="accountLink">Profile</b:NavLink>
 					<b:NavLink ui:field="messageLink">Messages</b:NavLink>
 					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
 					<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
 				</b:Dropdown>
-				<b:Dropdown icon="BELL" ui:field="notifications" addStyleNames="{style.notificationDropdown}">
+				<b:Dropdown icon="BELL" ui:field="notifications" addStyleNames="{style.notificationDropdown} {style.navlink}">
 					<b:customTrigger>
 						<g:HTMLPanel ui:field="unreadNotificationCountPanel"
 							addStyleNames="{style.unreadNotificationCountPanel}">
@@ -71,13 +74,12 @@
 						</g:HTMLPanel>
 					</b:customTrigger>
 				</b:Dropdown>
-				<b:Dropdown text="Community">
+				<b:Dropdown text="Community" addStyleNames="{style.navlink}">
 					<b:NavLink ui:field="residentsLink">Residents</b:NavLink>
 					<b:NavLink ui:field="businessListLink">Businesses</b:NavLink>
 				</b:Dropdown>
-				<b:NavLink ui:field="aboutLink">About</b:NavLink>
+				<b:NavLink ui:field="aboutLink" addStyleNames="{style.navlink}">About</b:NavLink>
 			</b:Nav>
-			<!-- </b:NavPills> -->
 		</b:ResponsiveNavbar>
 	</g:HTMLPanel>
 </ui:UiBinder> 

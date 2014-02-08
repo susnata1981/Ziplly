@@ -37,6 +37,7 @@ import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
 import com.ziplly.app.client.oauth.OAuthProvider;
+import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
@@ -146,6 +147,11 @@ public class SignupView extends AbstractView implements
 	@UiField
 	Button postMessageBtn;
 
+	@UiField
+	Anchor termsOfUseAnchor;
+	@UiField
+	Anchor privacyPolicyAnchor;
+	
 //	boolean imageUploaded = false;
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
@@ -567,6 +573,16 @@ public class SignupView extends AbstractView implements
 	@UiHandler({"exploreBtn","postMessageBtn"})
 	void exploreNeighborhod(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
+	}
+	
+	@UiHandler("privacyPolicyAnchor")
+	public void privacyPolicyLinkClicked(ClickEvent event) {
+		presenter.goTo(new AboutPlace(AboutViewSection.PRIVACY));
+	}
+	
+	@UiHandler("termsOfUseAnchor")
+	public void tosLinkClicked(ClickEvent event) {
+		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
 	
 	private void navigateToElement(Element elem) {

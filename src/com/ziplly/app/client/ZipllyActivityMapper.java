@@ -167,7 +167,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			return new AdminActivity(dispatcher, eventBus, placeController, ctx, adminView);
 		}
 		else if (place instanceof AboutPlace) {
-			return new AboutActivity(dispatcher, eventBus, placeController, ctx, aboutView);
+			return new AboutActivity(dispatcher, eventBus, placeController, ctx, (AboutPlace)place, aboutView);
 		}
 		throw new IllegalArgumentException();
 	}

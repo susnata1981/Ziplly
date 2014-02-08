@@ -154,7 +154,8 @@
  						<g:HTMLPanel addStyleNames="{style.row}">
 							<span class="tiny_text">
 								By joining, you agree to our
-								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
+								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor> and
+								<g:Anchor ui:field="privacyPolicyAnchor">Privacy Policy</g:Anchor>
 							</span>
 						</g:HTMLPanel>
 						<g:HTMLPanel addStyleNames="{style.row}">

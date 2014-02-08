@@ -27,7 +27,7 @@
 					<b:Image ui:field="tweetImage" addStyleNames="{style.tweetImage}" />
 				</g:HTMLPanel>
 				<div class="{style.tweet_content}">
-					<span class='{style.tweet_text}' ui:field="tweetContentSpan" />
+					<g:HTMLPanel addStyleNames='{style.tweet_text}' ui:field="tweetContentSpan" />
 					<b:TextArea ui:field="tweetContentTextArea"
 						addStyleNames="{style.tweetContentTextArea}" />
 					<g:HTMLPanel ui:field="tweetEditButtonPanel">

@@ -90,8 +90,8 @@
 				<br />
 				<b:Image ui:field="previewTweetImage" />
 			</g:HTMLPanel>
-			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}">
-				<span ui:field="tweetTextPreview" />
+			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}" ui:field="tweetTextPreview">
+				<!-- <span ui:field="tweetTextPreview" /> -->
 			</g:HTMLPanel>
 			<b:Button size="MINI" ui:field="closePreviewBtn">Close preview</b:Button>
 		</g:HTMLPanel>
