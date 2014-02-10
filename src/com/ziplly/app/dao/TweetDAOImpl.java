@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Tweet;
@@ -112,7 +111,7 @@ public class TweetDAOImpl implements TweetDAO {
 	}
 
 	@Override
-	public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) {
+	public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException {
 		if (neighborhoodId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -126,7 +125,10 @@ public class TweetDAOImpl implements TweetDAO {
 			@SuppressWarnings("unchecked")
 			List<Tweet> tweets = (List<Tweet>) query.getResultList();
 			return EntityUtil.cloneList(tweets);
-		} finally {
+		} catch(NoResultException nre) {
+			throw new NotFoundException();
+		}			
+		finally {
 			em.close();
 		}
 	}
@@ -370,11 +372,11 @@ public class TweetDAOImpl implements TweetDAO {
 	}
 
 	/*
-	 * Finds the count for different tweet types
+	 * Finds counts for different tweet types
 	 */
 	@Override
-	public Map<TweetType, Integer> findTweetCategoryCounts(Account acct) {
-		if (acct == null) {
+	public Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId) {
+		if (neighborhoodId == null) {
 			throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
 		}
 
@@ -384,9 +386,9 @@ public class TweetDAOImpl implements TweetDAO {
 		try {
 			Query query = em
 					.createNativeQuery(
-							"select t.type, count(*) from tweet t, account a "
-									+ "where t.sender_id = a.account_id and a.neighborhood_id = :neighborhood_id group by t.type")
-					.setParameter("neighborhood_id", acct.getNeighborhood().getNeighborhoodId());
+							"select t.type, count(*) from tweet t, tweet_neighborhood tn "
+									+ "where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhood_id group by t.type")
+					.setParameter("neighborhood_id", neighborhoodId);
 
 			@SuppressWarnings("rawtypes")
 			List resultList = query.getResultList();

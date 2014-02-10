@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
@@ -43,12 +44,32 @@ public class GetCommunityWallDataActionHandler
 
 		if (action.getSearchType() == SearchType.CATEGORY) {
 			return getTweetsByCategory(action);
-		} else if (action.getSearchType() == SearchType.HASHTAG) {
+		} 
+		else if (action.getSearchType() == SearchType.HASHTAG) {
 			return getTweetsByHashtag(action);
-		} else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
+		} 
+		else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
 			return getTweetById(action);
+		} 
+		else if (action.getSearchType() == SearchType.NEIGHBORHOOD) {
+			Preconditions.checkNotNull(action.getNeighborhood());
+			return getTweetsByNeighborhood(action);
 		}
 		throw new IllegalArgumentException();
+	}
+
+	private GetCommunityWallDataResult getTweetsByNeighborhood(GetCommunityWallDataAction action) throws NotFoundException {
+		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
+		try {
+			List<TweetDTO> tweets = tweetDao.findTweetsByNeighborhood(
+				action.getNeighborhood().getNeighborhoodId(), action.getPage(), action.getPageSize());
+			result.setTweets(tweets);
+		} catch(NotFoundException nfe) {
+			logger.severe(String.format("Couldn't find tweets for neighborhood %d",
+					action.getNeighborhood().getNeighborhoodId()));
+			throw nfe;
+		}
+		return result;
 	}
 
 	private GetCommunityWallDataResult getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
@@ -82,19 +103,19 @@ public class GetCommunityWallDataActionHandler
 		return gcwdr;
 	}
 
-	private GetCommunityWallDataResult getTweetsByCategory(GetCommunityWallDataAction action) {
+	private GetCommunityWallDataResult getTweetsByCategory(GetCommunityWallDataAction action) throws NotFoundException {
 		TweetType type = action.getType();
 		List<TweetDTO> tweets = null;
-		Long neighborhoodId = session.getAccount().getNeighborhood().getNeighborhoodId();
+		
 		if (type.equals(TweetType.ALL)) {
 			tweets = tweetDao.findTweetsByNeighborhood(
-					neighborhoodId, 
+					action.getNeighborhood().getNeighborhoodId(), 
 					action.getPage(), 
 					action.getPageSize());
 		} else {
 			tweets = tweetDao.findTweetsByTypeAndNeighborhood(
 					type, 
-					neighborhoodId,
+					action.getNeighborhood().getNeighborhoodId(),
 					action.getPage(), 
 					action.getPageSize());
 		}

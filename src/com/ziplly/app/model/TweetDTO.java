@@ -3,7 +3,9 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TweetDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -16,6 +18,7 @@ public class TweetDTO implements Serializable {
 	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
 	private TweetStatus status;
 	private String image;
+	private Set<NeighborhoodDTO> targetNeighborhoods = new HashSet<NeighborhoodDTO>();
 	private Date timeUpdated;
 	private Date timeCreated;
 	
@@ -95,5 +98,13 @@ public class TweetDTO implements Serializable {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public Set<NeighborhoodDTO> getTargetNeighborhoods() {
+		return targetNeighborhoods;
+	}
+
+	public void setTargetNeighborhoods(Set<NeighborhoodDTO> targetNeighborhoods) {
+		this.targetNeighborhoods = targetNeighborhoods;
 	}
 }

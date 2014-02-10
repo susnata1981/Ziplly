@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NeighborhoodDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -8,6 +10,7 @@ public class NeighborhoodDTO implements Serializable {
 	private String name;
 	private String city;
 	private String state;
+	private NeighborhoodDTO parentNeighborhood;
 	private PostalCodeDTO postalCode;
 	
 	public NeighborhoodDTO() {
@@ -75,5 +78,13 @@ public class NeighborhoodDTO implements Serializable {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public NeighborhoodDTO getParentNeighborhood() {
+		return parentNeighborhood;
+	}
+
+	public void setParentNeighborhood(NeighborhoodDTO parentNeighborhood) {
+		this.parentNeighborhood = parentNeighborhood;
 	}
 }

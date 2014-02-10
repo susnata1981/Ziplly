@@ -6,7 +6,6 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -22,6 +21,8 @@ import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
+import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -77,6 +78,20 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
+		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
+				: ctx.getAccount().getNeighborhood().getNeighborhoodId();
+		action.setNeighborhoodId(neighborhoodId);
+		action.setGender(Gender.ALL);
+		view.setNeighborhoodId(neighborhoodId);
+		
+		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+		neighborhoods.add(neighborhood);
+		if (neighborhood.getParentNeighborhood() != null) {
+			neighborhoods.add(neighborhood.getParentNeighborhood());
+		}
+		view.displayNeighborhoodFilters(neighborhoods);
+		
 		dispatcher.execute(action, handler);
 	}
 
@@ -96,18 +111,13 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		view.setPresenter(this);
 	}
 
+	/**
+	 * Main method being called from ResidentView
+	 */
 	@Override
 	public void getPersonalAccountList(GetEntityListAction action) {
 		dispatcher.execute(action, handler);
 	};
-
-	@Override
-	public void fetchData() {
-	}
-
-	@Override
-	public void go(AcceptsOneWidget container) {
-	}
 
 	private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
 		@Override
@@ -128,7 +138,7 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 
 		public void onFailure(Throwable caught) {
 			// TODO
-			Window.alert(caught.getLocalizedMessage());
+			System.out.println(caught.getLocalizedMessage());
 		}
 	}
 
@@ -156,4 +166,11 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		});
 	}
 
+	@Override
+	public void fetchData() {
+	}
+
+	@Override
+	public void go(AcceptsOneWidget container) {
+	}
 }

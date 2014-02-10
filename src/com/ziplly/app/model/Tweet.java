@@ -26,13 +26,19 @@ import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
 		@NamedQuery(name = "findTweetsByZip", query = "from Tweet t where t.sender.neighborhood.postalCode.postalCode = :zip and status = :status order by timeCreated desc"),
-		@NamedQuery(name = "findTweetsByNeighborhood", query = "from Tweet t where t.sender.neighborhood.neighborhoodId = :neighborhoodId and status = :status order by timeCreated desc"),
+		
+		@NamedQuery(name = "findTweetsByNeighborhood", 
+			query = "select t from Tweet t join t.targetNeighborhoods tn "
+					+ "where tn.neighborhoodId = :neighborhoodId and status = :status order by t.timeCreated desc"
+		),
+		
 		@NamedQuery(name = "findTweetsById", query = "from Tweet t where t.tweetId = :tweetId order by timeCreated desc"),
 		@NamedQuery(name = "findTweetsByAccountId", query = "from Tweet t where t.sender.accountId = :accountId and status = :status order by timeCreated desc"),
 		@NamedQuery(name = "findTweetsByTypeAndZip", query = "from Tweet t where t.sender.zip = :zip and status = :status and t.type = :type order by timeCreated desc"),
 		@NamedQuery(
 			name = "findTweetsByTypeAndNeighborhood", 
-			query = "from Tweet t where t.sender.neighborhood.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by timeCreated desc"), 
+//			query = "from Tweet t, Neighborhood n where t.neighborhood.neighborhoodId = n.neighborhoodId and n.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by timeCreated desc"),
+			query = "select t from Tweet t join t.targetNeighborhoods tn where tn.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by t.timeCreated desc"),
 })
 @Entity
 @Table(name = "tweet")
@@ -72,11 +78,17 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@JoinTable(name = "tweet_hashtag", joinColumns = { @JoinColumn(name = "tweet_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	private Set<Hashtag> hashtags = new HashSet<Hashtag>();
 
+	@Column(name="status")
 	private TweetStatus status;
 
 	// Currently supporting only 1 image.
 	@Column(name="image_url")
 	private String image;
+	
+	@ManyToMany
+	@JoinTable(name="tweet_neighborhood", 
+		joinColumns = { @JoinColumn(name="tweet_id") }, inverseJoinColumns = { @JoinColumn(name="neighborhood_id")} )
+	private Set<Neighborhood> targetNeighborhoods = new HashSet<Neighborhood>();
 	
 	public Tweet() {
 	}
@@ -92,6 +104,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		setTimeUpdated(tweet.getTimeUpdated());
 		setTimeCreated(tweet.getTimeCreated());
 		setImage(tweet.getImage());
+		
+		for(NeighborhoodDTO n : tweet.getTargetNeighborhoods()) {
+			targetNeighborhoods.add(new Neighborhood(n));
+		}
 	}
 
 	public TweetType getType() {
@@ -185,5 +201,13 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public Set<Neighborhood> getTargetNeighborhoods() {
+		return targetNeighborhoods;
+	}
+
+	public void setTargetNeighborhoods(Set<Neighborhood> targetNeighborhoods) {
+		this.targetNeighborhoods = targetNeighborhoods;
 	}
 }

@@ -2,13 +2,15 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetType;
 
 public class GetCommunityWallDataAction implements Action<GetCommunityWallDataResult> {
 	public static enum SearchType {
 		CATEGORY,
 		HASHTAG,
-		TWEET_BY_ID;
+		TWEET_BY_ID, 
+		NEIGHBORHOOD;
 	}
 
 	private GetCommunityWallDataAction.SearchType searchType;
@@ -17,6 +19,7 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 	private String tweetId;
 	private int page;
 	private int pageSize;
+	private NeighborhoodDTO neighborhood;
 
 	public GetCommunityWallDataAction() {
 	}
@@ -81,5 +84,13 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 
 	public void setTweetId(String tweetId) {
 		this.tweetId = tweetId;
+	}
+
+	public void setNeighborhood(NeighborhoodDTO neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+	
+	public NeighborhoodDTO getNeighborhood() {
+		return neighborhood;
 	}
 }

@@ -78,7 +78,7 @@ public class GetTweetForUserActionHandler extends
 					}
 				} else {
 					Account requestingAccount = session.getAccount();
-					if (!account.getNeighborhood().equals(requestingAccount.getNeighborhood())) {
+					if (!account.getNeighborhood().getParentNeighborhood().equals(requestingAccount.getNeighborhood().getParentNeighborhood())) {
 						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				}

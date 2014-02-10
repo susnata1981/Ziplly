@@ -207,6 +207,11 @@ public class EntityUtil {
 		resp.setStatus(tweet.getStatus());
 		resp.setImage(tweet.getImage());
 		resp.setTimeCreated(tweet.getTimeCreated());
+		
+		for(Neighborhood n : tweet.getTargetNeighborhoods()) {
+			resp.getTargetNeighborhoods().add(clone(n));
+		}
+		
 		if (needSender && Hibernate.isInitialized(tweet.getSender())) {
 			resp.setSender(convert(tweet.getSender()));
 		}
@@ -437,6 +442,9 @@ public class EntityUtil {
 		dest.setPostalCode(clone(neighborhood.getPostalCode()));
 		dest.setName(neighborhood.getName());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
+		if (neighborhood.getParentNeighborhood() != null) {
+			dest.setParentNeighborhood(clone(neighborhood.getParentNeighborhood()));
+		}
 		return dest;
 	}
 

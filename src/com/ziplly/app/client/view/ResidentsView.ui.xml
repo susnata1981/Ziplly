@@ -6,9 +6,14 @@
 		.heading {
 		color: #555;
 		}
-		.genderListBox {
+		.listBox {
 		display: block;
 		width: 140px;
+		}
+		.filterLabel {
+			display: block;
+			font-size: 1em;
+			padding: 4px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -16,7 +21,14 @@
 			<b:Column size="3">
 				<g:HTMLPanel>
 					<b:Heading size="4" addStyleNames="{style.heading}">Search Residents</b:Heading>
-					<b:ListBox ui:field="genderListBox" addStyleNames="{style.genderListBox}" />
+					<div>
+					    <span class="{style.filterLabel}">Select neighborhood</span>
+						<b:ListBox ui:field="neighborhoodListBox" addStyleNames="{style.listBox}" />
+					</div>
+					<div>
+					    <span class="{style.filterLabel}">Select gender	</span>
+						<b:ListBox ui:field="genderListBox" addStyleNames="{style.listBox}" />
+					</div>
 					<b:Button size="SMALL" ui:field="searchBtn">Search</b:Button>
 					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
 				</g:HTMLPanel>

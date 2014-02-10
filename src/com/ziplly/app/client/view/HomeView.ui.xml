@@ -121,6 +121,13 @@
 							</g:Anchor>
 						</g:HTMLPanel>
 					</div>
+					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
+						<span class="{style.leftnavHeaderSpan}">
+							<i class="fa fa-tags">&nbsp;Neighborhoods
+							</i>
+						</span>
+						<g:HTMLPanel ui:field="neighborhoodsPanel"></g:HTMLPanel>
+					</div>
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="7" addStyleNames="{style.communityWallColumn}">

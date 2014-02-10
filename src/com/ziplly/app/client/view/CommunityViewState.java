@@ -9,6 +9,7 @@ public class CommunityViewState {
 	GetEntityListAction action = new GetEntityListAction();
 	protected int start;
 	protected int pageSize;
+	protected Long neighborhoodId;
 	
 	public CommunityViewState(EntityType type, int pageSize) {
 		start = 0;
@@ -32,6 +33,7 @@ public class CommunityViewState {
 
 	public GetEntityListAction getCurrentEntityListAction() {
 		action.setPage(start);
+		action.setNeighborhoodId(neighborhoodId);
 		return action;
 	}
 
@@ -41,5 +43,13 @@ public class CommunityViewState {
 	
 	public int getStart() {
 		return start;
+	}
+	
+	public void setNeighborhood(Long neighborhoodId) {
+		this.neighborhoodId = neighborhoodId;
+	}
+
+	public Long getNeighborhoodId() {
+		return neighborhoodId;
 	}
 }

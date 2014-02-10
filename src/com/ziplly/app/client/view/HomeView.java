@@ -73,7 +73,11 @@ public class HomeView extends Composite implements IHomeView {
 
 		void displayHashtag(String text);
 
-		void sendFeedback(String content); 
+		void sendFeedback(String content);
+
+		void displayCommunityWallForNeighborhood(NeighborhoodDTO neighborhood);
+
+		void gotoResidentPlace(); 
 	}
 
 	@UiField
@@ -105,6 +109,9 @@ public class HomeView extends Composite implements IHomeView {
 	@UiField
 	CommunitySummaryWidget communitySummaryWidget;
 
+	@UiField
+	HTMLPanel neighborhoodsPanel;
+	
 	HomePresenter presenter;
 	Map<TweetType, Anchor> filters = new HashMap<TweetType, Anchor>();
 	ArrayList<Anchor> hashtagAnchors = new ArrayList<Anchor>();
@@ -132,7 +139,7 @@ public class HomeView extends Composite implements IHomeView {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.goTo(new ResidentPlace());
+				presenter.gotoResidentPlace();
 			}
 		});
 		
@@ -407,5 +414,24 @@ public class HomeView extends Composite implements IHomeView {
 	@UiHandler("feedbackLink")
 	public void feedbackLinkClicked(ClickEvent event) {
 		feedbackWidget.show(true);
+	}
+
+	@Override
+	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
+		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
+		neighborhoodsPanel.clear();
+		for (final NeighborhoodDTO neighborhood : targetNeighborhoodList) {
+			final Anchor anchor = new Anchor(neighborhood.getName());
+			anchor.setStyleName(style.tweetFilterLink());
+			anchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+//					presenter.getCommunityPanelDataForNeighborhood(neighborhood);
+					presenter.displayCommunityWallForNeighborhood(neighborhood);
+				}
+			});
+			neighborhoodsPanel.add(anchor);
+		}
+
 	}
 }

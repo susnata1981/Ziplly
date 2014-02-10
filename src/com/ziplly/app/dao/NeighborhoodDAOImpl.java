@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.jboss.logging.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -70,7 +71,8 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			}
 			return response;
 		} catch (NoResultException nre) {
-			logger.warn(String.format("Couldn't find neighborhood with postal code: %d", postalCode));
+			logger.warn(String
+					.format("Couldn't find neighborhood with postal code: %d", postalCode));
 			return ImmutableList.of();
 		} finally {
 			em.close();
@@ -99,6 +101,34 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			Query query = em.createQuery(countQuery);
 			Long count = (Long) query.getSingleResult();
 			return count;
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public List<NeighborhoodDTO> findAllNeighborhoodFor(Long neighborhoodId)
+			throws NotFoundException {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		try {
+			Query query = em
+					.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+			query.setParameter("neighborhoodId", neighborhoodId);
+			Neighborhood neighborhood = (Neighborhood) query.getSingleResult();
+
+			// If passed parent neighborhood
+			if (neighborhood.getParentNeighborhood() == null) {
+				query = em.createQuery("from Neighborhood where parentNeighborhood.neighborhoodId = :neighborhoodId");
+				query.setParameter("neighborhoodId", neighborhoodId);
+				@SuppressWarnings("unchecked")
+				List<Neighborhood> neighborhoods = query.getResultList();
+				return EntityUtil.cloneNeighborhoodList(neighborhoods);
+			} else {
+				return ImmutableList.of(EntityUtil.clone(neighborhood));
+			}
+		} catch (NoResultException nre) {
+			throw new NotFoundException();
 		} finally {
 			em.close();
 		}

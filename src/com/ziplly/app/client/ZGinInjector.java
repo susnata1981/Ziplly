@@ -9,14 +9,12 @@ import com.google.gwt.place.shared.PlaceController;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.HomeView;
-import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.widget.LoginWidget;
 
 @GinModules({StandardDispatchModule.class, ZClientModule.class})
 public interface ZGinInjector extends Ginjector{
 	CachingDispatcherAsync getCachingDispatcher();
-//	MainController getMainController();
 	ZipllyController getZipllyController();
 	SimpleEventBus getEventBus();
 	
@@ -24,7 +22,6 @@ public interface ZGinInjector extends Ginjector{
 	SignupView getSignupView();
 	HomeView getHomeView();
 	AccountView getAccountView();
-	MainView getMainView();
 	
 	// widgets
 	LoginWidget getLoginWidget();

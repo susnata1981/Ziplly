@@ -40,7 +40,7 @@ public class CommunitySummaryWidget extends Composite implements HasClickHandler
 	Anchor memberCountSpan;
 	@UiField
 	Anchor businessCountSpan;
-	
+
 	public CommunitySummaryWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}

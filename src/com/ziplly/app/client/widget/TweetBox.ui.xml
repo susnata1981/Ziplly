@@ -78,9 +78,10 @@
 			<b:FileUpload ui:field="fileUpload" name="image" />
 		</g:FormPanel>
 		<g:HTMLPanel ui:field="tweetActionPanel" addStyleNames="{style.tweetActionPanel}">
-			<b:Icon type="LINK" />&nbsp;
+<!-- 			<b:Icon type="LINK" />&nbsp;
 			<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>&nbsp;
-			<b:Icon type="STAR" />&nbsp;
+ -->
+ 			<b:Icon type="STAR" />&nbsp;
 			<g:Anchor ui:field="previewLinkAnchor">toggle preview</g:Anchor>&nbsp;
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
@@ -99,6 +100,11 @@
 			<b:ControlLabel>Select Category</b:ControlLabel>
 			<b:Controls>
 				<b:ListBox ui:field="tweetCategoryList">
+				</b:ListBox>
+			</b:Controls>
+			<b:ControlLabel>Target neighborhood</b:ControlLabel>
+			<b:Controls>
+				<b:ListBox ui:field="tweetTargetNeighborhoodList">
 				</b:ListBox>
 			</b:Controls>
 			<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"

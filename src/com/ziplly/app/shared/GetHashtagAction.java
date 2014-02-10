@@ -4,8 +4,13 @@ import net.customware.gwt.dispatch.shared.Action;
 
 public class GetHashtagAction implements Action<GetHashtagResult>{
 	private int size;
-
+	private Long neighborhoodId;
+	
 	public GetHashtagAction() {
+	}
+	
+	public GetHashtagAction(Long neighborhoodId) {
+		this.neighborhoodId = neighborhoodId;
 	}
 	
 	public GetHashtagAction(int n) {
@@ -18,5 +23,13 @@ public class GetHashtagAction implements Action<GetHashtagResult>{
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public Long getNeighborhoodId() {
+		return neighborhoodId;
+	}
+
+	public void setNeighborhoodId(Long neighborhoodId) {
+		this.neighborhoodId = neighborhoodId;
 	}
 }

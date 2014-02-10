@@ -25,7 +25,7 @@ public interface AccountDAO {
 	Long findTotalAccounts(String countQuery);
 	List<AccountDTO> findAllAccountsByZip(int zip);
 	List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId, int pageStart, int pageSize);
-	Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId);
+	Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId) throws NotFoundException;
 	Long getTotalAccountCountByNeighborhoods(EntityType entityType, List<NeighborhoodDTO> neighborhoodIds);
 	Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType, 
 			List<NeighborhoodDTO> neighborhoods, int page, int pageSize);
@@ -38,11 +38,12 @@ public interface AccountDAO {
 	 * @param start
 	 * @param pageSize
 	 * @return
+	 * @throws NotFoundException 
 	 */
 	List<PersonalAccountDTO> findPersonalAccounts(Gender gender, 
 			long neighborhoodId, 
 			int start,
-			int pageSize);
+			int pageSize) throws NotFoundException;
 	
 	
 	/**

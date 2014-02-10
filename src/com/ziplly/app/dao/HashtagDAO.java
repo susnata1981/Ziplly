@@ -11,7 +11,10 @@ public interface HashtagDAO {
 	void create(Hashtag hashtag);
 	HashtagDTO findByName(String name) throws NotFoundException;
 	List<HashtagDTO> findAll() throws NotFoundException;
-	List<HashtagDTO> findTopHashtag(int n) throws NotFoundException;
+
+	//List<HashtagDTO> findTopHashtag(int n) throws NotFoundException;
+	List<HashtagDTO> findTopHashtagForNeighborhood(Long neighborhoodId, int n) throws NotFoundException;
+	
 	List<TweetDTO> getTweetsForTag(String tag, int page, int pageSize) throws NotFoundException;
 	
 	/*
@@ -19,4 +22,5 @@ public interface HashtagDAO {
 	 */
 	List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag, Long neighborhoodId, int page,
 			int pageSize) throws NotFoundException;
+
 }

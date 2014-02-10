@@ -9,9 +9,7 @@ import com.github.gwtbootstrap.client.ui.FileUpload;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
@@ -40,6 +38,7 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
@@ -71,20 +70,23 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	ListBox tweetCategoryList;
 
 	@UiField
+	ListBox tweetTargetNeighborhoodList;
+
+	@UiField
 	Button tweetBtn;
 	@UiField
 	Button cancelBtn;
 
-	@UiField
-	Anchor embedLinkAnchor;
-	@UiField
-	Modal embedLinkModal;
-	@UiField
-	TextBox embedLinkTextBox;
-	@UiField
-	Button embedLinkButton;
-	@UiField
-	Button cancelEmbedLinkButton;
+//	@UiField
+//	Anchor embedLinkAnchor;
+//	@UiField
+//	Modal embedLinkModal;
+//	@UiField
+//	TextBox embedLinkTextBox;
+//	@UiField
+//	Button embedLinkButton;
+//	@UiField
+//	Button cancelEmbedLinkButton;
 
 	//
 	// Upload image form
@@ -106,7 +108,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	Image previewTweetImage;
 	@UiField
 	HTMLPanel tweetTextPreview;
-//	SpanElement tweetTextPreview;
+	// SpanElement tweetTextPreview;
 	@UiField
 	Button closePreviewBtn;
 
@@ -122,10 +124,11 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 
 	private List<TweetType> tweetTypes;
 
+	private List<NeighborhoodDTO> neighborhoods;
+
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(false);
-		embedLinkModal.hide();
 		initUploadForm();
 		StyleHelper.show(tweetCategoryPanel.getElement(), Display.NONE);
 		setupDefaultDimension();
@@ -151,8 +154,6 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweetTextBox.setWidth(width);
 		tweetActionPanel.setWidth(width);
 		tweetHelpInline.setWidth(width);
-		embedLinkModal.setWidth(width);
-		embedLinkTextBox.setWidth("90%");
 	}
 
 	public void setWidth(String width) {
@@ -200,7 +201,8 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweetTextBox.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
-				tweetTextPreview.getElement().setInnerHTML(TweetUtils.getContent(tweetTextBox.getText()));
+				tweetTextPreview.getElement().setInnerHTML(
+						TweetUtils.getContent(tweetTextBox.getText()));
 			}
 		});
 
@@ -226,31 +228,31 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			}
 		});
 
-		embedLinkAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				embedLinkModal.show();
-			}
-		});
-
-		cancelEmbedLinkButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				embedLinkModal.hide();
-			}
-		});
-
-		embedLinkButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				// validate link
-				String link = embedLinkTextBox.getText();
-				String url = "<a href='" + link + "'>" + link + "</a>";
-				tweetTextBox.setText(tweetTextBox.getText() + " " + url + " ");
-				embedLinkTextBox.setText("");
-				embedLinkModal.hide();
-			}
-		});
+//		embedLinkAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				embedLinkModal.show();
+//			}
+//		});
+//
+//		cancelEmbedLinkButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				embedLinkModal.hide();
+//			}
+//		});
+//
+//		embedLinkButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				// validate link
+//				String link = embedLinkTextBox.getText();
+//				String url = "<a href='" + link + "'>" + link + "</a>";
+//				tweetTextBox.setText(tweetTextBox.getText() + " " + url + " ");
+//				embedLinkTextBox.setText("");
+//				embedLinkModal.hide();
+//			}
+//		});
 
 		fileUpload.addChangeHandler(new ChangeHandler() {
 
@@ -294,7 +296,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
 
 		// clear preview section
-//		tweetTextPreview.setInnerText("");
+		// tweetTextPreview.setInnerText("");
 		tweetTextPreview.clear();
 		previewTweetImage.setUrl("");
 
@@ -317,6 +319,11 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweet.setType(tweetType);
 		tweet.setStatus(TweetStatus.ACTIVE);
 		tweet.setTimeCreated(new Date());
+		
+		if (neighborhoods != null) {
+			NeighborhoodDTO neighborhood = neighborhoods.get(tweetTargetNeighborhoodList.getSelectedIndex());
+			tweet.getTargetNeighborhoods().add(neighborhood);
+		}
 		if (tweetBoxState.isImageUploaded()) {
 			tweet.setImage(previewTweetImage.getUrl());
 		}
@@ -372,5 +379,16 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		fileUpload.getElement().setPropertyString("value", "");
 		// imageUploaded = false;
 		// tweetBoxState.reset();
+	}
+
+	public void initializeTargetNeighborhood(List<NeighborhoodDTO> neighborhoods) {
+		tweetTargetNeighborhoodList.clear();
+		if (neighborhoods != null) {
+			this.neighborhoods = neighborhoods;
+			for (NeighborhoodDTO n : neighborhoods) {
+				tweetTargetNeighborhoodList.addItem(n.getName());
+			}
+			StyleHelper.show(tweetTargetNeighborhoodList.getElement(), true);
+		}
 	}
 }

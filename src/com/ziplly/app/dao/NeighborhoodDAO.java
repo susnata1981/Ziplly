@@ -13,4 +13,10 @@ public interface NeighborhoodDAO {
 	List<NeighborhoodDTO> findAll();
 	Long findTotalNeighborhoods(String countQuery);
 	List<NeighborhoodDTO> findByPostalCode(String postalCode);
+	
+	/**
+	 * Returns the list of all neighborhoods under that neighborhood.
+	 * @throws NotFoundException 
+	 */
+	List<NeighborhoodDTO> findAllNeighborhoodFor(Long neighborhoodId) throws NotFoundException;
 }

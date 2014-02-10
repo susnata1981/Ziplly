@@ -49,14 +49,12 @@ import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.LoginAccountView;
-import com.ziplly.app.client.view.MainView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 
 public class ZipllyActivityMapper implements ActivityMapper{
-	MainView mainView;
 	HomeView homeView;
 	LoginAccountView loginAccountView;
 	AccountView accountView;
@@ -78,7 +76,6 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	
 	@Inject
 	public ZipllyActivityMapper(
-			MainView mainView,
 			HomeView homeView,
 			LoginAccountView loginAccountView,
 			AccountView accountView,
@@ -98,7 +95,6 @@ public class ZipllyActivityMapper implements ActivityMapper{
 			PlaceController placeController,
 			ApplicationContext ctx) {
 		
-		this.mainView = mainView;
 		this.homeView = homeView;
 		this.loginAccountView = loginAccountView;
 		this.accountView = accountView;

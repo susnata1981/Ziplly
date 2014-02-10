@@ -8,7 +8,8 @@ import com.ziplly.app.client.view.StringConstants;
 public class ResidentPlace extends Place {
 	private String token;
 	private Long accountId;
-
+	private Long neighborhoodId;
+	
 	public ResidentPlace() {
 		this.setToken("");
 	}
@@ -33,6 +34,14 @@ public class ResidentPlace extends Place {
 		this.accountId = accountId;
 	}
 
+	public Long getNeighborhoodId() {
+		return neighborhoodId;
+	}
+
+	public void setNeighborhoodId(Long neighborhoodId) {
+		this.neighborhoodId = neighborhoodId;
+	}
+
 	@Prefix("residents")
 	public static class Tokenizer implements PlaceTokenizer<ResidentPlace> {
 
@@ -51,6 +60,16 @@ public class ResidentPlace extends Place {
 							return new ResidentPlace("");
 						}
 					}
+					else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+						try {
+							long neighborhoodId = Long.parseLong(tokens[1]);
+							ResidentPlace place = new ResidentPlace();
+							place.setNeighborhoodId(neighborhoodId);
+							return place;
+						} catch (NumberFormatException nfe) {
+							return new ResidentPlace("");
+						}
+					}
 				}
 				return new ResidentPlace(token);
 			}
@@ -59,8 +78,13 @@ public class ResidentPlace extends Place {
 
 		@Override
 		public String getToken(ResidentPlace place) {
-			if (place.getToken() != null || !place.getToken().equals("")) {
-				return place.getToken();
+//			if (place.getToken() != null || !place.getToken().equals("")) {
+//				return place.getToken();
+//			} else {
+//				return "";
+//			}
+			if (place.getNeighborhoodId() != null) {
+				return PlaceUtils.getResidentPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {
 				return "";
 			}

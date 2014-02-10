@@ -9,6 +9,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
@@ -58,8 +59,7 @@ public class GetEntityActionHandler extends
 			neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
 			break;
 		default:
-			neighborhoods = ImmutableList.of(EntityUtil.clone(session.getAccount()
-					.getNeighborhood()));
+			neighborhoods = ImmutableList.of(EntityUtil.clone(session.getAccount().getNeighborhood()));
 		}
 
 		if (neighborhoods.isEmpty()) {
@@ -79,7 +79,7 @@ public class GetEntityActionHandler extends
 		return result;
 	}
 
-	private GetEntityResult findPersonalAccounts(GetEntityListAction action) {
+	private GetEntityResult findPersonalAccounts(GetEntityListAction action) throws NotFoundException {
 		GetEntityResult result = new GetEntityResult();
 		result.setEntityType(action.getEntityType());
 		List<AccountDTO> accounts = Lists.newArrayList();
@@ -89,7 +89,7 @@ public class GetEntityActionHandler extends
 		default:
 			accounts.addAll(accountDao.findPersonalAccounts(
 					action.getGender(),
-					session.getAccount().getNeighborhood().getNeighborhoodId(),
+					action.getNeighborhoodId(),
 					action.getPage(),
 					action.getPageSize()));
 		}
@@ -98,7 +98,7 @@ public class GetEntityActionHandler extends
 		if (action.isNeedTotalEntityCount()) {
 			Long count = accountDao.getTotalPersonalAccountCountByGender(
 					action.getGender(),
-					session.getAccount().getNeighborhood().getNeighborhoodId());
+					action.getNeighborhoodId());
 			result.setEntityCount(count);
 		}
 		result.setAccounts(accounts);

@@ -3,6 +3,7 @@ package com.ziplly.app.client.activities;
 import java.util.List;
 
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
@@ -14,6 +15,7 @@ public class HomeViewState {
 	private boolean fetchingData = false;
 	private int page = 0;
 	private int pageSize = 5;
+	private NeighborhoodDTO currentNeighborhood;
 	
 	/**
 	 * Returns search criteria object based on place
@@ -41,6 +43,7 @@ public class HomeViewState {
 			} catch (IllegalArgumentException ex) {
 				return getDefaultSearchAction();
 			}
+			action.setNeighborhood(currentNeighborhood);
 			action.setSearchType(SearchType.CATEGORY);
 			action.setType(type);
 		}
@@ -53,6 +56,7 @@ public class HomeViewState {
 		GetCommunityWallDataAction action = getCommunityWallDataAction();
 		action.setSearchType(SearchType.CATEGORY);
 		action.setType(type);
+		action.setNeighborhood(currentNeighborhood);
 		
 		resetLastSearchAction(action);
 		return action;
@@ -139,5 +143,22 @@ public class HomeViewState {
 		action.setPageSize(pageSize);
 		action.setPage(0);
 		return action;
+	}
+
+	public GetCommunityWallDataAction getSearchCriteria(NeighborhoodDTO neighborhood) {
+		this.setCurrentNeighborhood(neighborhood);
+		GetCommunityWallDataAction action = getCommunityWallDataAction();
+		action.setSearchType(SearchType.NEIGHBORHOOD);
+		action.setNeighborhood(neighborhood);
+		resetLastSearchAction(action);
+		return action;
+	}
+
+	public NeighborhoodDTO getCurrentNeighborhood() {
+		return currentNeighborhood;
+	}
+
+	public void setCurrentNeighborhood(NeighborhoodDTO currentNeighborhood) {
+		this.currentNeighborhood = currentNeighborhood;
 	}
 }

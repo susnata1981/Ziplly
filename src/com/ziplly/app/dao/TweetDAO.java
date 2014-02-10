@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -40,12 +39,13 @@ public interface TweetDAO {
 	
 	Long findTotalTweetCount(String queryStr);
 	
-	Map<TweetType, Integer> findTweetCategoryCounts(Account acct);
+//	Map<TweetType, Integer> findTweetCategoryCounts(Account acct);
+	Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId);
 	
 	/*
 	 * Retrieves all tweets based on Neighborhood
 	 */
-	List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize);
+	List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException;
 	
 
 	/*

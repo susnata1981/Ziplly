@@ -35,7 +35,7 @@ public class GetHashtagActionHandler extends AbstractAccountActionHandler<GetHas
 		
 		int n = action.getSize() != 0 ? action.getSize() : 10;
 		
-		List<HashtagDTO> hashtags = hashtagDao.findTopHashtag(n);
+		List<HashtagDTO> hashtags = hashtagDao.findTopHashtagForNeighborhood(action.getNeighborhoodId(), n);
 		GetHashtagResult result = new GetHashtagResult();
 		result.setHashtags(hashtags);
 		return result;

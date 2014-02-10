@@ -28,7 +28,7 @@ public class GetTweetCategoryDetailsActionHandler extends AbstractTweetActionHan
 		
 		validateSession();
 		
-		Map<TweetType, Integer> tweetTypeCounts = tweetDao.findTweetCategoryCounts(session.getAccount());
+		Map<TweetType, Integer> tweetTypeCounts = tweetDao.findTweetCategoryCounts(action.getNeighborhoodId());
 		
 		GetTweetCategoryDetailsResult result = new GetTweetCategoryDetailsResult();
 		result.setTweetCounts(tweetTypeCounts);
