@@ -16,6 +16,8 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.BusinessAccount;
+import com.ziplly.app.model.Neighborhood;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
@@ -51,18 +53,18 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		validateSession();
 		
 		Account account = session.getAccount();
+		Tweet tweet = new Tweet(action.getTweet());
 		
 		// check usage limits for business tweets
 		if (account instanceof BusinessAccount) {
 			checkUsage();
 		}
 		
-		Tweet tweet = new Tweet(action.getTweet());
 		tweet.setSender(session.getAccount());
 		TweetDTO saveTweet = tweetDao.save(tweet);
 		
 		if (tweetNotificationBli.shouldNotification(saveTweet)) {
-			accountBli.sendEmailByZip(
+			accountBli.sendEmailsByNeighborhood(
 					tweet.getSender(),
 					tweet.getTweetId(),
 					tweet.getType().getNotificationType(), 

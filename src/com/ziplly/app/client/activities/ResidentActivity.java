@@ -84,15 +84,18 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setGender(Gender.ALL);
 		view.setNeighborhoodId(neighborhoodId);
 		
+		view.displayNeighborhoodFilters(getNeighborhoodFilters());
+		dispatcher.execute(action, handler);
+	}
+
+	private List<NeighborhoodDTO> getNeighborhoodFilters() {
 		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
 		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
 		neighborhoods.add(neighborhood);
 		if (neighborhood.getParentNeighborhood() != null) {
 			neighborhoods.add(neighborhood.getParentNeighborhood());
 		}
-		view.displayNeighborhoodFilters(neighborhoods);
-		
-		dispatcher.execute(action, handler);
+		return neighborhoods;
 	}
 
 	private void updateMessageWidgetWithAccountDetails(Long accountId) {
@@ -102,7 +105,6 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 			public void onSuccess(GetAccountByIdResult result) {
 				view.updateMessageWidget(result.getAccount());
 			}
-			
 		});
 	}
 
@@ -137,7 +139,6 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		}
 
 		public void onFailure(Throwable caught) {
-			// TODO
 			System.out.println(caught.getLocalizedMessage());
 		}
 	}

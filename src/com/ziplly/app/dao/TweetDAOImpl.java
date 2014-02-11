@@ -112,9 +112,11 @@ public class TweetDAOImpl implements TweetDAO {
 
 	@Override
 	public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException {
+		
 		if (neighborhoodId == null) {
 			throw new IllegalArgumentException();
 		}
+		
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			Query query = (Query) em.createNamedQuery("findTweetsByNeighborhood");

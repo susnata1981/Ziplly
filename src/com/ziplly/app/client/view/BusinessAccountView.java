@@ -54,6 +54,7 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetLatLngResult;
@@ -468,5 +469,10 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void hideProfileSection() {
 		StyleHelper.show(profileSectionRow.getElement(), false);
+	}
+
+	@Override
+	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
+		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 	}
 }

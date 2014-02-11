@@ -45,9 +45,8 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 		
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.BY_ZIP.name())
-//				.param("recipientEmail", account.getEmail())
-//				.param("recipientName", account.getDisplayName())
 				.param("zip", Integer.toString(account.getZip()))
+				.param("neighborhoodId", Long.toString(account.getNeighborhood().getNeighborhoodId()))
 				.param("emailTemplateId",EmailTemplate.WELCOME_REGISTRATION.name())
 				.header("Host", backendAddress);
 		queue.add(options);

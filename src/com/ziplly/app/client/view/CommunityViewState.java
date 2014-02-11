@@ -25,6 +25,13 @@ public class CommunityViewState {
 		action.setPage(start);
 	}
 	
+	public void searchByNeighborhood(Long neighborhoodId) {
+		reset();
+		this.neighborhoodId = neighborhoodId;
+		action.setSearchType(SearchType.BY_NEIGHBORHOOD);
+		action.setPage(start);
+	}
+	
 	public void reset() {
 		start = 0;
 		action.setSearchType(SearchType.OTHER);

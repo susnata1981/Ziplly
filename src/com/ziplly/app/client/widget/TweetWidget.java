@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.WidgetFactory;
@@ -117,6 +118,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	Image tweetImage;
 	
+	@UiField
+	Anchor categoryLink;
 	@UiField
 	Anchor authorProfileLink;
 	@UiField
@@ -367,7 +370,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	 */
 	@Override
 	public void displayTweet(final TweetDTO tweet) {
-		long start1 = System.currentTimeMillis();
 		if (tweet != null) {
 			this.tweet = tweet;
 
@@ -386,8 +388,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			// comments
 			displayCommentSection();
 		}
-		long end1 = System.currentTimeMillis();
-//		System.out.println("Time to display tweet: " + (end1 - start1));
 	}
 
 	private void displayCommentSection() {
@@ -618,11 +618,21 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private void displayTweetSection() {
 		tweetContentSpan.getElement().setInnerHTML(TweetUtils.getContent(tweet.getContent()));
-		tweet.getTimeCreated();
+		
+		categoryLink.setHTML(basicDataFormatter.format(tweet.getType(), ValueType.TWEET_TYPE));
+		categoryLink.addClickHandler(new ClickHandler() {
 
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new HomePlace(tweet.getType()));
+			}
+		});
+		
+		tweet.getTimeCreated();
+		
 		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
 		timeCreated.setInnerHTML(time);
-
+		
 		authorImage.setUrl(accountFormatter.format(tweet.getSender(), ValueType.PROFILE_IMAGE_URL));
 		authorImage.addClickHandler(new ClickHandler() {
 

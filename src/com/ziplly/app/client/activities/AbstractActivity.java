@@ -1,5 +1,8 @@
 package com.ziplly.app.client.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
@@ -22,6 +25,7 @@ import com.ziplly.app.client.widget.LoadingPanelWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationType;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
@@ -34,31 +38,32 @@ public abstract class AbstractActivity implements Activity {
 	protected ApplicationContext ctx;
 	private static final String BACKGROUND_IMG_URL = "url('images/neighborhood_large.jpg')";
 	protected LoadingPanelWidget loadingModal;
-	
-	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, PlaceController placeController, ApplicationContext ctx) {
+
+	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
+			PlaceController placeController, ApplicationContext ctx) {
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
 		this.ctx = ctx;
-		loadingModal =  new LoadingPanelWidget();
+		loadingModal = new LoadingPanelWidget();
 	}
 
 	protected void setupHandlers() {
 		eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
-			
+
 			@Override
 			public void onEvent(LoadingEventStart event) {
 				showLodingIcon();
 			}
 		});
-		
+
 		eventBus.addHandler(LoadingEventEnd.TYPE, new LoadingEventEndHandler() {
 
 			@Override
 			public void onEvent(LoadingEventEnd event) {
 				hideLoadingIcon();
 			}
-		});		
+		});
 	}
 
 	void showLodingIcon() {
@@ -72,7 +77,7 @@ public abstract class AbstractActivity implements Activity {
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}
-	
+
 	@Override
 	public String mayStop() {
 		return null;
@@ -90,11 +95,11 @@ public abstract class AbstractActivity implements Activity {
 		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
 		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
-	
+
 	public void clearBackgroundImage() {
 		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
-	
+
 	public void checkAccountLogin() {
 		if (ctx.getAccount() != null) {
 			// control shouldn't flow here
@@ -102,56 +107,74 @@ public abstract class AbstractActivity implements Activity {
 			return;
 		}
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
-		dispatcher.execute(action,
-				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-					@Override
-					public void onSuccess(GetLoggedInUserResult result) {
-						if (result != null && result.getAccount() != null) {
-							ctx.setAccount(result.getAccount());
-							forward(result.getAccount());
-						} else {
-							doStart();
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getLocalizedMessage());
-					}
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+			@Override
+			public void onSuccess(GetLoggedInUserResult result) {
+				if (result != null && result.getAccount() != null) {
+					ctx.setAccount(result.getAccount());
+					forward(result.getAccount());
+				} else {
+					doStart();
+				}
+			}
 
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+		});
 	}
-	
+
 	public void checkLoginStatus() {
 		if (ctx.getAccount() != null) {
 			// control shouldn't flow here
 			return;
 		}
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
-		dispatcher.execute(action,
-				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-					@Override
-					public void onSuccess(GetLoggedInUserResult result) {
-						if (result != null && result.getAccount() != null) {
-							ctx.setAccount(result.getAccount());
-							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-						} else {
-							placeController.goTo(new LoginPlace());
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO (send them to login page?)
-						Window.alert(caught.getLocalizedMessage());
-					}
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+			@Override
+			public void onSuccess(GetLoggedInUserResult result) {
+				if (result != null && result.getAccount() != null) {
+					ctx.setAccount(result.getAccount());
+					eventBus.fireEvent(new LoginEvent(result.getAccount()));
+				} else {
+					placeController.goTo(new LoginPlace());
+				}
+			}
 
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO (send them to login page?)
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+		});
 	}
-	
+
+	/**
+	 * Get the list of target neighborhoods. For now it is
+	 * 1. current neighborhood
+	 * 2. parent neighborhood.
+	 */
+	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
+		if (ctx.getAccount() != null) {
+			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+			NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+			neighborhoods.add(neighborhood);
+			if (neighborhood.getParentNeighborhood() != null) {
+				neighborhoods.add(neighborhood.getParentNeighborhood());
+			}
+
+			return neighborhoods;
+		} else {
+			return null;
+		}
+	}
+
 	protected void doStart() {
 	}
-	
+
 	protected void forward(AccountDTO acct) {
 		if (acct != null) {
 			if (acct instanceof PersonalAccountDTO) {
@@ -161,8 +184,9 @@ public abstract class AbstractActivity implements Activity {
 			}
 		}
 	}
-	
-	public class AccountNotificationHandler extends DispatcherCallbackAsync<GetAccountNotificationResult> {
+
+	public class AccountNotificationHandler extends
+			DispatcherCallbackAsync<GetAccountNotificationResult> {
 
 		@Override
 		public void onSuccess(GetAccountNotificationResult result) {
@@ -172,6 +196,6 @@ public abstract class AbstractActivity implements Activity {
 
 	public void getConversations(ConversationType type, int start, int pageSize) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

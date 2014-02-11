@@ -30,7 +30,6 @@ import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
@@ -77,7 +76,9 @@ public class HomeView extends Composite implements IHomeView {
 
 		void displayCommunityWallForNeighborhood(NeighborhoodDTO neighborhood);
 
-		void gotoResidentPlace(); 
+		void gotoResidentPlace();
+
+		void gotoBusinessPlace(); 
 	}
 
 	@UiField
@@ -147,7 +148,7 @@ public class HomeView extends Composite implements IHomeView {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.goTo(new BusinessPlace());
+				presenter.gotoBusinessPlace();
 			}
 		});
 		
@@ -164,7 +165,6 @@ public class HomeView extends Composite implements IHomeView {
 				presenter.sendFeedback(feedbackWidget.getContent());
 				feedbackWidget.show(false);
 			}
-			
 		});
 	}
 

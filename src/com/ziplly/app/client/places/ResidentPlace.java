@@ -78,13 +78,11 @@ public class ResidentPlace extends Place {
 
 		@Override
 		public String getToken(ResidentPlace place) {
-//			if (place.getToken() != null || !place.getToken().equals("")) {
-//				return place.getToken();
-//			} else {
-//				return "";
-//			}
-			if (place.getNeighborhoodId() != null) {
-				return PlaceUtils.getResidentPlaceTokenForNeighborhood(place.getNeighborhoodId());
+			if (place.getAccountId() != null) {
+				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId());
+			}
+			else if (place.getNeighborhoodId() != null) {
+				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {
 				return "";
 			}

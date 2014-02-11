@@ -125,6 +125,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		}
 
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
+		view.displayTargetNeighborhoods(getTargetNeighborhoodList());
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());

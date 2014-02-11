@@ -356,9 +356,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 	}
 	
 	private String getImageLink(AccountDTO acct) {
-//		System.out.println("IMAGE LINK="+accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE));
-//		return accountFormatter.format(acct, ValueType.SMALL_IMAGE_VALUE);
-		return "<div class='tiny-image-div'><img class='tiny-image' src='"+acct.getImageUrl()+"'/></div>";
+		return accountFormatter.format(acct, ValueType.TINY_IMAGE_VALUE);
 	}
 	
 	private Panel getImagePanel(final AccountDTO acct, ValueType imageValueType) {

@@ -668,19 +668,23 @@ public class AccountBLIImpl implements AccountBLI {
 
 	// TODO(shaan) refactor
 	@Override
-	public void sendEmailByZip(Account sender, Long tweetId, NotificationType type,
+	public void sendEmailsByNeighborhood(Account sender, Long tweetId, NotificationType type,
 			EmailTemplate template) {
+		
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
 		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
 
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
-				.param("action", EmailAction.BY_ZIP.name())
-				.param("senderAccountId", sender.getAccountId().toString())
-				.param("tweetId", tweetId.toString()).param("notificationType", type.name())
-				.param("zip", Integer.toString(sender.getZip()))
-				.param("emailTemplateId", template.name()).header("Host", backendAddress);
+				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
+				.param(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY, Long.toString(sender.getNeighborhood().getNeighborhoodId()))
+				.param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY, sender.getAccountId().toString())
+				.param(ZipllyServerConstants.TWEET_ID_KEY, tweetId.toString())
+				.param(ZipllyServerConstants.NOTIFICATION_TYPE_KEY, type.name())
+//				.param("zip", Integer.toString(sender.getZip()))
+				.param(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY, template.name())
+				.header(ZipllyServerConstants.HOST_KEY, backendAddress);
 		queue.add(options);
 	}
 

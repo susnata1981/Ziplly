@@ -38,5 +38,5 @@ public interface AccountBLI {
 	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError,NotFoundException;
 	void resetPassword(Long accountId, String password) throws NotFoundException;
 	void sendEmail(Account sender, Account receiver, EmailTemplate template);
-	void sendEmailByZip(Account sender, Long tweetId, NotificationType type, EmailTemplate template);
+	void sendEmailsByNeighborhood(Account sender, Long tweetId, NotificationType type, EmailTemplate template);
 }

@@ -46,6 +46,7 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -331,5 +332,10 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	@Override
 	public void hideProfileSection() {
 		StyleHelper.show(profileSectionRow.getElement(), false);
+	}
+
+	@Override
+	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
+		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 	}
 }

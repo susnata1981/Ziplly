@@ -1,6 +1,5 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +20,7 @@ import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.ResidentPlace;
@@ -191,14 +191,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	 * 5. Counts on Tweet types
 	 */
 	private void displayCommunityWall() {
-		GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(place);
-		getCommunityWallData(searchCriteria);
+		getCommunityWallData(state.getSearchCriteria(place));
 		getHashtagList();
 		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
 		getNeighborhoodDetails();
 		
 		// account specific.
 		getLatLng(ctx.getAccount());
+		getAccountNotifications();
 		setImageUploadUrl();
 		setUploadImageHandler();
 		getAccountDetails();
@@ -215,17 +215,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		getNeighborhoodDetails();
 	}
 	
-	private List<NeighborhoodDTO> getTargetNeighborhoodList() {
-		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
-		neighborhoods.add(neighborhood);
-		if (neighborhood.getParentNeighborhood() != null) {
-			neighborhoods.add(neighborhood.getParentNeighborhood());
-		}
-		
-		return neighborhoods;
-	}
-
 	private void getNeighborhoodDetails() {
 		GetNeighborhoodDetailsAction action = new GetNeighborhoodDetailsAction(
 				state.getCurrentNeighborhood().getNeighborhoodId());
@@ -271,6 +260,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			binder.stop();
 		}
 		hideLoadingIcon();
+		homeView.clear();
 	}
 
 	@Override
@@ -297,35 +287,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void fetchData() {
 		dispatcher.execute(new GetLoggedInUserAction(), getLoggedInUserActionHandler);
 	}
-	
-	void getCommunityWallData(TweetType type) {
-		eventBus.fireEvent(new LoadingEventStart());
-		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
-		state.setFetchingData(true);
-		dispatcher.execute(searchCriteria, communityDataHandler);
-		
-		if (binder != null) {
-			binder.stop();
-		}
-		
-		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);
-		binder.start();
-	}
 
-	void getCommunityWallData(GetCommunityWallDataAction action) {
-		// load first batch of data
-		eventBus.fireEvent(new LoadingEventStart());
-		state.setFetchingData(true);
-		dispatcher.execute(action, communityDataHandler);
-		
-		if (binder != null) {
-			binder.stop();
-		}
-		
-		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);//getDefaultTweetBinder();
-		binder.start();
-	}
-	
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
 		homeView.display(tweets);
@@ -673,11 +635,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
 				eventBus.fireEvent(new LoginEvent(result.getAccount()));
 				displayCommunityWall();
-				getAccountNotifications();
 			} else {
 				goTo(new SignupPlace());
 			}
-			hideLoadingIcon();
 		}
 	}
 	
@@ -719,4 +679,38 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
 		placeController.goTo(place);
 	}
+
+	@Override
+	public void gotoBusinessPlace() {
+		BusinessPlace place = new BusinessPlace();
+		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
+		placeController.goTo(place);
+	}
+	
+	
+	void getCommunityWallData(TweetType type) {
+		eventBus.fireEvent(new LoadingEventStart());
+		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
+		state.setFetchingData(true);
+		dispatcher.execute(searchCriteria, communityDataHandler);
+		startViewBinder();
+	}
+
+	void getCommunityWallData(GetCommunityWallDataAction action) {
+		// Load first batch of data
+		eventBus.fireEvent(new LoadingEventStart());
+		state.setFetchingData(true);
+		dispatcher.execute(action, communityDataHandler);
+		startViewBinder();
+	}
+	
+	private void startViewBinder() {
+		if (binder != null) {
+			binder.stop();
+		}
+		
+		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);//getDefaultTweetBinder();
+		binder.start();
+	}
 }
+

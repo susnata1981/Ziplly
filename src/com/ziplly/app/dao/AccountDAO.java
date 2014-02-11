@@ -23,12 +23,22 @@ public interface AccountDAO {
 	List<AccountDTO> findAll();
 	List<AccountDTO> findAccounts(String query, int start, int end);
 	Long findTotalAccounts(String countQuery);
+	
+	@Deprecated
 	List<AccountDTO> findAllAccountsByZip(int zip);
+	
 	List<AccountDTO> findAccountsByNeighborhood(EntityType entityType, Long neighborhoodId, int pageStart, int pageSize);
+	
 	Long findTotalAccountsByNeighborhood(EntityType type, Long neighborhoodId) throws NotFoundException;
-	Long getTotalAccountCountByNeighborhoods(EntityType entityType, List<NeighborhoodDTO> neighborhoodIds);
-	Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType, 
-			List<NeighborhoodDTO> neighborhoods, int page, int pageSize);
+	
+	Long getTotalAccountCountByNeighborhoods(EntityType entityType, List<Long> neighborhoodIds);
+	
+	
+	Collection<? extends AccountDTO> findAccountsByNeighborhoods(
+			EntityType entityType, 
+			List<Long> neighborhoodIds, 
+			int page, 
+			int pageSize);
 	
 	
 	/**

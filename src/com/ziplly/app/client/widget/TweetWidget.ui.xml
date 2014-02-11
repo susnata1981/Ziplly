@@ -45,16 +45,9 @@
 						<b:NavLink ui:field="reportSpamLink" icon="FLAG">Report Spam</b:NavLink>
 					</b:Dropdown>
 				</div>
-				<!-- <div class="{style.tweet_content}"> <span class='{style.tweet_text}' 
-					ui:field="tweetContentSpan" /> <b:TextArea ui:field="tweetContentTextArea" 
-					addStyleNames="{style.tweetContentTextArea}" /> <g:HTMLPanel ui:field="tweetEditButtonPanel"> 
-					<b:Button type="PRIMARY" size="SMALL" ui:field="saveBtn">save</b:Button> 
-					<b:Button size="SMALL" ui:field="cancelBtn">cancel</b:Button> </g:HTMLPanel> 
-					</div> -->
 				<div class='tweet_actions'>
 					<div>
 						<div class='{style.tweet_action_link}'>
-							<!-- <g:Anchor ui:field="likeTweetLink" addStyleNames="{style.smalltext}">Like</g:Anchor> -->
 							<dt:ZAnchor ui:field="likeAnchor" icon="THUMBS_UP" />
 						</div>
 						<div class='{style.tweet_action_link}'>
@@ -62,7 +55,9 @@
 						</div>
 						<div class='{style.tweet_action_link}'>
 							<dt:ZAnchor ui:field="commentLink" icon="COMMENTS" />
-							<!-- <g:Anchor ui:field="commentLink" addStyleNames="{style.smalltext}">Comment</g:Anchor> -->
+						</div>
+						<div class='{style.tweet_action_link}'>
+						    Category:&nbsp;<g:Anchor ui:field="categoryLink" />
 						</div>
 						<div class='{style.tweet_sender_link}'>
 							posted by

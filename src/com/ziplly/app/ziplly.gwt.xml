@@ -43,5 +43,4 @@
 	
 	<!--  css obfuscation -->
 	<set-configuration-property name="CssResource.style" value="pretty"/>
-		
 </module>

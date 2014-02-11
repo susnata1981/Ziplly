@@ -4,24 +4,37 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.heading {
-			color: #555;
+		color: #555;
+		}
+		.listBox {
+		display: block;
+		width: 140px;
+		}
+		.filterLabel {
+		display: block;
+		font-size: 1em;
+		padding: 4px;
 		}
 	</ui:style>
 
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="3">
-			    <g:HTMLPanel>
-			        <b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
-			        <b:ControlGroup ui:field="zipCg">
+				<g:HTMLPanel>
+					<b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
+					<b:ControlGroup ui:field="zipCg">
 						<b:Controls>
 							<b:TextBox ui:field="zipTextBox" placeholder="zip..." />
 							<b:HelpInline ui:field="zipError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
+					<div>
+						<span class="{style.filterLabel}">Select neighborhood</span>
+						<b:ListBox ui:field="neighborhoodListBox" addStyleNames="{style.listBox}" />
+					</div>
 					<b:Button size="SMALL" ui:field="searchBtn">Search</b:Button>
 					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
-			    </g:HTMLPanel>
+				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="8">
 				<b:FluidRow>
@@ -35,9 +48,9 @@
 					</b:Column>
 				</b:FluidRow>
 				<b:FluidRow>
-				    <b:Column size="10">
-				        <b:Alert ui:field="message" close="false"/>
-				    </b:Column>
+					<b:Column size="10">
+						<b:Alert ui:field="message" close="false" />
+					</b:Column>
 				</b:FluidRow>
 			</b:Column>
 		</b:FluidRow>

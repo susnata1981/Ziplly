@@ -10,7 +10,7 @@ public enum TweetType {
 	SECURITY_ALERTS("Security Alerts", NotificationType.SECURITY_ALERT, true, true),
 	HELP("Help", NotificationType.NONE, true, true),
 	CLASSIFIEDS("Classifieds", NotificationType.NONE, true, false),
-	OFFERS("offers", NotificationType.OFFERS, true, true);
+	OFFERS("Offers", NotificationType.OFFERS, true, true);
 	
 	private String tweetName;
 	private NotificationType notificationType;

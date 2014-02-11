@@ -23,6 +23,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetEntityListAction;
@@ -78,12 +79,16 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
+		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
+				: ctx.getAccount().getNeighborhood().getNeighborhoodId();
+		action.setNeighborhoodId(neighborhoodId);
+		
+		view.displayNeighborhoodFilters(getNeighborhoodFilters());
 		dispatcher.execute(action, handler);
 	}
 	
 	@Override
 	public void onRangeChangeEvent(int start, int pageSize) {
-//		System.out.println("Calling range change event: start="+start+" size="+pageSize);
 		GetEntityListAction action = new GetEntityListAction(EntityType.BUSINESS_ACCOUNT);
 		action.setNeedTotalEntityCount(true);
 		action.setPage(start);
@@ -92,6 +97,16 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	};
 	
 
+	private List<NeighborhoodDTO> getNeighborhoodFilters() {
+		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+		neighborhoods.add(neighborhood);
+		if (neighborhood.getParentNeighborhood() != null) {
+			neighborhoods.add(neighborhood.getParentNeighborhood());
+		}
+		return neighborhoods;
+	}
+	
 	@Override
 	public void getBusinessList(GetEntityListAction action) {
 		dispatcher.execute(action, handler);

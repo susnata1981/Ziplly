@@ -6,12 +6,12 @@ import java.util.List;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
@@ -47,7 +47,7 @@ public class GetEntityActionHandler extends
 		throw new IllegalArgumentException("Invalid entity type passed to GetEntityListActionHandler");
 	}
 
-	private GetEntityResult findBusinessAccounts(GetEntityListAction action) {
+	private GetEntityResult findBusinessAccounts(GetEntityListAction action) throws NotFoundException {
 		GetEntityResult result = new GetEntityResult();
 		List<AccountDTO> accounts = Lists.newArrayList();
 		result.setEntityType(action.getEntityType());
@@ -58,21 +58,36 @@ public class GetEntityActionHandler extends
 		case BY_ZIP:
 			neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
 			break;
+		case BY_NEIGHBORHOOD:
 		default:
-			neighborhoods = ImmutableList.of(EntityUtil.clone(session.getAccount().getNeighborhood()));
+//			neighborhoodIds = ImmutableList.of(action.getNeighborhoodId());
+			neighborhoods = neighborhoodDao.findAllNeighborhoodFor(action.getNeighborhoodId());
 		}
 
-		if (neighborhoods.isEmpty()) {
+		List<Long> neighborhoodIds = Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {
+
+			@Override
+			public Long apply(NeighborhoodDTO n) {
+				return n.getNeighborhoodId();
+			}
+		});
+		
+		if (neighborhoodIds.isEmpty()) {
 			result.setAccounts(Collections.<AccountDTO> emptyList());
 			return result;
 		}
 
-		accounts.addAll(accountDao.findAccountsByNeighborhoods(action.getEntityType(),
-				neighborhoods, action.getPage(), action.getPageSize()));
+		accounts.addAll(accountDao.findAccountsByNeighborhoods(
+				action.getEntityType(),
+				neighborhoodIds, 
+				action.getPage(), 
+				action.getPageSize()));
 
 		if (action.isNeedTotalEntityCount()) {
-			Long count = accountDao.getTotalAccountCountByNeighborhoods(action.getEntityType(),
-					neighborhoods);
+			Long count = accountDao.getTotalAccountCountByNeighborhoods(
+					action.getEntityType(),
+					neighborhoodIds);
+			
 			result.setEntityCount(count);
 		}
 		result.setAccounts(accounts);

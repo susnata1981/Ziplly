@@ -127,9 +127,11 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	
 	@Override
 	public void sendTweet(TweetDTO tweet) {
+		//TODO(shaan): do we need this?
 		AccountDTO account = ctx.getAccount();
 		if (account == null) {
 			placeController.goTo(new LoginPlace());
+			return;
 		}
 		dispatcher.execute(new TweetAction(tweet), getTweetHandler());
 	}

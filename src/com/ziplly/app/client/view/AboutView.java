@@ -17,7 +17,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -41,9 +40,6 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	interface AboutViewUiBinder extends UiBinder<Widget, AboutView> {
 	}
 
-	@UiField
-	MyBundle resource;
-	
 	@UiField
 	Alert message;
 	
@@ -90,11 +86,11 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	
 	private AboutPresenter presenter;
 	
-	@UiFactory
-	MyBundle getResource() {
-		MyBundle.INSTANCE.style().ensureInjected();
-		return MyBundle.INSTANCE;
-	}
+//	@UiFactory
+//	MyBundle getResource() {
+//		MyBundle.INSTANCE.style().ensureInjected();
+//		return MyBundle.INSTANCE;
+//	}
 	
 	public AboutView() {
 		initWidget(uiBinder.createAndBindUi(this));

@@ -494,6 +494,7 @@ public class SignupView extends AbstractView implements
 	@Override
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
 		clearMessage();
+		neighborhoodListPanel.clear();
 		this.neighborhoods = neighborhoods;
 		for(NeighborhoodDTO n : neighborhoods) {
 			RadioButton rb = new RadioButton("neighborhood");

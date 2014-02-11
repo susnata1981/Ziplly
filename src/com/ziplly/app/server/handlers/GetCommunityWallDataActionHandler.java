@@ -58,7 +58,9 @@ public class GetCommunityWallDataActionHandler
 		throw new IllegalArgumentException();
 	}
 
-	private GetCommunityWallDataResult getTweetsByNeighborhood(GetCommunityWallDataAction action) throws NotFoundException {
+	private GetCommunityWallDataResult getTweetsByNeighborhood(GetCommunityWallDataAction action) 
+			throws NotFoundException {
+		
 		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
 		try {
 			List<TweetDTO> tweets = tweetDao.findTweetsByNeighborhood(

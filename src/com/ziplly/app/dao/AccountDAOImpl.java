@@ -251,14 +251,17 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType,
-			List<NeighborhoodDTO> neighborhoods, int start, int pageSize) {
+	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(
+			EntityType entityType,
+			List<Long> neighborhoodIds, 
+			int start, 
+			int pageSize) {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
+//		List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
-				.createQuery("from Account a where type = :type and a.neighborhood.neighborhoodId in :neighborhoodId"
+				.createQuery("from Account a where type = :type and a.neighborhood.neighborhoodId in (:neighborhoodId)"
 						+ " order by a.timeCreated");
 		query.setParameter("type", entityType.getType());
 		query.setParameter("neighborhoodId", neighborhoodIds);
@@ -281,11 +284,12 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public Long getTotalAccountCountByNeighborhoods(EntityType entityType,
-			List<NeighborhoodDTO> neighborhoods) {
+	public Long getTotalAccountCountByNeighborhoods(
+			EntityType entityType,
+			List<Long> neighborhoodIds) {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
+//		List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
 				.createNativeQuery("select count(n.neighborhood_id) from account a, neighborhood n where a.type = :type "

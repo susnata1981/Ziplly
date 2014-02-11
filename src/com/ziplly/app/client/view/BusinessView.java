@@ -6,6 +6,7 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -27,6 +28,7 @@ import com.ziplly.app.client.widget.cell.BusinessAccountCell;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.ValidationResult;
@@ -42,7 +44,7 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 
 		public void getBusinessList(GetEntityListAction currentEntityListAction);
 	}
-	
+
 	interface BusinessViewUiBinder extends UiBinder<Widget, BusinessView> {
 	}
 
@@ -51,7 +53,7 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 
 	@UiField(provided = true)
 	CellList<BusinessAccountDTO> businessList;
-	
+
 	//
 	// Search
 	//
@@ -61,19 +63,23 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 	TextBox zipTextBox;
 	@UiField
 	HelpInline zipError;
-	
+
+	@UiField
+	ListBox neighborhoodListBox;
+
 	@UiField
 	Button searchBtn;
-	
+
 	@UiField
 	Button resetBtn;
-	
+
 	@UiField
 	Alert message;
-	
+
 	private EntityListViewPresenter presenter;
 	private CommunityViewState state;
-	
+	private List<NeighborhoodDTO> neighborhoods;
+
 	public BusinessView() {
 		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell());
 		businessList.setPageSize(PAGE_SIZE);
@@ -130,22 +136,28 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 	@UiHandler("searchBtn")
 	void search(ClickEvent event) {
 		clearErrors();
-		boolean valid = validateZip();
-		if (!valid) {
-			return;
+		if (!FieldVerifier.isEmpty(zipTextBox.getText())) {
+			boolean valid = validateZip();
+			if (!valid) {
+				return;
+			}
+			state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
+		} else {
+			state.searchByNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
 		}
 		searchBtn.setEnabled(false);
-		state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
 		presenter.getBusinessList(state.getCurrentEntityListAction());
 	}
-	
+
 	@UiHandler("resetBtn")
 	void resetSearch(ClickEvent event) {
 		state.reset();
+		state.setNeighborhood(neighborhoods.get(0).getNeighborhoodId());
+		neighborhoodListBox.setSelectedIndex(0);
 		clear();
 		presenter.getBusinessList(state.getCurrentEntityListAction());
 	}
-	
+
 	@Override
 	public void setPresenter(EntityListViewPresenter presenter) {
 		this.presenter = presenter;
@@ -154,23 +166,23 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 	public int getPageSize() {
 		return PAGE_SIZE;
 	}
-	
+
 	private void enableButtonIfRequired() {
 		if (!searchBtn.isEnabled()) {
 			searchBtn.setEnabled(true);
 		}
-		
+
 		if (!resetBtn.isEnabled()) {
 			resetBtn.setEnabled(true);
 		}
 	}
-	
+
 	@Override
 	public void clear() {
 		zipTextBox.setText("");
 		clearErrors();
 	}
-	
+
 	private void clearErrors() {
 		zipCg.setType(ControlGroupType.NONE);
 		zipError.setText("");
@@ -189,10 +201,20 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 			smw.updateAccountInformation(account);
 		}
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
 		StyleHelper.show(message.getElement(), true);
+	}
+
+	public void displayNeighborhoodFilters(List<NeighborhoodDTO> neighborhoods) {
+		if (neighborhoods != null) {
+			neighborhoodListBox.clear();
+			this.neighborhoods = neighborhoods;
+			for (NeighborhoodDTO n : neighborhoods) {
+				neighborhoodListBox.addItem(n.getName());
+			}
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package com.ziplly.app.client.activities;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -45,7 +44,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
 	private List<TweetDTO> lastTweetList;
-	private Logger logger = Logger.getLogger(BusinessAccountActivity.class.getName());
 	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler();
 	private TweetHandler tweetHandler = new TweetHandler();
@@ -123,8 +121,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	public void displayProfile() {
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
 			view.displayProfile((BusinessAccountDTO) ctx.getAccount());
+			view.displayTargetNeighborhoods(getTargetNeighborhoodList());
 		} else if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountPlace());
+			return;
 		}
 		
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
