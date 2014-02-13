@@ -71,8 +71,8 @@ public class EmailServiceImpl implements EmailService {
 			
 			// Email enabled flag needs to be turned on.
 			boolean emailEnabled = Boolean.valueOf(System.getProperty(StringConstants.APP_EMAIL_ENABLE));
-			boolean adminEmailEnabled = Boolean.valueOf(System.getProperty(StringConstants.APP_ADMIN_EMAIL_ENABLE));
-			String adminEmail = System.getProperty(StringConstants.APP_ADMIN_EMAIL_KEY);
+			boolean adminEmailEnabled = Boolean.valueOf(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_ENABLE));
+			String adminEmail = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
 			
 			if (recipientEmail.equals(adminEmail)) {
 				if (adminEmailEnabled) {

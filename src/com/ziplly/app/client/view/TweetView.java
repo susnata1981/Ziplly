@@ -8,6 +8,7 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -119,17 +120,23 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override
 			public void execute() {
-//				long s1 = System.currentTimeMillis();
-				TweetWidget tw = new TweetWidget();
-				tw.setWidth(tweetWidgetWidth);
-				tw.setPresenter(presenter);
-				tw.displayTweet(tweet);
-				tw.addStyleName(style.tweetWidget());
-				tweetsSection.add(tw);
-//				int sh = tweetsSection.getElement().getScrollHeight();
-//				long e1 = System.currentTimeMillis();
-//				System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
-				tweetWidgetMap.put(tweet.getTweetId(), tw);
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					
+					@Override
+					public void execute() {
+//						long s1 = System.currentTimeMillis();
+						TweetWidget tw = new TweetWidget();
+						tw.setWidth(tweetWidgetWidth);
+						tw.setPresenter(presenter);
+						tw.displayTweet(tweet);
+						tw.addStyleName(style.tweetWidget());
+						tweetsSection.add(tw);
+//						int sh = tweetsSection.getElement().getScrollHeight();
+//						long e1 = System.currentTimeMillis();
+//						System.out.println("Time to create widget("+tweet.getTweetId()+") "+(e1-s1));
+						tweetWidgetMap.put(tweet.getTweetId(), tw);
+					}
+				});
 			}
 		});
 	}

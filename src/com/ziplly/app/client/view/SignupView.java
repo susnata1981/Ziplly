@@ -152,7 +152,6 @@ public class SignupView extends AbstractView implements
 	@UiField
 	Anchor privacyPolicyAnchor;
 	
-//	boolean imageUploaded = false;
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;

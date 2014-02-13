@@ -16,7 +16,6 @@
 		display: block;
 		padding: 4px;
 		margin-bottom: 30px;
-		letter-spacing: 4px;
 		}
 		.heading2 {
 		display: block;
@@ -135,7 +134,13 @@
 			margin-top: 40px;
 		}
 		.signup-hero-unit {
+			height: 180px;
+			position: relative;
 			padding: 60px 30px !important;
+		}
+		.hero-unit-btn {
+			position: absolute;
+			bottom: 30px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -276,7 +281,7 @@
 						<b:Paragraph>
 						    Complete your profile and upload a photo.
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="createProfileBtn">Signup</b:Button>
+						<b:Button type="INFO" ui:field="createProfileBtn" addStyleNames="{style.hero-unit-btn}">Signup</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -287,7 +292,7 @@
 						<b:Paragraph>
 						    Find residents and local businesses in your neighborhood. 
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="exploreBtn">Explore</b:Button>
+						<b:Button type="INFO" ui:field="exploreBtn" addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -298,7 +303,7 @@
 						<b:Paragraph>
 						    Share with your neighbors and local businesses. 
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="postMessageBtn">Post message</b:Button>
+						<b:Button type="INFO" ui:field="postMessageBtn" addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
 					</b:Hero>
 					 <a id="howItWorksLink"/>
 				</g:HTMLPanel>

@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -36,16 +38,17 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	private BusinessPlace place;
 	private EntityListHandler handler = new EntityListHandler();
 	private AcceptsOneWidget panel;
+	private AsyncProvider<BusinessView> viewProvider;
 
 	@Inject
 	public BusinessActivity(CachingDispatcherAsync dispatcher,
 			EventBus eventBus, PlaceController placeController,
 			ApplicationContext ctx,
-			BusinessPlace place, BusinessView view) {
+			BusinessPlace place, 
+			AsyncProvider<BusinessView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
-		this.view = view;
+		this.viewProvider = viewProvider;
 		this.place = place;
-		setupHandlers();
 	}
 
 	protected void setupHandlers() {
@@ -60,13 +63,25 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
-		if (ctx.getAccount() != null) {
-			displayBusinessList();
-		} else {
-			checkLoginStatus();
-			this.panel = panel;
-		}
+		viewProvider.get(new AsyncCallback<BusinessView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(BusinessView result) {
+				BusinessActivity.this.view = result;
+				bind();
+				setupHandlers();
+				if (ctx.getAccount() != null) {
+					displayBusinessList();
+				} else {
+					checkLoginStatus();
+				}
+			}
+		});
 	}
 
 	void displayBusinessList() {

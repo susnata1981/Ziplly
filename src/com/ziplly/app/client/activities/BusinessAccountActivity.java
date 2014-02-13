@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -47,19 +49,24 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler();
 	private TweetHandler tweetHandler = new TweetHandler();
+	private AsyncProvider<BusinessAccountView> viewProvider;
 	
 	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
 		void displayFormattedAddress(String fAddress);
 	}
 
 	@Inject
-	public BusinessAccountActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, BusinessAccountView view,
+	public BusinessAccountActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx, 
+			AsyncProvider<BusinessAccountView> viewProvider,
 			BusinessAccountPlace place) {
 
-		super(dispatcher, eventBus, placeController, ctx, view);
+		super(dispatcher, eventBus, placeController, ctx, null);
 		this.place = place;
-		setupHandlers();
+		this.viewProvider = viewProvider;
 	}
 
 	@Override
@@ -87,18 +94,28 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
+		viewProvider.get(new AsyncCallback<BusinessAccountView>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
 
-		if (place.getAccountId() != null) {
-			displayPublicProfile(place.getAccountId());
-		} else if (ctx.getAccount() != null) {
-			displayProfile();
-			go(panel);
-		} else {
-			goTo(new LoginPlace());
-		}
+			@Override
+			public void onSuccess(BusinessAccountView result) {
+				BusinessAccountActivity.this.view = result;
+				bind();
+				setupHandlers();	
+				if (place.getAccountId() != null) {
+					displayPublicProfile(place.getAccountId());
+				} else if (ctx.getAccount() != null) {
+					displayProfile();
+					go(panel);
+				} else {
+					goTo(new LoginPlace());
+				}
+			}
+		});
 	}
 
 	/*

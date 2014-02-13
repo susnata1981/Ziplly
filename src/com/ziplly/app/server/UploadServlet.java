@@ -17,6 +17,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Singleton;
 import com.ziplly.app.client.view.StringConstants;
 
@@ -38,7 +39,7 @@ public class UploadServlet extends HttpServlet {
 		if (blobKeys == null || blobKeys.size() == 0) {
 			logger.log(Level.ERROR, "Didn't get the blob key");
 		}
-		String uploadEndpoint = System.getProperty(StringConstants.UPLOAD_ENDPOINT);
+		String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
 		ImagesService imageService = ImagesServiceFactory.getImagesService();
 		res.sendRedirect(uploadEndpoint+"?imageUrl="+imageService.getServingUrl(
 				ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));

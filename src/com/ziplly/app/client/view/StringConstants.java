@@ -58,8 +58,8 @@ public class StringConstants {
 	public static final String PERSONAL_ACCOUNT_DISCRIMINATOR = "personal";
 	public static final String BUSINESS_ACCOUNT_DISCRIMINATOR = "business";
 	public static final String NO_TWEETS = "User hasn't shared any tweets yet.";
-	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
-	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
+//	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
+//	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
 	public static final String LOGIN_ERROR = "Sorry there was an error login in. Please try again later.";
 	public static final String INVALID_CREDENTIALS_ERROR = "Account with this email/password doesn't exist";
 	public static final String PLACE_SEPARATOR = ":";
@@ -67,11 +67,11 @@ public class StringConstants {
 	public static final String NEIGHBORHOOD_TOKEN = "neighborhood";
 	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
-	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
+//	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
 	public static final String TWEET_NOT_POSTED = "User hasn't posted any tweets";
 	public static final String TWEET_NOT_SHARED = "User hasn't shared his tweets";
 	public static final String INVALID_URL = "Invalid url";
-	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
+//	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
 	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
 	public static final String FEEDBACK = "Feedback";
 	public static final String FEEDBACK_SENT_SUCCESS = "Thanks for your feedback";

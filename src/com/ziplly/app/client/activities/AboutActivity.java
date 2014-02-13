@@ -2,7 +2,9 @@ package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -19,21 +21,39 @@ import com.ziplly.app.shared.EmailAdminResult;
 public class AboutActivity extends AbstractActivity implements AboutPresenter{
 	private AboutView view;
 	private AboutPlace place;
+	private AsyncProvider<AboutView> viewProvider;
+	private AcceptsOneWidget panel;
 	
 	@Inject
-	public AboutActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, AboutPlace place, AboutView view) {
+	public AboutActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx, 
+			AboutPlace place, 
+			AsyncProvider<AboutView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.view = view;
+		this.viewProvider = viewProvider;
 	}
 
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		bind();
-		view.displaySection(AboutViewSection.valueOf(place.getSection()));
-		panel.setWidget(view);
+		this.panel = panel;
+		viewProvider.get(new AsyncCallback<AboutView>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(AboutView result) {
+				AboutActivity.this.view = result;
+				bind();
+				view.displaySection(AboutViewSection.valueOf(place.getSection()));
+				AboutActivity.this.panel.setWidget(view);
+			}
+		});
 	}
 
 	@Override

@@ -10,4 +10,9 @@ public class ZipllyServerConstants {
 	public static final String EMAIL_TEMPLATE_ID_KEY = "emailTemplateId";
 	public static final String HOST_KEY = "Host";
 	public static final String ACTION_KEY = "action";
+	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
+	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
+	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
+	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
+	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
 }

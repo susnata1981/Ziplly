@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -36,15 +38,15 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	private ResidentPlace place;
 	private EntityListHandler handler = new EntityListHandler();
 	private AcceptsOneWidget panel;
+	private AsyncProvider<ResidentsView> viewProvider;
 
 	@Inject
 	public ResidentActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
 			PlaceController placeController, ApplicationContext ctx, ResidentPlace place,
-			ResidentsView view) {
+			AsyncProvider<ResidentsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
-		this.view = view;
+		this.viewProvider = viewProvider;
 		this.place = place;
-		setupHandlers();
 	}
 
 	protected void setupHandlers() {
@@ -59,12 +61,22 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
 		if (ctx.getAccount() != null) {
-			displayInitalRange();
+			viewProvider.get(new AsyncCallback<ResidentsView>() {
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+
+				@Override
+				public void onSuccess(ResidentsView result) {
+					ResidentActivity.this.view = result;
+					bind();
+					setupHandlers();
+					displayInitalRange();
+				}
+			});
 		} else {
 			checkLoginStatus();
-			this.panel = panel;
 		}
 	}
 

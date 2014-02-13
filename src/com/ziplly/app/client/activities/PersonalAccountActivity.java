@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -45,15 +47,16 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	private List<TweetDTO> lastTweetList;
 	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitActionHandler = new ScrollBottomHitActionHandler();
+	private AsyncProvider<AccountView> viewProvider;
 
 	@Inject
 	public PersonalAccountActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, AccountView view,
+			PlaceController placeController, ApplicationContext ctx, AsyncProvider<AccountView> viewProvider,
 			PersonalAccountPlace place) {
 
-		super(dispatcher, eventBus, placeController, ctx, view);
+		super(dispatcher, eventBus, placeController, ctx, null);
 		this.place = place;
-		setupHandlers();
+		this.viewProvider = viewProvider;
 	}
 	
 	@Override
@@ -83,15 +86,28 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
-		if (place.getAccountId() != null) {
-			displayPublicProfile(place.getAccountId());
-		} else if (ctx.getAccount() != null) {
-			displayProfile();
-			go(panel);
-		} else {
-			goTo(new LoginPlace());
-		}
+		viewProvider.get(new AsyncCallback<AccountView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(AccountView result) {
+				PersonalAccountActivity.this.view = result;
+				bind();
+				setupHandlers();
+				if (place.getAccountId() != null) {
+					displayPublicProfile(place.getAccountId());
+				} else if (ctx.getAccount() != null) {
+					displayProfile();
+					go(PersonalAccountActivity.this.panel);
+				} else {
+					goTo(new LoginPlace());
+				}
+			}
+		});
 	}
 
 	/**

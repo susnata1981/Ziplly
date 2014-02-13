@@ -61,6 +61,8 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class PersonalAccountSettingsView extends AbstractView implements IPersonalAccountSettingsView{
 
+	private static final int MAX_INTRODUCTION_LENGTH = 255;
+
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 			.create(PersonalAccountSettingsViewUiBinder.class);
 
@@ -356,6 +358,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	public void clearError() {
 		message.setVisible(false);
 		message.clear();
+		introductionCg.setType(ControlGroupType.NONE);
+		introductionError.setVisible(false);
 	}
 
 	@Override
@@ -367,6 +371,14 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	// TODO
 	boolean validate() {
+		ValidationResult result = FieldVerifier.validateString(introduction.getText(), MAX_INTRODUCTION_LENGTH);
+		if (!result.isValid()) {
+			introductionCg.setType(ControlGroupType.ERROR);
+			introductionError.setVisible(true);
+			introductionError.setText(result.getErrors().get(0).getErrorMessage());
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -390,8 +402,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	// TODO validation required!
 	@Override
 	public void onSave() {
+		clearError();
 		if (!validate()) {
-			displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
 			return;
 		}
 
@@ -447,7 +459,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	@Override
 	public void displayImagePreview(String imageUrl) {
-		profileImagePreview.setUrl(imageUrl);
+		if (imageUrl != null) {
+			profileImagePreview.setUrl(imageUrl);
+		}
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -78,6 +79,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	private String url;
 	
 	@Column(name="image_url")
+	@Size(max=1024)
 	private String imageUrl;
 	
 	@Column(name="zip", nullable=false)

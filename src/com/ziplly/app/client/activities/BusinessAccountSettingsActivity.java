@@ -7,7 +7,9 @@ import java.util.TreeMap;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -18,6 +20,7 @@ import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView.BusinessAccountSettingsPresenter;
 import com.ziplly.app.client.view.ISettingsView;
 import com.ziplly.app.client.view.StringConstants;
@@ -36,9 +39,8 @@ import com.ziplly.app.shared.PayResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
-public class BusinessAccountSettingsActivity
-		extends
-		AbstractAccountSettingsActivity<BusinessAccountDTO, BusinessAccountSettingsActivity.IBusinessAccountSettingView>
+public class BusinessAccountSettingsActivity extends 
+	AbstractAccountSettingsActivity<BusinessAccountDTO, BusinessAccountSettingsActivity.IBusinessAccountSettingView>
 		implements BusinessAccountSettingsPresenter {
 
 	public static interface IBusinessAccountSettingView extends
@@ -59,12 +61,17 @@ public class BusinessAccountSettingsActivity
 	}
 
 	private AcceptsOneWidget panel;
+	private AsyncProvider<BusinessAccountSettingsView> viewProvider;
 
 	@Inject
-	public BusinessAccountSettingsActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx,
-			IBusinessAccountSettingView view) {
-		super(dispatcher, eventBus, placeController, ctx, view);
+	public BusinessAccountSettingsActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx,
+			AsyncProvider<BusinessAccountSettingsView> viewProvider) {
+		super(dispatcher, eventBus, placeController, ctx, null);
+		this.viewProvider = viewProvider;
 		setupEventHandler();
 	}
 
@@ -93,7 +100,20 @@ public class BusinessAccountSettingsActivity
 			placeController.goTo(new PersonalAccountSettingsPlace());
 		}
 
-		bind();
+		viewProvider.get(new AsyncCallback<BusinessAccountSettingsView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(BusinessAccountSettingsView result) {
+				BusinessAccountSettingsActivity.this.view = result;
+				bind();
+			}
+		});
 		view.displaySettings((BusinessAccountDTO) ctx.getAccount());
 		displayTransactionHistory();
 		displaySubscriptionPlans();

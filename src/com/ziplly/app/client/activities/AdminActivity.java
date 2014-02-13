@@ -2,7 +2,9 @@ package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -32,27 +34,46 @@ import com.ziplly.app.shared.UpdateTweetResult;
 public class AdminActivity extends AbstractActivity implements AdminPresenter {
 
 	private AdminView view;
+	private AsyncProvider<AdminView> viewProvider;
+	private AcceptsOneWidget panel;
 
-	public AdminActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, AdminView view) {
+	public AdminActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx, 
+			AsyncProvider<AdminView> viewProvider) {
+		
 		super(dispatcher, eventBus, placeController, ctx);
-		this.view = view;
+		this.viewProvider = viewProvider;
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
 		AccountDTO account = ctx.getAccount();
 		if (account == null) {
 			placeController.goTo(new LoginPlace());
 			return;
 		}
-		bind();
-		panel.setWidget(view);
 		if (account.getRole() != Role.ADMINISTRATOR) {
 			// do something;
 			// messaging
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 			return;
+		} else {
+			viewProvider.get(new AsyncCallback<AdminView>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+
+				@Override
+				public void onSuccess(AdminView result) {
+					AdminActivity.this.view = result;
+					bind();
+				}
+			});
 		}
 	}
 	
@@ -65,6 +86,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	@Override
 	public void bind() {
 		view.setPresenter(this);
+		panel.setWidget(view);
 	}
 
 	@Override

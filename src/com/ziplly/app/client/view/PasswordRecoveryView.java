@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ResetPasswordAction;
 import com.ziplly.app.shared.ValidationResult;
@@ -64,6 +65,8 @@ public class PasswordRecoveryView extends Composite implements
 
 	@UiField
 	Button resetPasswordBtn;
+	@UiField
+	Button cancelBtn;
 	
 	@UiField
 	HTMLPanel passwordResetPanel;
@@ -140,6 +143,11 @@ public class PasswordRecoveryView extends Composite implements
 		action.setPassword(newPasswordInput);
 		presenter.resetPassword(action);
 		clear();
+	}
+	
+	@UiHandler("cancelBtn")
+	void cancelBtnClicked(ClickEvent event) {
+		presenter.goTo(new HomePlace());
 	}
 	
 	boolean validatePassword(String password, ControlGroup cg,

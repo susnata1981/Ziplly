@@ -450,7 +450,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		String bucketName = System.getProperty("gcs_bucket_name");
 		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
-		String uploadEndpoint = System.getProperty(StringConstants.UPLOAD_ENDPOINT);
+		String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
 		String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
 
 		String result = uploadUrl;
@@ -674,7 +674,7 @@ public class AccountBLIImpl implements AccountBLI {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
+		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
 
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
@@ -693,7 +693,7 @@ public class AccountBLIImpl implements AccountBLI {
 		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
 				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		String mailEndpoint = System.getProperty(StringConstants.MAIL_ENDPOINT);
+		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
 
 		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
 				.param("action", EmailAction.INDIVIDUAL.name())

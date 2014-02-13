@@ -2,7 +2,9 @@ package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -27,27 +29,43 @@ public class PasswordRecoveryActivity extends AbstractActivity implements
 	private PasswordRecoveryPlace place;
 	private AccountDTO account;
 	private AcceptsOneWidget panel;
+	private AsyncProvider<PasswordRecoveryView> viewProvider;
 
 	@Inject
 	public PasswordRecoveryActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx, PasswordRecoveryPlace place,
-			PasswordRecoveryView view) {
+			EventBus eventBus, 
+			PlaceController placeController,
+			ApplicationContext ctx, 
+			PasswordRecoveryPlace place,
+			AsyncProvider<PasswordRecoveryView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.view = view;
+		this.viewProvider = viewProvider;
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		bind();
 		this.panel = panel;
-		if (place.getHash() != null) {
-			verifyPasswordRecoveryHash();
-		} else {
-			view.displayPasswordRecoveryForm();
-			panel.setWidget(view);
-		}
+		viewProvider.get(new AsyncCallback<PasswordRecoveryView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(PasswordRecoveryView result) {
+				PasswordRecoveryActivity.this.view = result;
+				PasswordRecoveryActivity.this.panel.setWidget(view);
+				bind();
+				if (place.getHash() != null) {
+					verifyPasswordRecoveryHash();
+				} else {
+					view.displayPasswordRecoveryForm();
+				}
+			}
+		});
 	}
 
 	private void verifyPasswordRecoveryHash() {

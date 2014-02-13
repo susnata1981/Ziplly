@@ -4,14 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -84,6 +90,7 @@ import com.ziplly.app.shared.UpdateTweetResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
 	private IHomeView homeView;
+	private AsyncProvider<HomeView> homeViewProvider;
 	private HomeViewState state;
 	private TweetViewBinder binder;
 	private HomePlace place;
@@ -146,21 +153,23 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	@Inject
-	public HomeActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, HomePlace place,
-			PlaceController placeController,ApplicationContext ctx, 
-			HomeView homeView) {
+	public HomeActivity(CachingDispatcherAsync dispatcher, 
+			EventBus eventBus, 
+			HomePlace place,
+			PlaceController placeController,
+			ApplicationContext ctx,
+			AsyncProvider<HomeView> homeView) {
 
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.homeView = homeView;
+		this.homeViewProvider = homeView;
 		state = new HomeViewState();
-		setupHandlers();
+//		setupHandlers();
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
 		if (ctx.getAccount() != null) {
 			state.setCurrentNeighborhood(ctx.getAccount().getNeighborhood());
 			displayCommunityWall();
@@ -191,6 +200,22 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	 * 5. Counts on Tweet types
 	 */
 	private void displayCommunityWall() {
+		homeViewProvider.get(new AsyncCallback<HomeView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO: remove this.
+				Window.alert("LOADING ISSUE");
+			}
+
+			@Override
+			public void onSuccess(HomeView result) {
+				HomeActivity.this.homeView = result;
+				bind();
+				setupHandlers();
+			}
+		});
+		
 		getCommunityWallData(state.getSearchCriteria(place));
 		getHashtagList();
 		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());

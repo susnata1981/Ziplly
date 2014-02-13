@@ -2,12 +2,15 @@ package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessSignupPlace;
+import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.AccountDTO;
@@ -16,21 +19,38 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 		SignupActivityPresenter {
 	AcceptsOneWidget panel;
 	private BusinessSignupPlace place;
+	private AsyncProvider<BusinessSignupView> viewProvider;
 
 	@Inject
-	public BusinessSignupActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, BusinessSignupPlace place,
-			BusinessSignupView view) {
-		super(dispatcher, eventBus, placeController, ctx, view);
+	public BusinessSignupActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx, 
+			BusinessSignupPlace place,
+			AsyncProvider<BusinessSignupView> viewProvider) {
+		super(dispatcher, eventBus, placeController, ctx, null);
+		this.viewProvider = viewProvider;
 		this.place = place;
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		bind();
-		view.reset();
-		go(panel);
+		viewProvider.get(new AsyncCallback<BusinessSignupView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(BusinessSignupView result) {
+				BusinessSignupActivity.this.view = result;
+				bind();
+				view.reset();
+				go(BusinessSignupActivity.this.panel);
+			}
+		});
 	}
 
 	@Override

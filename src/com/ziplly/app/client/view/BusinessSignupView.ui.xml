@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
+	xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		input[type="text"],input[type="password"] {
@@ -42,6 +43,7 @@
 			background: #f1f1f1;
 			padding: 12px;
 			width: 340px;
+			border-radius: 4px;
 		}
 		.button {
 			height: 40px;
@@ -73,8 +75,13 @@
 			color : #fff;
 		}
 		.signup-hero-unit {
+			height: 180px;
+			position: relative;
 			padding: 60px 30px !important;
-			height: 160px;
+		}
+		.hero-unit-btn {
+			position: absolute;
+			bottom: 30px;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
@@ -180,7 +187,7 @@
 						<b:Paragraph>
 						    Say a bit about your business.
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="createProfileBtn">Signup</b:Button>
+						<b:Button type="INFO" ui:field="createProfileBtn" addStyleNames="{style.hero-unit-btn}">Signup</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -194,7 +201,7 @@
 						<b:Paragraph>
 						    Send 3 messages/month for free. 
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="exploreBtn">Explore</b:Button>
+						<b:Button type="INFO" ui:field="exploreBtn" addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -208,7 +215,7 @@
 						<b:Paragraph>
 						    Get instant results. 
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="postMessageBtn">Post message</b:Button>
+						<b:Button type="INFO" ui:field="postMessageBtn" addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
 					</b:Hero>
 					<a id="howItWorksLink"/>
 				</g:HTMLPanel>

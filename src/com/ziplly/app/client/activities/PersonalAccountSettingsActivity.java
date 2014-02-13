@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -14,6 +16,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ISettingsView;
+import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
@@ -37,11 +40,16 @@ public class PersonalAccountSettingsActivity
 	}
 
 	private AcceptsOneWidget panel;
+	private AsyncProvider<PersonalAccountSettingsView> viewProvider;
 
-	public PersonalAccountSettingsActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx,
-			IPersonalAccountSettingsView view) {
-		super(dispatcher, eventBus, placeController, ctx, view);
+	public PersonalAccountSettingsActivity(
+			CachingDispatcherAsync dispatcher, 
+			EventBus eventBus,
+			PlaceController placeController, 
+			ApplicationContext ctx,
+			AsyncProvider<PersonalAccountSettingsView> viewProvider) {
+		super(dispatcher, eventBus, placeController, ctx, null);
+		this.viewProvider = viewProvider;
 		setupHandlers();
 	}
 
@@ -75,7 +83,19 @@ public class PersonalAccountSettingsActivity
 			return;
 		}
 
-		bind();
+		viewProvider.get(new AsyncCallback<PersonalAccountSettingsView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(PersonalAccountSettingsView result) {
+				PersonalAccountSettingsActivity.this.view = result;
+				bind();
+			}
+		});
+		
 		setImageUploadFormSubmitCompleteHandler();
 		setUploadFormActionUrl();
 		view.displaySettings((PersonalAccountDTO) ctx.getAccount());

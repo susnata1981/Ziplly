@@ -71,7 +71,7 @@
 						Policy</g:Anchor>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="10">
+			<b:Column size="9">
 				<g:HTMLPanel ui:field="aboutUsPanel">
 					<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Our story</b:Heading>
 					<p class="{style.text}">

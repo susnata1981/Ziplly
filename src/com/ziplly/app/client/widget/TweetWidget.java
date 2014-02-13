@@ -19,6 +19,7 @@ import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -83,15 +84,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String profileLinkAnchor();
 
 		String commentRow();
-		
+
 		String commentRowAnchor();
-		
+
 		String commentRowText();
-		
+
 		String commentRowDate();
-		
+
 		String commentsLink();
-		
+
 		String commentEditLink();
 	}
 
@@ -109,7 +110,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	HTMLPanel tweetPanel;
 	@UiField
 	Image authorImage;
-	
+
 	//
 	// Tweet Image
 	//
@@ -117,7 +118,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	HTMLPanel tweetImagePanel;
 	@UiField
 	Image tweetImage;
-	
+
 	@UiField
 	Anchor categoryLink;
 	@UiField
@@ -148,7 +149,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	@UiField
 	ZAnchor replyAnchor;
-	
+
 	// Like section
 	@UiField
 	ZAnchor likeAnchor;
@@ -178,14 +179,14 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	// final Modal modal = new Modal();
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
-	private AccountFormatter accountFormatter = 
-			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
-	private BasicDataFormatter basicDataFormatter =
-			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
-	
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+
 	// Used by comment edit widget to display the edit link
 	private boolean commentEditLinkClicked = false;
-	
+
 	public TweetWidget() {
 		long s1, e1;
 		long start1 = System.currentTimeMillis();
@@ -241,7 +242,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				}
 			}
 		});
-		
+
 		saveBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -304,7 +305,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				commentInputTextBox.setHeight("20px");
 			}
 		});
-		
+
 		replyAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -339,14 +340,14 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void hideTweetUpdateButtons() {
-//		tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
+		// tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setReadOnly(true);
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	void showTweetUpdateButtons() {
-//		tweetContentSpan.getStyle().setDisplay(Display.NONE);
+		// tweetContentSpan.getStyle().setDisplay(Display.NONE);
 		StyleHelper.show(tweetContentSpan.getElement(), false);
 		tweetContentTextArea.setText(tweet.getContent());
 		tweetContentTextArea.setReadOnly(false);
@@ -455,18 +456,20 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	private Panel addNextComment(final CommentDTO comment) {
 		FlowPanel fp = new FlowPanel();
 		final CommentWidget commentWidget = new CommentWidget();
-		commentWidget.setImage(accountFormatter.format(comment.getAuthor(), ValueType.PROFILE_IMAGE_URL));
+		commentWidget.setImage(accountFormatter.format(comment.getAuthor(),
+				ValueType.PROFILE_IMAGE_URL));
 		commentWidget.setText(comment.getContent());
 		commentWidget.setProfileName(comment.getAuthor().getDisplayName());
-		commentWidget.setPostingDate(basicDataFormatter.format(comment.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM));
-		
+		commentWidget.setPostingDate(basicDataFormatter.format(comment.getTimeCreated(),
+				ValueType.DATE_VALUE_MEDIUM));
+
 		commentWidget.getProfileAnchor().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				presenter.goTo(new PersonalAccountPlace(comment.getAuthor().getAccountId()));
 			}
 		});
-		
+
 		final NavLink editLink = new NavLink();
 		editLink.setStyleName(style.commentEditLink());
 		editLink.setIcon(IconType.EDIT);
@@ -482,14 +485,14 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				}
 			}
 		});
-		
+
 		contentPanel.addMouseOutHandler(new MouseOutHandler() {
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
 				editLink.setVisible(false);
 			}
 		});
-		
+
 		editLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -498,10 +501,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				final MouseHoverPanel contentPanel = commentWidget.getContentPanel();
 				final CommentEditWidget editWidget = new CommentEditWidget();
 				editWidget.setText(comment.getContent());
-				
+
 				StyleHelper.show(contentElem, false);
 				contentPanel.add(editWidget);
-				
+
 				editWidget.getSaveButton().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -520,7 +523,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 						presenter.updateComment(comment);
 					}
 				});
-				
+
 				editWidget.getCancelButton().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -532,7 +535,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				});
 			}
 		});
-		
+
 		fp.add(commentWidget);
 		return fp;
 	}
@@ -600,7 +603,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		modal.setTitle("people who liked this post");
 		for (final LoveDTO like : tweet.getLikes()) {
 			AccountDTO acct = like.getAuthor();
-			String content = "<img src='"+acct.getImageUrl()+"' width='40px' height='40px'/>&nbsp;"+acct.getDisplayName();
+			String content = "<img src='" + acct.getImageUrl()
+					+ "' width='40px' height='40px'/>&nbsp;" + acct.getDisplayName();
 			Anchor profileLink = new Anchor();
 			profileLink.getElement().setInnerHTML(content);
 			profileLink.setStyleName(style.profileLinkAnchor());
@@ -618,7 +622,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private void displayTweetSection() {
 		tweetContentSpan.getElement().setInnerHTML(TweetUtils.getContent(tweet.getContent()));
-		
+
 		categoryLink.setHTML(basicDataFormatter.format(tweet.getType(), ValueType.TWEET_TYPE));
 		categoryLink.addClickHandler(new ClickHandler() {
 
@@ -627,12 +631,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				presenter.goTo(new HomePlace(tweet.getType()));
 			}
 		});
-		
+
 		tweet.getTimeCreated();
-		
+
 		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
 		timeCreated.setInnerHTML(time);
-		
+
 		authorImage.setUrl(accountFormatter.format(tweet.getSender(), ValueType.PROFILE_IMAGE_URL));
 		authorImage.addClickHandler(new ClickHandler() {
 
@@ -642,15 +646,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			}
 		});
 		authorName.setInnerHTML(tweet.getSender().getDisplayName());
-		
+
 		if (tweet.getImage() != null) {
 			tweetImage.setUrl(tweet.getImage());
 			tweetImage.addLoadHandler(new LoadHandler() {
-				
+
 				@Override
 				public void onLoad(LoadEvent event) {
 					int height = tweetImage.getHeight() + 20;
-					tweetImagePanel.setHeight(height+"px");
+					tweetImagePanel.setHeight(height + "px");
 				}
 			});
 		} else {
@@ -723,7 +727,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	public void remove() {
 		removeFromParent();
 	}
-	
+
 	private void displayElement(Element elem, boolean display) {
 		Display d = display ? Display.BLOCK : Display.NONE;
 		elem.getStyle().setDisplay(d);

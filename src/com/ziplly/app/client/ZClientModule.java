@@ -4,13 +4,17 @@ import javax.inject.Provider;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.web.bindery.event.shared.EventBus;
@@ -41,10 +45,8 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
-import com.ziplly.app.client.widget.EditAccount;
-import com.ziplly.app.client.widget.EditBusinessAccountWidget;
 import com.ziplly.app.client.widget.LoginWidget;
-import com.ziplly.app.client.widget.LogoutWidget;
+import com.ziplly.app.client.widget.SendMessageWidget;
 
 public class ZClientModule extends AbstractGinModule {
 
@@ -54,11 +56,9 @@ public class ZClientModule extends AbstractGinModule {
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
-//		bind(BasicAccountDataProvider.class);
 		
 		// main presenter
-//		bind(MainController.class).in(Singleton.class);
-//		bind(ZipllyController.class).in(Singleton.class);
+		bind(ZipllyController.class).in(Singleton.class);
 		
 		// views
 		bind(INavView.class).to(NavView.class).in(Singleton.class);
@@ -68,7 +68,6 @@ public class ZClientModule extends AbstractGinModule {
 		bind(IHomeView.class).to(HomeView.class).in(Singleton.class);
 		bind(SignupView.class).in(Singleton.class);
 		bind(BusinessSignupView.class).in(Singleton.class);
-//		bind(MainView.class).in(Singleton.class);
 		bind(ResidentsView.class).in(Singleton.class);
 		bind(PersonalAccountSettingsView.class);
 		bind(IBusinessAccountSettingView.class).to(BusinessAccountSettingsView.class);
@@ -78,8 +77,6 @@ public class ZClientModule extends AbstractGinModule {
 		
 		// widgets
 		bind(LoginWidget.class).in(Singleton.class);
-		bind(LogoutWidget.class).in(Singleton.class);
-		bind(EditAccount.class).annotatedWith(Names.named("business")).to(EditBusinessAccountWidget.class).in(Singleton.class);
 		
 		// activities
 		bind(HomeActivity.class);
@@ -95,10 +92,13 @@ public class ZClientModule extends AbstractGinModule {
 		
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
 		bind(ActivityMapper.class).annotatedWith(Names.named("nav")).to(NavActivityMapper.class).in(Singleton.class);
+		
 		bind(PlaceHistoryMapper.class).toProvider(PlaceHistoryMapperProvider.class).in(Singleton.class);
 		bind(PlaceHistoryHandler.class).toProvider(PlaceHistoryHandlerProvider.class).in(Singleton.class);
+		
 		bind(ActivityManager.class).toProvider(ActivityManagerProvider.class).in(Singleton.class);
 		bind(ActivityManager.class).annotatedWith(Names.named("nav")).toProvider(NavActivityManagerProvider.class).in(Singleton.class);
+		
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
 	}
 	
@@ -165,4 +165,47 @@ public class ZClientModule extends AbstractGinModule {
 			return manager;
 		}
 	}
+	
+	public static class SendMessageWidgetFactory implements AsyncProvider<SendMessageWidget> {
+
+		@Override
+		public void get(final AsyncCallback<? super SendMessageWidget> callback) {
+			GWT.runAsync(new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					callback.onSuccess(new SendMessageWidget(null));
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+				}
+			});
+		}
+	}
+	
+	public static class SendMessageWidgetProvider implements Provider<AsyncProvider<SendMessageWidget>> {
+
+		@Inject
+		SendMessageWidgetFactory factory;
+		
+		@Override
+		public AsyncProvider<SendMessageWidget> get() {
+			return factory;
+		}
+	}
+	
+//	public class ActivityProxyProvider<T extends Activity> implements Provider<ActivityAsyncProxy<T>> {
+//		private Provider<ActivityAsyncProxy<T>> provider;
+//
+//		@Inject
+//		public ActivityAsyncProxyProvider(Provider<ActivityAsyncProxy<T>> provider) {
+//			this.provider = provider;
+//		}
+//		
+//		@Override
+//		public ActivityAsyncProxy<T> get() {
+//			return provider.get();
+//		}
+//	}
 }

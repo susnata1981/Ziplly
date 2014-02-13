@@ -7,12 +7,12 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.EmailService;
 import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.EmailAdminResult;
 
@@ -38,7 +38,7 @@ public class EmailAdminActionHandler extends AbstractAccountActionHandler<EmailA
 		EmailEntity recipient = new EmailEntity();
 		EmailEntity sender = new EmailEntity();
 		sender.email = action.getFrom();
-		recipient.email = System.getProperty(StringConstants.APP_ADMIN_EMAIL_KEY);
+		recipient.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
 		System.out.println("COntent = "+action.getContent());
 		try {
 			emailService.sendEmail(action.getSubject(), action.getContent(), sender, recipient);

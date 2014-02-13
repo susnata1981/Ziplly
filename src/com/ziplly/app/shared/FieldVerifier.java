@@ -190,4 +190,21 @@ public class FieldVerifier {
 		}
 		return false;
 	}
+
+	public static ValidationResult validateString(String message, int maxLength) {
+		ValidationResult result = new ValidationResult();
+		if (message == null || message.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+		
+		message = SafeHtmlUtils.htmlEscape(message);
+		if (message.length() > maxLength) {
+			result.addError(getMessageTooLongError(maxLength));
+		}
+		return result;
+	}
+	
+	public static String getMessageTooLongError(int maxLength) {
+		return "Message can't be more than "+ maxLength +" characters.";
+	}
 }

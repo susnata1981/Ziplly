@@ -3,8 +3,10 @@ package com.ziplly.app.client;
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AboutActivity;
 import com.ziplly.app.client.activities.AdminActivity;
@@ -12,14 +14,13 @@ import com.ziplly.app.client.activities.BusinessAccountActivity;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
-import com.ziplly.app.client.activities.ConversationActvity;
+import com.ziplly.app.client.activities.ConversationActivity;
 import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.LoginActivity;
 import com.ziplly.app.client.activities.OAuthActivity;
 import com.ziplly.app.client.activities.PasswordRecoveryActivity;
 import com.ziplly.app.client.activities.PersonalAccountActivity;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity;
-import com.ziplly.app.client.activities.PublicAccountActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -36,7 +37,6 @@ import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.places.PasswordRecoveryPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
-import com.ziplly.app.client.places.PublicAccountPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AboutView;
@@ -54,42 +54,42 @@ import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 
-public class ZipllyActivityMapper implements ActivityMapper{
-	HomeView homeView;
-	LoginAccountView loginAccountView;
-	AccountView accountView;
-	SignupView signupView;
-	BusinessSignupView businessSignupView;
+public class ZipllyActivityMapper implements ActivityMapper {
 	private PlaceController placeController;
 	private CachingDispatcherAsync dispatcher;
 	private EventBus eventBus;
 	private ApplicationContext ctx;
-	private BusinessAccountView businessAccountView;
-	private ResidentsView residentsView;
-	private BusinessView businessView;
-	private PersonalAccountSettingsView personalAccountSettingsView;
-	private BusinessAccountSettingsView businessAccountSettingsView;
-	private ConversationView conversationView;
-	private PasswordRecoveryView passwordRecoveryView;
-	private AdminView adminView;
-	private AboutView aboutView;
+	private AsyncProvider<HomeView> homeView;
+	private AsyncProvider<LoginAccountView> loginAccountView;
+	private AsyncProvider<AccountView> accountView;
+	private AsyncProvider<SignupView> signupView;
+	private AsyncProvider<BusinessSignupView> businessSignupView;
+	private AsyncProvider<BusinessAccountView> businessAccountView;
+	private AsyncProvider<ResidentsView> residentsView;
+	private AsyncProvider<BusinessView> businessView;
+	private AsyncProvider<PersonalAccountSettingsView> personalAccountSettingsView;
+	private AsyncProvider<BusinessAccountSettingsView> businessAccountSettingsView;
+	private AsyncProvider<ConversationView> conversationView;
+	private AsyncProvider<PasswordRecoveryView> passwordRecoveryView;
+	private AsyncProvider<AdminView> adminView;
+	private AsyncProvider<AboutView> aboutView;
 	
 	@Inject
 	public ZipllyActivityMapper(
-			HomeView homeView,
-			LoginAccountView loginAccountView,
-			AccountView accountView,
-			BusinessAccountView businessAccountView,
-			SignupView signupView,
-			BusinessSignupView businessSignupView,
-			ResidentsView residentsView,
-			BusinessView businessView,
-			PersonalAccountSettingsView personalAccountSettingsView,
-			BusinessAccountSettingsView businessAccountSettingsView,
-			ConversationView conversationView,
-			PasswordRecoveryView passwordRecoverView,
-			AdminView adminView,
-			AboutView aboutView,
+			AsyncProvider<HomeView> homeView,
+			AsyncProvider<LoginAccountView> loginAccountView,
+			AsyncProvider<AccountView> accountView,
+			AsyncProvider<BusinessAccountView> businessAccountView,
+			AsyncProvider<SignupView> signupView,
+			AsyncProvider<BusinessSignupView> businessSignupView,
+			AsyncProvider<ResidentsView> residentsView,
+			AsyncProvider<BusinessView> businessView,
+			AsyncProvider<PersonalAccountSettingsView> personalAccountSettingsView,
+			AsyncProvider<BusinessAccountSettingsView> businessAccountSettingsView,
+			AsyncProvider<ConversationView> conversationView,
+			AsyncProvider<PasswordRecoveryView> passwordRecoverView,
+			AsyncProvider<AdminView> adminView,
+			AsyncProvider<AboutView> aboutView,
 			CachingDispatcherAsync dispatcher,
 			EventBus eventBus,
 			PlaceController placeController,
@@ -116,7 +116,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 	}
 	
 	@Override
-	public Activity getActivity(Place place) {
+	public Activity getActivity(final Place place) {
 		if (place instanceof HomePlace) {
 			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, homeView);
 		} 
@@ -126,14 +126,17 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		else if (place instanceof SignupPlace) {
 			return new SignupActivity(dispatcher, eventBus, placeController, (SignupPlace)place, ctx, signupView);
 		}
-		else if (place instanceof OAuthPlace) {
-			return new OAuthActivity(dispatcher, eventBus, placeController, ctx, (OAuthPlace)place);
-		}
 		else if (place instanceof BusinessSignupPlace) {
 			return new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, (BusinessSignupPlace)place, businessSignupView);
 		}
+		else if (place instanceof OAuthPlace) {
+			return new OAuthActivity(dispatcher, eventBus, placeController, ctx, (OAuthPlace)place);
+		}
 		else if (place instanceof PersonalAccountPlace) {
 			return new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView, (PersonalAccountPlace)place);
+		}
+		else if (place instanceof BusinessAccountPlace) {
+			return new BusinessAccountActivity(dispatcher, eventBus, placeController, ctx, businessAccountView, (BusinessAccountPlace)place);
 		}
 		else if (place instanceof PersonalAccountSettingsPlace) {
 			return new PersonalAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, personalAccountSettingsView);
@@ -141,17 +144,25 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		else if (place instanceof BusinessAccountSettingsPlace) {
 			return new BusinessAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, businessAccountSettingsView);
 		}
-		else if (place instanceof BusinessAccountPlace) {
-			return new BusinessAccountActivity(dispatcher, eventBus, placeController, ctx, businessAccountView, (BusinessAccountPlace)place);
-		}
-		else if (place instanceof PublicAccountPlace) {
-			return new PublicAccountActivity(dispatcher, eventBus, placeController, ctx, (PublicAccountPlace)place, accountView, businessAccountView);
-		}
 		else if (place instanceof ConversationPlace) {
-			return new ConversationActvity(dispatcher, eventBus, placeController, ctx, (ConversationPlace)place, conversationView);
+//			return new ConversationActivity(dispatcher, eventBus, placeController, ctx, (ConversationPlace)place, conversationView);
+			return new ActivityProxy<ConversationActivity>(new AsyncProvider<ConversationActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super ConversationActivity> callback) {
+					callback.onSuccess(new ConversationActivity(dispatcher, eventBus, placeController, ctx, (ConversationPlace)place, conversationView));
+				}
+			});
 		}
 		else if (place instanceof ResidentPlace) {
-			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, ((ResidentPlace)place), residentsView);
+//			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, ((ResidentPlace)place), residentsView);
+			return new ActivityProxy<ResidentActivity>(new AsyncProvider<ResidentActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super ResidentActivity> callback) {
+					callback.onSuccess(new ResidentActivity(dispatcher, eventBus, placeController, ctx, ((ResidentPlace)place), residentsView));
+				}
+			});
 		}
 		else if (place instanceof BusinessPlace) {
 			return new BusinessActivity(dispatcher, eventBus, placeController, ctx, ((BusinessPlace)place), businessView); 
@@ -165,6 +176,7 @@ public class ZipllyActivityMapper implements ActivityMapper{
 		else if (place instanceof AboutPlace) {
 			return new AboutActivity(dispatcher, eventBus, placeController, ctx, (AboutPlace)place, aboutView);
 		}
+		
 		throw new IllegalArgumentException();
 	}
 }

@@ -2,7 +2,9 @@ package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -26,6 +28,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	private ILoginAccountView<LoginPresenter> view;
 	LoginPlace place;
 	private AcceptsOneWidget panel;
+	private AsyncProvider<LoginAccountView> viewProvider;
 	
 	@Inject
 	public LoginActivity(
@@ -34,11 +37,11 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 		LoginPlace place,
 		PlaceController placeController, 
 		ApplicationContext ctx,
-		LoginAccountView view)
+		AsyncProvider<LoginAccountView> viewProvider)
 	{
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.view = view;
+		this.viewProvider = viewProvider;
 	}
 
 	@Override
@@ -47,9 +50,21 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 			forward(ctx.getAccount());
 			return;
 		}
-		
 		this.panel = panel;
-		checkAccountLogin();
+		viewProvider.get(new AsyncCallback<LoginAccountView>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(LoginAccountView result) {
+				LoginActivity.this.view = result;
+				checkAccountLogin();
+			}
+		});
 	}
 
 	@Override
