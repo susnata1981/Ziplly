@@ -13,11 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
+
 public class MailHandlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	private static final String APP_ADMIN_EMAIL = "app.admin.email2";
-
 	private EmailService emailService;
 	
 	public MailHandlerServlet() {
@@ -34,10 +33,13 @@ public class MailHandlerServlet extends HttpServlet {
 			String subject = message.getSubject();
 			String content = "";
 			content = getText(message);
-			System.out.println("Sender: " + from[0].toString() + " Subject: " + subject
-					+ " Content=" + content);
-			String adminEmail = System.getProperty(APP_ADMIN_EMAIL);
-			emailService.sendEmail(subject, content, from[0].toString(), adminEmail);
+			String adminEmail = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
+			EmailEntity sender = new EmailEntity();
+			sender.email = from[0].toString();
+			EmailEntity recipient = new EmailEntity();
+			recipient.email = adminEmail;
+			
+			emailService.sendNonTemplatedEmail(subject, content, sender, recipient);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}

@@ -31,6 +31,7 @@ public enum ValueType {
 	MEDIUM_IMAGE_VALUE,
 	LARGE_IMAGE_VALUE,
 	GENDER,
+	BADGE,
 	
 	// Personal Account
 	PERSON_NAME_VALUE,
@@ -45,5 +46,8 @@ public enum ValueType {
 	PRIVACY_FIELD_NAME,
 	
 	// Account Notification Settings
-	ACCOUNT_NOTIFICATION_TYPE, 
+	ACCOUNT_NOTIFICATION_TYPE,
+	
+	// Neighborhood
+	NEIGHBORHOOD, 
 }

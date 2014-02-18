@@ -2,8 +2,8 @@ package com.ziplly.app.model;
 
 public enum EntityType {
 	PERSONAL_ACCOUNT("personal"),
-	BUSINESS_ACCOUNT("BusinessAccount"), /* Will change to business */
-	PUBLISHER_ACCOUNT("BusinessAccount"); /* Will change to business */
+	BUSINESS_ACCOUNT("business"), /* Will change to business */
+	PUBLISHER_ACCOUNT("business"); /* Will change to business */
 	
 	private String type;
 

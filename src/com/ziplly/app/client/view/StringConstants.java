@@ -10,8 +10,8 @@ public class StringConstants {
 	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	public static final String PASSWORD_UPDATED = "Password updated successfully";
 	public static final String PASSWORD_UPDATE_FAILURE = "Failed to update password";
-	public static final String RECIPIENT_NAME_KEY = "recipientName";
-	public static final String RECIPIENT_EMAIL = "recipientEmail";
+//	public static final String RECIPIENT_NAME_KEY = "recipientName";
+//	public static final String RECIPIENT_EMAIL = "recipientEmail";
 	public static final String PASSWORD_RECOVER_URL = "passwordResetUrl";
 	public static final String PASSWORD_RESET_LINK_SENT = "Password reset link has been emailed.";
 	public static final String INVALID_ACCESS = "Invalid access";
@@ -22,7 +22,6 @@ public class StringConstants {
 	public static final String LIKE_SAVED = "Like updated!";
 	public static final String OPERATION_FAILED = "Operation failed.";
 	public static final String TWEET_UPDATED = "Tweet updated.";
-	public static final String EMAIL_QUEUE_NAME = "emailqueue";
 	public static final String USAGE_LIMIT_EXCEEDED_EXCEPTION = "Usage limit exceeded";
 	public static final String NEEDS_SUBSCRIPTION_EXCEPTION = "You've filled up your quote for the month. Please subscribe to send more tweets.";
 	public static final String TWEET_REMOVED = "Tweet removed successfully";
@@ -38,7 +37,6 @@ public class StringConstants {
 	public static final String COMMENT_LENGTH_EXCEEDED = "Comment length exceeded.";
 	public static final String REPORT_SPAM_SUCCESSFUL = "Thank you for reporting spam";
 	public static final String MESSAGE_NOT_DELIVERED = "Sorry your message couldn't be delivered at this time.";
-	public static final String BACKEND_INSTANCE_NAME_1 = "backend_instance_name_1";
 	public static final String NO_NEW_NOTIFICATION_MESSAGE = "No new notification";
 	public static final String PAYMENT_SUCCESSFULL = "Successfully made payment";
 	public static final String PAYMENT_UNSUCCESSFULL = "Failed to complete payment";
@@ -65,7 +63,7 @@ public class StringConstants {
 	public static final String PLACE_SEPARATOR = ":";
 	public static final String SEND_MESSAGE_TOKEN = "sm";
 	public static final String NEIGHBORHOOD_TOKEN = "neighborhood";
-	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
+//	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
 //	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
 	public static final String TWEET_NOT_POSTED = "User hasn't posted any tweets";

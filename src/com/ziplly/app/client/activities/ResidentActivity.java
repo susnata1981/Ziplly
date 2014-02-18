@@ -7,7 +7,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -33,7 +32,8 @@ import com.ziplly.app.shared.GetEntityResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
-public class ResidentActivity extends AbstractActivity implements EntityListViewPresenter, SendMessagePresenter {
+public class ResidentActivity extends AbstractActivity implements EntityListViewPresenter,
+		SendMessagePresenter {
 	private ResidentsView view;
 	private ResidentPlace place;
 	private EntityListHandler handler = new EntityListHandler();
@@ -61,23 +61,21 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		if (ctx.getAccount() != null) {
-			viewProvider.get(new AsyncCallback<ResidentsView>() {
-				@Override
-				public void onFailure(Throwable caught) {
-				}
+		checkAccountLogin();
+	}
 
-				@Override
-				public void onSuccess(ResidentsView result) {
-					ResidentActivity.this.view = result;
-					bind();
-					setupHandlers();
-					displayInitalRange();
-				}
-			});
-		} else {
-			checkLoginStatus();
-		}
+	@Override
+	public void doStart() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<ResidentsView>() {
+
+			@Override
+			public void onSuccess(ResidentsView result) {
+				ResidentActivity.this.view = result;
+				bind();
+				setupHandlers();
+				displayInitalRange();
+			}
+		});
 	}
 
 	protected void displayInitalRange() {
@@ -90,12 +88,12 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
-		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
-				: ctx.getAccount().getNeighborhood().getNeighborhoodId();
+		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
+				.getAccount().getNeighborhood().getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		action.setGender(Gender.ALL);
 		view.setNeighborhoodId(neighborhoodId);
-		
+
 		view.displayNeighborhoodFilters(getNeighborhoodFilters());
 		dispatcher.execute(action, handler);
 	}
@@ -111,13 +109,14 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	}
 
 	private void updateMessageWidgetWithAccountDetails(Long accountId) {
-		dispatcher.execute(new GetAccountByIdAction(accountId), new DispatcherCallbackAsync<GetAccountByIdResult>() {
+		dispatcher.execute(new GetAccountByIdAction(accountId),
+				new DispatcherCallbackAsync<GetAccountByIdResult>() {
 
-			@Override
-			public void onSuccess(GetAccountByIdResult result) {
-				view.updateMessageWidget(result.getAccount());
-			}
-		});
+					@Override
+					public void onSuccess(GetAccountByIdResult result) {
+						view.updateMessageWidget(result.getAccount());
+					}
+				});
 	}
 
 	@Override
@@ -160,27 +159,24 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		if (conversation == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
 			goTo(new LoginPlace());
 			return;
 		}
-		
+
 		// TODO check size
 		int size = conversation.getMessages().size();
-		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
-		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
-			@Override
-			public void onSuccess(SendMessageResult result) {
-				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
-			}
-		});
-	}
-
-	@Override
-	public void fetchData() {
+		dispatcher.execute(new SendMessageAction(conversation),
+				new DispatcherCallbackAsync<SendMessageResult>() {
+					@Override
+					public void onSuccess(SendMessageResult result) {
+						view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+					}
+				});
 	}
 
 	@Override

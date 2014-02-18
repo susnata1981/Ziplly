@@ -68,14 +68,14 @@ public class PersonalAccountSettingsActivity
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		if (ctx.getAccount() == null) {
-			checkLoginStatus();
-			return;
-		} else {
-			internalStart();
-		}
+		checkAccountLogin();
 	}
 
+	@Override
+	public void doStart() {
+		internalStart();
+	}
+	
 	private void internalStart() {
 		// hack, hate hate hate
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
@@ -93,14 +93,13 @@ public class PersonalAccountSettingsActivity
 			public void onSuccess(PersonalAccountSettingsView result) {
 				PersonalAccountSettingsActivity.this.view = result;
 				bind();
+				setImageUploadFormSubmitCompleteHandler();
+				setUploadFormActionUrl();
+				view.displaySettings((PersonalAccountDTO) ctx.getAccount());
+				fetchInterestList();
+				panel.setWidget(view);
 			}
 		});
-		
-		setImageUploadFormSubmitCompleteHandler();
-		setUploadFormActionUrl();
-		view.displaySettings((PersonalAccountDTO) ctx.getAccount());
-		fetchInterestList();
-		panel.setWidget(view);
 	}
 
 	private void fetchInterestList() {
@@ -151,10 +150,6 @@ public class PersonalAccountSettingsActivity
 		placeController.goTo(new ConversationPlace());
 	}
 	
-	@Override
-	public void fetchData() {
-	}
-
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

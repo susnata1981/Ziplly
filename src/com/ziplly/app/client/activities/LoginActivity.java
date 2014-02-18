@@ -4,7 +4,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -19,8 +18,6 @@ import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
-import com.ziplly.app.shared.GetLoggedInUserAction;
-import com.ziplly.app.shared.GetLoggedInUserResult;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
@@ -29,16 +26,11 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	LoginPlace place;
 	private AcceptsOneWidget panel;
 	private AsyncProvider<LoginAccountView> viewProvider;
-	
+
 	@Inject
-	public LoginActivity(
-		CachingDispatcherAsync dispatcher,
-		EventBus eventBus, 
-		LoginPlace place,
-		PlaceController placeController, 
-		ApplicationContext ctx,
-		AsyncProvider<LoginAccountView> viewProvider)
-	{
+	public LoginActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, LoginPlace place,
+			PlaceController placeController, ApplicationContext ctx,
+			AsyncProvider<LoginAccountView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
@@ -46,38 +38,29 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		if (ctx.getAccount() != null) {
-			forward(ctx.getAccount());
-			return;
-		}
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<LoginAccountView>() {
+		doStart();
+	}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
+	@Override
+	protected void doStart() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<LoginAccountView>() {
+		
 			@Override
 			public void onSuccess(LoginAccountView result) {
 				LoginActivity.this.view = result;
-				checkAccountLogin();
+				bind();
+				go(LoginActivity.this.panel);
 			}
 		});
 	}
 
 	@Override
-	protected void doStart() {
-		bind();
-		go(panel);
-	}
-	
-	@Override
 	public void onStop() {
 		view.clear();
+		clearBackgroundImage();
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 		container.setWidget(view);
@@ -104,31 +87,14 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 					@Override
 					public void onFailure(Throwable caught) {
 						if (caught instanceof NotFoundException) {
-							view.displayMessage(
-									LoginWidget.ACCOUNT_DOES_NOT_EXIST,
-									AlertType.ERROR);
+							view.displayMessage(LoginWidget.ACCOUNT_DOES_NOT_EXIST, AlertType.ERROR);
 						} else if (caught instanceof InvalidCredentialsException) {
-							view.displayMessage(
-									LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
+							view.displayMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
 									AlertType.ERROR);
 						} else {
 							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 						}
 						view.resetLoginForm();
-					}
-		});
-	}
-
-	@Override
-	public void fetchData() {
-		dispatcher.execute(new GetLoggedInUserAction(),
-				new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-					@Override
-					public void onSuccess(GetLoggedInUserResult result) {
-						if (result != null && result.getAccount() != null) {
-							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-							forward(result.getAccount());
-						}
 					}
 				});
 	}

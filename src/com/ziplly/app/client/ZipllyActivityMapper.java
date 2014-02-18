@@ -118,34 +118,84 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	@Override
 	public Activity getActivity(final Place place) {
 		if (place instanceof HomePlace) {
-			return new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, homeView);
+			return new ActivityProxy<HomeActivity>(new AsyncProvider<HomeActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super HomeActivity> callback) {
+					callback.onSuccess(new HomeActivity(dispatcher, eventBus, (HomePlace) place, placeController, ctx, homeView));
+				}
+			});
+
 		} 
 		else if (place instanceof LoginPlace) {
 			return new LoginActivity(dispatcher, eventBus, (LoginPlace)place, placeController, ctx, loginAccountView);
+//			return new ActivityProxy<LoginActivity>(new AsyncProvider<LoginActivity>() {
+//
+//				@Override
+//				public void get(AsyncCallback<? super LoginActivity> callback) {
+//					callback.onSuccess(new LoginActivity(dispatcher, eventBus, (LoginPlace)place, placeController, ctx, loginAccountView));
+//				}
+//			});
 		} 
 		else if (place instanceof SignupPlace) {
 			return new SignupActivity(dispatcher, eventBus, placeController, (SignupPlace)place, ctx, signupView);
 		}
 		else if (place instanceof BusinessSignupPlace) {
-			return new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, (BusinessSignupPlace)place, businessSignupView);
+			return new ActivityProxy<BusinessSignupActivity>(new AsyncProvider<BusinessSignupActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super BusinessSignupActivity> callback) {
+					callback.onSuccess(new BusinessSignupActivity(dispatcher, eventBus, placeController, ctx, (BusinessSignupPlace)place, businessSignupView));
+				}
+			});
 		}
 		else if (place instanceof OAuthPlace) {
-			return new OAuthActivity(dispatcher, eventBus, placeController, ctx, (OAuthPlace)place);
+			return new ActivityProxy<OAuthActivity>(new AsyncProvider<OAuthActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super OAuthActivity> callback) {
+					callback.onSuccess(new OAuthActivity(dispatcher, eventBus, placeController, ctx, (OAuthPlace)place));
+				}
+			});
 		}
 		else if (place instanceof PersonalAccountPlace) {
-			return new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView, (PersonalAccountPlace)place);
+			return new ActivityProxy<PersonalAccountActivity>(new AsyncProvider<PersonalAccountActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super PersonalAccountActivity> callback) {
+					callback.onSuccess(new PersonalAccountActivity(dispatcher, eventBus, placeController, ctx, accountView, (PersonalAccountPlace)place));
+				}
+			});
 		}
 		else if (place instanceof BusinessAccountPlace) {
-			return new BusinessAccountActivity(dispatcher, eventBus, placeController, ctx, businessAccountView, (BusinessAccountPlace)place);
+			
+			return new ActivityProxy<BusinessAccountActivity>(new AsyncProvider<BusinessAccountActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super BusinessAccountActivity> callback) {
+					callback.onSuccess(new BusinessAccountActivity(dispatcher, eventBus, placeController, ctx, businessAccountView, (BusinessAccountPlace)place));
+				}
+			});
 		}
 		else if (place instanceof PersonalAccountSettingsPlace) {
-			return new PersonalAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, personalAccountSettingsView);
+			return new ActivityProxy<PersonalAccountSettingsActivity>(new AsyncProvider<PersonalAccountSettingsActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super PersonalAccountSettingsActivity> callback) {
+					callback.onSuccess(new PersonalAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, personalAccountSettingsView));
+				}
+			});
 		}
 		else if (place instanceof BusinessAccountSettingsPlace) {
-			return new BusinessAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, businessAccountSettingsView);
+			return new ActivityProxy<BusinessAccountSettingsActivity>(new AsyncProvider<BusinessAccountSettingsActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super BusinessAccountSettingsActivity> callback) {
+					callback.onSuccess(new BusinessAccountSettingsActivity(dispatcher, eventBus, placeController, ctx, businessAccountSettingsView));
+				}
+			});
 		}
 		else if (place instanceof ConversationPlace) {
-//			return new ConversationActivity(dispatcher, eventBus, placeController, ctx, (ConversationPlace)place, conversationView);
 			return new ActivityProxy<ConversationActivity>(new AsyncProvider<ConversationActivity>() {
 
 				@Override
@@ -155,7 +205,6 @@ public class ZipllyActivityMapper implements ActivityMapper {
 			});
 		}
 		else if (place instanceof ResidentPlace) {
-//			return new ResidentActivity(dispatcher, eventBus, placeController, ctx, ((ResidentPlace)place), residentsView);
 			return new ActivityProxy<ResidentActivity>(new AsyncProvider<ResidentActivity>() {
 
 				@Override
@@ -165,18 +214,43 @@ public class ZipllyActivityMapper implements ActivityMapper {
 			});
 		}
 		else if (place instanceof BusinessPlace) {
-			return new BusinessActivity(dispatcher, eventBus, placeController, ctx, ((BusinessPlace)place), businessView); 
+			return new ActivityProxy<BusinessActivity>(new AsyncProvider<BusinessActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super BusinessActivity> callback) {
+					callback.onSuccess(new BusinessActivity(dispatcher, eventBus, placeController, ctx, ((BusinessPlace)place), businessView));
+				}
+			});
 		}
 		else if (place instanceof PasswordRecoveryPlace) {
-			return new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView);
+			return new ActivityProxy<PasswordRecoveryActivity>(new AsyncProvider<PasswordRecoveryActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super PasswordRecoveryActivity> callback) {
+					callback.onSuccess(new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView));
+				}
+			});
 		}
 		else if (place instanceof AdminPlace) {
-			return new AdminActivity(dispatcher, eventBus, placeController, ctx, adminView);
+			return new ActivityProxy<AdminActivity>(new AsyncProvider<AdminActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super AdminActivity> callback) {
+					callback.onSuccess(new AdminActivity(dispatcher, eventBus, placeController, ctx, adminView));
+				}
+			});
 		}
 		else if (place instanceof AboutPlace) {
-			return new AboutActivity(dispatcher, eventBus, placeController, ctx, (AboutPlace)place, aboutView);
+			return new ActivityProxy<AboutActivity>(new AsyncProvider<AboutActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super AboutActivity> callback) {
+					callback.onSuccess(new AboutActivity(dispatcher, eventBus, placeController, ctx, (AboutPlace)place, aboutView));
+				}
+			});
 		}
 		
 		throw new IllegalArgumentException();
 	}
+	
 }

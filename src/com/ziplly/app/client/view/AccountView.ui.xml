@@ -38,6 +38,10 @@
 							</span>
 						</div>
 						<div addStyleNames="{style.description}">
+								Badge:
+								<g:HTMLPanel ui:field="badgePanel" addStyleNames="{style.badgePanel}"/>
+						</div>
+						<div addStyleNames="{style.description}">
 							<span>
 								Last login:
 								<span ui:field="lastLoginTime" />

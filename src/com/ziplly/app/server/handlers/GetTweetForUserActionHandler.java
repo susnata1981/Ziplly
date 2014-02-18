@@ -52,7 +52,7 @@ public class GetTweetForUserActionHandler extends
 					action.getPage(), action.getPageSize());
 			GetTweetForUserResult result = new GetTweetForUserResult(tweets);
 			return result;
-		} catch (NoResultException nre) {
+		} catch (NotFoundException nfe) {
 			throw new NotFoundException();
 		}
 	}

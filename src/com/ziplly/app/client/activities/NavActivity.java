@@ -113,6 +113,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+//		checkAccountLogin();
 		bind();
 		if (ctx.getAccount() != null) {
 			view.showAccountLinks(true);
@@ -120,6 +121,11 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		panel.setWidget(view);
 	}
 
+	@Override 
+	public void doStart() {
+		view.showAccountLinks(true);
+	}
+	
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -191,10 +197,6 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		}
 	}
 	
-	@Override
-	public void fetchData() {
-	}
-
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

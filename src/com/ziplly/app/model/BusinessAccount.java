@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -12,8 +14,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-// TODO (uncomment)
-//@DiscriminatorValue("business")
+@DiscriminatorValue("business")
 public class BusinessAccount extends Account {
 	private static final long serialVersionUID = 1L;
 	private String name;
@@ -21,19 +22,22 @@ public class BusinessAccount extends Account {
 	private String website;
 	private String street1;
 	private String street2;
-	private BusinessType businessType;
-	private BusinessCategory category;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@Column(name="business_type")
+	private String businessType;
+	
+	private String category;
+
+	@OneToOne(cascade = CascadeType.ALL)
 	private BusinessProperties properties;
-	
-	@OneToMany(mappedBy="seller")
+
+	@OneToMany(mappedBy = "seller")
 	@Fetch(FetchMode.JOIN)
 	private Set<Transaction> transactions = new HashSet<Transaction>();
-	
+
 	public BusinessAccount() {
 	}
-	
+
 	public BusinessAccount(BusinessAccountDTO account) {
 		super(account);
 		this.name = account.getName();
@@ -41,36 +45,43 @@ public class BusinessAccount extends Account {
 		this.website = account.getWebsite();
 		this.street1 = account.getStreet1();
 		this.street2 = account.getStreet2();
-		this.businessType = account.getBusinessType();
-		this.category = account.getCategory();
+		this.businessType = BusinessType.COMMERCIAL.name();
+		this.category = account.getCategory().name();
 		this.properties = new BusinessProperties(account.getProperties());
-		
-		for(TransactionDTO txn : account.getTransactions()) {
+
+		for (TransactionDTO txn : account.getTransactions()) {
 			this.transactions.add(new Transaction(txn));
 		}
 	}
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getPhone() {
 		return phone;
 	}
+
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
 	public String getStreet1() {
 		return street1;
 	}
+
 	public void setStreet1(String street1) {
 		this.street1 = street1;
 	}
+
 	public String getStreet2() {
 		return street2;
 	}
+
 	public void setStreet2(String street2) {
 		this.street2 = street2;
 	}
@@ -91,14 +102,6 @@ public class BusinessAccount extends Account {
 		this.transactions = transactions;
 	}
 
-	public BusinessType getBusinessType() {
-		return businessType;
-	}
-
-	public void setBusinessType(BusinessType type) {
-		this.businessType = type;
-	}
-
 	public BusinessProperties getProperties() {
 		return properties;
 	}
@@ -107,11 +110,19 @@ public class BusinessAccount extends Account {
 		this.properties = properties;
 	}
 
+	public BusinessType getBusinessType() {
+		return BusinessType.valueOf(businessType);
+	}
+
+	public void setBusinessType(BusinessType type) {
+		this.businessType = type.name();
+	}
+
 	public BusinessCategory getCategory() {
-		return category;
+		return BusinessCategory.valueOf(category);
 	}
 
 	public void setCategory(BusinessCategory category) {
-		this.category = category;
+		this.category = category.name();
 	}
 }

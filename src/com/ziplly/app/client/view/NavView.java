@@ -221,7 +221,7 @@ public class NavView extends Composite implements INavView {
 		anchor.setStyleName(style.notificationLink());
 		notifications.add(anchor);
 		ValueType valueType = ValueType.valueOf(an.getType().name());
-		String imageUrl = accountFormatter.format(an.getSender(), ValueType.TINY_IMAGE_VALUE);
+//		String imageUrl = accountFormatter.format(an.getSender(), ValueType.TINY_IMAGE_VALUE);
 		anchor.getElement().setInnerHTML(formatter.format(an, valueType));
 		ClickHandler handler = new ClickHandler() {
 			@Override

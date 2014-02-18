@@ -1,7 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
-	xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		input[type="text"],input[type="password"] {
@@ -11,7 +10,7 @@
 		position: absolute;
 		top: 40%;
 		right: 10%;
-		width: 370px;
+		width: 300px;
 		}
 		.uploadImageForm {
 		clear: both;
@@ -39,74 +38,103 @@
 		border: 1px solid #ddd;
 		}
 		.signupPanel {
-			border: 1px solid #ddd;
-			background: #f1f1f1;
-			padding: 12px;
-			width: 340px;
-			border-radius: 4px;
+		border: 1px solid #ddd;
+		background: #f1f1f1;
+		padding:
+		12px;
+		width: 340px;
+		border-radius: 4px;
 		}
 		.button {
-			height: 40px;
-			line-height: 30px;
-			font-size: 1.2em;
-			font-weight: bold;
+		height: 40px;
+		line-height: 30px;
+		font-size: 1.2em;
+		font-weight: bold;
 		}
 		.row {
-		clear: left;
+		clear:
+		left;
 		display: block;
 		margin-top: 8px;
 		margin-bottom: 20px;
 		}
 		.fluid-row {
-			diplay: block;
-			margin-top: 40px;
+		diplay: block;
+		margin-top: 40px;
 		}
 		.tinytext {
-			font-size: .75em;
-			font-weight: normal;
+		font-size: 12px;
+		font-weight: normal;
 		}
 		.promotionPanel {
-			margin-top: 200px;
-			padding: 6px;
+		margin-top: 100px;
+		padding: 6px;
 		}
 		.heading {
-			font-family: Verdana, sans-serif;
-			font-size: 2em;
-			color : #fff;
+		font-family: Verdana, sans-serif;
+		font-size: 30px;
+		color: #fff;
+		padding: 20px 4px;
 		}
 		.signup-hero-unit {
-			height: 180px;
-			position: relative;
-			padding: 60px 30px !important;
+		height: 180px;
+		position: relative;
+		padding:
+		60px 30px !important;
+		opacity: .8;
 		}
 		.hero-unit-btn {
-			position: absolute;
-			bottom: 30px;
+		position: absolute;
+		bottom: 30px;
+		}
+		.signup-hero-unit-small {
+		position:
+		relative;
+		opacity: .8;
+		padding: 30px !important;
+		}
+		.popoverHover {
+		display: inline;
+		font-size:
+		12px;
+		}
+		.popoverLink {
+		font-size: 12px !important;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="2" size="8">
-				<b:Alert ui:field="infoField" animation="true" />
+			<b:Column offset="6" size="4">
+				<b:Alert ui:field="infoField" close="false" animation="true" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-		    <b:Column size="5">
-		        <g:HTMLPanel addStyleNames="{style.promotionPanel}">
-		            <span class="{style.heading}">
-		                Free trial till May, 2014!
-					</span>
-		        </g:HTMLPanel>
-		    </b:Column>
+			<b:Column size="5">
+				<g:HTMLPanel addStyleNames="{style.promotionPanel}">
+					<ul>
+						<li class="{style.heading}">
+							Instantly boost sales
+						</li>
+						<li class="{style.heading}">
+						    Sign up with Ziplly
+						</li>
+						<li class="{style.heading}">
+							Free trial till May, 2014
+						</li>
+					</ul>
+				</g:HTMLPanel>
+			</b:Column>
 			<b:Column offset="1" size="5">
 				<g:HTMLPanel addStyleNames="{style.signupPanel}">
-					<div class="heading">Business Signup
-					    <g:Anchor ui:field="learnMoreAnchor" addStyleNames="{style.tinytext}">learn more</g:Anchor>
+					<div class="heading">
+						Business Sign up
+						<g:Anchor ui:field="learnMoreAnchor" addStyleNames="{style.tinytext}">learn
+							more</g:Anchor>
 					</div>
-					<hr/>
-					<a id="signupFormLink"/>
+					<hr />
+					<a id="signupFormLink" />
 					<b:Form>
 						<b:ControlGroup ui:field="businessNameCg"
 							addStyleNames="{style.row}">
@@ -117,6 +145,12 @@
 								<b:HelpInline ui:field="businessNameError"></b:HelpInline>
 							</b:Controls>
 						</b:ControlGroup>
+						<b:Controls>
+						    <b:Label>Business name</b:Label>
+							<br />
+							<b:ListBox ui:field="businessCategory">
+							</b:ListBox>
+						</b:Controls>
 						<b:ControlGroup ui:field="street1Cg" addStyleNames="{style.row}">
 							<b:Controls>
 								<b:Label>Address</b:Label>
@@ -157,11 +191,13 @@
 								<b:HelpInline ui:field="passwordError"></b:HelpInline>
 							</b:Controls>
 						</b:ControlGroup>
- 						<b:Button block="true" type="SUCCESS" ui:field="signupBtn" addStyleNames="{style.button}">Signup Now</b:Button>
- 						<g:HTMLPanel addStyleNames="{style.row}">
+						<b:Button block="true" type="SUCCESS" ui:field="signupBtn"
+							addStyleNames="{style.button}">Sign up Now</b:Button>
+						<g:HTMLPanel addStyleNames="{style.row}">
 							<span class="tiny_text">
 								By joining, you agree to our
-								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor> and
+								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
+								and
 								<g:Anchor ui:field="privacyPolicyAnchor">Privacy Policy</g:Anchor>
 							</span>
 						</g:HTMLPanel>
@@ -171,7 +207,7 @@
 								<g:Anchor ui:field="signInAnchor">Sign in</g:Anchor>
 								here
 							</span>
-						</g:HTMLPanel> 
+						</g:HTMLPanel>
 					</b:Form>
 				</g:HTMLPanel>
 			</b:Column>
@@ -182,12 +218,13 @@
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
 						<b:Paragraph>
-						    Complete your profile and upload a photo.
+							Complete your profile and upload a photo.
 						</b:Paragraph>
 						<b:Paragraph>
-						    Say a bit about your business.
+							Say a bit about your business.
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="createProfileBtn" addStyleNames="{style.hero-unit-btn}">Signup</b:Button>
+						<b:Button type="INFO" ui:field="createProfileBtn"
+							addStyleNames="{style.hero-unit-btn}">Signup</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -196,12 +233,13 @@
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Pick a messaging plan</b:Heading>
 						<b:Paragraph>
-						    Basic, Pro and Premium plans, pricing based on usage. 
+							Basic, Pro and Premium plans, pricing based on usage.
 						</b:Paragraph>
 						<b:Paragraph>
-						    Send 3 messages/month for free. 
+							Send 3 messages/month for free.
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="exploreBtn" addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
+						<b:Button type="INFO" ui:field="exploreBtn"
+							addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
@@ -210,14 +248,68 @@
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Reach local customers</b:Heading>
 						<b:Paragraph>
-						    Post messages to inform local customers about specials. 
+							Post messages to inform local customers about
+							specials.
 						</b:Paragraph>
 						<b:Paragraph>
-						    Get instant results. 
+							Get instant results.
 						</b:Paragraph>
-						<b:Button type="INFO" ui:field="postMessageBtn" addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
+						<b:Button type="INFO" ui:field="postMessageBtn"
+							addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
 					</b:Hero>
-					<a id="howItWorksLink"/>
+					<a id="howItWorksLink" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.fluid-row}">
+			<b:Column offset="2" size="8">
+				<g:HTMLPanel>
+					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
+						<b:Heading size="3">One stop shop for your community</b:Heading>
+						<b:Heading size="4">Signup</b:Heading>
+						<g:HTMLPanel>
+							<ol>
+								<li>Pick your neighborhood based on your zip code</li>
+								<li>Complete your profile</li>
+								<li>
+									Instantly broadcast to your neighborhood or the larger
+									community
+									<g:HTMLPanel addStyleNames="{style.popoverHover}">
+										<b:Popover
+											text="For example, lets say Lower Queen Anne is your neighborhood based on your zip 98109, then
+								    you would be able to broadcast to either Lower Queen Anne(neighborhood) or to your larger community Queen Anne (i.e. lower, upper, east, west)"
+											heading="learn more">
+											<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+										</b:Popover>
+									</g:HTMLPanel>
+								</li>
+								<li>Community wall visible only to the residents of that
+									neighborhood</li>
+							</ol>
+						</g:HTMLPanel>
+						<b:Heading size="4">Reach out to your local customers</b:Heading>
+						<g:HTMLPanel>
+							<ol>
+								<li>Reach out to all local customers with 1 short message</li>
+								<li>Get instant spike in sales by promoting to local customers</li>
+								<li>Inform your customers about your business updates</li>
+							</ol>
+						</g:HTMLPanel>
+						<b:Heading size="4">Get customer feedback</b:Heading>
+						<g:HTMLPanel>
+							<ol>
+								<li>Get invaluable feedback from your local customers</li>
+								<li>Improvise your business strategy based on customer feedback</li>
+							</ol>
+						</g:HTMLPanel>
+						<b:Heading size="4">Learn about other businesses</b:Heading>
+						<g:HTMLPanel>
+							<ol>
+								<li>Learn about other businesses in your neighborhood</li>
+								<li>Promote your business to other businesses</li>
+							</ol>
+						</g:HTMLPanel>
+					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

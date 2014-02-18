@@ -7,7 +7,6 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -61,7 +60,7 @@ public class GetEntityActionHandler extends
 		case BY_NEIGHBORHOOD:
 		default:
 //			neighborhoodIds = ImmutableList.of(action.getNeighborhoodId());
-			neighborhoods = neighborhoodDao.findAllNeighborhoodFor(action.getNeighborhoodId());
+			neighborhoods = neighborhoodDao.findAllDescendentNeighborhoods(action.getNeighborhoodId());
 		}
 
 		List<Long> neighborhoodIds = Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {

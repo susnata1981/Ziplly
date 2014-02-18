@@ -76,6 +76,4 @@ public class PrivacySettings extends AbstractTimestampAwareEntity {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
-//	Map<AccountDetailsType, ShareSetting> accountSectionSettings = new HashMap<AccountDetailsType, ShareSetting>();
 }

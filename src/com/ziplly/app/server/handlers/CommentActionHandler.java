@@ -6,6 +6,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CommentDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Comment;
 import com.ziplly.app.server.AccountBLI;
@@ -36,7 +37,7 @@ public class CommentActionHandler extends AbstractAccountActionHandler<CommentAc
 		comment.setAuthor(session.getAccount());
 		commentDao.save(comment);
 		
-		return new CommentResult();
+		return new CommentResult(EntityUtil.clone(comment));
 	}
 
 	@Override

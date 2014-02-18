@@ -383,18 +383,6 @@ public class AccountDAOImpl implements AccountDAO {
 		}
 	}
 
-	private List<Long> getListOfNeighborhoodIds(List<NeighborhoodDTO> neighborhoods) {
-		List<Long> neighborhoodIds = Lists.transform(neighborhoods,
-				new Function<NeighborhoodDTO, Long>() {
-
-					@Override
-					public Long apply(NeighborhoodDTO n) {
-						return n.getNeighborhoodId();
-					}
-				});
-		return neighborhoodIds;
-	}
-
 	/**
 	 * Finds personal account by gender.
 	 * @throws NotFoundException 
@@ -409,7 +397,7 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query;
 		
-		List<NeighborhoodDTO> neighborhoods = neighborhoodDao.findAllNeighborhoodFor(neighborhoodId);
+		List<NeighborhoodDTO> neighborhoods = neighborhoodDao.findAllDescendentNeighborhoods(neighborhoodId);
 		List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
 		
 		if (gender == Gender.ALL) {

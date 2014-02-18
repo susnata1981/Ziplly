@@ -11,6 +11,8 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.view.ISettingsView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
@@ -36,13 +38,26 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO,
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		
+		eventBus.fireEvent(new LoadingEventStart());
 		dispatcher.execute(new UpdateAccountAction(account), new DispatcherCallbackAsync<UpdateAccountResult>() {
 			@Override
 			public void onSuccess(UpdateAccountResult result) {
 				// fire event;
 				view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+
+				// Update account and fire event.
+				ctx.setAccount(result.getAccount());
 				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+				
+				view.enableSaveButton();
+				eventBus.fireEvent(new LoadingEventEnd());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
+				view.enableSaveButton();
+				eventBus.fireEvent(new LoadingEventEnd());
 			}
 		});
 	}
@@ -51,7 +66,7 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO,
 		dispatcher.execute(action, callback);
 	}
 	
-	// TODO centralize url transformation code
+	// TODO: centralize url transformation code
 	public void setUploadFormActionUrl() {
 		dispatcher.execute(new GetImageUploadUrlAction(),
 				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {

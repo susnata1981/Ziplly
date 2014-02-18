@@ -4,13 +4,12 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessSignupPlace;
-import com.ziplly.app.client.view.BusinessAccountView;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.AccountDTO;
@@ -37,11 +36,17 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<BusinessSignupView>() {
+		checkAccountLogin();
+	}
 
-			@Override
-			public void onFailure(Throwable caught) {
-			}
+	@Override
+	public void doStart() {
+		placeController.goTo(new HomePlace());
+	}
+	
+	@Override
+	protected void doStartOnUserNotLoggedIn() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessSignupView>() {
 
 			@Override
 			public void onSuccess(BusinessSignupView result) {
@@ -52,7 +57,7 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 			}
 		});
 	}
-
+	
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -82,9 +87,5 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	public void onStop() {
 		view.clear();
 		clearBackgroundImage();
-	}
-
-	@Override
-	public void fetchData() {
 	}
 }

@@ -44,8 +44,8 @@
 		color: #555444;
 		}
 		.contentArea {
-		height: 100px;
-		width: 75%;
+		height: 130px;
+		width: 460px;
 		}
 		.headingWithBorder {
 		border-bottom: 1px solid #ddd;
@@ -58,6 +58,10 @@
 		padding: 8px;
 		font-size:
 		16px;
+		}
+		input[type="text"] {
+			height: 38px;
+			font-size: 16px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -168,7 +172,7 @@
 						making annoucements and
 						above all
 						pay
-						attention of their primary
+						attention to their primary
 						customers.
 					</p>
 					<p class="{style.text}">
@@ -180,15 +184,9 @@
 					</p>
 					<g:HTMLPanel>
 						<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Contact us</b:Heading>
-						<Address>
-							Ziplly Services Inc.
-							<br />
-							3006 21st Ave W,
-							Seattle, WA 98199
-						</Address>
-						<span>Telephone: &nbsp;
-							918-850-7778
-						</span>
+						Ziplly Inc.
+						<br />
+						<span>Telephone: &nbsp; 918-850-7778</span>
 					</g:HTMLPanel>
 					<g:HTMLPanel addStyleNames="{style.contactForm}">
 						<b:Alert ui:field="message" close="false" />
@@ -209,7 +207,7 @@
 								<b:ControlGroup ui:field="contentCg">
 									<b:Label>Content</b:Label>
 									<br />
-									<b:TextArea ui:field="content" placeholder="content..."
+									<b:TextArea ui:field="content" placeholder="Message..."
 										addStyleNames="{style.contentArea}" />
 									<b:HelpInline ui:field="contentError"></b:HelpInline>
 								</b:ControlGroup>
@@ -612,8 +610,7 @@
 					</p>
 					 
 					<p>
-						Telephone number:
-						9188507778
+						Telephone number: 918-850-7778
 					</p>
 					 
 					<p>
@@ -771,8 +768,7 @@
 					admin@ziplly.com
 					</p>
 					<p>
-					Telephone number:
-					98199
+					Telephone number: 918-850-7778
 					</p>
 					<p>
 					Effective as of February 10, 2014

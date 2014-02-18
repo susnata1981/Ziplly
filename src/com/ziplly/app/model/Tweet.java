@@ -37,7 +37,6 @@ import org.hibernate.annotations.FetchMode;
 		@NamedQuery(name = "findTweetsByTypeAndZip", query = "from Tweet t where t.sender.zip = :zip and status = :status and t.type = :type order by timeCreated desc"),
 		@NamedQuery(
 			name = "findTweetsByTypeAndNeighborhood", 
-//			query = "from Tweet t, Neighborhood n where t.neighborhood.neighborhoodId = n.neighborhoodId and n.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by timeCreated desc"),
 			query = "select t from Tweet t join t.targetNeighborhoods tn where tn.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by t.timeCreated desc"),
 })
 @Entity
@@ -62,7 +61,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@Column(length = 512)
 	private String content;
 
-	private TweetType type;
+	private String type;
 	
 	@OneToMany(mappedBy = "tweet")
 	@Fetch(FetchMode.JOIN)
@@ -79,7 +78,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	private Set<Hashtag> hashtags = new HashSet<Hashtag>();
 
 	@Column(name="status")
-	private TweetStatus status;
+	private String status;
 
 	// Currently supporting only 1 image.
 	@Column(name="image_url")
@@ -98,9 +97,9 @@ public class Tweet extends AbstractTimestampAwareEntity {
 			tweetId = tweet.getTweetId();
 		}
 		imageId = tweet.getImageId();
-		type = tweet.getType();
+		type = tweet.getType().name();
 		content = tweet.getContent();
-		status = tweet.getStatus();
+		status = tweet.getStatus().name();
 		setTimeUpdated(tweet.getTimeUpdated());
 		setTimeCreated(tweet.getTimeCreated());
 		setImage(tweet.getImage());
@@ -111,11 +110,11 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	}
 
 	public TweetType getType() {
-		return type;
+		return TweetType.valueOf(type);
 	}
 
 	public void setType(TweetType type) {
-		this.type = type;
+		this.type = type.name();
 	}
 
 	public String getContent() {
@@ -127,11 +126,11 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	}
 
 	public TweetStatus getStatus() {
-		return status;
+		return TweetStatus.valueOf(status);
 	}
 
 	public void setStatus(TweetStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	public Date getTime_created() {
@@ -209,5 +208,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 	public void setTargetNeighborhoods(Set<Neighborhood> targetNeighborhoods) {
 		this.targetNeighborhoods = targetNeighborhoods;
+	}
+	
+	@Override
+	public String toString() {
+		return "Content:  "+content+" Type: "+type +" Sender: "+sender.getEmail();
 	}
 }

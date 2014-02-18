@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.model.AccountDTO;
@@ -16,6 +17,7 @@ import com.ziplly.app.model.PersonalAccountDTO;
 public class SignupActivity extends AbstractSignupActivity {
 	private SignupPlace place;
 	private AsyncProvider<SignupView> viewProvider;
+	private AcceptsOneWidget panel;
 
 	@Inject
 	public SignupActivity(
@@ -32,6 +34,17 @@ public class SignupActivity extends AbstractSignupActivity {
 
 	@Override
 	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
+		checkAccountLogin();
+	}
+
+	@Override
+	public void doStart() {
+		placeController.goTo(new HomePlace());
+	}
+
+	@Override
+	protected void doStartOnUserNotLoggedIn() {
 		viewProvider.get(new AsyncCallback<SignupView>() {
 
 			@Override
@@ -50,7 +63,7 @@ public class SignupActivity extends AbstractSignupActivity {
 						view.displayAccount((PersonalAccountDTO)a);
 					}
 				}
-				panel.setWidget(view);
+				SignupActivity.this.panel.setWidget(view);
 			}
 		});
 	}
@@ -70,9 +83,4 @@ public class SignupActivity extends AbstractSignupActivity {
 		view.clear();
 		clearBackgroundImage();
 	}
-	
-	@Override
-	public void fetchData() {
-	}
-
 }

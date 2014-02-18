@@ -90,7 +90,7 @@ public class Account extends AbstractTimestampAwareEntity {
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name="neighborhood_id")
+	@JoinColumn(name="neighborhood_id", nullable = false)
 	private Neighborhood neighborhood;
 	
 	@Column(name="role", insertable=true, updatable=false)

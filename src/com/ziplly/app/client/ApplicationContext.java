@@ -14,6 +14,7 @@ public class ApplicationContext {
 	}
 
 	private Environment environment = Environment.DEVEL;
+	private boolean environmentSet = false;
 	private AccountDTO account;
 	private int unreadMessageCount;
 	private int totalTweets;
@@ -74,8 +75,16 @@ public class ApplicationContext {
 		return environment;
 	}
 
+	public boolean isEnvironmentSet() {
+		return environmentSet;
+	}
+	
 	public void setEnvironment(Environment environment) {
+		if (environmentSet) {
+			return;
+		}
 		this.environment = environment;
+		environmentSet = true;
 	}
 
 	/**

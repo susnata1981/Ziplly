@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.AdminView;
 import com.ziplly.app.client.view.AdminView.AdminPresenter;
 import com.ziplly.app.client.view.StringConstants;
@@ -51,12 +50,12 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		AccountDTO account = ctx.getAccount();
-		if (account == null) {
-			placeController.goTo(new LoginPlace());
-			return;
-		}
-		if (account.getRole() != Role.ADMINISTRATOR) {
+		checkAccountLogin();
+	}
+	
+	@Override
+	public void doStart() {
+		if (ctx.getAccount().getRole() != Role.ADMINISTRATOR) {
 			// do something;
 			// messaging
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
@@ -140,10 +139,6 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	}
 
 	
-	@Override
-	public void fetchData() {
-	}
-
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

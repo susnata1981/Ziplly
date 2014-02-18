@@ -15,7 +15,8 @@ public class AccountNotificationFormatter extends AbstractValueFormatter<Account
 			return content.toString();
 		case SECURITY_ALERT:
 			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
-			content.append(basicValueFormatter.format("&nbsp;posted a security alert", ValueType.STRING_VALUE));
+			content.append("&nbsp;"+value.getSender().getDisplayName() + 
+					basicValueFormatter.format("&nbsp;posted a security alert", ValueType.STRING_VALUE));
 			return content.toString();
 		case ANNOUNCEMENT:
 			content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));

@@ -12,11 +12,11 @@ public class TweetDTO implements Serializable {
 	private Long tweetId;
 	private AccountDTO sender;
 	private long imageId;
-	private TweetType type;
+	private String type;
 	private String content;
 	private List<CommentDTO> comments = new ArrayList<CommentDTO>();
 	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
-	private TweetStatus status;
+	private String status;
 	private String image;
 	private Set<NeighborhoodDTO> targetNeighborhoods = new HashSet<NeighborhoodDTO>();
 	private Date timeUpdated;
@@ -26,10 +26,10 @@ public class TweetDTO implements Serializable {
 	}
 	
 	public TweetType getType() {
-		return type;
+		return TweetType.valueOf(type);
 	}
 	public void setType(TweetType type) {
-		this.type = type;
+		this.type = type.name();
 	}
 	public String getContent() {
 		return content;
@@ -38,10 +38,10 @@ public class TweetDTO implements Serializable {
 		this.content = content;
 	}
 	public TweetStatus getStatus() {
-		return status;
+		return TweetStatus.valueOf(status);
 	}
 	public void setStatus(TweetStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 	public List<CommentDTO> getComments() {
 		return comments;
@@ -106,5 +106,10 @@ public class TweetDTO implements Serializable {
 
 	public void setTargetNeighborhoods(Set<NeighborhoodDTO> targetNeighborhoods) {
 		this.targetNeighborhoods = targetNeighborhoods;
+	}
+	
+	@Override
+	public String toString() {
+		return "tweetId: "+tweetId+" Content:  "+content+" Type: "+type +" Sender: "+sender.getEmail();
 	}
 }

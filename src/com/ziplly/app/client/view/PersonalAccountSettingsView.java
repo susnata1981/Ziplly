@@ -26,6 +26,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -102,6 +103,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	FileUpload uploadField;
 	@UiField
 	Image profileImagePreview;
+	private boolean imageUploaded;
 
 	//
 	// Account Notification settings
@@ -145,6 +147,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	//
 	@UiField
 	Tab locationTab;
+	@UiField
+	SpanElement neighborhoodSpan;
 	@UiField
 	TextBox zip;
 
@@ -270,6 +274,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		occupation.setText(account.getOccupation());
 
 		// location
+		neighborhoodSpan.setInnerHTML(account.getNeighborhood().getName());
 		zip.setReadOnly(true);
 		zip.setText(Integer.toString(account.getZip()));
 
@@ -407,9 +412,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			return;
 		}
 
-		String imageUrl = profileImagePreview.getUrl();
-		if (imageUrl != null) {
-			account.setImageUrl(imageUrl);
+		if (imageUploaded) {
+			account.setImageUrl(profileImagePreview.getUrl());
 		}
 
 		// TODO validation
@@ -472,6 +476,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@Override
 	public void onUpload() {
 		uploadForm.submit();
+		imageUploaded = true;
 	}
 
 	@UiHandler("updatePasswordBtn")
@@ -554,6 +559,11 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		presenter.cancel();
 	}
 
+	@Override
+	public void enableSaveButton() {
+		saveBtn.setEnabled(true);
+	}
+	
 	@UiHandler("cancelBtn")
 	void cancel(ClickEvent event) {
 		onCancel();

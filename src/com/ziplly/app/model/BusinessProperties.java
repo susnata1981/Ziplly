@@ -66,8 +66,8 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 	@Column(name = "accepts_credit_card", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
 	private boolean acceptsCreditCard;
 
-	@Column(name = "parking_facility")
-	private String partkingFacility;
+	@Column(name = "parking_available")
+	private boolean parkingAvailable;
 
 	@Column(name = "wifi_available", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
 	private boolean wifiAvailable;
@@ -106,7 +106,7 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 			this.setSaturdayEndTime(businessAccountProperties.getSaturdayEndTime());
 			this.setHolidays(businessAccountProperties.getHolidays());
 			this.setAcceptsCreditCard(businessAccountProperties.getAcceptsCreditCard());
-			this.setPartkingFacility(businessAccountProperties.getPartkingFacility());
+			this.setParkingAvailable(businessAccountProperties.isParkingAvailable());
 			this.setWifiAvailable(businessAccountProperties.getWifiAvailable());
 			this.setGoodForKids(businessAccountProperties.getGoodForKids());
 			this.setPriceRange(businessAccountProperties.getPriceRange());
@@ -259,12 +259,13 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 	}
 
 	// parkingFacility
-	public String getPartkingFacility() {
-		return partkingFacility;
+
+	public boolean isParkingAvailable() {
+		return parkingAvailable;
 	}
 
-	public void setPartkingFacility(String partkingFacility) {
-		this.partkingFacility = partkingFacility;
+	public void setParkingAvailable(boolean partkingFacility) {
+		this.parkingAvailable = partkingFacility;
 	}
 
 	// wifiAvailable

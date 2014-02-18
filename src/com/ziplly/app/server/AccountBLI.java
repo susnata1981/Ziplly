@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
@@ -14,7 +15,6 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.shared.EmailTemplate;
@@ -37,6 +37,6 @@ public interface AccountBLI {
 	void sendPasswordRecoveryEmail(String email) throws NotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, DuplicateException;
 	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError,NotFoundException;
 	void resetPassword(Long accountId, String password) throws NotFoundException;
-	void sendEmail(Account sender, Account receiver, EmailTemplate template);
-	void sendEmailsByNeighborhood(Account sender, Long tweetId, NotificationType type, EmailTemplate template);
+//	void sendEmail(Account sender, Account receiver, EmailTemplate template);
+	Environment getEnvironment();
 }

@@ -18,7 +18,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -57,6 +56,7 @@ import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class BusinessAccountView extends AbstractView implements IBusinessAccountView {
@@ -225,7 +225,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 //		description.setText(account.get);
 		
 		if (account.getCategory() != null) {
-			businessCategory.setInnerText(account.getCategory().name().toLowerCase());
+			businessCategory.setInnerText(account.getCategory().getName());
 		}
 		
 		email.setInnerText(account.getEmail());
@@ -245,7 +245,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		}
 		
 		parkingAvailableSpan.clear();
-		if (props.getPartkingFacility() != null) {
+		if (props.isParkingAvailable()) {
 			parkingAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_UP));
 		} else {
 			parkingAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_DOWN));
@@ -258,10 +258,9 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 			wifiAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_DOWN));
 		}
 		
-		// last login time
+		// last login time shouldn't be null
 		if (account.getLastLoginTime() != null) {
-			DateTimeFormat fmt = DateTimeFormat.getFormat("MMMM dd, yyyy");
-			lastLoginTime.setInnerText(fmt.format(account.getLastLoginTime()));
+			lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
 		}
 
 		displayHoursOfOperation();
@@ -395,6 +394,15 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		}
 	}
 
+	@Override
+	public void updatePublicAccountDetails(GetAccountDetailsResult result) {
+		if (result != null) {
+			tweetCountWidget.setValue(new Integer(result.getTotalTweets()).toString());
+			commentCountWidget.setValue(new Integer(result.getTotalComments()).toString());
+			likeCountWidget.setValue(new Integer(result.getTotalLikes()).toString());
+		}
+	}
+	
 	@Override
 	public void updateComment(CommentDTO comment) {
 		tview.addComment(comment);

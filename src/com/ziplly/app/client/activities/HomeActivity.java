@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
@@ -17,7 +15,6 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -38,7 +35,6 @@ import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
-import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
@@ -69,8 +65,6 @@ import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
-import com.ziplly.app.shared.GetLoggedInUserAction;
-import com.ziplly.app.shared.GetLoggedInUserResult;
 import com.ziplly.app.shared.GetNeighborhoodDetailsAction;
 import com.ziplly.app.shared.GetNeighborhoodDetailsResult;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
@@ -94,14 +88,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private HomeViewState state;
 	private TweetViewBinder binder;
 	private HomePlace place;
-	private AccountDTO account;
 	private AcceptsOneWidget panel;
 
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
 	private CommunityDataHandler communityDataHandler = new CommunityDataHandler();
-	private GetLoggedInUserActionHandler getLoggedInUserActionHandler = new GetLoggedInUserActionHandler();
 	private GetNeighborhoodDetailsHandler neighborhoodDetailsHandler = new GetNeighborhoodDetailsHandler();
-	
+
 	public static interface IHomeView extends View<HomePresenter> {
 		void display(List<TweetDTO> tweets);
 
@@ -153,36 +145,45 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	@Inject
-	public HomeActivity(CachingDispatcherAsync dispatcher, 
-			EventBus eventBus, 
-			HomePlace place,
-			PlaceController placeController,
-			ApplicationContext ctx,
-			AsyncProvider<HomeView> homeView) {
+	public HomeActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, HomePlace place,
+			PlaceController placeController, ApplicationContext ctx,
+			AsyncProvider<HomeView> homeViewProvider) {
 
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.homeViewProvider = homeView;
+		this.homeViewProvider = homeViewProvider;
 		state = new HomeViewState();
-//		setupHandlers();
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		if (ctx.getAccount() != null) {
-			state.setCurrentNeighborhood(ctx.getAccount().getNeighborhood());
-			displayCommunityWall();
-		} else {
-			fetchData();
-		}
+		checkAccountLogin();
 	}
 
+	@Override
+	protected void doStart() {
+		state.setCurrentNeighborhood(ctx.getAccount().getNeighborhood());
+		displayCommunityWall();
+		
+		// account specific.
+		getLatLng(ctx.getAccount());
+		getAccountNotifications();
+		setImageUploadUrl();
+		setUploadImageHandler();
+		getAccountDetails();
+	}
+	
+	@Override
+	protected void doStartOnUserNotLoggedIn() {
+		placeController.goTo(new SignupPlace());
+	}
+	
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
-			
+
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
 				ctx.updateAccountDetails(event.getAccountDetails());
@@ -192,20 +193,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	/**
-	 * Loads the following data into home view
-	 * 1. Tweets
-	 * 2. Community Summary
-	 * 3. Location
-	 * 4. Top hashtags
-	 * 5. Counts on Tweet types
+	 * Loads the following data into home view 1. Tweets 2. Community Summary 3.
+	 * Location 4. Top hashtags 5. Counts on Tweet types
 	 */
 	private void displayCommunityWall() {
 		homeViewProvider.get(new AsyncCallback<HomeView>() {
-
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO: remove this.
-				Window.alert("LOADING ISSUE");
+				Window.alert("Failed to load information.");
 			}
 
 			@Override
@@ -213,22 +208,16 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				HomeActivity.this.homeView = result;
 				bind();
 				setupHandlers();
+				
+				getCommunityWallData(state.getSearchCriteria(place));
+				getHashtagList();
+				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
+				getNeighborhoodDetails();
+				homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
+				displayHomeView();
 			}
 		});
-		
-		getCommunityWallData(state.getSearchCriteria(place));
-		getHashtagList();
-		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
-		getNeighborhoodDetails();
-		
-		// account specific.
-		getLatLng(ctx.getAccount());
-		getAccountNotifications();
-		setImageUploadUrl();
-		setUploadImageHandler();
-		getAccountDetails();
-		homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
-		displayHomeView();
+
 	}
 
 	@Override
@@ -239,27 +228,28 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
 		getNeighborhoodDetails();
 	}
-	
+
 	private void getNeighborhoodDetails() {
-		GetNeighborhoodDetailsAction action = new GetNeighborhoodDetailsAction(
-				state.getCurrentNeighborhood().getNeighborhoodId());
+		GetNeighborhoodDetailsAction action = new GetNeighborhoodDetailsAction(state
+				.getCurrentNeighborhood().getNeighborhoodId());
 		dispatcher.execute(action, neighborhoodDetailsHandler);
 		homeView.displaySummaryData(state.getCurrentNeighborhood());
 	}
 
 	private void getCountsForTweetTypes(Long neighborhoodId) {
-		dispatcher.execute(new GetTweetCategoryDetailsAction(neighborhoodId), 
+		dispatcher.execute(new GetTweetCategoryDetailsAction(neighborhoodId),
 				new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>() {
-			@Override
-			public void onSuccess(GetTweetCategoryDetailsResult result) {
-				// do something.
-				homeView.updateTweetCategoryCount(result.getTweetCounts());
-			}
-		});
+					@Override
+					public void onSuccess(GetTweetCategoryDetailsResult result) {
+						// do something.
+						homeView.updateTweetCategoryCount(result.getTweetCounts());
+					}
+				});
 	}
 
 	private void getHashtagList() {
-		GetHashtagAction action = new GetHashtagAction(state.getCurrentNeighborhood().getNeighborhoodId());
+		GetHashtagAction action = new GetHashtagAction(state.getCurrentNeighborhood()
+				.getNeighborhoodId());
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>() {
 			@Override
 			public void onSuccess(GetHashtagResult result) {
@@ -269,15 +259,16 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	private void getAccountDetails() {
-		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		dispatcher.execute(new GetAccountDetailsAction(),
+				new DispatcherCallbackAsync<GetAccountDetailsResult>() {
 
-			@Override
-			public void onSuccess(GetAccountDetailsResult result) {
-				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
-			}
-		});
+					@Override
+					public void onSuccess(GetAccountDetailsResult result) {
+						eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+					}
+				});
 	}
-	
+
 	@Override
 	public void onStop() {
 		clearBackgroundImage();
@@ -290,12 +281,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void go(AcceptsOneWidget container) {
-		if (this.account != null) {
-			displayHomeView();
-		} else {
-			fetchData();
-		}
-		hideLoadingIcon();
+//		if (this.account != null) {
+//			displayHomeView();
+//		} else {
+//			fetchData();
+//		}
+//		hideLoadingIcon();
 	}
 
 	@Override
@@ -308,10 +299,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		panel.setWidget(homeView);
 	}
 
-	@Override
-	public void fetchData() {
-		dispatcher.execute(new GetLoggedInUserAction(), getLoggedInUserActionHandler);
-	}
+//	@Override
+//	public void fetchData() {
+//		dispatcher.execute(new GetLoggedInUserAction(), getLoggedInUserActionHandler);
+//	}
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
@@ -331,7 +322,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void postComment(final CommentDTO comment) {
-		dispatcher.execute(new CommentAction(comment), new PostCommentHandler(comment));
+		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
 	}
 
 	@Override
@@ -356,7 +347,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
 
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
+		dispatcher
+				.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
 	}
 
 	@Override
@@ -381,13 +373,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 		if (ctx.getAccount() != null && state.hasMorePages()) {
 			GetCommunityWallDataAction nextSearchAction = state.getNextSearchAction();
-			dispatcher.execute(nextSearchAction, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
-				@Override
-				public void onSuccess(GetCommunityWallDataResult result) {
-					state.setCurrentTweetList(result.getTweets());
-					homeView.addTweets(result.getTweets());
-				}
-			});
+			dispatcher.execute(nextSearchAction,
+					new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+						@Override
+						public void onSuccess(GetCommunityWallDataResult result) {
+							state.setCurrentTweetList(result.getTweets());
+							homeView.addTweets(result.getTweets());
+						}
+					});
 		}
 	}
 
@@ -395,11 +388,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void displayHashtag(String hashtag) {
 		if (hashtag != null) {
 			eventBus.fireEvent(new LoadingEventStart());
-			GetCommunityWallDataAction searchCriteriaForHashtag = state.getSearchCriteriaForHashtag(hashtag);
+			GetCommunityWallDataAction searchCriteriaForHashtag = state
+					.getSearchCriteriaForHashtag(hashtag);
 			dispatcher.execute(searchCriteriaForHashtag, communityDataHandler);
 		}
 	}
-	
+
 	@Override
 	public void displayMessage(String message, AlertType type) {
 		homeView.displayMessage(message, type);
@@ -413,7 +407,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
 	}
 
-	
 	public void setImageUploadUrl() {
 		dispatcher.execute(new GetImageUploadUrlAction(),
 				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
@@ -436,40 +429,42 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			}
 		});
 	}
-	
+
 	/**
 	 * Deletes the image from blobstore based on serving url
 	 */
 	@Override
 	public void deleteImage(String url) {
-		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
-			@Override
-			public void onSuccess(DeleteImageResult result) {
-				// Nothing to do.
-			}
-		});
+		dispatcher.execute(new DeleteImageAction(url),
+				new DispatcherCallbackAsync<DeleteImageResult>() {
+					@Override
+					public void onSuccess(DeleteImageResult result) {
+						// Nothing to do.
+					}
+				});
 	}
-	
+
 	@Override
 	public void updateComment(CommentDTO comment) {
-		dispatcher.execute(new UpdateCommentAction(comment), new DispatcherCallbackAsync<UpdateCommentResult>() {
-			@Override
-			public void onSuccess(UpdateCommentResult result) {
-				homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-				homeView.updateComment(result.getComment());
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				} else {
-					homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
-		});
+		dispatcher.execute(new UpdateCommentAction(comment),
+				new DispatcherCallbackAsync<UpdateCommentResult>() {
+					@Override
+					public void onSuccess(UpdateCommentResult result) {
+						homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+						homeView.updateComment(result.getComment());
+					}
+
+					@Override
+					public void onFailure(Throwable th) {
+						if (th instanceof AccessError) {
+							homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+						} else {
+							homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+						}
+					}
+				});
 	}
-	
+
 	private void getLatLng(AccountDTO account) {
 		GetLatLngAction action = new GetLatLngAction();
 		action.setAccount(account);
@@ -481,7 +476,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			}
 		});
 	}
-	
+
 	private void getAccountNotifications() {
 		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
 	}
@@ -578,15 +573,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
-		private CommentDTO comment;
-
-		public PostCommentHandler(CommentDTO comment) {
-			this.comment = comment;
-		}
 
 		@Override
 		public void onSuccess(CommentResult result) {
-			homeView.addComment(comment);
+			homeView.addComment(result.getComment());
 			homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 		}
 
@@ -614,7 +604,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			}
 		}
 	}
-	
+
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
 		@Override
 		public void onSuccess(ReportSpamResult result) {
@@ -627,55 +617,59 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		if (conversation == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
-//			homeView.closeMessageWidget();
+			// homeView.closeMessageWidget();
 			goTo(new LoginPlace());
 			return;
 		}
-		
+
 		// TODO check size
 		int size = conversation.getMessages().size();
-		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
-		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
-			@Override
-			public void onSuccess(SendMessageResult result) {
-				homeView.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				homeView.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
-			}
-		});
+		dispatcher.execute(new SendMessageAction(conversation),
+				new DispatcherCallbackAsync<SendMessageResult>() {
+					@Override
+					public void onSuccess(SendMessageResult result) {
+						homeView.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+					}
+
+					@Override
+					public void onFailure(Throwable th) {
+						homeView.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED,
+								AlertType.ERROR);
+					}
+				});
 	};
-	
-	private class GetLoggedInUserActionHandler extends DispatcherCallbackAsync<GetLoggedInUserResult> {
-		@Override
-		public void onSuccess(GetLoggedInUserResult result) {
-			if (result != null && result.getAccount() != null) {
-				ctx.setAccount(result.getAccount());
-				state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
-				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-				displayCommunityWall();
-			} else {
-				goTo(new SignupPlace());
-			}
-		}
-	}
-	
-	private class GetNeighborhoodDetailsHandler extends DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
+
+//	private class GetLoggedInUserActionHandler extends
+//			DispatcherCallbackAsync<GetLoggedInUserResult> {
+//		@Override
+//		public void onSuccess(GetLoggedInUserResult result) {
+//			if (result != null && result.getAccount() != null) {
+//				ctx.setAccount(result.getAccount());
+//				state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
+//				eventBus.fireEvent(new LoginEvent(result.getAccount()));
+//				displayCommunityWall();
+//			} else {
+//				goTo(new SignupPlace());
+//			}
+//		}
+//	}
+
+	private class GetNeighborhoodDetailsHandler extends
+			DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
-			System.out.println("Total business count: "+result.getTotalBusinesses());
+			System.out.println("Total business count: " + result.getTotalBusinesses());
 			homeView.displayCommunitySummaryDetails(result);
 		}
-		
+
 		@Override
 		public void onFailure(Throwable th) {
-			System.out.println("Resutl: "+th.getMessage());
+			System.out.println("Resutl: " + th.getMessage());
 		}
 	}
 
@@ -683,14 +677,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	public void sendFeedback(String content) {
 		EmailAdminAction action = new EmailAdminAction();
 		action.setContent(content);
-		action.setSubject(StringConstants.FEEDBACK+" from "+ctx.getAccount().getEmail());
+		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
 		action.setFrom(ctx.getAccount().getEmail());
 		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
 			@Override
 			public void onSuccess(EmailAdminResult result) {
-				homeView.displayMessage(StringConstants.FEEDBACK_SENT_SUCCESS, AlertType.SUCCESS);	
+				homeView.displayMessage(StringConstants.FEEDBACK_SENT_SUCCESS, AlertType.SUCCESS);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable th) {
 				homeView.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
@@ -711,8 +705,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
 		placeController.goTo(place);
 	}
-	
-	
+
 	void getCommunityWallData(TweetType type) {
 		eventBus.fireEvent(new LoadingEventStart());
 		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
@@ -728,14 +721,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		dispatcher.execute(action, communityDataHandler);
 		startViewBinder();
 	}
-	
+
 	private void startViewBinder() {
 		if (binder != null) {
 			binder.stop();
 		}
-		
-		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);//getDefaultTweetBinder();
+
+		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);// getDefaultTweetBinder();
 		binder.start();
 	}
 }
-

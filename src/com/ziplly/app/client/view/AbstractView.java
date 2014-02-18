@@ -37,6 +37,6 @@ public abstract class AbstractView extends Composite {
 	public void setBackgroundImage(String imageUrl) {
 		RootPanel.getBodyElement().getStyle().setProperty("background", 
 				"url("+imageUrl+") no-repeat center center fixed");
-		RootPanel.getBodyElement().getStyle().setProperty("backGroundSize", "cover");
+		RootPanel.getBodyElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 }

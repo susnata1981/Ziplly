@@ -6,17 +6,26 @@
 	<ui:style
 		type="com.ziplly.app.client.view.BusinessAccountSettingsView.Style">
 		.settingsPanel {
-		padding-bottom: 60px;
+			padding-bottom: 60px;
+		}
+		.businessSettingsRow {
+			overflow: hidden;
 		}
 		.businessDetailsPanel {
 		position: relative;
-		left: -40px;
+		margin-left: -40px;
+		overflow: hidden;
+		}
+		.businessProfileImageRootPanel {
+		position: relative;
+		top: 60px;
 		}
 		.businessProfileImagePanel
 		{
 		width: 180px;
 		height: 220px;
-		overflow: hidden;
+		overflow:
+		hidden;
 		}
 		.businessProfileImage {
 		height: 100%;
@@ -60,7 +69,7 @@
 		.timeOpenTextBox {
 		float: left;
 		width: 100px;
-		height: 20px;
+		height: 36px;
 		margin-right: 20px;
 		}
 		.buttonPanel {
@@ -70,11 +79,24 @@
 		margin: 6px 0;
 		padding: 6px 0;
 		}
+
+		.inputTextField {
+		height: 36px !important;
+		font-size: 18px !important;
+		} 
+		.wideTextBox {
+		width: 240px;
+		}
+		select {
+		width: 240px;
+		font-size:
+		18px !important;
+		}
 	</ui:style>
 	<b:FluidContainer addStyleNames="{style.settingsPanel}">
 		<b:FluidRow>
-			<b:Column size="9">
-				<b:Alert ui:field="message" animation="true" />
+			<b:Column offset="1" size="9">
+				<b:Alert ui:field="message" animation="true" close="false"/>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
@@ -84,12 +106,15 @@
 						<b:Row>
 							<b:Column offset="1" size="6">
 								<g:HTMLPanel addStyleNames="{style.businessDetailsPanel}">
-									<div class="heading">Account Details</div>
+									<div class="profile_section_heading">
+										<span>Basic Info</span>
+									</div>
 									<b:ControlGroup ui:field="businessNameCg">
 										<b:Controls>
 											<b:Label>Business name</b:Label>
 											<br />
-											<b:TextBox ui:field="businessName" placeholder="BusinessName..." />
+											<b:TextBox ui:field="businessName" placeholder="BusinessName..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 											<b:HelpInline ui:field="businessNameError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
@@ -97,7 +122,8 @@
 										<b:Controls>
 											<b:Label>Street1</b:Label>
 											<br />
-											<b:TextBox ui:field="street1" placeholder="street1..." />
+											<b:TextBox ui:field="street1" placeholder="street1..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 											<b:HelpInline ui:field="street1Error"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
@@ -105,28 +131,32 @@
 										<b:Controls>
 											<b:Label>Zip</b:Label>
 											<br />
-											<b:TextBox ui:field="zip" placeholder="zip..." />
+											<b:TextBox ui:field="zip" placeholder="zip..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 											<b:HelpInline ui:field="zipError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
+									<div>
+									    <b:Label>Neighborhood</b:Label>
+											<br />
+											<b:TextBox ui:field="neighborhoodTextBox" placeholder="neighborhood..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+									</div>
 									<b:ControlGroup ui:field="websiteCg">
 										<b:Controls>
 											<b:Label>Website</b:Label>
 											<br />
-											<b:TextBox ui:field="website" placeholder="website..." />
+											<b:TextBox ui:field="website" placeholder="website..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 											<b:HelpInline ui:field="websiteError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
-									<!-- <g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadForm}"> 
-										<g:HTMLPanel addStyleNames="{style.uploadFormActionPanel}"> <g:FileUpload 
-										ui:field="uploadField" name="image" /> <b:Button ui:field="uploadBtn">Upload</b:Button> 
-										<b:Icon type="UPLOAD" /> <div> <b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" 
-										/> </div> </g:HTMLPanel> </g:FormPanel> -->
 									<b:ControlGroup ui:field="emailCg">
 										<b:Controls>
 											<b:Label>Email</b:Label>
 											<br />
-											<b:TextBox ui:field="email" placeholder="email..." />
+											<b:TextBox ui:field="email" placeholder="email..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 											<b:HelpInline ui:field="emailError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
@@ -210,15 +240,14 @@
 								</g:HTMLPanel>
 							</b:Column>
 							<b:Column size="4">
-								<g:HTMLPanel>
+								<g:HTMLPanel addStyleNames="{style.businessProfileImageRootPanel}">
 									<g:HTMLPanel addStyleNames="{style.businessProfileImagePanel}">
 										<b:Image ui:field="profileImagePreview" addStyleNames="{style.businessProfileImage}" />
 									</g:HTMLPanel>
 									<g:FormPanel ui:field="uploadForm">
 										<g:HTMLPanel>
-											<g:FileUpload ui:field="uploadField" name="image" />
-											<b:Button ui:field="uploadBtn">Upload</b:Button>
-											<b:Icon type="UPLOAD" />
+										    <b:Label>Upload image</b:Label>
+											<b:FileUpload ui:field="uploadField" name="image" />
 										</g:HTMLPanel>
 									</g:FormPanel>
 								</g:HTMLPanel>
@@ -231,12 +260,15 @@
 							<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
 								addStyleNames="{style.subscriptionPlanTablePanel}">
 								<p class="heading4">
-								    Take full advantage of the promotional
-									period by reaching out to your customers.
+									Take full advantage of the promotional
+									period by
+									reaching out to
+									your customers.
 								</p>
 								<p class="heading4">
-								    Communicate with them as well as
-									listen to their feedback.
+									Communicate with them as well as
+									listen to their
+									feedback.
 								</p>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
@@ -246,32 +278,37 @@
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab heading="Password Reset">
-						<b:ControlGroup ui:field="passwordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{astyle.label}">Old Password</g:Label>
-								<b:PasswordTextBox ui:field="password"
-									placeholder="Old password..." />
-								<b:HelpInline ui:field="passwordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="newPasswordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{astyle.label}">New Password</g:Label>
-								<b:PasswordTextBox ui:field="newPassword"
-									placeholder="New password..." />
-								<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="confirmNewPasswordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{astyle.label}">Confirm new password</g:Label>
-								<b:PasswordTextBox ui:field="confirmNewPassword"
-									placeholder="confirm new password..." />
-								<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:Button addStyleNames="{astyle.updatePasswordBtn}"
-							ui:field="updatePasswordBtn">Update password</b:Button>
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Reset your password</span>
+							</div>
+							<b:ControlGroup ui:field="passwordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{astyle.label}">Old Password</g:Label>
+									<b:PasswordTextBox ui:field="password"
+										placeholder="Old password..." addStyleNames="{astyle.passwordTextBox}"/>
+									<b:HelpInline ui:field="passwordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="newPasswordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{astyle.label}">New Password</g:Label>
+									<b:PasswordTextBox ui:field="newPassword"
+										placeholder="New password..." addStyleNames="{astyle.passwordTextBox}"/>
+									<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="confirmNewPasswordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{astyle.label}">Confirm new password</g:Label>
+									<b:PasswordTextBox ui:field="confirmNewPassword"
+										placeholder="confirm new password..." addStyleNames="{astyle.passwordTextBox}"/>
+									<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:Button addStyleNames="{astyle.updatePasswordBtn}"
+								ui:field="updatePasswordBtn">Update password</b:Button>
+						</g:HTMLPanel>
 					</b:Tab>
 				</b:TabPanel>
 			</b:Column>

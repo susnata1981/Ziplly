@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ziplly.app.shared.StringUtil;
+
 public class PersonalAccountDTO extends AccountDTO {
 	private static final long serialVersionUID = 1L;
 	private String firstName;
@@ -12,6 +14,7 @@ public class PersonalAccountDTO extends AccountDTO {
 	private String introduction;
 	private String occupation;
 	private String gender;
+	private String badge;
 	
 	private Set<InterestDTO> interests = new HashSet<InterestDTO>();
 	private List<AccountSettingDTO> accountSettings = new ArrayList<AccountSettingDTO>();
@@ -70,7 +73,7 @@ public class PersonalAccountDTO extends AccountDTO {
 
 	@Override
 	public String getDisplayName() {
-		return firstName + " " + lastName;
+		return StringUtil.capitalize(firstName) + " " + lastName;
 	}
 
 	public void setFacebookRegistration(boolean b) {
@@ -86,5 +89,13 @@ public class PersonalAccountDTO extends AccountDTO {
 
 	public void setGender(Gender gender) {
 		this.gender = gender.name();
+	}
+	
+	public Badge getBadge() {
+		return Badge.valueOf(badge);
+	}
+	
+	public void setBadge(Badge badge) {
+		this.badge = badge.name();
 	}
 }

@@ -9,6 +9,7 @@ import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -44,7 +45,9 @@ import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessPropertiesDTO;
+import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PriceRange;
@@ -86,6 +89,9 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	@UiField
 	HelpInline businessNameError;
 
+	@UiField
+	ListBox businessCategory;
+	
 	@UiField
 	TextBox street1;
 	@UiField
@@ -151,8 +157,16 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		neighborhoodControl.setVisible(false);
+		
+		populateBusinessCategory();
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
+	}
+
+	private void populateBusinessCategory() {
+		for(BusinessCategory category : BusinessCategory.values()) {
+			businessCategory.addItem(category.getName());
+		}
 	}
 
 	@Override
@@ -377,6 +391,14 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		account.setCity(city);
 		account.setState(state);
 		account.setZip(Integer.parseInt(zipCode));
+
+		// business category
+		BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
+		account.setCategory(category);
+		
+		// Hardcoded to COMMERCIAL for now (Need admin privileges to change it for public institutions)
+		account.setBusinessType(BusinessType.COMMERCIAL);
+		
 		account.setRole(Role.USER);
 		account.setEmail(emailInput);
 		account.setStatus(AccountStatus.PENDING_ACTIVATION);
@@ -428,7 +450,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		
 		properties.setPriceRange(PriceRange.MEDIUM);
 		properties.setWifiAvailable(false);
-		properties.setPartkingFacility("available");
+		properties.setParkingAvailable(true);
 		properties.setPriceRange(PriceRange.MEDIUM);
 		return properties;
 	}
@@ -573,7 +595,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	@Override
 	public void displayNeighborhoodListLoading(boolean display) {
 		if (display) {
-			neighborhoodLoadingImage.setUrl(StringConstants.SMALL_IMAGE_LOADER);
+			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
 		} else {
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);

@@ -41,7 +41,7 @@ public class EmailAdminActionHandler extends AbstractAccountActionHandler<EmailA
 		recipient.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
 		System.out.println("COntent = "+action.getContent());
 		try {
-			emailService.sendEmail(action.getSubject(), action.getContent(), sender, recipient);
+			emailService.sendNonTemplatedEmail(action.getSubject(), action.getContent(), sender, recipient);
 		} catch (MessagingException e) {
 			
 		}

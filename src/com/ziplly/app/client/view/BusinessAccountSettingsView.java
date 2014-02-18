@@ -15,6 +15,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
+import com.github.gwtbootstrap.client.ui.FileUpload;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -116,13 +117,6 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	@UiField
 	HelpInline street1Error;
 
-//	@UiField
-//	TextBox street2;
-//	@UiField
-//	ControlGroup street2Cg;
-//	@UiField
-//	HelpInline street2Error;
-
 	@UiField
 	TextBox zip;
 	@UiField
@@ -130,6 +124,9 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	@UiField
 	HelpInline zipError;
 
+	@UiField
+	TextBox neighborhoodTextBox;
+	
 	@UiField
 	TextBox website;
 	@UiField
@@ -162,9 +159,12 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	@UiField
 	FormPanel uploadForm;
 	@UiField
-	Button uploadBtn;
+	FileUpload uploadField;
+//	@UiField
+//	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
+	private boolean imageUploaded;
 
 	// Hours of operation
 	@UiField
@@ -258,6 +258,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		clearPaymentStatus();
+		StyleHelper.show(cuisineControls.getElement(), false);
 		setupHandlers();
 	}
 
@@ -275,6 +276,13 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 				}
 			}
 		});
+		
+		uploadField.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				onUpload();
+			}
+		});
 	}
 
 	@Override
@@ -284,7 +292,6 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		message.setVisible(false);
 		businessName.setText("");
 		street1.setText("");
-//		street2.setText("");
 		zip.setText("");
 		website.setText("");
 		email.setText("");
@@ -298,10 +305,12 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			this.account = account;
 			businessName.setText(account.getName());
 			street1.setText(account.getStreet1());
-//			street2.setText(account.getStreet2());
 			
 			zip.setText(Integer.toString(account.getZip()));
 			zip.setReadOnly(true);
+			
+			neighborhoodTextBox.setText(basicDataFormatter.format(account.getNeighborhood(), ValueType.NEIGHBORHOOD));
+			neighborhoodTextBox.setReadOnly(true);
 			
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
@@ -341,7 +350,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			priceRangeListBox.setSelectedIndex(PriceRange.valueOf(props.getPriceRange().name()).ordinal());
 		}
 		wifiAvailableCheckbox.setValue(props.getWifiAvailable());
-		parkingAvailableCheckbox.setValue(props.getPartkingFacility() != null);
+		parkingAvailableCheckbox.setValue(props.isParkingAvailable());
 		
 		mondayStart.setText(props.getMondayStartTime());
 		mondayEnd.setText(props.getMondayEndTime());
@@ -435,21 +444,24 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 		String name = businessName.getText().trim();
 		String streetOne = street1.getText().trim();
-//		String streetTwo = street2.getText().trim();
 		String websiteUrl = website.getText().trim();
 		String emailInput = email.getText().trim();
 		String zipInput = zip.getText().trim();
-		String imageUrl = profileImagePreview.getUrl();
 		BusinessAccountDTO acct = new BusinessAccountDTO();
 		acct.setAccountId(account.getAccountId());
+		if (imageUploaded) {
+			acct.setImageUrl(profileImagePreview.getUrl());
+		}
 		acct.setUid(account.getUid());
 		acct.setNeighborhood(account.getNeighborhood());
 		acct.setName(name);
 		acct.setStreet1(streetOne);
-//		acct.setStreet2(streetTwo);
 		acct.setZip(Integer.parseInt(zipInput));
+		acct.setStatus(account.getStatus());
+		acct.setRole(account.getRole());
 		acct.setWebsite(websiteUrl);
 		acct.setEmail(emailInput);
+		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setCategory(BusinessCategory.values()[businessCategory.getSelectedIndex()]);
 		
 		BusinessPropertiesDTO props = new BusinessPropertiesDTO();
@@ -461,8 +473,8 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			props.setCuisine(cuisine);
 		}
 		
-		props.setWifiAvailable(wifiAvailableCheckbox.isEnabled());
-		props.setPartkingFacility(parkingAvailableCheckbox.isEnabled()? "Yes" : null);
+		props.setWifiAvailable(wifiAvailableCheckbox.getValue());
+		props.setParkingAvailable(parkingAvailableCheckbox.getValue());
 		props.setMondayStartTime(FieldVerifier.sanitize(mondayStart.getText()));
 		props.setMondayEndTime(FieldVerifier.sanitize(mondayEnd.getText()));
 		props.setTuesdayStartTime(FieldVerifier.sanitize(tuesdayStart.getText()));
@@ -480,16 +492,18 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		
 		acct.setProperties(props);
 		
-		if (imageUrl != null) {
-			acct.setImageUrl(imageUrl);
-		}
 		presenter.save(acct);
+		saveBtn.setEnabled(false);
 	}
 
 	@Override
+	public void enableSaveButton() {
+		saveBtn.setEnabled(true);
+	}
+	
+	@Override
 	public void setUploadFormActionUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
-		uploadBtn.setEnabled(true);
 	}
 
 	@Override
@@ -531,18 +545,13 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	@Override
 	public void resetUploadForm() {
-		uploadBtn.setEnabled(false);
 		uploadForm.setAction("");
 	}
 
 	@Override
 	public void onUpload() {
 		uploadForm.submit();
-	}
-
-	@UiHandler("uploadBtn")
-	void uploadImage(ClickEvent event) {
-		onUpload();
+		imageUploaded = true;
 	}
 
 	@Override

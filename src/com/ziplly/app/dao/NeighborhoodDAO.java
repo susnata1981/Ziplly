@@ -18,5 +18,5 @@ public interface NeighborhoodDAO {
 	 * Returns the list of all neighborhoods under that neighborhood.
 	 * @throws NotFoundException 
 	 */
-	List<NeighborhoodDTO> findAllNeighborhoodFor(Long neighborhoodId) throws NotFoundException;
+	List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
 }

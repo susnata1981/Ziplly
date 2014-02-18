@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.google.gwt.json.client.JSONException;
 import com.ziplly.app.client.oauth.AccessToken;
@@ -20,6 +21,7 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 	protected String clientId;
 	protected String key;
 	protected String redirectUri = OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT;
+	private Logger logger = Logger.getLogger(OAuthFlowManager.class.getName());
 	
 	public OAuthFlowManager(OAuthConfig config) {
 		this.provider = config.getProvider();
@@ -44,13 +46,15 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 		Map<String,String> params = getRequestParams(code);
 		
 		String response = doExchange(params);
-
+		logger.info(String.format("OAuth Received response %s", response));
 		return parseResponse(response);
 	}
 	
 	protected String getResponse(HttpURLConnection conn) throws IOException {
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 			System.out.println(conn.getResponseCode());
+			logger.severe(String.format("Failed OAuth with response code %d, response %s", 
+					conn.getResponseCode(), conn.getResponseMessage()));
 			throw new RuntimeException(conn.getResponseMessage());
 		}
 		

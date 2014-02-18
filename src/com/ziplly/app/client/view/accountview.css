@@ -117,9 +117,9 @@ h2.heading {
 
 .profileCaption {
 	font-family: Georgia, serif;
-	font-size: 1.4em;
+	font-size: 18px;
 	color: #555444;
-	text-align: center;
+	text-align: center !important;
 	text-transform: capitalize;
 }
 
@@ -185,6 +185,11 @@ h2.heading {
 .updatePasswordBtn {
 	margin-top: 20px;
 	float: left;
+}
+
+.passwordTextBox {
+	height: 38px !important;
+	font-size: 16px !important;
 }
 
 .introductionTextBox {
@@ -341,9 +346,30 @@ h2.heading {
 
 .locationTab {
 	position: relative;
-	left: 20px;
+	left: 36px;
 }
 
 .alertMsg {
-	margin-top:8px;
+	margin-top: 8px;
+}
+
+.badgePanel {
+	display: inline-block;
+}
+
+.accountAttribute {
+	font-weight: 600;
+}
+
+.container {
+	margin-top: 10px;
+}
+
+.popoverLink {
+	font-size: 11px !important;
+}
+
+.popoverText {
+	display: inline;
+	font-size: 11px !important;
 }

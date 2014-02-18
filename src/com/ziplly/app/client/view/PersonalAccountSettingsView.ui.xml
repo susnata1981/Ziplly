@@ -6,11 +6,10 @@
 
 	<b:FluidContainer addStyleNames="{style.settingsPanel}">
 		<b:FluidRow>
-			<b:Column size="10">
+			<b:Column offset="1" size="9">
 				<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
 			</b:Column>
 		</b:FluidRow>
-		<!-- <b:FluidRow ui:field="asidePanel" addStyleNames="{style.asidePanel}"> -->
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
 				<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
@@ -20,6 +19,12 @@
 								<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
 									<div class="profile_section_heading">
 										<span>Basic Info</span>
+										<g:HTMLPanel addStyleNames="{style.popoverText}">
+											<b:Popover text="Tell us about your self in few words"
+												heading="help">
+												<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+											</b:Popover>
+										</g:HTMLPanel>
 									</div>
 									<div class="{style.profileInfoBlock}">
 										<div>
@@ -64,6 +69,12 @@
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
 								<span>Occupation</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover text="Tell us about your profession"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
 							</div>
 							<b:ControlGroup ui:field="occupationCg">
 								<b:Controls>
@@ -77,85 +88,114 @@
 					<b:Tab ui:field="interestTab" heading="Interests">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
-								<span>Interests</span>
+								<span>Select your privacy settings</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover text="Tell us about your interests"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
 							</div>
-							<g:HTMLPanel ui:field="interestTabPanel">
+							<g:HTMLPanel ui:field="interestTabPanel"
+								addStyleNames="{style.container}">
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="locationTab" heading="Location">
-						<g:HTMLPanel addStyleNames="{style.locationTab}">
-							<b:Row>
-								<b:Column size="9">
-									<g:HTMLPanel>
-										<div class="profile_section_heading">
-											<span>Location</span>
-										</div>
-									</g:HTMLPanel>
-								</b:Column>
-							</b:Row>
-							<b:Row>
-								<b:Column size="6">
-									<g:HTMLPanel>
-										<b:ControlGroup ui:field="zipCg">
-											<b:Controls>
-												<g:Label addStyleNames="{style.label}">Zip</g:Label>
-												<b:TextBox ui:field="zip" placeholder="zip..." />
-												<b:HelpInline ui:field="zipError"></b:HelpInline>
-											</b:Controls>
-										</b:ControlGroup>
-									</g:HTMLPanel>
-								</b:Column>
-								<b:Column size="2">
-									<g:HTMLPanel>
-										<b:Tooltip text="Currently locations can't be changed.">
-											<b:NavLink addStyleNames="{style.tab-heading}">learn more</b:NavLink>
-										</b:Tooltip>
-									</g:HTMLPanel>
-								</b:Column>
-							</b:Row>
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Location</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover
+										text="Currently locations can't be changed, please email us directly if you need to change address"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+							</div>
+							<g:HTMLPanel>
+								<b:ControlGroup ui:field="neighborhoodCg">
+									<b:Controls>
+										<g:Label addStyleNames="{style.label}">Neighborhood</g:Label>
+										<span ui:field="neighborhoodSpan" />
+									</b:Controls>
+								</b:ControlGroup>
+							</g:HTMLPanel>
+							<g:HTMLPanel>
+								<b:ControlGroup ui:field="zipCg">
+									<b:Controls>
+										<g:Label addStyleNames="{style.label}">Zip</g:Label>
+										<b:TextBox ui:field="zip" placeholder="zip..." />
+									</b:Controls>
+								</b:ControlGroup>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="privacyTab" heading="Privacy">
-						<g:HTMLPanel ui:field="privacyPanel">
-							<!-- <table class="{style.notificationTable}"> <thead> <tr> <th>Field</th> 
-								<th>Setting</th> </tr> <tbody> <tr> <td>Email</td> <td> <dt:ShareSettingsWidget 
-								ui:field="emailShareSetting"/> </td> </tr> <tr> <td>Occupation</td> <td> 
-								<dt:ShareSettingsWidget ui:field="occupationShareSetting"/> </td> </tr> </tbody> 
-								</thead> </table> -->
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Select your privacy settings</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover
+										text="You can choose to make certain attributes of your profile public, private or visible to 
+								    only people within your community"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+							</div>
+							<g:HTMLPanel ui:field="privacyPanel" addStyleNames="{style.container}">
+							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="notification" heading="Notification">
-						<g:HTMLPanel ui:field="notificationPanel">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Select your notificaiton settings</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover
+										text="You can choose to get email notifications for certain types of messages within your community"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+							</div>
+							<g:HTMLPanel ui:field="notificationPanel">
+							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="passwordTab" heading="Password Reset">
-						<b:ControlGroup ui:field="passwordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{style.label}">Old Password</g:Label>
-								<b:PasswordTextBox ui:field="password"
-									placeholder="Old password..." />
-								<b:HelpInline ui:field="passwordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="newPasswordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{style.label}">New Password</g:Label>
-								<b:PasswordTextBox ui:field="newPassword"
-									placeholder="New password..." />
-								<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="confirmNewPasswordCg">
-							<b:Controls>
-								<g:Label addStyleNames="{style.label}">Confirm new password</g:Label>
-								<b:PasswordTextBox ui:field="confirmNewPassword"
-									placeholder="confirm new password..." />
-								<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:Button addStyleNames="{style.updatePasswordBtn}"
-							ui:field="updatePasswordBtn">Update password</b:Button>
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Reset your password</span>
+							</div>
+							<b:ControlGroup ui:field="passwordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{style.label}">Old Password</g:Label>
+									<b:PasswordTextBox ui:field="password"
+										placeholder="Old password..." />
+									<b:HelpInline ui:field="passwordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="newPasswordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{style.label}">New Password</g:Label>
+									<b:PasswordTextBox ui:field="newPassword"
+										placeholder="New password..." />
+									<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="confirmNewPasswordCg">
+								<b:Controls>
+									<g:Label addStyleNames="{style.label}">Confirm new password</g:Label>
+									<b:PasswordTextBox ui:field="confirmNewPassword"
+										placeholder="confirm new password..." />
+									<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:Button addStyleNames="{style.updatePasswordBtn}"
+								ui:field="updatePasswordBtn">Update password</b:Button>
+						</g:HTMLPanel>
 					</b:Tab>
 				</b:TabPanel>
 				<g:HTMLPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}">

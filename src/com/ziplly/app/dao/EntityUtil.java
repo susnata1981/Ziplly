@@ -155,6 +155,7 @@ public class EntityUtil {
 		dest.setIntroduction(account.getIntroduction());
 		dest.setOccupation(account.getOccupation());
 		dest.setGender(account.getGender());
+		dest.setBadge(account.getBadge());
 		
 		if (Hibernate.isInitialized(account.getInterests())) {
 			for (Interest interest : account.getInterests()) {
@@ -252,6 +253,11 @@ public class EntityUtil {
 		resp.setAuthor(convert(comment.getAuthor()));
 		resp.setContent(comment.getContent());
 		resp.setTimeCreated(comment.getTimeCreated());
+		
+		TweetDTO tweet = new TweetDTO();
+		tweet.setTweetId(comment.getTweet().getTweetId());
+		resp.setTweet(tweet);
+		
 		return resp;
 	}
 
@@ -427,7 +433,7 @@ public class EntityUtil {
 		dest.setSaturdayEndTime(source.getSaturdayEndTime());
 		dest.setHolidays(source.getHolidays());
 		dest.setAcceptsCreditCard(source.getAcceptsCreditCard());
-		dest.setPartkingFacility(source.getPartkingFacility());
+		dest.setParkingAvailable(source.isParkingAvailable());
 		dest.setWifiAvailable(source.getWifiAvailable());
 		dest.setGoodForKids(source.getGoodForKids());
 		dest.setPriceRange(source.getPriceRange());

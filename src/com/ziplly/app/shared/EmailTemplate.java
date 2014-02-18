@@ -5,7 +5,9 @@ public enum EmailTemplate {
 	INVITE_PEOPLE("invite.ftl", "Invitation to join ziplly.com"),
 	PASSWORD_RECOVERY("password_recovery.ftl", "Reset your password on ziplly.com"),
 	PENDING_MESSAGE("pending_message.ftl", "Pending message"),
-	SECURITY_ALERT("security_alert.ftl", "Security alert");
+	SECURITY_ALERT("security_alert.ftl", "Security alert"), 
+	ANNOUNCEMENT("announcement.ftl", "Announcement"),
+	OFFER("offer.ftl", "Offer");
 	
 	private String subject;
 

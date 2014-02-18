@@ -21,7 +21,7 @@
 		font-family: sans-serif;
 		}
 		.uploadForm {
-			margin-bottom: 5px;
+		margin-bottom: 5px;
 		}
 		.tweetHelpInline {
 		clear: left;
@@ -60,6 +60,13 @@
 		color: #666;
 		font-family: Georgia, serif;
 		}
+		.inlineLabel {
+			display: inline-block;
+		}
+		.popoverLink {
+		display: inline;
+		font-size: 10px;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.tweetBoxPanel}">
 		<!-- <b:Form ui:field="tweetForm"> -->
@@ -75,13 +82,12 @@
 			</b:Controls>
 		</b:ControlGroup>
 		<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadForm}">
+			<!-- <g:HTMLPanel> <b:Icon type="UPLOAD"/><b:FileUpload ui:field="fileUpload" 
+				name="image"/> </g:HTMLPanel> -->
 			<b:FileUpload ui:field="fileUpload" name="image" />
 		</g:FormPanel>
 		<g:HTMLPanel ui:field="tweetActionPanel" addStyleNames="{style.tweetActionPanel}">
-<!-- 			<b:Icon type="LINK" />&nbsp;
-			<g:Anchor ui:field="embedLinkAnchor">embed link</g:Anchor>&nbsp;
- -->
- 			<b:Icon type="STAR" />&nbsp;
+			<b:Icon type="STAR" />&nbsp;
 			<g:Anchor ui:field="previewLinkAnchor">toggle preview</g:Anchor>&nbsp;
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
@@ -91,18 +97,33 @@
 				<br />
 				<b:Image ui:field="previewTweetImage" />
 			</g:HTMLPanel>
-			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}" ui:field="tweetTextPreview">
+			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}"
+				ui:field="tweetTextPreview">
 				<!-- <span ui:field="tweetTextPreview" /> -->
 			</g:HTMLPanel>
 			<b:Button size="MINI" ui:field="closePreviewBtn">Close preview</b:Button>
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="tweetCategoryPanel" addStyleNames="{style.tweetCategoryPanel}">
-			<b:ControlLabel>Select Category</b:ControlLabel>
+			<g:HTMLPanel>
+				<b:ControlLabel addStyleNames="{style.inlineLabel}">Select Category</b:ControlLabel>
+				<b:Popover
+					text="Pick specific category to get better response"
+					heading="Learn more">
+					<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+				</b:Popover>
+			</g:HTMLPanel>
 			<b:Controls>
 				<b:ListBox ui:field="tweetCategoryList">
 				</b:ListBox>
 			</b:Controls>
-			<b:ControlLabel>Target neighborhood</b:ControlLabel>
+			<g:HTMLPanel>
+				<b:ControlLabel addStyleNames="{style.inlineLabel}">Target neighborhood</b:ControlLabel>
+				<b:Popover
+					text="You can broadcast to your neighborhood or to the greater community for more visibility"
+					heading="Learn more">
+					<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+				</b:Popover>
+			</g:HTMLPanel>
 			<b:Controls>
 				<b:ListBox ui:field="tweetTargetNeighborhoodList">
 				</b:ListBox>

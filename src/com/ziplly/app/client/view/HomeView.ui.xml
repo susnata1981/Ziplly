@@ -46,7 +46,8 @@
 		.communityWallPanel {
 		position: absolute;
 		left: 0;
-		right: 0;
+		right:
+		0;
 		margin-left: 20px;
 		background-color: #ddd;
 		padding-top: 10px;
@@ -82,17 +83,36 @@
 		.link {
 		list-style: none;
 		}
+		.popoverLink {
+			display: inline;
+			font-size: 8px;
+		}
+		.filterPanel {
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="10">
+			<b:Column size="9">
 				<b:Alert ui:field="message" addStyleNames="{style.message}"
 					close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column size="2">
-				<g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="{style.filterPanel}">
+					<div class="{style.leftnavHeaderContainer}">
+						<g:HTMLPanel>
+						    <span class="{style.leftnavHeaderSpan}">
+							<i class="fa fa-tags">&nbsp;Neighborhoods
+							</i>
+							<b:Popover text="You can broadcast to your neighborhood or to the greater community for more visibility"
+								heading="Learn more">
+								<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+							</b:Popover>
+						</span>
+							<g:HTMLPanel ui:field="neighborhoodsPanel"></g:HTMLPanel>
+						</g:HTMLPanel>
+					</div>
 					<div class="{style.leftnavHeaderContainer}">
 						<span class="{style.leftnavHeaderSpan}">
 							<i class="fa fa-list">&nbsp;Category
@@ -120,13 +140,6 @@
 								<span ui:field="unreadMessageCountSpan" />
 							</g:Anchor>
 						</g:HTMLPanel>
-					</div>
-					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
-						<span class="{style.leftnavHeaderSpan}">
-							<i class="fa fa-tags">&nbsp;Neighborhoods
-							</i>
-						</span>
-						<g:HTMLPanel ui:field="neighborhoodsPanel"></g:HTMLPanel>
 					</div>
 				</g:HTMLPanel>
 			</b:Column>

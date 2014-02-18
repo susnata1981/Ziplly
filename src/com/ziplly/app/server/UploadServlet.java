@@ -17,9 +17,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
-import com.google.gwt.core.client.GWT;
 import com.google.inject.Singleton;
-import com.ziplly.app.client.view.StringConstants;
 
 @Singleton
 public class UploadServlet extends HttpServlet {
@@ -48,6 +46,7 @@ public class UploadServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		String imageUrl = req.getParameter("imageUrl");
+		logger.log(Level.INFO, String.format("doPost method called with image url %s", imageUrl));
 		res.setHeader("Content-Type", "text/html");
 //		res.setContentType("text/html");
 		res.getWriter().println(imageUrl);

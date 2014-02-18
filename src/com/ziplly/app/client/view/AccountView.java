@@ -50,6 +50,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class AccountView extends Composite implements IAccountView<PersonalAccountDTO> {
@@ -74,6 +75,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	Paragraph description;
 	@UiField
 	SpanElement gender;
+	@UiField
+	HTMLPanel badgePanel;
 	@UiField
 	SpanElement lastLoginTime;
 	@UiField
@@ -150,6 +153,7 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
 		gender.setInnerHTML(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
+		badgePanel.getElement().setInnerHTML(accountFormatter.format(account, ValueType.BADGE));
 		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
 
 		// occupation panel
@@ -256,6 +260,15 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 		}
 	}
 
+	@Override
+	public void updatePublicAccountDetails(GetAccountDetailsResult result) {
+		if (result != null) {
+			tweetCountWidget.setValue(new Integer(result.getTotalTweets()).toString());
+			commentCountWidget.setValue(new Integer(result.getTotalComments()).toString());
+			likeCountWidget.setValue(new Integer(result.getTotalLikes()).toString());
+		}
+	}
+	
 	@Override
 	public void updateComment(CommentDTO comment) {
 		tview.updateComment(comment);

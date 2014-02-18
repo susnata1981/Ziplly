@@ -4,7 +4,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -46,13 +45,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<PasswordRecoveryView>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<PasswordRecoveryView>() {
 
 			@Override
 			public void onSuccess(PasswordRecoveryView result) {
@@ -68,6 +61,11 @@ public class PasswordRecoveryActivity extends AbstractActivity implements
 		});
 	}
 
+	@Override
+	public void doStart() {
+		// shoudn't get called.
+	}
+	
 	private void verifyPasswordRecoveryHash() {
 		dispatcher
 				.execute(
@@ -151,11 +149,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements
 					});
 		}
 	}
-
-	@Override
-	public void fetchData() {
-	}
-
+	
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

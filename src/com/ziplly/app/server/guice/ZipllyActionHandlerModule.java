@@ -17,6 +17,7 @@ import com.ziplly.app.server.handlers.GetAllSubscriptionPlanActionHandler;
 import com.ziplly.app.server.handlers.GetCommunityWallDataActionHandler;
 import com.ziplly.app.server.handlers.GetConversationActionHandler;
 import com.ziplly.app.server.handlers.GetEntityActionHandler;
+import com.ziplly.app.server.handlers.GetEnvironmentActionHandler;
 import com.ziplly.app.server.handlers.GetFacebookDetailsHandler;
 import com.ziplly.app.server.handlers.GetFacebookRedirectUriActionHandler;
 import com.ziplly.app.server.handlers.GetHashtagActionHandler;
@@ -64,6 +65,7 @@ import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetEntityListAction;
+import com.ziplly.app.shared.GetEnvironmentAction;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
 import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetHashtagAction;
@@ -181,5 +183,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		
 		// invitation
 		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);
+		
+		// Environment
+		bindHandler(GetEnvironmentAction.class, GetEnvironmentActionHandler.class);
 	}
 }

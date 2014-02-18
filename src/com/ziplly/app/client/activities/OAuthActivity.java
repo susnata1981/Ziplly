@@ -48,4 +48,7 @@ public class OAuthActivity extends AbstractActivity {
 		});
 	}
 
+	@Override
+	public void doStart() {
+	}
 }

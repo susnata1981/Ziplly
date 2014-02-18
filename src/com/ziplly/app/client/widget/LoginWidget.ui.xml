@@ -11,6 +11,8 @@
 		}
 		.inputTextBox {
 			width: 96%;
+			height: 40px !important;
+			font-size: 18px;
 		}
 		.button
 		{
@@ -49,7 +51,7 @@
 	</ui:style>
 
 	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
-		<b:Alert ui:field="message" />
+		<b:Alert ui:field="message"  close="false"/>
 		<b:WellForm>
 			<b:ControlGroup ui:field="emailCg">
 				<b:Controls>

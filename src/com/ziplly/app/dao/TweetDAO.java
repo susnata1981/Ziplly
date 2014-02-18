@@ -15,32 +15,31 @@ public interface TweetDAO {
 	/*
 	 * Should be removed eventually, as we call the paginated version of this api.
 	 */
-	List<TweetDTO> findAllTweetsByAccountId(Long accountId);
+	List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException;
 	
 	List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize);
 	
 	List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip,
 			int page, int pageSize);
 	
-	TweetDTO update(Tweet tweet);
+	TweetDTO update(Tweet tweet) throws NotFoundException;
 	
-	void delete(Tweet tweet);
+	void delete(Tweet tweet) throws NotFoundException;
 	
 	/*
 	 * Paginated version of findTweetsByAccountId
 	 */
-	List<TweetDTO> findTweetsByAccountId(Long accountId, int page, int pageSize);
+	List<TweetDTO> findTweetsByAccountId(Long accountId, int page, int pageSize) throws NotFoundException;
 	
-	Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException;
-	Long findTweetsCountByAccountId(Long accountId);
+	Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException, NotFoundException;
+	Long findTweetsCountByAccountId(Long accountId) throws NotFoundException;
 	TweetDTO findTweetById(Long tweetId) throws NotFoundException;
 	List<TweetDTO> findAll();
 	List<TweetDTO> findTweets(String query, int start, int end);
 	
 	Long findTotalTweetCount(String queryStr);
 	
-//	Map<TweetType, Integer> findTweetCategoryCounts(Account acct);
-	Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId);
+	Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException;
 	
 	/*
 	 * Retrieves all tweets based on Neighborhood
@@ -52,5 +51,5 @@ public interface TweetDAO {
 	 * Retrieves specific tweet type based on Neighborhood
 	 */
 	List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type, Long neighborhoodId, int page,
-			int pageSize);
+			int pageSize) throws NotFoundException;
 }

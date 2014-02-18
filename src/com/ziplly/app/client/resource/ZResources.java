@@ -16,10 +16,10 @@ public interface ZResources extends ClientBundle {
 		String zipllyLogo();
 	}
 	
-	@Source("No_person.jpg")
+	@Source("no-photo.jpg")
 	ImageResource noImage();
 	
-	@Source("neighborhood_large.jpg")
+	@Source("zbackground.jpg")
 	ImageResource neighborhoodLargePic();
 	
 	@Source("active_600.png")
@@ -27,6 +27,15 @@ public interface ZResources extends ClientBundle {
 
 	@Source("ziplly-logo.png")
 	ImageResource zipllyLogo();
+	
+	@Source("ajax-loader-large.gif")
+	ImageResource loadingImageLarge();
+	
+	@Source("ajax-loader-small.gif")
+	ImageResource loadingImageSmall();
+	
+	@Source("no-photo.jpg")
+	ImageResource noPhoto();
 	
 	@Source("zstyle.css")
 	Styles style();

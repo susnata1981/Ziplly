@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +19,6 @@ import javax.validation.constraints.NotNull;
 		@NamedQuery(name = "findAllPostalCodes", query = "from PostalCode") })
 @Entity
 @Table(name = "postal_code")
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class PostalCode extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -29,6 +26,9 @@ public class PostalCode extends AbstractTimestampAwareEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long postalCodeId;
+	
+	@Column(name = "type", nullable=true)
+	private String type;
 	
 	@Column(name="code")
 	private String postalCode;
@@ -57,5 +57,13 @@ public class PostalCode extends AbstractTimestampAwareEntity {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

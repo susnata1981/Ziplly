@@ -3,27 +3,24 @@ package com.ziplly.app.client.widget;
 public enum AccountDetailsType {
     EMAIL ("Email", true, true, true), 
     OCCUPATION ("Occupation", true, true, true),
-    TWEETS ("Tweets", true, true, false);
+    TWEETS ("Messages", true, true, false);
     
-    private String section;
+    private String name;
 	private boolean allowedPublic;
 	private boolean allowedCommunity;
 	private boolean allowedPrivate;
     
-	private AccountDetailsType(String section, boolean allowedPublic, boolean allowedCommunity, boolean allowedPrivate) {
-    	this.setSection(section);
+	private AccountDetailsType(String name, boolean allowedPublic, boolean allowedCommunity, boolean allowedPrivate) {
+    	this.name = name;
     	this.setAllowedPublic(allowedPublic);
     	this.setAllowedCommunity(allowedCommunity);
     	this.allowedPrivate = allowedPrivate;
 	}
 	
-	public String getSection() {
-		return section;
+	public String getName() {
+		return name;
 	}
-	public void setSection(String section) {
-		this.section = section;
-	}
-
+	
 	public boolean isAllowedPrivate() {
 		return allowedPrivate;
 	}

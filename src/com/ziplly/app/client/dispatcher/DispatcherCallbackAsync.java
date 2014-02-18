@@ -27,6 +27,5 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 			return;
 		}
 		logger.severe("Received exception from server: "+caught.getLocalizedMessage());
-//		Window.alert(caught.getLocalizedMessage());
 	}
 }

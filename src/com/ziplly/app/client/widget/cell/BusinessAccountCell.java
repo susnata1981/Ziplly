@@ -23,18 +23,6 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		}
 		
 		super.onBrowserEvent(context, parent, value, event, valueUpdater);
-		
-//		String redirectUrl = "";
-//		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
-//		if (environment.equalsIgnoreCase(Environment.DEVEL.name())) {
-//			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, ""); 
-//		} else {
-//			redirectUrl = GWT.getHostPageBaseURL();
-//		}
-//		
-//		String accountId = value.getAccountId().toString();
-//		redirectUrl = redirectUrl + "#personalaccount:" + accountId;
-//		Window.Location.replace(redirectUrl);
 		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
 		String accountId = value.getAccountId().toString();
 		String redirectUrl = "";
@@ -52,7 +40,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		if (button.isOrHasChild(Element.as(target))) {
 			redirectUrl = redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
 		} else {
-			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
+			redirectUrl = redirectUrl + "#businessaccount:" + accountId;
 		}
 		Window.Location.replace(redirectUrl);
 	}

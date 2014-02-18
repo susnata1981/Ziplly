@@ -2,6 +2,7 @@ package com.ziplly.app.client;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
@@ -12,8 +13,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.OAuthPlace;
+import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.NavView;
 
 public class ZipllyController {
@@ -32,7 +33,7 @@ public class ZipllyController {
 	PlaceHistoryHandler historyHandler;
 	PlaceController placeController;
 	
-	HomePlace defaultPlace;
+	Place defaultPlace;
 	RootPanel container;
 	SimplePanel panel = new SimplePanel();
 	SimplePanel navPanel = new SimplePanel();
@@ -75,7 +76,7 @@ public class ZipllyController {
 		this.placeHistoryMapper = placeHistoryMapper; 		
 		this.historyHandler = placeHistoryHandler; 			
 		this.placeController = placeController; 		
-		this.defaultPlace = new HomePlace();
+		this.defaultPlace = new SignupPlace();
 		historyHandler.register(placeController, eventBus, defaultPlace);
 	}
 	

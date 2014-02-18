@@ -34,7 +34,7 @@ public class BusinessPropertiesDTO implements Serializable {
 
 	private boolean acceptsCreditCard;
 
-	private String partkingFacility;
+	private boolean parkingAvailable;
 
 	private boolean wifiAvailable;
 
@@ -192,13 +192,12 @@ public class BusinessPropertiesDTO implements Serializable {
 		this.acceptsCreditCard = acceptsCreditCard;
 	}
 
-	// parkingFacility
-	public String getPartkingFacility() {
-		return partkingFacility;
+	public boolean isParkingAvailable() {
+		return parkingAvailable;
 	}
 
-	public void setPartkingFacility(String partkingFacility) {
-		this.partkingFacility = partkingFacility;
+	public void setParkingAvailable(boolean partkingFacility) {
+		this.parkingAvailable = partkingFacility;
 	}
 
 	// wifiAvailable
@@ -227,7 +226,7 @@ public class BusinessPropertiesDTO implements Serializable {
 				+ "," + this.wednesdayEndTime + "," + this.thursdayStartTime + ","
 				+ this.thursdayEndTime + "," + this.fridayStartTime + "," + this.fridayEndTime
 				+ "," + this.saturdayStartTime + "," + this.saturdayEndTime + "," + this.holidays
-				+ "," + String.valueOf(this.acceptsCreditCard) + "," + this.partkingFacility + ","
+				+ "," + String.valueOf(this.acceptsCreditCard) + "," + this.parkingAvailable + ","
 				+ String.valueOf(this.wifiAvailable) + "," + String.valueOf(this.goodForKids) + ","
 				+ this.getPriceRange() + "," + ")";
 	}

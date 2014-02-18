@@ -22,6 +22,7 @@ import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.TweetNotificationBLI;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
@@ -30,14 +31,19 @@ public class SendMessageActionHandler extends
 		AbstractAccountActionHandler<SendMessageAction, SendMessageResult> {
 	private ConversationDAO conversationDao;
 	private AccountNotificationDAO accountNotificationDao;
+	private TweetNotificationBLI tweetNotificationBli;
 
 	@Inject
-	public SendMessageActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, ConversationDAO conversationDao,
-			AccountNotificationDAO accountNotificationDao) {
+	public SendMessageActionHandler(AccountDAO accountDao, 
+			SessionDAO sessionDao,
+			AccountBLI accountBli, 
+			ConversationDAO conversationDao,
+			AccountNotificationDAO accountNotificationDao,
+			TweetNotificationBLI tweetNotificationBli) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.accountNotificationDao = accountNotificationDao;
+		this.tweetNotificationBli = tweetNotificationBli;
 	}
 
 	@Override
@@ -64,6 +70,7 @@ public class SendMessageActionHandler extends
 		return result;
 	}
 
+	// Needs to move to NotificationBLI
 	private void notifyUser(Conversation conversation) {
 		Account recipient = conversation.getReceiver();
 		Account sender = conversation.getSender();
@@ -73,7 +80,11 @@ public class SendMessageActionHandler extends
 		for (AccountNotificationSettings notificationSetting : notificationSettings) {
 			if (notificationSetting.getType() == NotificationType.PERSONAL_MESSAGE
 					&& notificationSetting.getAction() == NotificationAction.EMAIL) {
-				accountBli.sendEmail(sender, recipient, EmailTemplate.PENDING_MESSAGE);
+				
+				tweetNotificationBli.sendEmail(
+						sender, 
+						recipient, 
+						EmailTemplate.PENDING_MESSAGE);
 			}
 		}
 

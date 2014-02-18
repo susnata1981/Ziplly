@@ -18,9 +18,9 @@ import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 
 @WithTokenizers({
+	SignupPlace.Tokenizer.class, 
 	HomePlace.Tokenizer.class,
 	LoginPlace.Tokenizer.class, 
-	SignupPlace.Tokenizer.class, 
 	BusinessSignupPlace.Tokenizer.class,
 	BusinessAccountSettingsPlace.Tokenizer.class,
 	PersonalAccountPlace.Tokenizer.class,

@@ -12,6 +12,7 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public interface IAccountView<T extends AccountDTO> extends View<AccountPresenter<T>> {
@@ -65,4 +66,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void hideProfileSection();
 
 	void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
+
+	void updatePublicAccountDetails(GetAccountDetailsResult result);
 }

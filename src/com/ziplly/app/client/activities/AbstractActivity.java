@@ -10,11 +10,13 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
@@ -24,10 +26,11 @@ import com.ziplly.app.client.view.handler.LoadingEventStartHandler;
 import com.ziplly.app.client.widget.LoadingPanelWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.ConversationType;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountNotificationResult;
+import com.ziplly.app.shared.GetEnvironmentAction;
+import com.ziplly.app.shared.GetEnvironmentResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 
@@ -36,7 +39,6 @@ public abstract class AbstractActivity implements Activity {
 	protected PlaceController placeController;
 	protected EventBus eventBus;
 	protected ApplicationContext ctx;
-	private static final String BACKGROUND_IMG_URL = "url('images/neighborhood_large.jpg')";
 	protected LoadingPanelWidget loadingModal;
 
 	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
@@ -46,8 +48,25 @@ public abstract class AbstractActivity implements Activity {
 		this.placeController = placeController;
 		this.ctx = ctx;
 		loadingModal = new LoadingPanelWidget();
+		initializeEnvironment();
 	}
 
+	private void initializeEnvironment() {
+		if (!ctx.isEnvironmentSet()) {
+			dispatcher.execute(new GetEnvironmentAction(), new DispatcherCallbackAsync<GetEnvironmentResult>() {
+
+				@Override
+				public void onSuccess(GetEnvironmentResult result) {
+					ctx.setEnvironment(result.getEnvironment());
+				}
+			});
+		}
+	}
+
+	public Environment getEnvironment() {
+		return ctx.getEnvironment();
+	}
+	
 	protected void setupHandlers() {
 		eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
 
@@ -92,7 +111,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public void setBackgroundImage() {
-		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(BACKGROUND_IMG_URL);
+		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 
@@ -100,21 +119,28 @@ public abstract class AbstractActivity implements Activity {
 		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
 
+	/**
+	 * Checks to see if user is logged in and calls doStart if user is logged in.
+	 * Otherwise it forwards the user to LoginView.
+	 */
 	public void checkAccountLogin() {
+		// If user already logged in then just call doStart.
 		if (ctx.getAccount() != null) {
-			// control shouldn't flow here
-			forward(ctx.getAccount());
+			doStart();
 			return;
 		}
+		
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
 			@Override
 			public void onSuccess(GetLoggedInUserResult result) {
 				if (result != null && result.getAccount() != null) {
 					ctx.setAccount(result.getAccount());
-					forward(result.getAccount());
-				} else {
+					eventBus.fireEvent(new LoginEvent(result.getAccount()));
 					doStart();
+				} else {
+					// This could be overriden by client.
+					doStartOnUserNotLoggedIn();
 				}
 			}
 
@@ -125,12 +151,18 @@ public abstract class AbstractActivity implements Activity {
 
 		});
 	}
-
+	
+	/**
+	 * Checks to see if user is logged in and forwards to HomePlace.
+	 * Otherwise it forwards the user to LoginView.
+	 *
+	@Deprecated
 	public void checkLoginStatus() {
 		if (ctx.getAccount() != null) {
 			// control shouldn't flow here
 			return;
 		}
+		
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
 			@Override
@@ -138,6 +170,7 @@ public abstract class AbstractActivity implements Activity {
 				if (result != null && result.getAccount() != null) {
 					ctx.setAccount(result.getAccount());
 					eventBus.fireEvent(new LoginEvent(result.getAccount()));
+					placeController.goTo(new HomePlace());
 				} else {
 					placeController.goTo(new LoginPlace());
 				}
@@ -148,8 +181,20 @@ public abstract class AbstractActivity implements Activity {
 				// TODO (send them to login page?)
 				Window.alert(caught.getLocalizedMessage());
 			}
-
 		});
+	}
+	*/
+
+	/**
+	 * Activity needs to define behavior in case user is logged in.
+	 */
+	protected abstract void doStart();
+	
+	/**
+	 * If user is not logged in, default behavior is to redirect to Login view.
+	 */
+	protected void doStartOnUserNotLoggedIn() {
+		placeController.goTo(new LoginPlace());
 	}
 
 	/**
@@ -172,9 +217,6 @@ public abstract class AbstractActivity implements Activity {
 		}
 	}
 
-	protected void doStart() {
-	}
-
 	protected void forward(AccountDTO acct) {
 		if (acct != null) {
 			if (acct instanceof PersonalAccountDTO) {
@@ -194,8 +236,8 @@ public abstract class AbstractActivity implements Activity {
 		}
 	}
 
-	public void getConversations(ConversationType type, int start, int pageSize) {
-		// TODO Auto-generated method stub
-
-	}
+//	public void getConversations(ConversationType type, int start, int pageSize) {
+//		// TODO Auto-generated method stub
+//
+//	}
 }

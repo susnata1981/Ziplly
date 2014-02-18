@@ -15,7 +15,7 @@ public class EntityManagerService {
 	static {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 			properties.put("javax.persistence.jdbc.driver","com.mysql.jdbc.GoogleDriver");
-			properties.put("javax.persistence.jdbc.url", "jdbc:google:mysql://zipplyrocks:z/zipllydb?user=root");
+			properties.put("javax.persistence.jdbc.url", "jdbc:google:mysql://zipplyrocks:z1/zipllydb?user=root");
 //			properties.put("hibernate.connection.url", "jdbc:google:mysql://zipplyrocks:z/zipllydb");
 
 //			properties.put("javax.persistence.jdbc.user", "root");

@@ -8,7 +8,6 @@ import javax.persistence.Query;
 
 import org.jboss.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -59,7 +58,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 
 		Query query = em.createQuery("select n from Neighborhood n, PostalCode p "
 				+ "where n.postalCode.postalCodeId = p.postalCodeId "
-				+ "and p.postalCode = :postalCode");
+				+ "and p.postalCode = :postalCode and n.parentNeighborhood is not null");
 		query.setParameter("postalCode", postalCode);
 
 		try {
@@ -107,7 +106,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	}
 
 	@Override
-	public List<NeighborhoodDTO> findAllNeighborhoodFor(Long neighborhoodId)
+	public List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId)
 			throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 

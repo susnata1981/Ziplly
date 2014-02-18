@@ -5,10 +5,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 public interface Presenter {
 	/*
-	 * Fetches data for the view
-	 */
-	void fetchData();
-	/*
 	 * Display the view on the container
 	 */
 	void go(AcceptsOneWidget container);

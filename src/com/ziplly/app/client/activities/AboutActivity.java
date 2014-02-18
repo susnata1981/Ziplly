@@ -57,6 +57,10 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 	}
 
 	@Override
+	protected void doStart() {
+	}
+	
+	@Override
 	public void contact(String subject, String from, String content) {
 		EmailAdminAction action = new EmailAdminAction(from, content, subject);
 		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
@@ -68,11 +72,6 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 			}
 		});
 	}
-
-	@Override
-	public void fetchData() {
-	}
-
 
 	@Override
 	public void go(AcceptsOneWidget container) {

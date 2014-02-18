@@ -9,7 +9,6 @@ import java.nio.channels.Channels;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,9 +40,9 @@ import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.restfb.types.User;
+import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
@@ -105,7 +104,7 @@ public class AccountBLIImpl implements AccountBLI {
 	@Inject
 	protected Provider<HttpServletRequest> request;
 
-	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig;
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 
 	private InterestDAO interestDao;
@@ -129,10 +128,17 @@ public class AccountBLIImpl implements AccountBLI {
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
+		this.authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), getEnvironment());
 		// createInterestEntries();
 		// createSubscriptionPlan();
 	}
 
+	@Override
+	public Environment getEnvironment() {
+		Environment env = (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) ? 
+				Environment.PROD : Environment.DEVEL;
+		return env;
+	}
 //	private void createSubscriptionPlan() {
 //		SubscriptionPlan plan = new SubscriptionPlan();
 //		plan.setName("Basic plan");
@@ -233,8 +239,14 @@ public class AccountBLIImpl implements AccountBLI {
 		Long uid = doLogin(response);
 
 		// send welcome email
-		emailService.sendEmail(account.getName(), account.getEmail(),
-				EmailTemplate.WELCOME_REGISTRATION);
+		EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
+		builder.setRecipientName(account.getName())
+		    .setRecipientEmail(account.getEmail())
+		    .setSenderName(response.getDisplayName())
+		    .setSenderEmail(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY))
+		    .setEmailTemplate(EmailTemplate.WELCOME_REGISTRATION);
+		emailService.sendTemplatedEmailFromSender(builder);
+		
 		response.setUid(uid);
 		return response;
 	}
@@ -324,9 +336,13 @@ public class AccountBLIImpl implements AccountBLI {
 			if (!checkpw) {
 				throw new InvalidCredentialsException("Invalid account credentials");
 			}
+			// Update last login time.
+			account.setLastLoginTime(new Date());
+			accountDao.update(EntityUtil.convert(account));
 		} catch (NotFoundException e) {
 			throw e;
 		}
+		
 		return account;
 	}
 
@@ -395,6 +411,7 @@ public class AccountBLIImpl implements AccountBLI {
 		try {
 			token = authFlowManager.exchange(code);
 		} catch (Exception e) {
+			logger.severe(String.format("OAuth failed oauth exchange with exception %s",e));
 			throw new OAuthException();
 		}
 		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token.getAccess_token());
@@ -589,14 +606,12 @@ public class AccountBLIImpl implements AccountBLI {
 			passwordRecoveryDao.save(pr);
 
 			// send email
-			Map<String, String> emailData = Maps.newHashMap();
-			emailData.put(StringConstants.RECIPIENT_EMAIL, account.getEmail());
-			emailData.put(StringConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
-			String passwordRecoveryUrl = getPasswordRecoveryUrl(hash);
-			System.out.println("Password recovery url = " + passwordRecoveryUrl);
-			emailData.put(StringConstants.PASSWORD_RECOVER_URL, passwordRecoveryUrl);
-			emailService.sendEmail(emailData, EmailTemplate.PASSWORD_RECOVERY);
-
+			EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
+			builder.setRecipientName(account.getDisplayName())
+		        .setRecipientEmail(account.getEmail())
+		        .setEmailTemplate(EmailTemplate.WELCOME_REGISTRATION)
+		        .setSenderEmail(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
+		    emailService.sendTemplatedEmailFromSender(builder);
 		} catch (NotFoundException e) {
 			throw e;
 		} catch (UnsupportedEncodingException e) {
@@ -638,17 +653,17 @@ public class AccountBLIImpl implements AccountBLI {
 		return new String(encodeBase64);
 	}
 
-	private String getPasswordRecoveryUrl(String hash) {
-		String passwordRecoveryUrl = "";
-		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-			HttpServletRequest req = request.get();
-			passwordRecoveryUrl = req.getScheme() + "://" + req.getServerName()
-					+ req.getContextPath() + ":8888/Ziplly.html" + "#passwordrecovery:" + hash;
-		} else {
-
-		}
-		return passwordRecoveryUrl;
-	}
+//	private String getPasswordRecoveryUrl(String hash) {
+//		String passwordRecoveryUrl = "";
+//		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
+//			HttpServletRequest req = request.get();
+//			passwordRecoveryUrl = req.getScheme() + "://" + req.getServerName()
+//					+ req.getContextPath() + ":8888/Ziplly.html" + "#passwordrecovery:" + hash;
+//		} else {
+//
+//		}
+//		return passwordRecoveryUrl;
+//	}
 
 	// TODO maintaing transaction???
 	@Override
@@ -666,42 +681,22 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 	}
 
-	// TODO(shaan) refactor
-	@Override
-	public void sendEmailsByNeighborhood(Account sender, Long tweetId, NotificationType type,
-			EmailTemplate template) {
-		
-		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
-		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
-				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
-				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
-				.param(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY, Long.toString(sender.getNeighborhood().getNeighborhoodId()))
-				.param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY, sender.getAccountId().toString())
-				.param(ZipllyServerConstants.TWEET_ID_KEY, tweetId.toString())
-				.param(ZipllyServerConstants.NOTIFICATION_TYPE_KEY, type.name())
-//				.param("zip", Integer.toString(sender.getZip()))
-				.param(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY, template.name())
-				.header(ZipllyServerConstants.HOST_KEY, backendAddress);
-		queue.add(options);
-	}
-
-	@Override
-	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
-		Queue queue = QueueFactory.getQueue(StringConstants.EMAIL_QUEUE_NAME);
-		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
-				System.getProperty(StringConstants.BACKEND_INSTANCE_NAME_1));
-		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
-				.param("action", EmailAction.INDIVIDUAL.name())
-				.param("recipientEmail", receiver.getEmail())
-				.param("recipientName", receiver.getName())
-				.param("emailTemplateId", EmailTemplate.WELCOME_REGISTRATION.name())
-				.header("Host", backendAddress);
-		queue.add(options);
-
-	}
+//	
+//	@Override
+//	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
+//		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+//		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
+//				System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+//		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+//
+//		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
+//				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
+//				.param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
+//				.param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
+//				.param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
+//				.param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
+//				.param("emailTemplateId", template.name())
+//				.header("Host", backendAddress);
+//		queue.add(options);
+//	}
 }

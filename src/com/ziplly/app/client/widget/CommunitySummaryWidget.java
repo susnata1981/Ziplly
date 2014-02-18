@@ -18,6 +18,7 @@ import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.shared.StringUtil;
 
 public class CommunitySummaryWidget extends Composite implements HasClickHandlers {
 
@@ -51,7 +52,7 @@ public class CommunitySummaryWidget extends Composite implements HasClickHandler
 	
 	public void displaySummaryData(NeighborhoodDTO neighborhood) {
 		if (neighborhood != null) {
-			communityNameSpan.setInnerHTML(neighborhood.getName()+",&nbsp;"+neighborhood.getCity());
+			communityNameSpan.setInnerHTML(StringUtil.capitalize(neighborhood.getName())+",&nbsp;"+StringUtil.capitalize(neighborhood.getCity()));
 		}
 	}
 	

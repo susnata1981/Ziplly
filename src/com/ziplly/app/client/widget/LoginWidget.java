@@ -44,8 +44,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	public static final String ACCOUNT_DOES_NOT_EXIST = "Account with this email doesn't exist";
 	public static final String INVALID_ACCOUNT_CREDENTIALS = "Invalid account credentials.";
-	private OAuthConfig authConfig = OAuthFactory
-			.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig;
 
 	@Inject
 	public LoginWidget() {
@@ -125,6 +124,9 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	@UiHandler("fbLoginBtn")
 	void fbLogin(ClickEvent event) {
 		try {
+			if (authConfig == null) {
+				authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
+			}
 			Window.Location.replace(authConfig.getAuthorizationUrl());
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

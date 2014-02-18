@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
 
 public class FacebookAuthFlowManager extends OAuthFlowManager {
-
+	private Logger logger = Logger.getLogger(FacebookAuthFlowManager.class.getCanonicalName());
 	public FacebookAuthFlowManager(OAuthConfig config) {
 		super(config);
 	}
@@ -32,11 +33,11 @@ public class FacebookAuthFlowManager extends OAuthFlowManager {
 	@Override
 	public String doExchange(Map<String,String> params) throws IOException {
 		String exchangeTokenUrl = getUrlWithParam(provider.getTokenUrl(), params);
+		logger.info(String.format("OAuth Trying to connect to %s", exchangeTokenUrl));
 		
 		HttpURLConnection conn = HTTPConnectionProvider.getConnection(
 				exchangeTokenUrl,
 				HTTPRequestType.GET);
-		
 		String response = getResponse(conn);
 		return response;
 	}

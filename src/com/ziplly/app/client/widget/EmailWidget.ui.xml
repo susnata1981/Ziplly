@@ -13,18 +13,20 @@
 		.btn {
 			margin-right: 10px;
 		}
+		.buttonPanel {
+			margin: 10px 10px 10px 0;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.emailWidgetPanel}">
 		<b:Modal ui:field="emailWidgetModal" title="Invite neighbors"
 			backdrop="STATIC" keyboard="true" animation="true">
 			<g:HTMLPanel>
 				<b:Alert animation="true" ui:field="message" />
-				<h4>Enter email (comma separated)</h4>
+				<p>Enter email (comma separated)</p>
 				<b:TextBox ui:field="emailList" addStyleNames="{style.emailListTextBox}"/>
-				<br />
-				<div>
-					<b:Button addStyleNames="{style.btn}" size="MINI" type="INFO" ui:field="invitePeopleBtn">Invite people</b:Button>
-					<b:Button addStyleNames="{style.btn}" size="MINI" ui:field="cancelBtn">Cancel</b:Button>
+				<div class="{style.buttonPanel}">
+					<b:Button addStyleNames="{style.btn}"  type="INFO" ui:field="invitePeopleBtn">Invite people</b:Button>
+					<b:Button addStyleNames="{style.btn}" ui:field="cancelBtn">Cancel</b:Button>
 				</div>
 			</g:HTMLPanel>
 		</b:Modal>

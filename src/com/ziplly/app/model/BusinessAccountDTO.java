@@ -3,6 +3,8 @@ package com.ziplly.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ziplly.app.shared.StringUtil;
+
 public class BusinessAccountDTO extends AccountDTO {
 	private static final long serialVersionUID = 1L;
 	private String name;
@@ -11,9 +13,9 @@ public class BusinessAccountDTO extends AccountDTO {
 	private String street1;
 	private String street2;
 	private List<TransactionDTO> transactions = new ArrayList<TransactionDTO>();
-	private BusinessType businessType;
+	private String businessType;
+	private String category;
 	private BusinessPropertiesDTO properties;
-	private BusinessCategory category;
 	
 	public BusinessAccountDTO() {
 	}
@@ -44,7 +46,7 @@ public class BusinessAccountDTO extends AccountDTO {
 	}
 	@Override
 	public String getDisplayName() {
-		return name;
+		return StringUtil.capitalize(name);
 	}
 
 	public String getWebsite() {
@@ -62,27 +64,28 @@ public class BusinessAccountDTO extends AccountDTO {
 	public void setTransactions(List<TransactionDTO> transactions) {
 		this.transactions = transactions;
 	}
+
 	public BusinessType getBusinessType() {
-		return businessType;
+		return BusinessType.valueOf(businessType);
 	}
 
 	public void setBusinessType(BusinessType type) {
-		this.businessType = type;
+		this.businessType = type.name();
 	}
 
-	public BusinessPropertiesDTO getProperties() {
-		return properties;
+	public BusinessCategory getCategory() {
+		return BusinessCategory.valueOf(category);
 	}
 
+	public void setCategory(BusinessCategory category) {
+		this.category = category.name();
+	}
+	
 	public void setProperties(BusinessPropertiesDTO properties) {
 		this.properties = properties;
 	}
 
-	public BusinessCategory getCategory() {
-		return category;
-	}
-
-	public void setCategory(BusinessCategory category) {
-		this.category = category;
+	public BusinessPropertiesDTO getProperties() {
+		return properties;
 	}
 }

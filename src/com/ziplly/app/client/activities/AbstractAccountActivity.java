@@ -105,10 +105,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	protected abstract void onAccountDetailsUpdate();
 	
 	@Override
-	public void fetchData() {
-	}
-	
-	@Override
 	public void save(T account) {
 		dispatcher.execute(new UpdateAccountAction(account),
 				new DispatcherCallbackAsync<UpdateAccountResult>() {
@@ -148,7 +144,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			@Override
 			public void onSuccess(CommentResult result) {
 				view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-				view.updateComment(comment);
+				view.updateComment(result.getComment());
 			}
 			
 			@Override
@@ -324,7 +320,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	
 	@Override
 	public void invitePeople(List<String> emails){
-		System.out.println("Email people..."+emails);
 		SendEmailAction action = new SendEmailAction();
 		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
 		action.setEmailList(emails);

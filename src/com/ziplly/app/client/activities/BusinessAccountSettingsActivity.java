@@ -9,7 +9,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -72,7 +71,6 @@ public class BusinessAccountSettingsActivity extends
 			AsyncProvider<BusinessAccountSettingsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.viewProvider = viewProvider;
-		setupEventHandler();
 	}
 
 	private void setupEventHandler() {
@@ -87,39 +85,35 @@ public class BusinessAccountSettingsActivity extends
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		if (ctx.getAccount() == null) {
-			checkLoginStatus();
-			return;
-		} else {
-			internalStart();
-		}
+		checkAccountLogin();
 	}
 
+	@Override
+	public void doStart() {
+		internalStart();
+	}
+	
 	private void internalStart() {
 		if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountSettingsPlace());
+			return;
 		}
 
-		viewProvider.get(new AsyncCallback<BusinessAccountSettingsView>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessAccountSettingsView>() {
 
 			@Override
 			public void onSuccess(BusinessAccountSettingsView result) {
 				BusinessAccountSettingsActivity.this.view = result;
 				bind();
+				setupEventHandler();
+				view.displaySettings((BusinessAccountDTO) ctx.getAccount());
+				displayTransactionHistory();
+				displaySubscriptionPlans();
+				setImageUploadFormSubmitCompleteHandler();
+				setUploadFormActionUrl();
+				panel.setWidget(view);
 			}
 		});
-		view.displaySettings((BusinessAccountDTO) ctx.getAccount());
-		displayTransactionHistory();
-		displaySubscriptionPlans();
-		setImageUploadFormSubmitCompleteHandler();
-		setUploadFormActionUrl();
-		panel.setWidget(view);
 	}
 
 	private void displayTransactionHistory() {
@@ -265,9 +259,5 @@ public class BusinessAccountSettingsActivity extends
 
 	@Override
 	public void go(AcceptsOneWidget container) {
-	}
-
-	@Override
-	public void fetchData() {
 	}
 }

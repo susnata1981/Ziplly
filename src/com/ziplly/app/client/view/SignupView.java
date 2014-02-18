@@ -46,6 +46,7 @@ import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
+import com.ziplly.app.model.Badge;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -157,7 +158,7 @@ public class SignupView extends AbstractView implements
 	SignupActivityPresenter presenter;
 	private boolean facebookRegistration;
 	private boolean doValidation = true;
-	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	private OAuthConfig authConfig;
 
 	@Inject
 	public SignupView(EventBus eventBus) {
@@ -406,6 +407,7 @@ public class SignupView extends AbstractView implements
 		account.setZip(Integer.parseInt(zipInput));
 		account.setNeighborhood(selectedNeighborhood);
 		account.setRole(Role.USER);
+		account.setBadge(Badge.chipmunk);
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
 		
@@ -530,7 +532,7 @@ public class SignupView extends AbstractView implements
 	
 	public void displayNeighborhoodListLoading(boolean display) {
 		if (display) {
-			neighborhoodLoadingImage.setUrl(StringConstants.SMALL_IMAGE_LOADER);
+			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
 		} else {
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
@@ -544,6 +546,9 @@ public class SignupView extends AbstractView implements
 	@UiHandler("facebookSignupAnchor")
 	void signupUsingFacebook(ClickEvent event) {
 		try {
+			if (authConfig == null) {
+				authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
+			}
 			Window.Location.replace(authConfig.getAuthorizationUrl());
 		} catch (UnsupportedEncodingException e) {
 			// It should never get here.

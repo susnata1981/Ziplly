@@ -16,7 +16,7 @@ public class AbstractTimestampAwareEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="time_created")
+	@Column(name="time_created", updatable = false)
 	private Date timeCreated;
 	
 	@Temporal(TemporalType.TIMESTAMP)

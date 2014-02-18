@@ -6,7 +6,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -18,7 +17,6 @@ import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.HomePlace;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.IAccountView;
@@ -42,6 +40,7 @@ import com.ziplly.app.shared.TweetResult;
 
 public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAccountDTO> implements
 		InfiniteScrollHandler {
+	
 	private BusinessAccountPlace place;
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
@@ -96,28 +95,28 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<BusinessAccountView>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
+		checkAccountLogin();
+	}
+
+	@Override
+	public void doStart() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessAccountView>() {
 
 			@Override
 			public void onSuccess(BusinessAccountView result) {
 				BusinessAccountActivity.this.view = result;
 				bind();
-				setupHandlers();	
+				setupHandlers();
+				go(BusinessAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());
-				} else if (ctx.getAccount() != null) {
-					displayProfile();
-					go(panel);
 				} else {
-					goTo(new LoginPlace());
+					displayProfile();
 				}
 			}
 		});
 	}
-
+	
 	/*
 	 * Display people's profile
 	 */
@@ -136,14 +135,13 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public void displayProfile() {
-		if (ctx.getAccount() instanceof BusinessAccountDTO) {
-			view.displayProfile((BusinessAccountDTO) ctx.getAccount());
-			view.displayTargetNeighborhoods(getTargetNeighborhoodList());
-		} else if (ctx.getAccount() instanceof PersonalAccountDTO) {
+		if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountPlace());
 			return;
 		}
 		
+		view.displayProfile((BusinessAccountDTO) ctx.getAccount());
+		view.displayTargetNeighborhoods(getTargetNeighborhoodList());
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		getAccountNotifications();
 		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
@@ -151,10 +149,9 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
-		if (accountNotComplete()) {
-			System.out.println("SHOW POPUP");
-			view.displayNotificationWidget(true);
-		}
+//		if (accountNotComplete()) {
+//			view.displayNotificationWidget(true);
+//		}
 	}
 
 	private boolean accountNotComplete() {
@@ -288,7 +285,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
-			onAccountDetailsUpdate(result);
+//			onAccountDetailsUpdate(result);
+			view.updatePublicAccountDetails(result);
 		}
 	}
 

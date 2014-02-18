@@ -14,17 +14,12 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
-import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
-import com.ziplly.app.client.activities.LoginActivity;
-import com.ziplly.app.client.activities.NavActivity;
 import com.ziplly.app.client.activities.NavActivity.INavView;
-import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -45,7 +40,6 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
-import com.ziplly.app.client.widget.LoginWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
 
 public class ZClientModule extends AbstractGinModule {
@@ -74,15 +68,6 @@ public class ZClientModule extends AbstractGinModule {
 		bind(ConversationView.class);
 		bind(PasswordRecoveryView.class);
 		bind(AboutView.class);
-		
-		// widgets
-		bind(LoginWidget.class).in(Singleton.class);
-		
-		// activities
-		bind(HomeActivity.class);
-		bind(LoginActivity.class);
-		bind(SignupActivity.class);
-		bind(NavActivity.class);
 		
 		// places
 		bind(HomePlace.class);
@@ -194,18 +179,4 @@ public class ZClientModule extends AbstractGinModule {
 			return factory;
 		}
 	}
-	
-//	public class ActivityProxyProvider<T extends Activity> implements Provider<ActivityAsyncProxy<T>> {
-//		private Provider<ActivityAsyncProxy<T>> provider;
-//
-//		@Inject
-//		public ActivityAsyncProxyProvider(Provider<ActivityAsyncProxy<T>> provider) {
-//			this.provider = provider;
-//		}
-//		
-//		@Override
-//		public ActivityAsyncProxy<T> get() {
-//			return provider.get();
-//		}
-//	}
 }

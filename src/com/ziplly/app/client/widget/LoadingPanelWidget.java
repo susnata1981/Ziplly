@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.ziplly.app.client.resource.ZResources;
 
 public class LoadingPanelWidget extends Composite {
 	
@@ -18,7 +19,7 @@ public class LoadingPanelWidget extends Composite {
 		initWidget(panel);
 		HPanel container = new HPanel();
 		Image image = new Image();
-		image.setUrl("images/ajax-loader1.gif");
+		image.setUrl(ZResources.IMPL.loadingImageLarge().getSafeUri());
 		image.setHeight(IMAGE_HEIGHT);
 		container.add(image);
 		Heading loadingTitle = new Heading(4, "Loading...");

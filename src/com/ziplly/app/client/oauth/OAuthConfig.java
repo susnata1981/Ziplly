@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ziplly.app.client.ApplicationContext.Environment;
+
 @SuppressWarnings("serial")
 public class OAuthConfig implements Serializable {
 	private String[] scopes;
@@ -13,14 +15,16 @@ public class OAuthConfig implements Serializable {
 	private String clientId;
 	private OAuthProvider provider;
 	private String key;
+	private Environment environment;
 
 	private OAuthConfig(OAuthProvider provider, String clientId, String key, String[] scopes,
-			String redirectUri) {
+			String redirectUri, Environment environment) {
 		this.setProvider(provider);
 		this.setScopes(scopes);
 		this.setRedirectUri(redirectUri);
 		this.setClientId(clientId);
 		this.setKey(key);
+		this.environment = environment;
 	}
 
 	public String getAuthorizationUrl() throws UnsupportedEncodingException {
@@ -56,18 +60,21 @@ public class OAuthConfig implements Serializable {
 	}
 
 	/**********************************************************************
-	 * NEEDS TO CHANGE IN PRODUCTION
+	 * NO NEED TO CHANGE IN PRODUCTION
 	 * 
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 **********************************************************************/
 	public String getRedirectUri() throws UnsupportedEncodingException {
-		Map<String, String> paramsMap = new HashMap<String, String>();
-		paramsMap.put("gwt.codesvr", "127.0.0.1:9997");
-		return OAuthUtil.getUrlWithParam(redirectUri, paramsMap);
-
-		// IN PROD
-		// return OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT;
+		// In DEVEL
+		if (environment == Environment.DEVEL) {
+			Map<String, String> paramsMap = new HashMap<String, String>();
+			paramsMap.put("gwt.codesvr", "127.0.0.1:9997");
+			return OAuthUtil.getUrlWithParam(OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT, paramsMap);
+		} else {
+			// In PROD
+			return OAuthAppProperties.REDIRECT_URL_IN_PRODUCTION;
+		}
 	}
 
 	public void setRedirectUri(String redirectUri) {
@@ -96,17 +103,10 @@ public class OAuthConfig implements Serializable {
 		private String clientId;
 		private OAuthProvider provider;
 		private String key;
-
-		// public Builder(OAuthProvider provider, String clientId, String
-		// key,String redirectUri) {
-		// this.provider = provider;
-		// this.clientId = clientId;
-		// this.redirectUri = redirectUri;
-		// this.key = key;
-		// }
+		private Environment environment;
 
 		public OAuthConfig build() {
-			return new OAuthConfig(provider, clientId, key, scopes, redirectUri);
+			return new OAuthConfig(provider, clientId, key, scopes, redirectUri, environment);
 		}
 
 		public Builder setScope(String[] scopes) {
@@ -131,6 +131,15 @@ public class OAuthConfig implements Serializable {
 
 		public Builder setProvider(OAuthProvider provider) {
 			this.provider = provider;
+			return this;
+		}
+
+		public Environment getEnvironment() {
+			return environment;
+		}
+
+		public Builder setEnvironment(Environment environment) {
+			this.environment = environment;
 			return this;
 		}
 	}

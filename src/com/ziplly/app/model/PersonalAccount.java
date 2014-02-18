@@ -27,6 +27,8 @@ public class PersonalAccount extends Account {
 	private String introduction;
 	private String occupation;
 	private String gender;
+	@Column(name="badge")
+	private String badge;
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name="account_interest", 
@@ -48,6 +50,7 @@ public class PersonalAccount extends Account {
 		this.introduction = account.getIntroduction();
 		this.occupation = account.getOccupation();
 		this.setGender(account.getGender());
+		this.setBadge(account.getBadge());
 		
 		for(InterestDTO interest : account.getInterests()) {
 			getInterests().add(new Interest(interest));
@@ -126,5 +129,13 @@ public class PersonalAccount extends Account {
 
 	public void setGender(Gender gender) {
 		this.gender = gender.name();
+	}
+	
+	public Badge getBadge() {
+		return Badge.valueOf(badge);
+	}
+	
+	public void setBadge(Badge badge) {
+		this.badge = badge.name();
 	}
 }

@@ -6,7 +6,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -16,7 +15,6 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
-import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
@@ -86,30 +84,28 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<AccountView>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+		checkAccountLogin();
+	}
+	
+	@Override
+	public void doStart() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<AccountView>() {
 
 			@Override
 			public void onSuccess(AccountView result) {
 				PersonalAccountActivity.this.view = result;
 				bind();
 				setupHandlers();
+				go(PersonalAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());
-				} else if (ctx.getAccount() != null) {
-					displayProfile();
-					go(PersonalAccountActivity.this.panel);
 				} else {
-					goTo(new LoginPlace());
+					displayProfile();
 				}
 			}
 		});
 	}
-
+	
 	/**
 	 * Display people's profile
 	 */
@@ -306,7 +302,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
-			onAccountDetailsUpdate(result);
+//			onAccountDetailsUpdate(result);
+			view.updatePublicAccountDetails(result);
 		}
 	}
 

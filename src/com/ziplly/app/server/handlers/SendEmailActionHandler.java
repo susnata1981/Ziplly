@@ -1,17 +1,14 @@
 package com.ziplly.app.server.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.EmailService;
+import com.ziplly.app.server.EmailServiceImpl;
 import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendEmailResult;
 
@@ -34,13 +31,15 @@ public class SendEmailActionHandler extends AbstractAccountActionHandler<SendEma
 		
 		validateSession();
 		
-		Map<String, String> data = new HashMap<String, String>();
+		String senderEmail = session.getAccount().getEmail();
 		for(String email : action.getEmails()) {
-			data.clear();
-			data.put(StringConstants.SENDER_NAME_KEY, session.getAccount().getName());
-			data.put(StringConstants.RECIPIENT_NAME_KEY, "");
-			data.put(StringConstants.RECIPIENT_EMAIL, email);
-			emailService.sendEmail(data, action.getEmailTemplate());
+			EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
+			builder.setRecipientName("recipientName")
+			    .setRecipientEmail(email)
+			    .setEmailTemplate(action.getEmailTemplate())
+			    .setSenderName(session.getAccount().getName())
+			    .setSenderEmail(senderEmail);
+			emailService.sendTemplatedEmailFromSender(builder);
 		}
 		return new SendEmailResult();
 	}

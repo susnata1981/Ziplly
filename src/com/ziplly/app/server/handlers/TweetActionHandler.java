@@ -9,6 +9,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
@@ -16,8 +17,6 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.BusinessAccount;
-import com.ziplly.app.model.Neighborhood;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
@@ -61,22 +60,16 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		}
 		
 		tweet.setSender(session.getAccount());
-		TweetDTO saveTweet = tweetDao.save(tweet);
+		TweetDTO savedTweet = tweetDao.save(tweet);
 		
-		if (tweetNotificationBli.shouldNotification(saveTweet)) {
-			accountBli.sendEmailsByNeighborhood(
-					tweet.getSender(),
-					tweet.getTweetId(),
-					tweet.getType().getNotificationType(), 
-					EmailTemplate.SECURITY_ALERT);
-		}
+		tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
 		
 		TweetResult result = new TweetResult();
-		result.setTweet(saveTweet);
+		result.setTweet(savedTweet);
 		return result;
 	}
 
-	private void checkUsage() throws NeedsSubscriptionException, InternalError, UsageLimitExceededException {
+	private void checkUsage() throws NeedsSubscriptionException, InternalError, UsageLimitExceededException, NotFoundException {
 		boolean enablePaymentPlan = Boolean.valueOf(System.getProperty(StringConstants.ENABLE_PAYMENT_PLAN, "false"));
 		
 		// Wire on Wire off
@@ -89,7 +82,10 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		
 		try {
 			count = tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
-		} catch (ParseException e) {
+		} catch(NotFoundException nfe) {
+			throw nfe;
+		}
+		catch (ParseException e) {
 			// should never reach here
 			throw new InternalError("Internal error");
 		}

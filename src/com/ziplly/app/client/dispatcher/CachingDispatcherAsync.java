@@ -60,7 +60,6 @@ public class CachingDispatcherAsync implements DispatchAsync {
 		}
 
 		Result cachedResult = cache.get(action);
-		System.out.println("Result="+cachedResult+" Action = "+action.hashCode()+" cache="+cache.size());
 
 		if (cachedResult != null) {
 			logger.log(Level.INFO, "Cache hit");

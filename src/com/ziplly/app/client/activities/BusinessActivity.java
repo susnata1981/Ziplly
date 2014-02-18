@@ -8,7 +8,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -63,27 +62,23 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		viewProvider.get(new AsyncCallback<BusinessView>() {
+		checkAccountLogin();
+	}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+	@Override
+	public void doStart() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessView>() {
 
 			@Override
 			public void onSuccess(BusinessView result) {
 				BusinessActivity.this.view = result;
 				bind();
 				setupHandlers();
-				if (ctx.getAccount() != null) {
-					displayBusinessList();
-				} else {
-					checkLoginStatus();
-				}
+				displayBusinessList();
 			}
 		});
 	}
-
+	
 	void displayBusinessList() {
 		if (place.getAccountId() != null) {
 			view.displaySendMessageWidget(place.getAccountId());
@@ -189,10 +184,6 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	@Override
 	public void bind() {
 		view.setPresenter(this);
-	}
-
-	@Override
-	public void fetchData() {
 	}
 
 	@Override

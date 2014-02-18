@@ -621,6 +621,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	private void displayTweetSection() {
+		StyleHelper.show(tweetContentSpan.getElement(), true);
 		tweetContentSpan.getElement().setInnerHTML(TweetUtils.getContent(tweet.getContent()));
 
 		categoryLink.setHTML(basicDataFormatter.format(tweet.getType(), ValueType.TWEET_TYPE));
@@ -689,6 +690,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	@Override
 	public void updateTweet(TweetDTO tweet) {
+		System.out.println("Received tweet: "+tweet);
 		displayTweet(tweet);
 	}
 

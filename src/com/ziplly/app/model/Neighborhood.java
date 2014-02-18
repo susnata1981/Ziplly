@@ -7,15 +7,11 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -31,8 +27,6 @@ import javax.validation.constraints.NotNull;
 		@NamedQuery(name = "findAllNeighborhoods", query = "from Neighborhood") })
 @Entity
 @Table(name = "neighborhood")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class Neighborhood extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -41,7 +35,7 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name = "neighborhood_id")
 	private Long neighborhoodId;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="parent_neighborhood_id")
 	private Neighborhood parentNeighborhood;
 	

@@ -4,8 +4,10 @@ import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
 import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.TweetType;
 
@@ -37,9 +39,16 @@ public class BasicDataFormatter implements Formatter<Object> {
 		case PROFILE_IMAGE_URL:
 			String imgUrl = (String) value;
 			if (imgUrl == null) {
-				imgUrl = "images/no-photo.jpg";
+				imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
 			}
 			return imgUrl;
+		case NEIGHBORHOOD:
+			NeighborhoodDTO n = (NeighborhoodDTO) value;
+			if (n.getParentNeighborhood() != null) {
+				return n.getName() + ", " + n.getParentNeighborhood().getName();
+			} else {
+				return n.getName();
+			}
 		default:
 			throw new IllegalArgumentException("Invalid value type to render");
 		}

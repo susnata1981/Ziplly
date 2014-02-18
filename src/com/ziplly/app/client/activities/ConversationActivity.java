@@ -13,6 +13,7 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.StringConstants;
@@ -53,6 +54,11 @@ public class ConversationActivity extends AbstractActivity implements
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
+		checkAccountLogin();
+	}
+
+	@Override
+	public void doStart() {
 		viewProvider.get(new AsyncCallback<ConversationView>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -65,15 +71,16 @@ public class ConversationActivity extends AbstractActivity implements
 				bind();
 				go(ConversationActivity.this.panel);
 				setupHandlers();
-				if (ctx.getAccount() != null) {
-					internalStart();
-				} else {
-					checkLoginStatus();
-				}
+				internalStart();
+//				if (ctx.getAccount() != null) {
+//					internalStart();
+//				} else {
+//					checkAccountLogin();
+//				}
 			}
 		});
 	}
-
+	
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
@@ -131,10 +138,6 @@ public class ConversationActivity extends AbstractActivity implements
 						eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
 					}
 				});
-	}
-
-	@Override
-	public void fetchData() {
 	}
 
 	@Override
