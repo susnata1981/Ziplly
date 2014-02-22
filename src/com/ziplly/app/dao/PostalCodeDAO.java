@@ -11,4 +11,5 @@ public interface PostalCodeDAO {
         List<PostalCode> getAll(int start, int end);
         List<PostalCodeDTO> findAll();
         Long findTotalPostalCodes(String countQuery);
+		PostalCodeDTO findByPostalCode(String code);
 }

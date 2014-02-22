@@ -15,15 +15,16 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
@@ -33,6 +34,8 @@ import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
@@ -53,7 +56,7 @@ import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class AccountView extends Composite implements IAccountView<PersonalAccountDTO> {
+public class AccountView extends AbstractView implements IAccountView<PersonalAccountDTO> {
 
 	private static AccountViewUiBinder uiBinder = GWT
 			.create(AccountViewUiBinder.class);
@@ -117,23 +120,33 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
-	private String tweetWidgetWidth = "80%";
-	private String tweetBoxWidth = "82%";
+	
+	private String tweetWidgetWidth = "90%";
+	private String tweetBoxWidth = "92%";
+	private static final String TWEET_VIEW_HEIGHT = "1115px";
 	private BasicDataFormatter basicDataFormatter = 
 			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private AccountFormatter accountFormatter = 
 			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 	
-	public AccountView() {
+	@Inject
+	public AccountView(EventBus eventBus) {
+		super(eventBus);
+		
 		tweetBox = new TweetBox();
 		emailWidget = new EmailWidget();
 		tweetBox.setWidth(tweetBoxWidth);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tview.setWidth(tweetWidgetWidth);
+		tview.setHeight(TWEET_VIEW_HEIGHT);
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetSection.add(tview);
+		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app.model.AccountDTO)
+	 */
 	@Override
 	public void displayProfile(PersonalAccountDTO account) {
 		if (account == null) {
@@ -198,13 +211,16 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 	}
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets) {
-		displayTweets(tweets, true);
-	}
-
-	@Override
 	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
-		tview.displayTweets(tweets, displayNoTweetsMessage);
+		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
+			
+			@Override
+			public void hasFinished(double y) {
+				if (y == 100) {
+					eventBus.fireEvent(new LoadingEventEnd());
+				}
+			}
+		}, displayNoTweetsMessage);
 	}
 
 	@Override
@@ -215,6 +231,8 @@ public class AccountView extends Composite implements IAccountView<PersonalAccou
 
 	@Override
 	public void clear() {
+		clearTweet();
+		StyleHelper.clearBackground();
 	}
 
 	public void clearTweet() {

@@ -50,7 +50,11 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 			public void onSuccess(AboutView result) {
 				AboutActivity.this.view = result;
 				bind();
-				view.displaySection(AboutViewSection.valueOf(place.getSection()));
+				try {
+					view.displaySection(AboutViewSection.valueOf(place.getSection().toUpperCase()));
+				} catch(IllegalArgumentException ex) {
+					view.displaySection(AboutViewSection.ABOUTUS);
+				}
 				AboutActivity.this.panel.setWidget(view);
 			}
 		});

@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AccountNotificationSettingsFormatter;
 import com.ziplly.app.client.view.factory.PrivacySettingsFormatter;
@@ -51,6 +52,7 @@ import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
@@ -208,13 +210,6 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
-
-//		for (Activity activity : Activity.values()) {
-//			CheckBox cb = new CheckBox(activity.getActivityName());
-//			interestToCheckboxMap.put(activity, cb);
-//			interestTabPanel.add(cb);
-//		}
-
 		message.setVisible(false);
 		setupHandlers();
 	}
@@ -390,6 +385,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@Override
 	public void clear() {
 		clearError();
+		StyleHelper.clearBackground();
 	}
 
 	@Override
@@ -583,7 +579,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	
 	private void markSelectedInterest() {
 		for(InterestDTO interest : account.getInterests()) {
-			interestToCheckboxMap.get(interest).setEnabled(true);
+			interestToCheckboxMap.get(interest).setValue(true);
 		}
 	}
 }

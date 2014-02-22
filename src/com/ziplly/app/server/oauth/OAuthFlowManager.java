@@ -28,7 +28,7 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 		this.clientId = config.getClientId();
 		this.key = config.getKey();
 		try {
-			this.redirectUri = getRedirectUri();
+			this.redirectUri = config.getRedirectUri();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

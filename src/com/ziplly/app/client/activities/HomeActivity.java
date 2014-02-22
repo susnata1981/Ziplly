@@ -165,7 +165,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	protected void doStart() {
 		state.setCurrentNeighborhood(ctx.getAccount().getNeighborhood());
 		displayCommunityWall();
-		
+
 		// account specific.
 		getLatLng(ctx.getAccount());
 		getAccountNotifications();
@@ -173,12 +173,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		setUploadImageHandler();
 		getAccountDetails();
 	}
-	
+
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
 		placeController.goTo(new SignupPlace());
 	}
-	
+
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
@@ -208,13 +208,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				HomeActivity.this.homeView = result;
 				bind();
 				setupHandlers();
-				
 				getCommunityWallData(state.getSearchCriteria(place));
 				getHashtagList();
 				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
 				getNeighborhoodDetails();
 				homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
 				displayHomeView();
+				eventBus.fireEvent(new LoadingEventStart());
 			}
 		});
 
@@ -280,16 +280,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	@Override
-	public void go(AcceptsOneWidget container) {
-//		if (this.account != null) {
-//			displayHomeView();
-//		} else {
-//			fetchData();
-//		}
-//		hideLoadingIcon();
-	}
-
-	@Override
 	public void bind() {
 		homeView.setPresenter(this);
 	}
@@ -298,11 +288,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		hideLoadingIcon();
 		panel.setWidget(homeView);
 	}
-
-//	@Override
-//	public void fetchData() {
-//		dispatcher.execute(new GetLoggedInUserAction(), getLoggedInUserActionHandler);
-//	}
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
@@ -365,6 +350,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		return state.hasMorePages();
 	}
 
+	/**
+	 * Loads the messages for the next page.
+	 */
 	@Override
 	public void onScrollBottomHit() {
 		if (state.isFetchingData()) {
@@ -549,15 +537,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		@Override
 		public void onSuccess(GetCommunityWallDataResult result) {
 			if (result != null) {
-				hideLoadingIcon();
 				List<TweetDTO> tweets = result.getTweets();
 				state.setCurrentTweetList(tweets);
 				state.setFetchingData(false);
 				displayTweets(tweets);
-				hideLoadingIcon();
-				clearBackgroundImage();
 			}
-			eventBus.fireEvent(new LoadingEventEnd());
 		}
 
 		@Override
@@ -644,20 +628,20 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				});
 	};
 
-//	private class GetLoggedInUserActionHandler extends
-//			DispatcherCallbackAsync<GetLoggedInUserResult> {
-//		@Override
-//		public void onSuccess(GetLoggedInUserResult result) {
-//			if (result != null && result.getAccount() != null) {
-//				ctx.setAccount(result.getAccount());
-//				state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
-//				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-//				displayCommunityWall();
-//			} else {
-//				goTo(new SignupPlace());
-//			}
-//		}
-//	}
+	// private class GetLoggedInUserActionHandler extends
+	// DispatcherCallbackAsync<GetLoggedInUserResult> {
+	// @Override
+	// public void onSuccess(GetLoggedInUserResult result) {
+	// if (result != null && result.getAccount() != null) {
+	// ctx.setAccount(result.getAccount());
+	// state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
+	// eventBus.fireEvent(new LoginEvent(result.getAccount()));
+	// displayCommunityWall();
+	// } else {
+	// goTo(new SignupPlace());
+	// }
+	// }
+	// }
 
 	private class GetNeighborhoodDetailsHandler extends
 			DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
@@ -729,5 +713,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);// getDefaultTweetBinder();
 		binder.start();
+	}
+
+	@Override
+	public void go(AcceptsOneWidget container) {
 	}
 }

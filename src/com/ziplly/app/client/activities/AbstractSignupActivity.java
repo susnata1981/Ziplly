@@ -23,6 +23,7 @@ import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
 import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodResult;
+import com.ziplly.app.shared.NeighborhoodSearchActionType;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 
@@ -50,8 +51,9 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	@Override
 	public void getNeighborhoodData(String postalCode) {
 		view.displayNeighborhoodListLoading(true);
-		dispatcher.execute(new GetNeighborhoodAction(postalCode), 
-				new NeighborhoodHandler());
+		GetNeighborhoodAction action = new GetNeighborhoodAction(postalCode);
+		action.setSearchType(NeighborhoodSearchActionType.BY_ZIP);
+		dispatcher.execute(action, new NeighborhoodHandler());
 	}
 	
 	@Override

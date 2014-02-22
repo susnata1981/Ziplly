@@ -12,8 +12,8 @@
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
-				<b:TabPanel tabPosition="top" ui:field="accountDetailsTab">
-					<b:Tab ui:field="basicInfoTab" heading="About" active="true">
+				<b:TabPanel tabPosition="left" ui:field="accountDetailsTab">
+					<b:Tab ui:field="basicInfoTab" heading="About" active="true" >
 						<b:Row addStyleNames="{style.basicInfoTab}">
 							<b:Column size="6">
 								<g:HTMLPanel addStyleNames="{style.basicInfoPanel}">
@@ -30,12 +30,16 @@
 										<div>
 											<div class="{style.non_editable}">
 												<span class="{style.label}">Name</span>
-												<span ui:field="firstname" />&nbsp;
-												<span ui:field="lastname" />
+												<div>
+													<span ui:field="firstname" />&nbsp;
+													<span ui:field="lastname" />
+												</div>
 											</div>
 											<div class="{style.non_editable}">
 												<span class="{style.label}">Email</span>
+												<div>
 												<span ui:field="email" />
+												</div>
 											</div>
 										</div>
 										<div class="{style.profileInfoBlock}">
@@ -88,7 +92,7 @@
 					<b:Tab ui:field="interestTab" heading="Interests">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
-								<span>Select your privacy settings</span>
+								<span>Select your interests</span>
 								<g:HTMLPanel addStyleNames="{style.popoverText}">
 									<b:Popover text="Tell us about your interests"
 										heading="help">

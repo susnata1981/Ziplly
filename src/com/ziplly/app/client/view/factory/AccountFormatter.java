@@ -18,7 +18,7 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			return basicValueFormatter.format(value.getDisplayName(), ValueType.STRING_VALUE);
 		case PROFILE_IMAGE_URL:
 			if (value.getImageUrl() != null) {
-				return value.getImageUrl();// + "=s140";
+				return value.getImageUrl() + "=s1600";
 			} else {
 				return ZResources.IMPL.noImage().getSafeUri().asString();
 			}

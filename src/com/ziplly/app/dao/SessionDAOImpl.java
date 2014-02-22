@@ -78,7 +78,7 @@ public class SessionDAOImpl implements SessionDAO {
 			}
 
 			if (existingSession != null) {
-				logger.log(Level.SEVERE, "Duplicate session for user:"
+				logger.log(Level.INFO, "Duplicate session for user:"
 						+ session.getAccount().getAccountId());
 
 				// update it
@@ -95,6 +95,7 @@ public class SessionDAOImpl implements SessionDAO {
 			em.getTransaction().begin();
 			em.persist(session);
 			em.getTransaction().commit();
+			
 		} finally {
 			em.close();
 		}

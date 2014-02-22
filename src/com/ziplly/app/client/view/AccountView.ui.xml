@@ -7,14 +7,14 @@
 
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="1" size="10">
+			<b:Column offset="1" size="9">
 				<b:Alert ui:field="message" close="false" addStyleNames="{style.alertMsg}"/>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">
 			<b:Column offset="1" size="3">
 				<g:HTMLPanel>
-					<div class="{style.profileImageSection}">
+					<div class="{style.profileImageSection} {style.profileInfoBox}">
 						<div class="{style.profileImageDiv}">
 							<b:Image ui:field="profileImage" />
 						</div>
@@ -50,7 +50,7 @@
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Occupation</h2>
-						<span ui:field="occupationSpan" class="{style.occupationSpan}" />
+						<span ui:field="occupationSpan" />
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Interests</h2>
@@ -70,7 +70,7 @@
 					</div>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="7">
+			<b:Column size="6">
 				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
 						<dt:TweetBox ui:field="tweetBox" />

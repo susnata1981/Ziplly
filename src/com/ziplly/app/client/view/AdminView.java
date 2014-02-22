@@ -5,18 +5,26 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.FileUpload;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.RadioButton;
+import com.github.gwtbootstrap.client.ui.SubmitButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.DateCell;
+import com.google.gwt.cell.client.EditTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ImageCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,7 +32,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
@@ -36,12 +47,16 @@ import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetSearchCriteria;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.GetNeighborhoodAction;
+import com.ziplly.app.shared.NeighborhoodSearchActionType;
 
 public class AdminView extends Composite implements View<AdminView.AdminPresenter> {
 	private static final int PAGE_SIZE = 10;
@@ -60,6 +75,10 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		void updateAccount(AccountDTO a);
 
 		void inviteForRegistration(String email, AccountType type, BusinessType btype);
+
+		void searchNeighborhoods(GetNeighborhoodAction action);
+
+		void updateNeighborhood(NeighborhoodDTO n);
 	}
 
 	interface AdminViewUiBinder extends UiBinder<Widget, AdminView> {
@@ -115,7 +134,7 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 	ListBox businessTypeListBox;
 	@UiField
 	HTMLPanel businessTypePanel;
-	
+
 	@UiField
 	TextBox emailInvitationTextBox;
 	@UiField
@@ -126,13 +145,46 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 	@UiField
 	RadioButton businessAccountType;
 
+	// Neighborhood Editor
+	@UiField
+	HTMLPanel neighborhoodListPanel;
+	CellTable<NeighborhoodDTO> neighborhoodTable;
+	SimplePager neighborhoodTablePager;
+	@UiField
+	SubmitButton searchNeighborhoodBtn;
+	@UiField
+	FormPanel uploadForm;
+	@UiField
+	FileUpload uploadField;
+	@UiField
+	Image neighborhoodImagePreview;
+	@UiField
+	TextBox imageUrlTextField;
+	
 	private AdminPresenter presenter;
+	
+	private boolean imageUploaded;
 
 	public AdminView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
 		displayAccountSearchPanel(true);
 		setup();
+		setupHandlers();
+	}
+
+	private void setupHandlers() {
+		uploadField.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (imageUploaded) {
+//					presenter.deleteImage(neighborhoodImagePreview.getUrl());
+				}
+				imageUploaded = true;
+				uploadForm.submit();
+			}
+		});
 	}
 
 	private void setup() {
@@ -148,12 +200,13 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			accountTypeTextBox.addItem(type.name().toLowerCase());
 		}
 
-		for(BusinessType type : BusinessType.values()) {
+		for (BusinessType type : BusinessType.values()) {
 			businessTypeListBox.addItem(type.name().toLowerCase());
 		}
-		
+
 		buildAccountsTable();
 		buildTweetsTable();
+		buildNeighborhoodTable();
 	}
 
 	private void buildTweetsTable() {
@@ -379,6 +432,184 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		accountsTable.addRangeChangeHandler(new AccountsTableRangeChangeHandler());
 	}
 
+	public void buildNeighborhoodTable() {
+		neighborhoodTable = new CellTable<NeighborhoodDTO>();
+
+		Column<NeighborhoodDTO, Number> idColumn = new Column<NeighborhoodDTO, Number>(
+				new NumberCell()) {
+
+			@Override
+			public Long getValue(NeighborhoodDTO n) {
+				return n.getNeighborhoodId();
+			}
+		};
+		neighborhoodTable.addColumn(idColumn, "Id");
+
+		Column<NeighborhoodDTO, String> nameColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getName();
+			}
+		};
+		neighborhoodTable.addColumn(nameColumn, "Name");
+		nameColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO n, String value) {
+				n.setName(value);
+			}
+		});
+		
+		Column<NeighborhoodDTO, String> cityColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getCity();
+			}
+		};
+		neighborhoodTable.addColumn(cityColumn, "City");
+		cityColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO object, String value) {
+				if (value == null) {
+					Window.alert("City can't be null");
+					return;
+				}
+				object.setCity(value);
+			}
+			
+		});
+		
+		Column<NeighborhoodDTO, String> stateColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getState();
+			}
+		};
+		neighborhoodTable.addColumn(stateColumn, "State");
+		stateColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO object, String value) {
+				if (value == null) {
+					Window.alert("State can't be null");
+					return;
+				}
+				object.setState(value);
+			}
+		});
+		
+		Column<NeighborhoodDTO, String> parentNeighborhoodColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getNeighborhoodId().toString();
+			}
+		};
+		neighborhoodTable.addColumn(parentNeighborhoodColumn, "Parent Neighborhood Id");
+		parentNeighborhoodColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO object, String value) {
+				try {
+					Long.parseLong(value);
+				} catch(NumberFormatException ex) {
+					Window.alert("Invalid parent id");
+					return;
+				}
+				NeighborhoodDTO parent = new NeighborhoodDTO();
+				parent.setNeighborhoodId(Long.parseLong(value));
+				object.setParentNeighborhood(parent);
+			}
+		});
+		
+		Column<NeighborhoodDTO, String> zipColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getPostalCode().getPostalCode();
+			}
+		};
+		neighborhoodTable.addColumn(zipColumn, "Parent Neighborhood Id");
+		zipColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO object, String value) {
+				try {
+					Long.parseLong(value);
+				} catch(NumberFormatException ex) {
+					Window.alert("Invalid parent id");
+					return;
+				}
+				PostalCodeDTO p = new PostalCodeDTO();
+				p.setPostalCode(value);
+				object.setPostalCode(p);
+			}
+		});
+		
+		Column<NeighborhoodDTO, String> imageUrlColumn = new Column<NeighborhoodDTO, String>(
+				new EditTextCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getName();
+			}
+		};
+		neighborhoodTable.addColumn(imageUrlColumn, "State");
+		imageUrlColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+
+			@Override
+			public void update(int index, NeighborhoodDTO object, String value) {
+				object.setImageUrl(value);
+			}
+		});
+		
+		Column<NeighborhoodDTO, String> neighborhoodImageColumn = new Column<NeighborhoodDTO, String>(
+				new ImageCell()) {
+
+			@Override
+			public String getValue(NeighborhoodDTO n) {
+				return n.getImageUrl();
+
+			}
+		};
+		neighborhoodTable.addColumn(neighborhoodImageColumn, "Image");
+		
+		ActionCell<NeighborhoodDTO> updateButtonCell = new ActionCell<NeighborhoodDTO>("Update",
+				new ActionCell.Delegate<NeighborhoodDTO>() {
+					@Override
+					public void execute(NeighborhoodDTO n) {
+						presenter.updateNeighborhood(n);
+					}
+				});
+		Column<NeighborhoodDTO, NeighborhoodDTO> saveColumn = new Column<NeighborhoodDTO, NeighborhoodDTO>(updateButtonCell) {
+			@Override
+			public NeighborhoodDTO getValue(NeighborhoodDTO o) {
+				return o;
+			}
+		};
+		neighborhoodTable.addColumn(saveColumn);
+		
+		// add pager
+		neighborhoodTablePager = new SimplePager();
+		neighborhoodTablePager.setPage(PAGE_SIZE);
+		neighborhoodTablePager.setDisplay(neighborhoodTable);
+
+		// add table
+		neighborhoodListPanel.add(neighborhoodTable);
+		neighborhoodListPanel.add(neighborhoodTablePager);
+
+		neighborhoodTable.addRangeChangeHandler(new NeighborhoodTableRangeChangeHandler());
+	}
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
@@ -493,6 +724,19 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		}
 	}
 
+	private class NeighborhoodTableRangeChangeHandler implements RangeChangeEvent.Handler {
+
+		@Override
+		public void onRangeChange(RangeChangeEvent event) {
+			Range range = event.getNewRange();
+			int start = range.getStart();
+			int end = start + range.getLength();
+			GetNeighborhoodAction action = new GetNeighborhoodAction();
+			action.setSearchType(NeighborhoodSearchActionType.ALL);
+			presenter.searchNeighborhoods(action);
+		}
+	}
+
 	@Override
 	public void setPresenter(AdminView.AdminPresenter presenter) {
 		this.presenter = presenter;
@@ -539,5 +783,34 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 				: AccountType.BUSINESS;
 		BusinessType btype = BusinessType.values()[businessTypeListBox.getSelectedIndex()];
 		presenter.inviteForRegistration(email, type, btype);
+	}
+
+	public void setNeighborhoodData(int start, List<NeighborhoodDTO> neighbordhoods) {
+		neighborhoodTable.setRowData(start, neighbordhoods);
+	}
+
+	@UiHandler("searchNeighborhoodBtn")
+	public void searchNeigjborhood(ClickEvent event) {
+		GetNeighborhoodAction action = new GetNeighborhoodAction();
+		action.setSearchType(NeighborhoodSearchActionType.ALL);
+		presenter.searchNeighborhoods(action);
+	}
+
+	public void setUploadFormActionUrl(String imageUrl) {
+		uploadForm.setAction(imageUrl);
+	}
+
+	public void setUploadFormSubmitCompleteHandler(SubmitCompleteHandler handler) {
+		uploadForm.addSubmitCompleteHandler(handler);
+	}
+
+	public void displayImagePreview(String imageUrl) {
+		neighborhoodImagePreview.setUrl(imageUrl);
+		imageUrlTextField.setText(imageUrl);
+		imageUploaded = true;
+	}
+
+	public void resetUploadForm() {
+		uploadForm.reset();
 	}
 }

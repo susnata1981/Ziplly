@@ -36,4 +36,23 @@ public class InterestDTO implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public int hashCode() {
+		return interestId.hashCode() + name.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		
+		if (!(o instanceof InterestDTO) ){ 
+			return false;
+		}
+		
+		InterestDTO i = (InterestDTO)o;
+		return i.getInterestId() == interestId;
+	}
 }

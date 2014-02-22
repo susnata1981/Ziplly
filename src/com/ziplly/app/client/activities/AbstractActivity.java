@@ -116,6 +116,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public void clearBackgroundImage() {
+		System.out.println("CLEARING BACKGROUND IMAGE");
 		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
 
@@ -236,6 +237,10 @@ public abstract class AbstractActivity implements Activity {
 		}
 	}
 
+	public static native void log(String msg) /*-{
+		$wnd.console.log(msg);
+	}-*/;
+	
 //	public void getConversations(ConversationType type, int start, int pageSize) {
 //		// TODO Auto-generated method stub
 //

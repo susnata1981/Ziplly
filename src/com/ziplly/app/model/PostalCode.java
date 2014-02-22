@@ -40,6 +40,9 @@ public class PostalCode extends AbstractTimestampAwareEntity {
 	}
 
 	public PostalCode(PostalCodeDTO postalCode) {
+		if (postalCode.getPostalCodeId() != null) {
+			this.postalCodeId = postalCode.getPostalCodeId();
+		}
 		this.setPostalCode(postalCode.getPostalCode());
 	}
 

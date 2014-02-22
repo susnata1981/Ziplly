@@ -276,7 +276,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets(), displayNoTweetsMessage);
-				eventBus.fireEvent(new LoadingEventEnd());
 			}
 			
 			@Override

@@ -13,7 +13,7 @@ public class OAuthAppProperties {
 	public static final String GOOGLE_CLIENT_SECRET = "BjIdWVQVrMmLxZ4nqGwD6PR6";
 	
 	public static final String REDIRECT_URL_IN_DEVELOPMENT = "http://localhost:8888/Ziplly.html";//?gwt.codesvr=127.0.0.1%3A9997";
-	public static final String REDIRECT_URL_IN_PRODUCTION = "http://www.ziplly.com/";
+	public static final String REDIRECT_URL_IN_PRODUCTION = "http://www.ziplly.com";
 	
 	public static final String [] SCOPES = {
 		"https://www.googleapis.com/auth/userinfo.email",

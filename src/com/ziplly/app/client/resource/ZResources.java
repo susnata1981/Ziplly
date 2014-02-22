@@ -37,6 +37,12 @@ public interface ZResources extends ClientBundle {
 	@Source("no-photo.jpg")
 	ImageResource noPhoto();
 	
+	@Source("magnolia.jpg")
+	ImageResource magnolia();
+	
+	@Source("green-backgrounds.png")
+	ImageResource profileBackground();
+	
 	@Source("zstyle.css")
 	Styles style();
 }

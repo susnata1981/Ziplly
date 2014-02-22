@@ -25,9 +25,11 @@ public class OAuthActivity extends AbstractActivity {
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		log("calling GetFacebookDetailsAction");
 		dispatcher.execute(new GetFacebookDetailsAction(place.getCode()), new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
 			@Override
 			public void onSuccess(GetFacebookDetailsResult result) {
+				log("Received getFacebookDetailsAction with "+result.getAccount());
 				AccountDTO account = result.getAccount();
 				if (account != null) {
 					if (account.getAccountId() != null) {
@@ -43,6 +45,7 @@ public class OAuthActivity extends AbstractActivity {
 			
 			@Override
 			public void onFailure(Throwable caught) {
+				log("Exception caught in OAuthActivity: "+caught.getMessage());
 				System.out.println("Exception caught in OAuthActivity: "+caught.getMessage());
 			}
 		});

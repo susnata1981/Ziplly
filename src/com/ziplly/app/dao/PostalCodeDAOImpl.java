@@ -76,4 +76,17 @@ public class PostalCodeDAOImpl implements PostalCodeDAO {
 			em.close();
 		}
 	}
+
+	@Override
+	public PostalCodeDTO findByPostalCode(String postalCode) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		try {
+			Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
+			query.setParameter("postalCode", postalCode);
+			PostalCode result = (PostalCode) query.getSingleResult();
+			return EntityUtil.clone(result);
+		} finally {
+			em.close();
+		}
+	}
 }

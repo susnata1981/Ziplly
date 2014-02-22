@@ -60,7 +60,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		String imgUrl = value.getImageUrl() != null ? 
 				value.getImageUrl() : "images/no-photo.jpg";
 		
-		String category = value.getCategory() != null ? value.getCategory().name() : StringConstants.UNKNOWN;
+		String category = value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
 		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
 		
 		if (value != null) {

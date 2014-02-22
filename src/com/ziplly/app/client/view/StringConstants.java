@@ -74,4 +74,6 @@ public class StringConstants {
 	public static final String FEEDBACK = "Feedback";
 	public static final String FEEDBACK_SENT_SUCCESS = "Thanks for your feedback";
 	public static final String FEEDBACK_SENT_FAILURE = "Sorry, there was a problem sending the feedback";
+	public static final String SAVE_SUCCESSFULL = "Save successful";
+	public static final String FAILURE = "Failure";
 }

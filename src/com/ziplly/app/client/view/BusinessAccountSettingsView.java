@@ -1,6 +1,7 @@
 package com.ziplly.app.client.view;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.FileUpload;
+import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -26,6 +28,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
+import com.google.common.collect.Maps;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -43,6 +46,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
@@ -52,13 +56,18 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.SubscriptionPlanWidget;
+import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.Cuisine;
+import com.ziplly.app.model.NotificationAction;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.SubscriptionPlanStatus;
@@ -160,8 +169,6 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	FormPanel uploadForm;
 	@UiField
 	FileUpload uploadField;
-//	@UiField
-//	Button uploadBtn;
 	@UiField
 	Image profileImagePreview;
 	private boolean imageUploaded;
@@ -207,6 +214,10 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	@UiField
 	HTMLPanel subscriptionPlanTablePanel;
 
+	// Notification Panel
+	@UiField
+	HTMLPanel notificationPanel;
+	
 	// transaction details elements
 	CellTable<TransactionDTO> transactionTable;
 	@UiField
@@ -249,7 +260,8 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	private List<TransactionDTO> transactions;
 	private boolean sellerEligibleForSubscription = true;
 	private Map<SubscriptionPlanDTO, String> plans;
-
+	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap = new HashMap<AccountNotificationSettingsDTO, ListBox>();
+	
 	@Inject
 	public BusinessAccountSettingsView(EventBus eventBus) {
 		super(eventBus);
@@ -296,6 +308,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		website.setText("");
 		email.setText("");
 		clearPaymentStatus();
+		StyleHelper.clearBackground();
 	}
 
 	@Override
@@ -340,6 +353,8 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			if (account.getBusinessType() == BusinessType.NON_PROFIT) {
 				hideSubscriptionTab();
 			}
+			
+			popoulateNotificationSettings(account);
 		}
 	}
 
@@ -374,6 +389,42 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		sundayEnd.setText(props.getSundayEndTime());
 	}
 
+	private ListBox getNotificationActionListBox() {
+		ListBox actionListBox = new ListBox();
+		for (NotificationAction action : NotificationAction.values()) {
+			actionListBox.addItem(action.getName());
+		}
+		return actionListBox;
+	}
+	
+	/**
+	 * Populates account notification settings
+	 * @param account
+	 */
+	private void popoulateNotificationSettings(AccountDTO account) {
+		accountNotificationSettingsMap.clear();
+		notificationPanel.clear();
+		Collections.sort(account.getNotificationSettings(), new Comparator<AccountNotificationSettingsDTO>() {
+
+			@Override
+			public int compare(AccountNotificationSettingsDTO o1, AccountNotificationSettingsDTO o2) {
+				return o1.getType().name().compareTo(o2.getType().name());
+			}
+		});
+		
+		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
+			ListBox action = getNotificationActionListBox();
+			action.setSelectedIndex(ans.getAction().ordinal());
+			HPanel panel = new HPanel();
+			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
+			span.setWidth("120px");
+			panel.add(span);
+			panel.add(action);
+			notificationPanel.add(panel);
+			accountNotificationSettingsMap.put(ans, action);
+		}
+	}
+	
 	boolean validateZip() {
 		String zipInput = zip.getText().trim();
 		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
@@ -538,9 +589,13 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		presenter.cancel();
 	}
 
+	@UiField
+	FluidContainer settingsPanel;
+	
 	@Override
 	public void displayImagePreview(String imageUrl) {
 		profileImagePreview.setUrl(imageUrl);
+		StyleHelper.setBackgroundImage(RootPanel.get().getElement(), imageUrl);
 	}
 
 	@Override

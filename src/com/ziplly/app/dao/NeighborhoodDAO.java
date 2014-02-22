@@ -19,4 +19,5 @@ public interface NeighborhoodDAO {
 	 * @throws NotFoundException 
 	 */
 	List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
+	void update(Neighborhood neighborhood);
 }

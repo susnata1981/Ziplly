@@ -144,10 +144,17 @@
 			width: 80%;
 			margin: 10px auto;
 		}
+		.transparentColumn {
+			background: #f1f1f1;
+			opacity: .92;
+			min-height: 400px;
+			height: auto;
+			padding: 20px;	
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="2">
+			<b:Column size="2" addStyleNames="{style.transparentColumn}">
 				<g:HTMLPanel>
 					<dl>
 						<dt>
@@ -197,7 +204,7 @@
 					</b:Column>
 				</b:Row>	    
 				<b:Row ui:field="conversationRow">
-					<b:Column offset="1" size="9">
+					<b:Column offset="1" size="9" addStyleNames="{style.transparentColumn}">
 						<g:HTMLPanel ui:field="conversationPanel"
 							addStyleNames="{style.conversationPanel}">
 						</g:HTMLPanel>

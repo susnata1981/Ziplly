@@ -18,7 +18,7 @@ public class AboutPlace extends Place {
 	}
 
 	public String getSection() {
-		return section.name();
+		return section.name().toLowerCase();
 	}
 
 	public void setSection(String section) {
@@ -30,7 +30,7 @@ public class AboutPlace extends Place {
 		@Override
 		public AboutPlace getPlace(String token) {
 			try {
-			AboutViewSection section = AboutViewSection.valueOf(token);
+			AboutViewSection section = AboutViewSection.valueOf(token.toUpperCase());
 			return new AboutPlace(section);
 			} catch(RuntimeException ex) {
 				return new AboutPlace(AboutViewSection.ABOUTUS);

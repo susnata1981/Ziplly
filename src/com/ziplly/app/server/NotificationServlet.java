@@ -16,6 +16,8 @@ import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.AccountNotificationDAOImpl;
 import com.ziplly.app.dao.NeighborhoodDAOImpl;
+import com.ziplly.app.dao.PostalCodeDAO;
+import com.ziplly.app.dao.PostalCodeDAOImpl;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.dao.TweetDAOImpl;
 import com.ziplly.app.model.NotificationType;
@@ -32,11 +34,13 @@ public class NotificationServlet extends HttpServlet {
 	private AccountNotificationDAO accountNotificationDao;
 	private NeighborhoodDAOImpl neighborhoodDao;
 	private TweetNotificationBLI tweetNotificationBli;
+	private PostalCodeDAO postalCodeDao;
 	
 	// TODO: need to figure out how to use guice to inject dependency
 	public NotificationServlet() {
 		this.emailService = new EmailServiceImpl();
-		this.neighborhoodDao = new NeighborhoodDAOImpl();
+		this.postalCodeDao = new PostalCodeDAOImpl();
+		this.neighborhoodDao = new NeighborhoodDAOImpl(postalCodeDao);
 		this.accountDao = new AccountDAOImpl(neighborhoodDao);
 		this.tweetDao = new TweetDAOImpl(null /* passing null for HashtagDao (hack) */);
 		this.accountNotificationDao = new AccountNotificationDAOImpl();

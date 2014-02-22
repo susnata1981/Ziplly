@@ -2,18 +2,20 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style field="astyle" src="accountview.css" />
+	<!-- <ui:style field="astyle" src="accountview.css" /> -->
 	<ui:style
 		type="com.ziplly.app.client.view.BusinessAccountSettingsView.Style">
-		.settingsPanel {
-			padding-bottom: 60px;
+		.tabPanel {
+		background: #f1f1f1;
+		opacity: .92;
+		padding: 20px;
+		border-radius: 5px;
 		}
 		.businessSettingsRow {
-			overflow: hidden;
+		overflow: hidden;
 		}
 		.businessDetailsPanel {
 		position: relative;
-		margin-left: -40px;
 		overflow: hidden;
 		}
 		.businessProfileImageRootPanel {
@@ -81,30 +83,49 @@
 		}
 
 		.inputTextField {
-		height: 36px !important;
+		height:
+		36px !important;
 		font-size: 18px !important;
-		} 
+		}
 		.wideTextBox {
-		width: 240px;
+		width:
+		240px;
 		}
 		select {
 		width: 240px;
 		font-size:
 		18px !important;
 		}
+		.passwordLabel
+		{
+		display: inline-block;
+		width: 180px;
+		}
+		.passwordField {
+		height: 38px
+		!important;
+		font-size: 16px !important;
+		}
+		.popoverText {
+		display: inline;
+		font-size: 11px !important;
+		}
+		.popoverLink {
+		font-size: 11px !important;
+		}
 	</ui:style>
-	<b:FluidContainer addStyleNames="{style.settingsPanel}">
+	<b:FluidContainer ui:field="settingsPanel">
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
-				<b:Alert ui:field="message" animation="true" close="false"/>
+				<b:Alert ui:field="message" animation="true" close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column offset="1" size="9">
-				<b:TabPanel tabPosition="top" ui:field="settingPanel">
+			<b:Column offset="1" size="9" addStyleNames="{style.tabPanel}">
+				<b:TabPanel tabPosition="left" ui:field="settingPanel">
 					<b:Tab heading="Business details" active="true">
 						<b:Row>
-							<b:Column offset="1" size="6">
+							<b:Column offset="1" size="7">
 								<g:HTMLPanel addStyleNames="{style.businessDetailsPanel}">
 									<div class="profile_section_heading">
 										<span>Basic Info</span>
@@ -137,10 +158,10 @@
 										</b:Controls>
 									</b:ControlGroup>
 									<div>
-									    <b:Label>Neighborhood</b:Label>
-											<br />
-											<b:TextBox ui:field="neighborhoodTextBox" placeholder="neighborhood..."
-												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+										<b:Label>Neighborhood</b:Label>
+										<br />
+										<b:TextBox ui:field="neighborhoodTextBox"
+											placeholder="neighborhood..." addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 									</div>
 									<b:ControlGroup ui:field="websiteCg">
 										<b:Controls>
@@ -246,7 +267,7 @@
 									</g:HTMLPanel>
 									<g:FormPanel ui:field="uploadForm">
 										<g:HTMLPanel>
-										    <b:Label>Upload image</b:Label>
+											<b:Label>Upload image</b:Label>
 											<b:FileUpload ui:field="uploadField" name="image" />
 										</g:HTMLPanel>
 									</g:FormPanel>
@@ -277,6 +298,22 @@
 						<g:HTMLPanel ui:field="transactionDetailsPanel">
 						</g:HTMLPanel>
 					</b:Tab>
+					<b:Tab ui:field="notification" heading="Notification">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Select your notificaiton settings</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover
+										text="You can choose to get email notifications for certain types of messages within your community"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+							</div>
+							<g:HTMLPanel ui:field="notificationPanel">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Tab>
 					<b:Tab heading="Password Reset">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
@@ -284,30 +321,29 @@
 							</div>
 							<b:ControlGroup ui:field="passwordCg">
 								<b:Controls>
-									<g:Label addStyleNames="{astyle.label}">Old Password</g:Label>
+									<b:Label addStyleNames="{style.passwordLabel}">Old Password</b:Label>
 									<b:PasswordTextBox ui:field="password"
-										placeholder="Old password..." addStyleNames="{astyle.passwordTextBox}"/>
+										placeholder="Old password..." addStyleNames="{style.passwordField}" />
 									<b:HelpInline ui:field="passwordError"></b:HelpInline>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup ui:field="newPasswordCg">
 								<b:Controls>
-									<g:Label addStyleNames="{astyle.label}">New Password</g:Label>
+									<b:Label addStyleNames="{style.passwordLabel}">New Password</b:Label>
 									<b:PasswordTextBox ui:field="newPassword"
-										placeholder="New password..." addStyleNames="{astyle.passwordTextBox}"/>
+										placeholder="New password..." addStyleNames="{style.passwordField}" />
 									<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup ui:field="confirmNewPasswordCg">
 								<b:Controls>
-									<g:Label addStyleNames="{astyle.label}">Confirm new password</g:Label>
+									<b:Label addStyleNames="{style.passwordLabel}">Confirm new password</b:Label>
 									<b:PasswordTextBox ui:field="confirmNewPassword"
-										placeholder="confirm new password..." addStyleNames="{astyle.passwordTextBox}"/>
+										placeholder="confirm new password..." addStyleNames="{style.passwordField}" />
 									<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
 								</b:Controls>
 							</b:ControlGroup>
-							<b:Button addStyleNames="{astyle.updatePasswordBtn}"
-								ui:field="updatePasswordBtn">Update password</b:Button>
+							<b:Button ui:field="updatePasswordBtn">Update password</b:Button>
 						</g:HTMLPanel>
 					</b:Tab>
 				</b:TabPanel>

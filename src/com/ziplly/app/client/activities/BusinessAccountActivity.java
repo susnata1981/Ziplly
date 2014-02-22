@@ -224,8 +224,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	public void onStop() {
-		view.clearTweet();
-		view.displayNotificationWidget(false);
+		view.clear();
 	}
 
 	@Override

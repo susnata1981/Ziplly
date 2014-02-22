@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,14 +22,18 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
@@ -50,11 +55,12 @@ import com.ziplly.app.shared.ValidationResult;
 /**
  * Community Wall View
  */
-public class HomeView extends Composite implements IHomeView {
+public class HomeView extends AbstractView implements IHomeView {
 
-	private static final String TWEET_WIDGET_WIDTH = "80%";
-	private String tweetWidth = "80%";
-	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private static final String TWEET_WIDGET_WIDTH = "90%";
+	private String tweetWidth = "90%";
+	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) 
+			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 	private FeedbackWidget feedbackWidget = new FeedbackWidget();
 	
@@ -120,11 +126,16 @@ public class HomeView extends Composite implements IHomeView {
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
 
-	public HomeView() {
+	@Inject
+	public HomeView(EventBus eventBus) {
+		super(eventBus);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
+		
 		StyleHelper.show(message.getElement(), false);
+		StyleHelper.setBackgroundImage(RootPanel.get().getElement(), ZResources.IMPL.magnolia().getSafeUri().asString());
 		
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
@@ -260,7 +271,22 @@ public class HomeView extends Composite implements IHomeView {
 		message.clear();
 		hideMessage(true);
 		tview.clear();
-		tview.displayTweets(tweets, false);
+		
+		if (tweets.size() == 0) {
+			eventBus.fireEvent(new LoadingEventEnd());
+			return;
+		}
+		
+		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
+			
+			@Override
+			public void hasFinished(double y) {
+				System.out.println("FINISHED LOADING % "+y);
+				if (y == 100) {
+					eventBus.fireEvent(new LoadingEventEnd());
+				}
+			}
+		}, false);
 	}
 
 	@Override

@@ -447,6 +447,7 @@ public class EntityUtil {
 		dest.setState(neighborhood.getState());
 		dest.setPostalCode(clone(neighborhood.getPostalCode()));
 		dest.setName(neighborhood.getName());
+		dest.setImageUrl(neighborhood.getImageUrl());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
 		if (neighborhood.getParentNeighborhood() != null) {
 			dest.setParentNeighborhood(clone(neighborhood.getParentNeighborhood()));

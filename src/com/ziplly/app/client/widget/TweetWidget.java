@@ -340,7 +340,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void hideTweetUpdateButtons() {
-		// tweetContentSpan.getStyle().setDisplay(Display.BLOCK);
+		tweetContentSpan.getElement().getStyle().setDisplay(Display.BLOCK);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setReadOnly(true);
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -690,7 +690,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	@Override
 	public void updateTweet(TweetDTO tweet) {
-		System.out.println("Received tweet: "+tweet);
 		displayTweet(tweet);
 	}
 

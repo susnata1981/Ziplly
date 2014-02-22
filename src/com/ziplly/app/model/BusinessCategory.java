@@ -2,6 +2,7 @@ package com.ziplly.app.model;
 
 public enum BusinessCategory {
 	RESTAURANT("Restaurant"),
+	SPECIALTY_FOOD("Specialty food"),
 	FASTFOOD("Fastfood"),
 	FOODTRUCK("Food truck"),
 	BAR("Bar"),

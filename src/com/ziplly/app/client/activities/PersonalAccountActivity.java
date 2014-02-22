@@ -221,7 +221,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			binder.stop();
 		}
 		eventBus.fireEvent(new LoadingEventEnd());
-		view.clearTweet();
+		view.clear();
 	}
 
 	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {

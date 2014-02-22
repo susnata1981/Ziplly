@@ -45,8 +45,10 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	private String name;
 	private String city;
 	private String state;
-
-	@ManyToOne
+	@Column(name="image_url")
+	private String imageUrl;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="postalcode_id")
 	private PostalCode postalCode;
 
@@ -130,5 +132,13 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 
 	public void setParentNeighborhood(Neighborhood parentNeighborhood) {
 		this.parentNeighborhood = parentNeighborhood;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 }

@@ -13,7 +13,6 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.StringConstants;
@@ -21,6 +20,7 @@ import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.ConversationType;
@@ -243,5 +243,10 @@ public class ConversationActivity extends AbstractActivity implements
 				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
+	}
+
+	@Override
+	public AccountDTO getAccount() {
+		return ctx.getAccount();
 	};
 }

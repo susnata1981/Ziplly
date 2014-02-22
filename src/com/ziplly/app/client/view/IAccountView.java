@@ -23,8 +23,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	
 	void clearTweet();
 	
-	void displayTweets(List<TweetDTO> tweets);
-	
 	void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage);
 
 	void displayMessage(String msg, AlertType type);

@@ -14,12 +14,16 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.PostalCode;
+import com.ziplly.app.model.PostalCodeDTO;
 
 public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	private Logger logger = Logger.getLogger(NeighborhoodDAOImpl.class.getCanonicalName());
+	private PostalCodeDAO postalCodeDao;
 
 	@Inject
-	public NeighborhoodDAOImpl() {
+	public NeighborhoodDAOImpl(PostalCodeDAO postalCodeDao) {
+		this.postalCodeDao = postalCodeDao;
 	}
 
 	@Override
@@ -128,6 +132,28 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			}
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public void update(Neighborhood neighborhood) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		try {
+			em.getTransaction().begin();
+			PostalCodeDTO postalCode = null;
+			try {
+			postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCode().getPostalCode());
+			} catch(NoResultException nre) {
+				System.out.println("Didn't find postal code");
+				postalCode = new PostalCodeDTO();
+				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+			}
+			neighborhood.setPostalCode(new PostalCode(postalCode));
+			em.merge(neighborhood);
+			em.getTransaction().commit();
 		} finally {
 			em.close();
 		}

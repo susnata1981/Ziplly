@@ -4,19 +4,32 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="accountview.css"
 		type="com.ziplly.app.client.view.BusinessAccountView.Style" />
-
-	<b:FluidContainer addStyleNames="{style.rootPanel}">
+	<ui:style field="bstyle">
+	    .locationDiv {
+			width:300px; 
+			height:270px; 
+			padding: 4px;
+		}
+		.profileInfoBoxHeading {
+			font-size: 24px;
+			border-bottom: 2px solid #ddd;
+		}
+		.transparentColumn {
+			opacity: .92;	
+		}	
+	</ui:style>
+	<b:FluidContainer addStyleNames="{style.rootPanel}" ui:field="container">
 		<b:FluidRow>
 			<b:Column size="10" ui:field="messageSection">
 				<b:Alert ui:field="message" close="false"/>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">
-			<b:Column size="3">
+			<b:Column size="3" addStyleNames="{bstyle.transparentColumn}">
 				<g:HTMLPanel>
 					<div>
 						<div>
-							<div class="{style.profileImageSection}">
+							<g:HTMLPanel ui:field="profileImagePanel" addStyleNames="{style.profileImageSection}">
 								<div class="{style.profileImageDiv}">
 									<b:Image ui:field="profileImage" />
 								</div>
@@ -24,9 +37,10 @@
 								<div>
 									<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
 								</div>
-							</div>
+							</g:HTMLPanel>
 							<div class="{style.profileInfoBox}">
-								<h2 class="heading">Business details</h2>
+								<!-- <h2 class="heading">Business details</h2> -->
+								<h3 ui:field="businessName" addStylaNames="{bstyle.profileInfoBoxHeading}"/>
 								<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 								<div class="{style.businessInfoItem}">
 									<b:Label>Business Type</b:Label>
@@ -74,7 +88,7 @@
 								</g:HTMLPanel>
 							</div>
 							<div class="{style.profileInfoBox}">
-								<div style="width:320px; height:270px" ui:field="locationDiv"></div>
+								<div ui:field="locationDiv" class="{bstyle.locationDiv}"></div>
 							</div>
 							<g:HTMLPanel addStyleNames="{style.profileInfoBox} {style.smallfont}">
 								<h2 class="heading">Hours of operation</h2>
@@ -129,7 +143,7 @@
 					</div>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="6">
+			<b:Column size="6" addStyleNames="{bstyle.transparentColumn}">
 				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
 						<dt:TweetBox ui:field="tweetBox" />

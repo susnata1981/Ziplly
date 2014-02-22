@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
+import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Paragraph;
@@ -41,6 +42,7 @@ import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.NotificationWidget;
@@ -72,7 +74,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
-	private static final String TWEET_WIDGET_HEIGHT = "1100px";
+	private static final String TWEET_WIDGET_HEIGHT = "900px";
 	
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
@@ -81,7 +83,11 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	Style style;
 	
 	@UiField
+	FluidContainer container;
+	@UiField
 	Alert message;
+	@UiField
+	HTMLPanel profileImagePanel;
 	@UiField
 	FluidRow profileSectionRow;
 	@UiField
@@ -90,6 +96,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	Button sendMsgBtn;
 	@UiField
 	HeadingElement name;
+	@UiField
+	HeadingElement businessName;
 	@UiField
 	Paragraph description;
 	@UiField
@@ -206,6 +214,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 				messageSection.remove(popupPanel);
 			}
 		});
+		
+		StyleHelper.show(profileImagePanel.getElement(), false);
 	}
 
 	@Override
@@ -217,11 +227,12 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		this.account = account;
 		
 		// image section
-		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
-		profileImage.setAltText(account.getDisplayName());
+//		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+//		profileImage.setAltText(account.getDisplayName());
+		StyleHelper.setBackgroundImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		
 		name.setInnerHTML(account.getDisplayName());
-
+		businessName.setInnerHTML(account.getDisplayName());
 //		description.setText(account.get);
 		
 		if (account.getCategory() != null) {
@@ -267,7 +278,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		
 		// display tweets
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
-		displayTweets(account.getTweets());
+		displayTweets(account.getTweets(), false);
 		
 		StyleHelper.show(profileSectionRow.getElement(), true);
 	}
@@ -319,13 +330,21 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets) {
-		tview.displayTweets(tweets);
-	}
-
-	@Override
 	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
-		tview.displayTweets(tweets, displayNoTweetsMessage);
+		if (tweets.size() == 0) {
+			eventBus.fireEvent(new LoadingEventEnd());
+			return;
+		}
+		
+		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
+			
+			@Override
+			public void hasFinished(double y) {
+				if (y == 100) {
+					eventBus.fireEvent(new LoadingEventEnd());
+				}
+			}
+		}, displayNoTweetsMessage);
 	}
 	
 	@Override
@@ -336,8 +355,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	@Override
 	public void clear() {
-//		this.account = null;
 		clearTweet();
+		StyleHelper.clearBackground();
 	}
 
 	public void onCloseSendMessageWidgetClick(ClickEvent event) {

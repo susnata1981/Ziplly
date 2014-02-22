@@ -2,7 +2,10 @@ package com.ziplly.app.client.activities;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;

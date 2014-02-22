@@ -12,12 +12,11 @@ import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodResult;
-import com.ziplly.app.shared.ValidationResult;
 
-public class GetNeighborhoodActionHandler extends AbstractAccountActionHandler<GetNeighborhoodAction, GetNeighborhoodResult>{
+public class GetNeighborhoodActionHandler extends
+		AbstractAccountActionHandler<GetNeighborhoodAction, GetNeighborhoodResult> {
 
 	private NeighborhoodDAO neighborhoodDao;
 
@@ -31,25 +30,35 @@ public class GetNeighborhoodActionHandler extends AbstractAccountActionHandler<G
 	@Override
 	public GetNeighborhoodResult execute(GetNeighborhoodAction action, ExecutionContext arg1)
 			throws DispatchException {
-		
-		Preconditions.checkArgument(action != null);
-		
-		ValidationResult validationResult = FieldVerifier.validateZip(action.getPostalCode());
-		
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Invalid zip code");
-		}
 
-		List<NeighborhoodDTO> neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
-		
+		Preconditions.checkArgument(action != null);
+
+		// ValidationResult validationResult =
+		// FieldVerifier.validateZip(action.getPostalCode());
+
+		// if (!validationResult.isValid()) {
+		// throw new IllegalArgumentException("Invalid zip code");
+		// }
+
 		GetNeighborhoodResult result = new GetNeighborhoodResult();
-		result.setNeighbordhoods(neighborhoods);
-		return result;
+		List<NeighborhoodDTO> neighborhoods = null;
+		switch (action.getSearchType()) {
+
+		case ALL:
+			neighborhoods = neighborhoodDao.findAll();
+			result.setNeighbordhoods(neighborhoods);
+			return result;
+		case BY_ZIP:
+		default:
+			neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
+			result = new GetNeighborhoodResult();
+			result.setNeighbordhoods(neighborhoods);
+			return result;
+		}
 	}
 
 	@Override
 	public Class<GetNeighborhoodAction> getActionType() {
 		return GetNeighborhoodAction.class;
 	}
-
 }

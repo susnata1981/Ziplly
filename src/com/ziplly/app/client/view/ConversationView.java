@@ -68,6 +68,8 @@ public class ConversationView extends AbstractView implements IConversationView 
 		void onView(ConversationDTO conversation);
 
 		void getConversations(GetConversationsAction action);
+
+		AccountDTO getAccount();
 	}
 
 	private static final String SENDER_KEY = "Sender";
@@ -250,6 +252,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 	@Override
 	public void clear() {
 		StyleHelper.show(conversationRow.getElement(), false);
+		StyleHelper.clearBackground();
 	}
 	
 	@Override
@@ -377,6 +380,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
+		StyleHelper.setBackgroundImage(accountFormatter.format(presenter.getAccount(), ValueType.PROFILE_IMAGE_URL));
 	}
 
 	@Override
