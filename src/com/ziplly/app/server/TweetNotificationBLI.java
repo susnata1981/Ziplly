@@ -1,12 +1,13 @@
 package com.ziplly.app.server;
 
+import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface TweetNotificationBLI {
-	void sendNotificationsIfRequired(TweetDTO savedTweet);
+	void sendNotificationsIfRequired(TweetDTO savedTweet) throws NotFoundException;
 	
 	void sendNotification(Long senderAccountId, Long neighborhoodId, Long tweetId,
 			NotificationType ntype, EmailTemplate emailTemplate);

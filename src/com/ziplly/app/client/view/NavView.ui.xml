@@ -3,6 +3,9 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style type="com.ziplly.app.client.view.NavView.Style">
 		@external notificationDropdown dropdown-menu;
+		.navbarPanel {
+			width: 100%;
+		}
 		.navPillList {
 		float: right;
 		margin: 15px 100px
@@ -55,10 +58,14 @@
 		.navlink {
 			line-height: 20px;
 		}
+		.rightNavLink {
+			float: right !important;
+			margin-right: 30px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:ResponsiveNavbar>
-			<b:Nav>
+			<b:Nav addStyleNames="{style.navbarPanel}">
 			    <b:Image ui:field="logo" addStyleNames="{style.logo}" />
 				<b:NavLink ui:field="homeLink" icon="HOME" addStyleNames="{style.navlink}">Home</b:NavLink>
 				<b:NavLink ui:field="loginLink" icon="USER" addStyleNames="{style.navlink}">Login</b:NavLink>
@@ -81,6 +88,8 @@
 					<b:NavLink ui:field="businessListLink">Businesses</b:NavLink>
 				</b:Dropdown>
 				<b:NavLink ui:field="aboutLink" addStyleNames="{style.navlink}">About</b:NavLink>
+				<b:Dropdown ui:field="locationDropdown" text="location" icon="BOOKMARK" addStyleNames="{style.navlink} {style.rightNavLink}">
+				</b:Dropdown>
 			</b:Nav>
 		</b:ResponsiveNavbar>
 	</g:HTMLPanel>

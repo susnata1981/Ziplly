@@ -33,26 +33,23 @@ public class GetNeighborhoodActionHandler extends
 
 		Preconditions.checkArgument(action != null);
 
-		// ValidationResult validationResult =
-		// FieldVerifier.validateZip(action.getPostalCode());
-
-		// if (!validationResult.isValid()) {
-		// throw new IllegalArgumentException("Invalid zip code");
-		// }
-
 		GetNeighborhoodResult result = new GetNeighborhoodResult();
 		List<NeighborhoodDTO> neighborhoods = null;
 		switch (action.getSearchType()) {
 
 		case ALL:
 			neighborhoods = neighborhoodDao.findAll();
-			result.setNeighbordhoods(neighborhoods);
+			for(NeighborhoodDTO n : neighborhoods) {
+				result.getNeighbordhoods().add(n);
+			}
 			return result;
 		case BY_ZIP:
 		default:
 			neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
 			result = new GetNeighborhoodResult();
-			result.setNeighbordhoods(neighborhoods);
+			for(NeighborhoodDTO n : neighborhoods) {
+				result.getNeighbordhoods().add(n);
+			}
 			return result;
 		}
 	}

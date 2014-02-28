@@ -21,8 +21,7 @@ import com.ziplly.app.server.resources.Resource;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.CreateRegistrationResult;
 
-public class CreateRegistrationActionHandler extends AbstractAccountActionHandler<CreateRegistrationAction, CreateRegistrationResult>
-	implements IResource {
+public class CreateRegistrationActionHandler extends AbstractAccountActionHandler<CreateRegistrationAction, CreateRegistrationResult> {
 
 	private AccountRegistrationDAO registrationDao;
 

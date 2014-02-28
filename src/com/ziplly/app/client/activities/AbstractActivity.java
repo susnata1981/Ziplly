@@ -110,13 +110,14 @@ public abstract class AbstractActivity implements Activity {
 	public void onStop() {
 	}
 
+	@Deprecated
 	public void setBackgroundImage() {
 		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 
+	@Deprecated
 	public void clearBackgroundImage() {
-		System.out.println("CLEARING BACKGROUND IMAGE");
 		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
 
@@ -152,39 +153,6 @@ public abstract class AbstractActivity implements Activity {
 
 		});
 	}
-	
-	/**
-	 * Checks to see if user is logged in and forwards to HomePlace.
-	 * Otherwise it forwards the user to LoginView.
-	 *
-	@Deprecated
-	public void checkLoginStatus() {
-		if (ctx.getAccount() != null) {
-			// control shouldn't flow here
-			return;
-		}
-		
-		GetLoggedInUserAction action = new GetLoggedInUserAction();
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-			@Override
-			public void onSuccess(GetLoggedInUserResult result) {
-				if (result != null && result.getAccount() != null) {
-					ctx.setAccount(result.getAccount());
-					eventBus.fireEvent(new LoginEvent(result.getAccount()));
-					placeController.goTo(new HomePlace());
-				} else {
-					placeController.goTo(new LoginPlace());
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO (send them to login page?)
-				Window.alert(caught.getLocalizedMessage());
-			}
-		});
-	}
-	*/
 
 	/**
 	 * Activity needs to define behavior in case user is logged in.
@@ -206,7 +174,7 @@ public abstract class AbstractActivity implements Activity {
 	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
 		if (ctx.getAccount() != null) {
 			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-			NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
 			neighborhoods.add(neighborhood);
 			if (neighborhood.getParentNeighborhood() != null) {
 				neighborhoods.add(neighborhood.getParentNeighborhood());
@@ -240,9 +208,9 @@ public abstract class AbstractActivity implements Activity {
 	public static native void log(String msg) /*-{
 		$wnd.console.log(msg);
 	}-*/;
-	
-//	public void getConversations(ConversationType type, int start, int pageSize) {
+
+//	public void getNeighborhoodData(String postalCode) {
 //		// TODO Auto-generated method stub
-//
+//		
 //	}
 }

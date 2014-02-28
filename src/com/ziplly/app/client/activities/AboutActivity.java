@@ -11,10 +11,12 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.AboutPlace;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AboutView;
 import com.ziplly.app.client.view.AboutView.AboutPresenter;
 import com.ziplly.app.client.view.AboutViewSection;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.EmailAdminResult;
 
@@ -50,6 +52,7 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 			public void onSuccess(AboutView result) {
 				AboutActivity.this.view = result;
 				bind();
+				StyleHelper.setBackgroundImage(ZResources.IMPL.magnolia());
 				try {
 					view.displaySection(AboutViewSection.valueOf(place.getSection().toUpperCase()));
 				} catch(IllegalArgumentException ex) {

@@ -16,10 +16,12 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
+import com.ziplly.app.client.places.TweetDetailsPlace;
 
 @WithTokenizers({
 	SignupPlace.Tokenizer.class, 
 	HomePlace.Tokenizer.class,
+	TweetDetailsPlace.Tokenizer.class,
 	LoginPlace.Tokenizer.class, 
 	BusinessSignupPlace.Tokenizer.class,
 	BusinessAccountSettingsPlace.Tokenizer.class,

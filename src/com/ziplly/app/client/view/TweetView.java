@@ -77,17 +77,13 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets, 
-			final TweetViewDisplayStatusCallback callback,
-			boolean displayNoTweetsMessage) {
+			final TweetViewDisplayStatusCallback callback) {
 		
 		if (tweets != null) {
 			tweetsSection.clear();
 			StyleHelper.show(message.getElement(), false);
 			
 			if (tweets.isEmpty()) {
-				if (displayNoTweetsMessage) {
-					displayNoTweetsMessage();
-				}
 				return;
 			}
 			
@@ -112,10 +108,11 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	@Deprecated
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
-		displayTweets(tweets, null, true);
+		displayTweets(tweets, null);
 	}
 	
-	private void displayNoTweetsMessage() {
+	@Override
+	public void displayNoTweetsMessage() {
 		message.setText(StringConstants.TWEET_NOT_POSTED);
 		StyleHelper.show(message.getElement(), true);
 	}

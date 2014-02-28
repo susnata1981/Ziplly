@@ -1,0 +1,47 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		input[type="text"] {
+			height: 36px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal ui:field="modal">
+			<g:HTMLPanel>
+			    <b:Alert ui:field="message" close="false" />
+				<b:ControlGroup ui:field="zipCg">
+					<b:Controls>
+						<b:Label>Zip</b:Label>
+						<br />
+						<b:TextBox ui:field="zip" placeholder="zip..." />
+						<b:HelpInline ui:field="zipError"></b:HelpInline>
+						<b:Image ui:field="neighborhoodLoadingImage" />
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="neighborhoodCg">
+					<b:Controls ui:field="neighborhoodControl">
+						<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+						<g:HTMLPanel ui:field="neighborhoodListPanel">
+						</g:HTMLPanel>
+						<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+						<b:HelpBlock>Pick your neighborhood to learn about whats
+							going on
+							in there</b:HelpBlock>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="addressCg">
+					<b:Controls>
+						<b:Label>Address</b:Label>
+						<br />
+						<b:TextBox ui:field="address" placeholder="address..." />
+						<b:HelpInline ui:field="addressError"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:Button type="PRIMARY" ui:field="addBtn">Add</b:Button>
+				<b:Button ui:field="cancelBtn">Cancel</b:Button>
+			</g:HTMLPanel>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

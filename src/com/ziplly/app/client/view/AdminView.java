@@ -79,6 +79,10 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		void searchNeighborhoods(GetNeighborhoodAction action);
 
 		void updateNeighborhood(NeighborhoodDTO n);
+
+		void createNeighborhood(NeighborhoodDTO n);
+
+		void deleteNeighborhood(NeighborhoodDTO n);
 	}
 
 	interface AdminViewUiBinder extends UiBinder<Widget, AdminView> {
@@ -151,6 +155,8 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 	CellTable<NeighborhoodDTO> neighborhoodTable;
 	SimplePager neighborhoodTablePager;
 	@UiField
+	SubmitButton createNeighborhoodBtn;
+	@UiField
 	SubmitButton searchNeighborhoodBtn;
 	@UiField
 	FormPanel uploadForm;
@@ -207,6 +213,8 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		buildAccountsTable();
 		buildTweetsTable();
 		buildNeighborhoodTable();
+		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+		uploadForm.setMethod(FormPanel.METHOD_POST);
 	}
 
 	private void buildTweetsTable() {
@@ -432,7 +440,7 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		accountsTable.addRangeChangeHandler(new AccountsTableRangeChangeHandler());
 	}
 
-	public void buildNeighborhoodTable() {
+	private void buildNeighborhoodTable() {
 		neighborhoodTable = new CellTable<NeighborhoodDTO>();
 
 		Column<NeighborhoodDTO, Number> idColumn = new Column<NeighborhoodDTO, Number>(
@@ -510,7 +518,10 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 			@Override
 			public String getValue(NeighborhoodDTO n) {
-				return n.getNeighborhoodId().toString();
+				if (n.getParentNeighborhood() != null) {
+					return n.getParentNeighborhood().getNeighborhoodId().toString();
+				}
+				return "";
 			}
 		};
 		neighborhoodTable.addColumn(parentNeighborhoodColumn, "Parent Neighborhood Id");
@@ -518,12 +529,6 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 			@Override
 			public void update(int index, NeighborhoodDTO object, String value) {
-				try {
-					Long.parseLong(value);
-				} catch(NumberFormatException ex) {
-					Window.alert("Invalid parent id");
-					return;
-				}
 				NeighborhoodDTO parent = new NeighborhoodDTO();
 				parent.setNeighborhoodId(Long.parseLong(value));
 				object.setParentNeighborhood(parent);
@@ -535,10 +540,13 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 			@Override
 			public String getValue(NeighborhoodDTO n) {
-				return n.getPostalCode().getPostalCode();
+				if (n.getPostalCode() != null) {
+					return n.getPostalCode().getPostalCode();
+				}
+				return "";
 			}
 		};
-		neighborhoodTable.addColumn(zipColumn, "Parent Neighborhood Id");
+		neighborhoodTable.addColumn(zipColumn, "Zip code");
 		zipColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
 
 			@Override
@@ -555,16 +563,19 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			}
 		});
 		
-		Column<NeighborhoodDTO, String> imageUrlColumn = new Column<NeighborhoodDTO, String>(
+		Column<NeighborhoodDTO, String> neighborhoodImageUrlColumn = new Column<NeighborhoodDTO, String>(
 				new EditTextCell()) {
 
 			@Override
 			public String getValue(NeighborhoodDTO n) {
-				return n.getName();
+				if (n.getImageUrl() != null) {
+					return n.getImageUrl();
+				}
+				return "";
 			}
 		};
-		neighborhoodTable.addColumn(imageUrlColumn, "State");
-		imageUrlColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
+		neighborhoodTable.addColumn(neighborhoodImageUrlColumn, "Image url");
+		neighborhoodImageUrlColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
 
 			@Override
 			public void update(int index, NeighborhoodDTO object, String value) {
@@ -582,7 +593,6 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			}
 		};
 		neighborhoodTable.addColumn(neighborhoodImageColumn, "Image");
-		
 		ActionCell<NeighborhoodDTO> updateButtonCell = new ActionCell<NeighborhoodDTO>("Update",
 				new ActionCell.Delegate<NeighborhoodDTO>() {
 					@Override
@@ -597,6 +607,21 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			}
 		};
 		neighborhoodTable.addColumn(saveColumn);
+		
+		ActionCell<NeighborhoodDTO> deleteButtonCell = new ActionCell<NeighborhoodDTO>("Delete",
+				new ActionCell.Delegate<NeighborhoodDTO>() {
+					@Override
+					public void execute(NeighborhoodDTO n) {
+						presenter.deleteNeighborhood(n);
+					}
+				});
+		Column<NeighborhoodDTO, NeighborhoodDTO> deleteColumn = new Column<NeighborhoodDTO, NeighborhoodDTO>(deleteButtonCell) {
+			@Override
+			public NeighborhoodDTO getValue(NeighborhoodDTO o) {
+				return o;
+			}
+		};
+		neighborhoodTable.addColumn(deleteColumn);
 		
 		// add pager
 		neighborhoodTablePager = new SimplePager();
@@ -796,6 +821,36 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		presenter.searchNeighborhoods(action);
 	}
 
+	@UiField
+	TextBox neighborhoodZip;
+	@UiField
+	TextBox neighborhoodCity;
+	@UiField
+	TextBox neighborhoodState;
+	@UiField
+	TextBox neighborhoodName;
+	@UiField
+	TextBox parentNeighborhoodId;
+	
+	@UiHandler("createNeighborhoodBtn")
+	public void createNeighborhood(ClickEvent event) {
+		NeighborhoodDTO n = new NeighborhoodDTO();
+		n.setCity(neighborhoodCity.getText());
+		n.setState(neighborhoodState.getText());
+		n.setName(neighborhoodName.getText());
+		
+		if (!"".equals(parentNeighborhoodId.getText())) {
+			NeighborhoodDTO parent = new NeighborhoodDTO();
+			parent.setNeighborhoodId(Long.parseLong(parentNeighborhoodId.getText()));
+			n.setParentNeighborhood(parent);
+		}	
+		
+		PostalCodeDTO p = new PostalCodeDTO();
+		p.setPostalCode(neighborhoodZip.getText());
+		n.setPostalCode(p);
+		presenter.createNeighborhood(n);
+	}
+	
 	public void setUploadFormActionUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
 	}
@@ -812,5 +867,9 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 	public void resetUploadForm() {
 		uploadForm.reset();
+	}
+
+	public void resetNeighborhoodImageUploadForm() {
+		uploadForm.setAction("");
 	}
 }

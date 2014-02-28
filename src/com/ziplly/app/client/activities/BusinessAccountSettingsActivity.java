@@ -23,9 +23,12 @@ import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView.BusinessAccountSettingsPresenter;
 import com.ziplly.app.client.view.ISettingsView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.SubscriptionPlanStatus;
@@ -33,8 +36,13 @@ import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanResult;
+import com.ziplly.app.shared.GetNeighborhoodAction;
+import com.ziplly.app.shared.GetNeighborhoodResult;
+import com.ziplly.app.shared.NeighborhoodSearchActionType;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.PayResult;
+import com.ziplly.app.shared.UpdateAccountAction;
+import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
@@ -57,6 +65,14 @@ public class BusinessAccountSettingsActivity extends
 		void hideTransactionHistory();
 
 		void disableSubscription();
+
+		void displayNeighborhoodListLoading(boolean b);
+
+		void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods);
+
+		void displayMessageInAddLocationWidget(String accountSaveSuccessful, AlertType success);
+
+		void displayLocationModal(boolean b);
 	}
 
 	private AcceptsOneWidget panel;
@@ -71,14 +87,26 @@ public class BusinessAccountSettingsActivity extends
 			AsyncProvider<BusinessAccountSettingsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.viewProvider = viewProvider;
+		setupEventHandler();
 	}
 
 	private void setupEventHandler() {
+		super.setupHandlers();
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
+				ctx.setAccount(event.getAccount());
 				internalStart();
 			}
+		});
+		
+		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
+
+			@Override
+			public void onEvent(AccountUpdateEvent event) {
+				view.displaySettings((BusinessAccountDTO) ctx.getAccount());
+			}
+			
 		});
 	}
 
@@ -105,7 +133,6 @@ public class BusinessAccountSettingsActivity extends
 			public void onSuccess(BusinessAccountSettingsView result) {
 				BusinessAccountSettingsActivity.this.view = result;
 				bind();
-				setupEventHandler();
 				view.displaySettings((BusinessAccountDTO) ctx.getAccount());
 				displayTransactionHistory();
 				displaySubscriptionPlans();
@@ -258,6 +285,50 @@ public class BusinessAccountSettingsActivity extends
 	}
 
 	@Override
+	public void getNeighborhoodData(String postalCode) {
+		view.displayNeighborhoodListLoading(true);
+		GetNeighborhoodAction action = new GetNeighborhoodAction(postalCode);
+		action.setSearchType(NeighborhoodSearchActionType.BY_ZIP);
+		dispatcher.execute(action, new NeighborhoodHandler());
+	}
+	
+	@Override
 	public void go(AcceptsOneWidget container) {
+	}
+	
+	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
+		@Override
+		public void onSuccess(GetNeighborhoodResult result) {
+			if (result.getNeighbordhoods() != null && result.getNeighbordhoods().size() > 0) {
+				view.displayNeighborhoods(result.getNeighbordhoods());
+			} else {
+				view.displayMessageInAddLocationWidget(StringConstants.NOT_AVAILABLE_IN_AREA, AlertType.INFO);
+			}
+			view.displayNeighborhoodListLoading(false);
+		}
+	}
+
+	@Override
+	public void updateLocation(BusinessAccountDTO account) {
+		if (account == null) {
+			throw new IllegalArgumentException();
+		}
+		dispatcher.execute(new UpdateAccountAction(account), new DispatcherCallbackAsync<UpdateAccountResult>() {
+			@Override
+			public void onSuccess(UpdateAccountResult result) {
+				// Fire event.
+				view.displayMessageInAddLocationWidget(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+
+				// Update account and fire event.
+				ctx.setAccount(result.getAccount());
+				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+				view.displayLocationModal(false);
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessageInAddLocationWidget(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
+			}
+		});
 	}
 }

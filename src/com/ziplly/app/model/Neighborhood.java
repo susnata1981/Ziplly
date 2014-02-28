@@ -1,8 +1,6 @@
 package com.ziplly.app.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -35,11 +32,11 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name = "neighborhood_id")
 	private Long neighborhoodId;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="parent_neighborhood_id")
 	private Neighborhood parentNeighborhood;
 	
-	@ManyToMany(mappedBy="targetNeighborhoods")
+	@ManyToMany(mappedBy="targetNeighborhoods", fetch = FetchType.LAZY)
 	private Set<Tweet> tweets = new HashSet<Tweet>();
 	
 	private String name;
@@ -48,12 +45,10 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name="image_url")
 	private String imageUrl;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="postalcode_id")
+	//TODO : change this to ManyToMany
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="postalcode_id", nullable = false)
 	private PostalCode postalCode;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "neighborhood")
-	private List<Account> accounts = new ArrayList<Account>();
 
 	public Neighborhood() {
 	}
@@ -63,7 +58,16 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.setName(neighborhood.getName());
 		this.setCity(neighborhood.getCity());
 		this.setState(neighborhood.getState());
-		this.setPostalCode(new PostalCode(neighborhood.getPostalCode()));
+		
+		if (neighborhood.getParentNeighborhood() != null) {
+			this.parentNeighborhood = new Neighborhood(neighborhood.getParentNeighborhood());
+		}
+		
+		if (neighborhood.getPostalCode() != null) {
+			this.setPostalCode(new PostalCode(neighborhood.getPostalCode()));
+		}
+		
+		this.setImageUrl(neighborhood.getImageUrl());
 	}
 
 	public Long getNeighborhoodId() {

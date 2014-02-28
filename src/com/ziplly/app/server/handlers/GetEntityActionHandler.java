@@ -82,6 +82,11 @@ public class GetEntityActionHandler extends
 				action.getPage(), 
 				action.getPageSize()));
 
+		// Set the location for business accounts.
+//		if (action.getEntityType() == EntityType.BUSINESS_ACCOUNT) {
+//			setCurrentLocation(action.getNeighborhoodId(), accounts);
+//		}
+		
 		if (action.isNeedTotalEntityCount()) {
 			Long count = accountDao.getTotalAccountCountByNeighborhoods(
 					action.getEntityType(),
@@ -92,6 +97,21 @@ public class GetEntityActionHandler extends
 		result.setAccounts(accounts);
 		return result;
 	}
+
+//	private void setCurrentLocation(Long neighborhoodId, List<AccountDTO> accounts) {
+//		for(AccountDTO acct: accounts) {
+//			acct.setCurrentLocation(selectLocation(acct.getLocations(), neighborhoodId));
+//		}
+//	}
+//
+//	private LocationDTO selectLocation(List<LocationDTO> locations, Long neighborhoodId) {
+//		for(LocationDTO loc : locations) {
+//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+//				return loc;
+//			}
+//		}
+//		return null;
+//	}
 
 	private GetEntityResult findPersonalAccounts(GetEntityListAction action) throws NotFoundException {
 		GetEntityResult result = new GetEntityResult();
@@ -124,5 +144,4 @@ public class GetEntityActionHandler extends
 	public Class<GetEntityListAction> getActionType() {
 		return GetEntityListAction.class;
 	}
-
 }

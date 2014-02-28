@@ -18,6 +18,8 @@ import com.ziplly.app.dao.AccountNotificationDAOImpl;
 import com.ziplly.app.dao.NeighborhoodDAOImpl;
 import com.ziplly.app.dao.PostalCodeDAO;
 import com.ziplly.app.dao.PostalCodeDAOImpl;
+import com.ziplly.app.dao.SessionDAO;
+import com.ziplly.app.dao.SessionDAOImpl;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.dao.TweetDAOImpl;
 import com.ziplly.app.model.NotificationType;
@@ -30,6 +32,7 @@ public class NotificationServlet extends HttpServlet {
 	private Logger logger = Logger.getLogger(NotificationServlet.class.getCanonicalName());
 	private EmailService emailService;
 	private AccountDAO accountDao;
+	private SessionDAO sessionDao;
 	private TweetDAO tweetDao;
 	private AccountNotificationDAO accountNotificationDao;
 	private NeighborhoodDAOImpl neighborhoodDao;
@@ -42,9 +45,16 @@ public class NotificationServlet extends HttpServlet {
 		this.postalCodeDao = new PostalCodeDAOImpl();
 		this.neighborhoodDao = new NeighborhoodDAOImpl(postalCodeDao);
 		this.accountDao = new AccountDAOImpl(neighborhoodDao);
+		this.sessionDao = new SessionDAOImpl();
 		this.tweetDao = new TweetDAOImpl(null /* passing null for HashtagDao (hack) */);
 		this.accountNotificationDao = new AccountNotificationDAOImpl();
-		this.tweetNotificationBli = new TweetNotificationBLIImpl(accountDao, neighborhoodDao, tweetDao, accountNotificationDao, emailService);
+		this.tweetNotificationBli = new TweetNotificationBLIImpl(
+				accountDao,
+				sessionDao,
+				neighborhoodDao, 
+				tweetDao, 
+				accountNotificationDao, 
+				emailService);
 	}
 
 	@Override

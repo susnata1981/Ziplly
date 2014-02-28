@@ -2,12 +2,15 @@ package com.ziplly.app.server.guice;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
+import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.AddInvitationActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
+import com.ziplly.app.server.handlers.CreateNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.CreateRegistrationActionHandler;
 import com.ziplly.app.server.handlers.DeleteImageActionHandler;
+import com.ziplly.app.server.handlers.DeleteNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.DeleteTweetActionHandler;
 import com.ziplly.app.server.handlers.EmailAdminActionHandler;
 import com.ziplly.app.server.handlers.GetAccountByIdActionHandler;
@@ -42,6 +45,7 @@ import com.ziplly.app.server.handlers.SearchAccountActionHandler;
 import com.ziplly.app.server.handlers.SendEmailActionHandler;
 import com.ziplly.app.server.handlers.SendMessageActionHandler;
 import com.ziplly.app.server.handlers.SendPasswordRecoveryActionHandler;
+import com.ziplly.app.server.handlers.SwitchLocationActionHander;
 import com.ziplly.app.server.handlers.TweetActionHandler;
 import com.ziplly.app.server.handlers.UpdateAccountActionHandler;
 import com.ziplly.app.server.handlers.UpdateCommentActionHandler;
@@ -55,8 +59,10 @@ import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
+import com.ziplly.app.shared.CreateNeighborhoodAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.DeleteImageAction;
+import com.ziplly.app.shared.DeleteNeighborhoodAction;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.GetAccountByIdAction;
@@ -92,6 +98,7 @@ import com.ziplly.app.shared.SearchAccountAction;
 import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
+import com.ziplly.app.shared.SwitchLocationAction;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateCommentAction;
@@ -120,6 +127,11 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		// Neighborhood
 		bindHandler(GetNeighborhoodAction.class, GetNeighborhoodActionHandler.class);
 		bindHandler(UpdateNeighborhoodAction.class, UpdateNeighborhoodActionHandler.class);
+		bindHandler(CreateNeighborhoodAction.class, CreateNeighborhoodActionHandler.class);
+		bindHandler(DeleteNeighborhoodAction.class, DeleteNeighborhoodActionHandler.class);
+		
+		// Location
+		bindHandler(SwitchLocationAction.class, SwitchLocationActionHander.class);
 		
 		bindHandler(ValidateLoginAction.class, ValidateLoginActionHandler.class);
 		

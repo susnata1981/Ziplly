@@ -21,6 +21,10 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.Location;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.LocationType;
+import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -46,6 +50,8 @@ public class GetLatLngActionHandler extends
 			throw new IllegalArgumentException();
 		}
 
+		// validateSession();
+
 		AccountDTO account = action.getAccount();
 		String restUrl = "";
 		try {
@@ -54,15 +60,15 @@ public class GetLatLngActionHandler extends
 			e.printStackTrace();
 		}
 		String response = callGeoEncodingService(restUrl);
-		 GetLatLngResult parse = parse(response);
-		 if (parse == null) {
-			 GetLatLngResult result = new GetLatLngResult();
-			 result.setStatus(Status.ERROR);
-			 return result;
-		 } else {
-			 parse.setStatus(Status.SUCCESS);
-		 }
-		 return parse;
+		GetLatLngResult parse = parse(response);
+		if (parse == null) {
+			GetLatLngResult result = new GetLatLngResult();
+			result.setStatus(Status.ERROR);
+			return result;
+		} else {
+			parse.setStatus(Status.SUCCESS);
+		}
+		return parse;
 	}
 
 	private String getGeoEncodingServiceEndpoint(AccountDTO acct)
@@ -71,22 +77,53 @@ public class GetLatLngActionHandler extends
 			throw new IllegalArgumentException();
 		}
 		StringBuilder response = new StringBuilder("");
+		LocationDTO location = getPrimaryLocation(acct);
 		if (acct instanceof PersonalAccountDTO) {
-			response.append(acct.getZip());
+			// Changed
+			response.append(location.getNeighborhood().getPostalCode().getPostalCode());
 		} else if (acct instanceof BusinessAccountDTO) {
-			BusinessAccountDTO baccount = (BusinessAccountDTO) acct;
-			if (baccount.getStreet1() != null) {
-				response.append(baccount.getStreet1());
+			// BusinessAccountDTO baccount = (BusinessAccountDTO) acct;
+			// LocationDTO location = getCurrentLocation(baccount);
+			if (location != null && location.getAddress() != null) {
+				response.append(location.getAddress());
 			}
+			// if (baccount.getStreet1() != null) {
+			// response.append(baccount.getStreet1());
+			// }
 			response.append(" ");
 
-			if (baccount.getStreet2() != null) {
-				response.append(baccount.getStreet2());
-			}
-			response.append(" " + baccount.getZip());
+			// if (baccount.getStreet2() != null) {
+			// response.append(baccount.getStreet2());
+			// }
+			// response.append(" " + baccount.getZip());
+			response.append(" " + location.getNeighborhood().getPostalCode().getPostalCode());
 		}
 		return GEO_ENCODING_SERVICE_ENDPOINT + URLEncoder.encode(response.toString(), "UTF-8");
 	}
+
+	private LocationDTO getPrimaryLocation(AccountDTO acct) {
+		if (acct instanceof PersonalAccountDTO) {
+			return acct.getLocations().get(0);
+		} else {
+			for (LocationDTO loc : acct.getLocations()) {
+				if (loc.getType() == LocationType.PRIMARY) {
+					return loc;
+				}
+			}
+		}
+
+		return null;
+	}
+
+//	private LocationDTO getCurrentLocation(BusinessAccountDTO baccount) {
+//		long neighborhoodId = session.getNeighborhood().getNeighborhoodId();
+//		for (LocationDTO loc : baccount.getLocations()) {
+//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+//				return loc;
+//			}
+//		}
+//		return null;
+//	}
 
 	private GetLatLngResult parse(String json) {
 		JsonParser parser = new JsonParser();

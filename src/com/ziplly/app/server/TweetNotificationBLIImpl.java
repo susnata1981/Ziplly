@@ -20,6 +20,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
+import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
@@ -32,6 +33,7 @@ import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.model.RecordStatus;
+import com.ziplly.app.model.Session;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.EmailTemplate;
@@ -54,11 +56,18 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 	private AccountNotificationDAO accountNotificationDao;
 
+	private SessionDAO sessionDao;
+
 	@Inject
-	public TweetNotificationBLIImpl(AccountDAO accountDao, NeighborhoodDAO neighborhoodDao,
-			TweetDAO tweetDao, AccountNotificationDAO accountNotificationDao,
+	public TweetNotificationBLIImpl(
+			AccountDAO accountDao, 
+			SessionDAO sessionDao,
+			NeighborhoodDAO neighborhoodDao,
+			TweetDAO tweetDao, 
+			AccountNotificationDAO accountNotificationDao,
 			EmailService emailService) {
 		this.accountDao = accountDao;
+		this.sessionDao = sessionDao;
 		this.neighborhoodDao = neighborhoodDao;
 		this.tweetDao = tweetDao;
 		this.accountNotificationDao = accountNotificationDao;
@@ -71,9 +80,10 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 	/**
 	 * Called by TweetActionHandler
+	 * @throws NotFoundException 
 	 */
 	@Override
-	public void sendNotificationsIfRequired(TweetDTO tweet) {
+	public void sendNotificationsIfRequired(TweetDTO tweet) throws NotFoundException {
 		logger.info(String.format("Received request to send notification %s", tweet));
 		if (!shouldSendNotification(tweet)) {
 			return;
@@ -92,6 +102,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		}
 
 		AccountDTO sender = tweet.getSender();
+		Session session = sessionDao.findSessionByAccountId(sender.getAccountId());
 		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
 		
 		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
@@ -107,7 +118,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 				.method(Method.POST)
 				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
 				.param(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY,
-						Long.toString(sender.getNeighborhood().getNeighborhoodId()))
+						Long.toString(session.getLocation().getNeighborhood().getNeighborhoodId()))
 				.param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY,
 						sender.getAccountId().toString())
 				.param(ZipllyServerConstants.TWEET_ID_KEY, tweet.getTweetId().toString())

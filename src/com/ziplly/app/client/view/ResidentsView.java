@@ -209,4 +209,8 @@ public class ResidentsView extends AbstractView implements
 	public void setNeighborhoodId(Long neighborhoodId) {
 		state.setNeighborhood(neighborhoodId);
 	}
+
+	public void setBackground(NeighborhoodDTO neighborhood) {
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
+	}
 }

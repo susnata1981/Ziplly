@@ -161,6 +161,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
+		clearError();
 		if (!validateInput()) {
 			return;
 		}
@@ -188,16 +189,20 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@Override
 	public void resetLoginForm() {
+		clearError();
 		email.setText("");
-		emailError.setText("");
-		emailCg.setType(ControlGroupType.NONE);
 		password.setText("");	
-		passwordError.setText("");
-		passwordCg.setType(ControlGroupType.NONE);
 		loginBtn.setEnabled(true);
 		fbLoginBtn.setEnabled(true);
 	}
 
+	public void clearError() {
+		emailError.setText("");
+		emailCg.setType(ControlGroupType.NONE);
+		passwordError.setText("");
+		passwordCg.setType(ControlGroupType.NONE);
+	}
+	
 	@Override
 	public void resetMessage() {
 		message.setVisible(false);

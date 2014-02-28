@@ -10,8 +10,10 @@ import javax.persistence.Query;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
+import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class HashtagDAOImpl implements HashtagDAO {
@@ -159,7 +161,10 @@ public class HashtagDAOImpl implements HashtagDAO {
 			for (Object tweetId : query.getResultList()) {
 				BigInteger id = (BigInteger) tweetId;
 				TweetDTO tweet = tweetDao.findTweetById(id.longValue());
-				if (tweet.getSender().getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+//				if (tweet.getSender().getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+//					tweets.add(tweet);
+//				}
+				if (containsNeighborhood(tweet.getSender(), neighborhoodId)) {
 					tweets.add(tweet);
 				}
 			}
@@ -169,5 +174,15 @@ public class HashtagDAOImpl implements HashtagDAO {
 			em.close();
 		}
 		return tweets;
+	}
+	
+	public boolean containsNeighborhood(AccountDTO account, Long neighborhoodId) {
+		for(LocationDTO loc : account.getLocations()) {
+			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

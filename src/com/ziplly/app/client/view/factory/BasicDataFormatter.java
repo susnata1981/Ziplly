@@ -42,12 +42,23 @@ public class BasicDataFormatter implements Formatter<Object> {
 				imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
 			}
 			return imgUrl;
+		case ADDRESS:
+			return value.toString();
 		case NEIGHBORHOOD:
 			NeighborhoodDTO n = (NeighborhoodDTO) value;
 			if (n.getParentNeighborhood() != null) {
-				return n.getName() + ", " + n.getParentNeighborhood().getName();
+				return n.getName() + ", " + n.getCity();
 			} else {
 				return n.getName();
+			}
+		case NEIGHBORHOOD_IMAGE:
+			NeighborhoodDTO neighborhood = (NeighborhoodDTO) value;
+			if (neighborhood.getImageUrl() != null) {
+				return neighborhood.getImageUrl() + "=s1600";
+			} else if (neighborhood.getParentNeighborhood() != null) {
+				imgUrl = (neighborhood.getParentNeighborhood().getImageUrl() != null) ? neighborhood.getParentNeighborhood().getImageUrl()
+						: "";
+				return imgUrl + "=s1600";
 			}
 		default:
 			throw new IllegalArgumentException("Invalid value type to render");

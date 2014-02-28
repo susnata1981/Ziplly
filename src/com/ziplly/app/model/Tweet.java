@@ -25,7 +25,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
-		@NamedQuery(name = "findTweetsByZip", query = "from Tweet t where t.sender.neighborhood.postalCode.postalCode = :zip and status = :status order by timeCreated desc"),
+//		@NamedQuery(name = "findTweetsByZip", query = "from Tweet t where t.sender.neighborhood.postalCode.postalCode = :zip and status = :status order by timeCreated desc"),
 		
 		@NamedQuery(name = "findTweetsByNeighborhood", 
 			query = "select t from Tweet t join t.targetNeighborhoods tn "
@@ -34,7 +34,7 @@ import org.hibernate.annotations.FetchMode;
 		
 		@NamedQuery(name = "findTweetsById", query = "from Tweet t where t.tweetId = :tweetId order by timeCreated desc"),
 		@NamedQuery(name = "findTweetsByAccountId", query = "from Tweet t where t.sender.accountId = :accountId and status = :status order by timeCreated desc"),
-		@NamedQuery(name = "findTweetsByTypeAndZip", query = "from Tweet t where t.sender.zip = :zip and status = :status and t.type = :type order by timeCreated desc"),
+//		@NamedQuery(name = "findTweetsByTypeAndZip", query = "from Tweet t where t.sender.zip = :zip and status = :status and t.type = :type order by timeCreated desc"),
 		@NamedQuery(
 			name = "findTweetsByTypeAndNeighborhood", 
 			query = "select t from Tweet t join t.targetNeighborhoods tn where tn.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by t.timeCreated desc"),

@@ -2,10 +2,7 @@ package com.ziplly.app.client.activities;
 
 import java.util.List;
 
-import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.places.HomePlace;
-import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -31,24 +28,19 @@ public class HomeViewState {
 
 	private GetCommunityWallDataAction parsePlaceToken(HomePlace place) {
 		GetCommunityWallDataAction action = getCommunityWallDataAction();
-		String filter = place.getFilter();
-		if (filter.startsWith("tweet")) {
-			String[] tokens = filter.split(":");
-			if (!validTweetId(tokens)) {
-				return getDefaultSearchAction();
-			}
+
+		if (place.getTweetId() != null) {
 			action.setSearchType(SearchType.TWEET_BY_ID);
-			action.setTweetId(tokens[1]);
+			action.setTweetId(place.getTweetId().toString());
 		} else {
-			TweetType type;
 			try {
-				type = TweetType.valueOf(filter.toUpperCase());
+				TweetType type = TweetType.valueOf(place.getTweetType().toUpperCase());
+				action.setSearchType(SearchType.CATEGORY);
+				action.setNeighborhood(currentNeighborhood);
+				action.setType(type);
 			} catch (IllegalArgumentException ex) {
 				return getDefaultSearchAction();
 			}
-			action.setNeighborhood(currentNeighborhood);
-			action.setSearchType(SearchType.CATEGORY);
-			action.setType(type);
 		}
 		
 		resetLastSearchAction(action);
@@ -74,18 +66,18 @@ public class HomeViewState {
 		return action;
 	}
 
-	private boolean validTweetId(String [] tokens) {
-		if (tokens.length != 2) {
-			return false;
-		}
-		try {
-			Long.parseLong(tokens[1]);
-		} catch(NumberFormatException nfe) {
-			return false;
-		}
-		
-		return true;
-	}
+//	private boolean validTweetId(String [] tokens) {
+//		if (tokens.length != 2) {
+//			return false;
+//		}
+//		try {
+//			Long.parseLong(tokens[1]);
+//		} catch(NumberFormatException nfe) {
+//			return false;
+//		}
+//		
+//		return true;
+//	}
 
 	public GetCommunityWallDataAction getLastSearchAction() {
 		return lastSearchAction;

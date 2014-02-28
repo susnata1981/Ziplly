@@ -140,12 +140,11 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	@Override
 	public void update(Neighborhood neighborhood) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-
 		try {
 			em.getTransaction().begin();
 			PostalCodeDTO postalCode = null;
 			try {
-			postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCode().getPostalCode());
+				postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCode().getPostalCode());
 			} catch(NoResultException nre) {
 				System.out.println("Didn't find postal code");
 				postalCode = new PostalCodeDTO();
@@ -153,6 +152,60 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			}
 			neighborhood.setPostalCode(new PostalCode(postalCode));
 			em.merge(neighborhood);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
+	}
+	
+	@Override
+	public void save(Neighborhood neighborhood) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		try {
+			em.getTransaction().begin();
+			PostalCode postalCode = null;
+			
+			// parent neighborhood
+			try {
+				if (neighborhood.getParentNeighborhood() != null) {
+					Long parentNeighborhoodId = neighborhood.getParentNeighborhood().getNeighborhoodId();
+					Query query = em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+					query.setParameter("neighborhoodId", parentNeighborhoodId);
+					Neighborhood parent = (Neighborhood) query.getSingleResult();
+					neighborhood.setParentNeighborhood(parent);
+				}
+			} catch(NoResultException nre) {
+				throw nre;
+			}
+			
+			// postal code
+			try {
+				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
+				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
+				postalCode = (PostalCode) query.getSingleResult();
+			} catch(NoResultException nre) {
+				postalCode = new PostalCode();
+				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+			}
+			
+			neighborhood.setPostalCode(postalCode);
+			em.persist(neighborhood);
+			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public void delete(Long neighborhoodId) {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		try {
+			em.getTransaction().begin();
+			Query query = em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+			query.setParameter("neighborhoodId", neighborhoodId);
+			Neighborhood n = (Neighborhood) query.getSingleResult();
+			em.remove(n);
 			em.getTransaction().commit();
 		} finally {
 			em.close();

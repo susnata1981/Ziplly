@@ -12,16 +12,18 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.BusinessAccountCell;
@@ -33,7 +35,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessView extends Composite implements View<BusinessView.EntityListViewPresenter> {
+public class BusinessView extends AbstractView implements View<BusinessView.EntityListViewPresenter> {
 
 	private static final int PAGE_SIZE = 10;
 	private SendMessageWidget smw;
@@ -80,7 +82,9 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 	private CommunityViewState state;
 	private List<NeighborhoodDTO> neighborhoods;
 
-	public BusinessView() {
+	@Inject
+	public BusinessView(EventBus eventBus) {
+		super(eventBus);
 		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell());
 		businessList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
@@ -216,5 +220,9 @@ public class BusinessView extends Composite implements View<BusinessView.EntityL
 				neighborhoodListBox.addItem(n.getName());
 			}
 		}
+	}
+
+	public void setBackground(NeighborhoodDTO neighborhood) {
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
 	}
 }

@@ -12,6 +12,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.LocationDTO;
 
 public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 
@@ -62,6 +63,11 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		String category = value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
 		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
+		StringBuilder locations = new StringBuilder();
+		for(LocationDTO loc : value.getLocations()) {
+			locations.append(loc.getNeighborhood().getName()+","+loc.getNeighborhood().getCity());
+			locations.append("<br>");
+		}
 		
 		if (value != null) {
 			sb.appendHtmlConstant(
@@ -73,7 +79,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
 					+ "<span class='pcell-row'>Website: <a href='#'>"+ website + "</a></span>"
 					+ "<span class='pcell-row'> Category: "+ category +"</span>"
-					+ "<span class='pcell-row'>Located at:&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "<span class='pcell-row'>Located at:&nbsp;"+locations.toString()+"</span>"
 					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
 					+ "</div>"
 					+ "</div>");

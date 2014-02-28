@@ -25,8 +25,12 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetSearchCriteria;
+import com.ziplly.app.shared.CreateNeighborhoodAction;
+import com.ziplly.app.shared.CreateNeighborhoodResult;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.CreateRegistrationResult;
+import com.ziplly.app.shared.DeleteNeighborhoodAction;
+import com.ziplly.app.shared.DeleteNeighborhoodResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetNeighborhoodAction;
@@ -235,7 +239,42 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 				String imageUrl = event.getResults();
 				System.out.println("Received uploaded image url:"+imageUrl);
 				view.displayImagePreview(imageUrl);
-				view.resetUploadForm();
+				view.resetNeighborhoodImageUploadForm();
+				setUploadFormActionUrl();
+			}
+		});
+	}
+
+	@Override
+	public void createNeighborhood(NeighborhoodDTO n) {
+		dispatcher.execute(new CreateNeighborhoodAction(n), new DispatcherCallbackAsync<CreateNeighborhoodResult>() {
+
+			@Override
+			public void onSuccess(CreateNeighborhoodResult result) {
+				view.displayMessage(StringConstants.SAVE_SUCCESSFULL, AlertType.SUCCESS);
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
+			}
+		});
+	}
+
+	@Override
+	public void deleteNeighborhood(NeighborhoodDTO n) {
+		DeleteNeighborhoodAction action = new DeleteNeighborhoodAction(n.getNeighborhoodId());
+		dispatcher.execute(action, new DispatcherCallbackAsync<DeleteNeighborhoodResult>() {
+
+			@Override
+			public void onSuccess(DeleteNeighborhoodResult result) {
+				view.displayMessage(StringConstants.NEIGHBORHOOD_DELETED, AlertType.SUCCESS);
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getMessage());
+				view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 			}
 		});
 	}

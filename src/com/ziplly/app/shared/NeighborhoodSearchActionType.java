@@ -1,6 +1,8 @@
 package com.ziplly.app.shared;
 
-public enum NeighborhoodSearchActionType {
+import java.io.Serializable;
+
+public enum NeighborhoodSearchActionType implements Serializable {
 	BY_ZIP,
 	ALL;
 }

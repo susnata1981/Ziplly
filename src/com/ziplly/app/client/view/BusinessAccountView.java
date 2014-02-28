@@ -54,6 +54,8 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -75,13 +77,13 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
 	private static final String TWEET_WIDGET_HEIGHT = "900px";
-	
+
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
 
 	@UiField
 	Style style;
-	
+
 	@UiField
 	FluidContainer container;
 	@UiField
@@ -118,10 +120,12 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	SpanElement websiteSpan;
 	@UiField
 	Anchor websiteLink;
-	
+
 	// Address section
 	@UiField
 	HTMLPanel addressPanel;
+	@UiField
+	SpanElement neighborhoodName;
 	@UiField
 	SpanElement formattedAddress;
 
@@ -155,9 +159,9 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@UiField
 	SpanElement sundayEnd;
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	TweetBox tweetBox;
-	
+
 	// Account stats
 	@UiField
 	ProfileStatWidget tweetCountWidget;
@@ -168,11 +172,11 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	@UiField
 	DivElement locationDiv;
-	
+
 	ITweetView<TweetPresenter> tview = new TweetView();
 	SendMessageWidget smw;
 	NotificationWidget notificationWidget;
-	
+
 	/*
 	 * Tweet section
 	 */
@@ -180,14 +184,14 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	HTMLPanel tweetSection;
 	@UiField
 	HTMLPanel tweetBoxDiv;
-	
+
 	@UiField
 	Column messageSection;
-	
+
 	AccountPresenter<BusinessAccountDTO> presenter;
 	BusinessAccountDTO account;
 	PopupPanel popupPanel;
-	
+
 	@Inject
 	public BusinessAccountView(EventBus eventBus) {
 		super(eventBus);
@@ -214,7 +218,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 				messageSection.remove(popupPanel);
 			}
 		});
-		
+
 		StyleHelper.show(profileImagePanel.getElement(), false);
 	}
 
@@ -225,20 +229,27 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		}
 		message.setVisible(false);
 		this.account = account;
-		
+
 		// image section
-//		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
-//		profileImage.setAltText(account.getDisplayName());
-		StyleHelper.setBackgroundImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
-		
+		StyleHelper.setBackgroundImage(accountFormatter
+				.format(account, ValueType.PROFILE_IMAGE_URL));
+
 		name.setInnerHTML(account.getDisplayName());
+		// TODO
 		businessName.setInnerHTML(account.getDisplayName());
-//		description.setText(account.get);
-		
+
+		if (account.getCurrentLocation() != null) {
+			neighborhoodName.setInnerHTML(basicDataFormatter.format(account.getCurrentLocation()
+					.getNeighborhood(), ValueType.NEIGHBORHOOD));
+		} else {
+			neighborhoodName.setInnerHTML(basicDataFormatter.format(getPrimaryLocation(account), ValueType.NEIGHBORHOOD));
+		}
+		// description.setText(account.getDe);
+
 		if (account.getCategory() != null) {
 			businessCategory.setInnerText(account.getCategory().getName());
 		}
-		
+
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
 
@@ -246,15 +257,15 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 			websiteSpan.setInnerHTML(account.getWebsite());
 			websiteLink.setHref(account.getWebsite());
 		}
-		
+
 		// price range test
 		BusinessPropertiesDTO props = account.getProperties();
-		
+
 		priceRangeWidget.clear();
 		if (props.getPriceRange() != null) {
 			priceRangeWidget.setRange(account.getProperties().getPriceRange());
 		}
-		
+
 		parkingAvailableSpan.clear();
 		if (props.isParkingAvailable()) {
 			parkingAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_UP));
@@ -268,47 +279,57 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		} else {
 			wifiAvailableSpan.add(CssStyleHelper.getIcon(IconType.THUMBS_DOWN));
 		}
-		
+
 		// last login time shouldn't be null
 		if (account.getLastLoginTime() != null) {
-			lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
+			lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(),
+					ValueType.DATE_VALUE_SHORT));
 		}
 
 		displayHoursOfOperation();
-		
+
 		// display tweets
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
 		displayTweets(account.getTweets(), false);
-		
+
 		StyleHelper.show(profileSectionRow.getElement(), true);
+	}
+
+	private NeighborhoodDTO getPrimaryLocation(BusinessAccountDTO account) {
+		for(LocationDTO location : account.getLocations()) {
+			if (location.getType() == LocationType.PRIMARY) {
+				return location.getNeighborhood();
+			}
+		}
+		return null;
 	}
 
 	private void displayHoursOfOperation() {
 		mondayStart.setInnerText(account.getProperties().getMondayEndTime());
 		mondayEnd.setInnerText(account.getProperties().getMondayEndTime());
-		
+
 		tuesdayStart.setInnerText(account.getProperties().getTuesdayStartTime());
 		tuesdayEnd.setInnerText(account.getProperties().getTuesdayEndTime());
-		
+
 		wednesdayStart.setInnerText(account.getProperties().getWednesdayStartTime());
 		wednesdayEnd.setInnerText(account.getProperties().getWednesdayEndTime());
-		
+
 		thursdayStart.setInnerText(account.getProperties().getThursdayStartTime());
 		thursdayEnd.setInnerText(account.getProperties().getThursdayEndTime());
-		
+
 		fridayStart.setInnerText(account.getProperties().getFridayStartTime());
 		fridayEnd.setInnerText(account.getProperties().getFridayEndTime());
-		
+
 		saturdayStart.setInnerText(account.getProperties().getSaturdayStartTime());
 		saturdayEnd.setInnerText(account.getProperties().getSaturdayEndTime());
-		
+
 		sundayStart.setInnerText(account.getProperties().getSundayStartTime());
 		sundayEnd.setInnerText(account.getProperties().getSundayEndTime());
 	}
 
 	@Override
 	public void displayFormattedAddress(String fAddress) {
-		if (account != null) {
+		if (fAddress != null) {
 			formattedAddress.setInnerHTML(fAddress);
 		}
 	}
@@ -316,37 +337,42 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void displayLocationInMap(GetLatLngResult input) {
 		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());
-	    MapOptions myOptions = MapOptions.create();
-	    myOptions.setZoom(10.0);
-	    myOptions.setCenter(myLatLng);
-	    myOptions.setMapMaker(true);
-	    myOptions.setMapTypeId(MapTypeId.ROADMAP);
+		MapOptions myOptions = MapOptions.create();
+		myOptions.setZoom(10.0);
+		myOptions.setCenter(myLatLng);
+		myOptions.setMapMaker(true);
+		myOptions.setMapTypeId(MapTypeId.ROADMAP);
 
-	    GoogleMap map = GoogleMap.create(locationDiv, myOptions);
+		GoogleMap map = GoogleMap.create(locationDiv, myOptions);
 		MarkerOptions markerOpts = MarkerOptions.create();
-        markerOpts.setMap(map);
-        markerOpts.setPosition(myLatLng);
-        Marker.create(markerOpts);
+		markerOpts.setMap(map);
+		markerOpts.setPosition(myLatLng);
+		Marker.create(markerOpts);
 	}
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
 		if (tweets.size() == 0) {
+
+			if (displayNoTweetsMessage) {
+				tview.displayNoTweetsMessage();
+			}
+
 			eventBus.fireEvent(new LoadingEventEnd());
 			return;
 		}
-		
+
 		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
-			
+
 			@Override
 			public void hasFinished(double y) {
 				if (y == 100) {
 					eventBus.fireEvent(new LoadingEventEnd());
 				}
 			}
-		}, displayNoTweetsMessage);
+		});
 	}
-	
+
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
@@ -362,7 +388,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void onCloseSendMessageWidgetClick(ClickEvent event) {
 		closeMessageWidget();
 	}
-	
+
 	@Override
 	public void closeMessageWidget() {
 		smw.hide();
@@ -372,7 +398,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void onSendMessageWidgetClick(ClickEvent event) {
 		openMessageWidget();
 	}
-	
+
 	@Override
 	public void openMessageWidget() {
 		smw = new SendMessageWidget(account);
@@ -393,7 +419,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		message.setType(type);
 		message.setVisible(true);
 	}
-	
+
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -421,7 +447,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 			likeCountWidget.setValue(new Integer(result.getTotalLikes()).toString());
 		}
 	}
-	
+
 	@Override
 	public void updateComment(CommentDTO comment) {
 		tview.addComment(comment);
@@ -431,7 +457,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void addComment(CommentDTO comment) {
 		tview.addComment(comment);
 	}
-	
+
 	@Override
 	public void updateTweetLike(LoveDTO like) {
 		tview.updateLike(like);
@@ -451,7 +477,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void removeTweet(TweetDTO tweet) {
 		tview.remove(tweet);
 	}
-	
+
 	@Override
 	public void setImageUploadUrl(String imageUrl) {
 		tweetBox.setImageUploadUrl(imageUrl);
@@ -471,18 +497,18 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
 	}
-	
+
 	@Override
 	public void displayTweetViewMessage(String msg, AlertType type) {
 		tview.displayMessage(msg, type);
 	}
-	
+
 	@Override
 	public void displayNotificationWidget(boolean show) {
 		if (show) {
 			popupPanel = new PopupPanel();
 			popupPanel.setWidget(notificationWidget);
-			popupPanel.setPopupPosition(Window.getClientWidth()-270,70);
+			popupPanel.setPopupPosition(Window.getClientWidth() - 270, 70);
 			messageSection.add(popupPanel);
 			popupPanel.show();
 		} else {

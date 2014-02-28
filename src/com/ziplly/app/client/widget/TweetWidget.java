@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -19,7 +21,6 @@ import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.WidgetFactory;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -156,7 +158,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	HTMLPanel tweetLikePanel;
 	List<LoveDTO> likes = new ArrayList<LoveDTO>();
-	Map<Long, Panel> commentsToWidgetMap = new HashMap<Long, Panel>();
+	Map<Long, Panel> commentsToWidgetMap = new LinkedHashMap<Long, Panel>();
 
 	// Comment section
 	@UiField
@@ -173,7 +175,11 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	Button commentBtn;
 	@UiField
 	Button cancelCommentBtn;
-
+	
+	// Create Link anchor
+	@UiField
+	ZAnchor createLink;
+	
 	private TweetPresenter presenter;
 	private TweetDTO tweet;
 	// final Modal modal = new Modal();
@@ -314,6 +320,16 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				smw.show();
 			}
 		});
+		
+		createLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+//				presenter.goTo(new HomePlace(tweet.getTweetId()));
+				presenter.goTo(new TweetDetailsPlace(tweet.getTweetId()));
+			}
+			
+		});
 	}
 
 	private boolean validateComment(String comment) {
@@ -406,9 +422,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			Panel panel = addNextComment(comment);
 			commentsToWidgetMap.put(comment.getCommentId(), panel);
 			tweetCommentSection.add(panel);
-			if (commentCount < DEFAULT_COMMENT_COUNT) {
-				;
-			} else {
+
+			// Hide comments
+			if (commentCount >= DEFAULT_COMMENT_COUNT) {
 				panel.setVisible(false);
 			}
 			commentCount++;
@@ -438,17 +454,31 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void showMoreComments() {
-		for (int i = DEFAULT_COMMENT_COUNT; i < commentsToWidgetMap.size(); i++) {
-			commentsToWidgetMap.get(i).setVisible(true);
+		Iterator<Entry<Long, Panel>> iterator = commentsToWidgetMap.entrySet().iterator();
+		int count = 0;
+		while(iterator.hasNext()) {
+			Entry<Long, Panel> entry = iterator.next();
+			if (count >= DEFAULT_COMMENT_COUNT){
+				commentsToWidgetMap.get(entry.getKey()).setVisible(true);				
+			}
+			count++;
 		}
+		
 		showMoreCommentsLink.setVisible(false);
 		hideCommentsLink.setVisible(true);
 	}
 
 	void hideMoreComments() {
-		for (int i = DEFAULT_COMMENT_COUNT; i < commentsToWidgetMap.size(); i++) {
-			commentsToWidgetMap.get(i).setVisible(false);
+		Iterator<Entry<Long, Panel>> iterator = commentsToWidgetMap.entrySet().iterator();
+		int count = 0;
+		while(iterator.hasNext()) {
+			Entry<Long, Panel> entry = iterator.next();
+			if (count >= DEFAULT_COMMENT_COUNT){
+				commentsToWidgetMap.get(entry.getKey()).setVisible(false);				
+			}
+			count++;
 		}
+		
 		showMoreCommentsLink.setVisible(true);
 		hideCommentsLink.setVisible(false);
 	}

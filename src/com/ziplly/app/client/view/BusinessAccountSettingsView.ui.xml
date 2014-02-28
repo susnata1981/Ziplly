@@ -113,6 +113,32 @@
 		.popoverLink {
 		font-size: 11px !important;
 		}
+		.row {
+		display: block;
+		margin: 10px 4px;
+		}
+		.hpanelNoMargin {
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.tinyText {
+			font-size: 10px !important;
+		}
+		.locationItemPanel {
+			width: 440px;
+			border: 2px solid #ddd;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+		.heading {
+		font-size: 20px;
+		font-weight: 500;
+		}
+		.locationBlock {
+			clear: both;
+			float: left;
+			padding: 2px;
+		}
 	</ui:style>
 	<b:FluidContainer ui:field="settingsPanel">
 		<b:FluidRow>
@@ -139,6 +165,10 @@
 											<b:HelpInline ui:field="businessNameError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
+									<div>
+										<b:Label>Neighborhood</b:Label>
+										<span ui:field="neighborhoodSpan" />
+									</div>
 									<b:ControlGroup ui:field="street1Cg">
 										<b:Controls>
 											<b:Label>Street1</b:Label>
@@ -148,21 +178,15 @@
 											<b:HelpInline ui:field="street1Error"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
-									<b:ControlGroup ui:field="zipCg">
+									<b:ControlGroup ui:field="phoneCg">
 										<b:Controls>
-											<b:Label>Zip</b:Label>
+											<b:Label>Phone</b:Label>
 											<br />
-											<b:TextBox ui:field="zip" placeholder="zip..."
+											<b:TextBox ui:field="phone" placeholder="phone..."
 												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
-											<b:HelpInline ui:field="zipError"></b:HelpInline>
+											<b:HelpInline ui:field="phoneError"></b:HelpInline>
 										</b:Controls>
 									</b:ControlGroup>
-									<div>
-										<b:Label>Neighborhood</b:Label>
-										<br />
-										<b:TextBox ui:field="neighborhoodTextBox"
-											placeholder="neighborhood..." addStyleNames="{style.wideTextBox} {style.inputTextField}" />
-									</div>
 									<b:ControlGroup ui:field="websiteCg">
 										<b:Controls>
 											<b:Label>Website</b:Label>
@@ -311,6 +335,15 @@
 								</g:HTMLPanel>
 							</div>
 							<g:HTMLPanel ui:field="notificationPanel">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Tab>
+					<b:Tab ui:field="location" heading="Locations">
+						<g:HTMLPanel>
+							<b:Label>Locations</b:Label> <g:Anchor ui:field="addLocationAnchor">add</g:Anchor>
+							<hr />
+							<g:HTMLPanel ui:field="locationPanel">
+
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>

@@ -1,8 +1,7 @@
 package com.ziplly.app.server.handlers;
 
+import java.util.Iterator;
 import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
@@ -19,6 +18,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.Location;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
@@ -69,6 +69,7 @@ public class GetTweetForUserActionHandler extends
 			userLoggedIn = false;
 		}
 
+		// ONLY APPLICABLE FOR PERSONAL ACCOUNTS.
 		AccountDTO account = accountDao.findById(accountId);
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			if (ps.getSection() == AccountDetailsType.TWEETS) {
@@ -78,7 +79,14 @@ public class GetTweetForUserActionHandler extends
 					}
 				} else {
 					Account requestingAccount = session.getAccount();
-					if (!account.getNeighborhood().getParentNeighborhood().equals(requestingAccount.getNeighborhood().getParentNeighborhood())) {
+					Iterator<Location> locationIterator = requestingAccount.getLocations().iterator();
+					if (!locationIterator.hasNext()) {
+						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
+					}
+					
+					Location location = locationIterator.next();
+					if (!session.getLocation().getNeighborhood().getParentNeighborhood().equals(
+							location.getNeighborhood().getParentNeighborhood())) {
 						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				}

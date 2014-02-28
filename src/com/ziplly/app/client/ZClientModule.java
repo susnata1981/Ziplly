@@ -40,6 +40,7 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.view.TweetDetailsView;
 import com.ziplly.app.client.widget.SendMessageWidget;
 
 public class ZClientModule extends AbstractGinModule {
@@ -60,6 +61,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(ILoginAccountView.class).to(LoginAccountView.class).in(Singleton.class);
 		bind(ISignupView.class).to(BusinessSignupView.class).in(Singleton.class);
 		bind(IHomeView.class).to(HomeView.class).in(Singleton.class);
+		bind(TweetDetailsView.class).in(Singleton.class);
 		bind(SignupView.class).in(Singleton.class);
 		bind(BusinessSignupView.class).in(Singleton.class);
 		bind(ResidentsView.class).in(Singleton.class);

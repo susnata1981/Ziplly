@@ -111,6 +111,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
+			ctx.setAccount(result.getAccount());
 			eventBus.fireEvent(new LoginEvent(result.getAccount()));
 			view.clear();
 			forward(result.getAccount());

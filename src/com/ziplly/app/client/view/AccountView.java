@@ -212,6 +212,14 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
+		if (tweets.size() == 0) {
+			if (displayNoTweetsMessage) {
+				tview.displayNoTweetsMessage();
+			}
+			eventBus.fireEvent(new LoadingEventEnd());
+			return;
+		}
+		
 		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
 			
 			@Override
@@ -220,7 +228,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 					eventBus.fireEvent(new LoadingEventEnd());
 				}
 			}
-		}, displayNoTweetsMessage);
+		});
 	}
 
 	@Override

@@ -1,11 +1,15 @@
 insert into postal_code (type,code) values ("regular", 98199);
 insert into postal_code (type,code) values ("regular", 98198);
 insert into postal_code (type,code) values ("regular", 98197);
+insert into postal_code (type,code) values ("regular", 98109);
 
 insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "Magnolia","WA", 1, null);
 insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "East Magnolia","WA", 1, 1);
 insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "Baircliff","WA", 1, 1);
 
+insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Queen Anne","WA", 1, null);
+insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Lower Queen Anne","WA", 1, 1);
+insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Upper Queen Anne","WA", 1, 1);
 
 insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Magnolia","WA", 1);
 

@@ -21,8 +21,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,7 +30,6 @@ import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
@@ -135,7 +132,6 @@ public class HomeView extends AbstractView implements IHomeView {
 		message.setAnimation(true);
 		
 		StyleHelper.show(message.getElement(), false);
-		StyleHelper.setBackgroundImage(RootPanel.get().getElement(), ZResources.IMPL.magnolia().getSafeUri().asString());
 		
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
@@ -281,12 +277,11 @@ public class HomeView extends AbstractView implements IHomeView {
 			
 			@Override
 			public void hasFinished(double y) {
-				System.out.println("FINISHED LOADING % "+y);
 				if (y == 100) {
 					eventBus.fireEvent(new LoadingEventEnd());
 				}
 			}
-		}, false);
+		});
 	}
 
 	@Override
@@ -348,7 +343,6 @@ public class HomeView extends AbstractView implements IHomeView {
 	
 	@Override
 	public Element getTweetSectionElement() {
-//		return communityWallPanel.getElement();
 		return tview.getTweetSection();
 	}
 
@@ -451,12 +445,15 @@ public class HomeView extends AbstractView implements IHomeView {
 			anchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-//					presenter.getCommunityPanelDataForNeighborhood(neighborhood);
 					presenter.displayCommunityWallForNeighborhood(neighborhood);
 				}
 			});
 			neighborhoodsPanel.add(anchor);
 		}
-
+	}
+	
+	@Override
+	public void displayNeighborhoodImage(NeighborhoodDTO neighborhood) {
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
 	}
 }

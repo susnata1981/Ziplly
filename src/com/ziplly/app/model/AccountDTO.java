@@ -15,11 +15,9 @@ public class AccountDTO implements Serializable {
 	private String password;
 	private String url;
 	private String imageUrl;
-	private int zip;
-    private NeighborhoodDTO neighborhood;
-	private String city;
-	private String state;
 	private String role;
+	private List<LocationDTO> locations = new ArrayList<LocationDTO>();
+	private LocationDTO currentLocation;
 	private String status;
 	private Date lastLoginTime;
 	private Date timeUpdated;
@@ -29,6 +27,11 @@ public class AccountDTO implements Serializable {
 	private List<AccountNotificationDTO> accountNotifications = new ArrayList<AccountNotificationDTO>();
 	private List<AccountNotificationSettingsDTO> notificationSettings = new ArrayList<AccountNotificationSettingsDTO>();
 	private List<PrivacySettingsDTO> privacySettings = new ArrayList<PrivacySettingsDTO>();
+
+//	private int zip;
+//    private NeighborhoodDTO neighborhood;
+//	private String city;
+//	private String state;
 	
 	public AccountDTO() {
 	}
@@ -104,14 +107,6 @@ public class AccountDTO implements Serializable {
 		this.uid = uid;
 	}
 
-	public int getZip() {
-		return zip;
-	}
-
-	public void setZip(int zip) {
-		this.zip = zip;
-	}
-
 	public Date getLastLoginTime() {
 		return lastLoginTime;
 	}
@@ -168,30 +163,6 @@ public class AccountDTO implements Serializable {
 		this.timeUpdated = timeUpdated;
 	}
 
-	public NeighborhoodDTO getNeighborhood() {
-		return neighborhood;
-	}
-
-	public void setNeighborhood(NeighborhoodDTO neighborhood) {
-		this.neighborhood = neighborhood;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
 	public Role getRole() {
 		return Role.valueOf(role);
 	}
@@ -227,4 +198,57 @@ public class AccountDTO implements Serializable {
 	public void setAccountNotifications(List<AccountNotificationDTO> accountNotifications) {
 		this.accountNotifications = accountNotifications;
 	}
+
+	public List<LocationDTO> getLocations() {
+		return locations;
+	}
+
+	public void addLocation(LocationDTO loc) {
+		locations.add(loc);
+	}
+	
+	public void setLocations(List<LocationDTO> locations) {
+		this.locations = locations;
+	}
+
+	public LocationDTO getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(LocationDTO currentLocation) {
+		this.currentLocation = currentLocation;
+	}
+	
+//	public int getZip() {
+//		return zip;
+//	}
+//
+//	public void setZip(int zip) {
+//		this.zip = zip;
+//	}
+//
+//	public NeighborhoodDTO getNeighborhood() {
+//		return neighborhood;
+//	}
+//
+//	public void setNeighborhood(NeighborhoodDTO neighborhood) {
+//		this.neighborhood = neighborhood;
+//	}
+//
+//	public String getCity() {
+//		return city;
+//	}
+//
+//	public void setCity(String city) {
+//		this.city = city;
+//	}
+//
+//	public String getState() {
+//		return state;
+//	}
+//
+//	public void setState(String state) {
+//		this.state = state;
+//	}
+
 }

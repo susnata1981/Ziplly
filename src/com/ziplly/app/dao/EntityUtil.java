@@ -24,6 +24,8 @@ import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.InterestDTO;
+import com.ziplly.app.model.Location;
+import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.Message;
@@ -111,15 +113,25 @@ public class EntityUtil {
 		acct.setEmail(account.getEmail());
 		acct.setUrl(account.getUrl());
 		acct.setImageUrl(account.getImageUrl());
-		acct.setZip(account.getZip());
-		acct.setNeighborhood(clone(account.getNeighborhood()));
-		acct.setCity(account.getCity());
-		acct.setState(account.getState());
+//		acct.setZip(account.getZip());
+//		acct.setNeighborhood(clone(account.getNeighborhood()));
+//		acct.setCity(account.getCity());
+//		acct.setState(account.getState());
 		acct.setRole(account.getRole());
 		acct.setStatus(account.getStatus());
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
+		
+		if (Hibernate.isInitialized(account.getLocations())) {
+			for(Location loc: account.getLocations()) {
+				acct.addLocation(clone(loc));
+			}
+		}
+		
+		if (account.getCurrentLocation() != null) {
+			acct.setCurrentLocation(clone(account.getCurrentLocation()));
+		}
 	}
 
 	// public static AccountDTO topLevelClone(Account account) {
@@ -173,8 +185,8 @@ public class EntityUtil {
 		resp.setPhone(account.getPhone());
 		resp.setBusinessType(account.getBusinessType());
 		resp.setWebsite(account.getWebsite());
-		resp.setStreet1(account.getStreet1());
-		resp.setStreet2(account.getStreet2());
+//		resp.setStreet1(account.getStreet1());
+//		resp.setStreet2(account.getStreet2());
 		resp.setProperties(clone(account.getProperties()));
 		resp.setCategory(account.getCategory());
 		
@@ -445,13 +457,18 @@ public class EntityUtil {
 		NeighborhoodDTO dest = new NeighborhoodDTO();
 		dest.setCity(neighborhood.getCity());
 		dest.setState(neighborhood.getState());
-		dest.setPostalCode(clone(neighborhood.getPostalCode()));
 		dest.setName(neighborhood.getName());
 		dest.setImageUrl(neighborhood.getImageUrl());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
+		
 		if (neighborhood.getParentNeighborhood() != null) {
 			dest.setParentNeighborhood(clone(neighborhood.getParentNeighborhood()));
 		}
+		
+		if (neighborhood.getPostalCode() != null) {
+			dest.setPostalCode(clone(neighborhood.getPostalCode()));
+		}
+		
 		return dest;
 	}
 
@@ -510,6 +527,17 @@ public class EntityUtil {
 		for(Interest i : result) {
 			resp.add(clone(i));
 		}
+		return resp;
+	}
+	
+	public static LocationDTO clone(Location loc) {
+		LocationDTO resp = new LocationDTO();
+		resp.setLocationId(loc.getLocationId());
+		resp.setNeighborhood(clone(loc.getNeighborhood()));
+		resp.setAddress(loc.getAddress());
+		resp.setType(loc.getType());
+		resp.setTimeUpdated(loc.getTimeUpdated());
+		resp.setTimeCreated(loc.getTimeCreated());
 		return resp;
 	}
 }

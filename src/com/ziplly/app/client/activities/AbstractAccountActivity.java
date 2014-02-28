@@ -144,7 +144,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			@Override
 			public void onSuccess(CommentResult result) {
 				view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-				view.updateComment(result.getComment());
+				view.addComment(result.getComment());
 			}
 			
 			@Override

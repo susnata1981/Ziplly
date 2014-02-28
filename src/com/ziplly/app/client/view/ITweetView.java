@@ -35,11 +35,16 @@ public interface ITweetView<T extends Presenter> extends View<T> {
 
 	void setHeight(String tweetWidgetHeight);
 
+//	void displayTweets(List<TweetDTO> tweets, 
+//			TweetViewDisplayStatusCallback callback,
+//			boolean displayNoTweetsMessage);
+
 	void displayTweets(List<TweetDTO> tweets, 
-			TweetViewDisplayStatusCallback callback,
-			boolean displayNoTweetsMessage);
+			TweetViewDisplayStatusCallback callback);
 	
 	void displayTweets(List<TweetDTO> tweets);
 
 	void addTweet(TweetDTO tweet, TweetWidgetRenderingStatus callback);
+
+	void displayNoTweetsMessage();
 }

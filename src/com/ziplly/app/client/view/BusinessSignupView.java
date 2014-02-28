@@ -48,6 +48,8 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PriceRange;
@@ -100,6 +102,13 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	HelpInline street1Error;
 	@UiField
 	Image neighborhoodLoadingImage;
+
+	@UiField
+	ControlGroup phoneCg;
+	@UiField
+	HelpInline phoneError;
+	@UiField
+	TextBox phone;
 	
 	@UiField
 	ControlGroup neighborhoodCg;
@@ -310,12 +319,25 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		
 		valid &= validateEmail();
 
+		valid &=  validatePhone();
 		// valid &= validateZip();
 
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
 		return valid;
+	}
+
+	private boolean validatePhone() {
+		String phoneNumber = phone.getText().trim();
+		ValidationResult result = FieldVerifier.validatePhone(phoneNumber);
+		if (!result.isValid()) {
+			phoneCg.setType(ControlGroupType.ERROR);
+			phoneError.setText(result.getErrors().get(0).getErrorMessage());
+			phoneError.setVisible(true);
+			return false;
+		}
+		return true;
 	}
 
 	private boolean validateNeighborhood() {
@@ -349,6 +371,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		businessName.setText("");
 		street1.setText("");
 		email.setText("");
+		phone.setText("");
 		password.setText("");
 		neighborhoodListPanel.clear();
 	}
@@ -387,10 +410,21 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		BusinessAccountDTO account = new BusinessAccountDTO();
 		account.setName(name);
 		account.setStreet1(streetOne);
-		account.setNeighborhood(selectedNeighborhood);
-		account.setCity(city);
-		account.setState(state);
-		account.setZip(Integer.parseInt(zipCode));
+		account.setPhone(FieldVerifier.getEscapedText(phone.getText()));
+		
+		LocationDTO location = new LocationDTO();
+		location.setNeighborhood(selectedNeighborhood);
+		location.setAddress(streetOne);
+		location.setType(LocationType.PRIMARY);
+		location.setTimeUpdated(new Date());
+		location.setTimeCreated(new Date());
+		account.addLocation(location);
+		
+		// this should go away.
+//		account.setNeighborhood(selectedNeighborhood);
+//		account.setCity(city);
+//		account.setState(state);
+//		account.setZip(Integer.parseInt(zipCode));
 
 		// business category
 		BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
@@ -562,6 +596,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
 		clearMessage();
 		this.neighborhoods = neighborhoods;
+		neighborhoodListPanel.clear();
 		for(NeighborhoodDTO n : neighborhoods) {
 			RadioButton rb = new RadioButton("neighborhood");
 			rb.setText(n.getName());

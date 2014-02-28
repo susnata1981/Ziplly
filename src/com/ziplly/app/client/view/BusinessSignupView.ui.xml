@@ -160,6 +160,14 @@
 								<b:Image ui:field="neighborhoodLoadingImage" />
 							</b:Controls>
 						</b:ControlGroup>
+						<b:ControlGroup ui:field="phoneCg" addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Phone</b:Label>
+								<br />
+								<b:TextBox ui:field="phone" placeholder="xxx-xxx-xxxx" />
+								<b:HelpInline ui:field="phoneError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
 						<b:ControlGroup ui:field="neighborhoodCg"
 							addStyleNames="{style.row}">
 							<b:Controls ui:field="neighborhoodControl">

@@ -9,6 +9,7 @@
 		<class>com.ziplly.app.model.PersonalAccount</class>
 		<class>com.ziplly.app.model.BusinessAccount</class>
 		<class>com.ziplly.app.model.Neighborhood</class>
+		<class>com.ziplly.app.model.Location</class>
 		<class>com.ziplly.app.model.PostalCode</class>
 		<class>com.ziplly.app.model.BusinessProperties</class>
 		<class>com.ziplly.app.model.PrivacySettings</class>
@@ -30,7 +31,7 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 <!-- 			<property name="javax.persistence.jdbc.password" value="root" />
- -->			<property name="hibernate.show_sql" value="false" />
+ -->			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.hbm2ddl.auto" value="create-update" />
  	        <property name="hibernate.connection.CharSet" value="utf8" />
     	    <property name="hibernate.connection.characterEncoding" value="utf8" />

@@ -55,10 +55,8 @@ import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
-import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.dao.SubscriptionPlanDAO;
 import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
@@ -66,6 +64,10 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.Location;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.Neighborhood;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PasswordRecovery;
@@ -102,9 +104,7 @@ public class AccountBLIImpl implements AccountBLI {
 	private OAuthConfig authConfig;
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 
-	private InterestDAO interestDao;
 	private TransactionDAO transactionDao;
-	private SubscriptionPlanDAO subscriptionPlanDao;
 	private EmailService emailService;
 	private PasswordRecoveryDAO passwordRecoveryDao;
 	private final GcsService gcsService = GcsServiceFactory
@@ -112,20 +112,18 @@ public class AccountBLIImpl implements AccountBLI {
 					.retryMaxAttempts(10).totalRetryPeriodMillis(15000).build());
 
 	@Inject
-	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, InterestDAO interestDao,
-			TransactionDAO transactionDao, SubscriptionPlanDAO subscriptionPlanDao,
-			PasswordRecoveryDAO passwordRecoveryDao, EmailService emailService) {
+	public AccountBLIImpl(AccountDAO accountDao, 
+			SessionDAO sessionDao, 
+			TransactionDAO transactionDao, 
+			PasswordRecoveryDAO passwordRecoveryDao, 
+			EmailService emailService) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
-		this.interestDao = interestDao;
 		this.transactionDao = transactionDao;
-		this.subscriptionPlanDao = subscriptionPlanDao;
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
 		this.authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), getEnvironment());
-		// createInterestEntries();
-		// createSubscriptionPlan();
 	}
 
 	@Override
@@ -134,40 +132,6 @@ public class AccountBLIImpl implements AccountBLI {
 				Environment.PROD : Environment.DEVEL;
 		return env;
 	}
-//	private void createSubscriptionPlan() {
-//		SubscriptionPlan plan = new SubscriptionPlan();
-//		plan.setName("Basic plan");
-//		plan.setDescription("Send upto 3 messages a month");
-//		plan.setTweetsAllowed(3);
-//		plan.setFee(0.0);
-//		plan.setTimeCreated(new Date());
-//		subscriptionPlanDao.save(plan);
-//
-//		plan = new SubscriptionPlan();
-//		plan.setName("Pro plan");
-//		plan.setDescription("Send upto 6 messages a month");
-//		plan.setTweetsAllowed(6);
-//		plan.setFee(5.00);
-//		plan.setTimeCreated(new Date());
-//		subscriptionPlanDao.save(plan);
-//
-//		plan = new SubscriptionPlan();
-//		plan.setName("Premium plan");
-//		plan.setDescription("Send upto 15 messages a month");
-//		plan.setTweetsAllowed(15);
-//		plan.setFee(15.00);
-//		plan.setTimeCreated(new Date());
-//		subscriptionPlanDao.save(plan);
-//	}
-//
-//	private void createInterestEntries() {
-//		for (Activity a : Activity.values()) {
-//			Interest i = new Interest();
-//			i.setName(a.name().toLowerCase());
-//			i.setTimeCreated(new Date());
-//			interestDao.save(i);
-//		}
-//	}
 
 	// TODO should we throw exception for invalid attempt?
 	@Override
@@ -183,9 +147,11 @@ public class AccountBLIImpl implements AccountBLI {
 		if (isValidSession(session)) {
 			Account account = session.getAccount();
 			account.setUid(uid);
-			return EntityUtil.convert(account);
+			AccountDTO response = EntityUtil.convert(account);
+			response.setCurrentLocation(EntityUtil.clone(session.getLocation()));
+			return response;
 		}
-		System.out.println("Invalid session....");
+		logger.warning(String.format("Invalid session detected for uid %d", uid));
 		return null;
 	}
 
@@ -216,6 +182,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		createDefaultNotificationSettings(account);
+		
 		if (account instanceof PersonalAccount) {
 			createDefaultPrivacySettings((PersonalAccount) account);
 		}
@@ -233,6 +200,7 @@ public class AccountBLIImpl implements AccountBLI {
 		// login user
 		Long uid = doLogin(response);
 
+//		response.setCurrentLocation(getDefaultLocation(response));
 		// send welcome email
 		EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
 		builder.setRecipientName(account.getName())
@@ -345,6 +313,7 @@ public class AccountBLIImpl implements AccountBLI {
 	public Long doLogin(AccountDTO account) {
 		Session session = new Session();
 		session.setAccount(EntityUtil.convert(account));
+		session.setLocation(new Location(getDefaultLocation(account)));
 		Date currTime = new Date();
 		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
 		session.setExpireAt(expireAt);
@@ -352,24 +321,41 @@ public class AccountBLIImpl implements AccountBLI {
 		Long uid = UUID.randomUUID().getMostSignificantBits();
 		session.setUid(uid);
 		sessionDao.save(session);
+
 		storeCookie(uid);
+		
+		// set current location
+		account.setCurrentLocation(EntityUtil.clone(session.getLocation()));
 		return uid;
 	}
 
-	@Override
-	public Long doLogin(Account account) {
-		Session session = new Session();
-		session.setAccount(account);
-		Date currTime = new Date();
-		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
-		session.setExpireAt(expireAt);
-		session.setTimeCreated(currTime);
-		Long uid = UUID.randomUUID().getMostSignificantBits();
-		session.setUid(uid);
-		sessionDao.save(session);
-		storeCookie(uid);
-		return uid;
+//	@Override
+//	public void setCurrentLocation(AccountDTO account, Long neighborhoodId) {
+//		for(LocationDTO loc : account.getLocations()) {
+//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+//				account.setCurrentLocation(loc);
+//			}
+//		}
+//	}
+
+	private LocationDTO getDefaultLocation(AccountDTO account) {
+		return account.getLocations().get(0);
 	}
+
+//	@Override
+//	public Long doLogin(Account account) {
+//		Session session = new Session();
+//		session.setAccount(account);
+//		Date currTime = new Date();
+//		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
+//		session.setExpireAt(expireAt);
+//		session.setTimeCreated(currTime);
+//		Long uid = UUID.randomUUID().getMostSignificantBits();
+//		session.setUid(uid);
+//		sessionDao.save(session);
+//		storeCookie(uid);
+//		return uid;
+//	}
 
 	@Override
 	public void logout(Long uid) throws NotFoundException {
@@ -378,6 +364,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		Long uidInCookie = getUidFromCookie();
+		System.out.println("UID="+uidInCookie);
 		Long uidInRequest = uid;
 		if (uidInCookie == null || !uidInCookie.equals(uidInRequest)) {
 			throw new IllegalAccessError();
@@ -449,11 +436,19 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO updateAccount(Account account) throws NeedsLoginException {
+	public AccountDTO updateAccount(Account account) throws NeedsLoginException, NotFoundException {
 		if (!isValidSession()) {
 			throw new NeedsLoginException();
 		}
 		AccountDTO response = accountDao.update(account);
+		try {
+			Session session = sessionDao.findSessionByAccountId(account.getAccountId());
+//			setCurrentLocation(response, session.getNeighborhood().getNeighborhoodId());
+			account.setCurrentLocation(session.getLocation());
+		} catch (NotFoundException e) {
+			logger.severe(String.format("Failed to retrieve session for account %d", account.getAccountId()));
+			throw e;
+		}
 		return response;
 	}
 
@@ -526,14 +521,14 @@ public class AccountBLIImpl implements AccountBLI {
 		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 	}
 
-	@Override
-	public List<PersonalAccountDTO> getAccountByZip(AccountDTO account) {
-		if (account == null) {
-			throw new IllegalArgumentException();
-		}
-
-		return accountDao.findByZip(account.getZip());
-	}
+//	@Override
+//	public List<PersonalAccountDTO> getAccountByZip(AccountDTO account) {
+//		if (account == null) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		return accountDao.findByZip(account.getZip());
+//	}
 
 	@Override
 	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException,

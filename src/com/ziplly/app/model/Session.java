@@ -30,6 +30,11 @@ public class Session {
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="account_id")
 	private Account account;
+
+	@NotNull
+	@OneToOne
+	@JoinColumn(name = "location_id")
+	private Location location;
 	
 	@Column(name = "time_created")
 	private Date timeCreated;
@@ -75,5 +80,13 @@ public class Session {
 
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 }

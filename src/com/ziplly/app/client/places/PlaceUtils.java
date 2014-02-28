@@ -11,4 +11,13 @@ public class PlaceUtils {
 	public static String getPlaceTokenForMessaging(Long accountId) {
 		return StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
 	}
+
+	public static String getHomePlaceTokenForMessaging(Long tweetId) {
+		return StringConstants.HOME_TWEET_TOKEN + StringConstants.PLACE_SEPARATOR + tweetId.toString();
+	}
+
+	public static String getHomePlaceTokenForTweetType(String tweetType) {
+//		return StringConstants.HOME_TOKEN + StringConstants.PLACE_SEPARATOR + tweetType;
+		return tweetType;
+	}
 }

@@ -24,7 +24,7 @@ public class AccountNotificationSettings {
 	
 	private String type;
 	
-	private NotificationAction action;
+	private String action;
 
 	@Column(name="time_created")
 	private Date timeCreated;
@@ -39,7 +39,7 @@ public class AccountNotificationSettings {
 		acct.setAccountId(an.getAccount().getAccountId());
 		this.account = acct;
 		this.setType(an.getType());
-		this.action = an.getAction();
+		this.action = an.getAction().name();
 		this.timeCreated = an.getTimeCreated();
 	}
 
@@ -68,11 +68,11 @@ public class AccountNotificationSettings {
 	}
 
 	public NotificationAction getAction() {
-		return action;
+		return NotificationAction.valueOf(action);
 	}
 
 	public void setAction(NotificationAction action) {
-		this.action = action;
+		this.action = action.name();
 	}
 
 	public Account getAccount() {

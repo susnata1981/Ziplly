@@ -48,6 +48,8 @@ import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.Badge;
 import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
@@ -395,7 +397,7 @@ public class SignupView extends AbstractView implements
 		String firstnameInput = firstname.getText().trim();
 		String lastnameInput = lastname.getText().trim();
 		String emailInput = email.getText().trim();
-		String zipInput = zip.getText().trim();
+//		String zipInput = zip.getText().trim();
 		PersonalAccountDTO account = new PersonalAccountDTO();
 		account.setFirstName(firstnameInput);
 		account.setLastName(lastnameInput);
@@ -404,8 +406,17 @@ public class SignupView extends AbstractView implements
 		Gender selectedGender = Gender.values()[genderListBox.getSelectedIndex()];
 		account.setGender(selectedGender);
 		account.setPassword(password.getText().trim());
-		account.setZip(Integer.parseInt(zipInput));
-		account.setNeighborhood(selectedNeighborhood);
+		LocationDTO location = new LocationDTO();
+		location.setNeighborhood(selectedNeighborhood);
+		location.setType(LocationType.PRIMARY);
+		location.setTimeCreated(new Date());
+		location.setTimeUpdated(new Date());
+		account.addLocation(location);
+		
+		// Should go away
+//		account.setZip(Integer.parseInt(zipInput));
+//		account.setNeighborhood(selectedNeighborhood);
+		
 		account.setRole(Role.USER);
 		account.setBadge(Badge.chipmunk);
 		account.setLastLoginTime(new Date());
@@ -450,7 +461,7 @@ public class SignupView extends AbstractView implements
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
 		
-		zip.setText(Integer.toString(account.getZip()));
+//		zip.setText(Integer.toString(account.getZip()));
 		
 		if (account.getImageUrl() != null) {
 			this.profileImageUrl = account.getImageUrl();

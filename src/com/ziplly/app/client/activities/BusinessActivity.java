@@ -75,6 +75,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 				bind();
 				setupHandlers();
 				displayBusinessList();
+				view.setBackground(ctx.getCurrentNeighborhood());
 			}
 		});
 	}
@@ -90,7 +91,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
 		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
-				: ctx.getAccount().getNeighborhood().getNeighborhoodId();
+				: ctx.getCurrentNeighborhood().getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		
 		view.displayNeighborhoodFilters(getNeighborhoodFilters());
@@ -109,7 +110,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 
 	private List<NeighborhoodDTO> getNeighborhoodFilters() {
 		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+		NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
 		neighborhoods.add(neighborhood);
 		if (neighborhood.getParentNeighborhood() != null) {
 			neighborhoods.add(neighborhood.getParentNeighborhood());
@@ -185,13 +186,13 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 	public void bind() {
 		view.setPresenter(this);
 	}
-
-	@Override
-	public void go(AcceptsOneWidget container) {
-	}
 	
 	@Override
 	public void onStop() {
 		view.clear();
+	}
+	
+	@Override
+	public void go(AcceptsOneWidget container) {
 	}
 }

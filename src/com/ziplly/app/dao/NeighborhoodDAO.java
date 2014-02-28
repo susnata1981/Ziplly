@@ -20,4 +20,6 @@ public interface NeighborhoodDAO {
 	 */
 	List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
 	void update(Neighborhood neighborhood);
+	void save(Neighborhood neighborhood);
+	void delete(Long neighborhoodId);
 }

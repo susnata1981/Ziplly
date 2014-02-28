@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
@@ -19,18 +20,23 @@ import com.ziplly.app.client.view.NavView.NavPresenter;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
+import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountNotificationEventHandler;
+import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
+import com.ziplly.app.shared.SwitchLocationAction;
+import com.ziplly.app.shared.SwitchLocationResult;
 import com.ziplly.app.shared.ViewNotificationAction;
 import com.ziplly.app.shared.ViewNotificationResult;
 
@@ -57,6 +63,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		void updateNotificationCount(int count);
 
 		void setUnreadMessageCount(int count, boolean show);
+
+		void displayLocationsDropdown(List<LocationDTO> locations);
 	}
 
 	@Inject
@@ -71,12 +79,23 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
+			
 			@Override
 			public void onEvent(LoginEvent event) {
 				onLogin();
+				view.displayLocationsDropdown(event.getAccount().getLocations());
 			}
 		});
 
+		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
+
+			@Override
+			public void onEvent(AccountUpdateEvent event) {
+				view.displayLocationsDropdown(event.getAccount().getLocations());
+			}
+			
+		});
+		
 		eventBus.addHandler(AccountNotificationEvent.TYPE, accountNotificationHandler);
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, accountDetailsEventHandler);
 	}
@@ -181,7 +200,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			goTo(place);
 		}
 	}
-
+	
 	private class AccountNotificationHandler implements AccountNotificationEventHandler {
 		@Override
 		public void onEvent(AccountNotificationEvent event) {
@@ -199,5 +218,23 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	
 	@Override
 	public void go(AcceptsOneWidget container) {
+	}
+
+	@Override
+	public void switchLocation(LocationDTO location) {
+		dispatcher.execute(new SwitchLocationAction(location.getLocationId()), new DispatcherCallbackAsync<SwitchLocationResult>() {
+
+			@Override
+			public void onSuccess(SwitchLocationResult result) {
+				ctx.setAccount(result.getAccount());
+				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+				placeController.goTo(new HomePlace());
+			}
+			
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getMessage());
+			}
+		});
 	}
 }

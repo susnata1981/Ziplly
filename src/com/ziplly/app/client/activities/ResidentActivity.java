@@ -74,6 +74,7 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 				bind();
 				setupHandlers();
 				displayInitalRange();
+				view.setBackground(ctx.getCurrentNeighborhood());
 			}
 		});
 	}
@@ -88,19 +89,18 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
-		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
-				.getAccount().getNeighborhood().getNeighborhoodId();
+		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : 
+			ctx.getCurrentNeighborhood().getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		action.setGender(Gender.ALL);
 		view.setNeighborhoodId(neighborhoodId);
-
 		view.displayNeighborhoodFilters(getNeighborhoodFilters());
 		dispatcher.execute(action, handler);
 	}
 
 	private List<NeighborhoodDTO> getNeighborhoodFilters() {
 		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-		NeighborhoodDTO neighborhood = ctx.getAccount().getNeighborhood();
+		NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
 		neighborhoods.add(neighborhood);
 		if (neighborhood.getParentNeighborhood() != null) {
 			neighborhoods.add(neighborhood.getParentNeighborhood());

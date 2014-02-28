@@ -18,6 +18,8 @@ import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.InterestDAOImpl;
 import com.ziplly.app.dao.LikeDAO;
 import com.ziplly.app.dao.LikeDAOImpl;
+import com.ziplly.app.dao.LocationDAO;
+import com.ziplly.app.dao.LocationDAOImpl;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.NeighborhoodDAOImpl;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
@@ -73,6 +75,7 @@ public class DAOModule extends AbstractModule {
 		bind(NeighborhoodDAO.class).to(NeighborhoodDAOImpl.class).in(Singleton.class);
 		bind(PostalCodeDAO.class).to(PostalCodeDAOImpl.class).in(Singleton.class);
 		bind(PendingInvitationsDAO.class).to(PendingInvitationsDAOImpl.class).in(Singleton.class);
+		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
 	}
 
 //	@Provides

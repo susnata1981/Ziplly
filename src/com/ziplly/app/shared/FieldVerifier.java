@@ -25,7 +25,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * </p>
  */
 public class FieldVerifier {
-	private static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	private static final String CANT_BE_EMPTY = "Can't be empty";
 	private static final String INVALID_ZIP = "Invalid zip";
 	private static final String INVALID_EMAIL = "Invalid email";
@@ -39,6 +38,7 @@ public class FieldVerifier {
 	}
 	
 	private static final RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
+	private static final RegExp phonePattern = RegExp.compile("\\d{3}-\\d{3}-\\d{4}");
 	private static final RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
 	public static final int MAX_TWEET_LENGTH = 512;
 	private static final int MAX_COMMENT_LENGTH = 256;
@@ -51,6 +51,8 @@ public class FieldVerifier {
 	private static final int MAX_PASSWORD_LENGTH = 16;
 	private static final String MINIMUN_PASSWORD_LENGTH_ERROR = "Password should be atleast "+ MIN_PASSWORD_LENGTH +" characters.";
 	private static final String MAX_PASSWORD_LENGTH_ERROR = "Password can't be more than "+ MAX_PASSWORD_LENGTH +" characters.";
+	private static final String INVALID_PHONE = "Phone number needs to be in XXX-XXX-XXXX format";
+	public static final int MAX_ADDRESS_LENGTH = 255;
 	
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
@@ -61,6 +63,20 @@ public class FieldVerifier {
 		MatchResult matcher = emailPattern.exec(email);
 		if (matcher == null) {
 			result.addError(INVALID_EMAIL);
+		}
+		return result;
+	}
+	
+	
+	public static ValidationResult validatePhone(String phone) {
+		ValidationResult result = new ValidationResult();
+		if (phone == null || phone.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+
+		MatchResult matcher = phonePattern.exec(phone);
+		if (matcher == null) {
+			result.addError(INVALID_PHONE);
 		}
 		return result;
 	}

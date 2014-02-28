@@ -43,7 +43,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
-import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AccountNotificationSettingsFormatter;
 import com.ziplly.app.client.view.factory.PrivacySettingsFormatter;
@@ -269,9 +268,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		occupation.setText(account.getOccupation());
 
 		// location
-		neighborhoodSpan.setInnerHTML(account.getNeighborhood().getName());
-		zip.setReadOnly(true);
-		zip.setText(Integer.toString(account.getZip()));
+//		neighborhoodSpan.setInnerHTML(account.getNeighborhood().getName());
+//		zip.setReadOnly(true);
+//		zip.setText(Integer.toString(account.getZip()));
 
 		// privacy settings
 		populatePrivacySettings(account);
@@ -417,9 +416,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			account.setIntroduction(introduction.getText());
 		}
 
-		if (!zip.getText().equals("")) {
-			account.setZip(Integer.parseInt(zip.getText()));
-		}
+//		if (!zip.getText().equals("")) {
+//			account.setZip(Integer.parseInt(zip.getText()));
+//		}
 
 		if (!occupation.getText().equals("")) {
 			account.setOccupation(occupation.getText());

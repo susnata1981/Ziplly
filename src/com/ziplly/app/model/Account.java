@@ -18,11 +18,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -81,17 +82,14 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Column(name="image_url")
 	@Size(max=1024)
 	private String imageUrl;
-	
-	@Column(name="zip", nullable=false)
-	private int zip;
-	private String city;
-	private String state;
-	private String status;
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name="neighborhood_id", nullable = false)
-	private Neighborhood neighborhood;
+	private String status;
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@JoinTable(name="account_location",
+			joinColumns =  {@JoinColumn(name="account_id")},
+			inverseJoinColumns = {@JoinColumn(name="location_id")})
+	private Set<Location> locations = new HashSet<Location>();
 	
 	@Column(name="role", insertable=true, updatable=false)
 	private String role;
@@ -106,14 +104,17 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Fetch(FetchMode.JOIN)
 	private Set<PrivacySettings> privacySettings = new HashSet<PrivacySettings>();
 	
-	@OneToMany(mappedBy = "recipient")
+	@OneToMany(mappedBy = "recipient", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
 	private Set<AccountNotification> accountNotifications = new HashSet<AccountNotification>();
 	
-	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="account", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
 	@Fetch(FetchMode.JOIN)
 	private Set<AccountNotificationSettings> notificationSettings = new HashSet<AccountNotificationSettings>();
 	
 	private Long uid;
+	
+	@Transient
+	private Location currentLocation;
 	
 	public Account() {
 	}
@@ -128,19 +129,23 @@ public class Account extends AbstractTimestampAwareEntity {
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
-		setZip(account.getZip());
-		
-		if (account.getNeighborhood() != null) {
-			setNeighborhood(new Neighborhood(account.getNeighborhood()));
-		}
-		setCity(account.getCity());
-		setState(account.getState());
+//		setZip(account.getZip());
+//		
+//		if (account.getNeighborhood() != null) {
+//			setNeighborhood(new Neighborhood(account.getNeighborhood()));
+//		}
+//		setCity(account.getCity());
+//		setState(account.getState());
 		setRole(account.getRole());
 		setStatus(account.getStatus());
 		setLastLoginTime(account.getLastLoginTime());
 		setTimeCreated(account.getTimeCreated());
 		setTimeUpdated(account.getTimeUpdated());
 		this.setUid(account.getUid());
+		
+		for(LocationDTO location: account.getLocations()) {
+			addLocation(new Location(location));
+		}
 		
 		for(AccountNotificationDTO an : account.getAccountNotifications()) {
 			addAccountNotification(new AccountNotification(an));
@@ -234,14 +239,6 @@ public class Account extends AbstractTimestampAwareEntity {
 		this.uid = uid;
 	}
 
-	public int getZip() {
-		return zip;
-	}
-
-	public void setZip(int zip) {
-		this.zip = zip;
-	}
-
 	public String getFacebookId() {
 		return facebookId;
 	}
@@ -286,29 +283,6 @@ public class Account extends AbstractTimestampAwareEntity {
 		this.notificationSettings = notifications;
 	}
 
-	public Neighborhood getNeighborhood() {
-		return neighborhood;
-	}
-
-	public void setNeighborhood(Neighborhood neighborhood) {
-		this.neighborhood = neighborhood;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
 
 	public Role getRole() {
 		return Role.valueOf(role);
@@ -350,4 +324,58 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void addAccountNotification(AccountNotification an) {
 		this.accountNotifications.add(an);
 	}
+
+	public void setLocation(Set<Location> locations) {
+		this.locations = locations;
+	}
+	
+	public void addLocation(Location loc) {
+		if (loc != null) {
+			locations.add(loc);
+		}
+	}
+	
+	public Set<Location> getLocations() {
+		return locations;
+	}
+
+	public Location getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(Location currentLocation) {
+		this.currentLocation = currentLocation;
+	}
+
+//	public Neighborhood getNeighborhood() {
+//		return neighborhood;
+//	}
+//
+//	public void setNeighborhood(Neighborhood neighborhood) {
+//		this.neighborhood = neighborhood;
+//	}
+//
+//	public String getCity() {
+//		return city;
+//	}
+//
+//	public void setCity(String city) {
+//		this.city = city;
+//	}
+//
+//	public String getState() {
+//		return state;
+//	}
+//
+//	public void setState(String state) {
+//		this.state = state;
+//	}
+//	public int getZip() {
+//		return zip;
+//	}
+//
+//	public void setZip(int zip) {
+//		this.zip = zip;
+//	}
+//	
 }

@@ -96,6 +96,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 				PersonalAccountActivity.this.view = result;
 				bind();
 				setupHandlers();
+				// TODO (set a background)
+//				view.setBackground();
 				go(PersonalAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());

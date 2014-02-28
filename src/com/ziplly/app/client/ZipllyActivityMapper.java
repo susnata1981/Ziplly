@@ -23,6 +23,7 @@ import com.ziplly.app.client.activities.PersonalAccountActivity;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
+import com.ziplly.app.client.activities.TweetDetailsActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.AdminPlace;
@@ -39,6 +40,7 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
+import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.view.AboutView;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.AdminView;
@@ -53,6 +55,7 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.view.TweetDetailsView;
 
 public class ZipllyActivityMapper implements ActivityMapper {
 	private PlaceController placeController;
@@ -60,6 +63,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private EventBus eventBus;
 	private ApplicationContext ctx;
 	private AsyncProvider<HomeView> homeView;
+	private AsyncProvider<TweetDetailsView> tweetDetailsView;
 	private AsyncProvider<LoginAccountView> loginAccountView;
 	private AsyncProvider<AccountView> accountView;
 	private AsyncProvider<SignupView> signupView;
@@ -77,6 +81,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	@Inject
 	public ZipllyActivityMapper(
 			AsyncProvider<HomeView> homeView,
+			AsyncProvider<TweetDetailsView> tweetDetailsView,
 			AsyncProvider<LoginAccountView> loginAccountView,
 			AsyncProvider<AccountView> accountView,
 			AsyncProvider<BusinessAccountView> businessAccountView,
@@ -96,6 +101,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 			ApplicationContext ctx) {
 		
 		this.homeView = homeView;
+		this.tweetDetailsView = tweetDetailsView;
 		this.loginAccountView = loginAccountView;
 		this.accountView = accountView;
 		this.businessAccountView = businessAccountView;
@@ -126,7 +132,17 @@ public class ZipllyActivityMapper implements ActivityMapper {
 				}
 			});
 
-		} 
+		}
+		else if (place instanceof TweetDetailsPlace) {
+			return new ActivityProxy<TweetDetailsActivity>(new AsyncProvider<TweetDetailsActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super TweetDetailsActivity> callback) {
+					callback.onSuccess(new TweetDetailsActivity(dispatcher, eventBus, (TweetDetailsPlace)place, placeController, ctx, tweetDetailsView));
+				}
+				
+			});
+		}
 		else if (place instanceof LoginPlace) {
 			return new LoginActivity(dispatcher, eventBus, (LoginPlace)place, placeController, ctx, loginAccountView);
 //			return new ActivityProxy<LoginActivity>(new AsyncProvider<LoginActivity>() {

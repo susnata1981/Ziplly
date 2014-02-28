@@ -86,6 +86,7 @@ public class SessionDAOImpl implements SessionDAO {
 				existingSession.setTimeCreated(session.getTimeCreated());
 				existingSession.setExpireAt(session.getExpireAt());
 				existingSession.setUid(session.getUid());
+				existingSession.setLocation(session.getLocation());
 				em.merge(existingSession);
 				em.getTransaction().commit();
 				return;

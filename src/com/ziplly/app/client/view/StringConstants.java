@@ -76,4 +76,11 @@ public class StringConstants {
 	public static final String FEEDBACK_SENT_FAILURE = "Sorry, there was a problem sending the feedback";
 	public static final String SAVE_SUCCESSFULL = "Save successful";
 	public static final String FAILURE = "Failure";
+	public static final String NEIGHBORHOOD_DELETED = "Deleted neighborhood";
+	public static final String HOME_TOKEN = "home";
+	public static final String HOME_TWEET_TOKEN = "tweet";
+	public static final String LEARN_MORE_TEXT = "learn more";
+	public static final String PRIMARY_LOCATION_KEY = "primary location";
+	public static final String PRIMARY_LOCATION = "This is the primary location";
+	public static final String CANT_REMOVE_PRIMARY_LOCATION = "Primary location can't be removed";
 }

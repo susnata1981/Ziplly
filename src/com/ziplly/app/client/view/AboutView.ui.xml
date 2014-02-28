@@ -51,7 +51,10 @@
 		border-bottom: 1px solid #ddd;
 		}
 		.navPanel {
-		margin-top: 50px;
+			background: #f1f1f1;
+			padding: 10px;
+			border-radius: 5px;
+			opacity: .9;
 		}
 		.navLink {
 		display: block;
@@ -62,6 +65,12 @@
 		input[type="text"] {
 			height: 38px;
 			font-size: 16px;
+		}
+		.aboutUsPanel {
+			background: #f1f1f1;
+			opacity: .9;
+			padding: 20px;
+			border-radius: 5px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -75,7 +84,7 @@
 						Policy</g:Anchor>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="9">
+			<b:Column size="9" addStyleNames="{style.aboutUsPanel}">
 				<g:HTMLPanel ui:field="aboutUsPanel">
 					<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Our story</b:Heading>
 					<p class="{style.text}">

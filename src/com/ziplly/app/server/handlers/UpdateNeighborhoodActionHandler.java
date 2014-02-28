@@ -10,6 +10,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Neighborhood;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.UpdateNeighborhoodAction;
@@ -37,7 +38,14 @@ public class UpdateNeighborhoodActionHandler extends AbstractAccountActionHandle
 			throw new AccessError();
 		}
 		
-		neighborhoodDao.update(new Neighborhood(action.getNeighborhood()));
+		NeighborhoodDTO neighborhood = action.getNeighborhood();
+		if (neighborhood.getParentNeighborhood() != null) {
+			Long parentNeighborhoodId = neighborhood.getParentNeighborhood().getNeighborhoodId();
+			NeighborhoodDTO parent = neighborhoodDao.findById(parentNeighborhoodId);
+			neighborhood.setParentNeighborhood(parent);
+		}
+		
+		neighborhoodDao.update(new Neighborhood(neighborhood));
 		UpdateNeighborhoodResult result = new UpdateNeighborhoodResult();
 		return result;
 	}

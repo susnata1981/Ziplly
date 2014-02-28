@@ -49,5 +49,7 @@ public enum ValueType {
 	ACCOUNT_NOTIFICATION_TYPE,
 	
 	// Neighborhood
-	NEIGHBORHOOD, 
+	NEIGHBORHOOD,
+	NEIGHBORHOOD_IMAGE, 
+	ADDRESS;
 }

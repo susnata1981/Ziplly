@@ -41,6 +41,7 @@ public class RegisterAccountActionHandler
 			if (accountDto instanceof PersonalAccountDTO) {
 				 saveImage = ((PersonalAccountDTO)accountDto).getFacebookRegistration();
 			}
+			
 			AccountDTO newAccount = accountBli.register(account, saveImage);
 			result.setAccount(newAccount);
 			result.setUid(accountDto.getUid());

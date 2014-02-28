@@ -100,7 +100,9 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 	}
 
 	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
-		return account.getNeighborhood().equals(loggedInAccount.getNeighborhood());
+//		return account.getNeighborhood().equals(loggedInAccount.getNeighborhood());
+		// this is applicable for only personal accounts.
+		return account.getLocations().get(0).getNeighborhood().equals(loggedInAccount.getLocations().get(0).getNeighborhood());
 	}
 
 	@Override

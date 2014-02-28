@@ -35,6 +35,7 @@ import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountNotificationDTO;
+import com.ziplly.app.model.LocationDTO;
 
 public class NavView extends Composite implements INavView {
 	private static NavigationUiBinder uiBinder = GWT.create(NavigationUiBinder.class);
@@ -45,6 +46,8 @@ public class NavView extends Composite implements INavView {
 		void redirectToSettingsPage();
 
 		void onNotificationLinkClick(AccountNotificationDTO an);
+
+		void switchLocation(LocationDTO location);
 	}
 
 	interface Style extends CssResource {
@@ -58,28 +61,28 @@ public class NavView extends Composite implements INavView {
 	Formatter<AccountNotificationDTO> formatter = (Formatter<AccountNotificationDTO>) AbstractValueFormatterFactory
 			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION);
 
-	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) 
-			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
-	
-	AccountFormatter accountFormatter = (AccountFormatter) 
-			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
-	
+	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+
+	AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+
 	@UiField
 	Style style;
 
 	@UiField
 	Image logo;
-	
+
 	@UiField
 	NavLink loginLink;
-	
+
 	@UiField
 	Dropdown accountDropdown;
 	@UiField
 	NavLink accountLink;
 	@UiField
 	NavLink messageLink;
-	
+
 	@UiField
 	NavLink settingsLink;
 	@UiField
@@ -103,6 +106,9 @@ public class NavView extends Composite implements INavView {
 	@UiField
 	HTMLPanel unreadNotificationCountPanel;
 
+	@UiField
+	Dropdown locationDropdown;
+
 	NavPresenter presenter;
 	List<AccountNotificationDTO> accountNotifications;
 
@@ -111,7 +117,7 @@ public class NavView extends Composite implements INavView {
 		showAccountLinks(false);
 		showAccountNotificationPanel(false);
 		notifications.clear();
-		
+
 		logo.setUrl(ZResources.IMPL.zipllyLogo().getSafeUri().asString());
 		logo.addClickHandler(new ClickHandler() {
 			@Override
@@ -119,6 +125,7 @@ public class NavView extends Composite implements INavView {
 				presenter.goTo(new HomePlace());
 			}
 		});
+		locationDropdown.setVisible(false);
 	}
 
 	private void showAccountNotificationPanel(boolean b) {
@@ -133,9 +140,9 @@ public class NavView extends Composite implements INavView {
 		settingsLink.setVisible(value);
 		notifications.setVisible(value);
 		logoutLink.setVisible(value);
-		
 		accountDropdown.setVisible(value);
 		loginLink.setVisible(!value);
+		// locationDropdown.setVisible(value);
 	}
 
 	@UiHandler("accountLink")
@@ -177,7 +184,7 @@ public class NavView extends Composite implements INavView {
 	void login(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
 	}
-	
+
 	@Override
 	public void clear() {
 	}
@@ -188,7 +195,7 @@ public class NavView extends Composite implements INavView {
 			if (show) {
 				displayUnreadMessageCount(count);
 			}
-		} else if (count > 0){
+		} else if (count > 0) {
 			displayUnreadMessageCount(count);
 		}
 	}
@@ -221,7 +228,8 @@ public class NavView extends Composite implements INavView {
 		anchor.setStyleName(style.notificationLink());
 		notifications.add(anchor);
 		ValueType valueType = ValueType.valueOf(an.getType().name());
-//		String imageUrl = accountFormatter.format(an.getSender(), ValueType.TINY_IMAGE_VALUE);
+		// String imageUrl = accountFormatter.format(an.getSender(),
+		// ValueType.TINY_IMAGE_VALUE);
 		anchor.getElement().setInnerHTML(formatter.format(an, valueType));
 		ClickHandler handler = new ClickHandler() {
 			@Override
@@ -267,5 +275,27 @@ public class NavView extends Composite implements INavView {
 	@UiHandler("aboutLink")
 	public void displayAboutView(ClickEvent event) {
 		presenter.goTo(new AboutPlace());
+	}
+
+	@Override
+	public void displayLocationsDropdown(List<LocationDTO> locations) {
+		locationDropdown.clear();
+		if (locations != null && locations.size() > 0) {
+			for (final LocationDTO location : locations) {
+				NavLink locationLink = new NavLink(location.getNeighborhood().getName());
+				locationLink.setText(location.getNeighborhood().getName());
+				locationLink.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// Switch
+						presenter.switchLocation(location);
+					}
+
+				});
+				locationDropdown.add(locationLink);
+			}
+			locationDropdown.setVisible(true);
+		}
 	}
 }

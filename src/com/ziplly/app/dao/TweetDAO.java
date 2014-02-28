@@ -17,10 +17,10 @@ public interface TweetDAO {
 	 */
 	List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException;
 	
-	List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize);
+//	List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize);
 	
-	List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip,
-			int page, int pageSize);
+//	List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip,
+//			int page, int pageSize);
 	
 	TweetDTO update(Tweet tweet) throws NotFoundException;
 	

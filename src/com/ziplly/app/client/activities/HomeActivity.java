@@ -36,6 +36,7 @@ import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
@@ -142,6 +143,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void addComment(CommentDTO comment);
 
 		void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
+
+		void displayNeighborhoodImage(NeighborhoodDTO neighborhood);
 	}
 
 	@Inject
@@ -163,7 +166,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	protected void doStart() {
-		state.setCurrentNeighborhood(ctx.getAccount().getNeighborhood());
+		state.setCurrentNeighborhood(ctx.getCurrentNeighborhood());
 		displayCommunityWall();
 
 		// account specific.
@@ -176,6 +179,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
+		if (place.getTweetId() != null) {
+			GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(place);
+			getTweetData(searchCriteria);
+			return;
+		}
+		
 		placeController.goTo(new SignupPlace());
 	}
 
@@ -217,7 +226,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				eventBus.fireEvent(new LoadingEventStart());
 			}
 		});
-
 	}
 
 	@Override
@@ -271,7 +279,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 	@Override
 	public void onStop() {
-		clearBackgroundImage();
+		StyleHelper.clearBackground();
 		if (binder != null) {
 			binder.stop();
 		}
@@ -287,6 +295,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	void displayHomeView() {
 		hideLoadingIcon();
 		panel.setWidget(homeView);
+		homeView.displayNeighborhoodImage(ctx.getCurrentNeighborhood());	
 	}
 
 	@Override
@@ -706,6 +715,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		startViewBinder();
 	}
 
+	void getTweetData(GetCommunityWallDataAction action) {
+		// Load first batch of data
+		eventBus.fireEvent(new LoadingEventStart());
+		state.setFetchingData(true);
+		dispatcher.execute(action, communityDataHandler);
+	}
+	
 	private void startViewBinder() {
 		if (binder != null) {
 			binder.stop();

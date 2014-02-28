@@ -13,10 +13,18 @@
 		.profileInfoBoxHeading {
 			font-size: 24px;
 			border-bottom: 2px solid #ddd;
+			text-align: center;
 		}
 		.transparentColumn {
 			opacity: .92;	
 		}	
+		.center {
+			text-align: center;
+		}
+		.businessAttribtue {
+			color: #555;
+			font-weight: 600;
+		}
 	</ui:style>
 	<b:FluidContainer addStyleNames="{style.rootPanel}" ui:field="container">
 		<b:FluidRow>
@@ -33,18 +41,18 @@
 								<div class="{style.profileImageDiv}">
 									<b:Image ui:field="profileImage" />
 								</div>
-								<h3 addStyleNames="{style.profileCaption}" ui:field="name" />
-								<div>
-									<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
-								</div>
+								<h3 class="{style.profileCaption}" ui:field="name" />
 							</g:HTMLPanel>
 							<div class="{style.profileInfoBox}">
-								<!-- <h2 class="heading">Business details</h2> -->
-								<h3 ui:field="businessName" addStylaNames="{bstyle.profileInfoBoxHeading}"/>
+								<h3 ui:field="businessName" class="{bstyle.profileInfoBoxHeading}"/>
 								<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 								<div class="{style.businessInfoItem}">
+								    <b:Label>Neigborhood</b:Label>
+								    <span class="{bstyle.businessAttribtue}" ui:field="neighborhoodName" />
+								</div>
+								<div class="{style.businessInfoItem}">
 									<b:Label>Business Type</b:Label>
-									<span ui:field="businessCategory" addStyleNames="{style.description}" />
+									<span ui:field="businessCategory" class="{style.description} {bstyle.businessAttribtue}" />
 								</div>
 								<div class="{style.businessInfoItem}">
 									<b:Label>Email</b:Label>
@@ -55,7 +63,7 @@
 								<div class="{style.businessInfoItem}">
 									<b:Label>Website</b:Label>
 									<g:Anchor ui:field="websiteLink">
-										<span ui:field="websiteSpan" addStyleNames="{style.description}" />
+										<span ui:field="websiteSpan" class="{style.description} {bstyle.businessAttribtue}" />
 									</g:Anchor>
 								</div>
 								<div class="{style.businessInfoItem}">
@@ -79,6 +87,9 @@
 										<b:Label>Last login</b:Label>
 										<span ui:field="lastLoginTime" />
 									</span>
+								</div>
+								<div>
+									<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
 								</div>
 							</div>
 							<div class="{style.profileInfoBox}">

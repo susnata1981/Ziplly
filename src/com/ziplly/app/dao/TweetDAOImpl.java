@@ -93,26 +93,26 @@ public class TweetDAOImpl implements TweetDAO {
 		return ImmutableSet.of();
 	}
 
-	@Deprecated
-	@Override
-	public List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize) {
-		if (zip == null) {
-			throw new IllegalArgumentException();
-		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = (Query) em.createNamedQuery("findTweetsByZip");
-			query.setParameter("zip", zip);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			return EntityUtil.cloneList(tweets);
-		} finally {
-			em.close();
-		}
-	}
+//	@Deprecated
+//	@Override
+//	public List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize) {
+//		if (zip == null) {
+//			throw new IllegalArgumentException();
+//		}
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+//		try {
+//			Query query = (Query) em.createNamedQuery("findTweetsByZip");
+//			query.setParameter("zip", zip);
+//			query.setParameter("status", TweetStatus.ACTIVE.name());
+//			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+//
+//			@SuppressWarnings("unchecked")
+//			List<Tweet> tweets = (List<Tweet>) query.getResultList();
+//			return EntityUtil.cloneList(tweets);
+//		} finally {
+//			em.close();
+//		}
+//	}
 
 	@Override
 	public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException {
@@ -140,26 +140,26 @@ public class TweetDAOImpl implements TweetDAO {
 		}
 	}
 
-	@Deprecated
-	@Override
-	public List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip, int page, int pageSize) {
-		if (zip == null) {
-			throw new IllegalArgumentException();
-		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = (Query) em.createNamedQuery("findTweetsByTypeAndZip");
-			query.setParameter("zip", zip);
-			query.setParameter("type", type.name());
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			return EntityUtil.cloneList(tweets);
-		} finally {
-			em.close();
-		}
-	}
+//	@Deprecated
+//	@Override
+//	public List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip, int page, int pageSize) {
+//		if (zip == null) {
+//			throw new IllegalArgumentException();
+//		}
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+//		try {
+//			Query query = (Query) em.createNamedQuery("findTweetsByTypeAndZip");
+//			query.setParameter("zip", zip);
+//			query.setParameter("type", type.name());
+//			query.setParameter("status", TweetStatus.ACTIVE.name());
+//			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+//			@SuppressWarnings("unchecked")
+//			List<Tweet> tweets = (List<Tweet>) query.getResultList();
+//			return EntityUtil.cloneList(tweets);
+//		} finally {
+//			em.close();
+//		}
+//	}
 
 	@Override
 	public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type, Long neighborhoodId,

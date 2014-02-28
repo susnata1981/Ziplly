@@ -40,7 +40,7 @@ public interface ZResources extends ClientBundle {
 	@Source("magnolia.jpg")
 	ImageResource magnolia();
 	
-	@Source("green-backgrounds.png")
+	@Source("green-background-optimized-cover.jpg")
 	ImageResource profileBackground();
 	
 	@Source("zstyle.css")

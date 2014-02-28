@@ -6,6 +6,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -17,6 +18,7 @@ import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.IAccountView;
@@ -112,6 +114,26 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 					displayPublicProfile(place.getAccountId());
 				} else {
 					displayProfile();
+				}
+			}
+		});
+	}
+	
+	
+	@Override
+	public void doStartOnUserNotLoggedIn() {
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessAccountView>() {
+
+			@Override
+			public void onSuccess(BusinessAccountView result) {
+				BusinessAccountActivity.this.view = result;
+				bind();
+				setupHandlers();
+				go(BusinessAccountActivity.this.panel);
+				if (place.getAccountId() != null) {
+					displayPublicProfile(place.getAccountId());
+				} else {
+					placeController.goTo(new LoginPlace());
 				}
 			}
 		});
@@ -242,6 +264,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 				view.displayLocationInMap(result);
 				((BusinessAccountView) view).displayFormattedAddress(result.getFormattedAddress());
 			}
+		}
+		
+		@Override
+		public void onFailure(Throwable th) {
+			Window.alert(th.getMessage());
 		}
 	}
 

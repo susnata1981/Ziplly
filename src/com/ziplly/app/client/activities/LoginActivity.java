@@ -18,6 +18,7 @@ import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.widget.LoginWidget;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
@@ -58,7 +59,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	@Override
 	public void onStop() {
 		view.clear();
-		clearBackgroundImage();
+		StyleHelper.clearBackground();
 	}
 
 	@Override

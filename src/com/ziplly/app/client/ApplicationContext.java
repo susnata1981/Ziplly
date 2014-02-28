@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.Timer;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 
 public class ApplicationContext {
@@ -35,6 +36,10 @@ public class ApplicationContext {
 		this.account = account;
 	}
 
+	public NeighborhoodDTO getCurrentNeighborhood() {
+		return account.getCurrentLocation().getNeighborhood();
+	}
+	
 	public TweetWidget getTweetWidget() {
 		return widgets.get(index++);
 	}

@@ -25,6 +25,7 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 		if (action == null) {
 			throw new IllegalArgumentException("Invalid argument to ValidateLoginActionHandler");
 		}
+		
 		AccountDTO account = accountBli.validateLogin(action.getEmail(), action.getPassword());
 		return new ValidateLoginResult(account);
 	}
@@ -33,5 +34,4 @@ public class ValidateLoginActionHandler extends AbstractAccountActionHandler<Val
 	public Class<ValidateLoginAction> getActionType() {
 		return ValidateLoginAction.class;
 	}
-
 }

@@ -10,18 +10,21 @@
 		.block {
 		display: block;
 		}
+		.profileImagePanel {
+			margin-left: 10px;
+		}
 		.profileImage {
 		width: 40px;
 		height: 40px;
 		}
 		.content {
-			font-size: .9em;
+			font-size: 14px;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.commentPanel}">
-		<b:Row>
-			<b:Column offset="1" size="2">
-				<g:HTMLPanel>
+		<b:FluidRow>
+			<b:Column size="2">
+				<g:HTMLPanel addStyleNames="{style.profileImagePanel}">
 					<b:Image ui:field="profileImage" addStyleNames="{style.profileImage}" />
 					<g:Anchor ui:field="profileNameAnchor" addStyleNames="{style.block}" />
 				</g:HTMLPanel>
@@ -31,13 +34,13 @@
 					<span ui:field="content" addStyleNames="{style.content}" />
 				</dt:MouseHoverPanel>
 			</b:Column>
-		</b:Row>
-		<b:Row>
+		</b:FluidRow>
+		<b:FluidRow>
 			<b:Column offset="8" size="4">
 				<g:HTMLPanel>
 					<span ui:field="postingDate" class="datefont"/>
 				</g:HTMLPanel>
 			</b:Column>
-		</b:Row>
+		</b:FluidRow>
 	</g:HTMLPanel>
 </ui:UiBinder> 

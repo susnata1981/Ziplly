@@ -8,23 +8,42 @@
 		}
 		.listBox {
 		display: block;
-		width: 140px;
+		width: 170px;
 		}
 		.filterLabel {
 		display: block;
 		font-size: 1em;
 		padding: 4px;
 		}
+		.filterPanel {
+		background: #f1f1f1;
+		padding: 20px;
+		width: 75%;
+		opacity: .90;
+		}
+		.residentListPanel {
+			background: #f1f1f1;
+			opacity: .85;
+		}
+		.inputControlGroup {
+			margin-bottom: 10px;
+		}
+		.textBox {
+			width: 160px !important;
+			height: 36px !important;
+			margin: 0 !important;
+		}
 	</ui:style>
 
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="3">
-				<g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="{style.filterPanel}">
 					<b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
-					<b:ControlGroup ui:field="zipCg">
+					<b:ControlGroup ui:field="zipCg" addStyleNames="{style.inputControlGroup}">
 						<b:Controls>
-							<b:TextBox ui:field="zipTextBox" placeholder="zip..." />
+							<b:TextBox ui:field="zipTextBox" placeholder="zip..."
+								addStyleNames="{style.textBox}" />
 							<b:HelpInline ui:field="zipError"></b:HelpInline>
 						</b:Controls>
 					</b:ControlGroup>
@@ -43,7 +62,7 @@
 					</b:Column>
 				</b:FluidRow>
 				<b:FluidRow>
-					<b:Column size="10">
+					<b:Column size="10" addStyleNames="{style.residentListPanel}">
 						<cell:CellList ui:field="businessList" />
 					</b:Column>
 				</b:FluidRow>

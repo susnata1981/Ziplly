@@ -30,13 +30,13 @@ public class PersonalAccount extends Account {
 	@Column(name="badge")
 	private String badge;
 	
-	@ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch=FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(name="account_interest", 
 		joinColumns = {@JoinColumn(name = "account_id")},
 		inverseJoinColumns = {@JoinColumn(name = "interest_id", nullable = false)})
 	private Set<Interest> interests = new HashSet<Interest>();
 	
-	@OneToMany(mappedBy="account", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="account", fetch=FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	private List<PrivacySettings> accountSettings = new ArrayList<PrivacySettings>();
 
 	public PersonalAccount() {

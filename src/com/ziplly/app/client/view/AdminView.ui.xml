@@ -7,6 +7,12 @@
 		border: 1px solid #ddd;
 		padding: 6px;
 		}
+		.longTextBox {
+			width: 280px;
+		}
+		.row {
+			overflow: auto;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:Alert ui:field="message" />
@@ -120,26 +126,31 @@
 						<b:WellForm>
 							<b:ControlGroup>
 								<b:Controls>
+								    <b:Label>Zip</b:Label>
 									<b:TextBox ui:field="neighborhoodZip" placeholder="Zip..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
+								    <b:Label>Neighborhood Name</b:Label>
 									<b:TextBox ui:field="neighborhoodName" placeholder="Neighborhood..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
+								    <b:Label>City</b:Label>
 									<b:TextBox ui:field="neighborhoodCity" placeholder="City..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
+								    <b:Label>State</b:Label>
 									<b:TextBox ui:field="neighborhoodState" placeholder="State..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
+								    <b:Label>Parent neighborhood id</b:Label>
 									<b:TextBox ui:field="parentNeighborhoodId"
 										placeholder="Parent ID..."></b:TextBox>
 								</b:Controls>
@@ -154,7 +165,7 @@
 						<g:HTMLPanel>
 							<g:HTMLPanel>
 								<b:Image ui:field="neighborhoodImagePreview" />
-								<b:TextBox ui:field="imageUrlTextField" />
+								<b:TextBox ui:field="imageUrlTextField" addStyleNames="{style.longTextBox}"/>
 							</g:HTMLPanel>
 							<g:FormPanel ui:field="uploadForm">
 								<g:HTMLPanel>
@@ -165,7 +176,7 @@
 						</g:HTMLPanel>
 					</b:Column>
 				</b:FluidRow>
-				<b:FluidRow>
+				<b:FluidRow addStyleNames="{style.row}">
 					<b:Column size="8">
 						<g:HTMLPanel ui:field="neighborhoodListPanel">
 						</g:HTMLPanel>

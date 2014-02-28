@@ -72,7 +72,7 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
 					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Gender:</span>&nbsp;"+ value.getGender().name().toLowerCase() + "</span>"
 					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Introduction:</span>&nbsp;"+ introduction +"</span>"
-					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Location:</span>&nbsp;"+value.getNeighborhood().getName()+"</span>"
+					+ "<span class='pcell-row'><span class='pcell-row-info-heading'>Location:</span>&nbsp;"+value.getLocations().get(0).getNeighborhood().getName()+"</span>"
 					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>" 
 					+ "</div>"
 					+ "</div>");

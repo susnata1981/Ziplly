@@ -40,7 +40,9 @@ public class GetCommunityWallDataActionHandler
 			GetCommunityWallDataAction action, ExecutionContext arg1)
 			throws DispatchException {
 
-		validateSession();
+		if (action.getSearchType() != SearchType.TWEET_BY_ID) {
+			validateSession();
+		}
 
 		if (action.getSearchType() == SearchType.CATEGORY) {
 			return getTweetsByCategory(action);
@@ -64,7 +66,9 @@ public class GetCommunityWallDataActionHandler
 		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
 		try {
 			List<TweetDTO> tweets = tweetDao.findTweetsByNeighborhood(
-				action.getNeighborhood().getNeighborhoodId(), action.getPage(), action.getPageSize());
+				action.getNeighborhood().getNeighborhoodId(), 
+				action.getPage(), 
+				action.getPageSize());
 			result.setTweets(tweets);
 		} catch(NotFoundException nfe) {
 			logger.severe(String.format("Couldn't find tweets for neighborhood %d",
@@ -83,7 +87,7 @@ public class GetCommunityWallDataActionHandler
 			tweets.add(tweet);
 			result.setTweets(tweets);
 		} catch(NotFoundException nfe) {
-			logger.severe(String.format("Couldn't find tweets for tweetId %d",action.getTweetId()));
+			logger.severe(String.format("Couldn't find tweets for tweetId %s",action.getTweetId()));
 			throw nfe;
 		}
 		catch(NumberFormatException nfe) {
@@ -93,7 +97,7 @@ public class GetCommunityWallDataActionHandler
 	}
 
 	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) throws NotFoundException {
-		Long neighborhoodId = session.getAccount().getNeighborhood().getNeighborhoodId();
+		Long neighborhoodId = session.getLocation().getNeighborhood().getNeighborhoodId();
 		List<TweetDTO> tweets = hashtagDao.getTweetsForTagAndNeighborhood(
 				action.getHashtag(),
 				neighborhoodId,

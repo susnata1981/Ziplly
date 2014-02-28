@@ -57,6 +57,9 @@
 							<dt:ZAnchor ui:field="commentLink" icon="COMMENTS" />
 						</div>
 						<div class='{style.tweet_action_link}'>
+							<dt:ZAnchor ui:field="createLink" icon="EXTERNAL_LINK" />
+						</div>
+						<div class='{style.tweet_action_link}'>
 						    Category:&nbsp;<g:Anchor ui:field="categoryLink" />
 						</div>
 						<div class='{style.tweet_sender_link}'>

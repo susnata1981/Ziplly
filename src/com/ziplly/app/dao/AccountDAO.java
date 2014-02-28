@@ -8,7 +8,6 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public interface AccountDAO {
