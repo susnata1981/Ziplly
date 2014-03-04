@@ -34,7 +34,7 @@ public interface AccountBLI {
 	void updatePassword(Account account, String oldPassword, String newPassword) throws InvalidCredentialsException, NotFoundException;
 	void sendPasswordRecoveryEmail(String email) throws NotFoundException, UnsupportedEncodingException, NoSuchAlgorithmException, DuplicateException;
 	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError,NotFoundException;
-	void resetPassword(Long accountId, String password) throws NotFoundException;
+	void resetPassword(Long accountId, String password) throws NotFoundException, InvalidCredentialsException;
 //	void sendEmail(Account sender, Account receiver, EmailTemplate template);
 	Environment getEnvironment();
 //	void setCurrentLocation(AccountDTO account, Long neighborhoodId);

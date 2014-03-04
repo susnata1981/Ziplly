@@ -393,6 +393,7 @@ public class SignupView extends AbstractView implements
 		if (!validateInput()) {
 			return;
 		}
+		
 		infoField.setType(AlertType.SUCCESS);
 		String firstnameInput = firstname.getText().trim();
 		String lastnameInput = lastname.getText().trim();

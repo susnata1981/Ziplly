@@ -1,13 +1,12 @@
 package com.ziplly.app.server.handlers;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
+import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
@@ -33,6 +32,9 @@ public class ResendEmailVerificationActionHandler extends AbstractAccountActionH
 			accountBli.resendEmailVerification(action.getEmail());
 		} 
 		catch(NotFoundException ex) {
+			throw ex;
+		}
+		catch(AccountExistsException ex) {
 			throw ex;
 		}
 		catch (Exception e) {

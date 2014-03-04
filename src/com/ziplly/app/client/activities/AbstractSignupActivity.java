@@ -12,8 +12,11 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.AddInvitationResult;
@@ -43,7 +46,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 	@Override
 	public void register(AccountDTO account) {
-		showLodingIcon();
+		eventBus.fireEvent(new LoadingEventStart());
 		dispatcher.execute(new RegisterAccountAction(account), registerAccountHandler);
 	}
 
@@ -112,11 +115,11 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
-			String property = System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
-					"true");
-			boolean isEmailVerificationRequired = Boolean.valueOf(property);
+//			String property = System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
+//					"true");
+//			boolean isEmailVerificationRequired = Boolean.valueOf(property);
 
-			if (isEmailVerificationRequired) {
+			if (result.getAccount().getStatus() != AccountStatus.ACTIVE) {
 				view.clear();
 				view.displayMessage(StringConstants.EMAIL_VERIFICATION_SENT, AlertType.SUCCESS);
 			} else {
@@ -125,16 +128,16 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 				view.clear();
 				forward(result.getAccount());
 			}
-			hideLoadingIcon();
+			eventBus.fireEvent(new LoadingEventEnd());
 		}
 
 		public void onFailure(Throwable th) {
-			hideLoadingIcon();
 			if (th instanceof AccountExistsException) {
 				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
 				return;
 			}
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			eventBus.fireEvent(new LoadingEventEnd());
 		}
 	}
 

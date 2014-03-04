@@ -102,4 +102,6 @@ public class StringConstants {
 	
 	public static final String ACCOUNT_NOT_COMPLETE_FOR_BUSINESS = "Your account is not complete yet <ol><li>Upload a picture of your business</li> "
 			+ "<li>Enter the website address</li> <li>Verify business category/hours of operation</li></ol> by going into";
+	public static final String VERIFICATION_EMAIL_SENT = "Password recovery email has been sent";
+	public static final String FAILURE_SENDING_VERIFICATION_EMAIL = "Failed to send verification email";
 }

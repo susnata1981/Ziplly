@@ -54,7 +54,7 @@ public class PasswordRecoveryDAOImpl implements PasswordRecoveryDAO {
 		try {
 			Query query = em.createNamedQuery("findPasswordRecoverByHash");
 			query.setParameter("hash", hash);
-			query.setParameter("status", PasswordRecoveryStatus.PENDING);
+			query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
 			return (PasswordRecovery) query.getSingleResult();
 		} finally {
 			em.close();
@@ -67,7 +67,7 @@ public class PasswordRecoveryDAOImpl implements PasswordRecoveryDAO {
 		try {
 			Query query = em.createNamedQuery("findPasswordRecoverByEmail");
 			query.setParameter("email", email);
-			query.setParameter("status", PasswordRecoveryStatus.PENDING);
+			query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
 			return (PasswordRecovery) query.getSingleResult();
 		} finally {
 			em.close();

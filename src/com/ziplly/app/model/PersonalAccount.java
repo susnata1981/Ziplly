@@ -29,6 +29,8 @@ public class PersonalAccount extends Account {
 	private String gender;
 	@Column(name="badge")
 	private String badge;
+	@Column(name="facebook_registration")
+	private boolean facebookRegistration;
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(name="account_interest", 
@@ -51,7 +53,7 @@ public class PersonalAccount extends Account {
 		this.occupation = account.getOccupation();
 		this.setGender(account.getGender());
 		this.setBadge(account.getBadge());
-		
+		this.setFacebookRegistration(account.getFacebookRegistration());
 		for(InterestDTO interest : account.getInterests()) {
 			getInterests().add(new Interest(interest));
 		}
@@ -137,5 +139,13 @@ public class PersonalAccount extends Account {
 	
 	public void setBadge(Badge badge) {
 		this.badge = badge.name();
+	}
+
+	public boolean isFacebookRegistration() {
+		return facebookRegistration;
+	}
+
+	public void setFacebookRegistration(boolean facebookRegistration) {
+		this.facebookRegistration = facebookRegistration;
 	}
 }

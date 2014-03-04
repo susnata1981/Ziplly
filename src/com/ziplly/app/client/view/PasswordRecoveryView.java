@@ -29,24 +29,35 @@ public class PasswordRecoveryView extends Composite implements
 	private static PasswordRecoveryViewUiBinder uiBinder = GWT
 			.create(PasswordRecoveryViewUiBinder.class);
 
-	interface PasswordRecoveryViewUiBinder extends
-			UiBinder<Widget, PasswordRecoveryView> {
+	interface PasswordRecoveryViewUiBinder extends UiBinder<Widget, PasswordRecoveryView> {
 	}
 
 	public static interface PasswordRecoveryPresenter extends Presenter {
 		void emailPasswordResetLink(String email);
 
 		void resetPassword(ResetPasswordAction action);
+
+		void resendVerficationEmail(String sanitize);
 	}
 
 	@UiField
 	Alert message;
+
+	// Password recovery
 	@UiField
 	TextBox email;
 	@UiField
 	ControlGroup emailCg;
 	@UiField
 	HelpInline emailError;
+
+	// Resend email verification
+	@UiField
+	TextBox resendEmailTextBox;
+	@UiField
+	ControlGroup resendEmailCg;
+	@UiField
+	HelpInline resendEmailError;
 
 	// Reset Password tab
 	@UiField
@@ -67,12 +78,12 @@ public class PasswordRecoveryView extends Composite implements
 	Button resetPasswordBtn;
 	@UiField
 	Button cancelBtn;
-	
+
 	@UiField
 	HTMLPanel passwordResetPanel;
 	@UiField
 	HTMLPanel passwordRecoveryPanel;
-	
+
 	PasswordRecoveryPresenter presenter;
 
 	public PasswordRecoveryView() {
@@ -89,17 +100,19 @@ public class PasswordRecoveryView extends Composite implements
 	public void clear() {
 		message.clear();
 		message.setVisible(false);
+		email.setText("");
+		resendEmailTextBox.setText("");
 		newPassword.setText("");
 		confirmNewPassword.setText("");
 	}
 
-	boolean validate() {
-		String emailInput = email.getText().trim();
+	boolean validate(TextBox field, ControlGroup cg, HelpInline error) {
+		String emailInput = field.getText().trim();
 		ValidationResult result = FieldVerifier.validateEmail(emailInput);
 		if (!result.isValid()) {
-			emailCg.setType(ControlGroupType.ERROR);
-			emailError.setText(result.getErrors().get(0).getErrorMessage());
-			emailError.setVisible(true);
+			cg.setType(ControlGroupType.ERROR);
+			error.setText(result.getErrors().get(0).getErrorMessage());
+			error.setVisible(true);
 			return false;
 		}
 		return true;
@@ -107,12 +120,21 @@ public class PasswordRecoveryView extends Composite implements
 
 	@UiHandler("submitBtn")
 	public void emailPasswordResetLink(ClickEvent event) {
-		if (!validate()) {
+		if (!validate(email, emailCg, emailError)) {
 			return;
 		}
 		presenter.emailPasswordResetLink(FieldVerifier.sanitize(email.getText()));
 	}
 
+	@UiHandler("resendBtn")
+	public void resendEmailVerification(ClickEvent event) {
+		if (!validate(resendEmailTextBox, resendEmailCg, resendEmailError)) {
+			return;
+		}
+		
+		presenter.resendVerficationEmail(FieldVerifier.sanitize(resendEmailTextBox.getText()));
+	}
+	
 	public void showMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
@@ -124,34 +146,33 @@ public class PasswordRecoveryView extends Composite implements
 		passwordRecoveryPanel.getElement().getStyle().setDisplay(Display.NONE);
 		passwordResetPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
-	
+
 	public void displayPasswordRecoveryForm() {
 		clear();
 		passwordResetPanel.getElement().getStyle().setDisplay(Display.NONE);
 		passwordRecoveryPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
-	
+
 	@UiHandler("resetPasswordBtn")
 	void resetPassword(ClickEvent event) {
 		resetPasswordErrors();
 		if (!validatePasswordInput()) {
 			return;
 		}
-		
+
 		String newPasswordInput = FieldVerifier.sanitize(newPassword.getText());
 		ResetPasswordAction action = new ResetPasswordAction();
 		action.setPassword(newPasswordInput);
 		presenter.resetPassword(action);
 		clear();
 	}
-	
+
 	@UiHandler("cancelBtn")
 	void cancelBtnClicked(ClickEvent event) {
 		presenter.goTo(new HomePlace());
 	}
-	
-	boolean validatePassword(String password, ControlGroup cg,
-			HelpInline helpInline) {
+
+	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validatePassword(password);
 		if (!result.isValid()) {
 			cg.setType(ControlGroupType.ERROR);
@@ -161,12 +182,11 @@ public class PasswordRecoveryView extends Composite implements
 		}
 		return true;
 	}
-	
+
 	private boolean validatePasswordInput() {
 		String newPasswordInput = newPassword.getText().trim();
-		boolean valid = validatePassword(newPasswordInput, newPasswordCg,
-				newPasswordError);
-		
+		boolean valid = validatePassword(newPasswordInput, newPasswordCg, newPasswordError);
+
 		String confirmPasswordInput = confirmNewPassword.getText().trim();
 		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg,
 				confirmNewPasswordError);
