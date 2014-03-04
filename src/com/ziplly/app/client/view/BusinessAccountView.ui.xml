@@ -16,7 +16,7 @@
 			text-align: center;
 		}
 		.transparentColumn {
-			opacity: .92;	
+			opacity: .95;	
 		}	
 		.center {
 			text-align: center;
@@ -160,6 +160,10 @@
 						<dt:TweetBox ui:field="tweetBox" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="2">
+			    <b:AlertBlock type="INFO" heading="Updates" close="false" ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
+			    </b:AlertBlock>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

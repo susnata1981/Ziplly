@@ -2,9 +2,9 @@ package com.ziplly.app.client.activities;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.ziplly.app.client.view.View;
+import com.google.gwt.user.client.ui.Composite;
 
-public abstract class DefaultViewLoaderAsyncCallback<T extends View<?>> implements AsyncCallback<T>{
+public abstract class DefaultViewLoaderAsyncCallback<T extends Composite> implements AsyncCallback<T>{
 
 	@Override
 	public void onFailure(Throwable caught) {

@@ -83,4 +83,23 @@ public class StringConstants {
 	public static final String PRIMARY_LOCATION_KEY = "primary location";
 	public static final String PRIMARY_LOCATION = "This is the primary location";
 	public static final String CANT_REMOVE_PRIMARY_LOCATION = "Primary location can't be removed";
+	public static final String BLOB_KEY_NAME = "blobKey";
+	public static final String IMAGE_URL_KEY = "imageUrl";
+	public static final String IMAGE_ID = "imageId";
+	public static final String VALUE_SEPARATOR = ";";
+	public static final String INVALID_IMAGE = "Invalid image file";
+	public static final String EMAIL_VERIFICATION_CODE_KEY = "code";
+	public static final String EMAILVERIFICATION_ID_KEY = "id";
+	public static final String EMAIL_VERIFICATION_SUCCESSFUL = "Email verification successful! You can login now and start exploring";
+	public static final String EMAIL_VERIFICATION_RESEND_SUCCESSFUL = "Email verification has been resent";
+	public static final String EMAIL_VERIFICATION_FEATURE_FLAG = "app.feature.requireEmailVerification";
+	public static final String EMAIL_VERIFICATION_SENT = "We've sent you an email with a verification link. Please verify your email address and start exploring";
+	public static final String URL_PARAMATER_SEPARATOR = "&";
+	public static final String ACCOUNT_ALEADY_VERIFIED = "Account has already been verified.";
+	public static final String ACCOUNT_DOESNT_EXISTS = "Account doesn't exist";
+	public static final String ACCOUNT_NOT_COMPLETE = "Your account is not complete yet <ol><li>Upload your picture</li> "
+			+ "<li>Fill out a brief introduction</li> <li>Select your interests</li></ol> by going into";
+	
+	public static final String ACCOUNT_NOT_COMPLETE_FOR_BUSINESS = "Your account is not complete yet <ol><li>Upload a picture of your business</li> "
+			+ "<li>Enter the website address</li> <li>Verify business category/hours of operation</li></ol> by going into";
 }

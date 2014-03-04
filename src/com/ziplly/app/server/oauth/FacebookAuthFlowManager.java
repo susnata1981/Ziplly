@@ -23,10 +23,10 @@ public class FacebookAuthFlowManager extends OAuthFlowManager {
 	public Map<String,String> getRequestParams(String code)
 			throws UnsupportedEncodingException {
 		Map<String,String> paramsMap = new HashMap<String,String>();
-		paramsMap.put("code", code);
 		paramsMap.put("client_id", clientId);
-		paramsMap.put("client_secret", key);
 		paramsMap.put("redirect_uri", redirectUri);
+		paramsMap.put("client_secret", key);
+		paramsMap.put("code", code);
 		return paramsMap;
 	}
 

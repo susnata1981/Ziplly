@@ -18,6 +18,7 @@ public class TweetDTO implements Serializable {
 	private List<LoveDTO> likes = new ArrayList<LoveDTO>();
 	private String status;
 	private String image;
+	private List<ImageDTO> images = new ArrayList<ImageDTO>();
 	private Set<NeighborhoodDTO> targetNeighborhoods = new HashSet<NeighborhoodDTO>();
 	private Date timeUpdated;
 	private Date timeCreated;
@@ -111,5 +112,17 @@ public class TweetDTO implements Serializable {
 	@Override
 	public String toString() {
 		return "tweetId: "+tweetId+" Content:  "+content+" Type: "+type +" Sender: "+sender.getEmail();
+	}
+
+	public List<ImageDTO> getImages() {
+		return images;
+	}
+
+	public void setImages(List<ImageDTO> images) {
+		this.images = images;
+	}
+
+	public void addImage(ImageDTO image) {
+		this.images.add(image);
 	}
 }

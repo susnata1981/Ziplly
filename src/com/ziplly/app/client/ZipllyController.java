@@ -80,24 +80,13 @@ public class ZipllyController {
 		historyHandler.register(placeController, eventBus, defaultPlace);
 	}
 	
-	private String NAKED_DOMAIN = "http://ziplly.com";
-	private String NON_NAKED_DOMAIN = "http://www.ziplly.com";
-
 	public static native void consolelog(String msg) /*-{
 		$wnd.console.log(msg);
 	}-*/;
 	
 	public void go() {
 		String code = Window.Location.getParameter("code");
-		String location = Window.Location.getHref();
-		consolelog("Location:"+location);
-		consolelog("Code:"+code);
 
-		if (location.equals(NAKED_DOMAIN)) {
-			consolelog("Forwarding to "+NON_NAKED_DOMAIN);
-			Window.Location.replace(NON_NAKED_DOMAIN);
-		}
-		
 		if (code!=null) {
 			consolelog("going to OauthPlace");
 			placeController.goTo(new OAuthPlace(code));

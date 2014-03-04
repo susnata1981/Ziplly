@@ -6,7 +6,6 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.ziplly.app.client.ApplicationContext;
-import com.ziplly.app.client.activities.AbstractSignupActivity.NeighborhoodHandler;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.view.ISettingsView;
@@ -17,8 +16,6 @@ import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
-import com.ziplly.app.shared.GetNeighborhoodAction;
-import com.ziplly.app.shared.NeighborhoodSearchActionType;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -52,14 +49,14 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO,
 				ctx.setAccount(result.getAccount());
 				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
 				
-				view.enableSaveButton();
+				view.showSaveButton(true);
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
 			
 			@Override
 			public void onFailure(Throwable th) {
 				view.displayMessage(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
-				view.enableSaveButton();
+				view.showSaveButton(true);
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
 		});
@@ -69,7 +66,6 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO,
 		dispatcher.execute(action, callback);
 	}
 	
-	// TODO: centralize url transformation code
 	public void setUploadFormActionUrl() {
 		dispatcher.execute(new GetImageUploadUrlAction(),
 				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
@@ -92,8 +88,13 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO,
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				String imageUrl = event.getResults();
 				System.out.println("Received uploaded image url:"+imageUrl);
-				view.displayImagePreview(imageUrl);
+				if (imageUrl == null || "".equals(imageUrl)) {
+					view.displayMessage(StringConstants.INVALID_IMAGE, AlertType.ERROR);
+				} else {
+					view.displayImagePreview(imageUrl);
+				}
 				resetUploadForm();
+				eventBus.fireEvent(new LoadingEventEnd());
 			}
 		});
 	}

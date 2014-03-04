@@ -14,6 +14,8 @@ import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.ConversationDAOImpl;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.HashtagDAOImpl;
+import com.ziplly.app.dao.ImageDAO;
+import com.ziplly.app.dao.ImageDAOImpl;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.InterestDAOImpl;
 import com.ziplly.app.dao.LikeDAO;
@@ -76,6 +78,7 @@ public class DAOModule extends AbstractModule {
 		bind(PostalCodeDAO.class).to(PostalCodeDAOImpl.class).in(Singleton.class);
 		bind(PendingInvitationsDAO.class).to(PendingInvitationsDAOImpl.class).in(Singleton.class);
 		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
+		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
 	}
 
 //	@Provides

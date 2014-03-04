@@ -32,6 +32,7 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -60,6 +61,9 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.client.resource.TableResources;
+import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
@@ -75,6 +79,7 @@ import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.Cuisine;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -88,7 +93,8 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessAccountSettingsView extends AbstractView implements IBusinessAccountSettingView {
+public class BusinessAccountSettingsView extends AbstractView implements
+		IBusinessAccountSettingView {
 
 	private static final Double MEMBERSHIP_FEE_AMOUNT = 5.0;
 	private static final int MAX_TRANSACTION_TABLE_ROW_COUNT = 100;
@@ -107,13 +113,13 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		String subscriptionPlanTablePanelMessage();
 
 		String subscriptionPlanTable();
-		
+
 		String row();
-		
+
 		String heading();
 
 		String hpanelNoMargin();
-		
+
 		String locationBlock();
 
 		String tinyText();
@@ -149,7 +155,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	@UiField
 	SpanElement neighborhoodSpan;
-	
+
 	@UiField
 	TextBox street1;
 	@UiField
@@ -164,9 +170,6 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	@UiField
 	HelpInline phoneError;
 
-//	@UiField
-//	TextBox neighborhoodTextBox;
-	
 	@UiField
 	TextBox website;
 	@UiField
@@ -183,23 +186,27 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	@UiField
 	ListBox businessCategory;
-	
+
 	@UiField
 	Controls cuisineControls;
 	@UiField
 	ListBox cuisineListBox;
-	
+
 	@UiField
 	ListBox priceRangeListBox;
 	@UiField
 	CheckBox wifiAvailableCheckbox;
 	@UiField
 	CheckBox parkingAvailableCheckbox;
-	
+
 	@UiField
 	FormPanel uploadForm;
 	@UiField
+	Image uploadAnchorIcon;
+	@UiField
 	FileUpload uploadField;
+	@UiField
+	HTMLPanel businessProfileImagePanel;
 	@UiField
 	Image profileImagePreview;
 	private boolean imageUploaded;
@@ -248,7 +255,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	// Notification Panel
 	@UiField
 	HTMLPanel notificationPanel;
-	
+
 	// transaction details elements
 	CellTable<TransactionDTO> transactionTable;
 	@UiField
@@ -261,7 +268,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	HTMLPanel locationPanel;
 	Anchor addLocationAnchor;
 	private AddLocationModal addLocationModal;
-	
+
 	// Reset Password tab
 	@UiField
 	PasswordTextBox password;
@@ -298,7 +305,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	private boolean sellerEligibleForSubscription = true;
 	private Map<SubscriptionPlanDTO, String> plans;
 	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap = new HashMap<AccountNotificationSettingsDTO, ListBox>();
-	
+
 	@Inject
 	public BusinessAccountSettingsView(EventBus eventBus) {
 		super(eventBus);
@@ -308,6 +315,8 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		clearPaymentStatus();
 		StyleHelper.show(cuisineControls.getElement(), false);
+		StyleHelper.show(uploadField.getElement(), false);
+		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
 		setupHandlers();
 	}
 
@@ -316,7 +325,8 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 			@Override
 			public void onChange(ChangeEvent event) {
-				BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
+				BusinessCategory category = BusinessCategory.values()[businessCategory
+						.getSelectedIndex()];
 				// Display cuisine listbox only for restaurants
 				if (category == BusinessCategory.RESTAURANT) {
 					StyleHelper.show(cuisineControls.getElement(), true);
@@ -325,10 +335,20 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 				}
 			}
 		});
+
+		uploadAnchorIcon.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				uploadField.getElement().<InputElement>cast().click();
+			}
+			
+		});
 		
 		uploadField.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
+				clearError();
 				onUpload();
 			}
 		});
@@ -348,6 +368,9 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		StyleHelper.clearBackground();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ziplly.app.client.view.ISettingsView#displaySettings(com.ziplly.app.model.AccountDTO)
+	 */
 	@Override
 	public void displaySettings(BusinessAccountDTO account) {
 		resetUploadForm();
@@ -355,44 +378,39 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			this.account = account;
 			businessName.setText(account.getName());
 			street1.setText(account.getCurrentLocation().getAddress());
-			
-//			zip.setText(Integer.toString(account.getZip()));
-//			zip.setReadOnly(true);
-//			
-//			neighborhoodTextBox.setText(basicDataFormatter.format(account.getNeighborhood(), ValueType.NEIGHBORHOOD));
-//			neighborhoodTextBox.setReadOnly(true);
-			
+
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
 			phone.setText(account.getPhone());
-			neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getCurrentLocation().getNeighborhood(), ValueType.NEIGHBORHOOD));
-			
+			neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getCurrentLocation()
+					.getNeighborhood(), ValueType.NEIGHBORHOOD));
+
 			businessCategory.clear();
-			for(BusinessCategory category : BusinessCategory.values()) {
+			for (BusinessCategory category : BusinessCategory.values()) {
 				businessCategory.addItem(category.name());
 			}
 
 			if (account.getCategory() != null) {
 				businessCategory.setSelectedIndex(account.getCategory().ordinal());
 			}
-			
-			for(PriceRange range : PriceRange.values()) {
+
+			for (PriceRange range : PriceRange.values()) {
 				priceRangeListBox.addItem(range.name());
 			}
-			
-			for(Cuisine cuisine : Cuisine.values()) {
+
+			for (Cuisine cuisine : Cuisine.values()) {
 				cuisineListBox.addItem(cuisine.name());
 			}
-			
+
 			displayBusinessProperties();
 
-			displayImagePreview(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+			setProfileImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 
 			// Don't show subscription tab for non-profits
 			if (account.getBusinessType() == BusinessType.NON_PROFIT) {
 				hideSubscriptionTab();
 			}
-			
+
 			populateLocationPanel();
 			popoulateNotificationSettings(account);
 		}
@@ -400,7 +418,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	private void populateLocationPanel() {
 		locationPanel.clear();
-		for(LocationDTO location : account.getLocations()) {
+		for (LocationDTO location : account.getLocations()) {
 			Panel panel = addLocationToPanel(location);
 			locationPanel.add(panel);
 		}
@@ -411,11 +429,12 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		panel.addStyleName(style.locationItemPanel());
 		HPanel hpanel = new HPanel();
 		hpanel.setStyleName(style.hpanelNoMargin());
-		Label locationName = new Label(basicDataFormatter.format(location.getNeighborhood(), ValueType.NEIGHBORHOOD));
+		Label locationName = new Label(basicDataFormatter.format(location.getNeighborhood(),
+				ValueType.NEIGHBORHOOD));
 		locationName.addStyleName(style.row());
 		locationName.addStyleName(style.heading());
 		hpanel.add(locationName);
-		
+
 		if (location.getType() == LocationType.PRIMARY) {
 			Popover primaryLocationPopover = new Popover();
 			Anchor learnMoreAnchor = new Anchor(StringConstants.PRIMARY_LOCATION_KEY);
@@ -425,7 +444,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			primaryLocationPopover.setText(StringConstants.PRIMARY_LOCATION);
 			hpanel.add(primaryLocationPopover);
 		}
-		
+
 		Anchor mapAnchor = new Anchor("map");
 		mapAnchor.addClickHandler(new ClickHandler() {
 
@@ -434,9 +453,9 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 				event.preventDefault();
 				Window.open(getAddressUrl(location.getAddress()), "_blank", "");
 			}
-			
+
 		});
-		
+
 		mapAnchor.setHref(getAddressUrl(location.getAddress()));
 		hpanel.add(mapAnchor);
 
@@ -455,10 +474,11 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		});
 		hpanel.add(removeAnchor);
 		panel.add(hpanel);
-		
+
 		hpanel = new HPanel();
 		hpanel.setStyleName(style.hpanelNoMargin());
-		Label locationAddress = new Label(basicDataFormatter.format(location.getAddress(), ValueType.ADDRESS));
+		Label locationAddress = new Label(basicDataFormatter.format(location.getAddress(),
+				ValueType.ADDRESS));
 		hpanel.add(locationAddress);
 		hpanel.addStyleName(style.row());
 		panel.add(hpanel);
@@ -473,31 +493,32 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	private void displayBusinessProperties() {
 		BusinessPropertiesDTO props = account.getProperties();
-		
+
 		if (props.getPriceRange() != null) {
-			priceRangeListBox.setSelectedIndex(PriceRange.valueOf(props.getPriceRange().name()).ordinal());
+			priceRangeListBox.setSelectedIndex(PriceRange.valueOf(props.getPriceRange().name())
+					.ordinal());
 		}
 		wifiAvailableCheckbox.setValue(props.getWifiAvailable());
 		parkingAvailableCheckbox.setValue(props.isParkingAvailable());
-		
+
 		mondayStart.setText(props.getMondayStartTime());
 		mondayEnd.setText(props.getMondayEndTime());
-		
+
 		tuesdayStart.setText(props.getTuesdayStartTime());
 		tuesdayEnd.setText(props.getTuesdayEndTime());
-		
+
 		wednesdayStart.setText(props.getWednesdayStartTime());
 		wednesdayEnd.setText(props.getWednesdayEndTime());
-		
+
 		thursdayStart.setText(props.getThursdayEndTime());
 		thursdayEnd.setText(props.getThursdayEndTime());
-		
+
 		fridayStart.setText(props.getFridayStartTime());
 		fridayEnd.setText(props.getFridayEndTime());
-		
+
 		saturdayStart.setText(props.getSaturdayStartTime());
 		saturdayEnd.setText(props.getSaturdayEndTime());
-		
+
 		sundayStart.setText(props.getSundayStartTime());
 		sundayEnd.setText(props.getSundayEndTime());
 	}
@@ -509,27 +530,32 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		}
 		return actionListBox;
 	}
-	
+
 	/**
 	 * Populates account notification settings
+	 * 
 	 * @param account
 	 */
 	private void popoulateNotificationSettings(AccountDTO account) {
 		accountNotificationSettingsMap.clear();
 		notificationPanel.clear();
-		Collections.sort(account.getNotificationSettings(), new Comparator<AccountNotificationSettingsDTO>() {
+		Collections.sort(account.getNotificationSettings(),
+				new Comparator<AccountNotificationSettingsDTO>() {
 
-			@Override
-			public int compare(AccountNotificationSettingsDTO o1, AccountNotificationSettingsDTO o2) {
-				return o1.getType().name().compareTo(o2.getType().name());
-			}
-		});
-		
+					@Override
+					public int compare(AccountNotificationSettingsDTO o1,
+							AccountNotificationSettingsDTO o2) {
+						return o1.getType().name().compareTo(o2.getType().name());
+					}
+				}
+		);
+
 		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
 			ListBox action = getNotificationActionListBox();
 			action.setSelectedIndex(ans.getAction().ordinal());
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
+			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(),
+					ValueType.NOTIFICATION_TYPE));
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(action);
@@ -537,18 +563,6 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			accountNotificationSettingsMap.put(ans, action);
 		}
 	}
-
-	//	boolean validateZip() {
-//		String zipInput = zip.getText().trim();
-//		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-//		if (!validateZip.isValid()) {
-//			zipCg.setType(ControlGroupType.ERROR);
-//			zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
-//			zipError.setVisible(true);
-//			return false;
-//		}
-//		return true;
-//	}
 
 	boolean validatePhone() {
 		String phoneInput = phone.getText().trim();
@@ -561,7 +575,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		}
 		return true;
 	}
-	
+
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
 		if (!result.isValid()) {
@@ -619,21 +633,22 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		}
 
 		String name = businessName.getText().trim();
-		String streetOne = street1.getText().trim();
+//		String streetOne = street1.getText().trim();
 		String websiteUrl = website.getText().trim();
 		String emailInput = email.getText().trim();
 		String phoneInput = phone.getText().trim();
 		BusinessAccountDTO acct = new BusinessAccountDTO();
 		acct.setAccountId(account.getAccountId());
+		
 		if (imageUploaded) {
-			acct.setImageUrl(profileImagePreview.getUrl());
+			acct.getImages().add(currentUploadedImage);
+//			acct.setImageUrl(profileImagePreview.getUrl());
 		}
+		
 		acct.setUid(account.getUid());
-//		acct.setZip(Integer.parseInt(zipInput));
-//		acct.setNeighborhood(account.getNeighborhood());
 		acct.setName(name);
 		acct.setPhone(phoneInput);
-//		acct.setStreet1(streetOne);
+		// acct.setStreet1(streetOne);
 		acct.setStatus(account.getStatus());
 		acct.setRole(account.getRole());
 		acct.setLocations(account.getLocations());
@@ -641,16 +656,16 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		acct.setEmail(emailInput);
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setCategory(BusinessCategory.values()[businessCategory.getSelectedIndex()]);
-		
+
 		BusinessPropertiesDTO props = new BusinessPropertiesDTO();
 		PriceRange priceRange = PriceRange.values()[priceRangeListBox.getSelectedIndex()];
 		props.setPriceRange(priceRange);
-		
+
 		if (StyleHelper.isVisible(cuisineControls.getElement())) {
 			Cuisine cuisine = Cuisine.values()[cuisineListBox.getSelectedIndex()];
 			props.setCuisine(cuisine);
 		}
-		
+
 		props.setWifiAvailable(wifiAvailableCheckbox.getValue());
 		props.setParkingAvailable(parkingAvailableCheckbox.getValue());
 		props.setMondayStartTime(FieldVerifier.sanitize(mondayStart.getText()));
@@ -667,18 +682,14 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		props.setSaturdayEndTime(FieldVerifier.sanitize(saturdayEnd.getText()));
 		props.setSundayStartTime(FieldVerifier.sanitize(sundayStart.getText()));
 		props.setSundayEndTime(FieldVerifier.sanitize(sundayEnd.getText()));
-		
+
 		acct.setProperties(props);
-		
+
 		presenter.save(acct);
 		saveBtn.setEnabled(false);
+		showSaveButton(false);
 	}
 
-	@Override
-	public void enableSaveButton() {
-		saveBtn.setEnabled(true);
-	}
-	
 	@Override
 	public void setUploadFormActionUrl(String imageUrl) {
 		uploadForm.setAction(imageUrl);
@@ -691,6 +702,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	@Override
 	public void clearError() {
+		message.setText("");
 		message.setVisible(false);
 	}
 
@@ -718,13 +730,26 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 
 	@UiField
 	FluidContainer settingsPanel;
-	
+
+	private ImageDTO currentUploadedImage;
+
 	@Override
 	public void displayImagePreview(String imageUrl) {
-		profileImagePreview.setUrl(imageUrl);
-		StyleHelper.setBackgroundImage(RootPanel.get().getElement(), imageUrl);
+		if (imageUrl != null) {
+			currentUploadedImage = ImageUtil.parseImageUrl(imageUrl);
+			profileImagePreview.setUrl(currentUploadedImage.getUrl()+"=s200");
+			StyleHelper.setBackgroundImage(RootPanel.get().getElement(), currentUploadedImage.getUrl());
+			eventBus.fireEvent(new LoadingEventEnd());
+		}
 	}
 
+	private void setProfileImage(String imageUrl) {
+		if (imageUrl != null) {
+			profileImagePreview.setUrl(imageUrl);
+			StyleHelper.setBackgroundImage(RootPanel.get().getElement(), imageUrl);
+		}
+	}
+	
 	@Override
 	public void resetUploadForm() {
 		uploadForm.setAction("");
@@ -734,6 +759,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	public void onUpload() {
 		uploadForm.submit();
 		imageUploaded = true;
+		eventBus.fireEvent(new LoadingEventStart());
 	}
 
 	@Override
@@ -802,13 +828,13 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		subscriptionPlanMap.clear();
 		subscriptionPlanTablePanel.clear();
 		this.plans = plans;
-		
+
 		int count = 0;
-		
+
 		for (SubscriptionPlanDTO plan : plans.keySet()) {
 			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
 			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan, plans.get(plan));
-			
+
 			if (plan.getStatus() == SubscriptionPlanStatus.DISABLED) {
 				widget.enableBuyButton(false);
 			}
@@ -822,19 +848,21 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		}
 	}
 
-	private Map<SubscriptionPlanDTO, String> sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
+	private Map<SubscriptionPlanDTO, String> sortSubscriptionPlans(
+			Map<SubscriptionPlanDTO, String> plans) {
 		TreeMap<SubscriptionPlanDTO, String> sortedPlans = new TreeMap<SubscriptionPlanDTO, String>(
-		    new Comparator<SubscriptionPlanDTO>() {
-			@Override
-			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
-				return (int)(o1.getFee() - o2.getFee());
-			}
-		});
+				new Comparator<SubscriptionPlanDTO>() {
+					@Override
+					public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
+						return (int) (o1.getFee() - o2.getFee());
+					}
+				});
 		sortedPlans.putAll(plans);
 		return sortedPlans;
 	}
 
-	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan, final String token) {
+	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan,
+			final String token) {
 		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
 		widget.setStyleName(style.subscriptionPlanWidget());
 		widget.setHeading(plan.getName());
@@ -1033,7 +1061,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 	public void addLocation(ClickEvent event) {
 		if (addLocationModal == null) {
 			addLocationModal = new AddLocationModal();
-			
+
 			// Add blur handler on zip textbox
 			addLocationModal.getZipTextBox().addBlurHandler(new BlurHandler() {
 				@Override
@@ -1041,10 +1069,11 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 					if (!addLocationModal.validateZip()) {
 						return;
 					}
-					presenter.getNeighborhoodData(FieldVerifier.sanitize(addLocationModal.getZipTextBox().getText()));
+					presenter.getNeighborhoodData(FieldVerifier.sanitize(addLocationModal
+							.getZipTextBox().getText()));
 				}
 			});
-			
+
 			// Add Location Handler
 			addLocationModal.getAddLocationButton().addClickHandler(new ClickHandler() {
 
@@ -1054,7 +1083,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 					if (!addLocationModal.validate()) {
 						return;
 					}
-					
+
 					LocationDTO location = addLocationModal.getLocation();
 					account.getLocations().add(location);
 					presenter.updateLocation(account);
@@ -1063,7 +1092,7 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 		}
 		addLocationModal.show(true);
 	}
-	
+
 	@Override
 	public void displayNeighborhoodListLoading(boolean b) {
 		addLocationModal.displayNeighborhoodListLoading(b);
@@ -1080,11 +1109,16 @@ public class BusinessAccountSettingsView extends AbstractView implements IBusine
 			addLocationModal.displayMessage(msg, type);
 		}
 	}
-	
+
 	@Override
 	public void displayLocationModal(boolean display) {
 		if (addLocationModal != null) {
 			addLocationModal.show(display);
 		}
+	}
+
+	@Override
+	public void showSaveButton(boolean show) {
+		saveBtn.setEnabled(show);
 	}
 }

@@ -15,6 +15,7 @@ import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
 import com.ziplly.app.client.activities.ConversationActivity;
+import com.ziplly.app.client.activities.EmailVerificationActivity;
 import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.LoginActivity;
 import com.ziplly.app.client.activities.OAuthActivity;
@@ -32,6 +33,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.EmailVerificationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.OAuthPlace;
@@ -49,6 +51,7 @@ import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.ConversationView;
+import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
@@ -75,6 +78,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<BusinessAccountSettingsView> businessAccountSettingsView;
 	private AsyncProvider<ConversationView> conversationView;
 	private AsyncProvider<PasswordRecoveryView> passwordRecoveryView;
+	private AsyncProvider<EmailVerificationView> emailVerificationView;
 	private AsyncProvider<AdminView> adminView;
 	private AsyncProvider<AboutView> aboutView;
 	
@@ -92,7 +96,8 @@ public class ZipllyActivityMapper implements ActivityMapper {
 			AsyncProvider<PersonalAccountSettingsView> personalAccountSettingsView,
 			AsyncProvider<BusinessAccountSettingsView> businessAccountSettingsView,
 			AsyncProvider<ConversationView> conversationView,
-			AsyncProvider<PasswordRecoveryView> passwordRecoverView,
+			AsyncProvider<PasswordRecoveryView> passwordRecoveryView,
+			AsyncProvider<EmailVerificationView> emailVerificationView,
 			AsyncProvider<AdminView> adminView,
 			AsyncProvider<AboutView> aboutView,
 			CachingDispatcherAsync dispatcher,
@@ -112,7 +117,8 @@ public class ZipllyActivityMapper implements ActivityMapper {
 		this.personalAccountSettingsView = personalAccountSettingsView;
 		this.businessAccountSettingsView = businessAccountSettingsView;
 		this.conversationView = conversationView;
-		this.passwordRecoveryView = passwordRecoverView;
+		this.passwordRecoveryView = passwordRecoveryView;
+		this.emailVerificationView = emailVerificationView;
 		this.adminView = adminView;
 		this.aboutView = aboutView;
 		this.dispatcher = dispatcher;
@@ -245,6 +251,16 @@ public class ZipllyActivityMapper implements ActivityMapper {
 				public void get(AsyncCallback<? super PasswordRecoveryActivity> callback) {
 					callback.onSuccess(new PasswordRecoveryActivity(dispatcher, eventBus, placeController, ctx, (PasswordRecoveryPlace)place, passwordRecoveryView));
 				}
+			});
+		}
+		else if (place instanceof EmailVerificationPlace) {
+			return new ActivityProxy<EmailVerificationActivity>(new AsyncProvider<EmailVerificationActivity>() {
+
+				@Override
+				public void get(AsyncCallback<? super EmailVerificationActivity> callback) {
+					callback.onSuccess(new EmailVerificationActivity(dispatcher, eventBus, placeController, ctx, (EmailVerificationPlace)place, emailVerificationView));
+				}
+				
 			});
 		}
 		else if (place instanceof AdminPlace) {

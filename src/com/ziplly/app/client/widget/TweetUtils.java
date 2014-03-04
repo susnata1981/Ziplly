@@ -6,6 +6,13 @@ import com.google.gwt.regexp.shared.RegExp;
 public class TweetUtils {
 	final static RegExp urlPattern = RegExp.compile("(.*)(https?:\\/\\/[^\\s]+)(\\s*.*)");
 
+	/**
+	 * INCOMPLETE: TODO
+	 * Converts a link - "http(s)://... into an anchor.
+	 * 
+	 * @param content
+	 * @return
+	 */
 	public static String getContent(String content) {
 		StringBuilder newContent = new StringBuilder();
 		MatchResult matcher = urlPattern.exec(content);

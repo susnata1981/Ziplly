@@ -22,6 +22,8 @@ import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
+import com.ziplly.app.model.Image;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.Location;
@@ -113,20 +115,20 @@ public class EntityUtil {
 		acct.setEmail(account.getEmail());
 		acct.setUrl(account.getUrl());
 		acct.setImageUrl(account.getImageUrl());
-//		acct.setZip(account.getZip());
-//		acct.setNeighborhood(clone(account.getNeighborhood()));
-//		acct.setCity(account.getCity());
-//		acct.setState(account.getState());
 		acct.setRole(account.getRole());
 		acct.setStatus(account.getStatus());
 		acct.setLastLoginTime(account.getLastLoginTime());
 		acct.setTimeCreated(account.getTimeCreated());
 		acct.setUid(account.getUid());
-		
+
 		if (Hibernate.isInitialized(account.getLocations())) {
-			for(Location loc: account.getLocations()) {
+			for (Location loc : account.getLocations()) {
 				acct.addLocation(clone(loc));
 			}
+		}
+
+		for(Image image: account.getImages()) {
+			acct.addImage(clone(image));
 		}
 		
 		if (account.getCurrentLocation() != null) {
@@ -168,7 +170,7 @@ public class EntityUtil {
 		dest.setOccupation(account.getOccupation());
 		dest.setGender(account.getGender());
 		dest.setBadge(account.getBadge());
-		
+
 		if (Hibernate.isInitialized(account.getInterests())) {
 			for (Interest interest : account.getInterests()) {
 				InterestDTO interestDto = clone(interest);
@@ -185,11 +187,11 @@ public class EntityUtil {
 		resp.setPhone(account.getPhone());
 		resp.setBusinessType(account.getBusinessType());
 		resp.setWebsite(account.getWebsite());
-//		resp.setStreet1(account.getStreet1());
-//		resp.setStreet2(account.getStreet2());
+		// resp.setStreet1(account.getStreet1());
+		// resp.setStreet2(account.getStreet2());
 		resp.setProperties(clone(account.getProperties()));
 		resp.setCategory(account.getCategory());
-		
+
 		if (Hibernate.isInitialized(account.getTransactions())) {
 			for (Transaction txn : account.getTransactions()) {
 				resp.getTransactions().add(clone(txn));
@@ -220,21 +222,30 @@ public class EntityUtil {
 		resp.setStatus(tweet.getStatus());
 		resp.setImage(tweet.getImage());
 		resp.setTimeCreated(tweet.getTimeCreated());
-		
-		for(Neighborhood n : tweet.getTargetNeighborhoods()) {
+
+		// Neighborhood
+		for (Neighborhood n : tweet.getTargetNeighborhoods()) {
 			resp.getTargetNeighborhoods().add(clone(n));
 		}
+
+		// Image
+		for(Image image : tweet.getImages()) {
+			resp.addImage(clone(image));
+		}
 		
+		// Sender
 		if (needSender && Hibernate.isInitialized(tweet.getSender())) {
 			resp.setSender(convert(tweet.getSender()));
 		}
 
+		// Comments
 		if (Hibernate.isInitialized(tweet.getComments())) {
 			for (Comment c : tweet.getComments()) {
 				resp.getComments().add(clone(c));
 			}
 		}
 
+		// Likes
 		if (Hibernate.isInitialized(tweet.getLikes())) {
 			for (Love l : tweet.getLikes()) {
 				resp.getLikes().add(clone(l));
@@ -265,11 +276,11 @@ public class EntityUtil {
 		resp.setAuthor(convert(comment.getAuthor()));
 		resp.setContent(comment.getContent());
 		resp.setTimeCreated(comment.getTimeCreated());
-		
+
 		TweetDTO tweet = new TweetDTO();
 		tweet.setTweetId(comment.getTweet().getTweetId());
 		resp.setTweet(tweet);
-		
+
 		return resp;
 	}
 
@@ -318,12 +329,12 @@ public class EntityUtil {
 
 	public static List<SubscriptionPlanDTO> cloneSubscriptionPlanList(List<SubscriptionPlan> plans) {
 		List<SubscriptionPlanDTO> resp = Lists.newArrayList();
-		for(SubscriptionPlan plan : plans) {
+		for (SubscriptionPlan plan : plans) {
 			resp.add(EntityUtil.clone(plan));
 		}
 		return resp;
 	}
-	
+
 	public static TransactionDTO clone(Transaction txn) {
 		if (txn != null) {
 			TransactionDTO transaction = new TransactionDTO();
@@ -344,17 +355,17 @@ public class EntityUtil {
 		resp.setNotificationId(an.getNotificationId());
 		resp.setRecipient(convert(an.getRecipient(), true));
 		resp.setSender(convert(an.getSender(), true));
-		
+
 		// Tweet
 		if (an.getTweet() != null) {
 			resp.setTweet(clone(an.getTweet()));
 		}
-		
+
 		// Conversation
 		if (an.getConversation() != null) {
 			resp.setConversation(clone(an.getConversation()));
 		}
-		
+
 		resp.setReadStatus(an.getReadStatus());
 		resp.setType(an.getType());
 		resp.setTimeUpdated(an.getTimeUpdated());
@@ -460,15 +471,21 @@ public class EntityUtil {
 		dest.setName(neighborhood.getName());
 		dest.setImageUrl(neighborhood.getImageUrl());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
-		
+
+		// Add parent neighborhood.
 		if (neighborhood.getParentNeighborhood() != null) {
 			dest.setParentNeighborhood(clone(neighborhood.getParentNeighborhood()));
 		}
-		
+
+		// Add postal code
 		if (neighborhood.getPostalCode() != null) {
 			dest.setPostalCode(clone(neighborhood.getPostalCode()));
 		}
-		
+
+		// Add images.
+		for(Image image : neighborhood.getImages()) {
+			dest.addImage(clone(image));
+		}
 		return dest;
 	}
 
@@ -513,23 +530,23 @@ public class EntityUtil {
 		return resp;
 	}
 
-	public static List<PendingInvitationsDTO> clonePendingInvidationList(List<PendingInvitations> input) {
+	public static List<PendingInvitationsDTO> clonePendingInvidationList(
+			List<PendingInvitations> input) {
 		List<PendingInvitationsDTO> result = new ArrayList<PendingInvitationsDTO>();
-		for(PendingInvitations pi : input) {
+		for (PendingInvitations pi : input) {
 			result.add(clone(pi));
 		}
 		return result;
- 	}
+	}
 
-	
 	public static List<InterestDTO> cloneInterestList(List<Interest> result) {
 		List<InterestDTO> resp = new ArrayList<InterestDTO>();
-		for(Interest i : result) {
+		for (Interest i : result) {
 			resp.add(clone(i));
 		}
 		return resp;
 	}
-	
+
 	public static LocationDTO clone(Location loc) {
 		LocationDTO resp = new LocationDTO();
 		resp.setLocationId(loc.getLocationId());
@@ -538,6 +555,15 @@ public class EntityUtil {
 		resp.setType(loc.getType());
 		resp.setTimeUpdated(loc.getTimeUpdated());
 		resp.setTimeCreated(loc.getTimeCreated());
+		return resp;
+	}
+
+	public static ImageDTO clone(Image image) {
+		ImageDTO resp = new ImageDTO();
+		resp.setId(image.getId());
+		resp.setBlobKey(image.getBlobKey());
+		resp.setUrl(image.getUrl());
+		resp.setTimeCreated(image.getTimeCreated());
 		return resp;
 	}
 }

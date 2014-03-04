@@ -397,7 +397,6 @@ public class SignupView extends AbstractView implements
 		String firstnameInput = firstname.getText().trim();
 		String lastnameInput = lastname.getText().trim();
 		String emailInput = email.getText().trim();
-//		String zipInput = zip.getText().trim();
 		PersonalAccountDTO account = new PersonalAccountDTO();
 		account.setFirstName(firstnameInput);
 		account.setLastName(lastnameInput);
@@ -412,10 +411,6 @@ public class SignupView extends AbstractView implements
 		location.setTimeCreated(new Date());
 		location.setTimeUpdated(new Date());
 		account.addLocation(location);
-		
-		// Should go away
-//		account.setZip(Integer.parseInt(zipInput));
-//		account.setNeighborhood(selectedNeighborhood);
 		
 		account.setRole(Role.USER);
 		account.setBadge(Badge.chipmunk);

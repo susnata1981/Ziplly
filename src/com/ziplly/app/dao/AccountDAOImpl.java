@@ -19,6 +19,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
@@ -27,6 +28,7 @@ import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PrivacySettings;
 
 public class AccountDAOImpl implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class.getCanonicalName());
@@ -116,6 +118,17 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();
+			
+			// Notification Settings.
+			for(AccountNotificationSettings as : account.getNotificationSettings()) {
+				em.persist(as);
+			}
+
+			// Privacy Settings.
+			for(PrivacySettings ps : account.getPrivacySettings()) {
+				em.persist(ps);
+			}
+			
 			em.persist(account);
 			em.getTransaction().commit();
 			AccountDTO result = EntityUtil.convert(account);
@@ -221,7 +234,7 @@ public class AccountDAOImpl implements AccountDAO {
 		int start = pageStart;// * pageSize;
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em
-				.createQuery("select a from Account a join a.locations l where a.type = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
+				.createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
 						+ " order by a.timeCreated");
 		
 		query.setParameter("type", entityType.getType())
@@ -252,7 +265,7 @@ public class AccountDAOImpl implements AccountDAO {
 		// List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
-				.createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId "
+				.createQuery("select distinct a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId "
 						+ "in (:neighborhoodId) order by a.timeCreated");
 		
 		query.setParameter("type", entityType.getType())
@@ -357,7 +370,7 @@ public class AccountDAOImpl implements AccountDAO {
 						});
 
 				query = em
-						.createNativeQuery("select count(*) from account a, account_location al, location l, neighborhood n "
+						.createNativeQuery("select distinct count(a) from account a, account_location al, location l, neighborhood n "
 								+ " where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
 								+ " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id in (:neighborhood_ids)");
 				
@@ -443,12 +456,12 @@ public class AccountDAOImpl implements AccountDAO {
 
 		if (gender == Gender.ALL) {
 			query = em
-					.createNativeQuery("select count(*) from account a, account_location al, location l, neighborhood n "
+					.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
 							+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
 							+ " and a.type = :type and n.neighborhood_id = :neighborhood_id");
 		} else {
 			query = em
-					.createNativeQuery("select count(*) from account a, account_location al, location l, neighborhood n "
+					.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
 							+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
 							+ " and a.type = :type and a.gender = :gender and n.neighborhood_id = :neighborhood_id");
 			query.setParameter("gender", gender.name());

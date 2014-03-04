@@ -96,8 +96,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 				PersonalAccountActivity.this.view = result;
 				bind();
 				setupHandlers();
-				// TODO (set a background)
-//				view.setBackground();
 				go(PersonalAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());
@@ -146,6 +144,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		getAccountNotifications();
 		setupImageUpload();
+		// Display account updates
+		view.displayAccontUpdate();
+
 	}
 
 	private void setupImageUpload() {
@@ -204,6 +205,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		ctx.setTotalTweets(result.getTotalTweets());
 		ctx.setTotalComments(result.getTotalComments());
 		ctx.setTotalLikes(result.getTotalLikes());
+		
 		view.updateAccountDetails(ctx);
 	}
 

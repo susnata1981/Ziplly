@@ -142,7 +142,6 @@ public class NavView extends Composite implements INavView {
 		logoutLink.setVisible(value);
 		accountDropdown.setVisible(value);
 		loginLink.setVisible(!value);
-		// locationDropdown.setVisible(value);
 	}
 
 	@UiHandler("accountLink")
@@ -187,6 +186,8 @@ public class NavView extends Composite implements INavView {
 
 	@Override
 	public void clear() {
+		showAccountLinks(false);
+		displayLocationDropdown(false);
 	}
 
 	@Override
@@ -297,5 +298,10 @@ public class NavView extends Composite implements INavView {
 			}
 			locationDropdown.setVisible(true);
 		}
+	}
+	
+	@Override
+	public void displayLocationDropdown(boolean show) {
+		locationDropdown.setVisible(show);
 	}
 }

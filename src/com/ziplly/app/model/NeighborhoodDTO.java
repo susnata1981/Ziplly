@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NeighborhoodDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -8,6 +10,7 @@ public class NeighborhoodDTO implements Serializable {
 	private String name;
 	private String city;
 	private String state;
+	private List<ImageDTO> images = new ArrayList<ImageDTO>();
 	private String imageUrl;
 	private NeighborhoodDTO parentNeighborhood;
 	private PostalCodeDTO postalCode;
@@ -93,5 +96,17 @@ public class NeighborhoodDTO implements Serializable {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public List<ImageDTO> getImages() {
+		return images;
+	}
+
+	public void addImage(ImageDTO image) {
+		images.add(image);
+	}
+	
+	public void setImages(List<ImageDTO> images) {
+		this.images = images;
 	}
 }

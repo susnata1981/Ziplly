@@ -1,12 +1,10 @@
 @CHARSET "US-ASCII";
 
-@external .tab-content;
+@external .tab-content, .updateAlertBlock;
 
 .rootPanel {
 	width: 100%;
 	height: auto;
-	position: relative;
-	left: 40px;
 }
 
 .asidePanel {
@@ -96,7 +94,8 @@ a.link:hover {
 }
 
 .profileImageSection img {
-	height: 100%;
+	max-height: 100%;
+	max-width: 100%;
 }
 
 .profileInfoBox {
@@ -176,6 +175,8 @@ h2.heading {
 	position: relative;
 	float: left;
 	width: 90%;
+	background: #f1f1f1;
+	opacity: 0.9;
 	margin-left: 2px;
 	padding: 10px;
 	border: 1px solid #ddd;
@@ -193,10 +194,11 @@ h2.heading {
 
 .introductionTextBox {
 	float: left;
-	width: 90%;
-	height: 100px;
-	padding: 4px;
+	width: 110%;
+	height: 120px;
+	padding: 6px;
 	margin-bottom: 30px;
+	font-size: 14px !important;
 }
 
 .label {
@@ -235,12 +237,6 @@ h2.heading {
 
 .settingsProfileImageSection {
 	margin: 0 20px 0 0;
-}
-
-.profileImage {
-	width: 160px;
-	height: 140px;
-	border: 2px solid #ddd;
 }
 
 .uploadFormActionPanel {
@@ -329,14 +325,13 @@ h2.heading {
 
 .profileImagePanel {
 	width: 180px;
-	height: 190px;
-	overflow: hidden;
-	margin-bottom: 12px;
+	height: 200px;
+	margin-bottom: 2px;
 }
 
 .profileImage {
-	height: 100%;
-	border: none;
+	max-height: 100%;
+	max-width: 100%;
 }
 
 .tab-heading {
@@ -386,5 +381,22 @@ h2.heading {
 
 input[type="text"], input[type="password"] {
 	height: 38px;
+	font-size: 18px;
+}
+
+.updateAlertBlock {
+	color: #888;
+	padding: 10px;
+}
+
+.updateAlertBlock h4 {
+	color: #666;
+	border-bottom: 1px solid #666;	
+	margin-bottom: 12px;
+}
+
+.updateAlertBlock a {
+	display: inline-block;
 	font-size: 16px;
+	margin-left: 4px;
 }

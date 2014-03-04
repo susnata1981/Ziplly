@@ -47,6 +47,7 @@ import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PostalCodeDTO;
@@ -579,6 +580,11 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 			@Override
 			public void update(int index, NeighborhoodDTO object, String value) {
+				if (imageDto == null) {
+					throw new RuntimeException("Image shouldn't be null");
+				}
+				
+				object.addImage(imageDto);
 				object.setImageUrl(value);
 			}
 		});
@@ -593,10 +599,20 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			}
 		};
 		neighborhoodTable.addColumn(neighborhoodImageColumn, "Image");
+		
 		ActionCell<NeighborhoodDTO> updateButtonCell = new ActionCell<NeighborhoodDTO>("Update",
 				new ActionCell.Delegate<NeighborhoodDTO>() {
 					@Override
 					public void execute(NeighborhoodDTO n) {
+						// WARNING (P1)
+						//
+						// It's going to attach the uploaded image to the neighborhood
+						// being updated. NEEDS TO CHANGE SOON!!!
+						//
+						//
+						if (imageDto != null) {
+							n.addImage(imageDto);
+						}
 						presenter.updateNeighborhood(n);
 					}
 				});
@@ -859,8 +875,11 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		uploadForm.addSubmitCompleteHandler(handler);
 	}
 
+	private ImageDTO imageDto;
+	
 	public void displayImagePreview(String imageUrl) {
-		neighborhoodImagePreview.setUrl(imageUrl);
+		imageDto = ImageUtil.parseImageUrl(imageUrl);
+		neighborhoodImagePreview.setUrl(imageDto.getUrl());
 		imageUrlTextField.setText(imageUrl);
 		imageUploaded = true;
 	}

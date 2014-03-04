@@ -1,3 +1,5 @@
+@external modal-body;
+
 .smalltext {
 	font-family: sans-serif;
 	font-size: 14px;
@@ -45,7 +47,7 @@
 .tweet_content_section {
 	clear: left;
  	float: left;
-	width: 80%;
+	width: 94%;
 	margin: 8px;
 	padding: 2px 8px;
 }
@@ -97,6 +99,10 @@ div.comment_text {
 	margin: 8px 4px 4px 0px;
 	font-size: 13px;
 	font-family: sans-serif;
+}
+
+.tweet_category {
+	width: 180px;	
 }
 
 .tweet_sender_link {
@@ -223,4 +229,23 @@ div.comment_text {
 .commentEditLink {
 	float: right;
 	list-style: none;
+}
+
+.tweetImageModal {
+	width: 500px;
+	margin: -300px 0 0 -250px !important;
+}
+
+.tweetImageModal .modal-body {
+	max-height: 100% !important;
+}
+
+.tweetModalImage {
+	width: 500px;
+}
+
+.tweetImageModalCloseButton {
+	position: absolute;
+	top: 0;
+	right: 0;
 }

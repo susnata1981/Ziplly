@@ -38,8 +38,8 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 	@Column(name="read_status")
 	private String readStatus;
 	
-	@Column(name="record_status")
-	private RecordStatus status;
+	@Column(name="record_status", length=50)
+	private String status;
 	
 	@Column(name="notification_type")
 	private String type;
@@ -111,11 +111,11 @@ public class AccountNotification extends AbstractTimestampAwareEntity {
 	}
 
 	public RecordStatus getStatus() {
-		return status;
+		return RecordStatus.valueOf(status);
 	}
 
 	public void setStatus(RecordStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	public Tweet getTweet() {

@@ -30,6 +30,7 @@ import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.ConversationView;
+import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.ILoginAccountView;
@@ -69,6 +70,7 @@ public class ZClientModule extends AbstractGinModule {
 		bind(IBusinessAccountSettingView.class).to(BusinessAccountSettingsView.class);
 		bind(ConversationView.class);
 		bind(PasswordRecoveryView.class);
+		bind(EmailVerificationView.class);
 		bind(AboutView.class);
 		
 		// places

@@ -36,10 +36,9 @@ public class GetNeighborhoodActionHandler extends
 		GetNeighborhoodResult result = new GetNeighborhoodResult();
 		List<NeighborhoodDTO> neighborhoods = null;
 		switch (action.getSearchType()) {
-
 		case ALL:
 			neighborhoods = neighborhoodDao.findAll();
-			for(NeighborhoodDTO n : neighborhoods) {
+			for (NeighborhoodDTO n : neighborhoods) {
 				result.getNeighbordhoods().add(n);
 			}
 			return result;
@@ -47,7 +46,7 @@ public class GetNeighborhoodActionHandler extends
 		default:
 			neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
 			result = new GetNeighborhoodResult();
-			for(NeighborhoodDTO n : neighborhoods) {
+			for (NeighborhoodDTO n : neighborhoods) {
 				result.getNeighbordhoods().add(n);
 			}
 			return result;

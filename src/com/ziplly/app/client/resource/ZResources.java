@@ -3,6 +3,7 @@ package com.ziplly.app.client.resource;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.DataResource.DoNotEmbed;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface ZResources extends ClientBundle {
@@ -16,6 +17,7 @@ public interface ZResources extends ClientBundle {
 		String zipllyLogo();
 	}
 	
+	@DoNotEmbed
 	@Source("no-photo.jpg")
 	ImageResource noImage();
 	
@@ -34,14 +36,18 @@ public interface ZResources extends ClientBundle {
 	@Source("ajax-loader-small.gif")
 	ImageResource loadingImageSmall();
 	
+	@DoNotEmbed
 	@Source("no-photo.jpg")
 	ImageResource noPhoto();
 	
 	@Source("magnolia.jpg")
 	ImageResource magnolia();
 	
-	@Source("green-background-optimized-cover.jpg")
+	@Source("blue-background.jpg")
 	ImageResource profileBackground();
+	
+	@Source("uploadicon.png")
+	ImageResource uploadIcon();
 	
 	@Source("zstyle.css")
 	Styles style();

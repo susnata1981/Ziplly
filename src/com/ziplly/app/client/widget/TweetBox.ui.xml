@@ -41,7 +41,8 @@
 		margin: 2px;
 		}
 		.tweetImagePreview img {
-		height: 100%;
+			max-height: 100%;
+			max-width: 100%;
 		}
 		.previewPanel {
 		width: 80%;
@@ -50,6 +51,7 @@
 		padding: 2px;
 		}
 		.previewHeading {
+		font-size: 15px;
 		color: #666;
 		margin: 0;
 		padding: 2px;
@@ -61,7 +63,12 @@
 		font-family: Georgia, serif;
 		}
 		.inlineLabel {
+			margin: 4px 0 0 2px;
+			font-size: 12px;
 			display: inline-block;
+		}
+		.listBox {
+			font-size: 12px;
 		}
 		.popoverLink {
 		display: inline;
@@ -89,13 +96,13 @@
 		<g:HTMLPanel ui:field="tweetActionPanel" addStyleNames="{style.tweetActionPanel}">
 			<b:Icon type="STAR" />&nbsp;
 			<g:Anchor ui:field="previewLinkAnchor">toggle preview</g:Anchor>&nbsp;
+			<b:Image ui:field="uploadAnchorIcon" />
 		</g:HTMLPanel>
 		<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
 			<b:Heading size="4" addStyleNames="{style.previewHeading}">Preview</b:Heading>
 			<g:HTMLPanel ui:field="previewTweetImagePanel"
 				addStyleNames="{style.tweetImagePreview}">
-				<br />
-				<b:Image ui:field="previewTweetImage" />
+				<b:Image ui:field="previewTweetImage"  />
 			</g:HTMLPanel>
 			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}"
 				ui:field="tweetTextPreview">
@@ -113,7 +120,7 @@
 				</b:Popover>
 			</g:HTMLPanel>
 			<b:Controls>
-				<b:ListBox ui:field="tweetCategoryList">
+				<b:ListBox ui:field="tweetCategoryList" addStyleNames="{style.listBox}">
 				</b:ListBox>
 			</b:Controls>
 			<g:HTMLPanel>
@@ -125,7 +132,7 @@
 				</b:Popover>
 			</g:HTMLPanel>
 			<b:Controls>
-				<b:ListBox ui:field="tweetTargetNeighborhoodList">
+				<b:ListBox ui:field="tweetTargetNeighborhoodList" addStyleNames="{style.listBox}">
 				</b:ListBox>
 			</b:Controls>
 			<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"

@@ -1,6 +1,7 @@
 package com.ziplly.app.server;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 
@@ -20,4 +21,7 @@ public interface EmailService {
 	void sendEmail(Builder builder) throws MessagingException;
 	
 	void sendTemplatedEmailFromSender(Builder builder);
+	
+	void sendTemplatedEmail(EmailEntity from, EmailEntity to, EmailTemplate template,
+			Map<String, String> data);
 }

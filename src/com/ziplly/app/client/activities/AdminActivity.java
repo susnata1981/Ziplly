@@ -231,34 +231,38 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 					}
 				});
 	}
-	
+
 	public void setImageUploadFormSubmitCompleteHandler() {
 		view.setUploadFormSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-				String imageUrl = event.getResults();
-				System.out.println("Received uploaded image url:"+imageUrl);
-				view.displayImagePreview(imageUrl);
-				view.resetNeighborhoodImageUploadForm();
-				setUploadFormActionUrl();
+				try {
+					String imageUrl = event.getResults();
+					System.out.println("Received uploaded image url:" + imageUrl);
+					view.displayImagePreview(imageUrl);
+				} finally {
+					view.resetNeighborhoodImageUploadForm();
+					setUploadFormActionUrl();
+				}
 			}
 		});
 	}
 
 	@Override
 	public void createNeighborhood(NeighborhoodDTO n) {
-		dispatcher.execute(new CreateNeighborhoodAction(n), new DispatcherCallbackAsync<CreateNeighborhoodResult>() {
+		dispatcher.execute(new CreateNeighborhoodAction(n),
+				new DispatcherCallbackAsync<CreateNeighborhoodResult>() {
 
-			@Override
-			public void onSuccess(CreateNeighborhoodResult result) {
-				view.displayMessage(StringConstants.SAVE_SUCCESSFULL, AlertType.SUCCESS);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
-			}
-		});
+					@Override
+					public void onSuccess(CreateNeighborhoodResult result) {
+						view.displayMessage(StringConstants.SAVE_SUCCESSFULL, AlertType.SUCCESS);
+					}
+
+					@Override
+					public void onFailure(Throwable th) {
+						view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
+					}
+				});
 	}
 
 	@Override
@@ -270,7 +274,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 			public void onSuccess(DeleteNeighborhoodResult result) {
 				view.displayMessage(StringConstants.NEIGHBORHOOD_DELETED, AlertType.SUCCESS);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable th) {
 				Window.alert(th.getMessage());
@@ -278,5 +282,5 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 			}
 		});
 	}
-	
+
 }

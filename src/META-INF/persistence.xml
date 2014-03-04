@@ -27,11 +27,13 @@
 		<class>com.ziplly.app.model.Hashtag</class>
 		<class>com.ziplly.app.model.Spam</class>
 		<class>com.ziplly.app.model.PendingInvitations</class>
+		<class>com.ziplly.app.model.Image</class>
+		
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 <!-- 			<property name="javax.persistence.jdbc.password" value="root" />
- -->			<property name="hibernate.show_sql" value="true" />
+ -->			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.hbm2ddl.auto" value="create-update" />
  	        <property name="hibernate.connection.CharSet" value="utf8" />
     	    <property name="hibernate.connection.characterEncoding" value="utf8" />

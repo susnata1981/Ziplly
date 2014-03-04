@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+	</ui:style>
+	<b:Container>
+		<b:Row>
+			<b:Column size="8">
+				<g:HTMLPanel>
+					<b:Alert ui:field="message" close="false"/>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:Row>
+		<b:Row>
+			<b:Column size="8">
+				<g:HTMLPanel ui:field="successMessagePanel">
+					Login
+					<g:Anchor ui:field="loginAnchor">here</g:Anchor>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="failureMessagePanel">
+					<b:ControlGroup ui:field="emailCg">
+						<b:Controls>
+							<b:Label>Email</b:Label>
+							<br />
+							<b:TextBox ui:field="emailTextBox" placeholder="email..." />
+							<b:HelpInline ui:field="emailError"></b:HelpInline>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:Button ui:field="sendBtn">Resend email</b:Button>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:Row>
+	</b:Container>
+</ui:UiBinder> 

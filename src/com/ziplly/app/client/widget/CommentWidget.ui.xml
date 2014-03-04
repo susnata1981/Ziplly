@@ -29,7 +29,7 @@
 					<g:Anchor ui:field="profileNameAnchor" addStyleNames="{style.block}" />
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="7">
+			<b:Column size="9">
 				<dt:MouseHoverPanel ui:field="contentPanel">
 					<span ui:field="content" addStyleNames="{style.content}" />
 				</dt:MouseHoverPanel>

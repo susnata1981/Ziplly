@@ -80,7 +80,7 @@ public class HashtagDAOImpl implements HashtagDAO {
 	}
 
 	@Override
-	public List<HashtagDTO> findTopHashtagForNeighborhood(Long neighborhoodId, int n) throws NotFoundException {
+	public List<HashtagDTO> findTopHashtagForNeighborhood(Long neighborhoodId, int maxResult) throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
@@ -90,14 +90,15 @@ public class HashtagDAOImpl implements HashtagDAO {
 					+ "(select t.tweet_id from tweet t, tweet_neighborhood tn where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhoodId) "
 					+ "group by id order by count(tweet_id))");
 					
-			query.setParameter("neighborhoodId", neighborhoodId);
+			query.setParameter("neighborhoodId", neighborhoodId)
+			    .setMaxResults(maxResult);
 			
 			@SuppressWarnings("unchecked")
 			List<Object> result = query.getResultList();
 			List<HashtagDTO> response = Lists.newArrayList();
 			for (Object o : result) {
 				Object[] r = (Object[]) o;
-				System.out.println(r[0] + ":" + r[1] + ":" + r[2]);
+//				System.out.println(r[0] + ":" + r[1] + ":" + r[2]);
 				HashtagDTO h = new HashtagDTO();
 				BigInteger hId = (BigInteger) r[0];
 				h.setId(hId.longValue());

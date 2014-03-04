@@ -66,4 +66,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
 
 	void updatePublicAccountDetails(GetAccountDetailsResult result);
+
+	void displayAccontUpdate();
 }

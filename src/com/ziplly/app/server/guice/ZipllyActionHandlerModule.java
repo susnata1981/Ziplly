@@ -2,7 +2,6 @@ package com.ziplly.app.server.guice;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
-import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.AddInvitationActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
@@ -40,6 +39,7 @@ import com.ziplly.app.server.handlers.LogoutActionHandler;
 import com.ziplly.app.server.handlers.PayActionHandler;
 import com.ziplly.app.server.handlers.RegisterAccountActionHandler;
 import com.ziplly.app.server.handlers.ReportSpamActionHandler;
+import com.ziplly.app.server.handlers.ResendEmailVerificationActionHandler;
 import com.ziplly.app.server.handlers.ResetPasswordActionHandler;
 import com.ziplly.app.server.handlers.SearchAccountActionHandler;
 import com.ziplly.app.server.handlers.SendEmailActionHandler;
@@ -53,6 +53,7 @@ import com.ziplly.app.server.handlers.UpdateNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.UpdatePasswordActionHandler;
 import com.ziplly.app.server.handlers.UpdateTweetActionHandler;
 import com.ziplly.app.server.handlers.ValidateLoginActionHandler;
+import com.ziplly.app.server.handlers.VerifyEmailActionHandler;
 import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
 import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
@@ -93,6 +94,7 @@ import com.ziplly.app.shared.MyAction;
 import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.ReportSpamAction;
+import com.ziplly.app.shared.ResendEmailVerificationAction;
 import com.ziplly.app.shared.ResetPasswordAction;
 import com.ziplly.app.shared.SearchAccountAction;
 import com.ziplly.app.shared.SendEmailAction;
@@ -106,6 +108,7 @@ import com.ziplly.app.shared.UpdateNeighborhoodAction;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.ValidateLoginAction;
+import com.ziplly.app.shared.VerifyEmailAction;
 import com.ziplly.app.shared.VerifyPasswordRecoveryHashAction;
 import com.ziplly.app.shared.ViewConversationAction;
 import com.ziplly.app.shared.ViewNotificationAction;
@@ -120,9 +123,12 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetFacebookRedirectUriAction.class, GetFacebookRedirectUriActionHandler.class);
 		bindHandler(GetAccountByIdAction.class, GetAccountByIdActionHandler.class);
 		
+		// Account registration
 		bindHandler(RegisterAccountAction.class, RegisterAccountActionHandler.class);
 		bindHandler(CreateRegistrationAction.class, CreateRegistrationActionHandler.class);
 		bindHandler(UpdatePasswordAction.class, UpdatePasswordActionHandler.class);
+		bindHandler(VerifyEmailAction.class, VerifyEmailActionHandler.class);
+		bindHandler(ResendEmailVerificationAction.class, ResendEmailVerificationActionHandler.class);
 		
 		// Neighborhood
 		bindHandler(GetNeighborhoodAction.class, GetNeighborhoodActionHandler.class);

@@ -5,7 +5,9 @@
 
 	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
 		@external tiny-image-div, tiny-image;
-
+		.messageFiltersPanel {
+			margin-top: 30px;
+		}
 		.leftnavHeaderSpan {
 		margin: 0;
 		padding: 2px;
@@ -17,9 +19,9 @@
 		}
 		.conversation
 		{
-		width: 90%;
+		width: 98%;
 		padding: 8px;
-		margin: 5%;
+		margin: 6px;
 		border-bottom: 1px solid #ddd;
 		overflow: auto;
 		}
@@ -44,7 +46,7 @@
 		width:
 		52%;
 		padding: 4px;
-		margin-right: 4%;
+		margin-right: 4px;
 		}
 		.subjectHeader {
 		padding: 4px;
@@ -67,8 +69,7 @@
 		}
 		.replyPanel TextArea {
 		padding: 4px;
-		margin: 2%
-		10%;
+		margin: 2% 10%;
 		width: 90%;
 		height:
 		50px;
@@ -106,7 +107,7 @@
 		}
 		.conversationPanel {
 		float: left;
-		width: 90%;
+		width: 98%;
 		border:
 		1px solid #ddd;
 		}
@@ -154,7 +155,7 @@
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="2" addStyleNames="{style.transparentColumn}">
+			<b:Column size="3" addStyleNames="{style.transparentColumn} {style.messageFiltersPanel}">
 				<g:HTMLPanel>
 					<dl>
 						<dt>
@@ -197,7 +198,7 @@
 					</dl>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="10">
+			<b:Column size="9">
 			    <b:Row>
 					<b:Column offset="1" size="8">
 					    <b:Alert ui:field="message" close="false" addStyleNames="{style.message}"/>

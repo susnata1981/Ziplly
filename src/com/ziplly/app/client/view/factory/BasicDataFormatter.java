@@ -53,12 +53,12 @@ public class BasicDataFormatter implements Formatter<Object> {
 			}
 		case NEIGHBORHOOD_IMAGE:
 			NeighborhoodDTO neighborhood = (NeighborhoodDTO) value;
-			if (neighborhood.getImageUrl() != null) {
-				return neighborhood.getImageUrl() + "=s1600";
-			} else if (neighborhood.getParentNeighborhood() != null) {
-				imgUrl = (neighborhood.getParentNeighborhood().getImageUrl() != null) ? neighborhood.getParentNeighborhood().getImageUrl()
-						: "";
-				return imgUrl + "=s1600";
+			NeighborhoodDTO nn = neighborhood.getImages().size() > 0 ? neighborhood : neighborhood.getParentNeighborhood();
+			if (nn.getImages().size() > 0) {
+				String v = nn.getImages().get(0).getUrl();
+				return nn.getImages().get(0).getUrl() + "=s1600";
+			} else {
+				return "";
 			}
 		default:
 			throw new IllegalArgumentException("Invalid value type to render");

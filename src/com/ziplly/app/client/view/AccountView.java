@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.AlertBlock;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
@@ -14,7 +15,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -34,6 +39,7 @@ import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -53,23 +59,26 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class AccountView extends AbstractView implements IAccountView<PersonalAccountDTO> {
 
-	private static AccountViewUiBinder uiBinder = GWT
-			.create(AccountViewUiBinder.class);
+	private static AccountViewUiBinder uiBinder = GWT.create(AccountViewUiBinder.class);
 
 	interface AccountViewUiBinder extends UiBinder<Widget, AccountView> {
 	}
 
 	@UiField
 	FluidRow profileSectionRow;
-	
+
 	// Basic account info
 	@UiField
 	Alert message;
+	
+	@UiField
+	HTMLPanel profileImagePanel;
 	@UiField
 	Image profileImage;
 	@UiField
@@ -88,7 +97,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	Anchor emailLink;
 	@UiField
 	Button inviteBtn;
-	
+
 	@UiField
 	SpanElement occupationSpan;
 	@UiField
@@ -101,9 +110,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	ProfileStatWidget commentCountWidget;
 	@UiField
 	ProfileStatWidget likeCountWidget;
-	
+
 	ITweetView<TweetPresenter> tview = new TweetView();
-	
+
 	/*
 	 * Tweet section
 	 */
@@ -116,23 +125,27 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField
 	DivElement locationDiv;
 
+	// Updates section
+	@UiField
+	AlertBlock updateAlertBlock;
+
 	EmailWidget emailWidget;
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
-	
+
 	private String tweetWidgetWidth = "90%";
 	private String tweetBoxWidth = "92%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
-	private BasicDataFormatter basicDataFormatter = 
-			(BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
-	private AccountFormatter accountFormatter = 
-			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
-	
+	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+
 	@Inject
 	public AccountView(EventBus eventBus) {
 		super(eventBus);
-		
+
 		tweetBox = new TweetBox();
 		emailWidget = new EmailWidget();
 		tweetBox.setWidth(tweetBoxWidth);
@@ -143,21 +156,28 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		tweetSection.add(tview);
 		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app.model.AccountDTO)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app
+	 * .model.AccountDTO)
 	 */
 	@Override
 	public void displayProfile(PersonalAccountDTO account) {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
+		
 		message.setVisible(false);
 		this.account = account;
-		
+
 		// image section
 		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
+
+		adjustProfileImagePanel();
 		
 		name.setText(account.getDisplayName());
 
@@ -167,33 +187,46 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		emailLink.setText(account.getEmail());
 		gender.setInnerHTML(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
 		badgePanel.getElement().setInnerHTML(accountFormatter.format(account, ValueType.BADGE));
-		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(), ValueType.DATE_VALUE_SHORT));
+		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(),
+				ValueType.DATE_VALUE_SHORT));
 
 		// occupation panel
 		occupationSpan.setInnerHTML(account.getOccupation());
-		
+
 		// interest section
 		populateInterest();
-		
+
 		// display tweets
 		StyleHelper.show(tweetBoxDiv.getElement(), true);
 		StyleHelper.show(profileSectionRow.getElement(), true);
 	}
 
+	private void adjustProfileImagePanel() {
+		profileImage.addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				String height = profileImage.getHeight() + "px";
+				profileImagePanel.setHeight(height);
+			}
+			
+		});
+	}
+
 	@Override
 	public void displayLocationInMap(GetLatLngResult input) {
 		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());
-	    MapOptions myOptions = MapOptions.create();
-	    myOptions.setZoom(10.0);
-	    myOptions.setCenter(myLatLng);
-	    myOptions.setMapMaker(true);
-	    myOptions.setMapTypeId(MapTypeId.ROADMAP);
+		MapOptions myOptions = MapOptions.create();
+		myOptions.setZoom(10.0);
+		myOptions.setCenter(myLatLng);
+		myOptions.setMapMaker(true);
+		myOptions.setMapTypeId(MapTypeId.ROADMAP);
 
-	    GoogleMap map = GoogleMap.create(locationDiv, myOptions);
+		GoogleMap map = GoogleMap.create(locationDiv, myOptions);
 		MarkerOptions markerOpts = MarkerOptions.create();
-        markerOpts.setMap(map);
-        markerOpts.setPosition(myLatLng);
-        Marker.create(markerOpts);
+		markerOpts.setMap(map);
+		markerOpts.setPosition(myLatLng);
+		Marker.create(markerOpts);
 	}
 
 	private void populateInterest() {
@@ -204,7 +237,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		int size = interests.size();
 		if (size > 0) {
 			for (InterestDTO interest : interests) {
-				sb.append(interest.getName()+"<br>");
+				sb.append(interest.getName() + "<br>");
 			}
 			interestPanel.add(new HTMLPanel("<span>" + sb.toString() + "</span>"));
 		}
@@ -219,9 +252,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 			eventBus.fireEvent(new LoadingEventEnd());
 			return;
 		}
-		
+
 		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
-			
+
 			@Override
 			public void hasFinished(double y) {
 				if (y == 100) {
@@ -261,7 +294,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		message.setType(type);
 		message.setVisible(true);
 	}
-	
+
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -294,7 +327,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 			likeCountWidget.setValue(new Integer(result.getTotalLikes()).toString());
 		}
 	}
-	
+
 	@Override
 	public void updateComment(CommentDTO comment) {
 		tview.updateComment(comment);
@@ -319,7 +352,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	public void onSendMessageWidgetClick(ClickEvent event) {
 		openMessageWidget();
 	}
-	
+
 	@Override
 	public void openMessageWidget() {
 		smw = new SendMessageWidget(account);
@@ -331,9 +364,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	public void closeMessageWidget() {
 		smw.hide();
 	}
-	
+
 	@UiHandler("inviteBtn")
-	public void invite(ClickEvent event){
+	public void invite(ClickEvent event) {
 		emailWidget.show();
 	}
 
@@ -356,7 +389,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
 	}
-	
+
 	@Override
 	public void displayTweetViewMessage(String msg, AlertType type) {
 		tview.displayMessage(msg, type);
@@ -365,7 +398,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void displayNotificationWidget(boolean show) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -376,5 +409,37 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
+	}
+
+	@Override
+	public void displayAccontUpdate() {
+		if (isAccountNotComplete()) {
+			addAccountProfileNotCompleteMessage();
+		} 
+		else {
+			String uploadImageHtml = "There are no updates at this moment";
+			updateAlertBlock.setHTML(uploadImageHtml);
+		}
+	}
+
+	private boolean isAccountNotComplete() {
+		return FieldVerifier.isEmpty(account.getIntroduction())
+				|| account.getInterests().size() == 0 
+				|| account.getImages().size() == 0;
+	}
+
+	private void addAccountProfileNotCompleteMessage() {
+		updateAlertBlock.setHTML(StringConstants.ACCOUNT_NOT_COMPLETE);
+		Anchor accountSettingsAnchor = new Anchor();
+		accountSettingsAnchor.setText("settings");
+		accountSettingsAnchor.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new PersonalAccountSettingsPlace());
+			}
+		});
+
+		updateAlertBlock.add(accountSettingsAnchor);
 	}
 }

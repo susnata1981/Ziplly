@@ -12,6 +12,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -439,9 +440,12 @@ public class HomeView extends AbstractView implements IHomeView {
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 		neighborhoodsPanel.clear();
+		int margin = 0;
 		for (final NeighborhoodDTO neighborhood : targetNeighborhoodList) {
 			final Anchor anchor = new Anchor(neighborhood.getName());
 			anchor.setStyleName(style.tweetFilterLink());
+			anchor.getElement().getStyle().setMarginLeft(margin, Unit.PX);
+			margin += 20;
 			anchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {

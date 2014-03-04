@@ -6,7 +6,8 @@ public enum ZipllyIcon {
 	EDIT("fa-pencil"),
 	COMMENTS("fa-comments"),
 	SPINNER("fa fa-repeat"),
-	EXTERNAL_LINK("fa-external-link");
+	EXTERNAL_LINK("fa-external-link"),
+	INFO("fa fa-info");
 	
 	private String name;
 

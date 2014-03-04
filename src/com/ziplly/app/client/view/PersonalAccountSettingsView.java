@@ -26,15 +26,19 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -43,8 +47,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity.IPersonalAccountSettingsView;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
-import com.ziplly.app.client.view.factory.AccountNotificationSettingsFormatter;
 import com.ziplly.app.client.view.factory.PrivacySettingsFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
@@ -53,6 +57,7 @@ import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -91,6 +96,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	Element email;
 
 	@UiField
+	Element gender;
+	
+	@UiField
 	ControlGroup introductionCg;
 	@UiField
 	TextArea introduction;
@@ -103,9 +111,18 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@UiField
 	FileUpload uploadField;
 	@UiField
+	Image uploadAnchorIcon;
+	@UiField
+	HTMLPanel profileImagePanel;
+	@UiField
 	Image profileImagePreview;
+	@UiField
+	Image loadingImage;
+	
+	// State variables - create abstraction.
 	private boolean imageUploaded;
-
+	private ImageDTO currentUploadedImage;
+	
 	//
 	// Account Notification settings
 	//
@@ -113,9 +130,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	HTMLPanel notificationPanel;
 	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap 
 	  = new HashMap<AccountNotificationSettingsDTO, ListBox>();
-	private AccountNotificationSettingsFormatter accountNotificationFormatter = 
-			(AccountNotificationSettingsFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION_SETTINGS);
-
+	
 	//
 	// Privacy settings
 	//
@@ -150,8 +165,6 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	Tab locationTab;
 	@UiField
 	SpanElement neighborhoodSpan;
-	@UiField
-	TextBox zip;
 
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -206,10 +219,15 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	public PersonalAccountSettingsView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
-
+		setBackgroundImage(ZResources.IMPL.profileBackground().getSafeUri().asString());
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
+		StyleHelper.show(loadingImage.getElement(), false);
 		message.setVisible(false);
+		
+		// Setup upload anchor
+		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
+		StyleHelper.show(uploadField.getElement(), false);
 		setupHandlers();
 	}
 
@@ -230,6 +248,15 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 					showButtonsPanel(true);
 				}
 			}
+		});
+		
+		uploadAnchorIcon.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				uploadField.getElement().<InputElement>cast().click();
+			}
+			
 		});
 		
 		uploadField.addChangeHandler(new ChangeHandler() {
@@ -257,20 +284,19 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		this.account = account;
 		
 		// basic info
-		displayImagePreview(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+		setProfileImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		
 		firstname.setInnerText(account.getFirstName());
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
+		gender.setInnerText(account.getGender().name().toLowerCase());
 		introduction.setText(account.getIntroduction());
 
 		// occupation
 		occupation.setText(account.getOccupation());
 
 		// location
-//		neighborhoodSpan.setInnerHTML(account.getNeighborhood().getName());
-//		zip.setReadOnly(true);
-//		zip.setText(Integer.toString(account.getZip()));
+		neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getLocations().get(0).getNeighborhood(), ValueType.NEIGHBORHOOD));
 
 		// privacy settings
 		populatePrivacySettings(account);
@@ -370,6 +396,11 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	// TODO
 	boolean validate() {
+		// No need to validate if it's empty
+		if (introduction.getText().length() == 0) {
+			return true;
+		}
+		
 		ValidationResult result = FieldVerifier.validateString(introduction.getText(), MAX_INTRODUCTION_LENGTH);
 		if (!result.isValid()) {
 			introductionCg.setType(ControlGroupType.ERROR);
@@ -407,18 +438,16 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			return;
 		}
 
+		// Image
 		if (imageUploaded) {
-			account.setImageUrl(profileImagePreview.getUrl());
+			// TODO: change it to take multiple images.
+			account.getImages().add(currentUploadedImage);
 		}
 
 		// TODO validation
 		if (!introduction.getText().equals("")) {
 			account.setIntroduction(introduction.getText());
 		}
-
-//		if (!zip.getText().equals("")) {
-//			account.setZip(Integer.parseInt(zip.getText()));
-//		}
 
 		if (!occupation.getText().equals("")) {
 			account.setOccupation(occupation.getText());
@@ -454,15 +483,48 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 		// call presenter
 		presenter.save(account);
+		showSaveButton(false);
 	}
 
 	@Override
 	public void displayImagePreview(String imageUrl) {
 		if (imageUrl != null) {
-			profileImagePreview.setUrl(imageUrl);
+			currentUploadedImage = ImageUtil.parseImageUrl(imageUrl);
+			setProfileImage(currentUploadedImage.getUrl());
+			StyleHelper.show(loadingImage.getElement(), false);
 		}
 	}
 
+	/** 
+	 * Sets the profile image
+	 */
+	private void setProfileImage(final String imageUrl) {
+		if (imageUrl != null) {
+			resetProfileImagePanel();
+			profileImagePreview.setUrl(imageUrl);
+			adjustProfileImagePanel();
+		}
+	}
+	
+	/**
+	 * Adjusts the height of profile image panel.
+	 */
+	private void adjustProfileImagePanel() {
+		profileImagePreview.addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				String height = profileImagePreview.getHeight() + "px";
+				profileImagePanel.setHeight(height);
+			}
+			
+		});
+	}
+	
+	private void resetProfileImagePanel() {
+		profileImagePanel.setHeight("250px");
+	}
+	
 	@Override
 	public void resetUploadForm() {
 		uploadForm.setAction("");
@@ -471,6 +533,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@Override
 	public void onUpload() {
 		uploadForm.submit();
+		StyleHelper.show(loadingImage.getElement(), true);
+		loadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri().asString());
 		imageUploaded = true;
 	}
 
@@ -554,11 +618,6 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		presenter.cancel();
 	}
 
-	@Override
-	public void enableSaveButton() {
-		saveBtn.setEnabled(true);
-	}
-	
 	@UiHandler("cancelBtn")
 	void cancel(ClickEvent event) {
 		onCancel();
@@ -581,4 +640,10 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			interestToCheckboxMap.get(interest).setValue(true);
 		}
 	}
+
+	@Override
+	public void showSaveButton(boolean show) {
+		saveBtn.setEnabled(show);
+	}
+
 }

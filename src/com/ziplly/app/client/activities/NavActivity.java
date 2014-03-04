@@ -22,10 +22,12 @@ import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountNotificationEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -65,6 +67,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		void setUnreadMessageCount(int count, boolean show);
 
 		void displayLocationsDropdown(List<LocationDTO> locations);
+
+		void displayLocationDropdown(boolean show);
 	}
 
 	@Inject
@@ -87,6 +91,15 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			}
 		});
 
+		eventBus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
+
+			@Override
+			public void onEvent(LogoutEvent event) {
+				view.clear();
+			}
+			
+		});
+		
 		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
 
 			@Override
@@ -156,8 +169,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			@Override
 			public void onSuccess(LogoutResult result) {
 				ctx.setAccount(null);
-				// eventBus.fireEvent(new LogoutEvent());
-				view.showAccountLinks(false);
+				eventBus.fireEvent(new LogoutEvent());
 				placeController.goTo(new LoginPlace());
 			}
 

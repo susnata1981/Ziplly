@@ -11,6 +11,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
@@ -81,6 +82,6 @@ public class SignupActivity extends AbstractSignupActivity {
 	@Override
 	public void onStop() {
 		view.clear();
-		clearBackgroundImage();
+		StyleHelper.clearBackground();
 	}
 }

@@ -11,13 +11,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
 		@NamedQuery(name = "findNeighborhoodById", query = "from Neighborhood n where n.neighborhoodId = :neighborhoodId"),
@@ -42,6 +47,14 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	private String name;
 	private String city;
 	private String state;
+	
+	@OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
+	@JoinTable(name = "neighborhood_images", 
+		joinColumns = { @JoinColumn(name="neighborhood_id") },
+		inverseJoinColumns = { @JoinColumn(name="image_id") })
+	private Set<Image> images = new HashSet<Image>();
+	
 	@Column(name="image_url")
 	private String imageUrl;
 	
@@ -68,6 +81,10 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		}
 		
 		this.setImageUrl(neighborhood.getImageUrl());
+		
+		for(ImageDTO image : neighborhood.getImages()) {
+			this.addImage(new Image(image));
+		}
 	}
 
 	public Long getNeighborhoodId() {
@@ -110,6 +127,34 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.postalCode = postalCode;
 	}
 
+	public Neighborhood getParentNeighborhood() {
+		return parentNeighborhood;
+	}
+
+	public void setParentNeighborhood(Neighborhood parentNeighborhood) {
+		this.parentNeighborhood = parentNeighborhood;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public Set<Image> getImages() {
+		return images;
+	}
+
+	public void addImage(Image image) {
+		images.add(image);
+	}
+	
+	public void setImages(Set<Image> images) {
+		this.images = images;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
@@ -128,21 +173,5 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Override
 	public int hashCode() {
 		return neighborhoodId.hashCode();
-	}
-
-	public Neighborhood getParentNeighborhood() {
-		return parentNeighborhood;
-	}
-
-	public void setParentNeighborhood(Neighborhood parentNeighborhood) {
-		this.parentNeighborhood = parentNeighborhood;
-	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
 	}
 }

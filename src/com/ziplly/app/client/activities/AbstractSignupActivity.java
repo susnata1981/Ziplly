@@ -27,14 +27,14 @@ import com.ziplly.app.shared.NeighborhoodSearchActionType;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 
-public abstract class AbstractSignupActivity extends AbstractActivity implements SignupActivityPresenter {
+public abstract class AbstractSignupActivity extends AbstractActivity implements
+		SignupActivityPresenter {
 	ISignupView<SignupActivityPresenter> view;
 	Logger logger = Logger.getLogger(AbstractSignupActivity.class.getName());
 	RegisterAccountHandler registerAccountHandler = new RegisterAccountHandler();
-	
-	public AbstractSignupActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx,
+
+	public AbstractSignupActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
+			PlaceController placeController, ApplicationContext ctx,
 			ISignupView<SignupActivityPresenter> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
@@ -44,8 +44,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	@Override
 	public void register(AccountDTO account) {
 		showLodingIcon();
-		dispatcher.execute(new RegisterAccountAction(account),
-				registerAccountHandler);
+		dispatcher.execute(new RegisterAccountAction(account), registerAccountHandler);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		action.setSearchType(NeighborhoodSearchActionType.BY_ZIP);
 		dispatcher.execute(action, new NeighborhoodHandler());
 	}
-	
+
 	@Override
 	public void addToInviteList(String email, int postalCode) {
 		AddInvitationAction action = new AddInvitationAction(email, postalCode);
@@ -67,25 +66,26 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			}
 		});
 	}
-	
+
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {
-		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(), code);
+		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(),
+				code);
 		dispatcher.execute(action, new CheckEmailRegistrationHandler(account));
 	}
-	
+
 	@Override
 	public void register(AccountDTO account, String code) {
-		
+
 		if (code == null) {
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 			return;
 		}
-		
-		if (account != null && code != null ) {
+
+		if (account != null && code != null) {
 			try {
 				long c = Long.parseLong(code);
 				verifyInvitationForEmail(account, c);
-			} catch(NumberFormatException nf) {
+			} catch (NumberFormatException nf) {
 				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				return;
 			}
@@ -99,25 +99,35 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	 */
 	@Override
 	public void deleteImage(String url) {
-		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
-			@Override
-			public void onSuccess(DeleteImageResult result) {
-				// Nothing to do.
-			}
-		});
+		dispatcher.execute(new DeleteImageAction(url),
+				new DispatcherCallbackAsync<DeleteImageResult>() {
+					@Override
+					public void onSuccess(DeleteImageResult result) {
+						// Nothing to do.
+					}
+				});
 	}
-	
+
 	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
-		
+
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
-			ctx.setAccount(result.getAccount());
-			eventBus.fireEvent(new LoginEvent(result.getAccount()));
-			view.clear();
-			forward(result.getAccount());
+			String property = System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
+					"true");
+			boolean isEmailVerificationRequired = Boolean.valueOf(property);
+
+			if (isEmailVerificationRequired) {
+				view.clear();
+				view.displayMessage(StringConstants.EMAIL_VERIFICATION_SENT, AlertType.SUCCESS);
+			} else {
+				ctx.setAccount(result.getAccount());
+				eventBus.fireEvent(new LoginEvent(result.getAccount()));
+				view.clear();
+				forward(result.getAccount());
+			}
 			hideLoadingIcon();
 		}
-		
+
 		public void onFailure(Throwable th) {
 			hideLoadingIcon();
 			if (th instanceof AccountExistsException) {
@@ -125,17 +135,17 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 				return;
 			}
 			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			
 		}
 	}
-	
-	public class CheckEmailRegistrationHandler extends DispatcherCallbackAsync<CheckEmailRegistrationResult> {
+
+	public class CheckEmailRegistrationHandler extends
+			DispatcherCallbackAsync<CheckEmailRegistrationResult> {
 		private AccountDTO account;
 
 		public CheckEmailRegistrationHandler(AccountDTO account) {
 			this.account = account;
 		}
-		
+
 		@Override
 		public void onSuccess(CheckEmailRegistrationResult result) {
 			if (account instanceof BusinessAccountDTO) {
@@ -143,7 +153,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			}
 			register(account);
 		}
-		
+
 		@Override
 		public void onFailure(Throwable th) {
 			if (th instanceof AccessError) {
@@ -151,7 +161,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			}
 		}
 	}
-	
+
 	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodResult result) {

@@ -113,10 +113,10 @@
 							<i class="fa fa-tags">&nbsp;
 							    <span class="{style.fontBold}">Neighborhoods</span>
 							</i>
-							<b:Popover text="You can broadcast to your neighborhood or to the greater community for more visibility"
+						<!-- 	<b:Popover text="You can broadcast to your neighborhood or to the greater community for more visibility"
 								heading="Learn more">
 								<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-							</b:Popover>
+							</b:Popover> -->
 						</span>
 							<g:HTMLPanel ui:field="neighborhoodsPanel"></g:HTMLPanel>
 						</g:HTMLPanel>

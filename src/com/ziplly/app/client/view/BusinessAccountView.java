@@ -3,6 +3,7 @@ package com.ziplly.app.client.view;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.AlertBlock;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidContainer;
@@ -42,6 +43,7 @@ import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.CssStyleHelper;
@@ -60,6 +62,7 @@ import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
@@ -76,7 +79,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
-	private static final String TWEET_WIDGET_HEIGHT = "900px";
+	private static final String TWEET_WIDGET_HEIGHT = "1000px";
 
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 			.create(BusinessAccountViewUiBinder.class);
@@ -177,13 +180,15 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	SendMessageWidget smw;
 	NotificationWidget notificationWidget;
 
-	/*
-	 * Tweet section
-	 */
+	// Tweet section
 	@UiField
 	HTMLPanel tweetSection;
 	@UiField
 	HTMLPanel tweetBoxDiv;
+
+	// Update section
+	@UiField
+	AlertBlock updateAlertBlock;
 
 	@UiField
 	Column messageSection;
@@ -242,7 +247,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 			neighborhoodName.setInnerHTML(basicDataFormatter.format(account.getCurrentLocation()
 					.getNeighborhood(), ValueType.NEIGHBORHOOD));
 		} else {
-			neighborhoodName.setInnerHTML(basicDataFormatter.format(getPrimaryLocation(account), ValueType.NEIGHBORHOOD));
+			neighborhoodName.setInnerHTML(basicDataFormatter.format(getPrimaryLocation(account),
+					ValueType.NEIGHBORHOOD));
 		}
 		// description.setText(account.getDe);
 
@@ -296,7 +302,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 
 	private NeighborhoodDTO getPrimaryLocation(BusinessAccountDTO account) {
-		for(LocationDTO location : account.getLocations()) {
+		for (LocationDTO location : account.getLocations()) {
 			if (location.getType() == LocationType.PRIMARY) {
 				return location.getNeighborhood();
 			}
@@ -528,4 +534,35 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 	}
+
+	@Override
+	public void displayAccontUpdate() {
+		if (isAccountNotComplete()) {
+			addAccountProfileNotCompleteMessage();
+		} else {
+			String uploadImageHtml = "There are no updates at this moment";
+			updateAlertBlock.setHTML(uploadImageHtml);
+		}
+	}
+
+	private boolean isAccountNotComplete() {
+		return FieldVerifier.isEmpty(account.getWebsite()) 
+				|| account.getImages().size() == 0;
+	}
+
+	private void addAccountProfileNotCompleteMessage() {
+		updateAlertBlock.setHTML(StringConstants.ACCOUNT_NOT_COMPLETE_FOR_BUSINESS);
+		Anchor accountSettingsAnchor = new Anchor();
+		accountSettingsAnchor.setText("settings");
+		accountSettingsAnchor.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.goTo(new PersonalAccountSettingsPlace());
+			}
+		});
+
+		updateAlertBlock.add(accountSettingsAnchor);
+	}
+
 }

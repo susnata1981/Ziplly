@@ -24,14 +24,10 @@ public class AccountDTO implements Serializable {
 	private Date timeCreated;
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	private Long uid;
+	private List<ImageDTO> images = new ArrayList<ImageDTO>();
 	private List<AccountNotificationDTO> accountNotifications = new ArrayList<AccountNotificationDTO>();
 	private List<AccountNotificationSettingsDTO> notificationSettings = new ArrayList<AccountNotificationSettingsDTO>();
 	private List<PrivacySettingsDTO> privacySettings = new ArrayList<PrivacySettingsDTO>();
-
-//	private int zip;
-//    private NeighborhoodDTO neighborhood;
-//	private String city;
-//	private String state;
 	
 	public AccountDTO() {
 	}
@@ -218,37 +214,16 @@ public class AccountDTO implements Serializable {
 	public void setCurrentLocation(LocationDTO currentLocation) {
 		this.currentLocation = currentLocation;
 	}
-	
-//	public int getZip() {
-//		return zip;
-//	}
-//
-//	public void setZip(int zip) {
-//		this.zip = zip;
-//	}
-//
-//	public NeighborhoodDTO getNeighborhood() {
-//		return neighborhood;
-//	}
-//
-//	public void setNeighborhood(NeighborhoodDTO neighborhood) {
-//		this.neighborhood = neighborhood;
-//	}
-//
-//	public String getCity() {
-//		return city;
-//	}
-//
-//	public void setCity(String city) {
-//		this.city = city;
-//	}
-//
-//	public String getState() {
-//		return state;
-//	}
-//
-//	public void setState(String state) {
-//		this.state = state;
-//	}
 
+	public List<ImageDTO> getImages() {
+		return images;
+	}
+
+	public void setImages(List<ImageDTO> images) {
+		this.images = images;
+	}
+
+	public void addImage(ImageDTO image) {
+		this.images.add(image);
+	}
 }

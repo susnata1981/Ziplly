@@ -383,6 +383,8 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		street1Error.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
+		phoneCg.setType(ControlGroupType.NONE);
+		phoneError.setVisible(false);
 		neighborhoodCg.setType(ControlGroupType.NONE);
 		neighborhoodError.setVisible(false);
 		passwordCg.setType(ControlGroupType.NONE);

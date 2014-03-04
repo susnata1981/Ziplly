@@ -171,9 +171,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
-//		if (accountNotComplete()) {
-//			view.displayNotificationWidget(true);
-//		}
+		view.displayAccontUpdate();
 	}
 
 	private boolean accountNotComplete() {

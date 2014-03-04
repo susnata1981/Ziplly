@@ -54,7 +54,7 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 		ar.setBusinessType(action.getBusinessType());
 		ar.setCode(code);
 		ar.setStatus(AccountRegistrationStatus.ACTIVE);
-		registrationDao.create(ar);
+		registrationDao.save(ar);
 		try {
 			String registrationLink = URLEncoder.encode("code="+code+"email="+action.getEmail(),"utf-8");
 			// TODO send email

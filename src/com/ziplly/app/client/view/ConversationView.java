@@ -49,6 +49,7 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.TableResources;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -195,6 +196,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		conversationPanel.add(conversationTable);
 		state = new ConversationViewState(PAGE_SIZE);
 		StyleHelper.show(message.getElement(), false);
+		setBackgroundImage(ZResources.IMPL.profileBackground().getSafeUri().asString());
 	}
 
 	private void clearConversationTable() {
@@ -380,7 +382,6 @@ public class ConversationView extends AbstractView implements IConversationView 
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
-		StyleHelper.setBackgroundImage(accountFormatter.format(presenter.getAccount(), ValueType.PROFILE_IMAGE_URL));
 	}
 
 	@Override
@@ -465,11 +466,10 @@ public class ConversationView extends AbstractView implements IConversationView 
 		FluidContainer container = new FluidContainer();
 		Row row = new Row();
 		com.github.gwtbootstrap.client.ui.Column imageCol = new com.github.gwtbootstrap.client.ui.Column(3);
-		imageCol.setOffset(1);
 		imageCol.add(getImagePanel(msg.getSender(), ValueType.MEDIUM_IMAGE_VALUE));
 		row.add(imageCol);
 		
-		com.github.gwtbootstrap.client.ui.Column messageCol = new com.github.gwtbootstrap.client.ui.Column(8);
+		com.github.gwtbootstrap.client.ui.Column messageCol = new com.github.gwtbootstrap.client.ui.Column(9);
 		HTMLPanel messagePanel = new HTMLPanel("<span class='medium_text'>" + msg.getMessage() + "</span>");
 		messageCol.add(messagePanel);
 		row.add(messageCol);

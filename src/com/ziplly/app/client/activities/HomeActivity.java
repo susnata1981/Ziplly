@@ -84,6 +84,7 @@ import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
+	private static final int MAX_HASHTAG_COUNT = 5;
 	private IHomeView homeView;
 	private AsyncProvider<HomeView> homeViewProvider;
 	private HomeViewState state;
@@ -184,7 +185,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 			getTweetData(searchCriteria);
 			return;
 		}
-		
+
 		placeController.goTo(new SignupPlace());
 	}
 
@@ -258,6 +259,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	private void getHashtagList() {
 		GetHashtagAction action = new GetHashtagAction(state.getCurrentNeighborhood()
 				.getNeighborhoodId());
+		action.setSize(MAX_HASHTAG_COUNT);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>() {
 			@Override
 			public void onSuccess(GetHashtagResult result) {
@@ -295,7 +297,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	void displayHomeView() {
 		hideLoadingIcon();
 		panel.setWidget(homeView);
-		homeView.displayNeighborhoodImage(ctx.getCurrentNeighborhood());	
+		homeView.displayNeighborhoodImage(ctx.getCurrentNeighborhood());
 	}
 
 	@Override
@@ -419,10 +421,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		homeView.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-				String imageUrl = event.getResults();
-				homeView.displayProfileImagePreview(imageUrl);
-				homeView.resetImageUploadUrl();
-				setImageUploadUrl();
+				try {
+					String imageUrl = event.getResults();
+					homeView.displayProfileImagePreview(imageUrl);
+				} finally {
+					homeView.resetImageUploadUrl();
+					setImageUploadUrl();
+				}
 			}
 		});
 	}
@@ -721,7 +726,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		state.setFetchingData(true);
 		dispatcher.execute(action, communityDataHandler);
 	}
-	
+
 	private void startViewBinder() {
 		if (binder != null) {
 			binder.stop();

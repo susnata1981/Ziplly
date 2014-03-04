@@ -41,6 +41,12 @@
 												<span ui:field="email" />
 												</div>
 											</div>
+											<div class="{style.non_editable}">
+												<span class="{style.label}">Gender</span>
+												<div>
+													<span ui:field="gender" />
+												</div>
+											</div>
 										</div>
 										<div class="{style.profileInfoBlock}">
 											<b:ControlGroup ui:field="introductionCg">
@@ -57,12 +63,15 @@
 							</b:Column>
 							<b:Column size="4">
 								<g:HTMLPanel addStyleNames="{style.uploadProfileImagePanel}">
-									<g:HTMLPanel addStyleNames="{style.profileImagePanel}">
+									<g:HTMLPanel addStyleNames="{style.profileImagePanel}" ui:field="profileImagePanel">
 										<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImage}" />
 									</g:HTMLPanel>
 									<g:FormPanel ui:field="uploadForm">
 										<g:HTMLPanel>
 											<g:FileUpload ui:field="uploadField" name="image" />
+											<b:Label>Upload Image</b:Label>
+											<b:Image ui:field="uploadAnchorIcon" />
+											<b:Image ui:field="loadingImage" />
 										</g:HTMLPanel>
 									</g:FormPanel>
 								</g:HTMLPanel>
@@ -125,14 +134,14 @@
 									</b:Controls>
 								</b:ControlGroup>
 							</g:HTMLPanel>
-							<g:HTMLPanel>
+							<!-- <g:HTMLPanel>
 								<b:ControlGroup ui:field="zipCg">
 									<b:Controls>
 										<g:Label addStyleNames="{style.label}">Zip</g:Label>
 										<b:TextBox ui:field="zip" placeholder="zip..." />
 									</b:Controls>
 								</b:ControlGroup>
-							</g:HTMLPanel>
+							</g:HTMLPanel> -->
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="privacyTab" heading="Privacy">

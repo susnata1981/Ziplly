@@ -27,13 +27,13 @@ public class StyleHelper {
 
 	public static void setBackgroundImage(Element element, String imageUrl) {
 		element.getStyle().setProperty("background", 
-				"url("+imageUrl+") no-repeat center center fixed");
+				"url(" + imageUrl + ") no-repeat center center fixed");
 		element.getStyle().setProperty("backgroundSize", "cover");
 	}
 	
 	public static void setBackgroundImage(ImageResource image) {
 		RootPanel.get().getElement().getStyle().setProperty("background", 
-				"url("+image.getSafeUri().asString()+") no-repeat center center fixed");
+				"url(" + image.getSafeUri().asString() + ") no-repeat center center fixed");
 		
 		RootPanel.get().getElement().getStyle().setProperty("backgroundSize", "cover");
 	}

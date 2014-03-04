@@ -22,19 +22,21 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Hashtag;
-import com.ziplly.app.model.HashtagDTO;
+import com.ziplly.app.model.Image;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
 
 public class TweetDAOImpl implements TweetDAO {
-	private HashtagDAO hashtagDao;
 	private Logger logger = Logger.getLogger(TweetDAOImpl.class.getCanonicalName());
+	private HashtagDAO hashtagDao;
+	private ImageDAO imageDao;
 	
 	@Inject
-	public TweetDAOImpl(HashtagDAO hashtagDao) {
+	public TweetDAOImpl(HashtagDAO hashtagDao, ImageDAO imageDao) {
 		this.hashtagDao = hashtagDao;
+		this.imageDao = imageDao;
 	}
 
 	@Override
@@ -53,11 +55,12 @@ public class TweetDAOImpl implements TweetDAO {
 			Set<String> hashtags = extractHashtags(tweet.getContent());
 			Set<Hashtag> existingTags = new HashSet<Hashtag>();
 			for (String hashtag : hashtags) {
-				HashtagDTO existingHashtag = null;
 				try {
-					existingHashtag = hashtagDao.findByName(hashtag);
-					existingTags.add(new Hashtag(existingHashtag));
-				} catch (NotFoundException nre) {
+					Query query = em.createQuery("from Hashtag where tag = :name")
+					    .setParameter("name", hashtag);
+					Hashtag result = (Hashtag) query.getSingleResult(); 
+					existingTags.add(result);
+				} catch (NoResultException nre) {
 					Hashtag h = new Hashtag();
 					h.setTag(hashtag);
 					h.addTweet(tweet);
@@ -70,7 +73,25 @@ public class TweetDAOImpl implements TweetDAO {
 			if (existingTags.size() > 0) {
 				tweet.setHashtags(existingTags);
 			}
-
+			
+			// load images
+			Set<Image> images = new HashSet<Image>();
+			for(Image image : tweet.getImages()) {
+				try {
+					Query query = em.createQuery("from Image where id = :id")
+						    .setParameter("id", image.getId());
+					Image existingImage = (Image)query.getSingleResult();
+					images.add(existingImage);
+				} catch(NoResultException ex) {
+					// do nothing.
+					logger.severe(String.format("Failed to load image with id %d", image.getId()));
+				}
+			}
+			
+			if (images.size() > 0) {
+				tweet.setImages(images);
+			}
+			
 			em.persist(tweet);
 			em.getTransaction().commit();
 			TweetDTO result = EntityUtil.clone(tweet);
@@ -139,27 +160,6 @@ public class TweetDAOImpl implements TweetDAO {
 			em.close();
 		}
 	}
-
-//	@Deprecated
-//	@Override
-//	public List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip, int page, int pageSize) {
-//		if (zip == null) {
-//			throw new IllegalArgumentException();
-//		}
-//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-//		try {
-//			Query query = (Query) em.createNamedQuery("findTweetsByTypeAndZip");
-//			query.setParameter("zip", zip);
-//			query.setParameter("type", type.name());
-//			query.setParameter("status", TweetStatus.ACTIVE.name());
-//			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-//			@SuppressWarnings("unchecked")
-//			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-//			return EntityUtil.cloneList(tweets);
-//		} finally {
-//			em.close();
-//		}
-//	}
 
 	@Override
 	public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type, Long neighborhoodId,

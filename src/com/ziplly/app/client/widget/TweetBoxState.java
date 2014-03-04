@@ -1,8 +1,11 @@
 package com.ziplly.app.client.widget;
 
+import com.ziplly.app.model.ImageDTO;
+
 public class TweetBoxState {
 	private State state;
 	private ImageState imageState;
+	private ImageDTO currentUploadedImage;
 	
 	public enum State {
 		PREVIEW_ENABLED,
@@ -23,7 +26,8 @@ public class TweetBoxState {
 		state = State.PREVIEW_ENABLED;
 	}
 
-	public void preview() {
+	public void preview(ImageDTO currentUploadedImage) {
+		this.currentUploadedImage = currentUploadedImage;
 		state = State.PREVIEW_ENABLED;
 		imageState = ImageState.PRESENT;
 	}
@@ -47,5 +51,9 @@ public class TweetBoxState {
 	
 	public boolean isPreviewPanelVisible() {
 		return state == State.PREVIEW_ENABLED;
+	}
+
+	public ImageDTO getCurrentUploadedImage() {
+		return currentUploadedImage;
 	}
 }

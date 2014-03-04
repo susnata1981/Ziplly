@@ -1,5 +1,6 @@
 package com.ziplly.app.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,11 +15,21 @@ public class AccountRegistration extends AbstractTimestampAwareEntity {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	private AccountRegistrationStatus status;
-	private AccountType accountType;
-	private BusinessType businessType;
+	private String status;
+	
+	@Column(name="account_type")
+	private String accountType;
+	
+	@Column(name="business_type")
+	private String businessType;
+	
 	private String email;
-	private long code;
+	
+	@Column(name="account_id")
+	private Long accountId;
+	
+	@Column(length=512)
+	private String code;
 	
 	public Long getId() {
 		return id;
@@ -32,36 +43,43 @@ public class AccountRegistration extends AbstractTimestampAwareEntity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public long getCode() {
-		return code;
-	}
-	public void setCode(long code2) {
-		this.code = code2;
-	}
 	public AccountRegistrationStatus getStatus() {
-		return status;
+		return AccountRegistrationStatus.valueOf(status);
 	}
 	public void setStatus(AccountRegistrationStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 
 	public AccountType getAccountType() {
-		return accountType;
+		return AccountType.valueOf(accountType);
 	}
 	public void setAccountType(AccountType accountType) {
-		this.accountType = accountType;
+		this.accountType = accountType.name();
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 
+	public Long getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
 	public BusinessType getBusinessType() {
-		return businessType;
+		return BusinessType.valueOf(businessType);
 	}
-	public void setBusinessType(BusinessType businessType) {
-		this.businessType = businessType;
+	public void setBusinessType(BusinessType type) {
+		this.businessType = type.name();
 	}
-
+	
 	public static enum AccountRegistrationStatus {
 		ACTIVE,
-		INACTIVE, 
+		INACTIVE,
+		UNUSED,
 		USED;
 	}
 }

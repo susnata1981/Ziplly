@@ -24,13 +24,13 @@
 		}
 		.businessProfileImagePanel
 		{
-		width: 180px;
-		height: 220px;
-		overflow:
-		hidden;
+			width: 200px;
+			height: 200px;
+			overflow: hidden;
 		}
 		.businessProfileImage {
-		height: 100%;
+			max-height: 100%;
+			max-width: 100%;
 		}
 		.paymentDetailsSection {
 		width: 96%;
@@ -70,9 +70,9 @@
 		}
 		.timeOpenTextBox {
 		float: left;
-		width: 100px;
+		width: 60px;
 		height: 36px;
-		margin-right: 20px;
+		margin-right: 10px;
 		}
 		.buttonPanel {
 		clear: both;
@@ -138,6 +138,10 @@
 			clear: both;
 			float: left;
 			padding: 2px;
+		}
+		.helptext {
+			margin-top: 10px;
+			font-size: 12px;
 		}
 	</ui:style>
 	<b:FluidContainer ui:field="settingsPanel">
@@ -286,13 +290,19 @@
 							</b:Column>
 							<b:Column size="4">
 								<g:HTMLPanel addStyleNames="{style.businessProfileImageRootPanel}">
-									<g:HTMLPanel addStyleNames="{style.businessProfileImagePanel}">
+									<g:HTMLPanel ui:field="businessProfileImagePanel" addStyleNames="{style.businessProfileImagePanel}">
 										<b:Image ui:field="profileImagePreview" addStyleNames="{style.businessProfileImage}" />
 									</g:HTMLPanel>
 									<g:FormPanel ui:field="uploadForm">
 										<g:HTMLPanel>
-											<b:Label>Upload image</b:Label>
+											<b:Label>Upload image </b:Label>
+											<b:Image ui:field="uploadAnchorIcon" />
 											<b:FileUpload ui:field="uploadField" name="image" />
+											<p class="{style.helptext}">
+											    The image you upload would be applied as a background image on your profile.
+											    To attract more traffic, it is recommended that you upload a medium resolution
+											    custom picture tailer toward your business.
+											</p>
 										</g:HTMLPanel>
 									</g:FormPanel>
 								</g:HTMLPanel>
@@ -380,6 +390,11 @@
 						</g:HTMLPanel>
 					</b:Tab>
 				</b:TabPanel>
+			</b:Column>
+			<b:Column size="3">
+			    <g:HTMLPanel>
+			        Updates
+			    </g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

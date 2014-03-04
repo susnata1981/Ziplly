@@ -43,7 +43,7 @@ public class EmailServiceImpl implements EmailService {
 	public EmailServiceImpl() {
 	}
 	
-	public void sendEmail(String recipientName, 
+	private void sendEmail(String recipientName, 
 			String recipientEmail, 
 			String senderEmail, 
 			String senderName, 
@@ -64,6 +64,18 @@ public class EmailServiceImpl implements EmailService {
 				emailMessage);
 	}
 
+	@Override
+	public void sendTemplatedEmail(EmailEntity from, EmailEntity to, EmailTemplate template, Map<String, String> data) {
+		String emailMessage = prepareEmail(data, template);
+		sendEmailToFrom(
+				data.get(ZipllyServerConstants.RECIPIENT_NAME_KEY),
+				data.get(ZipllyServerConstants.RECIPIENT_EMAIL_KEY),
+				data.get(ZipllyServerConstants.SENDER_NAME_KEY),
+				data.get(ZipllyServerConstants.SENDER_EMAIL_KEY),
+				template.getSubject(), 
+				emailMessage);
+	}
+	
 	private String prepareEmail(Map<String, String> data, EmailTemplate template) {
 		Configuration cfg = new Configuration();
 		cfg.setDefaultEncoding("UTF-8");
@@ -108,8 +120,7 @@ public class EmailServiceImpl implements EmailService {
 		Session session = Session.getDefaultInstance(props);
 		Message msg = new MimeMessage(session);
 		try {
-//			msg.setFrom(new InternetAddress(fromEmail)); //new InternetAddress(System.getProperty(APP_ADMING_EMAIL_PROP, "Ziplly.com, Admin")));
-			msg.setFrom(new InternetAddress(System.getProperty(APP_ADMING_EMAIL_PROP, "Ziplly.com, Admin")));
+			msg.setFrom(new InternetAddress(System.getProperty(APP_ADMING_EMAIL_PROP, ZipllyServerConstants.APP_ADMIN_NAME)));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail, recipientName));
 			msg.setSubject(subject);
 			msg.setContent(emailContent, "text/html; charset=utf-8");

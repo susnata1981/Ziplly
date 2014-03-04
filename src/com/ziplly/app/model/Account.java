@@ -82,9 +82,14 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Column(name="image_url")
 	@Size(max=1024)
 	private String imageUrl;
-
-	private String status;
 	
+	@OneToMany(cascade = CascadeType.PERSIST)
+	@Fetch(FetchMode.JOIN)
+	@JoinTable(name = "account_images",
+		joinColumns={ @JoinColumn(name="account_id") },
+		inverseJoinColumns = { @JoinColumn(name="image_id") })
+	private Set<Image> images = new HashSet<Image>();
+
 	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JoinTable(name="account_location",
 			joinColumns =  {@JoinColumn(name="account_id")},
@@ -94,6 +99,9 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Column(name="role", insertable=true, updatable=false)
 	private String role;
 
+	@Column(name="status")
+	private String status;
+	
 	@Column(name="last_login")
 	private Date lastLoginTime;
 	
@@ -107,7 +115,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	@OneToMany(mappedBy = "recipient", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
 	private Set<AccountNotification> accountNotifications = new HashSet<AccountNotification>();
 	
-	@OneToMany(mappedBy="account", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
+	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
 	@Fetch(FetchMode.JOIN)
 	private Set<AccountNotificationSettings> notificationSettings = new HashSet<AccountNotificationSettings>();
 	
@@ -129,13 +137,6 @@ public class Account extends AbstractTimestampAwareEntity {
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
 		imageUrl = account.getImageUrl();
-//		setZip(account.getZip());
-//		
-//		if (account.getNeighborhood() != null) {
-//			setNeighborhood(new Neighborhood(account.getNeighborhood()));
-//		}
-//		setCity(account.getCity());
-//		setState(account.getState());
 		setRole(account.getRole());
 		setStatus(account.getStatus());
 		setLastLoginTime(account.getLastLoginTime());
@@ -145,6 +146,10 @@ public class Account extends AbstractTimestampAwareEntity {
 		
 		for(LocationDTO location: account.getLocations()) {
 			addLocation(new Location(location));
+		}
+		
+		for(ImageDTO image: account.getImages()) {
+			addImage(new Image(image));
 		}
 		
 		for(AccountNotificationDTO an : account.getAccountNotifications()) {
@@ -159,7 +164,7 @@ public class Account extends AbstractTimestampAwareEntity {
 			addPrivacySettings(new PrivacySettings(ps));
 		}
 	}
-	
+
 	public Long getAccountId() {
 		return accountId;
 	}
@@ -347,35 +352,16 @@ public class Account extends AbstractTimestampAwareEntity {
 		this.currentLocation = currentLocation;
 	}
 
-//	public Neighborhood getNeighborhood() {
-//		return neighborhood;
-//	}
-//
-//	public void setNeighborhood(Neighborhood neighborhood) {
-//		this.neighborhood = neighborhood;
-//	}
-//
-//	public String getCity() {
-//		return city;
-//	}
-//
-//	public void setCity(String city) {
-//		this.city = city;
-//	}
-//
-//	public String getState() {
-//		return state;
-//	}
-//
-//	public void setState(String state) {
-//		this.state = state;
-//	}
-//	public int getZip() {
-//		return zip;
-//	}
-//
-//	public void setZip(int zip) {
-//		this.zip = zip;
-//	}
-//	
+	public Set<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<Image> images) {
+		this.images = images;
+	}
+	
+	
+	private void addImage(Image image) {
+		this.images.add(image);
+	}
 }

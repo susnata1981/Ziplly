@@ -6,13 +6,14 @@
 		src="tweetwidget.css">
 		.dropdown-menu2 ul {
 		position: absolute !important;
-		left: -130px !important;
+		left: -130px
+		!important;
 		width: 80px
 		!important;
 		z-index: 1000px;
 		}
 		.spannocaret {
-			display: none !important;
+		display: none !important;
 		}
 	</ui:style>
 	<!-- <ui:with type="com.ziplly.app.client.resource.ZResources" field="resources"/> -->
@@ -27,7 +28,8 @@
 					<b:Image ui:field="tweetImage" addStyleNames="{style.tweetImage}" />
 				</g:HTMLPanel>
 				<div class="{style.tweet_content}">
-					<g:HTMLPanel addStyleNames='{style.tweet_text}' ui:field="tweetContentSpan" />
+					<g:HTMLPanel addStyleNames='{style.tweet_text}'
+						ui:field="tweetContentSpan" />
 					<b:TextArea ui:field="tweetContentTextArea"
 						addStyleNames="{style.tweetContentTextArea}" />
 					<g:HTMLPanel ui:field="tweetEditButtonPanel">
@@ -59,21 +61,22 @@
 						<div class='{style.tweet_action_link}'>
 							<dt:ZAnchor ui:field="createLink" icon="EXTERNAL_LINK" />
 						</div>
-						<div class='{style.tweet_action_link}'>
-						    Category:&nbsp;<g:Anchor ui:field="categoryLink" />
-						</div>
-						<div class='{style.tweet_sender_link}'>
-							posted by
-							<g:Anchor ui:field="authorProfileLink">
-								<span class="smalltext" ui:field="authorName" />
-							</g:Anchor>
-							on
-							<span ui:field="timeCreated" />
+						<div class='{style.tweet_action_link} {style.tweet_category}'>
+							Category:&nbsp;
+							<g:Anchor ui:field="categoryLink" />
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<g:HTMLPanel addStyleNames='{style.tweet_sender_link}'>
+		    <div class="fb-share-button" data-href="http://developers.facebook.com/docs/plugins/" data-type="button_count"></div>
+		    posted by
+			<g:Anchor ui:field="authorProfileLink">
+				<span class="smalltext" ui:field="authorName" />
+			</g:Anchor>
+			on <span ui:field="timeCreated" />
+		</g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.people_liked_section}"
 			ui:field="tweetLikePanel">
 		</g:HTMLPanel>

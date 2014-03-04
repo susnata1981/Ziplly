@@ -1,17 +1,34 @@
 package com.ziplly.app.dao;
 
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.DuplicateException;
+import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.model.Account;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountRegistration;
 import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
+import com.ziplly.app.model.AccountStatus;
 
 public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
+	private Logger logger = Logger.getLogger(AccountRegistrationDAOImpl.class.getCanonicalName());
+	
+	private AccountDAO accountDao;
 
+	@Inject
+	AccountRegistrationDAOImpl(AccountDAO accountDao) {
+		this.accountDao = accountDao;
+	}
+	
 	@Override
-	public void create(AccountRegistration ar) {
+	public void save(AccountRegistration ar) {
 		if (ar == null) {
 			throw new IllegalArgumentException();
 		}
@@ -54,19 +71,22 @@ public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 			Query query = em
 					.createQuery("from AccountRegistration where email = :email and status = :status order by timeCreated desc");
 			query.setParameter("email", email);
-			query.setParameter("status", AccountRegistrationStatus.ACTIVE);
-			@SuppressWarnings("unchecked")
-			List<AccountRegistration> result = query.getResultList();
-
-			if (result.size() > 0) {
-				return result.get(0);
-			}
-			return null;
+			query.setParameter("status", AccountRegistrationStatus.UNUSED.name());
+//			@SuppressWarnings("unchecked")
+//			List<AccountRegistration> result = query.getResultList();
+//
+//			if (result.size() > 0) {
+//				return result.get(0);
+//			}
+//			return null;
+			AccountRegistration ar = (AccountRegistration) query.getSingleResult();
+			return ar;
 		} finally {
 			em.close();
 		}
 	}
 
+	@Deprecated
 	@Override
 	public AccountRegistration findByEmailAndCode(String email, long code) {
 		if (email == null) {
@@ -98,6 +118,45 @@ public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 			em.getTransaction().begin();
 			em.merge(ar);
 			em.getTransaction().commit();
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public AccountRegistration findByEmailAndCode(String email, String code) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void findAndVerifyAccount(Long id, String code) throws NotFoundException, DuplicateException {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		try {
+			em.getTransaction().begin();
+			Query query = em
+					.createQuery("from AccountRegistration where accountId = :id and code = :code")
+					.setParameter("id", id).setParameter("code", code);
+
+			AccountRegistration ar = (AccountRegistration) query.getSingleResult();
+			
+			if (ar.getStatus() == AccountRegistrationStatus.USED) {
+				throw new DuplicateException();
+			}
+			
+			ar.setStatus(AccountRegistrationStatus.USED);
+			em.merge(ar);
+
+			query = em.createQuery("from Account where account_id = :accountId").setParameter("accountId", id);
+			Account account = (Account) query.getSingleResult();
+			account.setStatus(AccountStatus.ACTIVE);
+			account.setTimeUpdated(new Date());
+			em.merge(account);
+			
+			em.getTransaction().commit();
+		} catch (NoResultException e) {
+			logger.warning(String.format("Couldn't find AccountRegistration with id %d, code %s", id, code));
+			throw new NotFoundException();
 		} finally {
 			em.close();
 		}

@@ -168,18 +168,20 @@ public abstract class AbstractActivity implements Activity {
 
 	/**
 	 * Get the list of target neighborhoods. For now it is
-	 * 1. current neighborhood
-	 * 2. parent neighborhood.
+	 * 1. parent neighborhood
+	 * 2. current neighborhood.
+	 * in that order. 
 	 */
 	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
 		if (ctx.getAccount() != null) {
 			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
 			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
-			neighborhoods.add(neighborhood);
+			
 			if (neighborhood.getParentNeighborhood() != null) {
 				neighborhoods.add(neighborhood.getParentNeighborhood());
 			}
-
+			neighborhoods.add(neighborhood);
+			
 			return neighborhoods;
 		} else {
 			return null;

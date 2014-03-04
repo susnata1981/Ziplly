@@ -7,7 +7,8 @@ public enum EmailTemplate {
 	PENDING_MESSAGE("pending_message.ftl", "Pending message"),
 	SECURITY_ALERT("security_alert.ftl", "Security alert"), 
 	ANNOUNCEMENT("announcement.ftl", "Announcement"),
-	OFFER("offer.ftl", "Offer");
+	OFFER("offer.ftl", "Offer"), 
+	EMAIL_VERIFICATION("email_verification.ftl", "Verify you email");
 	
 	private String subject;
 

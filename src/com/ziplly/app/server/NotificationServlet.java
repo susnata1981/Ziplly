@@ -46,7 +46,7 @@ public class NotificationServlet extends HttpServlet {
 		this.neighborhoodDao = new NeighborhoodDAOImpl(postalCodeDao);
 		this.accountDao = new AccountDAOImpl(neighborhoodDao);
 		this.sessionDao = new SessionDAOImpl();
-		this.tweetDao = new TweetDAOImpl(null /* passing null for HashtagDao (hack) */);
+		this.tweetDao = new TweetDAOImpl(null, null);
 		this.accountNotificationDao = new AccountNotificationDAOImpl();
 		this.tweetNotificationBli = new TweetNotificationBLIImpl(
 				accountDao,

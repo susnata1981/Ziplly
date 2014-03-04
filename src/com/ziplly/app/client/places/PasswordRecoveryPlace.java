@@ -24,11 +24,13 @@ public class PasswordRecoveryPlace extends Place {
 
 	@Prefix("passwordrecovery")
 	public static class Tokenizer implements PlaceTokenizer<PasswordRecoveryPlace> {
+		
 		@Override
 		public PasswordRecoveryPlace getPlace(String hash) {
 			if (hash != null && !hash.equals("")) {
 				return new PasswordRecoveryPlace(hash);
 			}
+			
 			return new PasswordRecoveryPlace();
 		}
 

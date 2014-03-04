@@ -32,7 +32,7 @@ public class PasswordRecovery implements Serializable {
 	
 	private String hash;
 	private String email;
-	private PasswordRecoveryStatus status;
+	private String status;
 	private Date timeCreated;
 	
 	public String getHash() {
@@ -60,9 +60,9 @@ public class PasswordRecovery implements Serializable {
 		this.timeCreated = timeCreated;
 	}
 	public PasswordRecoveryStatus getStatus() {
-		return status;
+		return PasswordRecoveryStatus.valueOf(status);
 	}
 	public void setStatus(PasswordRecoveryStatus status) {
-		this.status = status;
+		this.status = status.name();
 	}
 }

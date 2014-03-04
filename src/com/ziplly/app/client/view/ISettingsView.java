@@ -16,5 +16,5 @@ public interface ISettingsView<K extends AccountDTO, T extends AccountSettingsPr
 	void resetUploadForm();
 	void onUpload();
 	void onCancel();
-	void enableSaveButton();
+	void showSaveButton(boolean show);
 }

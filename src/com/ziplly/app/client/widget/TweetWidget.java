@@ -18,6 +18,7 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.TextArea;
+import com.github.gwtbootstrap.client.ui.constants.BackdropType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
@@ -66,7 +67,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {
 
-	private static final int PROFILE_COUNT_FOR_LIKE = 2;
+//	private static final int PROFILE_COUNT_FOR_LIKE = 2;
 	private static final int DEFAULT_COMMENT_COUNT = 4;
 
 	private static TweetWidgetUiBinder uiBinder = GWT.create(TweetWidgetUiBinder.class);
@@ -96,6 +97,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String commentsLink();
 
 		String commentEditLink();
+		
+		String tweetImageModal();
+
+		String tweetModalImage();
+
+		String tweetImageModalCloseButton();
 	}
 
 	@UiFactory
@@ -194,31 +201,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	private boolean commentEditLinkClicked = false;
 
 	public TweetWidget() {
-		long s1, e1;
-		long start1 = System.currentTimeMillis();
-		s1 = System.currentTimeMillis();
 		initWidget(uiBinder.createAndBindUi(this));
-		e1 = System.currentTimeMillis();
-		// System.out.println("Time to initWidget"+(e1-s1));
-		s1 = System.currentTimeMillis();
 		hideTweetUpdateButtons();
-		e1 = System.currentTimeMillis();
-		// System.out.println("Time to hideTweetUpdateButtons"+(e1-s1));
-		s1 = e1;
 		hideCommentButtons();
-		e1 = System.currentTimeMillis();
-		// System.out.println("Time to hideCommentButtons"+(e1-s1));
-		s1 = e1;
 		setupHandlers();
-		e1 = System.currentTimeMillis();
-		// System.out.println("Time to setupHandlers"+(e1-s1));
-		s1 = e1;
-		e1 = System.currentTimeMillis();
-		// System.out.println("Time to modal"+(e1-s1));
-		s1 = e1;
-
-		long end1 = System.currentTimeMillis();
-		// System.out.println("Time to create tweet widget="+(end1-start1));
 	}
 
 	private void setupHandlers() {
@@ -265,6 +251,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				tweetContentTextArea.setText("");
 				hideTweetUpdateButtons();
 			}
 		});
@@ -325,7 +312,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 			@Override
 			public void onClick(ClickEvent event) {
-//				presenter.goTo(new HomePlace(tweet.getTweetId()));
 				presenter.goTo(new TweetDetailsPlace(tweet.getTweetId()));
 			}
 			
@@ -678,8 +664,13 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		});
 		authorName.setInnerHTML(tweet.getSender().getDisplayName());
 
-		if (tweet.getImage() != null) {
-			tweetImage.setUrl(tweet.getImage());
+		displayTweetImageIfPresent();
+	}
+
+	private void displayTweetImageIfPresent() {
+		if (tweet.getImages().size() > 0) {
+			tweetImage.setUrl(tweet.getImages().get(0).getUrl());
+			
 			tweetImage.addLoadHandler(new LoadHandler() {
 
 				@Override
@@ -688,11 +679,47 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 					tweetImagePanel.setHeight(height + "px");
 				}
 			});
+			
+			tweetImage.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					displayImageInModal(tweet.getImages().get(0).getUrl());
+				}
+				
+			});
+			
 		} else {
 			displayElement(tweetImagePanel.getElement(), false);
 		}
 	}
 
+	private void displayImageInModal(String imageUrl) {
+		final Modal imageModal = new Modal();
+		imageModal.addStyleName(style.tweetImageModal());
+		final FlowPanel panel = new FlowPanel();
+		final Image image = new Image(imageUrl);
+		image.addStyleName(style.tweetModalImage());
+		panel.add(image);
+		imageModal.add(panel);
+		imageModal.setBackdrop(BackdropType.NORMAL);
+		imageModal.setAnimation(true);
+		imageModal.setKeyboard(true);
+		imageModal.setCloseVisible(true);
+		imageModal.show();
+		Button closeBtn = new Button("close");
+		closeBtn.addStyleName(style.tweetImageModalCloseButton());
+		imageModal.add(closeBtn);
+		closeBtn.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				imageModal.hide();
+			}
+			
+		});
+	}
+	
 	@UiHandler("authorProfileLink")
 	void displayProfile(ClickEvent event) {
 		displayPublicProfile(tweet.getSender());

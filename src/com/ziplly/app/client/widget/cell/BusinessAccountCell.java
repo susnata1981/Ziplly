@@ -63,11 +63,13 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		String category = value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
 		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
-		StringBuilder locations = new StringBuilder();
+		StringBuilder locations = new StringBuilder("<ol>");
 		for(LocationDTO loc : value.getLocations()) {
+			locations.append("<li>");
 			locations.append(loc.getNeighborhood().getName()+","+loc.getNeighborhood().getCity());
-			locations.append("<br>");
+			locations.append("</li>");
 		}
+		locations.append("</ol>");
 		
 		if (value != null) {
 			sb.appendHtmlConstant(
@@ -79,7 +81,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
 					+ "<span class='pcell-row'>Website: <a href='#'>"+ website + "</a></span>"
 					+ "<span class='pcell-row'> Category: "+ category +"</span>"
-					+ "<span class='pcell-row'>Located at:&nbsp;"+locations.toString()+"</span>"
+					+ "<span class='pcell-row'>Locateds:&nbsp;"+locations.toString()+"</span>"
 					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
 					+ "</div>"
 					+ "</div>");

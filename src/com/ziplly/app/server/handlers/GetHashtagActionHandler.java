@@ -16,6 +16,7 @@ import com.ziplly.app.shared.GetHashtagResult;
 
 public class GetHashtagActionHandler extends AbstractAccountActionHandler<GetHashtagAction, GetHashtagResult> {
 
+	private static final int MAX_HASHTAGS = 10;
 	private HashtagDAO hashtagDao;
 
 	@Inject
@@ -33,7 +34,7 @@ public class GetHashtagActionHandler extends AbstractAccountActionHandler<GetHas
 			throw new IllegalArgumentException();
 		}
 		
-		int n = action.getSize() != 0 ? action.getSize() : 10;
+		int n = action.getSize() != 0 ? action.getSize() : MAX_HASHTAGS;
 		
 		List<HashtagDTO> hashtags = hashtagDao.findTopHashtagForNeighborhood(action.getNeighborhoodId(), n);
 		GetHashtagResult result = new GetHashtagResult();

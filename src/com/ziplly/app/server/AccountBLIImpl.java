@@ -8,7 +8,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +35,7 @@ import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.restfb.types.User;
 import com.ziplly.app.client.ApplicationContext.Environment;
@@ -42,6 +43,7 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.DuplicateException;
+import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -54,6 +56,7 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -63,11 +66,13 @@ import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
+import com.ziplly.app.model.AccountRegistration;
+import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
+import com.ziplly.app.model.AccountStatus;
+import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
-import com.ziplly.app.model.Neighborhood;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PasswordRecovery;
@@ -79,6 +84,7 @@ import com.ziplly.app.model.Session;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
 import com.ziplly.app.shared.BCrypt;
@@ -104,6 +110,7 @@ public class AccountBLIImpl implements AccountBLI {
 	private OAuthConfig authConfig;
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 
+	private AccountRegistrationDAO accountRegistrationDao;
 	private TransactionDAO transactionDao;
 	private EmailService emailService;
 	private PasswordRecoveryDAO passwordRecoveryDao;
@@ -112,24 +119,24 @@ public class AccountBLIImpl implements AccountBLI {
 					.retryMaxAttempts(10).totalRetryPeriodMillis(15000).build());
 
 	@Inject
-	public AccountBLIImpl(AccountDAO accountDao, 
-			SessionDAO sessionDao, 
-			TransactionDAO transactionDao, 
-			PasswordRecoveryDAO passwordRecoveryDao, 
-			EmailService emailService) {
+	public AccountBLIImpl(AccountDAO accountDao, SessionDAO sessionDao,
+			TransactionDAO transactionDao, PasswordRecoveryDAO passwordRecoveryDao,
+			EmailService emailService, AccountRegistrationDAO accountRegistrationDao) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.transactionDao = transactionDao;
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
-		this.authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), getEnvironment());
+		this.accountRegistrationDao = accountRegistrationDao;
+		this.authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(),
+				getEnvironment());
 	}
 
 	@Override
 	public Environment getEnvironment() {
-		Environment env = (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) ? 
-				Environment.PROD : Environment.DEVEL;
+		Environment env = (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) ? Environment.PROD
+				: Environment.DEVEL;
 		return env;
 	}
 
@@ -143,7 +150,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 		Session session = null;
 		session = sessionDao.findSessionByUid(uid);
-		logger.log(Level.INFO, String.format("Found session : %s",session.getId()));
+		logger.log(Level.INFO, String.format("Found session : %s", session.getId()));
 		if (isValidSession(session)) {
 			Account account = session.getAccount();
 			account.setUid(uid);
@@ -164,7 +171,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO register(Account account, boolean saveImage) throws AccountExistsException {
+	public AccountDTO register(Account account, boolean saveImage) throws AccountExistsException, InternalError, UnsupportedEncodingException, NoSuchAlgorithmException {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
@@ -182,7 +189,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		createDefaultNotificationSettings(account);
-		
+
 		if (account instanceof PersonalAccount) {
 			createDefaultPrivacySettings((PersonalAccount) account);
 		}
@@ -194,24 +201,86 @@ public class AccountBLIImpl implements AccountBLI {
 			account.setImageUrl(servingUrl);
 		}
 
+		if (isEmailVerificationRequired()) {
+			account.setStatus(AccountStatus.PENDING_ACTIVATION);
+		}
+
 		// create account otherwise
 		AccountDTO response = accountDao.save(account);
 
-		// login user
-		Long uid = doLogin(response);
+		// Send email verification.
+		if (isEmailVerificationRequired()) {
+			sendEmailVerification(response);
+			// TODO: remove this
+			return EntityUtil.convert(account);
+		} else {
+			// login user
+			Long uid = doLogin(response);
 
-//		response.setCurrentLocation(getDefaultLocation(response));
-		// send welcome email
-		EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
-		builder.setRecipientName(account.getName())
-		    .setRecipientEmail(account.getEmail())
-		    .setSenderName(response.getDisplayName())
-		    .setSenderEmail(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY))
-		    .setEmailTemplate(EmailTemplate.WELCOME_REGISTRATION);
-		emailService.sendTemplatedEmailFromSender(builder);
+			// send welcome email
+			EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
+			builder.setRecipientName(account.getName()).setRecipientEmail(account.getEmail())
+					.setSenderName(response.getDisplayName())
+					.setSenderEmail(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY))
+					.setEmailTemplate(EmailTemplate.WELCOME_REGISTRATION);
+			emailService.sendTemplatedEmailFromSender(builder);
+
+			response.setUid(uid);
+			return response;
+		}
+	}
+
+	private void sendEmailVerification(AccountDTO account) throws InternalError, UnsupportedEncodingException, NoSuchAlgorithmException {
+		Preconditions.checkNotNull(account);
+
+		try {
+			AccountRegistration ar = accountRegistrationDao.findByEmail(account.getEmail());
+			sendEmailVerificationCode(ar.getCode(), account);
+			return;
+		} 
+		catch(NoResultException nre) {
+			// First time requesting resend verification code.
+		}
+
+		// Create account registration entry for the first time.
+		AccountRegistration ar = new AccountRegistration();
+		try {
+			String hash = getHash(account);
+			ar.setCode(hash);
+			ar.setTimeCreated(new Date());
+			ar.setEmail(account.getEmail());
+			ar.setAccountId(account.getAccountId());
+			ar.setStatus(AccountRegistrationStatus.UNUSED);
+			AccountType atype = (account instanceof PersonalAccountDTO) ? AccountType.PERSONAL : AccountType.BUSINESS;
+			ar.setAccountType(atype);
+			accountRegistrationDao.save(ar);
+
+			sendEmailVerificationCode(hash, account);
+
+		} catch (Exception e) {
+			logger.severe(String.format("Failed to create Hash for account %s, exception %s", account.getEmail(), e));
+			throw new InternalError("Failed to send verification email");
+		}
+	}
+
+	// Sends the email
+	private void sendEmailVerificationCode(String verificationCode, AccountDTO account) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		
-		response.setUid(uid);
-		return response;
+		EmailEntity from = new EmailEntity();
+		from.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
+		from.name = ZipllyServerConstants.APP_ADMIN_EMAIL_NAME;
+
+		EmailEntity to = new EmailEntity();
+		to.email = account.getEmail();
+		to.name = account.getDisplayName();
+		Map<String, String> data = Maps.newHashMap();
+		data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
+		data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
+		data.put(ZipllyServerConstants.SENDER_NAME_KEY, ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
+		data.put(ZipllyServerConstants.SENDER_EMAIL_KEY,
+				System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
+		data.put(ZipllyServerConstants.CONFIRM_EMAIL_URL_KEY, getEmailConfirmationUrl(verificationCode, account.getAccountId()));
+		emailService.sendTemplatedEmail(from, to, EmailTemplate.EMAIL_VERIFICATION, data);
 	}
 
 	/**
@@ -283,6 +352,12 @@ public class AccountBLIImpl implements AccountBLI {
 			throws InvalidCredentialsException, NotFoundException {
 
 		AccountDTO account = doValidateLogin(email, password);
+		
+		// Throw error if account isn't active
+		if (account.getStatus() != AccountStatus.ACTIVE) {
+			throw new InvalidCredentialsException();
+		}
+		
 		// login user
 		Long uid = doLogin(account);
 		account.setUid(uid);
@@ -305,7 +380,7 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (NotFoundException e) {
 			throw e;
 		}
-		
+
 		return account;
 	}
 
@@ -323,39 +398,30 @@ public class AccountBLIImpl implements AccountBLI {
 		sessionDao.save(session);
 
 		storeCookie(uid);
-		
+
 		// set current location
 		account.setCurrentLocation(EntityUtil.clone(session.getLocation()));
 		return uid;
 	}
 
-//	@Override
-//	public void setCurrentLocation(AccountDTO account, Long neighborhoodId) {
-//		for(LocationDTO loc : account.getLocations()) {
-//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
-//				account.setCurrentLocation(loc);
-//			}
-//		}
-//	}
-
 	private LocationDTO getDefaultLocation(AccountDTO account) {
 		return account.getLocations().get(0);
 	}
 
-//	@Override
-//	public Long doLogin(Account account) {
-//		Session session = new Session();
-//		session.setAccount(account);
-//		Date currTime = new Date();
-//		Date expireAt = new Date(currTime.getTime() + hoursInMillis);
-//		session.setExpireAt(expireAt);
-//		session.setTimeCreated(currTime);
-//		Long uid = UUID.randomUUID().getMostSignificantBits();
-//		session.setUid(uid);
-//		sessionDao.save(session);
-//		storeCookie(uid);
-//		return uid;
-//	}
+	// @Override
+	// public Long doLogin(Account account) {
+	// Session session = new Session();
+	// session.setAccount(account);
+	// Date currTime = new Date();
+	// Date expireAt = new Date(currTime.getTime() + hoursInMillis);
+	// session.setExpireAt(expireAt);
+	// session.setTimeCreated(currTime);
+	// Long uid = UUID.randomUUID().getMostSignificantBits();
+	// session.setUid(uid);
+	// sessionDao.save(session);
+	// storeCookie(uid);
+	// return uid;
+	// }
 
 	@Override
 	public void logout(Long uid) throws NotFoundException {
@@ -364,7 +430,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		Long uidInCookie = getUidFromCookie();
-		System.out.println("UID="+uidInCookie);
+		System.out.println("UID=" + uidInCookie);
 		Long uidInRequest = uid;
 		if (uidInCookie == null || !uidInCookie.equals(uidInRequest)) {
 			throw new IllegalAccessError();
@@ -393,7 +459,7 @@ public class AccountBLIImpl implements AccountBLI {
 		try {
 			token = authFlowManager.exchange(code);
 		} catch (Exception e) {
-			logger.severe(String.format("OAuth failed oauth exchange with exception %s",e));
+			logger.severe(String.format("OAuth failed oauth exchange with exception %s", e));
 			throw new OAuthException();
 		}
 		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token.getAccess_token());
@@ -440,16 +506,18 @@ public class AccountBLIImpl implements AccountBLI {
 		if (!isValidSession()) {
 			throw new NeedsLoginException();
 		}
-		AccountDTO response = accountDao.update(account);
+
 		try {
+			accountDao.update(account);
+			AccountDTO response = EntityUtil.convert(account);
 			Session session = sessionDao.findSessionByAccountId(account.getAccountId());
-//			setCurrentLocation(response, session.getNeighborhood().getNeighborhoodId());
-			account.setCurrentLocation(session.getLocation());
+			response.setCurrentLocation(EntityUtil.clone(session.getLocation()));
+			return response;
 		} catch (NotFoundException e) {
-			logger.severe(String.format("Failed to retrieve session for account %d", account.getAccountId()));
+			logger.severe(String.format("Failed to retrieve session for account %d",
+					account.getAccountId()));
 			throw e;
 		}
-		return response;
 	}
 
 	@Override
@@ -521,14 +589,14 @@ public class AccountBLIImpl implements AccountBLI {
 		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 	}
 
-//	@Override
-//	public List<PersonalAccountDTO> getAccountByZip(AccountDTO account) {
-//		if (account == null) {
-//			throw new IllegalArgumentException();
-//		}
-//
-//		return accountDao.findByZip(account.getZip());
-//	}
+	// @Override
+	// public List<PersonalAccountDTO> getAccountByZip(AccountDTO account) {
+	// if (account == null) {
+	// throw new IllegalArgumentException();
+	// }
+	//
+	// return accountDao.findByZip(account.getZip());
+	// }
 
 	@Override
 	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException,
@@ -587,7 +655,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		try {
 			AccountDTO account = accountDao.findByEmail(email);
-			String hash = getHash(account.getEmail() + new Date().toString());
+			String hash = getHash(account);
 			PasswordRecovery pr = new PasswordRecovery();
 			pr.setEmail(account.getEmail());
 			pr.setHash(hash);
@@ -595,13 +663,22 @@ public class AccountBLIImpl implements AccountBLI {
 			pr.setStatus(PasswordRecoveryStatus.PENDING);
 			passwordRecoveryDao.save(pr);
 
-			// send email
-			EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
-			builder.setRecipientName(account.getDisplayName())
-		        .setRecipientEmail(account.getEmail())
-		        .setEmailTemplate(EmailTemplate.WELCOME_REGISTRATION)
-		        .setSenderEmail(System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
-		    emailService.sendTemplatedEmailFromSender(builder);
+			EmailEntity from = new EmailEntity();
+			from.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
+			from.name = ZipllyServerConstants.APP_ADMIN_EMAIL_NAME;
+
+			EmailEntity to = new EmailEntity();
+			to.email = email;
+			to.name = account.getDisplayName();
+			Map<String, String> data = Maps.newHashMap();
+			data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
+			data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
+			data.put(ZipllyServerConstants.SENDER_NAME_KEY,
+					ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
+			data.put(ZipllyServerConstants.SENDER_EMAIL_KEY,
+					System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
+			data.put(ZipllyServerConstants.PASSWORD_RESET_URL_KEY, getPasswordRecoveryUrl(hash));
+			emailService.sendTemplatedEmail(from, to, EmailTemplate.PASSWORD_RECOVERY, data);
 		} catch (NotFoundException e) {
 			throw e;
 		} catch (UnsupportedEncodingException e) {
@@ -609,6 +686,19 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (NoSuchAlgorithmException nsa) {
 			throw nsa;
 		}
+	}
+
+	private String getEmailConfirmationUrl(String hash, Long accountId) {
+		HttpServletRequest httpRequest = request.get();
+		return httpRequest.getScheme() + "://" + httpRequest.getServerName()
+				+ httpRequest.getContextPath() + "#emailverification:"
+				+ hash + StringConstants.URL_PARAMATER_SEPARATOR + accountId;
+	}
+	
+	private String getPasswordRecoveryUrl(String hash) {
+		HttpServletRequest httpRequest = request.get();
+		return httpRequest.getScheme() + "://" + httpRequest.getServerName()
+				+ httpRequest.getContextPath() + "#passwordrecovery:" + hash;
 	}
 
 	@Override
@@ -634,26 +724,15 @@ public class AccountBLIImpl implements AccountBLI {
 		return null;
 	}
 
-	private String getHash(String input) throws UnsupportedEncodingException,
+	private String getHash(AccountDTO account) throws UnsupportedEncodingException,
 			NoSuchAlgorithmException {
-		if (input == null) {
+		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		byte[] encodeBase64 = Base64.encodeBase64(input.getBytes("UTF-8"));
+		String hash = account.getEmail() + new Date().toString();
+		byte[] encodeBase64 = Base64.encodeBase64(hash.getBytes("UTF-8"));
 		return new String(encodeBase64);
 	}
-
-//	private String getPasswordRecoveryUrl(String hash) {
-//		String passwordRecoveryUrl = "";
-//		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-//			HttpServletRequest req = request.get();
-//			passwordRecoveryUrl = req.getScheme() + "://" + req.getServerName()
-//					+ req.getContextPath() + ":8888/Ziplly.html" + "#passwordrecovery:" + hash;
-//		} else {
-//
-//		}
-//		return passwordRecoveryUrl;
-//	}
 
 	// TODO maintaing transaction???
 	@Override
@@ -671,22 +750,25 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 	}
 
-//	
-//	@Override
-//	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
-//		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-//		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
-//				System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
-//		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-//
-//		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
-//				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
-//				.param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
-//				.param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
-//				.param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
-//				.param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
-//				.param("emailTemplateId", template.name())
-//				.header("Host", backendAddress);
-//		queue.add(options);
-//	}
+	@Override
+	public void resendEmailVerification(String email) throws NotFoundException, AccountExistsException, InternalError, UnsupportedEncodingException, NoSuchAlgorithmException {
+		try {
+			AccountDTO account = accountDao.findByEmail(email);
+			if (account.getStatus() != AccountStatus.PENDING_ACTIVATION) {
+				throw new AccountExistsException();
+			}
+			
+			sendEmailVerification(account);
+		} catch (NotFoundException e) {
+			logger.severe(String.format("Error trying to resend email to an non-existing account %s", email));
+			throw e;
+		}
+	}
+	
+	private boolean isEmailVerificationRequired() {
+		// Email verification required
+		String property = System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
+				"true");
+		return Boolean.valueOf(property);
+	}
 }

@@ -61,23 +61,9 @@ public class HomeViewState {
 		GetCommunityWallDataAction action = getCommunityWallDataAction();
 		action.setSearchType(SearchType.HASHTAG);
 		action.setHashtag(hashtag);
-		
 		resetLastSearchAction(action);
 		return action;
 	}
-
-//	private boolean validTweetId(String [] tokens) {
-//		if (tokens.length != 2) {
-//			return false;
-//		}
-//		try {
-//			Long.parseLong(tokens[1]);
-//		} catch(NumberFormatException nfe) {
-//			return false;
-//		}
-//		
-//		return true;
-//	}
 
 	public GetCommunityWallDataAction getLastSearchAction() {
 		return lastSearchAction;
