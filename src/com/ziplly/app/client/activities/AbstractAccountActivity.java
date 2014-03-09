@@ -110,13 +110,13 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				new DispatcherCallbackAsync<UpdateAccountResult>() {
 					@Override
 					public void onSuccess(UpdateAccountResult result) {
-						view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+						view.displayModalMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
 						eventBus.fireEvent(new AccountUpdateEvent(result
 								.getAccount()));
 					}
 
 					public void onFailure(Throwable error) {
-						view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+						view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 					}
 				});
 	}
@@ -143,13 +143,13 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>() {
 			@Override
 			public void onSuccess(CommentResult result) {
-				view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 				view.addComment(result.getComment());
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				view.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.ERROR);
 			}
 		});
 	}
@@ -162,14 +162,14 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(LikeResult result) {
-				view.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
 				view.updateTweetLike(result.getLike());
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof DuplicateException) {
-					view.displayMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
 				}
 			}
 		});
@@ -185,16 +185,16 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			@Override
 			public void onSuccess(UpdateTweetResult result) {
 				view.updateTweet(result.getTweet());
-				view.displayMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof AccessError) {
-					view.displayMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
 					return;
 				} 
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		});
 	}
@@ -204,16 +204,16 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DispatcherCallbackAsync<DeleteTweetResult>() {
 			@Override
 			public void onSuccess(DeleteTweetResult result) {
-				view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
 				view.removeTweet(tweet);
 			}
 
 			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof AccessError) {
-					view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				} else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
 			}
 		});
@@ -259,12 +259,12 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
 			@Override
 			public void onSuccess(SendMessageResult result) {
-				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
 			}
 			
 			@Override
 			public void onFailure(Throwable th) {
-				view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
 			}
 		});
 	}
@@ -287,7 +287,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 //					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
 				}
 				else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
 				stopThreads();
 				eventBus.fireEvent(new LoadingEventEnd());
@@ -325,7 +325,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>() {
 			@Override
 			public void onSuccess(SendEmailResult result) {
-				view.displayMessage(StringConstants.EMAIL_SENT, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.EMAIL_SENT, AlertType.SUCCESS);
 			}
 		});
 	};
@@ -343,7 +343,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 	
 	public void displayMessage(String message, AlertType type) {
-		view.displayMessage(message, type);
+		view.displayModalMessage(message, type);
 	}
 	
 	@Override
@@ -383,16 +383,16 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(UpdateCommentResult result) {
-				view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 				view.updateComment(result.getComment());
 			}
 			
 			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof AccessError) {
-					view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				} else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
 			}
 		});

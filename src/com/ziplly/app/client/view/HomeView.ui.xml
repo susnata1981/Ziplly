@@ -153,7 +153,7 @@
 					</div>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="6" addStyleNames="{style.communityWallColumn}">
+			<b:Column size="7" addStyleNames="{style.communityWallColumn}">
 				<g:HTMLPanel ui:field="communityWallPanel"
 					addStyleNames="{style.communityWallPanel}">
 					<dt:TweetBox ui:field="tweetBox" addStyleNames="{style.tweetBox}" />

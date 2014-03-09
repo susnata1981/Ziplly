@@ -9,6 +9,7 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatte
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationType;
+import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.TweetType;
 
 public class BasicDataFormatter implements Formatter<Object> {
@@ -51,10 +52,13 @@ public class BasicDataFormatter implements Formatter<Object> {
 			} else {
 				return n.getName();
 			}
+		case POSTAL_CODE:
+			PostalCodeDTO p = (PostalCodeDTO) value;
+			return p.getCity() + ", " + p.getState();
 		case NEIGHBORHOOD_IMAGE:
 			NeighborhoodDTO neighborhood = (NeighborhoodDTO) value;
 			NeighborhoodDTO nn = neighborhood.getImages().size() > 0 ? neighborhood : neighborhood.getParentNeighborhood();
-			if (nn.getImages().size() > 0) {
+			if (nn != null && nn.getImages().size() > 0) {
 				String v = nn.getImages().get(0).getUrl();
 				return nn.getImages().get(0).getUrl() + "=s1600";
 			} else {

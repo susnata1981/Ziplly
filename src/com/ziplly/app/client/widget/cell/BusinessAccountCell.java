@@ -58,8 +58,12 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 			return;
 		}
 		
-		String imgUrl = value.getImageUrl() != null ? 
-				value.getImageUrl() : "images/no-photo.jpg";
+		String imgUrl = null;
+		if (value.getImages().size() > 0) {
+			imgUrl = value.getImages().get(0).getUrl() + "=s300";
+		} else {
+			imgUrl = "images/no-photo.jpg";
+		}
 		
 		String category = value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
 		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
@@ -81,7 +85,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 					+ "<span class='pcell-row-heading'>"+value.getDisplayName()+"</span>"
 					+ "<span class='pcell-row'>Website: <a href='#'>"+ website + "</a></span>"
 					+ "<span class='pcell-row'> Category: "+ category +"</span>"
-					+ "<span class='pcell-row'>Locateds:&nbsp;"+locations.toString()+"</span>"
+					+ "<span class='pcell-row'>Locations&nbsp;"+locations.toString()+"</span>"
 					+ "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
 					+ "</div>"
 					+ "</div>");

@@ -61,7 +61,7 @@
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Activity</h2>
-						<dt:ProfileStatWidget title="Tweets"
+						<dt:ProfileStatWidget title="Messages"
 							ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
 						<dt:ProfileStatWidget title="Comments"
 							ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" />

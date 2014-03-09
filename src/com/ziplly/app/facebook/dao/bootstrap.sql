@@ -1,21 +1,26 @@
-insert into postal_code (type,code) values ("regular", 98199);
-insert into postal_code (type,code) values ("regular", 98198);
-insert into postal_code (type,code) values ("regular", 98197);
-insert into postal_code (type,code) values ("regular", 98109);
+insert into neighborhood (city, name, state, parent_neighborhood_id) values ("seattle", "Magnolia","WA", null);
 
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "Magnolia","WA", 1, null);
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "East Magnolia","WA", 1, 1);
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("seattle", "Baircliff","WA", 1, 1);
 
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Queen Anne","WA", 1, null);
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Lower Queen Anne","WA", 1, 1);
-insert into neighborhood (city,name,state, postalcode_id,parent_neighborhood_id) values ("Seattle", "Upper Queen Anne","WA", 1, 1);
+insert into neighborhood(name, city, state, type) values ("North Seattle", "Seattle", "WA", "XXX");
+insert into neighborhood(name, city, state, type) values ("West Woodland", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("Sunset Hill", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("Adams", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("Whittier Heights", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("Loyal Heights", "Seattle","WA", "X");
 
-insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Magnolia","WA", 1);
 
-insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Interbay","WA", 1);
-insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Queen Ann","WA", 2);
-insert into neighborhood (type,city,name,state, postalcode_id) values ("regular", "seattle", "Ballard","WA", 3);
+insert into neighborhood(name, city, state, type) values ("North Seattle", "Seattle", "WA", "XXX");
+insert into neighborhood(name, city, state, type) values ("Magnolia", "Seattle", "WA", "XX");
+insert into neighborhood(name, city, state, type) values ("SouthEast Magnolia", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("BrairCliff", "Seattle", "WA", "X");
+insert into neighborhood(name, city, state, type) values ("Lawton Heights", "Seattle", "WA", "X");
+
+insert into neighborhood_postalcode values(2,98199);
+insert into neighborhood_postalcode values(3,98199);
+insert into neighborhood_postalcode values(4,98199);
+insert into neighborhood_postalcode values(12,98117);
+insert into neighborhood_postalcode values(13,98117);
+
 
 insert into interest (name) values ("Outdoor");
 insert into interest (name) values ("Indoor");

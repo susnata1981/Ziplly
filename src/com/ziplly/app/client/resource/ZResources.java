@@ -43,7 +43,7 @@ public interface ZResources extends ClientBundle {
 	@Source("magnolia.jpg")
 	ImageResource magnolia();
 	
-	@Source("blue-background.jpg")
+	@Source("bluecriscross.png")
 	ImageResource profileBackground();
 	
 	@Source("uploadicon.png")

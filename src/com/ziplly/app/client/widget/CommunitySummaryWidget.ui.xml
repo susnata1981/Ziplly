@@ -16,9 +16,10 @@
 			font-family: sans-serif, fantasy;
 			display: inline-block;
 			width: 100%;
-			font-size: 1.3em;
+			font-size: 15px;
+			font-weight: 500;
 			color: #666;
-			padding: 4px;
+			padding: 2px;
 			border-bottom: 1px solid #ddd;
 		}
 		

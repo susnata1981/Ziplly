@@ -26,7 +26,6 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.blobstore.UploadOptions;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
@@ -71,6 +70,7 @@ import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.NotificationAction;
@@ -193,13 +193,6 @@ public class AccountBLIImpl implements AccountBLI {
 
 		if (account instanceof PersonalAccount) {
 			createDefaultPrivacySettings((PersonalAccount) account);
-		}
-
-		if (saveImage && account.getImageUrl() != null) {
-			BlobKey blobKey = saveImage(account.getImageUrl());
-			String servingUrl = imageService.getServingUrl(ServingUrlOptions.Builder
-					.withBlobKey(blobKey));
-			account.setImageUrl(servingUrl);
 		}
 
 		// Set account status
@@ -417,21 +410,6 @@ public class AccountBLIImpl implements AccountBLI {
 		return account.getLocations().get(0);
 	}
 
-	// @Override
-	// public Long doLogin(Account account) {
-	// Session session = new Session();
-	// session.setAccount(account);
-	// Date currTime = new Date();
-	// Date expireAt = new Date(currTime.getTime() + hoursInMillis);
-	// session.setExpireAt(expireAt);
-	// session.setTimeCreated(currTime);
-	// Long uid = UUID.randomUUID().getMostSignificantBits();
-	// session.setUid(uid);
-	// sessionDao.save(session);
-	// storeCookie(uid);
-	// return uid;
-	// }
-
 	@Override
 	public void logout(Long uid) throws NotFoundException {
 		if (uid == null) {
@@ -473,7 +451,7 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 		IFUserDAO fUserDao = FUserDAOFactory.getFUserDao(token.getAccess_token());
 		User fuser = fUserDao.getUser();
-
+		
 		if (fuser == null) {
 			return null;
 		}
@@ -491,6 +469,8 @@ public class AccountBLIImpl implements AccountBLI {
 			account.setAccessToken(token.getAccess_token());
 			account.setFacebookId(fuser.getId());
 			account.setUrl(fuser.getLink());
+			Gender gender = fuser.getGender() != null ? Gender.valueOf(fuser.getGender().toUpperCase()) : Gender.NOT_SPECIFIED;
+			account.setGender(gender);
 			account.setIntroduction(fuser.getBio());
 			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture?type=large"; // ?width=200&height=160
 			account.setImageUrl(imgUrl);

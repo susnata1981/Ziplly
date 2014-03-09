@@ -3,7 +3,7 @@ package com.ziplly.app.server.oauth;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -22,7 +22,7 @@ public class FacebookAuthFlowManager extends OAuthFlowManager {
 	@Override
 	public Map<String,String> getRequestParams(String code)
 			throws UnsupportedEncodingException {
-		Map<String,String> paramsMap = new HashMap<String,String>();
+		Map<String,String> paramsMap = new LinkedHashMap<String,String>();
 		paramsMap.put("client_id", clientId);
 		paramsMap.put("redirect_uri", redirectUri);
 		paramsMap.put("client_secret", key);

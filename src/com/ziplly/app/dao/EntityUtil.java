@@ -469,6 +469,7 @@ public class EntityUtil {
 		dest.setCity(neighborhood.getCity());
 		dest.setState(neighborhood.getState());
 		dest.setName(neighborhood.getName());
+		dest.setType(neighborhood.getType());
 		dest.setImageUrl(neighborhood.getImageUrl());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
 
@@ -478,8 +479,8 @@ public class EntityUtil {
 		}
 
 		// Add postal code
-		if (neighborhood.getPostalCode() != null) {
-			dest.setPostalCode(clone(neighborhood.getPostalCode()));
+		for(PostalCode p : neighborhood.getPostalCodes()) {
+			dest.addPostalCode(clone(p));
 		}
 
 		// Add images.
@@ -501,17 +502,14 @@ public class EntityUtil {
 	public static PostalCodeDTO clone(PostalCode postalCode) {
 		PostalCodeDTO dest = new PostalCodeDTO();
 		dest.setPostalCode(postalCode.getPostalCode());
-		dest.setPostalCodeId(postalCode.getPostalCodeId());
+//		dest.setPostalCodeId(postalCode.getPostalCodeId());
+		dest.setCity(postalCode.getCity());
+		dest.setState(postalCode.getState());
+		dest.setFullState(postalCode.getFullState());
+		dest.setLatitude(postalCode.getLatitude());
+		dest.setLongitude(postalCode.getLongitude());
 		return dest;
 	}
-
-	// public static PostalCode clone(PostalCodeDTO postalCode) {
-	// PostalCode dest = new PostalCode();
-	// dest.setPostalCode(postalCode.getPostalCode());
-	// dest.setPostalCodeId(postalCode.getPostalCodeId());
-	//
-	// return dest;
-	// }
 
 	public static List<PostalCodeDTO> clonePostalCodeList(List<PostalCode> postalCodes) {
 		List<PostalCodeDTO> result = Lists.newArrayList();

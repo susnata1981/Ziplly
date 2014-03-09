@@ -4,14 +4,14 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="accountview.css" />
 
-	<b:FluidContainer addStyleNames="{style.settingsPanel}">
+	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
 				<b:Alert ui:field="message" close="false" animation="true"></b:Alert>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column offset="1" size="9">
+			<b:Column offset="1" size="9" addStyleNames="{style.settingsPanel}">
 				<b:TabPanel tabPosition="left" ui:field="accountDetailsTab">
 					<b:Tab ui:field="basicInfoTab" heading="About" active="true" >
 						<b:Row addStyleNames="{style.basicInfoTab}">
@@ -44,7 +44,7 @@
 											<div class="{style.non_editable}">
 												<span class="{style.label}">Gender</span>
 												<div>
-													<span ui:field="gender" />
+													<b:ListBox ui:field="genderList" />
 												</div>
 											</div>
 										</div>

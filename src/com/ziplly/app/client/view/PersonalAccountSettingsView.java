@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
@@ -57,6 +58,7 @@ import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.client.widget.ShareSettingsWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
+import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
@@ -66,9 +68,12 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class PersonalAccountSettingsView extends AbstractView implements IPersonalAccountSettingsView{
+public class PersonalAccountSettingsView extends AbstractView implements
+		IPersonalAccountSettingsView {
 
 	private static final int MAX_INTRODUCTION_LENGTH = 255;
+
+	private static final int MAX_OCCUPATION_LENGTH = 50;
 
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 			.create(PersonalAccountSettingsViewUiBinder.class);
@@ -81,11 +86,11 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	TabPanel accountDetailsTab;
 
 	//
-	// Basic account info 
+	// Basic account info
 	//
 	@UiField
 	Tab basicInfoTab;
-	
+
 	@UiField
 	Element firstname;
 
@@ -96,8 +101,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	Element email;
 
 	@UiField
-	Element gender;
-	
+	ListBox genderList;
+
 	@UiField
 	ControlGroup introductionCg;
 	@UiField
@@ -118,28 +123,26 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	Image profileImagePreview;
 	@UiField
 	Image loadingImage;
-	
+
 	// State variables - create abstraction.
 	private boolean imageUploaded;
 	private ImageDTO currentUploadedImage;
-	
+
 	//
 	// Account Notification settings
 	//
 	@UiField
 	HTMLPanel notificationPanel;
-	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap 
-	  = new HashMap<AccountNotificationSettingsDTO, ListBox>();
-	
+	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap = new HashMap<AccountNotificationSettingsDTO, ListBox>();
+
 	//
 	// Privacy settings
 	//
 	@UiField
 	HTMLPanel privacyPanel;
-	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap = 
-			new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
-	private PrivacySettingsFormatter privacySettingsFormatter = 
-			(PrivacySettingsFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
+	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap = new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
+	private PrivacySettingsFormatter privacySettingsFormatter = (PrivacySettingsFormatter) AbstractValueFormatterFactory
+			.getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
 
 	//
 	// Occupation
@@ -147,8 +150,12 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@UiField
 	Tab occupationTab;
 	@UiField
+	ControlGroup occupationCg;
+	@UiField
 	TextBox occupation;
-	
+	@UiField
+	HelpInline occupationError;
+
 	//
 	// Interest
 	//
@@ -157,7 +164,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	@UiField
 	HTMLPanel interestTabPanel;
 	Map<InterestDTO, CheckBox> interestToCheckboxMap = new HashMap<InterestDTO, CheckBox>();
-	
+
 	//
 	// Location TODO:(needs to go)
 	//
@@ -203,7 +210,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 	//
 	@UiField
 	Alert message;
-	
+
 	//
 	// Buttons
 	//
@@ -224,7 +231,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		StyleHelper.show(loadingImage.getElement(), false);
 		message.setVisible(false);
-		
+
 		// Setup upload anchor
 		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
 		StyleHelper.show(uploadField.getElement(), false);
@@ -249,16 +256,16 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 				}
 			}
 		});
-		
+
 		uploadAnchorIcon.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				uploadField.getElement().<InputElement>cast().click();
+				uploadField.getElement().<InputElement> cast().click();
 			}
-			
+
 		});
-		
+
 		uploadField.addChangeHandler(new ChangeHandler() {
 
 			@Override
@@ -274,6 +281,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	/**
 	 * Main function responsible for populating the view
+	 * 
 	 * @param account
 	 */
 	void populateFields(PersonalAccountDTO account) {
@@ -282,21 +290,28 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		}
 
 		this.account = account;
-		
+
 		// basic info
 		setProfileImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
-		
+		adjustProfileImagePanel();
+
 		firstname.setInnerText(account.getFirstName());
 		lastname.setInnerText(account.getLastName());
 		email.setInnerText(account.getEmail());
-		gender.setInnerText(account.getGender().name().toLowerCase());
 		introduction.setText(account.getIntroduction());
 
+		// gender 
+		for(Gender g : Gender.getValuesForSignup()) {
+			genderList.addItem(basicDataFormatter.format(g, ValueType.GENDER));
+		}
+		genderList.setSelectedValue(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
+		
 		// occupation
 		occupation.setText(account.getOccupation());
 
 		// location
-		neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getLocations().get(0).getNeighborhood(), ValueType.NEIGHBORHOOD));
+		neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getLocations().get(0)
+				.getNeighborhood(), ValueType.NEIGHBORHOOD));
 
 		// privacy settings
 		populatePrivacySettings(account);
@@ -307,21 +322,24 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	/**
 	 * Populates privacy settings
+	 * 
 	 * @param account
 	 */
 	private void populatePrivacySettings(PersonalAccountDTO account) {
 		privacyPanel.clear();
 		sortPrivacySettings(account.getPrivacySettings());
-		
+
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
-			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(ps.getAllowedShareSettings());
+			HTMLPanel span = new HTMLPanel(privacySettingsFormatter.format(ps,
+					ValueType.PRIVACY_FIELD_NAME));
+			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(
+					ps.getAllowedShareSettings());
 			shareSettingWidget.setSelection(ps.getSetting());
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(shareSettingWidget);
-//			notificationPanel.add(panel);
+			// notificationPanel.add(panel);
 			privacySettingsMap.put(ps, shareSettingWidget);
 			privacyPanel.add(panel);
 		}
@@ -344,27 +362,31 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		}
 		return actionListBox;
 	}
-	
+
 	/**
 	 * Populates account notification settings
+	 * 
 	 * @param account
 	 */
 	private void popoulateNotificationSettings(PersonalAccountDTO account) {
 		accountNotificationSettingsMap.clear();
 		notificationPanel.clear();
-		Collections.sort(account.getNotificationSettings(), new Comparator<AccountNotificationSettingsDTO>() {
+		Collections.sort(account.getNotificationSettings(),
+				new Comparator<AccountNotificationSettingsDTO>() {
 
-			@Override
-			public int compare(AccountNotificationSettingsDTO o1, AccountNotificationSettingsDTO o2) {
-				return o1.getType().name().compareTo(o2.getType().name());
-			}
-		});
-		
+					@Override
+					public int compare(AccountNotificationSettingsDTO o1,
+							AccountNotificationSettingsDTO o2) {
+						return o1.getType().name().compareTo(o2.getType().name());
+					}
+				});
+
 		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
 			ListBox action = getNotificationActionListBox();
 			action.setSelectedIndex(ans.getAction().ordinal());
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
+			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(),
+					ValueType.NOTIFICATION_TYPE));
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(action);
@@ -385,6 +407,8 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		message.clear();
 		introductionCg.setType(ControlGroupType.NONE);
 		introductionError.setVisible(false);
+		occupationCg.setType(ControlGroupType.NONE);
+		occupationError.setVisible(false);
 	}
 
 	@Override
@@ -396,19 +420,29 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 	// TODO
 	boolean validate() {
+		boolean valid = validateText(introduction, introductionCg, introductionError, MAX_INTRODUCTION_LENGTH);
+		valid &= validateText(occupation, occupationCg, occupationError, MAX_OCCUPATION_LENGTH);
+		
+		return valid;
+	}
+
+	private boolean validateText(HasText elem, ControlGroup cg, HelpInline error, int maxLength) {
 		// No need to validate if it's empty
-		if (introduction.getText().length() == 0) {
+		if (elem.getText().length() == 0) {
 			return true;
 		}
-		
-		ValidationResult result = FieldVerifier.validateString(introduction.getText(), MAX_INTRODUCTION_LENGTH);
+
+		ValidationResult result = FieldVerifier.validateString(elem.getText(),
+				maxLength);
 		if (!result.isValid()) {
-			introductionCg.setType(ControlGroupType.ERROR);
-			introductionError.setVisible(true);
-			introductionError.setText(result.getErrors().get(0).getErrorMessage());
+			cg.setType(ControlGroupType.ERROR);
+			error.setVisible(true);
+			error.setText(result.getErrors().get(0).getErrorMessage());
+			message.setText(result.getErrors().get(0).getErrorMessage());
+			message.setVisible(true);
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -453,6 +487,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			account.setOccupation(occupation.getText());
 		}
 
+		// Gender
+		account.setGender(Gender.getValuesForSignup().get(genderList.getSelectedIndex()));
+		
 		// interests
 		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
 		for (Entry<InterestDTO, CheckBox> entry : interestToCheckboxMap.entrySet()) {
@@ -463,15 +500,15 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		}
 		account.getInterests().clear();
 		account.getInterests().addAll(selectedInterests);
-		
+
 		//
 		// Privacy Settings
 		//
-		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
+		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			ShareSetting shareSettings = privacySettingsMap.get(ps).getSelection();
 			ps.setSetting(shareSettings);
 		}
-		
+
 		//
 		// AccountNotificationSettings
 		//
@@ -495,7 +532,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		}
 	}
 
-	/** 
+	/**
 	 * Sets the profile image
 	 */
 	private void setProfileImage(final String imageUrl) {
@@ -505,7 +542,7 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 			adjustProfileImagePanel();
 		}
 	}
-	
+
 	/**
 	 * Adjusts the height of profile image panel.
 	 */
@@ -514,17 +551,15 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 
 			@Override
 			public void onLoad(LoadEvent event) {
-				String height = profileImagePreview.getHeight() + "px";
-				profileImagePanel.setHeight(height);
+				StyleHelper.setHeight(profileImagePanel, profileImagePreview.getHeight());
 			}
-			
 		});
 	}
-	
+
 	private void resetProfileImagePanel() {
-		profileImagePanel.setHeight("250px");
+		profileImagePanel.setHeight("200px");
 	}
-	
+
 	@Override
 	public void resetUploadForm() {
 		uploadForm.setAction("");
@@ -634,9 +669,9 @@ public class PersonalAccountSettingsView extends AbstractView implements IPerson
 		}
 		markSelectedInterest();
 	}
-	
+
 	private void markSelectedInterest() {
-		for(InterestDTO interest : account.getInterests()) {
+		for (InterestDTO interest : account.getInterests()) {
 			interestToCheckboxMap.get(interest).setValue(true);
 		}
 	}

@@ -11,6 +11,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;

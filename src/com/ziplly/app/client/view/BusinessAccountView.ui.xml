@@ -61,6 +61,10 @@
 									</g:Anchor>
 								</div>
 								<div class="{style.businessInfoItem}">
+									<b:Label>Phone</b:Label>
+									<span ui:field="phoneSpan" class="{style.description} {bstyle.businessAttribtue}" />
+								</div>
+								<div class="{style.businessInfoItem}">
 									<b:Label>Website</b:Label>
 									<g:Anchor ui:field="websiteLink">
 										<span ui:field="websiteSpan" class="{style.description} {bstyle.businessAttribtue}" />
@@ -143,7 +147,7 @@
 							</g:HTMLPanel>
 							<div class="{style.profileInfoBox}">
 								<h2 class="heading">Activity</h2>
-								<dt:ProfileStatWidget title="Tweets"
+								<dt:ProfileStatWidget title="Messages"
 									ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
 								<dt:ProfileStatWidget title="Comments"
 									ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" />

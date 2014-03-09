@@ -85,8 +85,8 @@ public class GetTweetForUserActionHandler extends
 					}
 					
 					Location location = locationIterator.next();
-					if (!session.getLocation().getNeighborhood().getParentNeighborhood().equals(
-							location.getNeighborhood().getParentNeighborhood())) {
+					if (session.getLocation().getNeighborhood().getParentNeighborhood().getNeighborhoodId() != 
+							location.getNeighborhood().getParentNeighborhood().getNeighborhoodId()) {
 						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				}

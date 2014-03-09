@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -47,6 +46,7 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	private String name;
 	private String city;
 	private String state;
+	private String type;
 	
 	@OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
@@ -58,10 +58,11 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name="image_url")
 	private String imageUrl;
 	
-	//TODO : change this to ManyToMany
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name="postalcode_id", nullable = false)
-	private PostalCode postalCode;
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@JoinTable(name="neighborhood_postalcode",
+		joinColumns = { @JoinColumn(name="neighborhood_id") },
+		inverseJoinColumns = { @JoinColumn(name="postal_code") })
+	private Set<PostalCode> postalCodes = new HashSet<PostalCode>();
 
 	public Neighborhood() {
 	}
@@ -71,13 +72,14 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.setName(neighborhood.getName());
 		this.setCity(neighborhood.getCity());
 		this.setState(neighborhood.getState());
+		this.type = neighborhood.getType().name();
 		
 		if (neighborhood.getParentNeighborhood() != null) {
 			this.parentNeighborhood = new Neighborhood(neighborhood.getParentNeighborhood());
 		}
 		
-		if (neighborhood.getPostalCode() != null) {
-			this.setPostalCode(new PostalCode(neighborhood.getPostalCode()));
+		for(PostalCodeDTO p : neighborhood.getPostalCodes()) {
+			this.postalCodes.add(new PostalCode(p));
 		}
 		
 		this.setImageUrl(neighborhood.getImageUrl());
@@ -117,14 +119,6 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public PostalCode getPostalCode() {
-		return this.postalCode;
-	}
-
-	public void setPostalCode(PostalCode postalCode) {
-		this.postalCode = postalCode;
 	}
 
 	public Neighborhood getParentNeighborhood() {
@@ -173,5 +167,25 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Override
 	public int hashCode() {
 		return neighborhoodId.hashCode();
+	}
+	
+	public void addPostalCode(PostalCode p) {
+		this.postalCodes.add(p);
+	}
+
+	public Set<PostalCode> getPostalCodes() {
+		return postalCodes;
+	}
+
+	public void setPostalCodes(Set<PostalCode> postalCodes) {
+		this.postalCodes = postalCodes;
+	}
+
+	public NeighborhoodType getType() {
+		return NeighborhoodType.valueOf(type);
+	}
+
+	public void setType(NeighborhoodType type) {
+		this.type = type.name();
 	}
 }

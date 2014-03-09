@@ -6,6 +6,7 @@ import java.util.List;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -65,4 +66,6 @@ public interface AccountDAO {
 	Long getTotalPersonalAccountCountByGender(
 			Gender gender, 
 			Long neighborhoodId);
+	List<BusinessAccountDTO> findBusinessAccounts(long neighborhoodId, int start, int pageSize)
+			throws NotFoundException;
 }

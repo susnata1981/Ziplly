@@ -25,7 +25,7 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	
 	void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage);
 
-	void displayMessage(String msg, AlertType type);
+	void displayModalMessage(String msg, AlertType type);
 
 	Element getTweetSectionElement();
 
@@ -68,4 +68,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void updatePublicAccountDetails(GetAccountDetailsResult result);
 
 	void displayAccontUpdate();
+
+	void displayMessage(String msg, AlertType type);
 }

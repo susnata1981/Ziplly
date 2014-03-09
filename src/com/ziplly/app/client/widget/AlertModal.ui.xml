@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+		@external .alert-modal, .modal-body;
+		.alert-modal  {
+			width: 250px;
+			padding: 0;
+		}
+		.alert-modal .modal-body {
+			padding: 0;
+		}
+		.alert-modal .alert {
+			padding: 16px;
+			font-size: 16px !important;
+			margin: 0;
+			text-align: center;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+	    <b:Modal ui:field="modal" addStyleNames="{style.alert-modal}">
+	        <b:Alert ui:field="alert" close="false" addStyleNames="{style.alert}" />
+	    </b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

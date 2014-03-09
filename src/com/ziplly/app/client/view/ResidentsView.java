@@ -192,6 +192,7 @@ public class ResidentsView extends AbstractView implements
 		smw = new SendMessageWidget(receiver);
 		smw.setPresenter((SendMessagePresenter) presenter);
 		smw.show();
+		System.out.println("SHOWING MODAL");
 	}
 
 	public void updateMessageWidget(AccountDTO account) {

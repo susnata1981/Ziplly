@@ -191,7 +191,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	private List<AccountDTO> getAllRecipients(Long neighborhoodId) {
 		try {
 			List<NeighborhoodDTO> neighborhoods = neighborhoodDao
-					.findAllDescendentNeighborhoods(neighborhoodId);
+					.findAllDescendentNeighborhoodsIncludingItself(neighborhoodId);
 
 			List<AccountDTO> recipients = Lists.newArrayList();
 			for (NeighborhoodDTO neighborhood : neighborhoods) {

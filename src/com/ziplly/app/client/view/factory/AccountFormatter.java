@@ -20,7 +20,13 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			if (value.getImages().size() > 0) {
 				return value.getImages().get(0).getUrl() + "=s300";
 			} else {
-				return ZResources.IMPL.noImage().getSafeUri().asString();
+				return ZResources.IMPL.noPhoto().getSafeUri().asString();
+			}
+		case PROFILE_BACKROUND_URL:
+			if (value.getImages().size() > 0) {
+				return value.getImages().get(0).getUrl() + "=s1600";
+			} else {
+				return ZResources.IMPL.profileBackground().getSafeUri().asString();
 			}
 		case TINY_IMAGE_VALUE:
 			String imgUrl = "";
@@ -29,7 +35,7 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			} else {
 				imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
 			}
-			content.append("<img src='" + imgUrl + "' width='25px' height='25px'/>");
+			content.append("<img src='" + imgUrl + "' width='40px' height='40px'/>");
 			return content.toString();
 		case SMALL_IMAGE_VALUE:
 			content.append("<img src='" + value.getImageUrl()

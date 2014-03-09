@@ -21,10 +21,10 @@ public class StringConstants {
 	public static final String FAILED_TO_UPDATE_COMMENT = "Failed to update comment";
 	public static final String LIKE_SAVED = "Like updated!";
 	public static final String OPERATION_FAILED = "Operation failed.";
-	public static final String TWEET_UPDATED = "Tweet updated.";
+	public static final String TWEET_UPDATED = "Message updated.";
 	public static final String USAGE_LIMIT_EXCEEDED_EXCEPTION = "Usage limit exceeded";
-	public static final String NEEDS_SUBSCRIPTION_EXCEPTION = "You've filled up your quote for the month. Please subscribe to send more tweets.";
-	public static final String TWEET_REMOVED = "Tweet removed successfully";
+	public static final String NEEDS_SUBSCRIPTION_EXCEPTION = "You've filled up your quote for the month. Please subscribe to send more messages.";
+	public static final String TWEET_REMOVED = "Message removed successfully";
 	public static final String FAILED_TO_SAVE_LIKE = "Failed to update like";
 	public static final String NO_MESSAGES = "No messages to be displayed.";
 	public static final String MESSAGE_SENT = "Message was sent";
@@ -55,7 +55,7 @@ public class StringConstants {
 	public static final String NO_RESULT_FOUND = "Sorry no results were found.";
 	public static final String PERSONAL_ACCOUNT_DISCRIMINATOR = "personal";
 	public static final String BUSINESS_ACCOUNT_DISCRIMINATOR = "business";
-	public static final String NO_TWEETS = "User hasn't shared any tweets yet.";
+	public static final String NO_TWEETS = "User hasn't shared any messages yet.";
 //	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
 //	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
 	public static final String LOGIN_ERROR = "Sorry there was an error login in. Please try again later.";
@@ -66,8 +66,8 @@ public class StringConstants {
 //	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
 //	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
-	public static final String TWEET_NOT_POSTED = "User hasn't posted any tweets";
-	public static final String TWEET_NOT_SHARED = "User hasn't shared his tweets";
+	public static final String TWEET_NOT_POSTED = "User hasn't posted any messages";
+	public static final String TWEET_NOT_SHARED = "User hasn't shared his messages";
 	public static final String INVALID_URL = "Invalid url";
 //	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
 	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
@@ -104,4 +104,5 @@ public class StringConstants {
 			+ "<li>Enter the website address</li> <li>Verify business category/hours of operation</li></ol> by going into";
 	public static final String VERIFICATION_EMAIL_SENT = "Password recovery email has been sent";
 	public static final String FAILURE_SENDING_VERIFICATION_EMAIL = "Failed to send verification email";
+	public static final String TWEET_DETAILS_TOKEN = "tweet";
 }

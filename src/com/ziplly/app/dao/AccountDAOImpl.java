@@ -2,6 +2,7 @@ package com.ziplly.app.dao;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import org.jboss.logging.Logger.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -21,6 +23,8 @@ import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettings;
 import com.ziplly.app.model.Activity;
+import com.ziplly.app.model.BusinessAccount;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.Interest;
@@ -45,7 +49,7 @@ public class AccountDAOImpl implements AccountDAO {
 			logger.log(Level.ERROR, String.format("Invalid arguements to findByEmail %s", email));
 			throw new IllegalArgumentException("Invalid arguement to findByEmail");
 		}
-		
+
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
@@ -118,17 +122,17 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();
-			
+
 			// Notification Settings.
-			for(AccountNotificationSettings as : account.getNotificationSettings()) {
+			for (AccountNotificationSettings as : account.getNotificationSettings()) {
 				em.persist(as);
 			}
 
 			// Privacy Settings.
-			for(PrivacySettings ps : account.getPrivacySettings()) {
+			for (PrivacySettings ps : account.getPrivacySettings()) {
 				em.persist(ps);
 			}
-			
+
 			em.persist(account);
 			em.getTransaction().commit();
 			AccountDTO result = EntityUtil.convert(account);
@@ -236,11 +240,10 @@ public class AccountDAOImpl implements AccountDAO {
 		Query query = em
 				.createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
 						+ " order by a.timeCreated");
-		
+
 		query.setParameter("type", entityType.getType())
-		    .setParameter("neighborhoodId", neighborhoodId)
-		    .setFirstResult(start)
-		    .setMaxResults(pageSize);
+				.setParameter("neighborhoodId", neighborhoodId).setFirstResult(start)
+				.setMaxResults(pageSize);
 
 		List<AccountDTO> response = Lists.newArrayList();
 		try {
@@ -258,20 +261,26 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType,
-			List<Long> neighborhoodIds, int start, int pageSize) {
+	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(
+			EntityType entityType,
+			List<Long> neighborhoodIds, 
+			int start, 
+			int pageSize) {
 
+		if (neighborhoodIds.size() == 0) {
+			return Collections.emptyList();
+		}
+		
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		// List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
-				.createQuery("select distinct a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId "
+				.createQuery("select distinct a from Account a join a.locations l where a.class = :type "
+						+ "and l.neighborhood.neighborhoodId "
 						+ "in (:neighborhoodId) order by a.timeCreated");
-		
+
 		query.setParameter("type", entityType.getType())
-		    .setParameter("neighborhoodId", neighborhoodIds)
-		    .setFirstResult(start)
-		    .setMaxResults(pageSize);
+				.setParameter("neighborhoodId", neighborhoodIds).setFirstResult(start)
+				.setMaxResults(pageSize);
 
 		List<AccountDTO> response = Lists.newArrayList();
 		try {
@@ -290,17 +299,21 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public Long getTotalAccountCountByNeighborhoods(EntityType entityType,
+	public Long getTotalAccountCountByNeighborhoods(
+			EntityType entityType,
 			List<Long> neighborhoodIds) {
 
+		if (neighborhoodIds.size() == 0) {
+			return 0L;
+		}
+		
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		// List<Long> neighborhoodIds = getListOfNeighborhoodIds(neighborhoods);
 
 		Query query = em
-				.createNativeQuery("select count(n.neighborhood_id) from account a, account_location al, location l, neighborhood n "
+				.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
 						+ " where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
 						+ " and a.type = :type and n.neighborhood_id in (:neighborhoodIds)");
-		
+
 		query.setParameter("type", entityType.getType());
 		query.setParameter("neighborhoodIds", neighborhoodIds);
 
@@ -348,45 +361,27 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
+			List<NeighborhoodDTO> neighborhoods = neighborhoodDao
+					.findAllDescendentNeighborhoods(neighborhoodId);
+			List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
+			List<Long> neighborhoodIds = Lists.transform(neighborhoods,
+					new Function<NeighborhoodDTO, Long>() {
+
+						@Override
+						public Long apply(NeighborhoodDTO n) {
+							return n.getNeighborhoodId();
+						}
+					});
+
+			allNeighborhoodIds.addAll(neighborhoodIds);
+
 			Query query = em
-					.createQuery("from Neighborhood n where n.neighborhoodId = :neighborhoodId");
-			query.setParameter("neighborhoodId", neighborhoodId);
-			Neighborhood neighborhood = (Neighborhood) query.getSingleResult();
+					.createNativeQuery("select distinct count(a.account_id) from account a, account_location al, location l, neighborhood n "
+							+ " where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
+							+ " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id in (:neighborhood_ids)");
 
-			// If passed parent neighborhood
-			if (neighborhood.getParentNeighborhood() == null) {
-				query = em
-						.createQuery("from Neighborhood where parentNeighborhood.neighborhoodId = :neighborhoodId");
-				query.setParameter("neighborhoodId", neighborhoodId);
-				@SuppressWarnings("unchecked")
-				List<Neighborhood> neighborhoods = query.getResultList();
-				List<Long> neighborhoodIds = Lists.transform(neighborhoods,
-						new Function<Neighborhood, Long>() {
-
-							@Override
-							public Long apply(Neighborhood n) {
-								return n.getNeighborhoodId();
-							}
-						});
-
-				query = em
-						.createNativeQuery("select distinct count(a) from account a, account_location al, location l, neighborhood n "
-								+ " where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-								+ " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id in (:neighborhood_ids)");
-				
-				query.setParameter("type", type.getType());
-				query.setParameter("neighborhood_ids", neighborhoodIds);
-			}
-			// for specific neighborhood
-			else {
-				query = em
-						.createNativeQuery("select count(*) from account a, account_location al, location l, neighborhood n "
-								+ " where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-								+ " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id = :neighborhood_id");
-				
-				query.setParameter("type", type.getType());
-				query.setParameter("neighborhood_id", neighborhoodId);
-			}
+			query.setParameter("type", type.getType());
+			query.setParameter("neighborhood_ids", allNeighborhoodIds);
 			BigInteger count = (BigInteger) query.getSingleResult();
 			return count.longValue();
 		} catch (NoResultException nre) {
@@ -410,25 +405,22 @@ public class AccountDAOImpl implements AccountDAO {
 
 		List<NeighborhoodDTO> neighborhoods = neighborhoodDao
 				.findAllDescendentNeighborhoods(neighborhoodId);
+		List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
 		List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
+		allNeighborhoodIds.addAll(neighborhoodIdList);
 
 		if (gender == Gender.ALL) {
-//			query = em
-//					.createQuery("from Account a, a.locations l where l.accountId = a.accountId "
-//							+ "and type = :type and l.neighborhood.neighborhoodId in (:neighborhoodId)");
-			query = em
-					.createQuery("select a from Account a join a.locations l "
-								+ " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)");
+			query = em.createQuery("select a from Account a join a.locations l "
+							+ " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)");
 		} else {
 			query = em.createQuery("select a from Account a join a.locations l "
-							+ " where a.class = PersonalAccount and gender = :gender and "
-							+ " l.neighborhood.neighborhoodId in (:neighborhoodId)");
+					+ " where a.class = PersonalAccount and gender = :gender and "
+					+ " l.neighborhood.neighborhoodId in (:neighborhoodId)");
 			query.setParameter("gender", gender.name());
 		}
 
-		query.setParameter("neighborhoodId", neighborhoodIdList)
-		    .setFirstResult(start)
-			.setMaxResults(pageSize);
+		query.setParameter("neighborhoodId", allNeighborhoodIds).setFirstResult(start)
+				.setMaxResults(pageSize);
 
 		List<PersonalAccountDTO> result = Lists.newArrayList();
 		try {
@@ -445,6 +437,39 @@ public class AccountDAOImpl implements AccountDAO {
 		}
 	}
 
+	@Override
+	public List<BusinessAccountDTO> findBusinessAccounts(long neighborhoodId,
+			int start, int pageSize) throws NotFoundException {
+
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query;
+
+		List<NeighborhoodDTO> neighborhoods = neighborhoodDao
+				.findAllDescendentNeighborhoods(neighborhoodId);
+		List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
+		List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
+		allNeighborhoodIds.addAll(neighborhoodIdList);
+
+		query = em.createQuery("select a from Account a join a.locations l "
+							+ " where a.class = BusinessAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)");
+		query.setParameter("neighborhoodId", allNeighborhoodIds).setFirstResult(start)
+				.setMaxResults(pageSize);
+
+		List<BusinessAccountDTO> result = Lists.newArrayList();
+		try {
+			@SuppressWarnings("unchecked")
+			List<BusinessAccount> baList = query.getResultList();
+			for (BusinessAccount ba : baList) {
+				result.add(EntityUtil.clone(ba, false));
+			}
+			return result;
+		} catch (NoResultException nre) {
+			return result;
+		} finally {
+			em.close();
+		}
+	}
+	
 	//
 	// TODO: Handles Gender.ALL in a hacky fashion.
 	//
@@ -452,30 +477,47 @@ public class AccountDAOImpl implements AccountDAO {
 	public Long getTotalPersonalAccountCountByGender(Gender gender, Long neighborhoodId) {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query;
 
-		if (gender == Gender.ALL) {
-			query = em
-					.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
-							+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-							+ " and a.type = :type and n.neighborhood_id = :neighborhood_id");
-		} else {
-			query = em
-					.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
-							+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-							+ " and a.type = :type and a.gender = :gender and n.neighborhood_id = :neighborhood_id");
-			query.setParameter("gender", gender.name());
+		try {
+			List<NeighborhoodDTO> neighborhoods = neighborhoodDao
+					.findAllDescendentNeighborhoods(neighborhoodId);
+			List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
+			List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
+			allNeighborhoodIds.addAll(neighborhoodIdList);
+			Query query;
+
+			if (gender == Gender.ALL) {
+				query = em
+						.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
+								+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
+								+ " and a.type = :type and n.neighborhood_id in (:neighborhoodIds)");
+			} else {
+				query = em
+						.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
+								+ "where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
+								+ " and a.type = :type and a.gender = :gender and n.neighborhood_id in (:neighborhoodIds)");
+				query.setParameter("gender", gender.name());
+			}
+
+			query.setParameter("type", StringConstants.PERSONAL_ACCOUNT_DISCRIMINATOR)
+					.setParameter("neighborhoodIds", allNeighborhoodIds);
+
+			BigInteger count = (BigInteger) query.getSingleResult();
+			return count.longValue();
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			em.close();
 		}
-
-		query.setParameter("type", StringConstants.PERSONAL_ACCOUNT_DISCRIMINATOR).setParameter(
-				"neighborhood_id", neighborhoodId);
-
-		BigInteger count = (BigInteger) query.getSingleResult();
-		em.close();
-		return count.longValue();
+		return 0L;
 	}
 
 	private List<Long> getNeighborhoodIds(List<NeighborhoodDTO> neighborhoods) {
+		if (neighborhoods.size() == 0) {
+			return Collections.emptyList();
+		}
+		
 		List<Long> neighborhoodIdList = Lists.transform(neighborhoods,
 				new Function<NeighborhoodDTO, Long>() {
 					@Override

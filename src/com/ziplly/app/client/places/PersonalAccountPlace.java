@@ -39,5 +39,6 @@ public class PersonalAccountPlace extends Place {
 			}
 			return "";
 		}
-	}	
+	}
+
 }

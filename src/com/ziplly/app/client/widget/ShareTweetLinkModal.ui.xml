@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+		.shareTweetLinkModal {
+			width: 400px;
+		}
+		.btn {
+			margin-left: 8px;
+			padding: 4px;
+			width: 40px;
+		}
+		.shareTextBox {
+			height: 34px !important;
+			width: 80% !important;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal ui:field="shareTweetLinkModal" addStyleNames="{style.shareTweetLinkModal}">
+			<g:HTMLPanel>
+			    <b:Heading size="4">Copy and share this link</b:Heading>
+				<b:TextBox ui:field="shareTextBox" addStyleNames="{style.shareTextBox}" />
+				<div>
+					<b:Button type="PRIMARY" ui:field="gotoTweetBtn"
+						addStyleNames="{style.btn}">Visit</b:Button>
+					<b:Button ui:field="closeBtn" addStyleNames="{style.btn}">Close</b:Button>
+				</div>
+			</g:HTMLPanel>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

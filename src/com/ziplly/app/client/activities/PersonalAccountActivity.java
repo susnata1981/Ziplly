@@ -137,7 +137,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		}
 
 		view.displayProfile((PersonalAccountDTO) ctx.getAccount());
+
+		// Display target neighborhood
 		view.displayTargetNeighborhoods(getTargetNeighborhoodList());
+		
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
@@ -205,8 +208,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		ctx.setTotalTweets(result.getTotalTweets());
 		ctx.setTotalComments(result.getTotalComments());
 		ctx.setTotalLikes(result.getTotalLikes());
-		
-		view.updateAccountDetails(ctx);
+		if (view != null) {
+			view.updateAccountDetails(ctx);
+		}
 	}
 
 	@Override
@@ -279,23 +283,23 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	@Override
 	public void deleteTweet(final TweetDTO tweet) {
 		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
-			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+			view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
 
 		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()),
 				new DispatcherCallbackAsync<DeleteTweetResult>() {
 					@Override
 					public void onSuccess(DeleteTweetResult result) {
-						view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+						view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
 						view.removeTweet(tweet);
 					}
 
 					@Override
 					public void onFailure(Throwable th) {
 						if (th instanceof AccessError) {
-							view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+							view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 						} else {
-							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+							view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 						}
 					}
 				});
@@ -320,14 +324,14 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		@Override
 		public void onFailure(Throwable th) {
-			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 		}
 	}
 
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
 		@Override
 		public void onSuccess(ReportSpamResult result) {
-			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+			view.displayModalMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
 		}
 	}
 

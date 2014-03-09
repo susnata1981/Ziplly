@@ -65,7 +65,7 @@
 					<b:HelpInline ui:field="passwordError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
-			<b:Button type="SUCCESS" ui:field="loginBtn" addStyleNames="{style.button}">Signin</b:Button>
+			<b:Button type="SUCCESS" ui:field="loginBtn" addStyleNames="{style.button}">Sign in</b:Button>
 			<g:HTMLPanel>
 			    <hr class="{style.hr}"/>
 				<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"

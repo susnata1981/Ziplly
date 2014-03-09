@@ -1,8 +1,10 @@
 package com.ziplly.app.server.handlers;
 
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -22,6 +24,8 @@ public class GetNeighborhoodDetailsActionHandler extends AbstractAccountActionHa
 	@Override
 	public GetNeighborhoodDetailsResult execute(GetNeighborhoodDetailsAction action, ExecutionContext arg1)
 			throws DispatchException {
+		
+		Preconditions.checkNotNull(action.getNeighborhoodId());
 		
 		validateSession();
 		

@@ -23,6 +23,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -149,6 +150,7 @@ public class BusinessView extends AbstractView implements View<BusinessView.Enti
 		} else {
 			state.searchByNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
 		}
+		eventBus.fireEvent(new LoadingEventStart());
 		searchBtn.setEnabled(false);
 		presenter.getBusinessList(state.getCurrentEntityListAction());
 	}
@@ -219,6 +221,7 @@ public class BusinessView extends AbstractView implements View<BusinessView.Enti
 			for (NeighborhoodDTO n : neighborhoods) {
 				neighborhoodListBox.addItem(n.getName());
 			}
+			neighborhoodListBox.setSelectedIndex(neighborhoods.size());
 		}
 	}
 

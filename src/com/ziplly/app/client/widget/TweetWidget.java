@@ -50,6 +50,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.WidgetFactory;
@@ -303,6 +304,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			@Override
 			public void onClick(ClickEvent event) {
 				SendMessageWidget smw = new SendMessageWidget(tweet.getSender());
+				smw.setSubject(PlaceUtils.getPlaceTokenForTweetDetails(tweet));
 				smw.setPresenter(presenter);
 				smw.show();
 			}
@@ -312,7 +314,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.goTo(new TweetDetailsPlace(tweet.getTweetId()));
+				final ShareTweetLinkModal modal = new ShareTweetLinkModal();
+				modal.setTweetLink(PlaceUtils.getPlaceTokenForTweetDetails(tweet));
+				modal.getGotoTweetButton().addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						presenter.goTo(new TweetDetailsPlace(tweet.getTweetId()));
+						modal.hide();
+					}
+				});
+				
+				modal.show();
 			}
 			
 		});

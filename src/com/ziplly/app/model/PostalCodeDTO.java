@@ -6,9 +6,12 @@ public class PostalCodeDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long postalCodeId;
 	private String postalCode;
-	private String city;
 	private String state;
-	
+	private String city;
+	private String fullState;
+	private String latitude;
+	private String longitude;	
+
 	public PostalCodeDTO() {
 	}
 	
@@ -32,7 +35,7 @@ public class PostalCodeDTO implements Serializable {
 		}
 		
 		PostalCode p = (PostalCode)o;
-		return p.getPostalCodeId() == this.getPostalCodeId();
+		return p.getPostalCode() == this.getPostalCode();
 	}
 
 	public void setPostalCodeId(Long postalCodeId) {
@@ -41,7 +44,7 @@ public class PostalCodeDTO implements Serializable {
 
 	// to be overridden
 	public String getDisplayName() {
-		return "<NAME>";
+		return city + "," + state;
 	}
 
 	public String getPostalCode() {
@@ -50,5 +53,45 @@ public class PostalCodeDTO implements Serializable {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getFullState() {
+		return fullState;
+	}
+
+	public void setFullState(String fullState) {
+		this.fullState = fullState;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
 	}
 }

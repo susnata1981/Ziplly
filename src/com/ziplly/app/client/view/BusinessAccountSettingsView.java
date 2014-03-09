@@ -404,7 +404,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 			displayBusinessProperties();
 
-			setProfileImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+			setProfileImage(accountFormatter.format(account, ValueType.PROFILE_BACKROUND_URL));
 
 			// Don't show subscription tab for non-profits
 			if (account.getBusinessType() == BusinessType.NON_PROFIT) {

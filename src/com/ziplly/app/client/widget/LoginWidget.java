@@ -50,8 +50,6 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
-//		email.setWidth("90%");
-//		password.setWidth("90%");
 		setWidth("90%");
 	}
 
@@ -98,7 +96,6 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	com.google.gwt.user.client.ui.Button fbLoginBtn;
-//	Button fbLoginBtn;
 
 	@UiField
 	Button loginBtn;
@@ -147,7 +144,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		}
 
 		String passwordInput = password.getText();
-		result = FieldVerifier.validatePassword(passwordInput);
+		result = FieldVerifier.validateString(passwordInput, FieldVerifier.MAX_PASSWORD_LENGTH);
 
 		if (!result.isValid()) {
 			passwordError.setText(result.getErrors().get(0).getErrorMessage());

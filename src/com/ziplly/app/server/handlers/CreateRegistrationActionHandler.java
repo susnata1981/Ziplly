@@ -16,8 +16,6 @@ import com.ziplly.app.model.AccountRegistration;
 import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.resources.IResource;
-import com.ziplly.app.server.resources.Resource;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.CreateRegistrationResult;
 
@@ -52,7 +50,7 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 		ar.setEmail(action.getEmail());
 		ar.setAccountType(action.getType());
 		ar.setBusinessType(action.getBusinessType());
-		ar.setCode(code);
+		ar.setCode(Long.toString(code));
 		ar.setStatus(AccountRegistrationStatus.ACTIVE);
 		registrationDao.save(ar);
 		try {
@@ -72,9 +70,9 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 	public Class<CreateRegistrationAction> getActionType() {
 		return CreateRegistrationAction.class;
 	}
-
-	@Override
-	public int getResourceId() {
-		return Resource.CREATE_REGISTRATION_ACTION;
-	}
+//
+//	@Override
+//	public int getResourceId() {
+//		return Resource.CREATE_REGISTRATION_ACTION;
+//	}
 }

@@ -1,7 +1,9 @@
 package com.ziplly.app.client.widget;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -121,6 +123,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 
 	private List<TweetType> tweetTypes;
 
+	private Map<String, NeighborhoodDTO> neighborhoodNameMap = new HashMap<String, NeighborhoodDTO>();
 	private List<NeighborhoodDTO> neighborhoods;
 
 	public TweetBox() {
@@ -315,8 +318,8 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweet.setTimeCreated(new Date());
 
 		if (neighborhoods != null) {
-			NeighborhoodDTO neighborhood = neighborhoods.get(tweetTargetNeighborhoodList
-					.getSelectedIndex());
+			NeighborhoodDTO neighborhood = neighborhoodNameMap.get(
+					tweetTargetNeighborhoodList.getItemText(tweetTargetNeighborhoodList.getSelectedIndex()));
 			tweet.getTargetNeighborhoods().add(neighborhood);
 		}
 		
@@ -389,11 +392,12 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	}
 
 	public void initializeTargetNeighborhood(List<NeighborhoodDTO> neighborhoods) {
-		tweetTargetNeighborhoodList.clear();
 		if (neighborhoods != null) {
+			tweetTargetNeighborhoodList.clear();
 			this.neighborhoods = neighborhoods;
 			for (NeighborhoodDTO n : neighborhoods) {
 				tweetTargetNeighborhoodList.addItem(n.getName());
+				neighborhoodNameMap.put(n.getName(), n);
 			}
 			StyleHelper.show(tweetTargetNeighborhoodList.getElement(), true);
 		}

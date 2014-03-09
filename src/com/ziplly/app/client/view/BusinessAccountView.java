@@ -46,6 +46,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.CssStyleHelper;
 import com.ziplly.app.client.widget.NotificationWidget;
 import com.ziplly.app.client.widget.PriceRangeWidget;
@@ -119,6 +120,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	SpanElement email;
 	@UiField
 	Anchor emailLink;
+	@UiField
+	SpanElement phoneSpan;
 	@UiField
 	SpanElement websiteSpan;
 	@UiField
@@ -237,7 +240,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 		// image section
 		StyleHelper.setBackgroundImage(accountFormatter
-				.format(account, ValueType.PROFILE_IMAGE_URL));
+				.format(account, ValueType.PROFILE_BACKROUND_URL));
 
 		name.setInnerHTML(account.getDisplayName());
 		// TODO
@@ -259,6 +262,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		email.setInnerText(account.getEmail());
 		emailLink.setText(account.getEmail());
 
+		phoneSpan.setInnerHTML(account.getPhone());
+		
 		if (account.getWebsite() != null) {
 			websiteSpan.setInnerHTML(account.getWebsite());
 			websiteLink.setHref(account.getWebsite());
@@ -382,7 +387,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
+		hideAccontUpdate();
+		StyleHelper.show(tweetBoxDiv.getElement(), false);
 	}
 
 	@Override
@@ -417,6 +423,12 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		this.presenter = presenter;
 		tweetBox.setPresenter(presenter);
 		tview.setPresenter(presenter);
+	}
+
+	@Override
+	public void displayModalMessage(String msg, AlertType type) {
+		AlertModal modal = new AlertModal();
+		modal.showMessage(msg, type);
 	}
 
 	@Override
@@ -565,4 +577,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		updateAlertBlock.add(accountSettingsAnchor);
 	}
 
+	private void hideAccontUpdate() {
+		StyleHelper.show(updateAlertBlock.getElement(), false);
+	}
 }

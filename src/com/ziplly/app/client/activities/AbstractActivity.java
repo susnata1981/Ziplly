@@ -1,6 +1,7 @@
 package com.ziplly.app.client.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.activity.shared.Activity;
@@ -166,28 +167,6 @@ public abstract class AbstractActivity implements Activity {
 		placeController.goTo(new LoginPlace());
 	}
 
-	/**
-	 * Get the list of target neighborhoods. For now it is
-	 * 1. parent neighborhood
-	 * 2. current neighborhood.
-	 * in that order. 
-	 */
-	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
-		if (ctx.getAccount() != null) {
-			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
-			
-			if (neighborhood.getParentNeighborhood() != null) {
-				neighborhoods.add(neighborhood.getParentNeighborhood());
-			}
-			neighborhoods.add(neighborhood);
-			
-			return neighborhoods;
-		} else {
-			return null;
-		}
-	}
-
 	protected void forward(AccountDTO acct) {
 		if (acct != null) {
 			if (acct instanceof PersonalAccountDTO) {
@@ -198,6 +177,26 @@ public abstract class AbstractActivity implements Activity {
 		}
 	}
 
+	/**
+	 * Get the list of target neighborhoods in child to parent order. 
+	 */
+	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
+		if (ctx.getAccount() != null) {
+			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
+			neighborhoods.add(neighborhood);
+			NeighborhoodDTO parentNeighborhood = neighborhood.getParentNeighborhood();
+			while (parentNeighborhood != null) {
+				neighborhoods.add(parentNeighborhood);
+				parentNeighborhood = parentNeighborhood.getParentNeighborhood();
+			}
+			
+			return neighborhoods;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+	
 	public class AccountNotificationHandler extends
 			DispatcherCallbackAsync<GetAccountNotificationResult> {
 
@@ -211,8 +210,4 @@ public abstract class AbstractActivity implements Activity {
 		$wnd.console.log(msg);
 	}-*/;
 
-//	public void getNeighborhoodData(String postalCode) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 }

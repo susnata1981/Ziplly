@@ -14,8 +14,8 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.NeighborhoodType;
 import com.ziplly.app.model.PostalCode;
-import com.ziplly.app.model.PostalCodeDTO;
 
 public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	private Logger logger = Logger.getLogger(NeighborhoodDAOImpl.class.getCanonicalName());
@@ -60,10 +60,10 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
-		Query query = em.createQuery("select n from Neighborhood n, PostalCode p "
-				+ "where n.postalCode.postalCodeId = p.postalCodeId "
-				+ "and p.postalCode = :postalCode and n.parentNeighborhood is not null");
-		query.setParameter("postalCode", postalCode);
+		Query query = em.createQuery("select n from Neighborhood n join n.postalCodes p"
+				+ " where p.postalCode = :postalCode and n.type is :type");
+		query.setParameter("postalCode", postalCode)
+		    .setParameter("type", NeighborhoodType.X.name());
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -113,25 +113,56 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	public List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId)
 			throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-
+		
+		List<NeighborhoodDTO> result = Lists.newArrayList();
+		
 		try {
 			Query query = em
-					.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+					.createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId");
 			query.setParameter("neighborhoodId", neighborhoodId);
-			Neighborhood neighborhood = (Neighborhood) query.getSingleResult();
-
-			// If passed parent neighborhood
-			if (neighborhood.getParentNeighborhood() == null) {
-				query = em.createQuery("from Neighborhood where parentNeighborhood.neighborhoodId = :neighborhoodId");
-				query.setParameter("neighborhoodId", neighborhoodId);
-				@SuppressWarnings("unchecked")
-				List<Neighborhood> neighborhoods = query.getResultList();
-				return EntityUtil.cloneNeighborhoodList(neighborhoods);
-			} else {
-				return ImmutableList.of(EntityUtil.clone(neighborhood));
+			List<Neighborhood> neighborhoods = query.getResultList();
+			for(Neighborhood neighborhood : neighborhoods) {
+				result.add(EntityUtil.clone(neighborhood));
+				
+				List<NeighborhoodDTO> childNeighborhoods = findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
+				if (childNeighborhoods.size() == 0) {
+					continue;
+				}
+				result.addAll(childNeighborhoods);
 			}
+			
+			return result;
 		} catch (NoResultException nre) {
-			throw new NotFoundException();
+			return ImmutableList.of();
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public List<NeighborhoodDTO> findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId)
+			throws NotFoundException {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		List<NeighborhoodDTO> result = Lists.newArrayList();
+		
+		try {
+			Query query = em
+					.createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId or neighborhoodId = :neighborhoodId");
+			query.setParameter("neighborhoodId", neighborhoodId);
+			List<Neighborhood> neighborhoods = query.getResultList();
+			for(Neighborhood neighborhood : neighborhoods) {
+				result.add(EntityUtil.clone(neighborhood));
+				
+				List<NeighborhoodDTO> childNeighborhoods = findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
+				if (childNeighborhoods.size() == 0) {
+					continue;
+				}
+				result.addAll(childNeighborhoods);
+			}
+			
+			return result;
+		} catch (NoResultException nre) {
+			return ImmutableList.of();
 		} finally {
 			em.close();
 		}
@@ -142,15 +173,21 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();
-			PostalCodeDTO postalCode = null;
-			try {
-				postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCode().getPostalCode());
-			} catch(NoResultException nre) {
-				System.out.println("Didn't find postal code");
-				postalCode = new PostalCodeDTO();
-				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-			}
-			neighborhood.setPostalCode(new PostalCode(postalCode));
+//			PostalCodeDTO postalCode = null;
+//			try {
+////				postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCodes().iterator().next().getPostalCode());
+//				String zip = neighborhood.getPostalCodes().iterator().next().getPostalCode();
+//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode")
+//				    .setParameter("postalCode", zip);
+//				PostalCode p = (PostalCode) query.getSingleResult();
+//				neighborhood.addPostalCode(p);
+//			} catch(NoResultException nre) {
+////				System.out.println("Didn't find postal code");
+////				postalCode = new PostalCodeDTO();
+////				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+//				throw new RuntimeException("Postal code not found.");
+//			}
+////			neighborhood.addPostalCode(new PostalCode(postalCode));
 			em.merge(neighborhood);
 			em.getTransaction().commit();
 		} finally {
@@ -158,6 +195,45 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		}
 	}
 	
+//	@Override
+//	public void save(Neighborhood neighborhood) {
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+//
+//		try {
+//			em.getTransaction().begin();
+//			PostalCode postalCode = null;
+//			
+//			// parent neighborhood
+//			try {
+//				if (neighborhood.getParentNeighborhood() != null) {
+//					Long parentNeighborhoodId = neighborhood.getParentNeighborhood().getNeighborhoodId();
+//					Query query = em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+//					query.setParameter("neighborhoodId", parentNeighborhoodId);
+//					Neighborhood parent = (Neighborhood) query.getSingleResult();
+//					neighborhood.setParentNeighborhood(parent);
+//				}
+//			} catch(NoResultException nre) {
+//				throw nre;
+//			}
+//			
+//			// postal code
+//			try {
+//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
+//				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
+//				postalCode = (PostalCode) query.getSingleResult();
+//			} catch(NoResultException nre) {
+//				postalCode = new PostalCode();
+//				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+//			}
+//			
+//			neighborhood.setPostalCode(postalCode);
+//			em.persist(neighborhood);
+//			em.getTransaction().commit();
+//		} finally {
+//			em.close();
+//		}
+//	}
+
 	@Override
 	public void save(Neighborhood neighborhood) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
@@ -179,17 +255,17 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 				throw nre;
 			}
 			
-			// postal code
-			try {
-				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
-				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
-				postalCode = (PostalCode) query.getSingleResult();
-			} catch(NoResultException nre) {
-				postalCode = new PostalCode();
-				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-			}
-			
-			neighborhood.setPostalCode(postalCode);
+//			// postal code
+//			try {
+//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
+//				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
+//				postalCode = (PostalCode) query.getSingleResult();
+//			} catch(NoResultException nre) {
+//				postalCode = new PostalCode();
+//				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+//			}
+//			
+//			neighborhood.setPostalCode(postalCode);
 			em.persist(neighborhood);
 			em.getTransaction().commit();
 		} finally {

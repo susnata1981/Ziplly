@@ -541,10 +541,11 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 			@Override
 			public String getValue(NeighborhoodDTO n) {
-				if (n.getPostalCode() != null) {
-					return n.getPostalCode().getPostalCode();
+				String v = "";
+				for(PostalCodeDTO p : n.getPostalCodes()) {
+					v += p.getPostalCode()+",";
 				}
-				return "";
+				return v;
 			}
 		};
 		neighborhoodTable.addColumn(zipColumn, "Zip code");
@@ -560,7 +561,7 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 				}
 				PostalCodeDTO p = new PostalCodeDTO();
 				p.setPostalCode(value);
-				object.setPostalCode(p);
+				object.addPostalCode(p);
 			}
 		});
 		
@@ -863,7 +864,7 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		
 		PostalCodeDTO p = new PostalCodeDTO();
 		p.setPostalCode(neighborhoodZip.getText());
-		n.setPostalCode(p);
+		n.addPostalCode(p);
 		presenter.createNeighborhood(n);
 	}
 	

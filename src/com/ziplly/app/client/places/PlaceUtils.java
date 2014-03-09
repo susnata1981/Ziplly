@@ -1,6 +1,8 @@
 package com.ziplly.app.client.places;
 
+import com.google.gwt.core.client.GWT;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.model.TweetDTO;
 
 public class PlaceUtils {
 	
@@ -19,5 +21,9 @@ public class PlaceUtils {
 	public static String getHomePlaceTokenForTweetType(String tweetType) {
 //		return StringConstants.HOME_TOKEN + StringConstants.PLACE_SEPARATOR + tweetType;
 		return tweetType;
+	}
+
+	public static String getPlaceTokenForTweetDetails(TweetDTO tweet) {
+		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN + StringConstants.PLACE_SEPARATOR + tweet.getTweetId();
 	}
 }

@@ -21,10 +21,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
-import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -80,7 +78,7 @@ public class GetLatLngActionHandler extends
 		LocationDTO location = getPrimaryLocation(acct);
 		if (acct instanceof PersonalAccountDTO) {
 			// Changed
-			response.append(location.getNeighborhood().getPostalCode().getPostalCode());
+			response.append(location.getNeighborhood().getPostalCodes().get(0).getPostalCode());
 		} else if (acct instanceof BusinessAccountDTO) {
 			// BusinessAccountDTO baccount = (BusinessAccountDTO) acct;
 			// LocationDTO location = getCurrentLocation(baccount);
@@ -96,7 +94,7 @@ public class GetLatLngActionHandler extends
 			// response.append(baccount.getStreet2());
 			// }
 			// response.append(" " + baccount.getZip());
-			response.append(" " + location.getNeighborhood().getPostalCode().getPostalCode());
+			response.append(" " + location.getNeighborhood().getPostalCodes().get(0).getPostalCode());
 		}
 		return GEO_ENCODING_SERVICE_ENDPOINT + URLEncoder.encode(response.toString(), "UTF-8");
 	}

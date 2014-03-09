@@ -30,7 +30,6 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -163,7 +162,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		}
 		
 		view.displayProfile((BusinessAccountDTO) ctx.getAccount());
+		
+		// Display target neighborhood 
 		view.displayTargetNeighborhoods(getTargetNeighborhoodList());
+
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		getAccountNotifications();
 		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
@@ -172,14 +174,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
 		view.displayAccontUpdate();
-	}
-
-	private boolean accountNotComplete() {
-		BusinessAccountDTO ba = (BusinessAccountDTO) ctx.getAccount();
-		if (FieldVerifier.isEmpty(ba.getWebsite())) {
-			return true;
-		}
-		return false;
 	}
 
 	private void setupImageUpload() {
@@ -287,9 +281,9 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		@Override
 		public void onFailure(Throwable th) {
 			if (th instanceof NotFoundException) {
-				view.displayMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
 			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 			view.hideProfileSection();
 		}
@@ -324,11 +318,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		@Override
 		public void onFailure(Throwable th) {
 			if (th instanceof NeedsSubscriptionException) {
-				view.displayMessage(th.getMessage(), AlertType.ERROR);
+				view.displayModalMessage(th.getMessage(), AlertType.ERROR);
 			} else if (th instanceof UsageLimitExceededException) {
-				view.displayMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
 			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
 	}
@@ -336,7 +330,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
 		@Override
 		public void onSuccess(ReportSpamResult result) {
-			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+			view.displayModalMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
 		}
 	}
 	

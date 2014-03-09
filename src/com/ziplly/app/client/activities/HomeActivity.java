@@ -642,26 +642,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				});
 	};
 
-	// private class GetLoggedInUserActionHandler extends
-	// DispatcherCallbackAsync<GetLoggedInUserResult> {
-	// @Override
-	// public void onSuccess(GetLoggedInUserResult result) {
-	// if (result != null && result.getAccount() != null) {
-	// ctx.setAccount(result.getAccount());
-	// state.setCurrentNeighborhood(result.getAccount().getNeighborhood());
-	// eventBus.fireEvent(new LoginEvent(result.getAccount()));
-	// displayCommunityWall();
-	// } else {
-	// goTo(new SignupPlace());
-	// }
-	// }
-	// }
-
 	private class GetNeighborhoodDetailsHandler extends
 			DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
-			System.out.println("Total business count: " + result.getTotalBusinesses());
 			homeView.displayCommunitySummaryDetails(result);
 		}
 

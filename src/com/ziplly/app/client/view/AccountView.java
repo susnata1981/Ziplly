@@ -15,7 +15,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -47,6 +46,7 @@ import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
@@ -135,8 +135,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	private SendMessageWidget smw;
 
 	private String tweetWidgetWidth = "90%";
-	private String tweetBoxWidth = "92%";
+	private String tweetBoxWidth = "93%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
+	
 	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
 			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
@@ -176,7 +177,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		// image section
 		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
-
 		adjustProfileImagePanel();
 		
 		name.setText(account.getDisplayName());
@@ -267,6 +267,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
+		hideAccontUpdate();
 		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
@@ -289,12 +290,18 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	}
 
 	@Override
+	public void displayModalMessage(String msg, AlertType type) {
+		AlertModal modal = new AlertModal();
+		modal.showMessage(msg, type);
+	}
+
+	@Override
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
 		message.setVisible(true);
 	}
-
+	
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -422,6 +429,10 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		}
 	}
 
+	private void hideAccontUpdate() {
+		StyleHelper.show(updateAlertBlock.getElement(), false);
+	}
+	
 	private boolean isAccountNotComplete() {
 		return FieldVerifier.isEmpty(account.getIntroduction())
 				|| account.getInterests().size() == 0 

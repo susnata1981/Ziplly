@@ -1,6 +1,7 @@
 package com.ziplly.app.client.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.FeedbackWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -349,9 +351,8 @@ public class HomeView extends AbstractView implements IHomeView {
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-		message.setText(msg);
-		message.setType(type);
-		hideMessage(false);
+		AlertModal modal = new AlertModal();
+		modal.showMessage(msg, type);
 	}
 
 	@Override
@@ -438,8 +439,11 @@ public class HomeView extends AbstractView implements IHomeView {
 
 	@Override
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
-		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 		neighborhoodsPanel.clear();
+		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
+		
+		// Display neighborhood list in reverse (parent first)
+		Collections.reverse(targetNeighborhoodList);		
 		int margin = 0;
 		for (final NeighborhoodDTO neighborhood : targetNeighborhoodList) {
 			final Anchor anchor = new Anchor(neighborhood.getName());

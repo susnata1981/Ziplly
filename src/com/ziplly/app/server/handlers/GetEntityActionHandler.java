@@ -52,66 +52,36 @@ public class GetEntityActionHandler extends
 		result.setEntityType(action.getEntityType());
 
 		List<NeighborhoodDTO> neighborhoods;
-		// TODO
+		List<Long> allNeighborhoodIds = Lists.newArrayList();
+		
 		switch (action.getSearchType()) {
 		case BY_ZIP:
 			neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
+			allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
 			break;
 		case BY_NEIGHBORHOOD:
 		default:
-//			neighborhoodIds = ImmutableList.of(action.getNeighborhoodId());
+			allNeighborhoodIds.add(action.getNeighborhoodId());
 			neighborhoods = neighborhoodDao.findAllDescendentNeighborhoods(action.getNeighborhoodId());
-		}
-
-		List<Long> neighborhoodIds = Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {
-
-			@Override
-			public Long apply(NeighborhoodDTO n) {
-				return n.getNeighborhoodId();
-			}
-		});
-		
-		if (neighborhoodIds.isEmpty()) {
-			result.setAccounts(Collections.<AccountDTO> emptyList());
-			return result;
+			allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
 		}
 
 		accounts.addAll(accountDao.findAccountsByNeighborhoods(
 				action.getEntityType(),
-				neighborhoodIds, 
+				allNeighborhoodIds, 
 				action.getPage(), 
 				action.getPageSize()));
 
-		// Set the location for business accounts.
-//		if (action.getEntityType() == EntityType.BUSINESS_ACCOUNT) {
-//			setCurrentLocation(action.getNeighborhoodId(), accounts);
-//		}
-		
 		if (action.isNeedTotalEntityCount()) {
 			Long count = accountDao.getTotalAccountCountByNeighborhoods(
 					action.getEntityType(),
-					neighborhoodIds);
+					allNeighborhoodIds);
 			
 			result.setEntityCount(count);
 		}
 		result.setAccounts(accounts);
 		return result;
 	}
-
-//	private void setCurrentLocation(Long neighborhoodId, List<AccountDTO> accounts) {
-//		for(AccountDTO acct: accounts) {
-//			acct.setCurrentLocation(selectLocation(acct.getLocations(), neighborhoodId));
-//		}
-//	}
-//
-//	private LocationDTO selectLocation(List<LocationDTO> locations, Long neighborhoodId) {
-//		for(LocationDTO loc : locations) {
-//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
-//				return loc;
-//			}
-//		}
-//		return null;
-//	}
 
 	private GetEntityResult findPersonalAccounts(GetEntityListAction action) throws NotFoundException {
 		GetEntityResult result = new GetEntityResult();
@@ -143,5 +113,21 @@ public class GetEntityActionHandler extends
 	@Override
 	public Class<GetEntityListAction> getActionType() {
 		return GetEntityListAction.class;
+	}
+	
+	private List<Long> getNeighbodhoodIdList(List<NeighborhoodDTO> neighborhoods) {
+		if (neighborhoods.size() == 0) {
+			return Collections.emptyList();
+		}
+		
+		return Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {
+
+			@Override
+			public Long apply(NeighborhoodDTO n) {
+				return n.getNeighborhoodId();
+			}
+		});
+		
+		
 	}
 }

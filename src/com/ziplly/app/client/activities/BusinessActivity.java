@@ -7,7 +7,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -18,13 +17,14 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.BusinessView.EntityListViewPresenter;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetEntityListAction;
@@ -76,6 +76,8 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 				setupHandlers();
 				displayBusinessList();
 				view.setBackground(ctx.getCurrentNeighborhood());
+				view.displayNeighborhoodFilters(getTargetNeighborhoodList());
+				panel.setWidget(view);
 			}
 		});
 	}
@@ -85,7 +87,6 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 			view.displaySendMessageWidget(place.getAccountId());
 			updateMessageWidgetWithAccountDetails(place.getAccountId());
 		}
-
 		GetEntityListAction action = new GetEntityListAction(EntityType.BUSINESS_ACCOUNT);
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
@@ -93,8 +94,6 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
 				: ctx.getCurrentNeighborhood().getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
-		
-		view.displayNeighborhoodFilters(getNeighborhoodFilters());
 		dispatcher.execute(action, handler);
 	}
 	
@@ -106,17 +105,6 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		action.setPageSize(pageSize);
 		dispatcher.execute(action, handler);
 	};
-	
-
-	private List<NeighborhoodDTO> getNeighborhoodFilters() {
-		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-		NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
-		neighborhoods.add(neighborhood);
-		if (neighborhood.getParentNeighborhood() != null) {
-			neighborhoods.add(neighborhood.getParentNeighborhood());
-		}
-		return neighborhoods;
-	}
 	
 	@Override
 	public void getBusinessList(GetEntityListAction action) {
@@ -136,14 +124,12 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 			if (result.getCount() != null) {
 				view.setTotalRowCount(result.getCount());
 			}
-			
 			view.display(accounts);
-			panel.setWidget(view);
 		}
 		
 		public void onFailure(Throwable caught) {
 			// TODO
-			Window.alert(caught.getLocalizedMessage());
+			view.displayMessage(caught.getMessage(), AlertType.ERROR);
 		}
 	}
 	
@@ -158,7 +144,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 			goTo(new LoginPlace());
 			return;
 		}
-		
+
 		// TODO check size
 		int size = conversation.getMessages().size();
 		conversation.getMessages().get(size-1).setSender(ctx.getAccount());

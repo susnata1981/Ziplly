@@ -23,7 +23,6 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
@@ -75,6 +74,8 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 				setupHandlers();
 				displayInitalRange();
 				view.setBackground(ctx.getCurrentNeighborhood());
+				view.displayNeighborhoodFilters(getTargetNeighborhoodList());
+				panel.setWidget(view);
 			}
 		});
 	}
@@ -94,18 +95,7 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setNeighborhoodId(neighborhoodId);
 		action.setGender(Gender.ALL);
 		view.setNeighborhoodId(neighborhoodId);
-		view.displayNeighborhoodFilters(getNeighborhoodFilters());
-		dispatcher.execute(action, handler);
-	}
-
-	private List<NeighborhoodDTO> getNeighborhoodFilters() {
-		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-		NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
-		neighborhoods.add(neighborhood);
-		if (neighborhood.getParentNeighborhood() != null) {
-			neighborhoods.add(neighborhood.getParentNeighborhood());
-		}
-		return neighborhoods;
+		getPersonalAccountList(action);
 	}
 
 	private void updateMessageWidgetWithAccountDetails(Long accountId) {
@@ -117,11 +107,6 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 						view.updateMessageWidget(result.getAccount());
 					}
 				});
-	}
-
-	@Override
-	public void bind() {
-		view.setPresenter(this);
 	}
 
 	/**
@@ -146,11 +131,10 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 				view.setTotalRowCount(result.getCount());
 			}
 			view.display(accounts);
-			panel.setWidget(view);
 		}
 
 		public void onFailure(Throwable caught) {
-			System.out.println(caught.getLocalizedMessage());
+			view.displayMessage(caught.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -177,6 +161,11 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 						view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
 					}
 				});
+	}
+
+	@Override
+	public void bind() {
+		view.setPresenter(this);
 	}
 
 	@Override

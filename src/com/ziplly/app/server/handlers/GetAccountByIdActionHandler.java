@@ -4,6 +4,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.ShareSetting;
@@ -32,8 +33,6 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();
 		}
-		
-//		validateSession();
 		
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
@@ -76,11 +75,11 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 
 	private boolean isAttributeVisible(AccountDTO account, PrivacySettingsDTO ps) {
 
-//		try {
-//			validateSession();
-//		} catch (NeedsLoginException e) {
-//			return ps.getSetting() == ShareSetting.PUBLIC;
-//		}
+		try {
+			validateSession();
+		} catch (NeedsLoginException e) {
+			return ps.getSetting() == ShareSetting.PUBLIC;
+		}
 
 		if (session == null || session.getAccount() == null) {
 			return ps.getSetting() == ShareSetting.PUBLIC;
@@ -100,9 +99,8 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 	}
 
 	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
-//		return account.getNeighborhood().equals(loggedInAccount.getNeighborhood());
-		// this is applicable for only personal accounts.
-		return account.getLocations().get(0).getNeighborhood().equals(loggedInAccount.getLocations().iterator().next().getNeighborhood());
+		return account.getLocations().get(0).getNeighborhood().getNeighborhoodId() == 
+				loggedInAccount.getLocations().iterator().next().getNeighborhood().getNeighborhoodId();
 	}
 
 	@Override

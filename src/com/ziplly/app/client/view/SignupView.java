@@ -457,8 +457,7 @@ public class SignupView extends AbstractView implements
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
 		
-//		zip.setText(Integer.toString(account.getZip()));
-		
+		genderListBox.setSelectedIndex(account.getGender().ordinal());
 		if (account.getImageUrl() != null) {
 			this.profileImageUrl = account.getImageUrl();
 		}

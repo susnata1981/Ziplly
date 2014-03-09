@@ -3,6 +3,7 @@ package com.ziplly.app.client.widget;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class StyleHelper {
@@ -48,5 +49,9 @@ public class StyleHelper {
 
 	public static void clearBackground() {
 		RootPanel.get().getElement().getStyle().clearBackgroundImage();
+	}
+
+	public static void setHeight(HTMLPanel panel, int height) {
+		panel.setHeight(height + "px");
 	}
 }

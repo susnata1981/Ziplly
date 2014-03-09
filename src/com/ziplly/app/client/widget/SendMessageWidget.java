@@ -196,4 +196,8 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		receiverProfileImage.setAltText(receiver.getDisplayName());
 		receiverProfileImage.setUrl(accountFormatter.format(receiver, ValueType.PROFILE_IMAGE_URL));
 	}
+	
+	public void setSubject(String subjectInput) {
+		subject.setText(subjectInput);
+	}
 }
