@@ -67,7 +67,7 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 			return;
 		}
 
-		String imgUrl = value.getImageUrl() != null ? value.getImageUrl() : "images/no-photo.jpg";
+		String imgUrl = value.getImages().size() > 0 ? value.getImages().get(0).getUrl() : "images/no-photo.jpg";
 
 		String introduction =
 		    value.getIntroduction() != null ? value.getIntroduction() : "Not Available";

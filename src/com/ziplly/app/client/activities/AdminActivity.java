@@ -21,6 +21,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSearchCriteria;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.TweetDTO;
@@ -40,6 +41,8 @@ import com.ziplly.app.shared.GetTweetsResult;
 import com.ziplly.app.shared.SearchAccountAction;
 import com.ziplly.app.shared.SearchAccountResult;
 import com.ziplly.app.shared.UpdateAccountAction;
+import com.ziplly.app.shared.UpdateAccountLocationAction;
+import com.ziplly.app.shared.UpdateAccountLocationResult;
 import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdateNeighborhoodAction;
 import com.ziplly.app.shared.UpdateNeighborhoodResult;
@@ -290,5 +293,21 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 					});
 		}
 	}
+
+	@Override
+  public void updateAccountLocation(AccountDTO account, LocationDTO newLocation) {
+		dispatcher.execute(new UpdateAccountLocationAction(account, newLocation), new DispatcherCallbackAsync<UpdateAccountLocationResult>() {
+
+			@Override
+      public void onSuccess(UpdateAccountLocationResult result) {
+	      view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+      }
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.SAVE_SUCCESSFULL, AlertType.ERROR);
+			}
+		});
+  }
 
 }

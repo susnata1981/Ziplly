@@ -297,7 +297,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		    }) {
 			    @Override
 			    public String getValue(ConversationDTO c) {
-				    return c.getSender().getImageUrl();
+				    return accountFormatter.format(c.getSender(), ValueType.PROFILE_IMAGE_URL);
 			    }
 		    };
 		conversationTable.addColumn(senderColumn, buildHeader(SENDER_KEY));
@@ -313,7 +313,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		    }) {
 			    @Override
 			    public String getValue(ConversationDTO c) {
-				    return c.getSender().getImageUrl();
+				    return accountFormatter.format(c.getSender(), ValueType.PROFILE_IMAGE_URL);
 			    }
 		    };
 		conversationTable.addColumn(receiverColumn, buildHeader(RECEIVER_KEY));

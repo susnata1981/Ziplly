@@ -9,6 +9,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public interface AccountDAO {
@@ -79,4 +80,7 @@ public interface AccountDAO {
 
 	List<BusinessAccountDTO>
 	    findBusinessAccounts(long neighborhoodId, int start, int pageSize) throws NotFoundException;
+
+
+	void updateLocation(AccountDTO accountDTO, LocationDTO location) throws NotFoundException;
 }

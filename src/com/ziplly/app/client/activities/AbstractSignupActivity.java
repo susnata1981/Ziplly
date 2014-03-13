@@ -139,9 +139,9 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		public void onFailure(Throwable th) {
 			if (th instanceof AccountExistsException) {
 				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
-				return;
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
-			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			eventBus.fireEvent(new LoadingEventEnd());
 		}
 	}

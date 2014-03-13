@@ -29,6 +29,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 
 import com.ziplly.app.shared.BCrypt;
 
@@ -58,6 +59,7 @@ public class Account extends AbstractTimestampAwareEntity {
 
 	@NotNull
 	@Column(name = "email", unique = true)
+	@Index(name = "email_idx")
 	private String email;
 
 	@NotNull
@@ -67,9 +69,9 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Column(name = "profile_url")
 	private String url;
 
-	@Column(name = "image_url")
-	@Size(max = 1024)
-	private String imageUrl;
+//	@Column(name = "image_url")
+//	@Size(max = 1024)
+//	private String imageUrl;
 
 	@OneToMany(cascade = CascadeType.PERSIST)
 	@Fetch(FetchMode.JOIN)
@@ -77,8 +79,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	    inverseJoinColumns = { @JoinColumn(name = "image_id") })
 	private Set<Image> images = new HashSet<Image>();
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-	    CascadeType.REMOVE })
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	@JoinTable(name = "account_location", joinColumns = { @JoinColumn(name = "account_id") },
 	    inverseJoinColumns = { @JoinColumn(name = "location_id") })
 	private Set<Location> locations = new HashSet<Location>();
@@ -123,9 +124,10 @@ public class Account extends AbstractTimestampAwareEntity {
 		if (account.getPassword() != null) {
 			password = encryptPassword(account.getPassword());
 		}
+		
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
-		imageUrl = account.getImageUrl();
+//		imageUrl = account.getImageUrl();
 		setRole(account.getRole());
 		setStatus(account.getStatus());
 		setLastLoginTime(account.getLastLoginTime());
@@ -185,14 +187,6 @@ public class Account extends AbstractTimestampAwareEntity {
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
-	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
 	}
 
 	@Override

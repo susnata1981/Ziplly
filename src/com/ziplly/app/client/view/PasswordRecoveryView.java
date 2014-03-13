@@ -1,5 +1,9 @@
 package com.ziplly.app.client.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
@@ -16,9 +20,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ResetPasswordAction;
 import com.ziplly.app.shared.ValidationResult;
@@ -84,6 +90,11 @@ public class PasswordRecoveryView extends Composite implements
 	@UiField
 	HTMLPanel passwordRecoveryPanel;
 
+	@UiField
+	AccordionGroup passwordRecoveryAccordionGroup;
+	@UiField
+	AccordionGroup resentEmailAccordionGroup;
+	
 	PasswordRecoveryPresenter presenter;
 
 	public PasswordRecoveryView() {
@@ -145,12 +156,14 @@ public class PasswordRecoveryView extends Composite implements
 		clear();
 		passwordRecoveryPanel.getElement().getStyle().setDisplay(Display.NONE);
 		passwordResetPanel.getElement().getStyle().setDisplay(Display.BLOCK);
+		passwordRecoveryAccordionGroup.show();
 	}
 
 	public void displayPasswordRecoveryForm() {
 		clear();
 		passwordResetPanel.getElement().getStyle().setDisplay(Display.NONE);
 		passwordRecoveryPanel.getElement().getStyle().setDisplay(Display.BLOCK);
+		resentEmailAccordionGroup.show();
 	}
 
 	@UiHandler("resetPasswordBtn")
@@ -195,6 +208,7 @@ public class PasswordRecoveryView extends Composite implements
 				confirmNewPasswordCg.setType(ControlGroupType.ERROR);
 				confirmNewPasswordError.setText(StringConstants.PASSWORD_MISMATCH_ERROR);
 				confirmNewPasswordError.setVisible(true);
+				valid = false;
 			}
 		}
 		return valid;

@@ -419,10 +419,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			account.setFacebookRegistration(true);
 		}
 
-		if (profileImageUrl != null) {
-			account.setImageUrl(profileImageUrl);
-		}
-
 		//
 		// RESTRICT_REGISTRATION_FEATURE
 		//
@@ -455,10 +451,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		email.setText(account.getEmail());
 
 		genderListBox.setSelectedIndex(account.getGender().ordinal());
-		if (account.getImageUrl() != null) {
-			this.profileImageUrl = account.getImageUrl();
-		}
-
 		zip.setText("");
 		neighborhoodControl.setVisible(false);
 		facebookRegistration = true;

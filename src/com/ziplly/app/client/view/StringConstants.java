@@ -50,7 +50,7 @@ public class StringConstants {
 	public static final String NOT_AVAILABLE_IN_AREA =
 	    "Sorry, ziplly is not yet available in your area";
 	public static final String SERVICE_NOT_AVAILABLE =
-	    "Sorry Ziplly isn't yet available in your area";
+	    "Sorry Ziplly isn't yet available in your area yet";
 	public static final String REDIRECT_URI = "app.dev.redirecturl";
 	public static final String APP_ENVIRONMENT = "app.environment";
 	public static final String BUCKET_NAME = "gcs_bucket_name";

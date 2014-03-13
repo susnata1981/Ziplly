@@ -46,7 +46,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<PasswordRecoveryView>() {
 
@@ -60,6 +60,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 				} else {
 					view.displayPasswordRecoveryForm();
 				}
+		    panel.setWidget(view);
 			}
 		});
 	}
@@ -79,14 +80,12 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 				    account = result.getAccount();
 				    view.showMessage(StringConstants.PASSWORD_RESET_SUCCESFULLY, AlertType.SUCCESS);
 				    view.displayPasswordResetForm();
-				    panel.setWidget(view);
 			    }
 
 			    @Override
 			    public void onFailure(Throwable th) {
 				    view.showMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				    view.displayPasswordRecoveryForm();
-				    panel.setWidget(view);
 			    }
 		    });
 	}

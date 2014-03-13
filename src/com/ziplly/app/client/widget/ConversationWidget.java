@@ -22,6 +22,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.ConversationView.ConversationViewPresenter;
+import com.ziplly.app.client.view.factory.AbstractValueFormatter;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.MessageDTO;
@@ -41,7 +46,9 @@ public class ConversationWidget extends Composite implements View<ConversationVi
 	    new HashMap<ConversationDTO, HTMLPanel>();
 	private Map<ConversationDTO, HTMLPanel> conversationToReplyPanelMap =
 	    new HashMap<ConversationDTO, HTMLPanel>();
-
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+      .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION); 
+			
 	@Inject
 	public ConversationWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -149,7 +156,7 @@ public class ConversationWidget extends Composite implements View<ConversationVi
 			}
 		});
 
-		Image profileImage = new Image(message.getSender().getImageUrl());
+		Image profileImage = new Image(accountFormatter.format(message.getSender(), ValueType.PROFILE_IMAGE_URL));
 		profileImage.setWidth("60px");
 		profileImage.setHeight("50px");
 

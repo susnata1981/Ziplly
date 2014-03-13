@@ -665,9 +665,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		modal.setTitle("people who liked this post");
 		for (final LoveDTO like : tweet.getLikes()) {
 			AccountDTO acct = like.getAuthor();
-			String content =
-			    "<img src='" + acct.getImageUrl() + "' width='40px' height='40px'/>&nbsp;"
-			        + acct.getDisplayName();
+			String content = accountFormatter.format(acct, ValueType.PROFILE_IMAGE_URL);
 			Anchor profileLink = new Anchor();
 			profileLink.getElement().setInnerHTML(content);
 			profileLink.setStyleName(style.profileLinkAnchor());

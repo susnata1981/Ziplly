@@ -87,4 +87,26 @@ public class PasswordRecoveryDAOImpl implements PasswordRecoveryDAO {
 			em.close();
 		}
 	}
+
+	@Override
+	public void createOrUpdate(String email, String hash) {
+		boolean foundPasswordRecoveryLink = false;
+		try {
+			PasswordRecovery pr = findByEmail(email);
+			pr.setHash(hash);
+			foundPasswordRecoveryLink = true;
+			update(pr);
+		} catch (NoResultException nre) {
+		}
+
+		// First time create the entry
+		if (!foundPasswordRecoveryLink) {
+			PasswordRecovery pr = new PasswordRecovery();
+			pr.setEmail(email);
+			pr.setHash(hash);
+			pr.setTimeCreated(new Date());
+			pr.setStatus(PasswordRecoveryStatus.PENDING);
+			save(pr);
+		}
+	}
 }

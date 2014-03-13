@@ -17,6 +17,10 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -53,7 +57,9 @@ public class BusinessAccountWidgetModal extends Composite implements
 
 	private BusinessAccountDTO account;
 	CachingDispatcherAsync dispatcher;
-
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+      .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION); 
+	
 	public BusinessAccountWidgetModal() {
 		ZGinInjector injector = GWT.create(ZGinInjector.class);
 		dispatcher = injector.getCachingDispatcher();
@@ -102,7 +108,7 @@ public class BusinessAccountWidgetModal extends Composite implements
 			throw new IllegalArgumentException();
 		}
 		name.setInnerHTML(account.getName());
-		profileImageUrl.setUrl(account.getImageUrl());
+		profileImageUrl.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 	}
 
 	// public void displayLocationInMap(GetLatLngResult input) {

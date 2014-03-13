@@ -17,35 +17,20 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			case NAME_VALUE:
 				return basicValueFormatter.format(value.getDisplayName(), ValueType.STRING_VALUE);
 			case PROFILE_IMAGE_URL:
-				if (value.getImages().size() > 0) {
-					return value.getImages().get(0).getUrl() + "=s300";
-				} else {
-					return ZResources.IMPL.noPhoto().getSafeUri().asString();
-				}
+				return getImageUrl(value);
 			case PROFILE_BACKROUND_URL:
-				if (value.getImages().size() > 0) {
-					return value.getImages().get(0).getUrl() + "=s1600";
-				} else {
-					return ZResources.IMPL.profileBackground().getSafeUri().asString();
-				}
+				return getImageUrl(value);
 			case TINY_IMAGE_VALUE:
-				String imgUrl = "";
-				if (value.getImageUrl() != null) {
-					imgUrl = value.getImageUrl();
-				} else {
-					imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
-				}
-				content.append("<img src='" + imgUrl + "' width='40px' height='40px'/>");
+				content.append("<img src='" + getImageUrl(value) + "' width='40px' height='40px'/>");
 				return content.toString();
 			case SMALL_IMAGE_VALUE:
-				content.append("<img src='" + value.getImageUrl() + "' width='40px' height='40px'/>&nbsp;");// +
-																																																		// value.getDisplayName());
+				content.append("<img src='" + getImageUrl(value) + "' width='40px' height='40px'/>&nbsp;");
 				return content.toString();
 			case MEDIUM_IMAGE_ONLY:
-				content.append("<img src='" + value.getImageUrl() + "' width='60px' height='60px'/>");
+				content.append("<img src='" + getImageUrl(value) + "' width='60px' height='60px'/>");
 				return content.toString();
 			case MEDIUM_IMAGE_VALUE:
-				content.append("<img src='" + value.getImageUrl() + "' width='60px' height='60px'/>&nbsp;"
+				content.append("<img src='" + getImageUrl(value) + "' width='60px' height='60px'/>&nbsp;"
 				    + value.getDisplayName());
 				return content.toString();
 			case BADGE:
@@ -56,4 +41,13 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 		}
 	}
 
+	String getImageUrl(AccountDTO value) {
+		String imgUrl = "";
+		if (value.getImages().size() > 0) {
+			imgUrl = value.getImages().get(0).getUrl() + "=s1600";
+		} else {
+			imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
+		}
+		return imgUrl;
+	}
 }

@@ -10,4 +10,6 @@ public interface PasswordRecoveryDAO {
 	PasswordRecovery findByEmail(String email);
 
 	void update(PasswordRecovery pr);
+
+	void createOrUpdate(String email, String hash);
 }

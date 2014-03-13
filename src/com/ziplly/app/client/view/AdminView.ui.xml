@@ -63,6 +63,22 @@
 							</g:HTMLPanel>
 						</b:Column>
 					</b:FluidRow>
+					<b:FluidRow>
+					    <b:Column size="8">
+					        <g:HTMLPanel ui:field="accountDetailsPanel">
+					            <b:Label>Name:</b:Label>
+					            <b:TextBox ui:field="accountName"></b:TextBox>
+					            <br/>
+					            <b:Label>Neighborhood</b:Label>
+					            <b:TextBox ui:field="accountNeighborhoodName"></b:TextBox>
+					            <br/>
+					            <b:Label>Neighborhood ID</b:Label>
+					            <b:TextBox ui:field="accountNeighborhoodId"></b:TextBox>
+					            <br/>
+					        </g:HTMLPanel>
+					        <b:Button ui:field="updateAccountBtn">Update</b:Button>
+					    </b:Column>
+					</b:FluidRow>
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="registrationPanel">
 					<b:FluidRow>

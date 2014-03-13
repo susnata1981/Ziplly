@@ -43,9 +43,11 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.widget.HPanel;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountSearchCriteria;
 import com.ziplly.app.model.AccountStatus;
@@ -53,7 +55,10 @@ import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.ImageDTO;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.NeighborhoodType;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -97,6 +102,8 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		void updateAccount(AccountDTO a);
 
 		void updateNeighborhood(NeighborhoodDTO n);
+
+		void updateAccountLocation(AccountDTO account, LocationDTO newLocation);
 	}
 
 	interface AdminViewUiBinder extends UiBinder<Widget, AdminView> {
@@ -136,7 +143,17 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 	@UiField
 	HTMLPanel accountsCellTablePanel;
-
+	@UiField
+	HTMLPanel accountDetailsPanel;
+	@UiField
+	TextBox accountNeighborhoodName;
+	@UiField
+	TextBox accountNeighborhoodId;
+	@UiField
+	TextBox accountName;
+	@UiField
+	Button updateAccountBtn;
+	
 	@UiField
 	Button accountSearchBtn;
 
@@ -325,12 +342,25 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 		accountsTable.addColumn(statusCol, "status");
 		accountsTable.setColumnWidth(statusCol, 8, Unit.PCT);
 
+		Column<AccountDTO, String> neighborhoodCol = new Column<AccountDTO, String>(new TextCell()) {
+			@Override
+			public String getValue(final AccountDTO a) {
+				if (a != null) {
+						return a.getLocations().get(0).getNeighborhood().getNeighborhoodId().toString();
+				}
+				return "";
+			}
+		};
+		accountsTable.addColumn(neighborhoodCol, "NeighborhoodId");
+		accountsTable.setColumnWidth(neighborhoodCol, 3, Unit.PCT);
+		
 		Column<AccountDTO, Date> timeCreatedCol = new Column<AccountDTO, Date>(new DateCell()) {
 			@Override
 			public Date getValue(final AccountDTO a) {
 				return a.getTimeCreated();
 			}
 		};
+		
 		accountsTable.addColumn(timeCreatedCol, "Time created");
 		accountsTable.setColumnWidth(timeCreatedCol, 8, Unit.PCT);
 
@@ -380,8 +410,46 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 
 		// setup handlers
 		accountsTable.addRangeChangeHandler(new AccountsTableRangeChangeHandler());
+		
+		// setup seleciton
+		final SingleSelectionModel<AccountDTO> selectionModel = new SingleSelectionModel<AccountDTO>();
+		accountsTable.setSelectionModel(selectionModel);
+		
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				showAccountDetails(selectionModel.getSelectedObject());
+			}
+		});
 	}
 
+	private void showAccountDetails(AccountDTO account) {
+		StyleHelper.show(accountDetailsPanel.getElement(), true);
+		accountName.setText(account.getDisplayName());
+		accountNeighborhoodName.setText(account.getLocations().get(0).getNeighborhood().getName());
+		accountNeighborhoodId.setText(account.getLocations().get(0).getNeighborhood().getNeighborhoodId().toString());
+	}
+	
+	@UiHandler("updateAccountBtn")
+	public void updateAccount(ClickEvent event) {
+		@SuppressWarnings("unchecked")
+    SingleSelectionModel<AccountDTO> selectionModel = 
+				(com.google.gwt.view.client.SingleSelectionModel<AccountDTO>) accountsTable.getSelectionModel();
+		AccountDTO account = selectionModel.getSelectedObject();
+
+		LocationDTO newLocation = new LocationDTO();
+		NeighborhoodDTO neighborhood = new NeighborhoodDTO();
+		neighborhood.setNeighborhoodId(Long.parseLong(accountNeighborhoodId.getText()));
+		neighborhood.setName("");
+		neighborhood.setCity("");
+		neighborhood.setState("");
+		neighborhood.setType(NeighborhoodType.X);
+		newLocation.setNeighborhood(neighborhood);
+		newLocation.setType(LocationType.PRIMARY);
+		presenter.updateAccountLocation(account, newLocation);
+	}
+	
 	private void buildNeighborhoodTable() {
 		neighborhoodTable = new CellTable<NeighborhoodDTO>();
 
@@ -447,86 +515,7 @@ public class AdminView extends Composite implements View<AdminView.AdminPresente
 			    }
 		    };
 		neighborhoodTable.addColumn(zipColumn, "Zip code");
-		// zipColumn.setFieldUpdater(new FieldUpdater<NeighborhoodDTO, String>() {
-		//
-		// @Override
-		// public void update(final int index, final NeighborhoodDTO object, final
-		// String value) {
-		// try {
-		// Long.parseLong(value);
-		// } catch (NumberFormatException ex) {
-		// Window.alert("Invalid parent id");
-		// return;
-		// }
-		// PostalCodeDTO p = new PostalCodeDTO();
-		// p.setPostalCode(value);
-		// object.addPostalCode(p);
-		// }
-		// });
-
-		// Column<NeighborhoodDTO, String> neighborhoodImageUrlColumn =
-		// new Column<NeighborhoodDTO, String>(new EditTextCell()) {
-		//
-		// @Override
-		// public String getValue(final NeighborhoodDTO n) {
-		// if (n.getImageUrl() != null) {
-		// return n.getImageUrl();
-		// }
-		// return "";
-		// }
-		// };
-		// neighborhoodTable.addColumn(neighborhoodImageUrlColumn, "Image url");
-		// neighborhoodImageUrlColumn.setFieldUpdater(new
-		// FieldUpdater<NeighborhoodDTO, String>() {
-		//
-		// @Override
-		// public void update(final int index, final NeighborhoodDTO object, final
-		// String value) {
-		// if (imageDto == null) {
-		// throw new RuntimeException("Image shouldn't be null");
-		// }
-		//
-		// object.addImage(imageDto);
-		// object.setImageUrl(value);
-		// }
-		// });
-		//
-		// Column<NeighborhoodDTO, String> neighborhoodImageColumn =
-		// new Column<NeighborhoodDTO, String>(new ImageCell()) {
-		//
-		// @Override
-		// public String getValue(final NeighborhoodDTO n) {
-		// return n.getImageUrl();
-		//
-		// }
-		// };
-		// neighborhoodTable.addColumn(neighborhoodImageColumn, "Image");
-
-		// ActionCell<NeighborhoodDTO> updateButtonCell =
-		// new ActionCell<NeighborhoodDTO>("Update", new
-		// ActionCell.Delegate<NeighborhoodDTO>() {
-		// @Override
-		// public void execute(final NeighborhoodDTO n) {
-		// // WARNING (P1)
-		// //
-		// // It's going to attach the uploaded image to the neighborhood
-		// // being updated. NEEDS TO CHANGE SOON!!!
-		// //
-		// //
-		// if (imageDto != null) {
-		// n.addImage(imageDto);
-		// }
-		// presenter.updateNeighborhood(n);
-		// }
-		// });
-		// Column<NeighborhoodDTO, NeighborhoodDTO> saveColumn =
-		// new Column<NeighborhoodDTO, NeighborhoodDTO>(updateButtonCell) {
-		// @Override
-		// public NeighborhoodDTO getValue(final NeighborhoodDTO o) {
-		// return o;
-		// }
-		// };
-		// neighborhoodTable.addColumn(saveColumn);
+		
 
 		ActionCell<NeighborhoodDTO> deleteButtonCell =
 		    new ActionCell<NeighborhoodDTO>("Delete", new ActionCell.Delegate<NeighborhoodDTO>() {

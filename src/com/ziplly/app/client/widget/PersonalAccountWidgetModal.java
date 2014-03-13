@@ -15,6 +15,10 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
+import com.ziplly.app.client.view.factory.AccountFormatter;
+import com.ziplly.app.client.view.factory.ValueFamilyType;
+import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
@@ -53,6 +57,8 @@ public class PersonalAccountWidgetModal extends Composite implements
 	private Presenter presenter;
 
 	private PersonalAccountDTO account;
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+      .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION); 
 
 	public PersonalAccountWidgetModal() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -98,7 +104,7 @@ public class PersonalAccountWidgetModal extends Composite implements
 			throw new IllegalArgumentException();
 		}
 
-		profileImageUrl.setUrl(account.getImageUrl());
+		profileImageUrl.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		name.setInnerHTML(account.getDisplayName());
 		if (account.getIntroduction() != null) {
 			introduction.setInnerText(account.getIntroduction());

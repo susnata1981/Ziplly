@@ -114,7 +114,7 @@ public class EntityUtil {
 		acct.setFacebookId(account.getFacebookId());
 		acct.setEmail(account.getEmail());
 		acct.setUrl(account.getUrl());
-		acct.setImageUrl(account.getImageUrl());
+//		acct.setImageUrl(account.getImageUrl());
 		acct.setRole(account.getRole());
 		acct.setStatus(account.getStatus());
 		acct.setLastLoginTime(account.getLastLoginTime());

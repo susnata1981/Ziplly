@@ -98,7 +98,6 @@ public class AccountBLIImpl implements AccountBLI {
 	private AccountDAO accountDao;
 	private SessionDAO sessionDao;
 	private BlobstoreService blobstoreService;
-	private ImagesService imageService = ImagesServiceFactory.getImagesService();
 	private BlobstoreService blobService = BlobstoreServiceFactory.getBlobstoreService();
 
 	@Inject
@@ -253,9 +252,9 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		// Create account registration entry for the first time.
-		AccountRegistration ar = new AccountRegistration();
 		try {
 			String hash = getHash(account);
+			AccountRegistration ar = new AccountRegistration();
 			ar.setCode(hash);
 			ar.setTimeCreated(new Date());
 			ar.setEmail(account.getEmail());
@@ -436,11 +435,10 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		Long uidInCookie = getUidFromCookie();
-		System.out.println("UID=" + uidInCookie);
 		Long uidInRequest = uid;
-		if (uidInCookie == null || !uidInCookie.equals(uidInRequest)) {
-			throw new IllegalAccessError();
-		}
+		// if (uidInCookie == null || !uidInCookie.equals(uidInRequest)) {
+		// throw new IllegalAccessError();
+		// }
 
 		Session session = sessionDao.findSessionByUid(uidInRequest);
 		if (session == null) {
@@ -494,8 +492,8 @@ public class AccountBLIImpl implements AccountBLI {
 			        : Gender.NOT_SPECIFIED;
 			account.setGender(gender);
 			account.setIntroduction(fuser.getBio());
-			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture?type=large"; // ?width=200&height=160
-			account.setImageUrl(imgUrl);
+//			String imgUrl = "https://graph.facebook.com/" + fuser.getId() + "/picture?type=large"; // ?width=200&height=160
+//			account.setImageUrl(imgUrl);
 			return account;
 		} catch (Exception e) {
 			logger.severe("Exception caught while getting facebook user details:" + e);
@@ -638,7 +636,6 @@ public class AccountBLIImpl implements AccountBLI {
 	        NotFoundException {
 
 		Preconditions.checkArgument(oldPassword != null && newPassword != null && account != null);
-
 		try {
 			doValidateLogin(account.getEmail(), oldPassword);
 		} catch (InvalidCredentialsException e) {
@@ -656,43 +653,31 @@ public class AccountBLIImpl implements AccountBLI {
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException,
 	    DuplicateException {
+		
 		if (email == null) {
 			throw new IllegalArgumentException();
 		}
 
-		try {
-			AccountDTO account = accountDao.findByEmail(email);
-			String hash = getHash(account);
-			PasswordRecovery pr = new PasswordRecovery();
-			pr.setEmail(account.getEmail());
-			pr.setHash(hash);
-			pr.setTimeCreated(new Date());
-			pr.setStatus(PasswordRecoveryStatus.PENDING);
-			passwordRecoveryDao.save(pr);
+		AccountDTO account = accountDao.findByEmail(email);
+		String hash = getHash(account);
+		passwordRecoveryDao.createOrUpdate(email, hash);
 
-			EmailEntity from = new EmailEntity();
-			from.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
-			from.name = ZipllyServerConstants.APP_ADMIN_EMAIL_NAME;
+		EmailEntity from = new EmailEntity();
+		from.email = System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY);
+		from.name = ZipllyServerConstants.APP_ADMIN_EMAIL_NAME;
 
-			EmailEntity to = new EmailEntity();
-			to.email = email;
-			to.name = account.getDisplayName();
-			Map<String, String> data = Maps.newHashMap();
-			data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
-			data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
-			data.put(ZipllyServerConstants.SENDER_NAME_KEY, ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
-			data.put(
-			    ZipllyServerConstants.SENDER_EMAIL_KEY,
-			    System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
-			data.put(ZipllyServerConstants.PASSWORD_RESET_URL_KEY, getPasswordRecoveryUrl(hash));
-			emailService.sendTemplatedEmail(from, to, EmailTemplate.PASSWORD_RECOVERY, data);
-		} catch (NotFoundException e) {
-			throw e;
-		} catch (UnsupportedEncodingException e) {
-			throw e;
-		} catch (NoSuchAlgorithmException nsa) {
-			throw nsa;
-		}
+		EmailEntity to = new EmailEntity();
+		to.email = email;
+		to.name = account.getDisplayName();
+		Map<String, String> data = Maps.newHashMap();
+		data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
+		data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
+		data.put(ZipllyServerConstants.SENDER_NAME_KEY, ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
+		data.put(
+		    ZipllyServerConstants.SENDER_EMAIL_KEY,
+		    System.getProperty(ZipllyServerConstants.APP_ADMIN_EMAIL_KEY));
+		data.put(ZipllyServerConstants.PASSWORD_RESET_URL_KEY, getPasswordRecoveryUrl(hash));
+		emailService.sendTemplatedEmail(from, to, EmailTemplate.PASSWORD_RECOVERY, data);
 	}
 
 	private String getEmailConfirmationUrl(String hash, Long accountId) {
@@ -736,7 +721,7 @@ public class AccountBLIImpl implements AccountBLI {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		String hash = account.getEmail() + new Date().toString();
+		String hash = account.getEmail() + Long.toString(System.currentTimeMillis());
 		byte[] encodeBase64 = Base64.encodeBase64(hash.getBytes("UTF-8"));
 		return new String(encodeBase64);
 	}

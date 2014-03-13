@@ -44,9 +44,13 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@ManyToMany(mappedBy = "targetNeighborhoods", fetch = FetchType.LAZY)
 	private Set<Tweet> tweets = new HashSet<Tweet>();
 
+	@Column(updatable = false)
 	private String name;
+	@Column(updatable = false)
 	private String city;
+	@Column(updatable = false)
 	private String state;
+	@Column(updatable = false)
 	private String type;
 
 	@OneToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)

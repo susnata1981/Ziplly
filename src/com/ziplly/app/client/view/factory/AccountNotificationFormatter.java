@@ -34,9 +34,7 @@ public class AccountNotificationFormatter extends AbstractValueFormatter<Account
 				return content.toString();
 			case ACCOUNT_NOTIFICATION_SENDER_IMAGE:
 				content.append("<img src='"
-				    + basicValueFormatter.format(
-				        value.getSender().getImageUrl(),
-				        ValueType.PROFILE_IMAGE_URL) + "' width='25px' height='25px'/>");
+				    + basicValueFormatter.format(value, ValueType.PROFILE_IMAGE_URL) + "' width='25px' height='25px'/>");
 				return content.toString();
 			case ACCOUNT_NOTIFICATION_TYPE:
 				content.append(value.getType().getNotificationName());

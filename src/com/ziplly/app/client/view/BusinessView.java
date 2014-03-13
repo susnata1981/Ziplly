@@ -188,6 +188,7 @@ public class BusinessView extends AbstractView implements
 	public void clear() {
 		zipTextBox.setText("");
 		clearErrors();
+		StyleHelper.clearBackground();
 	}
 
 	private void clearErrors() {

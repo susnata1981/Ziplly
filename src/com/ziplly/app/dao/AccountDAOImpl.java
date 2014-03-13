@@ -27,6 +27,9 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.Interest;
+import com.ziplly.app.model.Location;
+import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -547,4 +550,21 @@ public class AccountDAOImpl implements AccountDAO {
 
 		return neighborhoodIdList;
 	}
+
+	/**
+	 * Only called by ADMINISTRATOR to change locations.
+	 */
+	@Override
+  public void updateLocation(AccountDTO account, LocationDTO location) throws NotFoundException {
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		
+		em.getTransaction().begin();
+		Query query = em.createQuery("from Account where accountId = :accountId");
+		query.setParameter("accountId", account.getAccountId());
+		Account acct = (Account) query.getSingleResult();
+		Location loc = acct.getLocations().iterator().next();
+		loc.setNeighborhood(new Neighborhood(location.getNeighborhood()));
+		em.merge(loc);
+		em.getTransaction().commit();
+  }
 }

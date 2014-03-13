@@ -14,7 +14,7 @@ public class AccountDTO implements Serializable {
 	private String email;
 	private String password;
 	private String url;
-	private String imageUrl;
+//	private String imageUrl;
 	private String role;
 	private List<LocationDTO> locations = new ArrayList<LocationDTO>();
 	private LocationDTO currentLocation;
@@ -65,14 +65,6 @@ public class AccountDTO implements Serializable {
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
-	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
 	}
 
 	@Override

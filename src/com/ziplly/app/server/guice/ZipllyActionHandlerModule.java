@@ -48,6 +48,7 @@ import com.ziplly.app.server.handlers.SendPasswordRecoveryActionHandler;
 import com.ziplly.app.server.handlers.SwitchLocationActionHander;
 import com.ziplly.app.server.handlers.TweetActionHandler;
 import com.ziplly.app.server.handlers.UpdateAccountActionHandler;
+import com.ziplly.app.server.handlers.UpdateAccountLocationActionHandler;
 import com.ziplly.app.server.handlers.UpdateCommentActionHandler;
 import com.ziplly.app.server.handlers.UpdateNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.UpdatePasswordActionHandler;
@@ -103,6 +104,7 @@ import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
 import com.ziplly.app.shared.SwitchLocationAction;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.UpdateAccountAction;
+import com.ziplly.app.shared.UpdateAccountLocationAction;
 import com.ziplly.app.shared.UpdateCommentAction;
 import com.ziplly.app.shared.UpdateNeighborhoodAction;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -138,7 +140,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 
 		// Location
 		bindHandler(SwitchLocationAction.class, SwitchLocationActionHander.class);
-
+		bindHandler(UpdateAccountLocationAction.class, UpdateAccountLocationActionHandler.class);
+		
 		bindHandler(ValidateLoginAction.class, ValidateLoginActionHandler.class);
 
 		bindHandler(UpdateAccountAction.class, UpdateAccountActionHandler.class);

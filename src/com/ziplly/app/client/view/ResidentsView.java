@@ -185,6 +185,7 @@ public class ResidentsView extends AbstractView implements
 	public void clear() {
 		genderListBox.setSelectedIndex(Gender.ALL.ordinal());
 		resetUiElements();
+		StyleHelper.clearBackground();
 	}
 
 	public void displaySendMessageWidget(Long receiverAccountId) {
