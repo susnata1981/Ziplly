@@ -22,7 +22,7 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 	protected String key;
 	protected String redirectUri = OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT;
 	private Logger logger = Logger.getLogger(OAuthFlowManager.class.getName());
-	
+
 	public OAuthFlowManager(OAuthConfig config) {
 		this.provider = config.getProvider();
 		this.clientId = config.getClientId();
@@ -32,34 +32,35 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-	}	
-	
+	}
+
 	public String getRedirectUri() throws UnsupportedEncodingException {
-		Map<String,String> paramsMap = new HashMap<String,String>();
+		Map<String, String> paramsMap = new HashMap<String, String>();
 		// TODO IMP.
-		paramsMap.put("gwt.codesvr","127.0.0.1:9997");
+		paramsMap.put("gwt.codesvr", "127.0.0.1:9997");
 		return FacebookAuthFlowManager.getUrlWithParam(redirectUri, paramsMap);
 	}
-	
+
 	@Override
 	public AccessToken exchange(String code) throws IOException, JSONException {
-		Map<String,String> params = getRequestParams(code);
-		
+		Map<String, String> params = getRequestParams(code);
+
 		String response = doExchange(params);
 		logger.info(String.format("OAuth Received response %s", response));
 		return parseResponse(response);
 	}
-	
+
 	protected String getResponse(HttpURLConnection conn) throws IOException {
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 			System.out.println(conn.getResponseCode());
-			logger.severe(String.format("Failed OAuth with response code %d, response %s", 
-					conn.getResponseCode(), conn.getResponseMessage()));
+			logger.severe(String.format(
+			    "Failed OAuth with response code %d, response %s",
+			    conn.getResponseCode(),
+			    conn.getResponseMessage()));
 			throw new RuntimeException(conn.getResponseMessage());
 		}
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 		String line = null;
 		StringBuilder sb = new StringBuilder();
 		while ((line = reader.readLine()) != null) {
@@ -69,11 +70,12 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 		reader.close();
 		return sb.toString();
 	}
-	
-	public static String getUrlWithParam(String url, Map<String,String> params) throws UnsupportedEncodingException {
+
+	public static String
+	    getUrlWithParam(String url, Map<String, String> params) throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
-		for(String key: params.keySet()) {
+		for (String key : params.keySet()) {
 			if (!first) {
 				sb.append("&");
 			} else {
@@ -82,7 +84,7 @@ public abstract class OAuthFlowManager implements IOAuthFlowManager {
 			sb.append(key);
 			sb.append("=");
 			String val = params.get(key);
-			sb.append(URLEncoder.encode(val,"utf-8"));
+			sb.append(URLEncoder.encode(val, "utf-8"));
 		}
 		return url + "?" + sb.substring(0, sb.length()).toString();
 	}

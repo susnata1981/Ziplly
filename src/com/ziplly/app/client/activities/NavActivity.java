@@ -1,4 +1,4 @@
-	package com.ziplly.app.client.activities;
+package com.ziplly.app.client.activities;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	private INavView view;
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
 	private AccountDetailsEventHandler accountDetailsEventHandler = new AccountDetailsEventHandler();
-	
+
 	public static interface INavView extends View<NavPresenter> {
 		void showAccountLinks(boolean show);
 
@@ -72,8 +72,11 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	}
 
 	@Inject
-	public NavActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, INavView view) {
+	public NavActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    INavView view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
 		setupHandlers();
@@ -83,7 +86,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
-			
+
 			@Override
 			public void onEvent(LoginEvent event) {
 				onLogin();
@@ -97,55 +100,56 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 			public void onEvent(LogoutEvent event) {
 				view.clear();
 			}
-			
+
 		});
-		
+
 		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
 
 			@Override
 			public void onEvent(AccountUpdateEvent event) {
 				view.displayLocationsDropdown(event.getAccount().getLocations());
 			}
-			
+
 		});
-		
+
 		eventBus.addHandler(AccountNotificationEvent.TYPE, accountNotificationHandler);
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, accountDetailsEventHandler);
 	}
 
 	/**
-	 * Post login does the following
-	 * 1. Rpc to GetAccountNotificationActionHandler and fires AccountNotificationEvent.
+	 * Post login does the following 1. Rpc to GetAccountNotificationActionHandler
+	 * and fires AccountNotificationEvent.
 	 */
 	private void onLogin() {
 		view.showAccountLinks(true);
-		dispatcher.execute(new GetAccountDetailsAction(), new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		dispatcher.execute(
+		    new GetAccountDetailsAction(),
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+			    @Override
+			    public void onSuccess(GetAccountDetailsResult result) {
+				    eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
+				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			    }
+		    });
+	}
+
+	private void markNotificationAsRead(AccountNotificationDTO an) {
+		dispatcher.execute(new ViewNotificationAction(an), new AsyncCallback<ViewNotificationResult>() {
 			@Override
-			public void onSuccess(GetAccountDetailsResult result) {
-				eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
-				eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			public void onFailure(Throwable caught) {
+				// TODO
+			}
+
+			@Override
+			public void onSuccess(ViewNotificationResult result) {
+				view.displayAccountNotifications(result.getAccountNotifications());
 			}
 		});
-	}
-	
-	private void markNotificationAsRead(AccountNotificationDTO an) {
-		dispatcher.execute(new ViewNotificationAction(an),
-				new AsyncCallback<ViewNotificationResult>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO
-					}
-
-					@Override
-					public void onSuccess(ViewNotificationResult result) {
-						view.displayAccountNotifications(result.getAccountNotifications());
-					}
-				});
 	}
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-//		checkAccountLogin();
+		// checkAccountLogin();
 		bind();
 		if (ctx.getAccount() != null) {
 			view.showAccountLinks(true);
@@ -153,11 +157,11 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		panel.setWidget(view);
 	}
 
-	@Override 
+	@Override
 	public void doStart() {
 		view.showAccountLinks(true);
 	}
-	
+
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -165,19 +169,20 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 	@Override
 	public void logout() {
-		DispatcherCallbackAsync<LogoutResult> dispatcherCallback = new DispatcherCallbackAsync<LogoutResult>() {
-			@Override
-			public void onSuccess(LogoutResult result) {
-				ctx.setAccount(null);
-				eventBus.fireEvent(new LogoutEvent());
-				placeController.goTo(new LoginPlace());
-			}
+		DispatcherCallbackAsync<LogoutResult> dispatcherCallback =
+		    new DispatcherCallbackAsync<LogoutResult>() {
+			    @Override
+			    public void onSuccess(LogoutResult result) {
+				    ctx.setAccount(null);
+				    eventBus.fireEvent(new LogoutEvent());
+				    placeController.goTo(new LoginPlace());
+			    }
 
-			@Override
-			public void onFailure(Throwable t) {
-				t.getMessage();
-			}
-		};
+			    @Override
+			    public void onFailure(Throwable t) {
+				    t.getMessage();
+			    }
+		    };
 		dispatcher.execute(new LogoutAction(ctx.getAccount().getUid()), dispatcherCallback);
 	}
 
@@ -201,52 +206,54 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	public void onNotificationLinkClick(AccountNotificationDTO an) {
 		markNotificationAsRead(an);
 		switch (an.getType()) {
-		case PERSONAL_MESSAGE:
-			goTo(new ConversationPlace(an.getConversation().getId()));
-			return;
-		case SECURITY_ALERT:
-		case ANNOUNCEMENT:
-		case OFFERS:
-		default:
-			HomePlace place = new HomePlace(an.getTweet().getTweetId());
-			goTo(place);
+			case PERSONAL_MESSAGE:
+				goTo(new ConversationPlace(an.getConversation().getId()));
+				return;
+			case SECURITY_ALERT:
+			case ANNOUNCEMENT:
+			case OFFERS:
+			default:
+				HomePlace place = new HomePlace(an.getTweet().getTweetId());
+				goTo(place);
 		}
 	}
-	
+
 	private class AccountNotificationHandler implements AccountNotificationEventHandler {
 		@Override
 		public void onEvent(AccountNotificationEvent event) {
 			view.displayAccountNotifications(event.getAccountNotifications());
 		}
 	}
-	
-	private class AccountDetailsEventHandler implements  AccountDetailsUpdateEventHandler {
+
+	private class AccountDetailsEventHandler implements AccountDetailsUpdateEventHandler {
 
 		@Override
 		public void onEvent(AccountDetailsUpdateEvent event) {
 			view.setUnreadMessageCount(event.getAccountDetails().getUnreadMessages(), true);
 		}
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
 
 	@Override
 	public void switchLocation(LocationDTO location) {
-		dispatcher.execute(new SwitchLocationAction(location.getLocationId()), new DispatcherCallbackAsync<SwitchLocationResult>() {
+		dispatcher.execute(
+		    new SwitchLocationAction(location.getLocationId()),
+		    new DispatcherCallbackAsync<SwitchLocationResult>() {
 
-			@Override
-			public void onSuccess(SwitchLocationResult result) {
-				ctx.setAccount(result.getAccount());
-				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
-				placeController.goTo(new HomePlace());
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				Window.alert(th.getMessage());
-			}
-		});
+			    @Override
+			    public void onSuccess(SwitchLocationResult result) {
+				    ctx.setAccount(result.getAccount());
+				    eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+				    placeController.goTo(new HomePlace());
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    Window.alert(th.getMessage());
+			    }
+		    });
 	}
 }

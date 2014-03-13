@@ -24,16 +24,20 @@ import com.ziplly.app.shared.ResendEmailVerificationResult;
 import com.ziplly.app.shared.VerifyEmailAction;
 import com.ziplly.app.shared.VerifyEmailResult;
 
-public class EmailVerificationActivity extends AbstractActivity implements EmailVerificationPresenter {
+public class EmailVerificationActivity extends AbstractActivity implements
+    EmailVerificationPresenter {
 	private EmailVerificationView view;
 	private AsyncProvider<EmailVerificationView> viewProvider;
 	private EmailVerificationPlace place;
 	private AcceptsOneWidget panel;
 
 	@Inject
-	public EmailVerificationActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, EmailVerificationPlace place,
-			AsyncProvider<EmailVerificationView> viewProvider) {
+	public EmailVerificationActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    EmailVerificationPlace place,
+	    AsyncProvider<EmailVerificationView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.viewProvider = viewProvider;
 		this.place = place;
@@ -51,8 +55,8 @@ public class EmailVerificationActivity extends AbstractActivity implements Email
 					EmailVerificationActivity.this.panel.setWidget(view);
 					bind();
 					if (place.getCode() != null && place.getId() != null) {
-						VerifyEmailAction action = new VerifyEmailAction(Long.parseLong(place.getId()),
-								place.getCode());
+						VerifyEmailAction action =
+						    new VerifyEmailAction(Long.parseLong(place.getId()), place.getCode());
 						dispatcher.execute(action, new EmailVerificationHandler());
 					} else {
 						view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
@@ -82,12 +86,10 @@ public class EmailVerificationActivity extends AbstractActivity implements Email
 			if (th instanceof AccessError) {
 				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				view.displayFailurePanel();
-			}
-			else if (th instanceof DuplicateException) {
+			} else if (th instanceof DuplicateException) {
 				view.displayMessage(StringConstants.ACCOUNT_ALEADY_VERIFIED, AlertType.WARNING);
 				view.displaySuccessPanel();
-			}
-			else {
+			} else {
 				view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 				view.displayFailurePanel();
 			}
@@ -98,32 +100,35 @@ public class EmailVerificationActivity extends AbstractActivity implements Email
 	public void bind() {
 		this.view.setPresenter(this);
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
 
 	@Override
 	public void resendEmailVerification(String email) {
-		dispatcher.execute(new ResendEmailVerificationAction(email), new DispatcherCallbackAsync<ResendEmailVerificationResult>() {
+		dispatcher.execute(
+		    new ResendEmailVerificationAction(email),
+		    new DispatcherCallbackAsync<ResendEmailVerificationResult>() {
 
-			@Override
-			public void onSuccess(ResendEmailVerificationResult result) {
-				view.displayMessage(StringConstants.EMAIL_VERIFICATION_RESEND_SUCCESSFUL, AlertType.SUCCESS);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccountExistsException) {
-					view.displayMessage(StringConstants.ACCOUNT_ALEADY_VERIFIED, AlertType.WARNING);
-				}
-				if (th instanceof NotFoundException) {
-					view.displayMessage(StringConstants.ACCOUNT_DOESNT_EXISTS, AlertType.ERROR);
-				} 
-				else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
-		});
+			    @Override
+			    public void onSuccess(ResendEmailVerificationResult result) {
+				    view.displayMessage(
+				        StringConstants.EMAIL_VERIFICATION_RESEND_SUCCESSFUL,
+				        AlertType.SUCCESS);
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof AccountExistsException) {
+					    view.displayMessage(StringConstants.ACCOUNT_ALEADY_VERIFIED, AlertType.WARNING);
+				    }
+				    if (th instanceof NotFoundException) {
+					    view.displayMessage(StringConstants.ACCOUNT_DOESNT_EXISTS, AlertType.ERROR);
+				    } else {
+					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+		    });
 	}
 }

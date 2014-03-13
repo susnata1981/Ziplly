@@ -4,6 +4,5 @@ import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
 public interface PaymentService {
-	String getJWT(Long sellerId, Double d) throws InvalidKeyException,
-			SignatureException;
+	String getJWT(Long sellerId, Double d) throws InvalidKeyException, SignatureException;
 }

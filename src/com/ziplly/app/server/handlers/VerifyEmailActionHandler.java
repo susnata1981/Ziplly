@@ -15,30 +15,30 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.VerifyEmailAction;
 import com.ziplly.app.shared.VerifyEmailResult;
 
-public class VerifyEmailActionHandler extends AbstractAccountActionHandler<VerifyEmailAction, VerifyEmailResult> {
+public class VerifyEmailActionHandler extends
+    AbstractAccountActionHandler<VerifyEmailAction, VerifyEmailResult> {
 	private AccountRegistrationDAO accountRegistrationDao;
 
 	@Inject
-	public VerifyEmailActionHandler(
-			AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			AccountBLI accountBli,
-			AccountRegistrationDAO accountRegistrationDao) {
+	public VerifyEmailActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    AccountRegistrationDAO accountRegistrationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.accountRegistrationDao = accountRegistrationDao;
 	}
 
 	@Override
-	public VerifyEmailResult execute(VerifyEmailAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public VerifyEmailResult
+	    execute(VerifyEmailAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkArgument(action.getCode() != null && action.getId() != null);
-		
+
 		try {
 			accountRegistrationDao.findAndVerifyAccount(action.getId(), action.getCode());
 			return new VerifyEmailResult();
-			
-		} catch(NoResultException nre) {
+
+		} catch (NoResultException nre) {
 			throw new AccessError();
 		}
 	}

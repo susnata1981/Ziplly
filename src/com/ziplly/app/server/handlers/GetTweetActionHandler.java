@@ -15,28 +15,33 @@ import com.ziplly.app.server.AdminBLI;
 import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.GetTweetsResult;
 
-public class GetTweetActionHandler extends AbstractTweetActionHandler<GetTweetsAction, GetTweetsResult>{
+public class GetTweetActionHandler extends
+    AbstractTweetActionHandler<GetTweetsAction, GetTweetsResult> {
 
 	private AdminBLI adminBli;
 
 	@Inject
-	public GetTweetActionHandler(AccountDAO accountDao, SessionDAO sessionDao, TweetDAO tweetDao,
-			AccountBLI accountBli, AdminBLI adminBli) {
+	public GetTweetActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli,
+	    AdminBLI adminBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 		this.adminBli = adminBli;
 	}
 
 	@Override
-	public GetTweetsResult execute(GetTweetsAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public GetTweetsResult
+	    execute(GetTweetsAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getCriteria() == null) {
 			throw new IllegalArgumentException();
 		}
-		
-		List<TweetDTO> tweets = adminBli.getTweets(action.getStart(), action.getEnd(), action.getCriteria());
+
+		List<TweetDTO> tweets =
+		    adminBli.getTweets(action.getStart(), action.getEnd(), action.getCriteria());
 		Long count = adminBli.getTotalTweetCount(action.getCriteria());
-		
+
 		GetTweetsResult result = new GetTweetsResult();
 		result.setTweets(tweets);
 		result.setTotalTweetCount(count);

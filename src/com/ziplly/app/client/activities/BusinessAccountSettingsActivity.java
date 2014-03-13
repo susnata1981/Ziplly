@@ -46,12 +46,13 @@ import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
-public class BusinessAccountSettingsActivity extends 
-	AbstractAccountSettingsActivity<BusinessAccountDTO, BusinessAccountSettingsActivity.IBusinessAccountSettingView>
-		implements BusinessAccountSettingsPresenter {
+public class BusinessAccountSettingsActivity
+    extends
+    AbstractAccountSettingsActivity<BusinessAccountDTO, BusinessAccountSettingsActivity.IBusinessAccountSettingView> implements
+    BusinessAccountSettingsPresenter {
 
 	public static interface IBusinessAccountSettingView extends
-			ISettingsView<BusinessAccountDTO, BusinessAccountSettingsPresenter> {
+	    ISettingsView<BusinessAccountDTO, BusinessAccountSettingsPresenter> {
 		void displayTransactionHistory(List<TransactionDTO> list);
 
 		void displaySubscriptionPlans(Map<SubscriptionPlanDTO, String> plans);
@@ -79,12 +80,11 @@ public class BusinessAccountSettingsActivity extends
 	private AsyncProvider<BusinessAccountSettingsView> viewProvider;
 
 	@Inject
-	public BusinessAccountSettingsActivity(
-			CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			PlaceController placeController, 
-			ApplicationContext ctx,
-			AsyncProvider<BusinessAccountSettingsView> viewProvider) {
+	public BusinessAccountSettingsActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AsyncProvider<BusinessAccountSettingsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.viewProvider = viewProvider;
 		setupEventHandler();
@@ -99,14 +99,14 @@ public class BusinessAccountSettingsActivity extends
 				internalStart();
 			}
 		});
-		
+
 		eventBus.addHandler(AccountUpdateEvent.TYPE, new AccountUpdateEventHandler() {
 
 			@Override
 			public void onEvent(AccountUpdateEvent event) {
 				view.displaySettings((BusinessAccountDTO) ctx.getAccount());
 			}
-			
+
 		});
 	}
 
@@ -120,7 +120,7 @@ public class BusinessAccountSettingsActivity extends
 	public void doStart() {
 		internalStart();
 	}
-	
+
 	private void internalStart() {
 		if (ctx.getAccount() instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountSettingsPlace());
@@ -145,7 +145,7 @@ public class BusinessAccountSettingsActivity extends
 
 	private void displayTransactionHistory() {
 		BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
-		for(TransactionDTO txn: account.getTransactions()) {
+		for (TransactionDTO txn : account.getTransactions()) {
 			if (txn.getStatus() == TransactionStatus.ACTIVE) {
 				// disable payment buttons
 				view.disableSubscription();
@@ -155,7 +155,7 @@ public class BusinessAccountSettingsActivity extends
 	}
 
 	private void displaySubscriptionPlans() {
-//		getJwtString();
+		// getJwtString();
 		getSubscriptionPlans();
 	}
 
@@ -165,57 +165,59 @@ public class BusinessAccountSettingsActivity extends
 	}
 
 	private void getSubscriptionPlans() {
-		dispatcher.execute(new GetAllSubscriptionPlanAction(),
-				new DispatcherCallbackAsync<GetAllSubscriptionPlanResult>() {
-					@Override
-					public void onSuccess(GetAllSubscriptionPlanResult result) {
-						if (result != null) {
-							boolean introductoryPeriod = true;
-							Map<SubscriptionPlanDTO, String> plans = sortSubscriptionPlans(result.getPlans());
-							view.displaySubscriptionPlans(result.getPlans());
-							for(SubscriptionPlanDTO plan : plans.keySet()) {
-								if (plan.getStatus() != SubscriptionPlanStatus.DISABLED) {
-									introductoryPeriod = false;
-								}
-							}
-							
-							// If none of the plans are active
-							if (introductoryPeriod) {
-								view.displayPaymentStatus(StringConstants.FREE_INTRODUCTORY_PLAN, AlertType.INFO);
-							}
-						}
-					}
-				});
+		dispatcher.execute(
+		    new GetAllSubscriptionPlanAction(),
+		    new DispatcherCallbackAsync<GetAllSubscriptionPlanResult>() {
+			    @Override
+			    public void onSuccess(GetAllSubscriptionPlanResult result) {
+				    if (result != null) {
+					    boolean introductoryPeriod = true;
+					    Map<SubscriptionPlanDTO, String> plans = sortSubscriptionPlans(result.getPlans());
+					    view.displaySubscriptionPlans(result.getPlans());
+					    for (SubscriptionPlanDTO plan : plans.keySet()) {
+						    if (plan.getStatus() != SubscriptionPlanStatus.DISABLED) {
+							    introductoryPeriod = false;
+						    }
+					    }
+
+					    // If none of the plans are active
+					    if (introductoryPeriod) {
+						    view.displayPaymentStatus(StringConstants.FREE_INTRODUCTORY_PLAN, AlertType.INFO);
+					    }
+				    }
+			    }
+		    });
 	}
 
-	private Map<SubscriptionPlanDTO, String> sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
-		TreeMap<SubscriptionPlanDTO, String> sortedPlans = new TreeMap<SubscriptionPlanDTO, String>(
-		    new Comparator<SubscriptionPlanDTO>() {
-			@Override
-			public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
-				return (int)(o1.getFee() - o2.getFee());
-			}
-		});
+	private Map<SubscriptionPlanDTO, String>
+	    sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
+		TreeMap<SubscriptionPlanDTO, String> sortedPlans =
+		    new TreeMap<SubscriptionPlanDTO, String>(new Comparator<SubscriptionPlanDTO>() {
+			    @Override
+			    public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
+				    return (int) (o1.getFee() - o2.getFee());
+			    }
+		    });
 		sortedPlans.putAll(plans);
 		return sortedPlans;
 	}
-	
+
 	@Override
 	public void cancel() {
 		placeController.goTo(new BusinessAccountPlace());
 	}
 
-//	@Override
-//	public void getJwtString() {
-//		dispatcher.execute(new GetJwtTokenAction(),
-//				new DispatcherCallbackAsync<GetJwtTokenResult>() {
-//					@Override
-//					public void onSuccess(GetJwtTokenResult result) {
-//						BusinessAccountSettingsActivity.this.jwt = result.getToken();
-//						view.setJwtString(jwt);
-//					}
-//				});
-//	}
+	// @Override
+	// public void getJwtString() {
+	// dispatcher.execute(new GetJwtTokenAction(),
+	// new DispatcherCallbackAsync<GetJwtTokenResult>() {
+	// @Override
+	// public void onSuccess(GetJwtTokenResult result) {
+	// BusinessAccountSettingsActivity.this.jwt = result.getToken();
+	// view.setJwtString(jwt);
+	// }
+	// });
+	// }
 
 	@Override
 	public void pay(final TransactionDTO txn) {
@@ -226,17 +228,15 @@ public class BusinessAccountSettingsActivity extends
 		if (txn.getStatus() != TransactionStatus.ACTIVE) {
 			return;
 		}
-		
+
 		dispatcher.execute(new PayAction(txn), new DispatcherCallbackAsync<PayResult>() {
 			@Override
 			public void onSuccess(PayResult result) {
 				if (txn.getStatus() == TransactionStatus.ACTIVE) {
-					view.displayPaymentStatus(StringConstants.PAYMENT_SUCCESSFULL,
-							AlertType.SUCCESS);
+					view.displayPaymentStatus(StringConstants.PAYMENT_SUCCESSFULL, AlertType.SUCCESS);
 				} else {
 					// some day, the sun will shine upon us.
-					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL,
-							AlertType.ERROR);
+					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
 				}
 
 				if (result.getTransaction() != null) {
@@ -246,9 +246,11 @@ public class BusinessAccountSettingsActivity extends
 				}
 			}
 
+			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof DuplicateException) {
-					view.displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT, AlertType.ERROR);
+					view
+					    .displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT, AlertType.ERROR);
 				} else {
 					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
 				}
@@ -264,6 +266,7 @@ public class BusinessAccountSettingsActivity extends
 				view.displayMessage(StringConstants.PASSWORD_UPDATED, AlertType.SUCCESS);
 			}
 
+			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof InvalidCredentialsException) {
 					view.displayMessage(th.getMessage(), AlertType.ERROR);
@@ -291,18 +294,20 @@ public class BusinessAccountSettingsActivity extends
 		action.setSearchType(NeighborhoodSearchActionType.BY_ZIP);
 		dispatcher.execute(action, new NeighborhoodHandler());
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
-	
+
 	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodResult result) {
 			if (result.getNeighbordhoods() != null && result.getNeighbordhoods().size() > 0) {
 				view.displayNeighborhoods(result.getNeighbordhoods());
 			} else {
-				view.displayMessageInAddLocationWidget(StringConstants.NOT_AVAILABLE_IN_AREA, AlertType.INFO);
+				view.displayMessageInAddLocationWidget(
+				    StringConstants.NOT_AVAILABLE_IN_AREA,
+				    AlertType.INFO);
 			}
 			view.displayNeighborhoodListLoading(false);
 		}
@@ -313,22 +318,28 @@ public class BusinessAccountSettingsActivity extends
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		dispatcher.execute(new UpdateAccountAction(account), new DispatcherCallbackAsync<UpdateAccountResult>() {
-			@Override
-			public void onSuccess(UpdateAccountResult result) {
-				// Fire event.
-				view.displayMessageInAddLocationWidget(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+		dispatcher.execute(
+		    new UpdateAccountAction(account),
+		    new DispatcherCallbackAsync<UpdateAccountResult>() {
+			    @Override
+			    public void onSuccess(UpdateAccountResult result) {
+				    // Fire event.
+				    view.displayMessageInAddLocationWidget(
+				        StringConstants.ACCOUNT_SAVE_SUCCESSFUL,
+				        AlertType.SUCCESS);
 
-				// Update account and fire event.
-				ctx.setAccount(result.getAccount());
-				eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
-				view.displayLocationModal(false);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				view.displayMessageInAddLocationWidget(StringConstants.FAILED_TO_SAVE_ACCOUNT, AlertType.ERROR);
-			}
-		});
+				    // Update account and fire event.
+				    ctx.setAccount(result.getAccount());
+				    eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+				    view.displayLocationModal(false);
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    view.displayMessageInAddLocationWidget(
+				        StringConstants.FAILED_TO_SAVE_ACCOUNT,
+				        AlertType.ERROR);
+			    }
+		    });
 	}
 }

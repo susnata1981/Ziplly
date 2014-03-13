@@ -9,12 +9,12 @@ import com.google.gwt.user.client.ui.Image;
 import com.ziplly.app.client.resource.ZResources;
 
 public class LoadingPanelWidget extends Composite {
-	
+
 	private static final String IMAGE_HEIGHT = "40px";
-	
+
 	HTMLPanel panel = new HTMLPanel("");
 	Modal modal = new Modal();
-	
+
 	public LoadingPanelWidget() {
 		initWidget(panel);
 		HPanel container = new HPanel();
@@ -36,7 +36,7 @@ public class LoadingPanelWidget extends Composite {
 	public void setWidth(String width) {
 		modal.setWidth(width);
 	}
-	
+
 	public void show(boolean b) {
 		if (b) {
 			modal.show();

@@ -7,6 +7,8 @@ import com.ziplly.app.model.InterestDTO;
 
 public interface InterestDAO {
 	Interest findInterestByName(String name);
+
 	void save(Interest interest);
+
 	List<InterestDTO> findAll();
 }

@@ -11,26 +11,29 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.ViewConversationAction;
 import com.ziplly.app.shared.ViewConversationResult;
 
-public class ViewConversationActionHandler extends AbstractAccountActionHandler<ViewConversationAction, ViewConversationResult>{
+public class ViewConversationActionHandler extends
+    AbstractAccountActionHandler<ViewConversationAction, ViewConversationResult> {
 	private ConversationDAO conversationDao;
 
 	@Inject
 	public ViewConversationActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli, ConversationDAO conversationDao) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    ConversationDAO conversationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 	}
 
 	@Override
-	public ViewConversationResult execute(ViewConversationAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public ViewConversationResult
+	    execute(ViewConversationAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getConversationId() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		conversationDao.markConversationAsRead(action.getConversationId());
 		return new ViewConversationResult();
 	}

@@ -12,7 +12,7 @@ public class GetJwtTokenResult implements Result {
 
 	public GetJwtTokenResult() {
 	}
-	
+
 	public Map<SubscriptionPlanDTO, String> getTokens() {
 		return tokens;
 	}
@@ -20,7 +20,7 @@ public class GetJwtTokenResult implements Result {
 	public void setTokens(Map<SubscriptionPlanDTO, String> tokens) {
 		this.tokens = tokens;
 	}
-	
+
 	public void addToken(SubscriptionPlanDTO plan, String token) {
 		tokens.put(plan, token);
 	}

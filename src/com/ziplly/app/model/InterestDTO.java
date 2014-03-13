@@ -8,51 +8,56 @@ public class InterestDTO implements Serializable {
 	private Long interestId;
 	private String name;
 	private Date timeCreated;
-	
+
 	public InterestDTO() {
 	}
-	
+
 	public InterestDTO(Interest i) {
 		this.interestId = i.getInterestId();
 		this.name = i.getName();
 		this.timeCreated = i.getTimeCreated();
 	}
-	
+
 	public Long getInterestId() {
 		return interestId;
 	}
+
 	public void setInterestId(Long interestId) {
 		this.interestId = interestId;
 	}
+
 	public Date getTimeCreated() {
 		return timeCreated;
 	}
+
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return interestId.hashCode() + name.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
 		}
-		
-		if (!(o instanceof InterestDTO) ){ 
+
+		if (!(o instanceof InterestDTO)) {
 			return false;
 		}
-		
-		InterestDTO i = (InterestDTO)o;
+
+		InterestDTO i = (InterestDTO) o;
 		return i.getInterestId() == interestId;
 	}
 }

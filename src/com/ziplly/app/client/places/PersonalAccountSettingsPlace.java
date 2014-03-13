@@ -5,10 +5,10 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 public class PersonalAccountSettingsPlace extends Place {
-	
+
 	public PersonalAccountSettingsPlace() {
 	}
-	
+
 	@Prefix("personalsettings")
 	public static class Tokenizer implements PlaceTokenizer<PersonalAccountSettingsPlace> {
 		@Override

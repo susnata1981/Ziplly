@@ -16,33 +16,37 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.CreateNeighborhoodAction;
 import com.ziplly.app.shared.CreateNeighborhoodResult;
 
-public class CreateNeighborhoodActionHandler extends AbstractAccountActionHandler<CreateNeighborhoodAction, CreateNeighborhoodResult>{
+public class CreateNeighborhoodActionHandler extends
+    AbstractAccountActionHandler<CreateNeighborhoodAction, CreateNeighborhoodResult> {
 
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public CreateNeighborhoodActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, NeighborhoodDAO neighborhoodDao) {
+	public CreateNeighborhoodActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    NeighborhoodDAO neighborhoodDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
-	public CreateNeighborhoodResult execute(CreateNeighborhoodAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public CreateNeighborhoodResult
+	    execute(CreateNeighborhoodAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkNotNull(action.getNeighborhood());
-		
+
 		validateSession();
-		
+
 		if (session.getAccount().getRole() != Role.ADMINISTRATOR) {
 			throw new AccessError();
 		}
-		
+
 		Neighborhood n = new Neighborhood(action.getNeighborhood());
-		
+
 		if (n.getParentNeighborhood() != null) {
-			NeighborhoodDTO parent = neighborhoodDao.findById(n.getParentNeighborhood().getNeighborhoodId());
+			NeighborhoodDTO parent =
+			    neighborhoodDao.findById(n.getParentNeighborhood().getNeighborhoodId());
 			n.setParentNeighborhood(new Neighborhood(parent));
 		}
 

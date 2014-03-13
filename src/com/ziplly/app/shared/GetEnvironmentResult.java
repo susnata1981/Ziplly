@@ -1,8 +1,8 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.client.ApplicationContext.Environment;
-
 import net.customware.gwt.dispatch.shared.Result;
+
+import com.ziplly.app.client.ApplicationContext.Environment;
 
 public class GetEnvironmentResult implements Result {
 	private Environment environment;

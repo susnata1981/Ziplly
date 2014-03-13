@@ -7,5 +7,6 @@ import com.ziplly.app.model.PendingInvitationsDTO;
 
 public interface PendingInvitationsDAO {
 	void save(PendingInvitations pi);
+
 	List<PendingInvitationsDTO> findAll();
 }

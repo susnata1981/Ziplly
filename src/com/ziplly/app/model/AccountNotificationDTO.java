@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class AccountNotificationDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long notificationId;
 	private AccountDTO sender;
 	private AccountDTO recipient;
@@ -16,7 +16,7 @@ public class AccountNotificationDTO implements Serializable {
 	private String type;
 	private Date timeUpdated;
 	private Date timeCreated;
-	
+
 	public Long getNotificationId() {
 		return notificationId;
 	}
@@ -108,11 +108,10 @@ public class AccountNotificationDTO implements Serializable {
 		if (notificationId == null) {
 			if (other.notificationId != null)
 				return false;
-		} 
-		else if (notificationId.equals(other.notificationId)) {
+		} else if (notificationId.equals(other.notificationId)) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -131,6 +130,5 @@ public class AccountNotificationDTO implements Serializable {
 	public void setConversation(ConversationDTO conversation) {
 		this.conversation = conversation;
 	}
-	
-	
+
 }

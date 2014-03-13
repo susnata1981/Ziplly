@@ -4,9 +4,10 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 
-public class AccountDetailsUpdateEvent extends GwtEvent<AccountDetailsUpdateEventHandler>{
+public class AccountDetailsUpdateEvent extends GwtEvent<AccountDetailsUpdateEventHandler> {
 
-	public static final Type<AccountDetailsUpdateEventHandler> TYPE = new Type<AccountDetailsUpdateEventHandler>();
+	public static final Type<AccountDetailsUpdateEventHandler> TYPE =
+	    new Type<AccountDetailsUpdateEventHandler>();
 	private GetAccountDetailsResult accountDetails;
 
 	public AccountDetailsUpdateEvent(GetAccountDetailsResult result) {

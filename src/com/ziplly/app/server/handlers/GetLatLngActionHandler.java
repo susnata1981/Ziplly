@@ -30,19 +30,19 @@ import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetLatLngResult.Status;
 
 public class GetLatLngActionHandler extends
-		AbstractAccountActionHandler<GetLatLngAction, GetLatLngResult> {
+    AbstractAccountActionHandler<GetLatLngAction, GetLatLngResult> {
 
 	@Inject
-	public GetLatLngActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli) {
+	public GetLatLngActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
-	private final static String GEO_ENCODING_SERVICE_ENDPOINT = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
+	private final static String GEO_ENCODING_SERVICE_ENDPOINT =
+	    "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
 
 	@Override
-	public GetLatLngResult execute(GetLatLngAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public GetLatLngResult
+	    execute(GetLatLngAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null) {
 			throw new IllegalArgumentException();
@@ -69,8 +69,7 @@ public class GetLatLngActionHandler extends
 		return parse;
 	}
 
-	private String getGeoEncodingServiceEndpoint(AccountDTO acct)
-			throws UnsupportedEncodingException {
+	private String getGeoEncodingServiceEndpoint(AccountDTO acct) throws UnsupportedEncodingException {
 		if (acct == null) {
 			throw new IllegalArgumentException();
 		}
@@ -113,15 +112,15 @@ public class GetLatLngActionHandler extends
 		return null;
 	}
 
-//	private LocationDTO getCurrentLocation(BusinessAccountDTO baccount) {
-//		long neighborhoodId = session.getNeighborhood().getNeighborhoodId();
-//		for (LocationDTO loc : baccount.getLocations()) {
-//			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
-//				return loc;
-//			}
-//		}
-//		return null;
-//	}
+	// private LocationDTO getCurrentLocation(BusinessAccountDTO baccount) {
+	// long neighborhoodId = session.getNeighborhood().getNeighborhoodId();
+	// for (LocationDTO loc : baccount.getLocations()) {
+	// if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
+	// return loc;
+	// }
+	// }
+	// return null;
+	// }
 
 	private GetLatLngResult parse(String json) {
 		JsonParser parser = new JsonParser();

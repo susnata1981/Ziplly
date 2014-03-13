@@ -49,8 +49,8 @@ public class CommentDAOImpl implements CommentDAO {
 		}
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
-		Query query = em
-				.createQuery("select count(*) from Comment where author.accountId = :accountId");
+		Query query =
+		    em.createQuery("select count(*) from Comment where author.accountId = :accountId");
 		query.setParameter("accountId", accountId);
 
 		try {

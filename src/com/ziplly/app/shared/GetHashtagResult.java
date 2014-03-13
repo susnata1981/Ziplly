@@ -11,7 +11,7 @@ public class GetHashtagResult implements Result {
 
 	public GetHashtagResult() {
 	}
-	
+
 	public GetHashtagResult(List<HashtagDTO> hashtags) {
 		this.setHashtags(hashtags);
 	}

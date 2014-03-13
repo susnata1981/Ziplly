@@ -12,26 +12,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="notification_settings")
+@Table(name = "notification_settings")
 public class AccountNotificationSettings {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long notificationId;
-	
+
 	@ManyToOne
-	@JoinColumn(name="account_id")
+	@JoinColumn(name = "account_id")
 	private Account account;
-	
+
 	private String type;
-	
+
 	private String action;
 
-	@Column(name="time_created")
+	@Column(name = "time_created")
 	private Date timeCreated;
-	
+
 	public AccountNotificationSettings() {
 	}
-	
+
 	public AccountNotificationSettings(AccountNotificationSettingsDTO an) {
 		this.notificationId = an.getNotificationId();
 		// hack to get around infinite call

@@ -4,10 +4,10 @@ import net.customware.gwt.dispatch.shared.Action;
 
 public class ResendEmailVerificationAction implements Action<ResendEmailVerificationResult> {
 	private String email;
-	
+
 	public ResendEmailVerificationAction() {
 	}
-	
+
 	public ResendEmailVerificationAction(String email) {
 		this.setEmail(email);
 	}

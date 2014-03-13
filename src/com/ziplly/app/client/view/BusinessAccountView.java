@@ -83,7 +83,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	private static final String TWEET_WIDGET_HEIGHT = "1000px";
 
 	private static BusinessAccountViewUiBinder uiBinder = GWT
-			.create(BusinessAccountViewUiBinder.class);
+	    .create(BusinessAccountViewUiBinder.class);
 
 	@UiField
 	Style style;
@@ -240,18 +240,20 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 		// image section
 		StyleHelper.setBackgroundImage(accountFormatter
-				.format(account, ValueType.PROFILE_BACKROUND_URL));
+		    .format(account, ValueType.PROFILE_BACKROUND_URL));
 
 		name.setInnerHTML(account.getDisplayName());
 		// TODO
 		businessName.setInnerHTML(account.getDisplayName());
 
 		if (account.getCurrentLocation() != null) {
-			neighborhoodName.setInnerHTML(basicDataFormatter.format(account.getCurrentLocation()
-					.getNeighborhood(), ValueType.NEIGHBORHOOD));
+			neighborhoodName.setInnerHTML(basicDataFormatter.format(account
+			    .getCurrentLocation()
+			    .getNeighborhood(), ValueType.NEIGHBORHOOD));
 		} else {
-			neighborhoodName.setInnerHTML(basicDataFormatter.format(getPrimaryLocation(account),
-					ValueType.NEIGHBORHOOD));
+			neighborhoodName.setInnerHTML(basicDataFormatter.format(
+			    getPrimaryLocation(account),
+			    ValueType.NEIGHBORHOOD));
 		}
 		// description.setText(account.getDe);
 
@@ -263,7 +265,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		emailLink.setText(account.getEmail());
 
 		phoneSpan.setInnerHTML(account.getPhone());
-		
+
 		if (account.getWebsite() != null) {
 			websiteSpan.setInnerHTML(account.getWebsite());
 			websiteLink.setHref(account.getWebsite());
@@ -293,8 +295,9 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 		// last login time shouldn't be null
 		if (account.getLastLoginTime() != null) {
-			lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(),
-					ValueType.DATE_VALUE_SHORT));
+			lastLoginTime.setInnerText(basicDataFormatter.format(
+			    account.getLastLoginTime(),
+			    ValueType.DATE_VALUE_SHORT));
 		}
 
 		displayHoursOfOperation();
@@ -558,8 +561,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 
 	private boolean isAccountNotComplete() {
-		return FieldVerifier.isEmpty(account.getWebsite()) 
-				|| account.getImages().size() == 0;
+		return FieldVerifier.isEmpty(account.getWebsite()) || account.getImages().size() == 0;
 	}
 
 	private void addAccountProfileNotCompleteMessage() {

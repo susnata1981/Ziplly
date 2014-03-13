@@ -80,7 +80,7 @@
 		<b:ControlGroup ui:field="tweetCg">
 			<b:Controls>
 				<b:InputAddOn>
-					<b:TextArea placeholder="Share what's on your mind…"
+					<b:TextArea placeholder="Tell us what's going on in your community…"
 						ui:field="tweetTextBox" />
 				</b:InputAddOn>
 				<div ui:field="tweetHelpDiv" class="{style.tweetHelpInline}">

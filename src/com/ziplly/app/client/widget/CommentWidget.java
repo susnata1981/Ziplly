@@ -47,25 +47,25 @@ public class CommentWidget extends Composite implements HasText {
 			profileNameAnchor.setHTML(name);
 		}
 	}
-	
+
 	public Anchor getProfileAnchor() {
 		return profileNameAnchor;
 	}
-	
+
 	public void setImage(String url) {
 		if (url != null) {
 			profileImage.setUrl(url);
 		}
 	}
-	
+
 	public void setPostingDate(String date) {
 		postingDate.setInnerHTML(date);
 	}
-	
+
 	public MouseHoverPanel getContentPanel() {
 		return contentPanel;
 	}
-	
+
 	public SpanElement getContentElement() {
 		return content;
 	}

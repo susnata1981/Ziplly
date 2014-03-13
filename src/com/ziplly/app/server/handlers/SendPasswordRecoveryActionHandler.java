@@ -14,23 +14,24 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailAction;
 import com.ziplly.app.shared.SendPasswordRecoveryEmailResult;
 
-public class SendPasswordRecoveryActionHandler extends AbstractAccountActionHandler<SendPasswordRecoveryEmailAction, SendPasswordRecoveryEmailResult> {
+public class SendPasswordRecoveryActionHandler extends
+    AbstractAccountActionHandler<SendPasswordRecoveryEmailAction, SendPasswordRecoveryEmailResult> {
 
 	@Inject
 	public SendPasswordRecoveryActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public SendPasswordRecoveryEmailResult execute(
-			SendPasswordRecoveryEmailAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public SendPasswordRecoveryEmailResult execute(SendPasswordRecoveryEmailAction action,
+	    ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getEmail() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		try {
 			accountBli.sendPasswordRecoveryEmail(action.getEmail());
 		} catch (UnsupportedEncodingException e) {
@@ -39,7 +40,7 @@ public class SendPasswordRecoveryActionHandler extends AbstractAccountActionHand
 			// TODO Auto-generated catch block
 			throw new InternalError("Internal error");
 		}
-		
+
 		return new SendPasswordRecoveryEmailResult();
 	}
 

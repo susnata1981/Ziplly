@@ -16,8 +16,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @NamedQueries({
-		@NamedQuery(name = "fetchSessionByUid", query = "from Session s where s.uid = :uid"),
-		@NamedQuery(name = "fetchSessionByAccountId", query = "from Session s where s.account.accountId = :account_id") })
+    @NamedQuery(name = "fetchSessionByUid", query = "from Session s where s.uid = :uid"),
+    @NamedQuery(name = "fetchSessionByAccountId",
+        query = "from Session s where s.account.accountId = :account_id") })
 @Entity
 @Table(name = "session")
 public class Session {
@@ -25,20 +26,20 @@ public class Session {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private Long uid;
-	
+
 	@NotNull
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="account_id")
+	@JoinColumn(name = "account_id")
 	private Account account;
 
 	@NotNull
 	@OneToOne
 	@JoinColumn(name = "location_id")
 	private Location location;
-	
+
 	@Column(name = "time_created")
 	private Date timeCreated;
-	
+
 	@Column(name = "expired_at")
 	private Date expireAt;
 

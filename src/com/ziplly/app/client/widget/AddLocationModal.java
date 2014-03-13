@@ -32,11 +32,49 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class AddLocationModal extends Composite {
 
-	private static AddLocationModalUiBinder uiBinder = GWT.create(AddLocationModalUiBinder.class);
-
 	interface AddLocationModalUiBinder extends UiBinder<Widget, AddLocationModal> {
 	}
 
+	private static AddLocationModalUiBinder uiBinder = GWT.create(AddLocationModalUiBinder.class);
+
+	@UiField
+	Button addBtn;
+
+	@UiField
+	TextBox address;
+	// Address
+	@UiField
+	ControlGroup addressCg;
+
+	@UiField
+	HelpInline addressError;
+	@UiField
+	Button cancelBtn;
+	@UiField
+	Alert message;
+
+	@UiField
+	Modal modal;
+	@UiField
+	Controls neighborhoodControl;
+	@UiField
+	HTMLPanel neighborhoodListPanel;
+
+	// Neighborhood
+	@UiField
+	Image neighborhoodLoadingImage;
+	private final Map<RadioButton, NeighborhoodDTO> neighborhoodRadioButtonMap =
+			new HashMap<RadioButton, NeighborhoodDTO>();
+	List<NeighborhoodDTO> neighborhoods;
+
+	// Zip
+	@UiField
+	TextBox zip;
+	@UiField
+	ControlGroup zipCg;
+
+	@UiField
+	HelpInline zipError;
 	public AddLocationModal() {
 		initWidget(uiBinder.createAndBindUi(this));
 		hide();
@@ -44,147 +82,10 @@ public class AddLocationModal extends Composite {
 		StyleHelper.show(neighborhoodControl.getElement(), false);
 	}
 
-	@UiField
-	Modal modal;
-	@UiField
-	Alert message;
-	
-	// Zip
-	@UiField
-	TextBox zip;
-	@UiField
-	ControlGroup zipCg;
-	@UiField
-	HelpInline zipError;
-	
-	// Neighborhood
-	@UiField
-	Image neighborhoodLoadingImage;
-	@UiField
-	Controls neighborhoodControl;
-	@UiField
-	HTMLPanel neighborhoodListPanel;
-	
-	// Address
-	@UiField
-	ControlGroup addressCg;
-	@UiField
-	HelpInline addressError;
-	@UiField
-	TextBox address;
-	
-	@UiField
-	Button addBtn;
-	@UiField
-	Button cancelBtn;
-	
-	private List<NeighborhoodDTO> neighborhoods;
-	private Map<RadioButton, NeighborhoodDTO> neighborhoodRadioButtonMap = new HashMap<RadioButton, NeighborhoodDTO>();
-	
-	public void show(boolean b) {
-		if (b) {
-			modal.show();
-		} else {
-			modal.hide();
-		}
-	}
-	
-	public void hide() {
-		modal.hide();
-	}
-	
 	@UiHandler("cancelBtn")
-	public void cancel(ClickEvent event) {
+	public void cancel(final ClickEvent event) {
 		clearError();
 		modal.hide();
-	}
-	
-	public Button getAddLocationButton() {
-		return addBtn;
-	}
-	
-	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
-		clearMessage();
-		neighborhoodListPanel.clear();
-		this.neighborhoods = neighborhoods;
-		for(NeighborhoodDTO n : neighborhoods) {
-			RadioButton rb = new RadioButton("neighborhood");
-			rb.setText(n.getName());
-			neighborhoodRadioButtonMap.put(rb, n);
-			neighborhoodListPanel.add(rb);
-		}
-		StyleHelper.show(neighborhoodControl.getElement(), true);
-	}
-
-	private void clearMessage() {
-		message.setText("");
-		StyleHelper.show(message.getElement(), false);
-	}
-	
-	public boolean validate() {
-		boolean isValid = validateZip();
-		isValid &= validateAddress();
-		
-		return isValid;
-	}
-	
-	public void displayNeighborhoodListLoading(boolean display) {
-		if (display) {
-			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
-			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
-		} else {
-			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
-		}
-	}
-
-	public void displayMessage(String msg, AlertType info) {
-		message.setText(msg);
-		message.setType(info);
-		StyleHelper.show(message.getElement(), true);
-	}
-
-	public LocationDTO getLocation() {
-		LocationDTO location = new LocationDTO();
-		location.setAddress(FieldVerifier.sanitize(address.getText()));
-		for(RadioButton rb : neighborhoodRadioButtonMap.keySet()) {
-			if (rb.getValue()) {
-				location.setNeighborhood(neighborhoodRadioButtonMap.get(rb));
-				break;
-			}
-		}
-		location.setType(LocationType.OTHER);
-		return location;
-	}
-	
-	public boolean validateZip() {
-		String zipInput = zip.getText().trim();
-		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-		if (!validateZip.isValid()) {
-			setControlMessageForZipcodeField(validateZip.getErrors().get(0).getErrorMessage(),
-					true,
-					ControlGroupType.ERROR);
-			return false;
-		}
-		return true;
-	}
-	
-	public boolean validateAddress() {
-		String addr = FieldVerifier.sanitize(address.getText());
-		ValidationResult result = FieldVerifier.validateString(addr, FieldVerifier.MAX_ADDRESS_LENGTH);
-		if (!result.isValid()) {
-			addressCg.setType(ControlGroupType.ERROR);
-			addressError.setText(result.getErrors().get(0).getErrorMessage());
-			addressError.setVisible(true);
-			return false;
-		}
-		
-		return true;
-	}
-	
-	void setControlMessageForZipcodeField(String msg, boolean msgVisible, ControlGroupType type) {
-		zipCg.setType(type);
-		zipError.setText(msg);
-		zipError.setVisible(msgVisible);
 	}
 
 	public void clearError() {
@@ -196,7 +97,108 @@ public class AddLocationModal extends Composite {
 		zipError.setVisible(false);
 	}
 
+	private void clearMessage() {
+		message.setText("");
+		StyleHelper.show(message.getElement(), false);
+	}
+
+	public void displayMessage(final String msg, final AlertType info) {
+		message.setText(msg);
+		message.setType(info);
+		StyleHelper.show(message.getElement(), true);
+	}
+
+	public void displayNeighborhoodListLoading(final boolean display) {
+		if (display) {
+			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), true);
+		} else {
+			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		}
+	}
+
+	public void displayNeighborhoods(final List<NeighborhoodDTO> neighborhoods) {
+		clearMessage();
+		neighborhoodListPanel.clear();
+		this.neighborhoods = neighborhoods;
+		for (NeighborhoodDTO n : neighborhoods) {
+			RadioButton rb = new RadioButton("neighborhood");
+			rb.setText(n.getName());
+			neighborhoodRadioButtonMap.put(rb, n);
+			neighborhoodListPanel.add(rb);
+		}
+		StyleHelper.show(neighborhoodControl.getElement(), true);
+	}
+
+	public Button getAddLocationButton() {
+		return addBtn;
+	}
+
+	public LocationDTO getLocation() {
+		LocationDTO location = new LocationDTO();
+		location.setAddress(FieldVerifier.sanitize(address.getText()));
+		for (RadioButton rb : neighborhoodRadioButtonMap.keySet()) {
+			if (rb.getValue()) {
+				location.setNeighborhood(neighborhoodRadioButtonMap.get(rb));
+				break;
+			}
+		}
+		location.setType(LocationType.OTHER);
+		return location;
+	}
+
 	public TextBox getZipTextBox() {
 		return zip;
+	}
+
+	public void hide() {
+		modal.hide();
+	}
+
+	void setControlMessageForZipcodeField(final String msg, final boolean msgVisible, final ControlGroupType type) {
+		zipCg.setType(type);
+		zipError.setText(msg);
+		zipError.setVisible(msgVisible);
+	}
+
+	public void show(final boolean b) {
+		if (b) {
+			modal.show();
+		} else {
+			modal.hide();
+		}
+	}
+
+	public boolean validate() {
+		boolean isValid = validateZip();
+		isValid &= validateAddress();
+
+		return isValid;
+	}
+
+	public boolean validateAddress() {
+		String addr = FieldVerifier.sanitize(address.getText());
+		ValidationResult result = FieldVerifier.validateString(addr, FieldVerifier.MAX_ADDRESS_LENGTH);
+		if (!result.isValid()) {
+			addressCg.setType(ControlGroupType.ERROR);
+			addressError.setText(result.getErrors().get(0).getErrorMessage());
+			addressError.setVisible(true);
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean validateZip() {
+		String zipInput = zip.getText().trim();
+		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
+		if (!validateZip.isValid()) {
+			setControlMessageForZipcodeField(
+					validateZip.getErrors().get(0).getErrorMessage(),
+					true,
+					ControlGroupType.ERROR);
+			return false;
+		}
+		return true;
 	}
 }

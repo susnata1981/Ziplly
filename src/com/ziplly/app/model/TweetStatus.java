@@ -1,7 +1,5 @@
 package com.ziplly.app.model;
 
 public enum TweetStatus {
-	ACTIVE,
-	DELETED,
-	ALL
+	ACTIVE, DELETED, ALL
 }

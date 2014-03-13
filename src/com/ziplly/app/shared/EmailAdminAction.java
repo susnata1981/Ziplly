@@ -33,7 +33,7 @@ public class EmailAdminAction implements Action<EmailAdminResult> {
 
 	public EmailAdminAction() {
 	}
-	
+
 	public EmailAdminAction(String from, String content, String subject) {
 		this.from = from;
 		this.content = content;

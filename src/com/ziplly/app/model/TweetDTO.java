@@ -22,49 +22,62 @@ public class TweetDTO implements Serializable {
 	private Set<NeighborhoodDTO> targetNeighborhoods = new HashSet<NeighborhoodDTO>();
 	private Date timeUpdated;
 	private Date timeCreated;
-	
+
 	public TweetDTO() {
 	}
-	
+
 	public TweetType getType() {
 		return TweetType.valueOf(type);
 	}
+
 	public void setType(TweetType type) {
 		this.type = type.name();
 	}
+
 	public String getContent() {
 		return content;
 	}
+
 	public void setContent(String content) {
 		this.content = content;
 	}
+
 	public TweetStatus getStatus() {
 		return TweetStatus.valueOf(status);
 	}
+
 	public void setStatus(TweetStatus status) {
 		this.status = status.name();
 	}
+
 	public List<CommentDTO> getComments() {
 		return comments;
 	}
+
 	public void setComments(List<CommentDTO> comments) {
 		this.comments = comments;
 	}
+
 	public AccountDTO getSender() {
 		return sender;
 	}
+
 	public void setSender(AccountDTO sender) {
 		this.sender = sender;
 	}
+
 	public long getImageId() {
 		return imageId;
 	}
+
 	public void setImageId(long imageId) {
 		this.imageId = imageId;
 	}
+
 	public Long getTweetId() {
 		return tweetId;
 	}
+
 	public void setTweetId(Long tweetId) {
 		this.tweetId = tweetId;
 	}
@@ -80,7 +93,7 @@ public class TweetDTO implements Serializable {
 	public void setLikes(List<LoveDTO> likes) {
 		this.likes = likes;
 	}
-	
+
 	public List<LoveDTO> getLikes() {
 		return likes;
 	}
@@ -108,10 +121,11 @@ public class TweetDTO implements Serializable {
 	public void setTargetNeighborhoods(Set<NeighborhoodDTO> targetNeighborhoods) {
 		this.targetNeighborhoods = targetNeighborhoods;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "tweetId: "+tweetId+" Content:  "+content+" Type: "+type +" Sender: "+sender.getEmail();
+		return "tweetId: " + tweetId + " Content:  " + content + " Type: " + type + " Sender: "
+		    + sender.getEmail();
 	}
 
 	public List<ImageDTO> getImages() {

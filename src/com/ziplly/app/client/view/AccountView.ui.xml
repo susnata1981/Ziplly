@@ -19,7 +19,7 @@
 							<b:Image ui:field="profileImage" />
 						</g:HTMLPanel>
 						<b:Heading size="3" addStyleNames="{style.profileCaption}" ui:field="name"/>
-						<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
+						<b:Button block="true" ui:field="sendMsgBtn">Send Personal Message</b:Button>
 						<b:Button block="true" ui:field="inviteBtn">Invite people</b:Button>
 					</div>
 					<div class="{style.profileInfoBox}">

@@ -16,9 +16,10 @@ public class HomeViewState {
 	private int page = 0;
 	private int pageSize = 5;
 	private NeighborhoodDTO currentNeighborhood;
-	
+
 	/**
 	 * Returns search criteria object based on place
+	 * 
 	 * @param place
 	 * @return
 	 */
@@ -42,7 +43,7 @@ public class HomeViewState {
 				return getDefaultSearchAction();
 			}
 		}
-		
+
 		resetLastSearchAction(action);
 		return getLastSearchAction();
 	}
@@ -52,11 +53,11 @@ public class HomeViewState {
 		action.setSearchType(SearchType.CATEGORY);
 		action.setType(type);
 		action.setNeighborhood(currentNeighborhood);
-		
+
 		resetLastSearchAction(action);
 		return action;
 	}
-	
+
 	public GetCommunityWallDataAction getSearchCriteriaForHashtag(String hashtag) {
 		GetCommunityWallDataAction action = getCommunityWallDataAction();
 		action.setSearchType(SearchType.HASHTAG);
@@ -73,14 +74,14 @@ public class HomeViewState {
 		lastSearchAction.setPage(++page);
 		return lastSearchAction;
 	}
-	
+
 	public boolean hasMorePages() {
 		if (isFetchingData()) {
 			return true;
 		}
 		return currentTweetList != null && currentTweetList.size() == pageSize;
 	}
-	
+
 	public void setLastSearchAction(GetCommunityWallDataAction lastSearchAction) {
 		this.lastSearchAction = lastSearchAction;
 	}
@@ -100,14 +101,15 @@ public class HomeViewState {
 	public void setCurrentTweetList(List<TweetDTO> currentTweetList) {
 		this.currentTweetList = currentTweetList;
 	}
-	
+
 	private GetCommunityWallDataAction getDefaultSearchAction() {
-		resetLastSearchAction(new GetCommunityWallDataAction(TweetType.ALL, 0, pageSize)); 
+		resetLastSearchAction(new GetCommunityWallDataAction(TweetType.ALL, 0, pageSize));
 		return getLastSearchAction();
 	}
-	
+
 	/**
 	 * Resets tweet search criteria
+	 * 
 	 * @param action
 	 */
 	private void resetLastSearchAction(GetCommunityWallDataAction action) {
@@ -115,10 +117,10 @@ public class HomeViewState {
 		if (currentTweetList != null) {
 			currentTweetList.clear();
 		}
-		
-		setLastSearchAction(action); 
+
+		setLastSearchAction(action);
 	}
-	
+
 	private GetCommunityWallDataAction getCommunityWallDataAction() {
 		GetCommunityWallDataAction action = new GetCommunityWallDataAction();
 		action.setPageSize(pageSize);

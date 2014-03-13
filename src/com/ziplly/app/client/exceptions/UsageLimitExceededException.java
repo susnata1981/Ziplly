@@ -7,7 +7,7 @@ public class UsageLimitExceededException extends DispatchException {
 
 	public UsageLimitExceededException() {
 	}
-	
+
 	public UsageLimitExceededException(String msg) {
 		super(msg);
 	}

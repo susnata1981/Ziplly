@@ -13,31 +13,34 @@ import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SpamStatus;
 
-public class ReportSpamActionHandler extends AbstractAccountActionHandler<ReportSpamAction, ReportSpamResult>{
+public class ReportSpamActionHandler extends
+    AbstractAccountActionHandler<ReportSpamAction, ReportSpamResult> {
 	private SpamDAO spamDao;
 
 	@Inject
-	public ReportSpamActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, SpamDAO spamDao) {
+	public ReportSpamActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    SpamDAO spamDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.spamDao = spamDao;
 	}
 
 	@Override
-	public ReportSpamResult execute(ReportSpamAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public ReportSpamResult
+	    execute(ReportSpamAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getSpam() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		// Just save it for now
 		Spam spam = new Spam(action.getSpam());
 		spam.setStatus(SpamStatus.PENDING);
 		spamDao.save(spam);
-		
+
 		return new ReportSpamResult();
 	}
 

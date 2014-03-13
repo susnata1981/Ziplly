@@ -24,8 +24,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @NamedQueries({
-		@NamedQuery(name = "findNeighborhoodById", query = "from Neighborhood n where n.neighborhoodId = :neighborhoodId"),
-		@NamedQuery(name = "findAllNeighborhoods", query = "from Neighborhood") })
+    @NamedQuery(name = "findNeighborhoodById",
+        query = "from Neighborhood n where n.neighborhoodId = :neighborhoodId"),
+    @NamedQuery(name = "findAllNeighborhoods", query = "from Neighborhood") })
 @Entity
 @Table(name = "neighborhood")
 public class Neighborhood extends AbstractTimestampAwareEntity {
@@ -36,32 +37,31 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name = "neighborhood_id")
 	private Long neighborhoodId;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinColumn(name="parent_neighborhood_id")
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "parent_neighborhood_id")
 	private Neighborhood parentNeighborhood;
-	
-	@ManyToMany(mappedBy="targetNeighborhoods", fetch = FetchType.LAZY)
+
+	@ManyToMany(mappedBy = "targetNeighborhoods", fetch = FetchType.LAZY)
 	private Set<Tweet> tweets = new HashSet<Tweet>();
-	
+
 	private String name;
 	private String city;
 	private String state;
 	private String type;
-	
-	@OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+
+	@OneToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
-	@JoinTable(name = "neighborhood_images", 
-		joinColumns = { @JoinColumn(name="neighborhood_id") },
-		inverseJoinColumns = { @JoinColumn(name="image_id") })
+	@JoinTable(name = "neighborhood_images", joinColumns = { @JoinColumn(name = "neighborhood_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "image_id") })
 	private Set<Image> images = new HashSet<Image>();
-	
-	@Column(name="image_url")
+
+	@Column(name = "image_url")
 	private String imageUrl;
-	
+
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-	@JoinTable(name="neighborhood_postalcode",
-		joinColumns = { @JoinColumn(name="neighborhood_id") },
-		inverseJoinColumns = { @JoinColumn(name="postal_code") })
+	@JoinTable(name = "neighborhood_postalcode",
+	    joinColumns = { @JoinColumn(name = "neighborhood_id") }, inverseJoinColumns = { @JoinColumn(
+	        name = "postal_code") })
 	private Set<PostalCode> postalCodes = new HashSet<PostalCode>();
 
 	public Neighborhood() {
@@ -73,18 +73,18 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.setCity(neighborhood.getCity());
 		this.setState(neighborhood.getState());
 		this.type = neighborhood.getType().name();
-		
+
 		if (neighborhood.getParentNeighborhood() != null) {
 			this.parentNeighborhood = new Neighborhood(neighborhood.getParentNeighborhood());
 		}
-		
-		for(PostalCodeDTO p : neighborhood.getPostalCodes()) {
+
+		for (PostalCodeDTO p : neighborhood.getPostalCodes()) {
 			this.postalCodes.add(new PostalCode(p));
 		}
-		
+
 		this.setImageUrl(neighborhood.getImageUrl());
-		
-		for(ImageDTO image : neighborhood.getImages()) {
+
+		for (ImageDTO image : neighborhood.getImages()) {
 			this.addImage(new Image(image));
 		}
 	}
@@ -144,31 +144,31 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	public void addImage(Image image) {
 		images.add(image);
 	}
-	
+
 	public void setImages(Set<Image> images) {
 		this.images = images;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Neighborhood)) {
 			return false;
 		}
-		
-		Neighborhood n = (Neighborhood)o;
-		
+
+		Neighborhood n = (Neighborhood) o;
+
 		return n.getNeighborhoodId() == neighborhoodId;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return neighborhoodId.hashCode();
 	}
-	
+
 	public void addPostalCode(PostalCode p) {
 		this.postalCodes.add(p);
 	}

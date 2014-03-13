@@ -23,10 +23,9 @@ import com.ziplly.app.model.NeighborhoodDTO;
 public class NeighborhoodSelectorWidget extends Composite implements HasClickHandlers {
 
 	private static NeighborhoodSelectorWidgetUiBinder uiBinder = GWT
-			.create(NeighborhoodSelectorWidgetUiBinder.class);
+	    .create(NeighborhoodSelectorWidgetUiBinder.class);
 
-	interface NeighborhoodSelectorWidgetUiBinder extends
-			UiBinder<Widget, NeighborhoodSelectorWidget> {
+	interface NeighborhoodSelectorWidgetUiBinder extends UiBinder<Widget, NeighborhoodSelectorWidget> {
 	}
 
 	public NeighborhoodSelectorWidget() {
@@ -35,33 +34,33 @@ public class NeighborhoodSelectorWidget extends Composite implements HasClickHan
 		modalPanel.setBackdrop(BackdropType.STATIC);
 		modalPanel.setKeyboard(false);
 	}
-	
+
 	@UiField
 	Modal modalPanel;
-	
+
 	@UiField
 	Controls radioButtonControl;
 
 	@UiField
 	Button submitBtn;
-	
+
 	@UiField
 	Alert message;
-	
+
 	private List<NeighborhoodDTO> neighborhoods;
 	private List<RadioButton> radioButtons = new ArrayList<RadioButton>();
-	
+
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
 		radioButtonControl.clear();
 		this.neighborhoods = neighborhoods;
-		for(NeighborhoodDTO n : neighborhoods) {
+		for (NeighborhoodDTO n : neighborhoods) {
 			RadioButton rb = new RadioButton(Long.toString(n.getNeighborhoodId()));
 			rb.setText(n.getName());
 			radioButtonControl.add(rb);
 			radioButtons.add(rb);
 		}
 	}
-	
+
 	public void show(boolean show) {
 		message.setVisible(false);
 		if (show) {
@@ -70,10 +69,10 @@ public class NeighborhoodSelectorWidget extends Composite implements HasClickHan
 			modalPanel.hide();
 		}
 	}
-	
+
 	public NeighborhoodDTO getSelection() {
 		int count = radioButtonControl.getWidgetCount();
-		for(int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++) {
 			RadioButton rb = (RadioButton) radioButtonControl.getWidget(i);
 			if (rb.getValue()) {
 				return neighborhoods.get(i);
@@ -86,7 +85,7 @@ public class NeighborhoodSelectorWidget extends Composite implements HasClickHan
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return submitBtn.addClickHandler(handler);
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);

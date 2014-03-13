@@ -7,7 +7,7 @@ public class DeleteTweetAction implements Action<DeleteTweetResult> {
 
 	public DeleteTweetAction() {
 	}
-	
+
 	public DeleteTweetAction(Long tweetId) {
 		this.setTweetId(tweetId);
 	}

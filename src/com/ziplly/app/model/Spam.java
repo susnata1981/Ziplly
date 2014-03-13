@@ -11,12 +11,12 @@ import javax.persistence.Table;
 import com.ziplly.app.shared.SpamStatus;
 
 @Entity
-@Table(name="spam")
+@Table(name = "spam")
 public class Spam extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@OneToOne
 	private Account reporter;
@@ -24,7 +24,7 @@ public class Spam extends AbstractTimestampAwareEntity {
 	private Tweet tweet;
 	@Column(name = "status")
 	private SpamStatus status;
-	
+
 	public Spam() {
 	}
 
@@ -32,7 +32,7 @@ public class Spam extends AbstractTimestampAwareEntity {
 		this.reporter = new Account(spam.getReporter());
 		this.tweet = new Tweet(spam.getTweet());
 	}
-	
+
 	public Long getId() {
 		return id;
 	}

@@ -9,7 +9,7 @@ public class PublicAccountPlace extends Place {
 
 	public PublicAccountPlace() {
 	}
-	
+
 	public PublicAccountPlace(Long accountId) {
 		this.setAccountId(accountId);
 	}
@@ -21,7 +21,7 @@ public class PublicAccountPlace extends Place {
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
 	}
-	
+
 	@Prefix("publicaccount")
 	public static class Tokenizer implements PlaceTokenizer<PublicAccountPlace> {
 
@@ -37,5 +37,5 @@ public class PublicAccountPlace extends Place {
 		public String getToken(PublicAccountPlace place) {
 			return Long.toString(place.getAccountId());
 		}
-	}	
+	}
 }

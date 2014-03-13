@@ -29,9 +29,12 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	private AsyncProvider<LoginAccountView> viewProvider;
 
 	@Inject
-	public LoginActivity(CachingDispatcherAsync dispatcher, EventBus eventBus, LoginPlace place,
-			PlaceController placeController, ApplicationContext ctx,
-			AsyncProvider<LoginAccountView> viewProvider) {
+	public LoginActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    LoginPlace place,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AsyncProvider<LoginAccountView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
@@ -46,7 +49,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	@Override
 	protected void doStart() {
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<LoginAccountView>() {
-		
+
 			@Override
 			public void onSuccess(LoginAccountView result) {
 				LoginActivity.this.view = result;
@@ -74,29 +77,29 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 
 	@Override
 	public void onLogin(String email, String password) {
-		dispatcher.execute(new ValidateLoginAction(email, password),
-				new DispatcherCallbackAsync<ValidateLoginResult>() {
-					@Override
-					public void onSuccess(ValidateLoginResult result) {
-						if (result != null && result.getAccount() != null) {
-							ctx.setAccount(result.getAccount());
-							eventBus.fireEvent(new LoginEvent(result.getAccount()));
-							goTo(new HomePlace());
-						}
-					}
+		dispatcher.execute(
+		    new ValidateLoginAction(email, password),
+		    new DispatcherCallbackAsync<ValidateLoginResult>() {
+			    @Override
+			    public void onSuccess(ValidateLoginResult result) {
+				    if (result != null && result.getAccount() != null) {
+					    ctx.setAccount(result.getAccount());
+					    eventBus.fireEvent(new LoginEvent(result.getAccount()));
+					    goTo(new HomePlace());
+				    }
+			    }
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught instanceof NotFoundException) {
-							view.displayMessage(LoginWidget.ACCOUNT_DOES_NOT_EXIST, AlertType.ERROR);
-						} else if (caught instanceof InvalidCredentialsException) {
-							view.displayMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS,
-									AlertType.ERROR);
-						} else {
-							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-						}
-						view.resetLoginForm();
-					}
-				});
+			    @Override
+			    public void onFailure(Throwable caught) {
+				    if (caught instanceof NotFoundException) {
+					    view.displayMessage(LoginWidget.ACCOUNT_DOES_NOT_EXIST, AlertType.ERROR);
+				    } else if (caught instanceof InvalidCredentialsException) {
+					    view.displayMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS, AlertType.ERROR);
+				    } else {
+					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+				    view.resetLoginForm();
+			    }
+		    });
 	}
 }

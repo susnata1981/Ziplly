@@ -42,7 +42,7 @@ public class BusinessPropertiesDTO implements Serializable {
 
 	private PriceRange priceRange;
 	private Cuisine cuisine;
-	
+
 	public BusinessPropertiesDTO() {
 	}
 
@@ -220,15 +220,14 @@ public class BusinessPropertiesDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "(" + this.id + "," + this.sundayStartTime + ","
-				+ this.sundayEndTime + "," + this.mondayStartTime + "," + this.mondayEndTime + ","
-				+ this.tuesdayStartTime + "," + this.tuesdayEndTime + "," + this.wednesdayStartTime
-				+ "," + this.wednesdayEndTime + "," + this.thursdayStartTime + ","
-				+ this.thursdayEndTime + "," + this.fridayStartTime + "," + this.fridayEndTime
-				+ "," + this.saturdayStartTime + "," + this.saturdayEndTime + "," + this.holidays
-				+ "," + String.valueOf(this.acceptsCreditCard) + "," + this.parkingAvailable + ","
-				+ String.valueOf(this.wifiAvailable) + "," + String.valueOf(this.goodForKids) + ","
-				+ this.getPriceRange() + "," + ")";
+		return "(" + this.id + "," + this.sundayStartTime + "," + this.sundayEndTime + ","
+		    + this.mondayStartTime + "," + this.mondayEndTime + "," + this.tuesdayStartTime + ","
+		    + this.tuesdayEndTime + "," + this.wednesdayStartTime + "," + this.wednesdayEndTime + ","
+		    + this.thursdayStartTime + "," + this.thursdayEndTime + "," + this.fridayStartTime + ","
+		    + this.fridayEndTime + "," + this.saturdayStartTime + "," + this.saturdayEndTime + ","
+		    + this.holidays + "," + String.valueOf(this.acceptsCreditCard) + ","
+		    + this.parkingAvailable + "," + String.valueOf(this.wifiAvailable) + ","
+		    + String.valueOf(this.goodForKids) + "," + this.getPriceRange() + "," + ")";
 	}
 
 	@Override

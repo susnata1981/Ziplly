@@ -11,33 +11,30 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.SignupView;
-import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class SignupActivity extends AbstractSignupActivity {
-	private SignupPlace place;
-	private AsyncProvider<SignupView> viewProvider;
 	private AcceptsOneWidget panel;
+	private final SignupPlace place;
+	private final AsyncProvider<SignupView> viewProvider;
 
 	@Inject
-	public SignupActivity(
-			CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			PlaceController placeController, 
-			SignupPlace place, 
-			ApplicationContext ctx, 
-			AsyncProvider<SignupView> viewProvider) {
+	public SignupActivity(final CachingDispatcherAsync dispatcher,
+			final EventBus eventBus,
+			final PlaceController placeController,
+			final SignupPlace place,
+			final ApplicationContext ctx,
+			final AsyncProvider<SignupView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.place = place;
 		this.viewProvider = viewProvider;
 	}
 
 	@Override
-	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
-		this.panel = panel;
-		checkAccountLogin();
+	public void bind() {
+		view.setPresenter(this);
 	}
 
 	@Override
@@ -50,39 +47,40 @@ public class SignupActivity extends AbstractSignupActivity {
 		viewProvider.get(new AsyncCallback<SignupView>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onFailure(final Throwable caught) {
 				// TODO Auto-generated method stub
 			}
 
 			@Override
-			public void onSuccess(SignupView result) {
+			public void onSuccess(final SignupView result) {
 				SignupActivity.this.view = result;
 				bind();
 				view.reset();
 				if (place.getAccount() != null) {
 					AccountDTO a = place.getAccount();
-					if (a instanceof PersonalAccountDTO ) {
-						view.displayAccount((PersonalAccountDTO)a);
+					if (a instanceof PersonalAccountDTO) {
+						view.displayAccount((PersonalAccountDTO) a);
 					}
 				}
-				SignupActivity.this.panel.setWidget(view);
+				panel.setWidget(view);
 			}
 		});
 	}
 
 	@Override
-	public void go(AcceptsOneWidget container) {
+	public void go(final AcceptsOneWidget container) {
 		container.setWidget(view);
-	}
-
-	@Override
-	public void bind() {
-		view.setPresenter(this);
 	}
 
 	@Override
 	public void onStop() {
 		view.clear();
 		StyleHelper.clearBackground();
+	}
+
+	@Override
+	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
+		this.panel = panel;
+		checkAccountLogin();
 	}
 }

@@ -9,7 +9,7 @@ public class SendMessageResult implements Result {
 
 	public SendMessageResult() {
 	}
-	
+
 	public SendMessageResult(MessageDTO msg) {
 		this.setMsg(msg);
 	}

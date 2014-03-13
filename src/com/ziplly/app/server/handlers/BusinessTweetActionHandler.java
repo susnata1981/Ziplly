@@ -24,50 +24,55 @@ import com.ziplly.app.shared.BusinessTweetAction;
 import com.ziplly.app.shared.BusinessTweetResult;
 
 @Deprecated
-public class BusinessTweetActionHandler extends AbstractTweetActionHandler<BusinessTweetAction, BusinessTweetResult> {
+public class BusinessTweetActionHandler extends
+    AbstractTweetActionHandler<BusinessTweetAction, BusinessTweetResult> {
 
 	@Inject
 	public BusinessTweetActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, TweetDAO tweetDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 	}
 
 	@Override
-	public BusinessTweetResult execute(BusinessTweetAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public BusinessTweetResult
+	    execute(BusinessTweetAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		Account account = session.getAccount();
-		
+
 		if (!(account instanceof BusinessAccount)) {
 			throw new AccessError("Illegal Access");
 		}
-		
-		BusinessAccount baccount = (BusinessAccount)account;
+
+		BusinessAccount baccount = (BusinessAccount) account;
 		Set<Transaction> transaction = baccount.getTransactions();
-		
+
 		if (transaction == null) {
 			// haven't paid yet, check quota
 			try {
-				long count = tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
+				long count =
+				    tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
 				if (count >= AccountBLIImpl.FREE_TWEET_PER_MONTH_THRESHOLD) {
-					throw new NeedsSubscriptionException("You've filled up your quote for the month. Please subscribe to send more tweets.");
+					throw new NeedsSubscriptionException(
+					    "You've filled up your quote for the month. Please subscribe to send more tweets.");
 				}
 			} catch (ParseException e) {
 				// should never reach here
 				throw new InternalError("Internal error");
 			}
 		}
-		
+
 		Tweet tweet = new Tweet(action.getTweet());
 		tweet.setSender(session.getAccount());
 		tweetDao.save(tweet);
-		
+
 		return new BusinessTweetResult();
 	}
 

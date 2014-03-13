@@ -23,7 +23,6 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
-import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -36,7 +35,8 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessView extends AbstractView implements View<BusinessView.EntityListViewPresenter> {
+public class BusinessView extends AbstractView implements
+    View<BusinessView.EntityListViewPresenter> {
 
 	private static final int PAGE_SIZE = 10;
 	private SendMessageWidget smw;
@@ -148,9 +148,10 @@ public class BusinessView extends AbstractView implements View<BusinessView.Enti
 			}
 			state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
 		} else {
-			state.searchByNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
+			state.searchByNeighborhood(neighborhoods
+			    .get(neighborhoodListBox.getSelectedIndex())
+			    .getNeighborhoodId());
 		}
-		eventBus.fireEvent(new LoadingEventStart());
 		searchBtn.setEnabled(false);
 		presenter.getBusinessList(state.getCurrentEntityListAction());
 	}
@@ -226,6 +227,8 @@ public class BusinessView extends AbstractView implements View<BusinessView.Enti
 	}
 
 	public void setBackground(NeighborhoodDTO neighborhood) {
-		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(
+		    neighborhood,
+		    ValueType.NEIGHBORHOOD_IMAGE));
 	}
 }

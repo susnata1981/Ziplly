@@ -28,13 +28,15 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 
 	@Override
 	public List<AccountNotificationDTO> findAccountNotificationByAccountId(Long recipientId) {
-		Preconditions.checkArgument(recipientId != null,
-				"Invalid argument to findAccountNotificationByAccountId");
+		Preconditions.checkArgument(
+		    recipientId != null,
+		    "Invalid argument to findAccountNotificationByAccountId");
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
-			Query query = em
-					.createQuery("from AccountNotification where recipient.accountId = :recipientId and readStatus = :readStatus");
+			Query query =
+			    em
+			        .createQuery("from AccountNotification where recipient.accountId = :recipientId and readStatus = :readStatus");
 			query.setParameter("recipientId", recipientId);
 			query.setParameter("readStatus", ReadStatus.UNREAD.name());
 
@@ -62,11 +64,12 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 
 	@Override
 	public AccountNotification findAccountNotificationByConversationId(Long conversationId) {
-		Preconditions.checkArgument(conversationId != null,
-				"Invalid argument to findAccountNotificationByAccountId");
+		Preconditions.checkArgument(
+		    conversationId != null,
+		    "Invalid argument to findAccountNotificationByAccountId");
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em
-				.createQuery("from AccountNotification where conversation.id = :conversationId");
+		Query query =
+		    em.createQuery("from AccountNotification where conversation.id = :conversationId");
 		query.setParameter("conversationId", conversationId);
 		try {
 			AccountNotification result = (AccountNotification) query.getSingleResult();
@@ -74,7 +77,7 @@ public class AccountNotificationDAOImpl implements AccountNotificationDAO {
 		} catch (NoResultException nre) {
 			return null;
 		} finally {
-			em.close();			
+			em.close();
 		}
 	}
 }

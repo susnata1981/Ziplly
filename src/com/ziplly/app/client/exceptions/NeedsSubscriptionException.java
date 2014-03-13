@@ -7,7 +7,7 @@ public class NeedsSubscriptionException extends DispatchException {
 
 	public NeedsSubscriptionException() {
 	}
-	
+
 	public NeedsSubscriptionException(String msg) {
 		super(msg);
 	}

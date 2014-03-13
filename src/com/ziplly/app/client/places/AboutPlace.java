@@ -8,11 +8,11 @@ import com.ziplly.app.client.view.AboutViewSection;
 public class AboutPlace extends Place {
 
 	private AboutViewSection section;
-	
+
 	public AboutPlace() {
 		this.section = AboutViewSection.ABOUTUS;
 	}
-	
+
 	public AboutPlace(AboutViewSection section) {
 		this.section = section;
 	}
@@ -30,9 +30,9 @@ public class AboutPlace extends Place {
 		@Override
 		public AboutPlace getPlace(String token) {
 			try {
-			AboutViewSection section = AboutViewSection.valueOf(token.toUpperCase());
-			return new AboutPlace(section);
-			} catch(RuntimeException ex) {
+				AboutViewSection section = AboutViewSection.valueOf(token.toUpperCase());
+				return new AboutPlace(section);
+			} catch (RuntimeException ex) {
 				return new AboutPlace(AboutViewSection.ABOUTUS);
 			}
 		}

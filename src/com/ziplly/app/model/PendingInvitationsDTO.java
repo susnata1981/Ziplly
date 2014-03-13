@@ -7,7 +7,7 @@ public class PendingInvitationsDTO {
 
 	public PendingInvitationsDTO() {
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}

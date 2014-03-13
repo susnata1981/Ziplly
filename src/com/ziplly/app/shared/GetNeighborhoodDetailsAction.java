@@ -8,7 +8,7 @@ public class GetNeighborhoodDetailsAction implements Action<GetNeighborhoodDetai
 
 	public GetNeighborhoodDetailsAction() {
 	}
-	
+
 	public GetNeighborhoodDetailsAction(Long neighborhoodId) {
 		this.setNeighborhoodId(neighborhoodId);
 	}

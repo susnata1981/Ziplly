@@ -16,7 +16,8 @@ public class CachingDispatcherAsync implements DispatchAsync {
 	Logger logger = Logger.getLogger(CachingDispatcherAsync.class.getName());
 	HashMap<Action<? extends Result>, Result> cache = new HashMap<Action<? extends Result>, Result>();
 
-	HashMap<Action<? extends Result>, ArrayList<AsyncCallback<Result>>> pendingCallbacks = new HashMap<Action<? extends Result>, ArrayList<AsyncCallback<Result>>>();
+	HashMap<Action<? extends Result>, ArrayList<AsyncCallback<Result>>> pendingCallbacks =
+	    new HashMap<Action<? extends Result>, ArrayList<AsyncCallback<Result>>>();
 
 	private DispatchAsync dispatcher;
 
@@ -27,7 +28,7 @@ public class CachingDispatcherAsync implements DispatchAsync {
 
 	@Override
 	public <A extends Action<R>, R extends Result> void execute(A action,
-			final AsyncCallback<R> callback) {
+	    final AsyncCallback<R> callback) {
 
 		if (action instanceof Cacheable) {
 			executeCache(action, callback);
@@ -48,10 +49,9 @@ public class CachingDispatcherAsync implements DispatchAsync {
 	}
 
 	<A extends Action<R>, R extends Result> void executeCache(final A action,
-			final AsyncCallback<R> callback) {
+	    final AsyncCallback<R> callback) {
 
-		ArrayList<AsyncCallback<Result>> callbackList = pendingCallbacks
-				.get(action);
+		ArrayList<AsyncCallback<Result>> callbackList = pendingCallbacks.get(action);
 
 		if (callbackList != null) {
 			logger.log(Level.INFO, "Pending async operation...");
@@ -66,15 +66,14 @@ public class CachingDispatcherAsync implements DispatchAsync {
 			callback.onSuccess((R) cachedResult);
 			return;
 		}
-		
+
 		pendingCallbacks.put(action, new ArrayList<AsyncCallback<Result>>());
 		logger.log(Level.INFO, "Cache miss");
 		dispatcher.execute(action, new AsyncCallback<R>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				ArrayList<AsyncCallback<Result>> callbacks = pendingCallbacks
-						.get(action);
+				ArrayList<AsyncCallback<Result>> callbacks = pendingCallbacks.get(action);
 				if (callbacks != null) {
 					for (AsyncCallback<Result> pendingCallback : callbacks) {
 						pendingCallback.onFailure(caught);
@@ -86,8 +85,7 @@ public class CachingDispatcherAsync implements DispatchAsync {
 
 			@Override
 			public void onSuccess(R result) {
-				ArrayList<AsyncCallback<Result>> callbacks = pendingCallbacks
-						.get(action);
+				ArrayList<AsyncCallback<Result>> callbacks = pendingCallbacks.get(action);
 				if (callbacks != null) {
 					for (AsyncCallback<Result> pendingCallback : callbacks) {
 						logger.log(Level.INFO, "Acknowledging pending callbacks");

@@ -8,11 +8,12 @@ public interface Presenter {
 	 * Display the view on the container
 	 */
 	void go(AcceptsOneWidget container);
-	
+
 	/*
 	 * Set a 2 way communication with the view
 	 */
 	void bind();
+
 	/*
 	 * Go to a place
 	 */

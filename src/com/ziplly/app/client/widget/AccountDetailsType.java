@@ -1,26 +1,29 @@
 package com.ziplly.app.client.widget;
 
 public enum AccountDetailsType {
-    EMAIL ("Email", true, true, true), 
-    OCCUPATION ("Occupation", true, true, true),
-    TWEETS ("Messages", true, true, false);
-    
-    private String name;
+	EMAIL("Email", true, true, true),
+	OCCUPATION("Occupation", true, true, true),
+	TWEETS("Messages", true, true, false);
+
+	private String name;
 	private boolean allowedPublic;
 	private boolean allowedCommunity;
 	private boolean allowedPrivate;
-    
-	private AccountDetailsType(String name, boolean allowedPublic, boolean allowedCommunity, boolean allowedPrivate) {
-    	this.name = name;
-    	this.setAllowedPublic(allowedPublic);
-    	this.setAllowedCommunity(allowedCommunity);
-    	this.allowedPrivate = allowedPrivate;
+
+	private AccountDetailsType(String name,
+	    boolean allowedPublic,
+	    boolean allowedCommunity,
+	    boolean allowedPrivate) {
+		this.name = name;
+		this.setAllowedPublic(allowedPublic);
+		this.setAllowedCommunity(allowedCommunity);
+		this.allowedPrivate = allowedPrivate;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isAllowedPrivate() {
 		return allowedPrivate;
 	}

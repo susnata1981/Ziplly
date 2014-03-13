@@ -13,18 +13,19 @@ import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 
 public class GetLoggedInUserActionHandler extends
-		AbstractAccountActionHandler<GetLoggedInUserAction, GetLoggedInUserResult> {
+    AbstractAccountActionHandler<GetLoggedInUserAction, GetLoggedInUserResult> {
 
 	@Inject
 	public GetLoggedInUserActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public GetLoggedInUserResult execute(GetLoggedInUserAction action,
-			ExecutionContext ec) throws DispatchException {
-		
+	public GetLoggedInUserResult
+	    execute(GetLoggedInUserAction action, ExecutionContext ec) throws DispatchException {
+
 		try {
 			AccountDTO account = accountBli.getLoggedInUser();
 			if (account == null) {

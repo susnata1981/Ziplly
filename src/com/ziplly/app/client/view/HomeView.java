@@ -59,17 +59,18 @@ public class HomeView extends AbstractView implements IHomeView {
 
 	private static final String TWEET_WIDGET_WIDTH = "90%";
 	private String tweetWidth = "90%";
-	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) 
-			AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private BasicDataFormatter basicDataFormatter =
+	    (BasicDataFormatter) AbstractValueFormatterFactory
+	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private static HomeViewUiBinder uiBinder = GWT.create(HomeViewUiBinder.class);
 	private FeedbackWidget feedbackWidget = new FeedbackWidget();
-	
+
 	public interface Style extends CssResource {
 		String tweetFilterLink();
 
 		String selectedTweetType();
 	}
-	
+
 	public static interface HomePresenter extends TweetPresenter, SendMessagePresenter {
 		void displayTweets(List<TweetDTO> tweets);
 
@@ -83,12 +84,12 @@ public class HomeView extends AbstractView implements IHomeView {
 
 		void gotoResidentPlace();
 
-		void gotoBusinessPlace(); 
+		void gotoBusinessPlace();
 	}
 
 	@UiField
 	Style style;
-	
+
 	@UiField
 	Alert message;
 
@@ -101,7 +102,7 @@ public class HomeView extends AbstractView implements IHomeView {
 	Anchor messagesLink;
 	@UiField
 	SpanElement unreadMessageCountField;
-	
+
 	@UiField
 	HTMLPanel communityWallPanel;
 
@@ -117,7 +118,7 @@ public class HomeView extends AbstractView implements IHomeView {
 
 	@UiField
 	HTMLPanel neighborhoodsPanel;
-	
+
 	HomePresenter presenter;
 	Map<TweetType, Anchor> filters = new HashMap<TweetType, Anchor>();
 	ArrayList<Anchor> hashtagAnchors = new ArrayList<Anchor>();
@@ -129,19 +130,19 @@ public class HomeView extends AbstractView implements IHomeView {
 	@Inject
 	public HomeView(EventBus eventBus) {
 		super(eventBus);
-		
+
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
-		
+
 		StyleHelper.show(message.getElement(), false);
-		
+
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
 		tweetBox.setPresenter(presenter);
-		
+
 		tview.setWidth(TWEET_WIDGET_WIDTH);
-		
+
 		communitySummaryContainer.setShowOn(Device.DESKTOP);
 		communityWallPanel.add(tview);
 		communitySummaryWidget.setHeight("270px");
@@ -152,7 +153,7 @@ public class HomeView extends AbstractView implements IHomeView {
 				presenter.gotoResidentPlace();
 			}
 		});
-		
+
 		communitySummaryWidget.addClickHandlerForBusinessLink(new ClickHandler() {
 
 			@Override
@@ -160,7 +161,7 @@ public class HomeView extends AbstractView implements IHomeView {
 				presenter.gotoBusinessPlace();
 			}
 		});
-		
+
 		feedbackWidget.getSubmitButton().addClickHandler(new ClickHandler() {
 
 			@Override
@@ -168,7 +169,9 @@ public class HomeView extends AbstractView implements IHomeView {
 				feedbackWidget.clear();
 				ValidationResult result = feedbackWidget.validate();
 				if (!result.isValid()) {
-					feedbackWidget.displayMessage(result.getErrors().get(0).getErrorMessage(), AlertType.ERROR);
+					feedbackWidget.displayMessage(
+					    result.getErrors().get(0).getErrorMessage(),
+					    AlertType.ERROR);
 					return;
 				}
 				presenter.sendFeedback(feedbackWidget.getContent());
@@ -198,17 +201,17 @@ public class HomeView extends AbstractView implements IHomeView {
 	}
 
 	private void clearHighlightOnTweetType() {
-		for(TweetType type : filters.keySet()) {
+		for (TweetType type : filters.keySet()) {
 			filters.get(type).removeStyleName(style.selectedTweetType());
 		}
 	}
-	
+
 	@Override
 	public void highlightTweetType(TweetType type) {
 		clearHighlightOnTweetType();
 		filters.get(type).addStyleName(style.selectedTweetType());
 	}
-	
+
 	private void clearTweetFilterSelection() {
 		for (Anchor a : filters.values()) {
 			clearAnchorSelection(a);
@@ -270,14 +273,14 @@ public class HomeView extends AbstractView implements IHomeView {
 		message.clear();
 		hideMessage(true);
 		tview.clear();
-		
+
 		if (tweets.size() == 0) {
 			eventBus.fireEvent(new LoadingEventEnd());
 			return;
 		}
-		
+
 		tview.displayTweets(tweets, new TweetViewDisplayStatusCallback() {
-			
+
 			@Override
 			public void hasFinished(double y) {
 				if (y == 100) {
@@ -301,7 +304,7 @@ public class HomeView extends AbstractView implements IHomeView {
 	public void insertTweet(TweetDTO tweet) {
 		tview.insertTweet(tweet);
 	}
-	
+
 	@Override
 	public void updateTweets(List<TweetDTO> tweets) {
 		tview.add(tweets);
@@ -343,7 +346,6 @@ public class HomeView extends AbstractView implements IHomeView {
 		tview.updateLike(like);
 	}
 
-	
 	@Override
 	public Element getTweetSectionElement() {
 		return tview.getTweetSection();
@@ -368,11 +370,11 @@ public class HomeView extends AbstractView implements IHomeView {
 			communitySummaryWidget.displayMap(ll);
 		}
 	}
-	
+
 	@Override
 	public void updateTweetCategoryCount(Map<TweetType, Integer> data) {
 		int totalTweetCount = 0;
-		for(Map.Entry<TweetType, Anchor> entry : filters.entrySet()) {
+		for (Map.Entry<TweetType, Anchor> entry : filters.entrySet()) {
 			Anchor a = entry.getValue();
 			int count = 0;
 			if (data.get(entry.getKey()) != null) {
@@ -383,19 +385,21 @@ public class HomeView extends AbstractView implements IHomeView {
 		}
 		setCountOnAnchor(filters.get(TweetType.ALL), TweetType.ALL.getTweetName(), totalTweetCount);
 	}
-	
+
 	@Override
 	public void setUnreadMessageCount(Long count) {
-		unreadMessageCountField.setInnerText(basicDataFormatter.format(count, ValueType.UNREAD_MESSAGE_COUNT));
+		unreadMessageCountField.setInnerText(basicDataFormatter.format(
+		    count,
+		    ValueType.UNREAD_MESSAGE_COUNT));
 	}
 
 	@UiHandler("messagesLink")
 	public void onMessageLinkClick(ClickEvent event) {
 		presenter.goTo(new ConversationPlace());
 	}
-	
+
 	private void setCountOnAnchor(Anchor a, String name, int count) {
-		String text = name +" ("+count+")";
+		String text = name + " (" + count + ")";
 		a.getElement().setInnerHTML(text);
 	}
 
@@ -409,7 +413,7 @@ public class HomeView extends AbstractView implements IHomeView {
 		communitySummaryWidget.setResidentCount(result.getTotalResidents());
 		communitySummaryWidget.setBusinessCount(result.getTotalBusinesses());
 	}
-	
+
 	@Override
 	public void setImageUploadUrl(String imageUrl) {
 		tweetBox.setImageUploadUrl(imageUrl);
@@ -431,7 +435,7 @@ public class HomeView extends AbstractView implements IHomeView {
 	public void resetImageUploadUrl() {
 		tweetBox.resetImageUploadUrl();
 	}
-	
+
 	@UiHandler("feedbackLink")
 	public void feedbackLinkClicked(ClickEvent event) {
 		feedbackWidget.show(true);
@@ -441,9 +445,9 @@ public class HomeView extends AbstractView implements IHomeView {
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
 		neighborhoodsPanel.clear();
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
-		
+
 		// Display neighborhood list in reverse (parent first)
-		Collections.reverse(targetNeighborhoodList);		
+		Collections.reverse(targetNeighborhoodList);
 		int margin = 0;
 		for (final NeighborhoodDTO neighborhood : targetNeighborhoodList) {
 			final Anchor anchor = new Anchor(neighborhood.getName());
@@ -459,9 +463,11 @@ public class HomeView extends AbstractView implements IHomeView {
 			neighborhoodsPanel.add(anchor);
 		}
 	}
-	
+
 	@Override
 	public void displayNeighborhoodImage(NeighborhoodDTO neighborhood) {
-		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(
+		    neighborhood,
+		    ValueType.NEIGHBORHOOD_IMAGE));
 	}
 }

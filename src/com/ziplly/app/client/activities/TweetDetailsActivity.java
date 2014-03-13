@@ -33,12 +33,12 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	private AcceptsOneWidget panel;
 
 	@Inject
-	public TweetDetailsActivity(CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			TweetDetailsPlace place,
-			PlaceController placeController,
-			ApplicationContext ctx,
-			AsyncProvider<TweetDetailsView> viewProvider) {
+	public TweetDetailsActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    TweetDetailsPlace place,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AsyncProvider<TweetDetailsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
@@ -65,18 +65,17 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 					view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 				}
 			}
-			
+
 			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof NotFoundException) {
-					view.displayMessage(StringConstants.INVALID_URL ,AlertType.ERROR);
+					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
 				} else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR ,AlertType.ERROR);
+					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
 			}
 		});
 	}
-
 
 	@Override
 	protected void doStart() {
@@ -107,12 +106,11 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 			}
 		});
 	}
-	
+
 	@Override
 	public void sendMessage(ConversationDTO conversation) {
-		placeController.goTo(new LoginPlace());		
+		placeController.goTo(new LoginPlace());
 	}
-
 
 	@Override
 	public void go(AcceptsOneWidget container) {
@@ -128,62 +126,53 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 		placeController.goTo(new LoginPlace());
 	}
 
-
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		placeController.goTo(new LoginPlace());
 	}
-
 
 	@Override
 	public void deleteTweet(TweetDTO tweet) {
 		placeController.goTo(new LoginPlace());
 	}
 
-
 	@Override
 	public void displayPublicProfile(Long accountId) {
 		placeController.goTo(new LoginPlace());
 	}
 
-
 	@Override
 	public void sendTweet(TweetDTO tweet) {
-		placeController.goTo(new LoginPlace());		
+		placeController.goTo(new LoginPlace());
 	}
-
 
 	@Override
 	public TweetWidget getTweetWidget() {
 		return null;
 	}
 
-
 	@Override
 	public void displayMessage(String msg, AlertType error) {
 		view.displayMessage(msg, error);
 	}
-
 
 	@Override
 	public void reportTweetAsSpam(TweetDTO tweet) {
 		placeController.goTo(new LoginPlace());
 	}
 
-
 	@Override
 	public void deleteImage(String url) {
 		placeController.goTo(new LoginPlace());
 	}
 
-
 	@Override
 	public void updateComment(CommentDTO comment) {
 		placeController.goTo(new LoginPlace());
 	}
-	
+
 	@Override
 	public void bind() {
-		
+
 	}
 }

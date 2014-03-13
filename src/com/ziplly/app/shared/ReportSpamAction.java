@@ -4,12 +4,12 @@ import net.customware.gwt.dispatch.shared.Action;
 
 import com.ziplly.app.model.SpamDTO;
 
-public class ReportSpamAction implements Action<ReportSpamResult>{
+public class ReportSpamAction implements Action<ReportSpamResult> {
 	private SpamDTO spam;
 
 	public ReportSpamAction() {
 	}
-	
+
 	public ReportSpamAction(SpamDTO spam) {
 		this.setSpam(spam);
 	}

@@ -13,18 +13,16 @@ import com.ziplly.app.client.widget.LoginWidget;
 
 public class LoginAccountView extends AbstractView implements ILoginAccountView<LoginPresenter> {
 
-	private static LoginAccountViewUiBinder uiBinder = GWT
-			.create(LoginAccountViewUiBinder.class);
+	private static LoginAccountViewUiBinder uiBinder = GWT.create(LoginAccountViewUiBinder.class);
 
-	interface LoginAccountViewUiBinder extends
-			UiBinder<Widget, LoginAccountView> {
+	interface LoginAccountViewUiBinder extends UiBinder<Widget, LoginAccountView> {
 	}
 
 	@UiField
 	LoginWidget loginWidget;
-	
+
 	LoginPresenter presenter;
-	
+
 	@Inject
 	public LoginAccountView(EventBus eventBus) {
 		super(eventBus);
@@ -41,10 +39,10 @@ public class LoginAccountView extends AbstractView implements ILoginAccountView<
 	public void onLoad() {
 		setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 	}
-	
+
 	@Override
 	public void clear() {
-		
+
 		loginWidget.clear();
 	}
 

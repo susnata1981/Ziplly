@@ -10,18 +10,15 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@NamedQueries({ 
-	@NamedQuery(
-		name = "findBusinessById", 
-		query = "from BusinessProperties b where b.id = :id") 
-})
+@NamedQueries({ @NamedQuery(name = "findBusinessById",
+    query = "from BusinessProperties b where b.id = :id") })
 @Entity
 @Table(name = "business_properties")
 public class BusinessProperties extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;
 
@@ -63,7 +60,8 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 	@Column(name = "holidays")
 	private String holidays;
 
-	@Column(name = "accepts_credit_card", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+	@Column(name = "accepts_credit_card", nullable = false,
+	    columnDefinition = "BOOLEAN DEFAULT false")
 	private boolean acceptsCreditCard;
 
 	@Column(name = "parking_available")
@@ -83,7 +81,7 @@ public class BusinessProperties extends AbstractTimestampAwareEntity {
 
 	@Column(name = "cuisine")
 	private Cuisine cuisine;
-	
+
 	public BusinessProperties() {
 	}
 

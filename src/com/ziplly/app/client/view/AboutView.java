@@ -28,41 +28,43 @@ import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class AboutView extends Composite implements HasClickHandlers , View<AboutView.AboutPresenter>{
+public class AboutView extends Composite implements
+    HasClickHandlers,
+    View<AboutView.AboutPresenter> {
 
 	private static AboutViewUiBinder uiBinder = GWT.create(AboutViewUiBinder.class);
 
 	public interface AboutPresenter extends Presenter {
 		public void contact(String name, String email, String content);
 	}
-	
+
 	interface AboutViewUiBinder extends UiBinder<Widget, AboutView> {
 	}
 
 	@UiField
 	Alert message;
-	
+
 	@UiField
 	TextBox subject;
 	@UiField
 	ControlGroup subjectCg;
 	@UiField
 	HelpInline subjectError;
-	
+
 	@UiField
 	TextBox email;
 	@UiField
 	ControlGroup emailCg;
 	@UiField
 	HelpInline emailError;
-	
+
 	@UiField
 	TextArea content;
 	@UiField
 	ControlGroup contentCg;
 	@UiField
 	HelpInline contentError;
-	
+
 	@UiField
 	Button contactBtn;
 
@@ -72,42 +74,42 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	Anchor tosAnchor;
 	@UiField
 	Anchor privacyAnchor;
-	
+
 	@UiField
 	HTMLPanel aboutUsPanel;
 	@UiField
 	HTMLPanel tosPanel;
 	@UiField
 	HTMLPanel privacyPanel;
-	
+
 	Map<Anchor, HTMLPanel> anchorToPanelMap = new HashMap<Anchor, HTMLPanel>();
 	Map<AboutViewSection, Anchor> sectionToAnchorMap = new HashMap<AboutViewSection, Anchor>();
-	
+
 	private AboutPresenter presenter;
-	
-//	@UiFactory
-//	MyBundle getResource() {
-//		MyBundle.INSTANCE.style().ensureInjected();
-//		return MyBundle.INSTANCE;
-//	}
-	
+
+	// @UiFactory
+	// MyBundle getResource() {
+	// MyBundle.INSTANCE.style().ensureInjected();
+	// return MyBundle.INSTANCE;
+	// }
+
 	public AboutView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		clear();
 		message.setVisible(false);
-		
+
 		// ADD ALL LINKS HERE
 		anchorToPanelMap.put(aboutUsAnchor, aboutUsPanel);
 		anchorToPanelMap.put(tosAnchor, tosPanel);
 		anchorToPanelMap.put(privacyAnchor, privacyPanel);
-		
+
 		sectionToAnchorMap.put(AboutViewSection.ABOUTUS, aboutUsAnchor);
 		sectionToAnchorMap.put(AboutViewSection.TOS, tosAnchor);
 		sectionToAnchorMap.put(AboutViewSection.PRIVACY, privacyAnchor);
-		
+
 		displaySection(aboutUsAnchor);
 	}
-	
+
 	public boolean validate() {
 		boolean valid = true;
 		String nameInput = subject.getText().trim();
@@ -118,7 +120,7 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 			subjectError.setVisible(true);
 			valid = false;
 		}
-		
+
 		String emailInput = email.getText().trim();
 		result = FieldVerifier.validateEmail(emailInput);
 		if (!result.isValid()) {
@@ -127,7 +129,7 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 			emailError.setVisible(true);
 			valid = false;
 		}
-		
+
 		String contentInput = content.getText().trim();
 		result = FieldVerifier.validateMessage(contentInput);
 		if (!result.isValid()) {
@@ -136,10 +138,10 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 			contentError.setVisible(true);
 			valid = false;
 		}
-		
+
 		return valid;
 	}
-	
+
 	@UiHandler("contactBtn")
 	void submit(ClickEvent event) {
 		clearError();
@@ -168,7 +170,7 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 		email.setText("");
 		content.setText("");
 	}
-	
+
 	void clearError() {
 		subjectCg.setType(ControlGroupType.NONE);
 		subjectError.setVisible(false);
@@ -177,13 +179,13 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 		contentError.setVisible(false);
 		contentCg.setType(ControlGroupType.NONE);
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
 		message.setVisible(true);
 	}
-	
+
 	@UiHandler("aboutUsAnchor")
 	public void aboutUs(ClickEvent event) {
 		displaySection(aboutUsAnchor);
@@ -193,14 +195,14 @@ public class AboutView extends Composite implements HasClickHandlers , View<Abou
 	public void tos(ClickEvent event) {
 		displaySection(tosAnchor);
 	}
-	
+
 	@UiHandler("privacyAnchor")
 	public void privacy(ClickEvent event) {
 		displaySection(privacyAnchor);
 	}
-	
+
 	private void displaySection(Anchor section) {
-		for(Anchor a : anchorToPanelMap.keySet()) {
+		for (Anchor a : anchorToPanelMap.keySet()) {
 			if (!a.equals(section)) {
 				StyleHelper.show(anchorToPanelMap.get(a).getElement(), false);
 			} else {

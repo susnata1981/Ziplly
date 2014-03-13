@@ -80,25 +80,26 @@ public class HashtagDAOImpl implements HashtagDAO {
 	}
 
 	@Override
-	public List<HashtagDTO> findTopHashtagForNeighborhood(Long neighborhoodId, int maxResult) throws NotFoundException {
+	public List<HashtagDTO>
+	    findTopHashtagForNeighborhood(Long neighborhoodId, int maxResult) throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
-			Query query = em.createNativeQuery(
-					"select h.id, h.tag, h.time_created from hashtag h where h.id in"  
-					+ "(select max(id) from tweet_hashtag where tweet_id in "
-					+ "(select t.tweet_id from tweet t, tweet_neighborhood tn where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhoodId) "
-					+ "group by id order by count(tweet_id))");
-					
-			query.setParameter("neighborhoodId", neighborhoodId)
-			    .setMaxResults(maxResult);
-			
+			Query query =
+			    em
+			        .createNativeQuery("select h.id, h.tag, h.time_created from hashtag h where h.id in"
+			            + "(select max(id) from tweet_hashtag where tweet_id in "
+			            + "(select t.tweet_id from tweet t, tweet_neighborhood tn where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhoodId) "
+			            + "group by id order by count(tweet_id))");
+
+			query.setParameter("neighborhoodId", neighborhoodId).setMaxResults(maxResult);
+
 			@SuppressWarnings("unchecked")
 			List<Object> result = query.getResultList();
 			List<HashtagDTO> response = Lists.newArrayList();
 			for (Object o : result) {
 				Object[] r = (Object[]) o;
-//				System.out.println(r[0] + ":" + r[1] + ":" + r[2]);
+				// System.out.println(r[0] + ":" + r[1] + ":" + r[2]);
 				HashtagDTO h = new HashtagDTO();
 				BigInteger hId = (BigInteger) r[0];
 				h.setId(hId.longValue());
@@ -115,8 +116,8 @@ public class HashtagDAOImpl implements HashtagDAO {
 	}
 
 	@Override
-	public List<TweetDTO> getTweetsForTag(String hashtag, int page, int pageSize)
-			throws NotFoundException {
+	public List<TweetDTO>
+	    getTweetsForTag(String hashtag, int page, int pageSize) throws NotFoundException {
 		if (hashtag == null) {
 			throw new IllegalArgumentException("Invalid argument");
 		}
@@ -125,9 +126,12 @@ public class HashtagDAOImpl implements HashtagDAO {
 		try {
 			HashtagDTO result = findByName(hashtag);
 			int start = page * pageSize;
-			Query query = em.createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
-					.setParameter("id", result.getId()).setFirstResult(start)
-					.setMaxResults(pageSize);
+			Query query =
+			    em
+			        .createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
+			        .setParameter("id", result.getId())
+			        .setFirstResult(start)
+			        .setMaxResults(pageSize);
 
 			@SuppressWarnings("unchecked")
 			List<BigInteger> tweetIds = query.getResultList();
@@ -145,8 +149,10 @@ public class HashtagDAOImpl implements HashtagDAO {
 	}
 
 	@Override
-	public List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag, Long neighborhoodId,
-			int page, int pageSize) throws NotFoundException {
+	public List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag,
+	    Long neighborhoodId,
+	    int page,
+	    int pageSize) throws NotFoundException {
 		if (hashtag == null) {
 			throw new IllegalArgumentException("Invalid argument");
 		}
@@ -155,16 +161,20 @@ public class HashtagDAOImpl implements HashtagDAO {
 		try {
 			HashtagDTO result = findByName(hashtag);
 			int start = page * pageSize;
-			Query query = em.createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
-					.setParameter("id", result.getId()).setFirstResult(start)
-					.setMaxResults(pageSize);
+			Query query =
+			    em
+			        .createNativeQuery("select tweet_id from tweet_hashtag where id = :id")
+			        .setParameter("id", result.getId())
+			        .setFirstResult(start)
+			        .setMaxResults(pageSize);
 
 			for (Object tweetId : query.getResultList()) {
 				BigInteger id = (BigInteger) tweetId;
 				TweetDTO tweet = tweetDao.findTweetById(id.longValue());
-//				if (tweet.getSender().getNeighborhood().getNeighborhoodId() == neighborhoodId) {
-//					tweets.add(tweet);
-//				}
+				// if (tweet.getSender().getNeighborhood().getNeighborhoodId() ==
+				// neighborhoodId) {
+				// tweets.add(tweet);
+				// }
 				if (containsNeighborhood(tweet.getSender(), neighborhoodId)) {
 					tweets.add(tweet);
 				}
@@ -176,14 +186,14 @@ public class HashtagDAOImpl implements HashtagDAO {
 		}
 		return tweets;
 	}
-	
+
 	public boolean containsNeighborhood(AccountDTO account, Long neighborhoodId) {
-		for(LocationDTO loc : account.getLocations()) {
+		for (LocationDTO loc : account.getLocations()) {
 			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }

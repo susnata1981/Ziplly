@@ -33,100 +33,89 @@ import org.hibernate.annotations.FetchMode;
 import com.ziplly.app.shared.BCrypt;
 
 @NamedQueries({
-	@NamedQuery(
-		name = "findAccountByEmail",
-		query = "from Account a where a.email = :email"
-	),
-	@NamedQuery(
-		name = "findByEmailAndPassword",
-		query = "from Account a where a.email = :email and a.password = :password"
-	),
-	@NamedQuery(
-		name = "findAccountById",
-		query = "from Account a where a.accountId = :accountId"
-	),
-	@NamedQuery(
-		name = "findAllAccounts",
-		query = "from Account"
-	)
-})
+    @NamedQuery(name = "findAccountByEmail", query = "from Account a where a.email = :email"),
+    @NamedQuery(name = "findByEmailAndPassword",
+        query = "from Account a where a.email = :email and a.password = :password"),
+    @NamedQuery(name = "findAccountById", query = "from Account a where a.accountId = :accountId"),
+    @NamedQuery(name = "findAllAccounts", query = "from Account") })
 @Entity
-@Table(name="account")
+@Table(name = "account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class Account extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@NotNull
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="account_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "account_id")
 	private Long accountId;
-	
-	@Column(name="facebook_id")
+
+	@Column(name = "facebook_id")
 	private String facebookId;
-	
-	@Column(name="access_token")
+
+	@Column(name = "access_token")
 	private String accessToken;
 
 	@NotNull
-	@Column(name="email", unique = true)
+	@Column(name = "email", unique = true)
 	private String email;
-	
+
 	@NotNull
-	@Column(name="password", updatable=false, insertable=true)
+	@Column(name = "password", updatable = false, insertable = true)
 	private String password;
-	
-	@Column(name="profile_url")
+
+	@Column(name = "profile_url")
 	private String url;
-	
-	@Column(name="image_url")
-	@Size(max=1024)
+
+	@Column(name = "image_url")
+	@Size(max = 1024)
 	private String imageUrl;
-	
+
 	@OneToMany(cascade = CascadeType.PERSIST)
 	@Fetch(FetchMode.JOIN)
-	@JoinTable(name = "account_images",
-		joinColumns={ @JoinColumn(name="account_id") },
-		inverseJoinColumns = { @JoinColumn(name="image_id") })
+	@JoinTable(name = "account_images", joinColumns = { @JoinColumn(name = "account_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "image_id") })
 	private Set<Image> images = new HashSet<Image>();
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-	@JoinTable(name="account_location",
-			joinColumns =  {@JoinColumn(name="account_id")},
-			inverseJoinColumns = {@JoinColumn(name="location_id")})
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+	    CascadeType.REMOVE })
+	@JoinTable(name = "account_location", joinColumns = { @JoinColumn(name = "account_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "location_id") })
 	private Set<Location> locations = new HashSet<Location>();
-	
-	@Column(name="role", insertable=true, updatable=false)
+
+	@Column(name = "role", insertable = true, updatable = false)
 	private String role;
 
-	@Column(name="status")
+	@Column(name = "status")
 	private String status;
-	
-	@Column(name="last_login")
+
+	@Column(name = "last_login")
 	private Date lastLoginTime;
-	
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="sender")
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sender")
 	private List<Tweet> tweets = new ArrayList<Tweet>();
-	
-	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	@Fetch(FetchMode.JOIN)
 	private Set<PrivacySettings> privacySettings = new HashSet<PrivacySettings>();
-	
-	@OneToMany(mappedBy = "recipient", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "recipient", cascade = { CascadeType.PERSIST, CascadeType.REMOVE },
+	    fetch = FetchType.LAZY)
 	private Set<AccountNotification> accountNotifications = new HashSet<AccountNotification>();
-	
-	@OneToMany(mappedBy="account", cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	@Fetch(FetchMode.JOIN)
-	private Set<AccountNotificationSettings> notificationSettings = new HashSet<AccountNotificationSettings>();
-	
+	private Set<AccountNotificationSettings> notificationSettings =
+	    new HashSet<AccountNotificationSettings>();
+
 	private Long uid;
-	
+
 	@Transient
 	private Location currentLocation;
-	
+
 	public Account() {
 	}
-	
+
 	public Account(AccountDTO account) {
 		this.setAccountId(account.getAccountId());
 		setFacebookId(account.getFacebookId());
@@ -143,24 +132,24 @@ public class Account extends AbstractTimestampAwareEntity {
 		setTimeCreated(account.getTimeCreated());
 		setTimeUpdated(account.getTimeUpdated());
 		this.setUid(account.getUid());
-		
-		for(LocationDTO location: account.getLocations()) {
+
+		for (LocationDTO location : account.getLocations()) {
 			addLocation(new Location(location));
 		}
-		
-		for(ImageDTO image: account.getImages()) {
+
+		for (ImageDTO image : account.getImages()) {
 			addImage(new Image(image));
 		}
-		
-		for(AccountNotificationDTO an : account.getAccountNotifications()) {
+
+		for (AccountNotificationDTO an : account.getAccountNotifications()) {
 			addAccountNotification(new AccountNotification(an));
 		}
-		
-		for(AccountNotificationSettingsDTO an : account.getNotificationSettings()) {
+
+		for (AccountNotificationSettingsDTO an : account.getNotificationSettings()) {
 			notificationSettings.add(new AccountNotificationSettings(an));
 		}
-		
-		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
+
+		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			addPrivacySettings(new PrivacySettings(ps));
 		}
 	}
@@ -211,12 +200,12 @@ public class Account extends AbstractTimestampAwareEntity {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Account)) {
 			return false;
 		}
-		
-		Account a = (Account)o;
+
+		Account a = (Account) o;
 		return a.getAccountId() == this.getAccountId();
 	}
 
@@ -227,11 +216,11 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setDirectPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = encryptPassword(password);
 	}
-	
+
 	protected String encryptPassword(String password) {
 		return BCrypt.hashpw(password, BCrypt.gensalt());
 	}
@@ -271,11 +260,12 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setTweets(List<Tweet> tweets) {
 		this.tweets = tweets;
 	}
+
 	public String getName() {
-		if (this instanceof PersonalAccount){
-			return ((PersonalAccount)this).getName();
+		if (this instanceof PersonalAccount) {
+			return ((PersonalAccount) this).getName();
 		} else if (this instanceof BusinessAccount) {
-			return ((BusinessAccount)this).getName();
+			return ((BusinessAccount) this).getName();
 		}
 		return "";
 	}
@@ -287,7 +277,6 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setNotificationSettings(Set<AccountNotificationSettings> notifications) {
 		this.notificationSettings = notifications;
 	}
-
 
 	public Role getRole() {
 		return Role.valueOf(role);
@@ -304,7 +293,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setPrivacySettings(Set<PrivacySettings> privacySettings) {
 		this.privacySettings = privacySettings;
 	}
-	
+
 	public void addPrivacySettings(PrivacySettings privacySetting) {
 		privacySetting.setAccount(this);
 		this.privacySettings.add(privacySetting);
@@ -325,7 +314,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setAccountNotification(Set<AccountNotification> accountNotification) {
 		this.accountNotifications = accountNotification;
 	}
-	
+
 	public void addAccountNotification(AccountNotification an) {
 		this.accountNotifications.add(an);
 	}
@@ -333,13 +322,13 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setLocation(Set<Location> locations) {
 		this.locations = locations;
 	}
-	
+
 	public void addLocation(Location loc) {
 		if (loc != null) {
 			locations.add(loc);
 		}
 	}
-	
+
 	public Set<Location> getLocations() {
 		return locations;
 	}
@@ -359,8 +348,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	public void setImages(Set<Image> images) {
 		this.images = images;
 	}
-	
-	
+
 	private void addImage(Image image) {
 		this.images.add(image);
 	}

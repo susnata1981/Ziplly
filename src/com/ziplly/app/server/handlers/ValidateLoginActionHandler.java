@@ -11,21 +11,24 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.ValidateLoginAction;
 import com.ziplly.app.shared.ValidateLoginResult;
 
-public class ValidateLoginActionHandler extends AbstractAccountActionHandler<ValidateLoginAction, ValidateLoginResult>{
+public class ValidateLoginActionHandler extends
+    AbstractAccountActionHandler<ValidateLoginAction, ValidateLoginResult> {
 
 	@Inject
-	public ValidateLoginActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
+	public ValidateLoginActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
-	
+
 	@Override
-	public ValidateLoginResult execute(ValidateLoginAction action,
-			ExecutionContext ec) throws DispatchException {
-		
+	public ValidateLoginResult
+	    execute(ValidateLoginAction action, ExecutionContext ec) throws DispatchException {
+
 		if (action == null) {
 			throw new IllegalArgumentException("Invalid argument to ValidateLoginActionHandler");
 		}
-		
+
 		AccountDTO account = accountBli.validateLogin(action.getEmail(), action.getPassword());
 		return new ValidateLoginResult(account);
 	}

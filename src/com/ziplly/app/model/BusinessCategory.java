@@ -17,15 +17,14 @@ public enum BusinessCategory {
 	CLOTHING("Clothing"),
 	RECORD("Record store"),
 	OTHER("Other");
-	
+
 	private String name;
 
 	BusinessCategory(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 }
-

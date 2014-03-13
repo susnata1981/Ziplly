@@ -10,18 +10,20 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetEnvironmentAction;
 import com.ziplly.app.shared.GetEnvironmentResult;
 
-public class GetEnvironmentActionHandler extends AbstractAccountActionHandler<GetEnvironmentAction, GetEnvironmentResult>{
+public class GetEnvironmentActionHandler extends
+    AbstractAccountActionHandler<GetEnvironmentAction, GetEnvironmentResult> {
 
 	@Inject
-	public GetEnvironmentActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli) {
+	public GetEnvironmentActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public GetEnvironmentResult execute(GetEnvironmentAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public GetEnvironmentResult
+	    execute(GetEnvironmentAction action, ExecutionContext arg1) throws DispatchException {
+
 		GetEnvironmentResult result = new GetEnvironmentResult();
 		result.setEnvironment(accountBli.getEnvironment());
 		return result;

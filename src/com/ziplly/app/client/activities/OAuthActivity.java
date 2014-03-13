@@ -17,10 +17,13 @@ import com.ziplly.app.shared.GetFacebookDetailsResult;
 
 public class OAuthActivity extends AbstractActivity {
 	private OAuthPlace place;
-	
+
 	@Inject
-	public OAuthActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, OAuthPlace place) {
+	public OAuthActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    OAuthPlace place) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 	}
@@ -29,31 +32,33 @@ public class OAuthActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget panel, final EventBus eventBus) {
 		log("calling GetFacebookDetailsAction");
 		eventBus.fireEvent(new LoadingEventStart());
-		dispatcher.execute(new GetFacebookDetailsAction(place.getCode()), new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
-			@Override
-			public void onSuccess(GetFacebookDetailsResult result) {
-				log("Received getFacebookDetailsAction with "+result.getAccount());
-				AccountDTO account = result.getAccount();
-				if (account != null) {
-					if (account.getAccountId() != null) {
-						// found user
-						ctx.setAccount(account);
-						forward(account);
-					} else {
-						// sign up page
-						goTo(new SignupPlace(account));
-					}
-				}
-				eventBus.fireEvent(new LoadingEventEnd());
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				log("Exception caught in OAuthActivity: "+caught.getMessage());
-				System.out.println("Exception caught in OAuthActivity: "+caught.getMessage());
-				eventBus.fireEvent(new LoadingEventEnd());
-			}
-		});
+		dispatcher.execute(
+		    new GetFacebookDetailsAction(place.getCode()),
+		    new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
+			    @Override
+			    public void onSuccess(GetFacebookDetailsResult result) {
+				    log("Received getFacebookDetailsAction with " + result.getAccount());
+				    AccountDTO account = result.getAccount();
+				    if (account != null) {
+					    if (account.getAccountId() != null) {
+						    // found user
+						    ctx.setAccount(account);
+						    forward(account);
+					    } else {
+						    // sign up page
+						    goTo(new SignupPlace(account));
+					    }
+				    }
+				    eventBus.fireEvent(new LoadingEventEnd());
+			    }
+
+			    @Override
+			    public void onFailure(Throwable caught) {
+				    log("Exception caught in OAuthActivity: " + caught.getMessage());
+				    System.out.println("Exception caught in OAuthActivity: " + caught.getMessage());
+				    eventBus.fireEvent(new LoadingEventEnd());
+			    }
+		    });
 	}
 
 	@Override

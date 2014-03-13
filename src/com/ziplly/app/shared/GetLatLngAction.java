@@ -6,10 +6,10 @@ import com.ziplly.app.model.AccountDTO;
 
 public class GetLatLngAction implements Action<GetLatLngResult> {
 	private AccountDTO account;
-	
+
 	public GetLatLngAction() {
 	}
-	
+
 	public AccountDTO getAccount() {
 		return account;
 	}
@@ -18,4 +18,3 @@ public class GetLatLngAction implements Action<GetLatLngResult> {
 		this.account = account;
 	}
 }
-	

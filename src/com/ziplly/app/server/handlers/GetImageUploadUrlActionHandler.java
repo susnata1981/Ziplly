@@ -14,19 +14,21 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 
-public class GetImageUploadUrlActionHandler extends AbstractAccountActionHandler<GetImageUploadUrlAction, GetImageUploadUrlResult>{
+public class GetImageUploadUrlActionHandler extends
+    AbstractAccountActionHandler<GetImageUploadUrlAction, GetImageUploadUrlResult> {
 	private Logger logger = Logger.getLogger(GetImageUploadUrlAction.class.getSimpleName());
-	
+
 	@Inject
 	public GetImageUploadUrlActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public GetImageUploadUrlResult execute(GetImageUploadUrlAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetImageUploadUrlResult
+	    execute(GetImageUploadUrlAction action, ExecutionContext arg1) throws DispatchException {
+
 		String imageUploadUrl = accountBli.getImageUploadUrl();
 		if (imageUploadUrl == null) {
 			throw new InternalError("Failed to create image upload url");
@@ -41,5 +43,5 @@ public class GetImageUploadUrlActionHandler extends AbstractAccountActionHandler
 	public Class<GetImageUploadUrlAction> getActionType() {
 		return GetImageUploadUrlAction.class;
 	}
-	
+
 }

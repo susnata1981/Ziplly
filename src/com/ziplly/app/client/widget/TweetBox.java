@@ -93,7 +93,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	FileUpload fileUpload;
 	@UiField
 	Image uploadAnchorIcon;
-	
+
 	//
 	// Preview panel
 	//
@@ -107,7 +107,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	Image previewTweetImage;
 	@UiField
 	HTMLPanel tweetTextPreview;
-	
+
 	@UiField
 	Button closePreviewBtn;
 
@@ -115,8 +115,9 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 
 	boolean showKeystrokeCounter = true;
 	private TweetPresenter presenter;
-	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private BasicDataFormatter basicDataFormatter =
+	    (BasicDataFormatter) AbstractValueFormatterFactory
+	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 
 	private String height = "40px";
 	private String width = "40%";
@@ -208,8 +209,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweetTextBox.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
-				tweetTextPreview.getElement().setInnerHTML(
-						TweetUtils.getContent(tweetTextBox.getText()));
+				tweetTextPreview.getElement().setInnerHTML(TweetUtils.getContent(tweetTextBox.getText()));
 			}
 		});
 
@@ -239,10 +239,10 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				fileUpload.getElement().<InputElement>cast().click();
+				fileUpload.getElement().<InputElement> cast().click();
 			}
 		});
-		
+
 		fileUpload.addChangeHandler(new ChangeHandler() {
 
 			@Override
@@ -275,7 +275,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	public void clear() {
 		// clear control errors.
 		clearError();
-		
+
 		setupDefaultDimension();
 
 		// clear text
@@ -299,11 +299,11 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweetHelpInline.setText("");
 		StyleHelper.show(tweetHelpInline.getElement(), false);
 	}
-	
+
 	@UiHandler("tweetBtn")
 	void tweet(ClickEvent event) {
 		clearError();
-		
+
 		if (!validate()) {
 			return;
 		}
@@ -318,16 +318,17 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		tweet.setTimeCreated(new Date());
 
 		if (neighborhoods != null) {
-			NeighborhoodDTO neighborhood = neighborhoodNameMap.get(
-					tweetTargetNeighborhoodList.getItemText(tweetTargetNeighborhoodList.getSelectedIndex()));
+			NeighborhoodDTO neighborhood =
+			    neighborhoodNameMap.get(tweetTargetNeighborhoodList
+			        .getItemText(tweetTargetNeighborhoodList.getSelectedIndex()));
 			tweet.getTargetNeighborhoods().add(neighborhood);
 		}
-		
+
 		if (tweetBoxState.isImageUploaded()) {
 			tweet.setImage(previewTweetImage.getUrl());
 			tweet.addImage(tweetBoxState.getCurrentUploadedImage());
 		}
-		
+
 		presenter.sendTweet(tweet);
 		clear();
 	}
@@ -354,7 +355,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			tweetBoxState.preview(currentUploadedImage);
 			displayPreview();
 		} catch (RuntimeException ex) {
-			GWT.log("Invalid image url/format: "+imageUrl);
+			GWT.log("Invalid image url/format: " + imageUrl);
 			tweetHelpInline.setText(StringConstants.INVALID_IMAGE);
 			tweetCg.setType(ControlGroupType.ERROR);
 			StyleHelper.show(tweetHelpInline.getElement(), true);

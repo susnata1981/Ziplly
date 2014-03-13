@@ -8,7 +8,7 @@ public enum ZipllyIcon {
 	SPINNER("fa fa-repeat"),
 	EXTERNAL_LINK("fa-external-link"),
 	INFO("fa fa-info");
-	
+
 	private String name;
 
 	private ZipllyIcon(String name) {

@@ -11,7 +11,7 @@ public class GetAccountNotificationResult implements Result {
 
 	public GetAccountNotificationResult() {
 	}
-	
+
 	public GetAccountNotificationResult(List<AccountNotificationDTO> notifications) {
 		this.setAccountNotifications(notifications);
 	}

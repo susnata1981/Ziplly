@@ -4,12 +4,12 @@ import net.customware.gwt.dispatch.shared.Result;
 
 import com.ziplly.app.model.AccountDTO;
 
-public class UpdateAccountResult implements Result{
+public class UpdateAccountResult implements Result {
 	private AccountDTO account;
 
 	public UpdateAccountResult() {
 	}
-	
+
 	public UpdateAccountResult(AccountDTO account) {
 		this.setAccount(account);
 	}

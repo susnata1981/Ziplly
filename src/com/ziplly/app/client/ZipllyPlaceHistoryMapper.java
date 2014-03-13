@@ -19,24 +19,14 @@ import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 
-@WithTokenizers({
-	SignupPlace.Tokenizer.class, 
-	HomePlace.Tokenizer.class,
-	TweetDetailsPlace.Tokenizer.class,
-	LoginPlace.Tokenizer.class, 
-	BusinessSignupPlace.Tokenizer.class,
-	BusinessAccountSettingsPlace.Tokenizer.class,
-	PersonalAccountPlace.Tokenizer.class,
-	BusinessAccountPlace.Tokenizer.class,
-	PersonalAccountSettingsPlace.Tokenizer.class,
-	ConversationPlace.Tokenizer.class,
-	PasswordRecoveryPlace.Tokenizer.class,
-	AdminPlace.Tokenizer.class,
-	AboutPlace.Tokenizer.class,
-	ResidentPlace.Tokenizer.class,
-	BusinessPlace.Tokenizer.class,
-	EmailVerificationPlace.Tokenizer.class,
-})
+@WithTokenizers({ SignupPlace.Tokenizer.class, HomePlace.Tokenizer.class,
+    TweetDetailsPlace.Tokenizer.class, LoginPlace.Tokenizer.class,
+    BusinessSignupPlace.Tokenizer.class, BusinessAccountSettingsPlace.Tokenizer.class,
+    PersonalAccountPlace.Tokenizer.class, BusinessAccountPlace.Tokenizer.class,
+    PersonalAccountSettingsPlace.Tokenizer.class, ConversationPlace.Tokenizer.class,
+    PasswordRecoveryPlace.Tokenizer.class, AdminPlace.Tokenizer.class, AboutPlace.Tokenizer.class,
+    ResidentPlace.Tokenizer.class, BusinessPlace.Tokenizer.class,
+    EmailVerificationPlace.Tokenizer.class, })
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

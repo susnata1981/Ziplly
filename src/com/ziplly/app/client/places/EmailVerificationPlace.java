@@ -9,15 +9,15 @@ public class EmailVerificationPlace extends Place {
 
 	private String code;
 	private String id;
-	
+
 	public EmailVerificationPlace(String code, String id) {
 		this.code = code;
 		this.id = id;
 	}
-	
+
 	public EmailVerificationPlace() {
 	}
-	
+
 	@Prefix("emailverification")
 	public static class Tokenizer implements PlaceTokenizer<EmailVerificationPlace> {
 		@Override

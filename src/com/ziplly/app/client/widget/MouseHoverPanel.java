@@ -23,16 +23,16 @@ public class MouseHoverPanel extends HTMLPanel implements HasMouseOverHandlers, 
 		this.mouseOverHandler = handler;
 		return null;
 	}
-	
+
 	public void onBrowserEvent(Event event) {
-		switch(DOM.eventGetType(event)) {
-		case Event.ONMOUSEOVER:
-			mouseOverHandler.onMouseOver(null);
-			break;
-		case Event.ONMOUSEOUT:
-			mouseOutHandler.onMouseOut(null);
-			break;
-		default:
+		switch (DOM.eventGetType(event)) {
+			case Event.ONMOUSEOVER:
+				mouseOverHandler.onMouseOver(null);
+				break;
+			case Event.ONMOUSEOUT:
+				mouseOutHandler.onMouseOut(null);
+				break;
+			default:
 		}
 	}
 

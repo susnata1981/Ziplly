@@ -7,7 +7,7 @@ import com.ziplly.app.model.AccountDTO;
 public class LoginEvent extends GwtEvent<LoginEventHandler> {
 	public static Type<LoginEventHandler> TYPE = new Type<LoginEventHandler>();
 	private AccountDTO account;
-	
+
 	public LoginEvent(AccountDTO account) {
 		this.account = account;
 	}

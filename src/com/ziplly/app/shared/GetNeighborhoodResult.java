@@ -12,11 +12,11 @@ public class GetNeighborhoodResult implements Result {
 
 	public GetNeighborhoodResult() {
 	}
-	
+
 	public GetNeighborhoodResult(ArrayList<NeighborhoodDTO> neighborhoods) {
 		this.neighbordhoods = neighborhoods;
 	}
-	
+
 	public List<NeighborhoodDTO> getNeighbordhoods() {
 		return neighbordhoods;
 	}

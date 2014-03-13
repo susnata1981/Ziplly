@@ -18,7 +18,8 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 
-public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler<GetAccountDetailsAction, GetAccountDetailsResult>{
+public class GetAccountDetailsActionHandler extends
+    AbstractAccountActionHandler<GetAccountDetailsAction, GetAccountDetailsResult> {
 	private ConversationDAO conversationDao;
 	private TweetDAO tweetDao;
 	private CommentDAO commentDao;
@@ -27,12 +28,13 @@ public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler
 
 	@Inject
 	public GetAccountDetailsActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli, 
-			ConversationDAO conversationDao, 
-			TweetDAO tweetDao,
-			CommentDAO commentDao,
-			LikeDAO likeDao,
-			AccountNotificationDAO accountNotificationDao) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    ConversationDAO conversationDao,
+	    TweetDAO tweetDao,
+	    CommentDAO commentDao,
+	    LikeDAO likeDao,
+	    AccountNotificationDAO accountNotificationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.tweetDao = tweetDao;
@@ -42,20 +44,22 @@ public class GetAccountDetailsActionHandler extends AbstractAccountActionHandler
 	}
 
 	@Override
-	public GetAccountDetailsResult execute(GetAccountDetailsAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetAccountDetailsResult
+	    execute(GetAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
+
 		validateSession();
-		
+
 		Long accountId = session.getAccount().getAccountId();
 
 		Long unreadMessageCount = conversationDao.getUnreadConversationCountForAccount(accountId);
 		Long totalTweets = tweetDao.findTweetsCountByAccountId(accountId);
 		Long totalComments = commentDao.findCommentCountByAccountId(accountId);
 		Long totalLikes = likeDao.findLikeCountByAccoutId(accountId);
-		
-		List<AccountNotificationDTO> notifications = 
-				accountNotificationDao.findAccountNotificationByAccountId(session.getAccount().getAccountId());
+
+		List<AccountNotificationDTO> notifications =
+		    accountNotificationDao.findAccountNotificationByAccountId(session
+		        .getAccount()
+		        .getAccountId());
 
 		GetAccountDetailsResult result = new GetAccountDetailsResult();
 		result.setUnreadMessages(unreadMessageCount.intValue());

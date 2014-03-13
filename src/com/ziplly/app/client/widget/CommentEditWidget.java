@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class CommentEditWidget extends Composite implements HasText{
+public class CommentEditWidget extends Composite implements HasText {
 
 	private static CommentEditWidgetUiBinder uiBinder = GWT.create(CommentEditWidgetUiBinder.class);
 
@@ -22,16 +22,16 @@ public class CommentEditWidget extends Composite implements HasText{
 
 	@UiField
 	TextArea editTextArea;
-	
+
 	@UiField
 	Button saveBtn;
-	
+
 	@UiField
 	Button cancelBtn;
-	
+
 	@UiField
 	Alert message;
-	
+
 	public CommentEditWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		StyleHelper.show(message.getElement(), false);
@@ -46,15 +46,15 @@ public class CommentEditWidget extends Composite implements HasText{
 	public void setText(String text) {
 		editTextArea.setText(text);
 	}
-	
+
 	public Button getSaveButton() {
 		return saveBtn;
 	}
-	
+
 	public Button getCancelButton() {
 		return cancelBtn;
 	}
-	
+
 	public boolean validateInput() {
 		ValidationResult result = FieldVerifier.validateComment(editTextArea.getText());
 		if (!result.isValid()) {
@@ -62,11 +62,11 @@ public class CommentEditWidget extends Composite implements HasText{
 		}
 		return result.isValid();
 	}
-	
+
 	public void showMessage(boolean b) {
 		StyleHelper.show(message.getElement(), b);
 	}
-	
+
 	public void displayMessage(String text, AlertType type) {
 		message.setText(text);
 		message.setType(type);

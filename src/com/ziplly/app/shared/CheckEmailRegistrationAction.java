@@ -2,13 +2,13 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class CheckEmailRegistrationAction implements Action<CheckEmailRegistrationResult>{
+public class CheckEmailRegistrationAction implements Action<CheckEmailRegistrationResult> {
 	private String email;
 	private long code;
 
 	public CheckEmailRegistrationAction() {
 	}
-	
+
 	public CheckEmailRegistrationAction(String email, long code) {
 		this.setEmail(email);
 		this.setCode(code);

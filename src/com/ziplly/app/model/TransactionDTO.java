@@ -13,11 +13,11 @@ public class TransactionDTO implements Serializable {
 	private SubscriptionPlanDTO plan;
 	private BigDecimal amount;
 	private TransactionStatus status;
-//	private BigDecimal recurringAmount;
+	// private BigDecimal recurringAmount;
 	private String currencyCode;
 	private Date timeUpdated;
 	private Date timeCreated;
-	
+
 	public TransactionDTO() {
 	}
 
@@ -29,13 +29,13 @@ public class TransactionDTO implements Serializable {
 		this.amount = amount;
 	}
 
-//	public BigDecimal getRecurringAmount() {
-//		return recurringAmount;
-//	}
-//
-//	public void setRecurringAmount(BigDecimal recurringAmount) {
-//		this.recurringAmount = recurringAmount;
-//	}
+	// public BigDecimal getRecurringAmount() {
+	// return recurringAmount;
+	// }
+	//
+	// public void setRecurringAmount(BigDecimal recurringAmount) {
+	// this.recurringAmount = recurringAmount;
+	// }
 
 	public String getCurrencyCode() {
 		return currencyCode;
@@ -76,9 +76,11 @@ public class TransactionDTO implements Serializable {
 	public void setTransactionId(Long transactionId) {
 		this.transactionId = transactionId;
 	}
+
 	public AccountDTO getSeller() {
 		return seller;
 	}
+
 	public void setSeller(AccountDTO seller) {
 		this.seller = seller;
 	}

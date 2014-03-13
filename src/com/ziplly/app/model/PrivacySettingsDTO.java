@@ -13,32 +13,39 @@ public class PrivacySettingsDTO implements Serializable {
 	private String section;
 	private String setting;
 	private Account account;
-	
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public AccountDetailsType getSection() {
 		return AccountDetailsType.valueOf(section);
 	}
+
 	public void setSection(AccountDetailsType section) {
 		this.section = section.name();
 	}
+
 	public ShareSetting getSetting() {
 		return ShareSetting.valueOf(setting);
 	}
+
 	public void setSetting(ShareSetting setting) {
 		this.setting = setting.name();
 	}
+
 	public Account getAccount() {
 		return account;
 	}
+
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -49,7 +56,7 @@ public class PrivacySettingsDTO implements Serializable {
 		result = prime * result + ((setting == null) ? 0 : setting.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -58,7 +65,7 @@ public class PrivacySettingsDTO implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		
+
 		PrivacySettingsDTO other = (PrivacySettingsDTO) obj;
 		if (id == null) {
 			if (other.id != null)
@@ -68,24 +75,24 @@ public class PrivacySettingsDTO implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public ShareSetting[] getAllowedShareSettings() {
 		List<ShareSetting> result = new ArrayList<ShareSetting>();
 		AccountDetailsType adt = AccountDetailsType.valueOf(section);
-		
+
 		if (adt.isAllowedPublic()) {
 			result.add(ShareSetting.PUBLIC);
 		}
-		
+
 		if (adt.isAllowedCommunity()) {
 			result.add(ShareSetting.COMMUNITY);
 		}
-		
+
 		if (adt.isAllowedPrivate()) {
 			result.add(ShareSetting.PRIVATE);
 		}
-		
-		ShareSetting response [] = new ShareSetting[result.size()];
+
+		ShareSetting response[] = new ShareSetting[result.size()];
 		return result.toArray(response);
 	}
 }

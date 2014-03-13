@@ -9,7 +9,7 @@ public class PayAction implements Action<PayResult> {
 
 	public PayAction() {
 	}
-	
+
 	public PayAction(TransactionDTO txn) {
 		this.setTransaction(txn);
 	}

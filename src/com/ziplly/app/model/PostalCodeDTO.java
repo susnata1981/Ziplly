@@ -10,11 +10,11 @@ public class PostalCodeDTO implements Serializable {
 	private String city;
 	private String fullState;
 	private String latitude;
-	private String longitude;	
+	private String longitude;
 
 	public PostalCodeDTO() {
 	}
-	
+
 	public Long getPostalCodeId() {
 		return postalCodeId;
 	}
@@ -29,12 +29,12 @@ public class PostalCodeDTO implements Serializable {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof PostalCode)) {
 			return false;
 		}
-		
-		PostalCode p = (PostalCode)o;
+
+		PostalCode p = (PostalCode) o;
 		return p.getPostalCode() == this.getPostalCode();
 	}
 

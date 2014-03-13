@@ -31,14 +31,16 @@ import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 
 public abstract class AbstractSignupActivity extends AbstractActivity implements
-		SignupActivityPresenter {
+    SignupActivityPresenter {
 	ISignupView<SignupActivityPresenter> view;
 	Logger logger = Logger.getLogger(AbstractSignupActivity.class.getName());
 	RegisterAccountHandler registerAccountHandler = new RegisterAccountHandler();
 
-	public AbstractSignupActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx,
-			ISignupView<SignupActivityPresenter> view) {
+	public AbstractSignupActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    ISignupView<SignupActivityPresenter> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
 		setupHandlers();
@@ -71,8 +73,8 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {
-		CheckEmailRegistrationAction action = new CheckEmailRegistrationAction(account.getEmail(),
-				code);
+		CheckEmailRegistrationAction action =
+		    new CheckEmailRegistrationAction(account.getEmail(), code);
 		dispatcher.execute(action, new CheckEmailRegistrationHandler(account));
 	}
 
@@ -102,22 +104,24 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	 */
 	@Override
 	public void deleteImage(String url) {
-		dispatcher.execute(new DeleteImageAction(url),
-				new DispatcherCallbackAsync<DeleteImageResult>() {
-					@Override
-					public void onSuccess(DeleteImageResult result) {
-						// Nothing to do.
-					}
-				});
+		dispatcher.execute(
+		    new DeleteImageAction(url),
+		    new DispatcherCallbackAsync<DeleteImageResult>() {
+			    @Override
+			    public void onSuccess(DeleteImageResult result) {
+				    // Nothing to do.
+			    }
+		    });
 	}
 
 	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
 
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
-//			String property = System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
-//					"true");
-//			boolean isEmailVerificationRequired = Boolean.valueOf(property);
+			// String property =
+			// System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
+			// "true");
+			// boolean isEmailVerificationRequired = Boolean.valueOf(property);
 
 			if (result.getAccount().getStatus() != AccountStatus.ACTIVE) {
 				view.clear();
@@ -131,6 +135,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 			eventBus.fireEvent(new LoadingEventEnd());
 		}
 
+		@Override
 		public void onFailure(Throwable th) {
 			if (th instanceof AccountExistsException) {
 				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
@@ -142,7 +147,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 
 	public class CheckEmailRegistrationHandler extends
-			DispatcherCallbackAsync<CheckEmailRegistrationResult> {
+	    DispatcherCallbackAsync<CheckEmailRegistrationResult> {
 		private AccountDTO account;
 
 		public CheckEmailRegistrationHandler(AccountDTO account) {

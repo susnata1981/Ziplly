@@ -2,17 +2,17 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetHashtagAction implements Action<GetHashtagResult>{
+public class GetHashtagAction implements Action<GetHashtagResult> {
 	private int size;
 	private Long neighborhoodId;
-	
+
 	public GetHashtagAction() {
 	}
-	
+
 	public GetHashtagAction(Long neighborhoodId) {
 		this.neighborhoodId = neighborhoodId;
 	}
-	
+
 	public GetHashtagAction(int n) {
 		this.setSize(n);
 	}

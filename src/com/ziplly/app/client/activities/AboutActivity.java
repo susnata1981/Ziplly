@@ -20,25 +20,23 @@ import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.shared.EmailAdminAction;
 import com.ziplly.app.shared.EmailAdminResult;
 
-public class AboutActivity extends AbstractActivity implements AboutPresenter{
+public class AboutActivity extends AbstractActivity implements AboutPresenter {
 	private AboutView view;
 	private AboutPlace place;
 	private AsyncProvider<AboutView> viewProvider;
 	private AcceptsOneWidget panel;
-	
+
 	@Inject
-	public AboutActivity(
-			CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			PlaceController placeController, 
-			ApplicationContext ctx, 
-			AboutPlace place, 
-			AsyncProvider<AboutView> viewProvider) {
+	public AboutActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AboutPlace place,
+	    AsyncProvider<AboutView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
 	}
-
 
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
@@ -55,7 +53,7 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 				StyleHelper.setBackgroundImage(ZResources.IMPL.magnolia());
 				try {
 					view.displaySection(AboutViewSection.valueOf(place.getSection().toUpperCase()));
-				} catch(IllegalArgumentException ex) {
+				} catch (IllegalArgumentException ex) {
 					view.displaySection(AboutViewSection.ABOUTUS);
 				}
 				AboutActivity.this.panel.setWidget(view);
@@ -66,7 +64,7 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 	@Override
 	protected void doStart() {
 	}
-	
+
 	@Override
 	public void contact(String subject, String from, String content) {
 		EmailAdminAction action = new EmailAdminAction(from, content, subject);
@@ -83,7 +81,6 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter{
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
-
 
 	@Override
 	public void bind() {

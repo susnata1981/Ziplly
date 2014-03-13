@@ -10,8 +10,7 @@ import com.ziplly.app.shared.GetAccountDetailsResult;
 
 public class ApplicationContext {
 	public enum Environment {
-		DEVEL,
-		PROD;
+		DEVEL, PROD;
 	}
 
 	private Environment environment = Environment.DEVEL;
@@ -39,7 +38,7 @@ public class ApplicationContext {
 	public NeighborhoodDTO getCurrentNeighborhood() {
 		return account.getCurrentLocation().getNeighborhood();
 	}
-	
+
 	public TweetWidget getTweetWidget() {
 		return widgets.get(index++);
 	}
@@ -83,7 +82,7 @@ public class ApplicationContext {
 	public boolean isEnvironmentSet() {
 		return environmentSet;
 	}
-	
+
 	public void setEnvironment(Environment environment) {
 		if (environmentSet) {
 			return;
@@ -93,7 +92,9 @@ public class ApplicationContext {
 	}
 
 	/**
-	 * Updated account details based on the response of GetAccountDetailsAction rpc
+	 * Updated account details based on the response of GetAccountDetailsAction
+	 * rpc
+	 * 
 	 * @param result
 	 */
 	public void updateAccountDetails(GetAccountDetailsResult result) {
@@ -103,5 +104,3 @@ public class ApplicationContext {
 		this.totalTweets = result.getTotalTweets();
 	}
 }
-
-

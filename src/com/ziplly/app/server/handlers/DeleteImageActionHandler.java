@@ -14,22 +14,24 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.DeleteImageAction;
 import com.ziplly.app.shared.DeleteImageResult;
 
-public class DeleteImageActionHandler extends AbstractAccountActionHandler<DeleteImageAction, DeleteImageResult>{
+public class DeleteImageActionHandler extends
+    AbstractAccountActionHandler<DeleteImageAction, DeleteImageResult> {
 
 	private static final String BLOBSTORE_KEY_STRING = "encoded_gs_key";
 
 	@Inject
-	public DeleteImageActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli) {
+	public DeleteImageActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public DeleteImageResult execute(DeleteImageAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public DeleteImageResult
+	    execute(DeleteImageAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkArgument(action.getImageUrl() != null);
-		
+
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		String imgUrl = action.getImageUrl();
 		if (imgUrl.indexOf(BLOBSTORE_KEY_STRING) != -1) {

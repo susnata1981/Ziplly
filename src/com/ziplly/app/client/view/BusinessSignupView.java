@@ -58,7 +58,8 @@ import com.ziplly.app.model.overlay.AddressComponent;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class BusinessSignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
+public class BusinessSignupView extends AbstractView implements
+    ISignupView<SignupActivityPresenter> {
 	String streetNumber;
 	String streetName;
 	String neighborhood;
@@ -69,7 +70,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	NeighborhoodDTO selectedNeighborhood;
 	boolean isServiceAvailable = true;
 	boolean doValidation = true;
-	
+
 	private static final String STREET_NUMBER_KEY = "street_number";
 	private static final String ROUTE_KEY = "route";
 	private static final String NEIGHBORHOOD_KEY = "neighborhood";
@@ -78,8 +79,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	private static final String POSTAL_CODE_KEY = "postal_code";
 	private static final String START_TIME = "9AM";
 	private static final String END_TIME = "9PM";
-	private static BusinessSignupViewUiBinder uiBinder = GWT
-			.create(BusinessSignupViewUiBinder.class);
+	private static BusinessSignupViewUiBinder uiBinder = GWT.create(BusinessSignupViewUiBinder.class);
 
 	interface BusinessSignupViewUiBinder extends UiBinder<Widget, BusinessSignupView> {
 	}
@@ -93,7 +93,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 
 	@UiField
 	ListBox businessCategory;
-	
+
 	@UiField
 	TextBox street1;
 	@UiField
@@ -109,7 +109,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	HelpInline phoneError;
 	@UiField
 	TextBox phone;
-	
+
 	@UiField
 	ControlGroup neighborhoodCg;
 	@UiField
@@ -118,7 +118,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	HTMLPanel neighborhoodListPanel;
 	@UiField
 	HelpInline neighborhoodError;
-	
+
 	@UiField
 	TextBox email;
 	@UiField
@@ -141,7 +141,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 
 	@UiField
 	Anchor signInAnchor;
-	
+
 	// how it works section
 	@UiField
 	Anchor learnMoreAnchor;
@@ -151,29 +151,29 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	Button exploreBtn;
 	@UiField
 	Button postMessageBtn;
-	
+
 	@UiField
 	Anchor privacyPolicyAnchor;
 	@UiField
 	Anchor termsOfUseAnchor;
-	
+
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
 	private boolean imageUploaded;
-	
+
 	@Inject
 	public BusinessSignupView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		neighborhoodControl.setVisible(false);
-		
+
 		populateBusinessCategory();
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 	}
 
 	private void populateBusinessCategory() {
-		for(BusinessCategory category : BusinessCategory.values()) {
+		for (BusinessCategory category : BusinessCategory.values()) {
 			businessCategory.addItem(category.getName());
 		}
 	}
@@ -182,7 +182,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	public void onLoad() {
 		setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 	}
-	
+
 	private void setupHandlers() {
 		businessName.addBlurHandler(new BlurHandler() {
 			@Override
@@ -190,36 +190,36 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 				if (!doValidation) {
 					return;
 				}
-				
-				boolean validateName = validateName(businessName.getText(), businessNameCg,
-						businessNameError);
+
+				boolean validateName =
+				    validateName(businessName.getText(), businessNameCg, businessNameError);
 				if (validateName) {
 					businessNameCg.setType(ControlGroupType.SUCCESS);
 					businessNameError.setVisible(false);
 				}
 			}
 		});
-		
+
 		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if (!doValidation) {
 					return;
 				}
-				
+
 				streetNumber = streetName = neighborhood = city = state = zipCode = null;
 				clearNeighborhoodSection();
 				validateAddressField();
 			}
 		});
-		
+
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
 				if (!doValidation) {
 					return;
 				}
-				
+
 				boolean validateName = validateName(email.getText(), emailCg, emailError);
 				if (validateName) {
 					emailCg.setType(ControlGroupType.SUCCESS);
@@ -234,7 +234,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 				if (!doValidation) {
 					return;
 				}
-				
+
 				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
@@ -316,10 +316,10 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		valid &= validateAddress(street, street1Cg, street1Error);
 
 		valid &= validateNeighborhood();
-		
+
 		valid &= validateEmail();
 
-		valid &=  validatePhone();
+		valid &= validatePhone();
 		// valid &= validateZip();
 
 		String passwordInput = password.getText().trim();
@@ -350,7 +350,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		}
 		return true;
 	}
-	
+
 	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
 		if (streetName == null || city == null || state == null || zipCode == null) {
 			cg.setType(ControlGroupType.ERROR);
@@ -394,14 +394,14 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
 		resetErrors();
-		
+
 		// checks to see if ziplly is available in the area code.
 		// this is set inside displayNotYetLaunchedWidget function.
 		if (!isServiceAvailable) {
 			displayMessage(StringConstants.SERVICE_NOT_AVAILABLE, AlertType.ERROR);
 			return;
 		}
-		
+
 		if (!validateInput()) {
 			return;
 		}
@@ -413,7 +413,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		account.setName(name);
 		account.setStreet1(streetOne);
 		account.setPhone(FieldVerifier.getEscapedText(phone.getText()));
-		
+
 		LocationDTO location = new LocationDTO();
 		location.setNeighborhood(selectedNeighborhood);
 		location.setAddress(streetOne);
@@ -421,20 +421,21 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		location.setTimeUpdated(new Date());
 		location.setTimeCreated(new Date());
 		account.addLocation(location);
-		
+
 		// this should go away.
-//		account.setNeighborhood(selectedNeighborhood);
-//		account.setCity(city);
-//		account.setState(state);
-//		account.setZip(Integer.parseInt(zipCode));
+		// account.setNeighborhood(selectedNeighborhood);
+		// account.setCity(city);
+		// account.setState(state);
+		// account.setZip(Integer.parseInt(zipCode));
 
 		// business category
 		BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
 		account.setCategory(category);
-		
-		// Hardcoded to COMMERCIAL for now (Need admin privileges to change it for public institutions)
+
+		// Hardcoded to COMMERCIAL for now (Need admin privileges to change it for
+		// public institutions)
 		account.setBusinessType(BusinessType.COMMERCIAL);
-		
+
 		account.setRole(Role.USER);
 		account.setEmail(emailInput);
 		account.setStatus(AccountStatus.PENDING_ACTIVATION);
@@ -456,13 +457,13 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 
 	private NeighborhoodDTO getNeighborhoodSelection() {
 		int count = neighborhoodListPanel.getWidgetCount();
-		for(int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
 			if (rb.getValue()) {
 				return neighborhoods.get(i);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -483,7 +484,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		properties.setSaturdayEndTime(END_TIME);
 		properties.setSundayStartTime(START_TIME);
 		properties.setSundayEndTime(END_TIME);
-		
+
 		properties.setPriceRange(PriceRange.MEDIUM);
 		properties.setWifiAvailable(false);
 		properties.setParkingAvailable(true);
@@ -500,13 +501,13 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		infoField.setText("");
 		infoField.setVisible(false);
 	}
-	
+
 	public void clearNeighborhoodSection() {
 		neighborhoodListPanel.clear();
 		neighborhoodCg.setType(ControlGroupType.NONE);
 		neighborhoodControl.setVisible(false);
 	}
-	
+
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
 		this.presenter = presenter;
@@ -528,39 +529,39 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	 * GOOGLE PLACES API INITIALIZATION
 	 */
 	public native void initializePlacesApi(Element elem) /*-{
-		var options = {
-			types : [ 'geocode' ]
-		};
+	                                                     var options = {
+	                                                     types : [ 'geocode' ]
+	                                                     };
 
-		var autocomplete = new $wnd.google.maps.places.Autocomplete(elem,
-				options);
+	                                                     var autocomplete = new $wnd.google.maps.places.Autocomplete(elem,
+	                                                     options);
 
-		var componentForm = {
-			street_number : 'short_name',
-			route : 'long_name',
-			locality : 'long_name',
-			administrative_area_level_1 : 'short_name',
-			country : 'long_name',
-			postal_code : 'short_name'
-		};
-		var that = this;
-		$wnd.google.maps.event
-				.addListener(
-						autocomplete,
-						'place_changed',
-						function() {
-							var places = autocomplete.getPlace();
-							console.log(places);
-							$wnd.places = autocomplete.getPlace();
-							that.@com.ziplly.app.client.view.BusinessSignupView::populateAddressFields()();
-						});
-	}-*/;
+	                                                     var componentForm = {
+	                                                     street_number : 'short_name',
+	                                                     route : 'long_name',
+	                                                     locality : 'long_name',
+	                                                     administrative_area_level_1 : 'short_name',
+	                                                     country : 'long_name',
+	                                                     postal_code : 'short_name'
+	                                                     };
+	                                                     var that = this;
+	                                                     $wnd.google.maps.event
+	                                                     .addListener(
+	                                                     autocomplete,
+	                                                     'place_changed',
+	                                                     function() {
+	                                                     var places = autocomplete.getPlace();
+	                                                     console.log(places);
+	                                                     $wnd.places = autocomplete.getPlace();
+	                                                     that.@com.ziplly.app.client.view.BusinessSignupView::populateAddressFields()();
+	                                                     });
+	                                                     }-*/;
 
 	/**
 	 * Callback handler to populate Address fields
 	 */
 	public void populateAddressFields() {
-//		streetNumber = streetName = neighborhood = city = state = zipCode = "";
+		// streetNumber = streetName = neighborhood = city = state = zipCode = "";
 		JsArray<AddressComponent> components = getAddressComponents();
 		for (int i = 0; i < components.length(); i++) {
 			AddressComponent ac = components.get(i);
@@ -588,8 +589,8 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	 * @return Array of address components in JSON format
 	 */
 	public native JsArray<AddressComponent> getAddressComponents() /*-{
-		return $wnd.places.address_components;
-	}-*/;
+	                                                               return $wnd.places.address_components;
+	                                                               }-*/;
 
 	/**
 	 * Displays neighborhood data
@@ -599,7 +600,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		clearMessage();
 		this.neighborhoods = neighborhoods;
 		neighborhoodListPanel.clear();
-		for(NeighborhoodDTO n : neighborhoods) {
+		for (NeighborhoodDTO n : neighborhoods) {
 			RadioButton rb = new RadioButton("neighborhood");
 			rb.setText(n.getName());
 			neighborhoodListPanel.add(rb);
@@ -608,7 +609,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 	}
 
 	/**
-	 * Displays a modal window to get user information 
+	 * Displays a modal window to get user information
 	 */
 	@Override
 	public void displayNotYetLaunchedWidget() {
@@ -623,7 +624,7 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 				String postalCode = widget.getPostalCode();
 				presenter.addToInviteList(email, Integer.parseInt(postalCode));
 			}
-			
+
 		});
 		selectedNeighborhood = null;
 		widget.show(true);
@@ -638,12 +639,12 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		}
 	}
-	
+
 	@UiHandler("signInAnchor")
 	public void signIn(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
 	}
-	
+
 	@UiHandler("learnMoreAnchor")
 	public void learnMore(ClickEvent event) {
 		event.preventDefault();
@@ -651,34 +652,34 @@ public class BusinessSignupView extends AbstractView implements ISignupView<Sign
 		navigateToElement(elem);
 	}
 
-	@UiHandler("createProfileBtn") 
+	@UiHandler("createProfileBtn")
 	public void createProfile(ClickEvent event) {
 		event.preventDefault();
 		Element elem = DOM.getElementById("signupFormLink");
 		navigateToElement(elem);
 	}
-	
+
 	@UiHandler("postMessageBtn")
 	public void postMessage(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
 	}
-	
-	@UiHandler("exploreBtn") 
+
+	@UiHandler("exploreBtn")
 	public void explore(ClickEvent event) {
 		presenter.goTo(new BusinessAccountSettingsPlace());
 	}
-	
+
 	private void navigateToElement(Element elem) {
 		if (elem != null) {
 			elem.scrollIntoView();
 		}
 	}
-	
+
 	@UiHandler("privacyPolicyAnchor")
 	public void privacyPolicyLinkClicked(ClickEvent event) {
 		presenter.goTo(new AboutPlace(AboutViewSection.PRIVACY));
 	}
-	
+
 	@UiHandler("termsOfUseAnchor")
 	public void tosLinkClicked(ClickEvent event) {
 		presenter.goTo(new AboutPlace(AboutViewSection.TOS));

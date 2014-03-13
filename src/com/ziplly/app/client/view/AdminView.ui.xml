@@ -8,10 +8,13 @@
 		padding: 6px;
 		}
 		.longTextBox {
-			width: 280px;
+		width: 280px;
 		}
 		.row {
-			overflow: auto;
+		overflow: auto;
+		}
+		.panel {
+			margin-top: 20px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
@@ -126,31 +129,31 @@
 						<b:WellForm>
 							<b:ControlGroup>
 								<b:Controls>
-								    <b:Label>Zip</b:Label>
+									<b:Label>Zip</b:Label>
 									<b:TextBox ui:field="neighborhoodZip" placeholder="Zip..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
-								    <b:Label>Neighborhood Name</b:Label>
+									<b:Label>Neighborhood Name</b:Label>
 									<b:TextBox ui:field="neighborhoodName" placeholder="Neighborhood..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
-								    <b:Label>City</b:Label>
+									<b:Label>City</b:Label>
 									<b:TextBox ui:field="neighborhoodCity" placeholder="City..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
-								    <b:Label>State</b:Label>
+									<b:Label>State</b:Label>
 									<b:TextBox ui:field="neighborhoodState" placeholder="State..."></b:TextBox>
 								</b:Controls>
 							</b:ControlGroup>
 							<b:ControlGroup>
 								<b:Controls>
-								    <b:Label>Parent neighborhood id</b:Label>
+									<b:Label>Parent neighborhood id</b:Label>
 									<b:TextBox ui:field="parentNeighborhoodId"
 										placeholder="Parent ID..."></b:TextBox>
 								</b:Controls>
@@ -162,24 +165,75 @@
 						</b:WellForm>
 					</b:Column>
 					<b:Column size="4">
-						<g:HTMLPanel>
-							<g:HTMLPanel>
-								<b:Image ui:field="neighborhoodImagePreview" />
-								<b:TextBox ui:field="imageUrlTextField" addStyleNames="{style.longTextBox}"/>
-							</g:HTMLPanel>
-							<g:FormPanel ui:field="uploadForm">
-								<g:HTMLPanel>
-									<b:Label>Upload image</b:Label>
-									<b:FileUpload ui:field="uploadField" name="image" />
-								</g:HTMLPanel>
-							</g:FormPanel>
-						</g:HTMLPanel>
+
 					</b:Column>
 				</b:FluidRow>
 				<b:FluidRow addStyleNames="{style.row}">
 					<b:Column size="8">
 						<g:HTMLPanel ui:field="neighborhoodListPanel">
 						</g:HTMLPanel>
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow addStyleNames="{style.row}">
+					<b:Column size="6">
+						<g:HTMLPanel ui:field="neighborhoodDetailsPanel" addStyleNames="{style.panel}">
+						    <b:Label>
+								Neighborhood ID
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodIdTextBox"
+								placeholder=""></b:TextBox>
+							<br />
+							<b:Label>
+								Name
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodNameTextBox"
+								placeholder="Name..."></b:TextBox>
+							<br />
+							<b:Label>
+								City
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodCityTextBox"
+								placeholder="City..."></b:TextBox>
+							<br />
+							<b:Label>
+								Zip
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodZipCodeTextBox"
+								placeholder="Zip..."></b:TextBox>
+							<br />
+							<b:Label>
+								Parent Neighborhood
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodParentIdTextBox"
+								placeholder="parent..."></b:TextBox>
+							<br />
+							<g:HTMLPanel addStyleNames="{style.panel}">
+								<g:HTMLPanel>
+									<b:Image ui:field="neighborhoodImagePreview" />
+									<b:Label>Image Link</b:Label>
+									<b:TextBox ui:field="imageUrlTextField"
+										addStyleNames="{style.longTextBox}" />
+									<br/>
+									<b:Label>Image ID</b:Label>
+									<b:TextBox ui:field="imageIdTextField"
+										addStyleNames="{style.longTextBox}" />
+								</g:HTMLPanel>
+								<g:FormPanel ui:field="uploadForm">
+									<g:HTMLPanel>
+										<b:Label>Upload image</b:Label>
+										<b:FileUpload ui:field="uploadField" name="image" />
+									</g:HTMLPanel>
+								</g:FormPanel>
+								<g:HTMLPanel ui:field="neighborhoodButtonPanel">
+								    <b:Button ui:field="imageAddBtn">Add Image</b:Button>
+								    <b:Button ui:field="saveNeighborhoodBtn">Save</b:Button>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Column>
+					<b:Column size="6">
+					    <g:FlowPanel ui:field="neighborhoodImagePanel">
+						</g:FlowPanel>
 					</b:Column>
 				</b:FluidRow>
 			</b:Tab>

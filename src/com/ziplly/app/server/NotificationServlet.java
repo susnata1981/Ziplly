@@ -38,7 +38,7 @@ public class NotificationServlet extends HttpServlet {
 	private NeighborhoodDAOImpl neighborhoodDao;
 	private TweetNotificationBLI tweetNotificationBli;
 	private PostalCodeDAO postalCodeDao;
-	
+
 	// TODO: need to figure out how to use guice to inject dependency
 	public NotificationServlet() {
 		this.emailService = new EmailServiceImpl();
@@ -48,13 +48,14 @@ public class NotificationServlet extends HttpServlet {
 		this.sessionDao = new SessionDAOImpl();
 		this.tweetDao = new TweetDAOImpl(null, null);
 		this.accountNotificationDao = new AccountNotificationDAOImpl();
-		this.tweetNotificationBli = new TweetNotificationBLIImpl(
-				accountDao,
-				sessionDao,
-				neighborhoodDao, 
-				tweetDao, 
-				accountNotificationDao, 
-				emailService);
+		this.tweetNotificationBli =
+		    new TweetNotificationBLIImpl(
+		        accountDao,
+		        sessionDao,
+		        neighborhoodDao,
+		        tweetDao,
+		        accountNotificationDao,
+		        emailService);
 	}
 
 	@Override
@@ -65,38 +66,43 @@ public class NotificationServlet extends HttpServlet {
 		String emailTemplateName = req.getParameter(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY);
 		EmailTemplate emailTemplate = EmailTemplate.valueOf(emailTemplateName);
 
-		logger.log(Level.INFO, String.format("Received notification request with action %s, sender %s, email template %s",
-				action,
-				senderAccountId,
-				emailTemplate));
-		
-		switch (action) {
-		case BY_NEIGHBORHOOD:
-			String neighborhoodId = req.getParameter(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY);
-			String notificationType = req.getParameter(ZipllyServerConstants.NOTIFICATION_TYPE_KEY);
-			String tweetId = req.getParameter(ZipllyServerConstants.TWEET_ID_KEY);
-			NotificationType ntype = NotificationType.valueOf(notificationType);
+		logger.log(Level.INFO, String.format(
+		    "Received notification request with action %s, sender %s, email template %s",
+		    action,
+		    senderAccountId,
+		    emailTemplate));
 
-			tweetNotificationBli.sendNotification(
-					Long.parseLong(senderAccountId), 
-					Long.parseLong(neighborhoodId), 
-					Long.parseLong(tweetId), 
-					ntype, 
-					emailTemplate);
-			
-			break;
-		case INDIVIDUAL:
-			String recipientEmail = req.getParameter(ZipllyServerConstants.RECIPIENT_EMAIL_KEY);
-			String recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);
-			String senderName = req.getParameter(ZipllyServerConstants.SENDER_NAME_KEY);
-			String senderEmail = req.getParameter(ZipllyServerConstants.SENDER_EMAIL_KEY);
-			tweetNotificationBli.sendEmail(recipientEmail, recipientName, senderEmail, senderName, emailTemplate);
-			break;
+		switch (action) {
+			case BY_NEIGHBORHOOD:
+				String neighborhoodId = req.getParameter(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY);
+				String notificationType = req.getParameter(ZipllyServerConstants.NOTIFICATION_TYPE_KEY);
+				String tweetId = req.getParameter(ZipllyServerConstants.TWEET_ID_KEY);
+				NotificationType ntype = NotificationType.valueOf(notificationType);
+
+				tweetNotificationBli.sendNotification(
+				    Long.parseLong(senderAccountId),
+				    Long.parseLong(neighborhoodId),
+				    Long.parseLong(tweetId),
+				    ntype,
+				    emailTemplate);
+
+				break;
+			case INDIVIDUAL:
+				String recipientEmail = req.getParameter(ZipllyServerConstants.RECIPIENT_EMAIL_KEY);
+				String recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);
+				String senderName = req.getParameter(ZipllyServerConstants.SENDER_NAME_KEY);
+				String senderEmail = req.getParameter(ZipllyServerConstants.SENDER_EMAIL_KEY);
+				tweetNotificationBli.sendEmail(
+				    recipientEmail,
+				    recipientName,
+				    senderEmail,
+				    senderName,
+				    emailTemplate);
+				break;
 		}
 		res.setStatus(HttpStatus.SC_OK);
 		res.getWriter().println("");
 	}
-
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		logger.log(Level.INFO, String.format("Received _ah/start get call"));

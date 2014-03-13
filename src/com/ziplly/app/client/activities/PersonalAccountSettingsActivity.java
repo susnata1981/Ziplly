@@ -29,12 +29,12 @@ import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
 public class PersonalAccountSettingsActivity
-		extends
-		AbstractAccountSettingsActivity<PersonalAccountDTO, PersonalAccountSettingsActivity.IPersonalAccountSettingsView>
-		implements AccountSettingsPresenter<PersonalAccountDTO> {
+    extends
+    AbstractAccountSettingsActivity<PersonalAccountDTO, PersonalAccountSettingsActivity.IPersonalAccountSettingsView> implements
+    AccountSettingsPresenter<PersonalAccountDTO> {
 
 	public static interface IPersonalAccountSettingsView extends
-			ISettingsView<PersonalAccountDTO, AccountSettingsPresenter<PersonalAccountDTO>> {
+	    ISettingsView<PersonalAccountDTO, AccountSettingsPresenter<PersonalAccountDTO>> {
 
 		void displayAllInterests(List<InterestDTO> interests);
 	}
@@ -42,20 +42,20 @@ public class PersonalAccountSettingsActivity
 	private AcceptsOneWidget panel;
 	private AsyncProvider<PersonalAccountSettingsView> viewProvider;
 
-	public PersonalAccountSettingsActivity(
-			CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			PlaceController placeController, 
-			ApplicationContext ctx,
-			AsyncProvider<PersonalAccountSettingsView> viewProvider) {
+	public PersonalAccountSettingsActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AsyncProvider<PersonalAccountSettingsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.viewProvider = viewProvider;
 		setupHandlers();
 	}
 
+	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
-		
+
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
 			public void onEvent(LoginEvent event) {
@@ -75,7 +75,7 @@ public class PersonalAccountSettingsActivity
 	public void doStart() {
 		internalStart();
 	}
-	
+
 	private void internalStart() {
 		// hack, hate hate hate
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
@@ -130,6 +130,7 @@ public class PersonalAccountSettingsActivity
 				view.displayMessage(StringConstants.PASSWORD_UPDATED, AlertType.SUCCESS);
 			}
 
+			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof InvalidCredentialsException) {
 					view.displayMessage(th.getMessage(), AlertType.ERROR);
@@ -149,7 +150,7 @@ public class PersonalAccountSettingsActivity
 	public void onInboxLinkClick() {
 		placeController.goTo(new ConversationPlace());
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

@@ -6,6 +6,8 @@ import com.ziplly.app.model.TransactionDTO;
 
 public interface TransactionDAO {
 	Transaction findById(Long transactionId);
+
 	Transaction findByAccountId(Long accountId);
+
 	TransactionDTO save(Transaction txn) throws DuplicateException;
 }

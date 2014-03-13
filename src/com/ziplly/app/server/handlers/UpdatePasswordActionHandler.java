@@ -11,27 +11,29 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
-public class UpdatePasswordActionHandler extends AbstractAccountActionHandler<UpdatePasswordAction, UpdatePasswordResult>{
-	
+public class UpdatePasswordActionHandler extends
+    AbstractAccountActionHandler<UpdatePasswordAction, UpdatePasswordResult> {
+
 	@Inject
 	public UpdatePasswordActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public UpdatePasswordResult execute(UpdatePasswordAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public UpdatePasswordResult
+	    execute(UpdatePasswordAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getOldPassword() == null || action.getNewPassword() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		Account account = session.getAccount();
 		accountBli.updatePassword(account, action.getOldPassword(), action.getNewPassword());
-		
+
 		return new UpdatePasswordResult();
 	}
 

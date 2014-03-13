@@ -28,8 +28,8 @@ public class PostalCodeDAOImpl implements PostalCodeDAO {
 			PostalCode neighborhood = (PostalCode) query.getSingleResult();
 			return EntityUtil.clone(neighborhood);
 		} catch (NoResultException nre) {
-			logger.warning(String.format("Couldn't find postal code for neighrborhood %d",
-					neighborhoodId));
+			logger.warning(String
+			    .format("Couldn't find postal code for neighrborhood %d", neighborhoodId));
 			throw new NotFoundException();
 		} finally {
 			em.close();

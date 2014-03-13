@@ -11,27 +11,27 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="location")
+@Table(name = "location")
 public class Location extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
-	@Column(name="location_id")
+	@Column(name = "location_id")
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long locationId;
-	
-	@Column(name="type")
+
+	@Column(name = "type")
 	private String type;
-	
+
 	@Column(nullable = true)
 	private String address;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "neighborhood_id", nullable = false)
 	private Neighborhood neighborhood;
-	
+
 	public Location() {
 	}
-	
+
 	public Location(LocationDTO location) {
 		this.setLocationId(location.getLocationId());
 		this.address = location.getAddress();
@@ -40,7 +40,7 @@ public class Location extends AbstractTimestampAwareEntity {
 		setTimeCreated(location.getTimeCreated());
 		setTimeUpdated(location.getTimeUpdated());
 	}
-	
+
 	public Neighborhood getNeighborhood() {
 		return neighborhood;
 	}
@@ -64,25 +64,25 @@ public class Location extends AbstractTimestampAwareEntity {
 	public void setLocationId(Long locationId) {
 		this.locationId = locationId;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
 			return false;
 		}
-		
+
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Location)) {
 			return false;
 		}
-		
-		Location l = (Location)o;
+
+		Location l = (Location) o;
 		return l.getLocationId() == locationId;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return neighborhood.hashCode();

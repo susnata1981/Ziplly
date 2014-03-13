@@ -10,22 +10,22 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
 
-public class LogoutActionHandler extends AbstractAccountActionHandler<LogoutAction, LogoutResult>{
-//	private Logger logger = Logger.getLogger(LogoutActionHandler.class.getCanonicalName());
-	
+public class LogoutActionHandler extends AbstractAccountActionHandler<LogoutAction, LogoutResult> {
+	// private Logger logger =
+	// Logger.getLogger(LogoutActionHandler.class.getCanonicalName());
+
 	@Inject
-	public LogoutActionHandler(AccountDAO accountDao,SessionDAO sessionDao,AccountBLI accountBli) {
+	public LogoutActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
-	
+
 	@Override
-	public LogoutResult execute(LogoutAction action, ExecutionContext ec)
-			throws DispatchException {
-		
+	public LogoutResult execute(LogoutAction action, ExecutionContext ec) throws DispatchException {
+
 		if (action == null || action.getUid() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		accountBli.logout(action.getUid());
 		return new LogoutResult();
 	}

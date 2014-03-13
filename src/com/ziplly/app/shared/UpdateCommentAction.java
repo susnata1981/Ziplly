@@ -4,12 +4,12 @@ import net.customware.gwt.dispatch.shared.Action;
 
 import com.ziplly.app.model.CommentDTO;
 
-public class UpdateCommentAction implements Action<UpdateCommentResult>{
+public class UpdateCommentAction implements Action<UpdateCommentResult> {
 	private CommentDTO comment;
 
 	public UpdateCommentAction() {
 	}
-	
+
 	public UpdateCommentAction(CommentDTO comment) {
 		this.setComment(comment);
 	}

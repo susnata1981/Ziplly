@@ -4,13 +4,13 @@ import net.customware.gwt.dispatch.shared.Result;
 
 import com.ziplly.app.model.LoveDTO;
 
-public class LikeResult implements Result{
+public class LikeResult implements Result {
 	private LoveDTO like;
-	
+
 	public LikeResult(LoveDTO like) {
 		this.setLike(like);
 	}
-	
+
 	public LikeResult() {
 	}
 

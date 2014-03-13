@@ -2,12 +2,12 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class LogoutAction implements Action<LogoutResult>{
+public class LogoutAction implements Action<LogoutResult> {
 	private Long uid;
 
 	public LogoutAction() {
 	}
-	
+
 	public LogoutAction(Long uid) {
 		this.setUid(uid);
 	}

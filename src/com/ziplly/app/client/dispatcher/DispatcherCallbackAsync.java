@@ -15,17 +15,17 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 	private PlaceController placeController;
 	ZGinInjector injector = GWT.create(ZGinInjector.class);
 	Logger logger = Logger.getLogger(DispatcherCallbackAsync.class.getName());
-	
+
 	public DispatcherCallbackAsync() {
 		this.placeController = injector.getPlaceController();
 	}
-	
+
 	@Override
 	public void onFailure(Throwable caught) {
 		if (caught instanceof NeedsLoginException) {
 			placeController.goTo(new LoginPlace());
 			return;
 		}
-		logger.severe("Received exception from server: "+caught.getLocalizedMessage());
+		logger.severe("Received exception from server: " + caught.getLocalizedMessage());
 	}
 }

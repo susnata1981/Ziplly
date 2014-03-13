@@ -6,5 +6,3 @@ import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 public interface TweetNotAvailableEventHandler extends EventHandler {
 	public void onEvent(TweetNotAvailableEvent event);
 }
-
-

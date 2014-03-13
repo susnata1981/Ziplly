@@ -28,7 +28,7 @@ import com.ziplly.app.model.TweetDTO;
 public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	private static TweetViewUiBinder uiBinder = GWT.create(TweetViewUiBinder.class);
-	
+
 	interface TweetViewUiBinder extends UiBinder<Widget, TweetView> {
 	}
 
@@ -41,7 +41,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 
 	@UiField
 	Alert message;
-	
+
 	@UiField
 	FlowPanel tweetsSection;
 	TweetPresenter presenter;
@@ -70,47 +70,47 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		tweetsSection.clear();
 	}
 
-//	@Override
-//	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
-//		displayTweets(tweets, null, displayNoTweetsMessage);
-//	}
+	// @Override
+	// public void displayTweets(List<TweetDTO> tweets, boolean
+	// displayNoTweetsMessage) {
+	// displayTweets(tweets, null, displayNoTweetsMessage);
+	// }
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets, 
-			final TweetViewDisplayStatusCallback callback) {
-		
+	public void displayTweets(List<TweetDTO> tweets, final TweetViewDisplayStatusCallback callback) {
+
 		if (tweets != null) {
 			tweetsSection.clear();
 			StyleHelper.show(message.getElement(), false);
-			
+
 			if (tweets.isEmpty()) {
 				return;
 			}
-			
+
 			final int size = tweets.size();
 			int count = 0;
 			for (TweetDTO tweet : tweets) {
 				count++;
 				final int c = count;
 				addTweet(tweet, new TweetWidgetRenderingStatus() {
-					
+
 					@Override
 					public void hasFinished(Long tweetId) {
 						if (callback != null) {
-							callback.hasFinished((100 * c)/size);
+							callback.hasFinished((100 * c) / size);
 						}
 					}
 				});
 			}
 		}
 	}
-	
+
 	@Deprecated
 	@Override
 	public void displayTweets(List<TweetDTO> tweets) {
 		displayTweets(tweets, null);
 	}
-	
+
 	@Override
 	public void displayNoTweetsMessage() {
 		message.setText(StringConstants.TWEET_NOT_POSTED);
@@ -126,14 +126,14 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	public void setHeight(String tweetWidgetHeight) {
 		tweetsSection.setHeight(tweetWidgetHeight);
 	}
-	
+
 	@Override
 	public void addTweet(final TweetDTO tweet, final TweetWidgetRenderingStatus callback) {
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override
 			public void execute() {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					
+
 					@Override
 					public void execute() {
 						TweetWidget tw = new TweetWidget();
@@ -156,7 +156,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	public void addTweet(final TweetDTO tweet) {
 		addTweet(tweet, null);
 	}
-	
+
 	@Override
 	public void insertTweet(final TweetDTO tweet) {
 		Scheduler.get().scheduleDeferred(new Command() {
@@ -197,7 +197,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		TweetWidget tweetWidget = tweetWidgetMap.get(comment.getTweet().getTweetId());
 		tweetWidget.updateComment(comment);
 	}
-	
+
 	@Override
 	public void updateLike(LoveDTO like) {
 		TweetWidget tweetWidget = tweetWidgetMap.get(like.getTweet().getTweetId());
@@ -220,7 +220,7 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		message.setType(type);
 		StyleHelper.show(message.getElement(), true);
 	}
-	
+
 	public interface TweetWidgetRenderingStatus {
 		void hasFinished(Long tweetId);
 	}

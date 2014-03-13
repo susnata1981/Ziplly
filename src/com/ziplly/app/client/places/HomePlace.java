@@ -7,16 +7,16 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.TweetType;
 
 public class HomePlace extends Place {
-//	private String filter;
+	// private String filter;
 	private Long tweetId;
 	private String tweetType;
-	
+
 	public HomePlace() {
 		this(TweetType.ALL);
 	}
 
 	public HomePlace(TweetType type) {
-//		setFilter(type.name().toLowerCase());
+		// setFilter(type.name().toLowerCase());
 		this.tweetType = type.name().toLowerCase();
 	}
 
@@ -24,17 +24,17 @@ public class HomePlace extends Place {
 		this.tweetId = tweetId;
 	}
 
-//	protected HomePlace(String filter) {
-//		setFilter(filter);
-//	}
-//
-//	public String getFilter() {
-//		return filter;
-//	}
-//
-//	public void setFilter(String filter) {
-//		this.filter = filter;
-//	}
+	// protected HomePlace(String filter) {
+	// setFilter(filter);
+	// }
+	//
+	// public String getFilter() {
+	// return filter;
+	// }
+	//
+	// public void setFilter(String filter) {
+	// this.filter = filter;
+	// }
 
 	public String getTweetType() {
 		return tweetType;
@@ -65,7 +65,7 @@ public class HomePlace extends Place {
 							HomePlace place = new HomePlace();
 							place.setTweetId(tweetId);
 							return place;
-						} catch(NumberFormatException ex) {
+						} catch (NumberFormatException ex) {
 							return new HomePlace();
 						}
 					} else {
@@ -84,14 +84,13 @@ public class HomePlace extends Place {
 
 		@Override
 		public String getToken(HomePlace place) {
-//			if (place.getFilter() != null) {
-//				return place.getFilter();
-//			}
-//			return TweetType.ALL.name();
+			// if (place.getFilter() != null) {
+			// return place.getFilter();
+			// }
+			// return TweetType.ALL.name();
 			if (place.getTweetId() != null) {
 				return PlaceUtils.getHomePlaceTokenForMessaging(place.getTweetId());
-			}
-			else if (place.getTweetType() != null) {
+			} else if (place.getTweetType() != null) {
 				return PlaceUtils.getHomePlaceTokenForTweetType(place.getTweetType());
 			} else {
 				return "";

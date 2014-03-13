@@ -2,7 +2,7 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetTweetForUserAction implements Action<GetTweetForUserResult>{
+public class GetTweetForUserAction implements Action<GetTweetForUserResult> {
 	private long accountId;
 	private int page;
 	private int pageSize;

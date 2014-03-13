@@ -12,22 +12,22 @@ import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 
 public class BusinessSignupActivity extends AbstractSignupActivity implements
-		SignupActivityPresenter {
+    SignupActivityPresenter {
 	AcceptsOneWidget panel;
 	private BusinessSignupPlace place;
 	private AsyncProvider<BusinessSignupView> viewProvider;
 
 	@Inject
-	public BusinessSignupActivity(
-			CachingDispatcherAsync dispatcher, 
-			EventBus eventBus,
-			PlaceController placeController, 
-			ApplicationContext ctx, 
-			BusinessSignupPlace place,
-			AsyncProvider<BusinessSignupView> viewProvider) {
+	public BusinessSignupActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    BusinessSignupPlace place,
+	    AsyncProvider<BusinessSignupView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.viewProvider = viewProvider;
 		this.place = place;
@@ -43,7 +43,7 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	public void doStart() {
 		placeController.goTo(new HomePlace());
 	}
-	
+
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessSignupView>() {
@@ -57,7 +57,7 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 			}
 		});
 	}
-	
+
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -86,6 +86,6 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 	@Override
 	public void onStop() {
 		view.clear();
-		clearBackgroundImage();
+		StyleHelper.clearBackground();
 	}
 }

@@ -19,21 +19,25 @@ public class ConversationCell extends AbstractCell<Conversation> {
 
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context,
-			Conversation value, SafeHtmlBuilder sb) {
-		
+	    Conversation value,
+	    SafeHtmlBuilder sb) {
+
 		if (value == null) {
 			return;
 		}
 		String content = "<div>" +
-//				"<a href=''"+value.getMessages().get(0).getSubject()+"</a>"+
-				"</div>";
+		// "<a href=''"+value.getMessages().get(0).getSubject()+"</a>"+
+		    "</div>";
 		sb.appendHtmlConstant(content);
 	}
-	
+
 	@Override
-	public void onBrowserEvent(Context context, Element parent, Conversation value,
-            NativeEvent event, ValueUpdater<Conversation> valueUpdater) {
-		
-//		Window.alert("Conversation:"+value.getReceiver().getDisplayName());
+	public void onBrowserEvent(Context context,
+	    Element parent,
+	    Conversation value,
+	    NativeEvent event,
+	    ValueUpdater<Conversation> valueUpdater) {
+
+		// Window.alert("Conversation:"+value.getReceiver().getDisplayName());
 	}
 }

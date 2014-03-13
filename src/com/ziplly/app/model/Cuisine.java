@@ -1,10 +1,5 @@
 package com.ziplly.app.model;
 
 public enum Cuisine {
-	Chinese,
-	Indian,
-	American,
-	Thai,
-	Italian,
-	French;
+	Chinese, Indian, American, Thai, Italian, French;
 }

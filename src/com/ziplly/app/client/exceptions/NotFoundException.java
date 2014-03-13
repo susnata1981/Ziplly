@@ -7,7 +7,7 @@ public class NotFoundException extends DispatchException {
 
 	public NotFoundException() {
 	}
-	
+
 	public NotFoundException(String msg) {
 		super(msg);
 	}

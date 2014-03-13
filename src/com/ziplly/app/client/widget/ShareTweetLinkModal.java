@@ -14,24 +14,24 @@ import com.google.gwt.user.client.ui.Widget;
 public class ShareTweetLinkModal extends Composite {
 
 	private static ShareTweetLinkModalUiBinder uiBinder = GWT
-			.create(ShareTweetLinkModalUiBinder.class);
+	    .create(ShareTweetLinkModalUiBinder.class);
 
 	interface ShareTweetLinkModalUiBinder extends UiBinder<Widget, ShareTweetLinkModal> {
 	}
 
 	@UiField
 	Modal shareTweetLinkModal;
-	
+
 	@UiField
 	TextBox shareTextBox;
-	
+
 	@UiField
 	Button gotoTweetBtn;
-	
+
 	public ShareTweetLinkModal() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-	
+
 	public void setTweetLink(String link) {
 		shareTextBox.setText(link);
 	}
@@ -47,7 +47,7 @@ public class ShareTweetLinkModal extends Composite {
 	public void hide() {
 		shareTweetLinkModal.hide();
 	}
-	
+
 	@UiHandler("closeBtn")
 	public void close(ClickEvent event) {
 		shareTweetLinkModal.hide();

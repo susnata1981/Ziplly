@@ -11,10 +11,10 @@ public class Predicate implements Serializable {
 	private List<String> values = new ArrayList<String>();
 	private Object parent;
 	private Class<?> parentEntity;
-	
+
 	public Predicate() {
 	}
-	
+
 	public Predicate(Class<?> parentEntity, Operator op, Object o) {
 		this.parentEntity = parentEntity;
 		if (op.equals(Operator.ANCESTOR)) {
@@ -24,19 +24,19 @@ public class Predicate implements Serializable {
 			throw new RuntimeException("Invalid Predicate!");
 		}
 	}
-	
+
 	public Predicate(Field field, Operator op, String value) {
 		this.setField(field);
 		this.setOp(op);
 		getValues().add(value);
 	}
-	
+
 	public Predicate(Field field, Operator op, Long value) {
 		this.setField(field);
 		this.setOp(op);
 		getValues().add(value.toString());
 	}
-	
+
 	public Predicate(Field field, Operator op, List<String> values) {
 		this.setField(field);
 		this.setOp(op);

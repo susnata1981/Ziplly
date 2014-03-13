@@ -7,6 +7,7 @@ import com.ziplly.app.shared.GetEntityListAction.SearchType;
 public class ResidentViewState extends CommunityViewState {
 
 	private Gender gender;
+
 	public ResidentViewState(EntityType type, int pageSize) {
 		super(type, pageSize);
 		action.setSearchType(SearchType.BY_GENDER);
@@ -27,7 +28,7 @@ public class ResidentViewState extends CommunityViewState {
 		action.setGender(gender);
 		action.setPage(start);
 	}
-	
+
 	public Gender getGender() {
 		return gender;
 	}

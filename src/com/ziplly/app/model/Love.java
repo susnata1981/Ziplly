@@ -16,52 +16,49 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-	@NamedQuery(
-		name = "findLikeByCommentAndUserId",
-		query = "from Love as l where l.comment.commentId = :commentId and l.author.accountId = :accountId"
-	),
-	@NamedQuery(
-		name = "findLikeByTweetAndUserId",
-		query = "from Love as l where l.tweet.tweetId = :tweetId and l.author.accountId = :accountId"
-	)
-})
+    @NamedQuery(
+        name = "findLikeByCommentAndUserId",
+        query = "from Love as l where l.comment.commentId = :commentId and l.author.accountId = :accountId"),
+    @NamedQuery(
+        name = "findLikeByTweetAndUserId",
+        query = "from Love as l where l.tweet.tweetId = :tweetId and l.author.accountId = :accountId") })
 @Entity
-@Table(name="love")
+@Table(name = "love")
 public class Love implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long likeId;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="tweet_id")
+	@JoinColumn(name = "tweet_id")
 	Tweet tweet;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="comment_id")
+	@JoinColumn(name = "comment_id")
 	Comment comment;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="account_id")
+	@JoinColumn(name = "account_id")
 	Account author;
-	
-	@Column(name="time_updated")
+
+	@Column(name = "time_updated")
 	private Date timeUpdated;
-	
-	@Column(name="time_created")
+
+	@Column(name = "time_created")
 	Date timeCreated;
 
 	public Love() {
 	}
-	
+
 	public Love(LoveDTO like) {
 		this.likeId = like.getLikeId();
 		this.comment = new Comment(like.getComment());
 		this.tweet = new Tweet(like.getTweet());
 		this.timeCreated = like.getTimeCreated();
 	}
-	
+
 	public Tweet getTweet() {
 		return tweet;
 	}

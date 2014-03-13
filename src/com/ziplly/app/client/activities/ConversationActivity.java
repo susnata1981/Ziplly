@@ -34,7 +34,7 @@ import com.ziplly.app.shared.ViewConversationAction;
 import com.ziplly.app.shared.ViewConversationResult;
 
 public class ConversationActivity extends AbstractActivity implements
-		ConversationView.ConversationViewPresenter {
+    ConversationView.ConversationViewPresenter {
 	private IConversationView view;
 	private AcceptsOneWidget panel;
 	private GetConversationHandler handler = new GetConversationHandler();
@@ -43,9 +43,12 @@ public class ConversationActivity extends AbstractActivity implements
 	private AsyncProvider<ConversationView> viewProvider;
 
 	@Inject
-	public ConversationActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, ConversationPlace place,
-			AsyncProvider<ConversationView> viewProvider) {
+	public ConversationActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    ConversationPlace place,
+	    AsyncProvider<ConversationView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
@@ -72,15 +75,16 @@ public class ConversationActivity extends AbstractActivity implements
 				go(ConversationActivity.this.panel);
 				setupHandlers();
 				internalStart();
-//				if (ctx.getAccount() != null) {
-//					internalStart();
-//				} else {
-//					checkAccountLogin();
-//				}
+				// if (ctx.getAccount() != null) {
+				// internalStart();
+				// } else {
+				// checkAccountLogin();
+				// }
 			}
 		});
 	}
-	
+
+	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
@@ -130,14 +134,15 @@ public class ConversationActivity extends AbstractActivity implements
 	}
 
 	private void getAccountDetails() {
-		dispatcher.execute(new GetAccountDetailsAction(),
-				new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		dispatcher.execute(
+		    new GetAccountDetailsAction(),
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
 
-					@Override
-					public void onSuccess(GetAccountDetailsResult result) {
-						eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
-					}
-				});
+			    @Override
+			    public void onSuccess(GetAccountDetailsResult result) {
+				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			    }
+		    });
 	}
 
 	@Override
@@ -168,13 +173,14 @@ public class ConversationActivity extends AbstractActivity implements
 			throw new IllegalArgumentException();
 		}
 
-		dispatcher.execute(new SendMessageAction(conversation),
-				new DispatcherCallbackAsync<SendMessageResult>() {
-					@Override
-					public void onSuccess(SendMessageResult result) {
-						view.updateConversation(conversation);
-					}
-				});
+		dispatcher.execute(
+		    new SendMessageAction(conversation),
+		    new DispatcherCallbackAsync<SendMessageResult>() {
+			    @Override
+			    public void onSuccess(SendMessageResult result) {
+				    view.updateConversation(conversation);
+			    }
+		    });
 	}
 
 	/**
@@ -188,24 +194,26 @@ public class ConversationActivity extends AbstractActivity implements
 				return;
 			}
 
-			dispatcher.execute(new ViewConversationAction(conversation.getId()),
-					new DispatcherCallbackAsync<ViewConversationResult>() {
-						@Override
-						public void onSuccess(ViewConversationResult result) {
-							updateAccountDetails();
-						}
-					});
+			dispatcher.execute(
+			    new ViewConversationAction(conversation.getId()),
+			    new DispatcherCallbackAsync<ViewConversationResult>() {
+				    @Override
+				    public void onSuccess(ViewConversationResult result) {
+					    updateAccountDetails();
+				    }
+			    });
 		}
 	}
 
 	private void updateAccountDetails() {
-		dispatcher.execute(new GetAccountDetailsAction(),
-				new DispatcherCallbackAsync<GetAccountDetailsResult>() {
-					@Override
-					public void onSuccess(GetAccountDetailsResult result) {
-						eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
-					}
-				});
+		dispatcher.execute(
+		    new GetAccountDetailsAction(),
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+			    @Override
+			    public void onSuccess(GetAccountDetailsResult result) {
+				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			    }
+		    });
 	}
 
 	private class GetConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {

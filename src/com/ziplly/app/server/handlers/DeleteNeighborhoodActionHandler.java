@@ -14,32 +14,35 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.DeleteNeighborhoodAction;
 import com.ziplly.app.shared.DeleteNeighborhoodResult;
 
-public class DeleteNeighborhoodActionHandler extends AbstractAccountActionHandler<DeleteNeighborhoodAction, DeleteNeighborhoodResult>{
+public class DeleteNeighborhoodActionHandler extends
+    AbstractAccountActionHandler<DeleteNeighborhoodAction, DeleteNeighborhoodResult> {
 
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public DeleteNeighborhoodActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, NeighborhoodDAO neighborhoodDao) {
+	public DeleteNeighborhoodActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    NeighborhoodDAO neighborhoodDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
-	public DeleteNeighborhoodResult execute(DeleteNeighborhoodAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public DeleteNeighborhoodResult
+	    execute(DeleteNeighborhoodAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkNotNull(action.getNeighborhoodId());
 		validateSession();
-		
+
 		if (session.getAccount().getRole() != Role.ADMINISTRATOR) {
 			throw new AccessError();
 		}
-		
+
 		neighborhoodDao.delete(action.getNeighborhoodId());
-		
+
 		return new DeleteNeighborhoodResult();
-		
+
 	}
 
 	@Override

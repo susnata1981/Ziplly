@@ -10,34 +10,43 @@ public class MessageDTO implements Serializable {
 	private AccountDTO sender;
 	private AccountDTO receiver;
 	private Date timeCreated;
-	
+
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
 	public AccountDTO getSender() {
 		return sender;
 	}
+
 	public void setSender(AccountDTO sender) {
 		this.sender = sender;
 	}
+
 	public AccountDTO getReceiver() {
 		return receiver;
 	}
+
 	public void setReceiver(AccountDTO receiver) {
 		this.receiver = receiver;
 	}
+
 	public ConversationDTO getConversation() {
 		return conversation;
 	}
+
 	public void setConversation(ConversationDTO conversation) {
 		this.conversation = conversation;
 	}
+
 	public Date getTimeCreated() {
 		return timeCreated;
 	}
+
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}

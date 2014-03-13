@@ -13,30 +13,33 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 
-public class CommentActionHandler extends AbstractAccountActionHandler<CommentAction, CommentResult>{
+public class CommentActionHandler extends
+    AbstractAccountActionHandler<CommentAction, CommentResult> {
 	private CommentDAO commentDao;
 
 	@Inject
-	public CommentActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, CommentDAO commentDao) {
+	public CommentActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    CommentDAO commentDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.commentDao = commentDao;
 	}
 
 	@Override
-	public CommentResult execute(CommentAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public CommentResult
+	    execute(CommentAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getComment() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		Comment comment = new Comment(action.getComment());
 		comment.setAuthor(session.getAccount());
 		commentDao.save(comment);
-		
+
 		return new CommentResult(EntityUtil.clone(comment));
 	}
 

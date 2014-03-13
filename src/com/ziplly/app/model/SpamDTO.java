@@ -5,13 +5,13 @@ import java.util.Date;
 
 public class SpamDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long id;
 	private AccountDTO reporter;
 	private TweetDTO tweet;
 	private Date timeCreated;
 	private Date timeUpdated;
-	
+
 	public SpamDTO() {
 	}
 

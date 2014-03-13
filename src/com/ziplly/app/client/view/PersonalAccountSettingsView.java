@@ -38,7 +38,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -69,17 +68,17 @@ import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
 public class PersonalAccountSettingsView extends AbstractView implements
-		IPersonalAccountSettingsView {
+    IPersonalAccountSettingsView {
 
 	private static final int MAX_INTRODUCTION_LENGTH = 255;
 
 	private static final int MAX_OCCUPATION_LENGTH = 50;
 
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
-			.create(PersonalAccountSettingsViewUiBinder.class);
+	    .create(PersonalAccountSettingsViewUiBinder.class);
 
 	interface PersonalAccountSettingsViewUiBinder extends
-			UiBinder<Widget, PersonalAccountSettingsView> {
+	    UiBinder<Widget, PersonalAccountSettingsView> {
 	}
 
 	@UiField
@@ -133,16 +132,19 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	//
 	@UiField
 	HTMLPanel notificationPanel;
-	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap = new HashMap<AccountNotificationSettingsDTO, ListBox>();
+	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap =
+	    new HashMap<AccountNotificationSettingsDTO, ListBox>();
 
 	//
 	// Privacy settings
 	//
 	@UiField
 	HTMLPanel privacyPanel;
-	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap = new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
-	private PrivacySettingsFormatter privacySettingsFormatter = (PrivacySettingsFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
+	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap =
+	    new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
+	private PrivacySettingsFormatter privacySettingsFormatter =
+	    (PrivacySettingsFormatter) AbstractValueFormatterFactory
+	        .getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
 
 	//
 	// Occupation
@@ -300,18 +302,20 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		email.setInnerText(account.getEmail());
 		introduction.setText(account.getIntroduction());
 
-		// gender 
-		for(Gender g : Gender.getValuesForSignup()) {
+		// gender
+		for (Gender g : Gender.getValuesForSignup()) {
 			genderList.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
 		genderList.setSelectedValue(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
-		
+
 		// occupation
 		occupation.setText(account.getOccupation());
 
 		// location
-		neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account.getLocations().get(0)
-				.getNeighborhood(), ValueType.NEIGHBORHOOD));
+		neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account
+		    .getLocations()
+		    .get(0)
+		    .getNeighborhood(), ValueType.NEIGHBORHOOD));
 
 		// privacy settings
 		populatePrivacySettings(account);
@@ -331,10 +335,10 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(privacySettingsFormatter.format(ps,
-					ValueType.PRIVACY_FIELD_NAME));
-			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(
-					ps.getAllowedShareSettings());
+			HTMLPanel span =
+			    new HTMLPanel(privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
+			ShareSettingsWidget shareSettingWidget =
+			    new ShareSettingsWidget(ps.getAllowedShareSettings());
 			shareSettingWidget.setSelection(ps.getSetting());
 			span.setWidth("120px");
 			panel.add(span);
@@ -371,22 +375,22 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	private void popoulateNotificationSettings(PersonalAccountDTO account) {
 		accountNotificationSettingsMap.clear();
 		notificationPanel.clear();
-		Collections.sort(account.getNotificationSettings(),
-				new Comparator<AccountNotificationSettingsDTO>() {
+		Collections.sort(
+		    account.getNotificationSettings(),
+		    new Comparator<AccountNotificationSettingsDTO>() {
 
-					@Override
-					public int compare(AccountNotificationSettingsDTO o1,
-							AccountNotificationSettingsDTO o2) {
-						return o1.getType().name().compareTo(o2.getType().name());
-					}
-				});
+			    @Override
+			    public int compare(AccountNotificationSettingsDTO o1, AccountNotificationSettingsDTO o2) {
+				    return o1.getType().name().compareTo(o2.getType().name());
+			    }
+		    });
 
 		for (AccountNotificationSettingsDTO ans : account.getNotificationSettings()) {
 			ListBox action = getNotificationActionListBox();
 			action.setSelectedIndex(ans.getAction().ordinal());
 			HPanel panel = new HPanel();
-			HTMLPanel span = new HTMLPanel(basicDataFormatter.format(ans.getType(),
-					ValueType.NOTIFICATION_TYPE));
+			HTMLPanel span =
+			    new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
 			span.setWidth("120px");
 			panel.add(span);
 			panel.add(action);
@@ -420,9 +424,10 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 	// TODO
 	boolean validate() {
-		boolean valid = validateText(introduction, introductionCg, introductionError, MAX_INTRODUCTION_LENGTH);
+		boolean valid =
+		    validateText(introduction, introductionCg, introductionError, MAX_INTRODUCTION_LENGTH);
 		valid &= validateText(occupation, occupationCg, occupationError, MAX_OCCUPATION_LENGTH);
-		
+
 		return valid;
 	}
 
@@ -432,8 +437,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 			return true;
 		}
 
-		ValidationResult result = FieldVerifier.validateString(elem.getText(),
-				maxLength);
+		ValidationResult result = FieldVerifier.validateString(elem.getText(), maxLength);
 		if (!result.isValid()) {
 			cg.setType(ControlGroupType.ERROR);
 			error.setVisible(true);
@@ -489,7 +493,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 		// Gender
 		account.setGender(Gender.getValuesForSignup().get(genderList.getSelectedIndex()));
-		
+
 		// interests
 		List<InterestDTO> selectedInterests = new ArrayList<InterestDTO>();
 		for (Entry<InterestDTO, CheckBox> entry : interestToCheckboxMap.entrySet()) {
@@ -614,8 +618,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		valid &= validatePassword(newPasswordInput, newPasswordCg, newPasswordError);
 
 		String confirmPasswordInput = confirmNewPassword.getText().trim();
-		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg,
-				confirmNewPasswordError);
+		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg, confirmNewPasswordError);
 
 		if (newPasswordInput != null && confirmPasswordInput != null) {
 			if (!confirmPasswordInput.equals(newPasswordInput)) {

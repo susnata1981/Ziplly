@@ -18,25 +18,29 @@ public abstract class AbstractView extends Composite {
 	protected PlaceController placeController;
 	protected BasicDataFormatter basicDataFormatter;
 	protected AccountFormatter accountFormatter;
-	
+
 	public AbstractView(EventBus eventBus) {
 		this.eventBus = eventBus;
-		basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(
-				ValueFamilyType.BASIC_DATA_VALUE);
-		accountFormatter = (AccountFormatter)AbstractValueFormatterFactory.getValueFamilyFormatter(
-				ValueFamilyType.ACCOUNT_INFORMATION);
+		basicDataFormatter =
+		    (BasicDataFormatter) AbstractValueFormatterFactory
+		        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+		accountFormatter =
+		    (AccountFormatter) AbstractValueFormatterFactory
+		        .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 	}
-	
+
 	public AbstractView(CachingDispatcherAsync dispatcher,
-			EventBus eventBus,
-			PlaceController placeController) {
+	    EventBus eventBus,
+	    PlaceController placeController) {
 		this(eventBus);
 		this.placeController = placeController;
 	}
-	
+
 	public void setBackgroundImage(String imageUrl) {
-		RootPanel.getBodyElement().getStyle().setProperty("background", 
-				"url("+imageUrl+") no-repeat center center fixed");
+		RootPanel
+		    .getBodyElement()
+		    .getStyle()
+		    .setProperty("background", "url(" + imageUrl + ") no-repeat center center fixed");
 		RootPanel.getBodyElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 }

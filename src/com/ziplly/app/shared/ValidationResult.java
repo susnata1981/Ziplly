@@ -29,7 +29,7 @@ public class ValidationResult {
 		public ErrorMessage(String error) {
 			this.error = error;
 		}
-		
+
 		public String getErrorMessage() {
 			return error;
 		}

@@ -79,11 +79,9 @@ public class ConversationView extends AbstractView implements IConversationView 
 	private static final String RECEIVER_KEY = "Receiver";
 	private static final int PAGE_SIZE = 10;
 	private static final String STATUS_COL_KEY = "Status";
-	private static ConversationViewUiBinder uiBinder = GWT
-			.create(ConversationViewUiBinder.class);
-	
-	interface ConversationViewUiBinder extends
-			UiBinder<Widget, ConversationView> {
+	private static ConversationViewUiBinder uiBinder = GWT.create(ConversationViewUiBinder.class);
+
+	interface ConversationViewUiBinder extends UiBinder<Widget, ConversationView> {
 	}
 
 	public interface Style extends CssResource {
@@ -100,19 +98,19 @@ public class ConversationView extends AbstractView implements IConversationView 
 		String replyPanel();
 
 		String buttonPanel();
-		
+
 		String button();
 
 		String conversationNotRead();
-		
+
 		String subjectFont();
-		
+
 		String helpinline();
-		
+
 		String conversationRow();
 
 		String replyTextArea();
-		
+
 		String message();
 	}
 
@@ -128,39 +126,39 @@ public class ConversationView extends AbstractView implements IConversationView 
 
 	@UiField
 	SpanElement unreadMessageCountSpan;
-	
+
 	@UiField
 	SpanElement sentMessageCountSpan;
-	
+
 	@UiField
 	SpanElement receivedMessageCountSpan;
-	
+
 	@UiField
 	Anchor receivedMessagesLink;
-	
+
 	@UiField
 	Anchor sentMessagesLink;
-	
+
 	@UiField
 	Anchor messagesLink;
-	
+
 	@UiField
 	Anchor profileLink;
-	
+
 	@UiField
 	Anchor settingsLink;
-	
+
 	@UiField
 	Alert message;
-	
+
 	ConversationViewPresenter presenter;
 
 	Map<INBOXLINK, Anchor> inboxLinks = new HashMap<INBOXLINK, Anchor>();
 	List<ConversationDTO> conversations;
-	
+
 	CellTable<ConversationDTO> conversationTable;
 	SimplePager pager;
-	
+
 	TableResources tableResources;
 	List<ConversationDTO> filteredConversations = new ArrayList<ConversationDTO>();
 	private ConversationViewState state;
@@ -178,20 +176,20 @@ public class ConversationView extends AbstractView implements IConversationView 
 				state.onRangeChange(event.getNewRange());
 				presenter.getConversations(state.getSearchCriteria());
 			}
-			
+
 		});
-			
+
 		pager = new SimplePager();
 		pager.setDisplay(conversationTable);
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		buildConversationTable();
-		
+
 		inboxLinks.put(INBOXLINK.INBOX, messagesLink);
 		inboxLinks.put(INBOXLINK.RECEIVED_MESSAGES, receivedMessagesLink);
 		inboxLinks.put(INBOXLINK.SENT_MESSAGES, sentMessagesLink);
 		setInboxLink(INBOXLINK.INBOX);
-		
+
 		conversationPanel.add(pager);
 		conversationPanel.add(conversationTable);
 		state = new ConversationViewState(PAGE_SIZE);
@@ -237,26 +235,26 @@ public class ConversationView extends AbstractView implements IConversationView 
 			return;
 		}
 		int totalConversations = conversations.size();
-			
-		for(int i=start; i<end; i++) {
+
+		for (int i = start; i < end; i++) {
 			if (i >= totalConversations) {
 				return;
 			}
 			ConversationDTO c = conversations.get(i);
-			System.out.println("S="+c.isSender()+" S="+c.getStatus());
-			if (/* !c.isSender() && */ c.getStatus() == ConversationStatus.UNREAD) {
-				TableRowElement row = conversationTable.getRowElement(i-start);
+			System.out.println("S=" + c.isSender() + " S=" + c.getStatus());
+			if (/* !c.isSender() && */c.getStatus() == ConversationStatus.UNREAD) {
+				TableRowElement row = conversationTable.getRowElement(i - start);
 				row.getStyle().setBackgroundColor("#e5e5e5");
 			}
 		}
 	}
-	
+
 	@Override
 	public void clear() {
 		StyleHelper.show(conversationRow.getElement(), false);
 		StyleHelper.clearBackground();
 	}
-	
+
 	@Override
 	public void clearMessageCount() {
 		updateCount(unreadMessageCountSpan, 0, false);
@@ -266,17 +264,17 @@ public class ConversationView extends AbstractView implements IConversationView 
 	public void setUnreadMessageCount(int count) {
 		updateCount(unreadMessageCountSpan, count, true);
 	}
-	
+
 	void updateCount(SpanElement elem, int value, boolean setZero) {
 		if (value > 0) {
-			elem.setInnerHTML("("+value+")");
+			elem.setInnerHTML("(" + value + ")");
 		} else if (setZero) {
 			elem.setInnerHTML("(0)");
 		} else if (!setZero) {
 			elem.setInnerHTML("");
 		}
 	}
-	
+
 	private Header<String> buildHeader(final String title) {
 		Header<String> header = new Header<String>(new TextCell()) {
 			@Override
@@ -286,39 +284,41 @@ public class ConversationView extends AbstractView implements IConversationView 
 		};
 		return header;
 	}
-	
+
 	void buildConversationTable() {
 		conversationTable.setStyleName(style.conversation());
-		Column<ConversationDTO, String> senderColumn = new Column<ConversationDTO, String>(new ClickableTextCell() {
-			public void render(Context context, String value, SafeHtmlBuilder sb) {
-				ConversationDTO c;
-				c = conversations.get(context.getIndex() - state.getStart());
-				sb.appendHtmlConstant(getImageLink(c.getSender()));
-			}
-			}) {
-				@Override
-				public String getValue(ConversationDTO c) {
-					return c.getSender().getImageUrl();
-				}
-		};
+		Column<ConversationDTO, String> senderColumn =
+		    new Column<ConversationDTO, String>(new ClickableTextCell() {
+			    public void render(Context context, String value, SafeHtmlBuilder sb) {
+				    ConversationDTO c;
+				    c = conversations.get(context.getIndex() - state.getStart());
+				    sb.appendHtmlConstant(getImageLink(c.getSender()));
+			    }
+		    }) {
+			    @Override
+			    public String getValue(ConversationDTO c) {
+				    return c.getSender().getImageUrl();
+			    }
+		    };
 		conversationTable.addColumn(senderColumn, buildHeader(SENDER_KEY));
 		conversationTable.setColumnWidth(senderColumn, 20, Unit.PCT);
-		
-		Column<ConversationDTO, String> receiverColumn = new Column<ConversationDTO, String>(new ClickableTextCell() {
-			public void render(Context context, String value, SafeHtmlBuilder sb) {
-				ConversationDTO c;
-				c = conversations.get(context.getIndex() - state.getStart());
-				sb.appendHtmlConstant(getImageLink(c.getReceiver()));
-			}
-			}) {
-				@Override
-				public String getValue(ConversationDTO c) {
-					return c.getSender().getImageUrl();
-				}
-		};
+
+		Column<ConversationDTO, String> receiverColumn =
+		    new Column<ConversationDTO, String>(new ClickableTextCell() {
+			    public void render(Context context, String value, SafeHtmlBuilder sb) {
+				    ConversationDTO c;
+				    c = conversations.get(context.getIndex() - state.getStart());
+				    sb.appendHtmlConstant(getImageLink(c.getReceiver()));
+			    }
+		    }) {
+			    @Override
+			    public String getValue(ConversationDTO c) {
+				    return c.getSender().getImageUrl();
+			    }
+		    };
 		conversationTable.addColumn(receiverColumn, buildHeader(RECEIVER_KEY));
 		conversationTable.setColumnWidth(receiverColumn, 20, Unit.PCT);
-		
+
 		Column<ConversationDTO, String> subjectCol = new TextColumn<ConversationDTO>() {
 			@Override
 			public String getValue(ConversationDTO c) {
@@ -328,7 +328,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		subjectCol.setCellStyleNames(style.subjectFont());
 		conversationTable.addColumn(subjectCol, buildHeader(SUBJECT_KEY));
 		conversationTable.setColumnWidth(subjectCol, 28, Unit.PCT);
-		
+
 		Column<ConversationDTO, String> statusCol = new TextColumn<ConversationDTO>() {
 
 			@Override
@@ -338,17 +338,19 @@ public class ConversationView extends AbstractView implements IConversationView 
 		};
 		conversationTable.addColumn(statusCol, buildHeader(STATUS_COL_KEY));
 		conversationTable.setColumnWidth(statusCol, 6, Unit.PCT);
-		
+
 		Column<ConversationDTO, String> timeSentCol = new TextColumn<ConversationDTO>() {
 			@Override
 			public String getValue(ConversationDTO c) {
-				return basicDataFormatter.format(c.getMessages().get(0).getTimeCreated(), ValueType.DATE_VALUE_MEDIUM);
+				return basicDataFormatter.format(
+				    c.getMessages().get(0).getTimeCreated(),
+				    ValueType.DATE_VALUE_MEDIUM);
 			}
 		};
 		conversationTable.addColumn(timeSentCol, buildHeader(TIME_RECEIVED_KEY));
 		conversationTable.setColumnWidth(timeSentCol, 26, Unit.PCT);
-		
-		conversationTable.addCellPreviewHandler(new Handler<ConversationDTO>(){
+
+		conversationTable.addCellPreviewHandler(new Handler<ConversationDTO>() {
 
 			@Override
 			public void onCellPreview(CellPreviewEvent<ConversationDTO> event) {
@@ -359,11 +361,11 @@ public class ConversationView extends AbstractView implements IConversationView 
 			}
 		});
 	}
-	
+
 	private String getImageLink(AccountDTO acct) {
 		return accountFormatter.format(acct, ValueType.TINY_IMAGE_VALUE);
 	}
-	
+
 	private Panel getImagePanel(final AccountDTO acct, ValueType imageValueType) {
 		HPanel panel = new HPanel();
 		Anchor anchor = new Anchor();
@@ -375,10 +377,11 @@ public class ConversationView extends AbstractView implements IConversationView 
 			}
 		});
 		panel.add(anchor);
-		panel.add(new HTMLPanel("<span>"+accountFormatter.format(acct, ValueType.NAME_VALUE)+"</span>"));
+		panel.add(new HTMLPanel("<span>" + accountFormatter.format(acct, ValueType.NAME_VALUE)
+		    + "</span>"));
 		return panel;
 	}
-	
+
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
@@ -398,9 +401,10 @@ public class ConversationView extends AbstractView implements IConversationView 
 		heading.setText(text);
 		return heading;
 	}
-	
+
 	/**
 	 * Displays the entire conversation
+	 * 
 	 * @param conversation
 	 */
 	@Override
@@ -410,44 +414,48 @@ public class ConversationView extends AbstractView implements IConversationView 
 			StyleHelper.show(conversationRow.getElement(), true);
 			conversationPanel.clear();
 			messagesPanel = new HTMLPanel("");
-			
+
 			FluidRow row = new FluidRow();
 			row.addStyleName(style.conversationRow());
-			com.github.gwtbootstrap.client.ui.Column col1 = new com.github.gwtbootstrap.client.ui.Column(1);
+			com.github.gwtbootstrap.client.ui.Column col1 =
+			    new com.github.gwtbootstrap.client.ui.Column(1);
 			col1.add(getHeading(4, SENDER_KEY));
 			row.add(col1);
-			
-			com.github.gwtbootstrap.client.ui.Column col2 = new com.github.gwtbootstrap.client.ui.Column(5);
+
+			com.github.gwtbootstrap.client.ui.Column col2 =
+			    new com.github.gwtbootstrap.client.ui.Column(5);
 			col2.setOffset(1);
 			col2.add(getImagePanel(conversation.getSender(), ValueType.SMALL_IMAGE_VALUE));
 			row.add(col2);
 			conversationPanel.add(row);
-			
+
 			row = new FluidRow();
 			row.addStyleName(style.conversationRow());
 			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
 			col1.add(getHeading(4, RECEIVER_KEY));
 			row.add(col1);
-			
+
 			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
 			col2.setOffset(1);
 			col2.add(getImagePanel(conversation.getReceiver(), ValueType.SMALL_IMAGE_VALUE));
 			row.add(col2);
 			conversationPanel.add(row);
-			
+
 			row = new FluidRow();
 			row.addStyleName(style.conversationRow());
 			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
 			col1.add(getHeading(4, SUBJECT_KEY));
 			row.add(col1);
-			
+
 			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
 			col2.setOffset(1);
-			col2.add(new HTMLPanel(basicDataFormatter.format(conversation.getSubject(), ValueType.STRING_VALUE)));
+			col2.add(new HTMLPanel(basicDataFormatter.format(
+			    conversation.getSubject(),
+			    ValueType.STRING_VALUE)));
 			row.add(col2);
 			conversationPanel.add(row);
 			conversationPanel.add(new HTMLPanel("<hr/>"));
-			
+
 			for (MessageDTO msg : conversation.getMessages()) {
 				messagesPanel.add(displayMessage(msg));
 				messagesPanel.add(new HTMLPanel("<hr/>"));
@@ -459,27 +467,34 @@ public class ConversationView extends AbstractView implements IConversationView 
 
 	/**
 	 * Displays individual messages of a conversation
+	 * 
 	 * @param msg
 	 * @return
 	 */
 	private Panel displayMessage(final MessageDTO msg) {
 		FluidContainer container = new FluidContainer();
 		Row row = new Row();
-		com.github.gwtbootstrap.client.ui.Column imageCol = new com.github.gwtbootstrap.client.ui.Column(3);
+		com.github.gwtbootstrap.client.ui.Column imageCol =
+		    new com.github.gwtbootstrap.client.ui.Column(3);
 		imageCol.add(getImagePanel(msg.getSender(), ValueType.MEDIUM_IMAGE_VALUE));
 		row.add(imageCol);
-		
-		com.github.gwtbootstrap.client.ui.Column messageCol = new com.github.gwtbootstrap.client.ui.Column(9);
-		HTMLPanel messagePanel = new HTMLPanel("<span class='medium_text'>" + msg.getMessage() + "</span>");
+
+		com.github.gwtbootstrap.client.ui.Column messageCol =
+		    new com.github.gwtbootstrap.client.ui.Column(9);
+		HTMLPanel messagePanel =
+		    new HTMLPanel("<span class='medium_text'>" + msg.getMessage() + "</span>");
 		messageCol.add(messagePanel);
 		row.add(messageCol);
 		container.add(row);
-		
+
 		Row timeRow = new Row();
-		com.github.gwtbootstrap.client.ui.Column timeCol = new com.github.gwtbootstrap.client.ui.Column(4);
+		com.github.gwtbootstrap.client.ui.Column timeCol =
+		    new com.github.gwtbootstrap.client.ui.Column(4);
 		timeCol.setOffset(8);
-		HTMLPanel timePanel = new HTMLPanel("<span class='tiny_text'>sent on "
-				+basicDataFormatter.format(msg.getTimeCreated(), ValueType.DATE_VALUE_SHORT)+"</span>");
+		HTMLPanel timePanel =
+		    new HTMLPanel("<span class='tiny_text'>sent on "
+		        + basicDataFormatter.format(msg.getTimeCreated(), ValueType.DATE_VALUE_SHORT)
+		        + "</span>");
 		timeCol.add(timePanel);
 		timeRow.add(timeCol);
 		container.add(timeRow);
@@ -488,6 +503,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 
 	/**
 	 * Adds a reply panel
+	 * 
 	 * @param root
 	 * @param c
 	 */
@@ -502,10 +518,11 @@ public class ConversationView extends AbstractView implements IConversationView 
 		col.add(info);
 		row.add(col);
 		container.add(row);
-		
+
 		// TextArea row
 		row = new Row();
-		com.github.gwtbootstrap.client.ui.Column replyTextCol = new com.github.gwtbootstrap.client.ui.Column(10);
+		com.github.gwtbootstrap.client.ui.Column replyTextCol =
+		    new com.github.gwtbootstrap.client.ui.Column(10);
 
 		replyTextCol.setOffset(1);
 		HTMLPanel replyPanel = new HTMLPanel("");
@@ -522,13 +539,14 @@ public class ConversationView extends AbstractView implements IConversationView 
 		replyTextCol.add(replyPanel);
 		row.add(replyTextCol);
 		container.add(row);
-		
+
 		// buttons
 		Row buttonRow = new Row();
-		com.github.gwtbootstrap.client.ui.Column replyBtnCol = new com.github.gwtbootstrap.client.ui.Column(1);
+		com.github.gwtbootstrap.client.ui.Column replyBtnCol =
+		    new com.github.gwtbootstrap.client.ui.Column(1);
 		replyBtnCol.setOffset(1);
 		buttonRow.add(replyBtnCol);
-		
+
 		Button replyBtn = new Button("Reply");
 		replyBtn.setType(ButtonType.PRIMARY);
 		replyBtnCol.add(replyBtn);
@@ -536,8 +554,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 			@Override
 			public void onClick(ClickEvent event) {
 				info.setVisible(false);
-				ValidationResult result = FieldVerifier
-						.validateTweet(replyTextArea.getText());
+				ValidationResult result = FieldVerifier.validateTweet(replyTextArea.getText());
 				if (!result.isValid()) {
 					replyTextAreaCg.setType(ControlGroupType.ERROR);
 					replyTextAreaHelpInline.setText(result.getErrors().get(0).getErrorMessage());
@@ -546,8 +563,8 @@ public class ConversationView extends AbstractView implements IConversationView 
 				}
 
 				replyTextAreaCg.setType(ControlGroupType.NONE);
-				replyTextAreaHelpInline.setVisible(false);		
-				
+				replyTextAreaHelpInline.setVisible(false);
+
 				ConversationDTO conversation = new ConversationDTO();
 				conversation.setId(c.getId());
 				conversation.setSender(c.getSender());
@@ -572,9 +589,10 @@ public class ConversationView extends AbstractView implements IConversationView 
 			}
 		});
 
-		com.github.gwtbootstrap.client.ui.Column backBtnCol = new com.github.gwtbootstrap.client.ui.Column(2);
+		com.github.gwtbootstrap.client.ui.Column backBtnCol =
+		    new com.github.gwtbootstrap.client.ui.Column(2);
 		buttonRow.add(backBtnCol);
-	
+
 		Button backBtn = new Button("Back");
 		backBtn.addStyleName(style.button());
 		backBtnCol.add(backBtn);
@@ -588,31 +606,31 @@ public class ConversationView extends AbstractView implements IConversationView 
 		container.add(buttonRow);
 		root.add(container);
 	}
-	
+
 	@UiHandler("profileLink")
 	void onProfileLinkClick(ClickEvent event) {
 		presenter.goTo(new PersonalAccountPlace());
 	}
-	
+
 	@UiHandler("settingsLink")
 	void onSettingsLinkClick(ClickEvent event) {
 		presenter.goTo(new PersonalAccountSettingsPlace());
 	}
-	
-	@UiHandler({"messagesLink"})
+
+	@UiHandler({ "messagesLink" })
 	void onInboxLinkClicked(ClickEvent event) {
 		state.getReceivedMessages();
 		getConversations();
 		clearConversationTable();
 	}
-	
+
 	@UiHandler("receivedMessagesLink")
 	void displayRecievedMessages(ClickEvent event) {
 		state.getReceivedMessages();
 		getConversations();
 		clearConversationTable();
 	}
-	
+
 	@UiHandler("sentMessagesLink")
 	void displaySentMessages(ClickEvent event) {
 		state.getSentMessages();
@@ -621,12 +639,12 @@ public class ConversationView extends AbstractView implements IConversationView 
 	}
 
 	private void getConversations() {
-		//presenter.getConversations(type, pageStart, 0);
+		// presenter.getConversations(type, pageStart, 0);
 		presenter.getConversations(state.getSearchCriteria());
 	}
-	
+
 	private void setInboxLink(INBOXLINK link) {
-		for(INBOXLINK l : INBOXLINK.values()) {
+		for (INBOXLINK l : INBOXLINK.values()) {
 			if (l == link) {
 				inboxLinks.get(l).getElement().getParentElement().getStyle().setBackgroundColor("#ddd");
 			} else {
@@ -634,11 +652,9 @@ public class ConversationView extends AbstractView implements IConversationView 
 			}
 		}
 	}
-	
+
 	public static enum INBOXLINK {
-		INBOX,
-		RECEIVED_MESSAGES,
-		SENT_MESSAGES
+		INBOX, RECEIVED_MESSAGES, SENT_MESSAGES
 	}
 
 	@Override

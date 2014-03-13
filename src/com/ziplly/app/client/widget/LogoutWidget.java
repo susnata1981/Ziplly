@@ -14,13 +14,13 @@ import com.ziplly.app.model.AccountDTO;
 
 public class LogoutWidget extends Composite {
 
-	private static LogoutWidgetUiBinder uiBinder = GWT
-			.create(LogoutWidgetUiBinder.class);
+	private static LogoutWidgetUiBinder uiBinder = GWT.create(LogoutWidgetUiBinder.class);
 
 	interface LogoutWidgetUiBinder extends UiBinder<Widget, LogoutWidget> {
 	}
 
-//	private OAuthConfig authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
+	// private OAuthConfig authConfig =
+	// OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name());
 
 	@UiField
 	Button logoutBtn;

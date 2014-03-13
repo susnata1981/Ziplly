@@ -5,11 +5,11 @@ import com.ziplly.app.model.ImageDTO;
 public class ImageUtil {
 
 	/**
-	 * This assumes UploadServlet is sending back the image data in the
-	 * following format <serving_url>:<blob_key>
+	 * This assumes UploadServlet is sending back the image data in the following
+	 * format <serving_url>:<blob_key>
 	 * 
 	 * @param imageUrl
-	 *            <serving_url>:<blob_key>
+	 *          <serving_url>:<blob_key>
 	 * @return {@link ImageDTO}
 	 */
 	public static ImageDTO parseImageUrl(String imageUrl) {
@@ -19,7 +19,7 @@ public class ImageUtil {
 			image.setUrl(data[0].trim());
 			image.setId(Long.parseLong(data[1].trim()));
 		} else {
-			throw new RuntimeException("Invalid image url format: "+imageUrl);
+			throw new RuntimeException("Invalid image url format: " + imageUrl);
 		}
 		return image;
 	}

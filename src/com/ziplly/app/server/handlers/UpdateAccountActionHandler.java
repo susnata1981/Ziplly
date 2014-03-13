@@ -14,17 +14,18 @@ import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
 
 public class UpdateAccountActionHandler extends
-		AbstractAccountActionHandler<UpdateAccountAction, UpdateAccountResult> {
+    AbstractAccountActionHandler<UpdateAccountAction, UpdateAccountResult> {
 
 	@Inject
 	public UpdateAccountActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public UpdateAccountResult execute(UpdateAccountAction action,
-			ExecutionContext ec) throws DispatchException {
+	public UpdateAccountResult
+	    execute(UpdateAccountAction action, ExecutionContext ec) throws DispatchException {
 
 		if (action == null || action.getAccount() == null) {
 			throw new IllegalArgumentException();
@@ -34,9 +35,10 @@ public class UpdateAccountActionHandler extends
 
 		AccountDTO accountDto = action.getAccount();
 		Account account = EntityUtil.convert(accountDto);
-		
+
 		AccountDTO result = accountBli.updateAccount(account);
-//		accountBli.setCurrentLocation(result, session.getLocation().getNeighborhood().getNeighborhoodId());
+		// accountBli.setCurrentLocation(result,
+		// session.getLocation().getNeighborhood().getNeighborhoodId());
 		result.setCurrentLocation(EntityUtil.clone(session.getLocation()));
 		return new UpdateAccountResult(result);
 	}

@@ -17,31 +17,32 @@ import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanResult;
 
-public class GetAllSubscriptionPlanActionHandler extends AbstractAccountActionHandler<GetAllSubscriptionPlanAction, GetAllSubscriptionPlanResult>{
+public class GetAllSubscriptionPlanActionHandler extends
+    AbstractAccountActionHandler<GetAllSubscriptionPlanAction, GetAllSubscriptionPlanResult> {
 	private SubscriptionPlanDAO subscriptionPlanDao;
 	private PaymentService paymentService;
 
 	@Inject
 	public GetAllSubscriptionPlanActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli,
-			PaymentService paymentService,
-			SubscriptionPlanDAO subscriptionPlanDao) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    PaymentService paymentService,
+	    SubscriptionPlanDAO subscriptionPlanDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.paymentService = paymentService;
 		this.subscriptionPlanDao = subscriptionPlanDao;
 	}
 
 	@Override
-	public GetAllSubscriptionPlanResult execute(
-			GetAllSubscriptionPlanAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public GetAllSubscriptionPlanResult execute(GetAllSubscriptionPlanAction action,
+	    ExecutionContext arg1) throws DispatchException {
+
 		validateSession();
-		
+
 		GetAllSubscriptionPlanResult result = new GetAllSubscriptionPlanResult();
-		
+
 		List<SubscriptionPlanDTO> plans = subscriptionPlanDao.getAll();
-		for(SubscriptionPlanDTO plan : plans) {
+		for (SubscriptionPlanDTO plan : plans) {
 			try {
 				String token = paymentService.getJWT(session.getAccount().getAccountId(), plan.getFee());
 				result.add(plan, token);

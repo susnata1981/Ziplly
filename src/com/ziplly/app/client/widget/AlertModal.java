@@ -19,14 +19,14 @@ public class AlertModal extends Composite {
 
 	@UiField
 	Modal modal;
-	
+
 	@UiField
 	Alert alert;
-	
+
 	public AlertModal() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-	
+
 	public void showMessage(String msg, AlertType type) {
 		alert.setText(msg);
 		alert.setType(type);
@@ -40,5 +40,5 @@ public class AlertModal extends Composite {
 		};
 		timer.schedule(1000);
 	}
-	
+
 }

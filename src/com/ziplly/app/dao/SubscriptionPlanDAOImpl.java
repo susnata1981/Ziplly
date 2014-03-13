@@ -37,8 +37,8 @@ public class SubscriptionPlanDAOImpl implements SubscriptionPlanDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			@SuppressWarnings("unchecked")
-			List<SubscriptionPlan> plans = (List<SubscriptionPlan>) em.createQuery(
-					"from SubscriptionPlan").getResultList();
+			List<SubscriptionPlan> plans =
+			    (List<SubscriptionPlan>) em.createQuery("from SubscriptionPlan").getResultList();
 			return EntityUtil.cloneSubscriptionPlanList(plans);
 		} finally {
 			em.close();

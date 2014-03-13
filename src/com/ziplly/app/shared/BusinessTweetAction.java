@@ -9,7 +9,7 @@ public class BusinessTweetAction implements Action<BusinessTweetResult> {
 
 	public BusinessTweetAction() {
 	}
-	
+
 	public BusinessTweetAction(TweetDTO tweet) {
 		this.setTweet(tweet);
 	}

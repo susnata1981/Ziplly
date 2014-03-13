@@ -14,24 +14,24 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetInterestAction;
 import com.ziplly.app.shared.GetInterestResult;
 
-public class GetInterestActionHandler extends AbstractAccountActionHandler<GetInterestAction, GetInterestResult> {
+public class GetInterestActionHandler extends
+    AbstractAccountActionHandler<GetInterestAction, GetInterestResult> {
 	private InterestDAO interestDao;
 
 	@Inject
-	public GetInterestActionHandler(
-			AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			AccountBLI accountBli,
-			InterestDAO interestDao) {
-		
+	public GetInterestActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    InterestDAO interestDao) {
+
 		super(accountDao, sessionDao, accountBli);
 		this.interestDao = interestDao;
 	}
 
 	@Override
-	public GetInterestResult execute(GetInterestAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public GetInterestResult
+	    execute(GetInterestAction action, ExecutionContext arg1) throws DispatchException {
+
 		validateSession();
 		List<InterestDTO> interests = interestDao.findAll();
 		GetInterestResult response = new GetInterestResult();

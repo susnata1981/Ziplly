@@ -1,7 +1,6 @@
 package com.ziplly.app.dao;
 
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
@@ -12,21 +11,20 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountRegistration;
 import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
 
 public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 	private Logger logger = Logger.getLogger(AccountRegistrationDAOImpl.class.getCanonicalName());
-	
+
 	private AccountDAO accountDao;
 
 	@Inject
 	AccountRegistrationDAOImpl(AccountDAO accountDao) {
 		this.accountDao = accountDao;
 	}
-	
+
 	@Override
 	public void save(AccountRegistration ar) {
 		if (ar == null) {
@@ -68,17 +66,18 @@ public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = em
-					.createQuery("from AccountRegistration where email = :email and status = :status order by timeCreated desc");
+			Query query =
+			    em
+			        .createQuery("from AccountRegistration where email = :email and status = :status order by timeCreated desc");
 			query.setParameter("email", email);
 			query.setParameter("status", AccountRegistrationStatus.UNUSED.name());
-//			@SuppressWarnings("unchecked")
-//			List<AccountRegistration> result = query.getResultList();
-//
-//			if (result.size() > 0) {
-//				return result.get(0);
-//			}
-//			return null;
+			// @SuppressWarnings("unchecked")
+			// List<AccountRegistration> result = query.getResultList();
+			//
+			// if (result.size() > 0) {
+			// return result.get(0);
+			// }
+			// return null;
 			AccountRegistration ar = (AccountRegistration) query.getSingleResult();
 			return ar;
 		} finally {
@@ -95,8 +94,9 @@ public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = em
-					.createQuery("from AccountRegistration where email = :email and status = :status and code = :code");
+			Query query =
+			    em
+			        .createQuery("from AccountRegistration where email = :email and status = :status and code = :code");
 			query.setParameter("email", email);
 			query.setParameter("code", code);
 			query.setParameter("status", AccountRegistrationStatus.ACTIVE);
@@ -130,32 +130,41 @@ public class AccountRegistrationDAOImpl implements AccountRegistrationDAO {
 	}
 
 	@Override
-	public void findAndVerifyAccount(Long id, String code) throws NotFoundException, DuplicateException {
+	public void findAndVerifyAccount(Long id, String code) throws NotFoundException,
+	    DuplicateException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();
-			Query query = em
-					.createQuery("from AccountRegistration where accountId = :id and code = :code")
-					.setParameter("id", id).setParameter("code", code);
+			Query query =
+			    em
+			        .createQuery("from AccountRegistration where accountId = :id and code = :code")
+			        .setParameter("id", id)
+			        .setParameter("code", code);
 
 			AccountRegistration ar = (AccountRegistration) query.getSingleResult();
-			
+
 			if (ar.getStatus() == AccountRegistrationStatus.USED) {
 				throw new DuplicateException();
 			}
-			
+
 			ar.setStatus(AccountRegistrationStatus.USED);
 			em.merge(ar);
 
-			query = em.createQuery("from Account where account_id = :accountId").setParameter("accountId", id);
+			query =
+			    em
+			        .createQuery("from Account where account_id = :accountId")
+			        .setParameter("accountId", id);
 			Account account = (Account) query.getSingleResult();
 			account.setStatus(AccountStatus.ACTIVE);
 			account.setTimeUpdated(new Date());
 			em.merge(account);
-			
+
 			em.getTransaction().commit();
 		} catch (NoResultException e) {
-			logger.warning(String.format("Couldn't find AccountRegistration with id %d, code %s", id, code));
+			logger.warning(String.format(
+			    "Couldn't find AccountRegistration with id %d, code %s",
+			    id,
+			    code));
 			throw new NotFoundException();
 		} finally {
 			em.close();

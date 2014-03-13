@@ -9,7 +9,7 @@ public class ValidateLoginResult implements Result {
 
 	public ValidateLoginResult() {
 	}
-	
+
 	public ValidateLoginResult(AccountDTO account) {
 		this.setAccount(account);
 	}

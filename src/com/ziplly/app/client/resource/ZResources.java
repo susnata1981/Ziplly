@@ -11,44 +11,44 @@ public interface ZResources extends ClientBundle {
 
 	interface Styles extends CssResource {
 		String mainPageBackground();
-		
+
 		String fbBtnImage();
-		
+
 		String zipllyLogo();
 	}
-	
+
 	@DoNotEmbed
 	@Source("no-photo.jpg")
 	ImageResource noImage();
-	
+
 	@Source("zbackground.jpg")
 	ImageResource neighborhoodLargePic();
-	
+
 	@Source("active_600.png")
 	ImageResource facebookLoginButtonImage();
 
 	@Source("ziplly-logo.png")
 	ImageResource zipllyLogo();
-	
+
 	@Source("ajax-loader-large.gif")
 	ImageResource loadingImageLarge();
-	
+
 	@Source("ajax-loader-small.gif")
 	ImageResource loadingImageSmall();
-	
+
 	@DoNotEmbed
 	@Source("no-photo.jpg")
 	ImageResource noPhoto();
-	
-	@Source("magnolia.jpg")
+
+	@Source("magnolia.jpeg")
 	ImageResource magnolia();
-	
+
 	@Source("bluecriscross.png")
 	ImageResource profileBackground();
-	
+
 	@Source("uploadicon.png")
 	ImageResource uploadIcon();
-	
+
 	@Source("zstyle.css")
 	Styles style();
 }

@@ -22,7 +22,7 @@ public class SignupPlace extends Place {
 	public void setAccount(AccountDTO account) {
 		this.account = account;
 	}
-	
+
 	@Prefix("signup")
 	public static class Tokenizer implements PlaceTokenizer<SignupPlace> {
 		@Override

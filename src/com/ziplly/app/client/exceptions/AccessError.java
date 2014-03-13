@@ -7,7 +7,7 @@ public class AccessError extends DispatchException {
 
 	public AccessError() {
 	}
-	
+
 	public AccessError(String msg) {
 		super(msg);
 	}

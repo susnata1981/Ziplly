@@ -6,7 +6,7 @@ import com.google.gwt.place.shared.Prefix;
 
 public class TweetDetailsPlace extends Place {
 	private Long tweetId;
-	
+
 	@Prefix("tweet")
 	public static class Tokenizer implements PlaceTokenizer<TweetDetailsPlace> {
 		@Override

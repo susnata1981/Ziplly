@@ -13,7 +13,7 @@ public class PayResult implements Result {
 	public void setTransaction(TransactionDTO txn) {
 		this.transaction = txn;
 	}
-	
+
 	public TransactionDTO getTransaction() {
 		return transaction;
 	}

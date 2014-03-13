@@ -10,26 +10,26 @@ public class QueryMetaData implements Serializable {
 	private EntityType entityType;
 	private List<Predicate> predicates = new ArrayList<Predicate>();
 	private Integer offset, limit;
-	
+
 	public EntityType getEntityType() {
 		return entityType;
 	}
-	
+
 	public void setEntityType(EntityType entityType) {
 		this.entityType = entityType;
 	}
-	
+
 	public void addPredicate(Field field, Operator op, String value) {
 		predicates.add(new Predicate(field, op, Collections.singletonList(value)));
 	}
-	
+
 	public void addPredicate(Field field, Operator op, List<String> values) {
 		if (op != Operator.IN) {
 			throw new IllegalArgumentException("Illegal argument to addPredicate function");
 		}
 		predicates.add(new Predicate(field, op, values));
 	}
-	
+
 	public boolean hasParams() {
 		return getPredicates().size() > 0;
 	}

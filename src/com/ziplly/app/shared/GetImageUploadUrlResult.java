@@ -7,7 +7,7 @@ public class GetImageUploadUrlResult implements Result {
 
 	public GetImageUploadUrlResult() {
 	}
-	
+
 	public GetImageUploadUrlResult(String url) {
 		this.setImageUrl(url);
 	}

@@ -1,9 +1,8 @@
 package com.ziplly.app.model;
 
 public enum NotificationAction {
-	EMAIL("email"),
-	NO_EMAIL("no email");
-	
+	EMAIL("email"), NO_EMAIL("no email");
+
 	private String name;
 
 	NotificationAction(String name) {

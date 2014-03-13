@@ -4,13 +4,13 @@ import net.customware.gwt.dispatch.shared.Action;
 
 import com.ziplly.app.model.CommentDTO;
 
-public class CommentAction implements Action<CommentResult>{
+public class CommentAction implements Action<CommentResult> {
 	private CommentDTO comment;
-	
+
 	public CommentAction(CommentDTO comment) {
 		this.setComment(comment);
 	}
-	
+
 	public CommentAction() {
 	}
 

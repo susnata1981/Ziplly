@@ -25,7 +25,7 @@ public class TweetDetailsView extends Composite {
 	@UiField
 	HTMLPanel communityWallPanel;
 	private TweetPresenter presenter;
-	
+
 	public TweetDetailsView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		StyleHelper.show(message.getElement(), false);
@@ -34,7 +34,7 @@ public class TweetDetailsView extends Composite {
 	public void setPresenter(TweetPresenter presenter) {
 		this.presenter = presenter;
 	}
-	
+
 	public void display(TweetDTO tweet) {
 		StyleHelper.show(message.getElement(), false);
 		clearDisplay();
@@ -44,11 +44,11 @@ public class TweetDetailsView extends Composite {
 		tw.displayTweet(tweet);
 		communityWallPanel.add(tw);
 	}
-	
+
 	public void clearDisplay() {
 		communityWallPanel.clear();
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);

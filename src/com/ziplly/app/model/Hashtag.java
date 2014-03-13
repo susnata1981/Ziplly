@@ -23,7 +23,7 @@ public class Hashtag extends AbstractTimestampAwareEntity {
 	@Column(name = "tag")
 	private String tag;
 
-	@ManyToMany(mappedBy="hashtags")
+	@ManyToMany(mappedBy = "hashtags")
 	private Set<Tweet> tweets = new HashSet<Tweet>();
 
 	public Hashtag() {
@@ -32,9 +32,9 @@ public class Hashtag extends AbstractTimestampAwareEntity {
 	public Hashtag(HashtagDTO h) {
 		this.id = h.getId();
 		this.tag = h.getTag();
-//		for (TweetDTO t : h.getTweets()) {
-//			tweets.add(new Tweet(t));
-//		}
+		// for (TweetDTO t : h.getTweets()) {
+		// tweets.add(new Tweet(t));
+		// }
 	}
 
 	public Set<Tweet> getTweets() {
@@ -64,7 +64,7 @@ public class Hashtag extends AbstractTimestampAwareEntity {
 	public void addTweet(Tweet tweet) {
 		tweets.add(tweet);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		if (tag != null) {
@@ -72,22 +72,22 @@ public class Hashtag extends AbstractTimestampAwareEntity {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Hashtag)) {
 			return false;
 		}
-		
-		Hashtag result = (Hashtag)o;
+
+		Hashtag result = (Hashtag) o;
 		if (result.getId() != null) {
 			return result.getId() == id;
 		}
-		
+
 		return true;
 	}
 }

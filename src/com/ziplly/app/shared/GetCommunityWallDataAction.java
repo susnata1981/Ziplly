@@ -7,10 +7,7 @@ import com.ziplly.app.model.TweetType;
 
 public class GetCommunityWallDataAction implements Action<GetCommunityWallDataResult> {
 	public static enum SearchType {
-		CATEGORY,
-		HASHTAG,
-		TWEET_BY_ID, 
-		NEIGHBORHOOD;
+		CATEGORY, HASHTAG, TWEET_BY_ID, NEIGHBORHOOD;
 	}
 
 	private GetCommunityWallDataAction.SearchType searchType;
@@ -23,25 +20,25 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 
 	public GetCommunityWallDataAction() {
 	}
-	
+
 	public GetCommunityWallDataAction(TweetType type, int page, int pageSize) {
 		this.type = type;
 		this.setPage(page);
 		this.setPageSize(pageSize);
 		searchType = GetCommunityWallDataAction.SearchType.CATEGORY;
 	}
-	
+
 	public GetCommunityWallDataAction(String hashtag, int page, int pageSize) {
 		this.hashtag = hashtag;
 		this.setPage(page);
 		this.setPageSize(pageSize);
 		searchType = GetCommunityWallDataAction.SearchType.HASHTAG;
 	}
-	
+
 	public TweetType getType() {
 		return type;
 	}
-	
+
 	public void setType(TweetType type) {
 		this.type = type;
 	}
@@ -89,7 +86,7 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 	public void setNeighborhood(NeighborhoodDTO neighborhood) {
 		this.neighborhood = neighborhood;
 	}
-	
+
 	public NeighborhoodDTO getNeighborhood() {
 		return neighborhood;
 	}

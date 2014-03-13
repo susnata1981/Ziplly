@@ -17,36 +17,36 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.SwitchLocationAction;
 import com.ziplly.app.shared.SwitchLocationResult;
 
-public class SwitchLocationActionHander extends AbstractAccountActionHandler<SwitchLocationAction, SwitchLocationResult> {
+public class SwitchLocationActionHander extends
+    AbstractAccountActionHandler<SwitchLocationAction, SwitchLocationResult> {
 	private LocationDAO locationDao;
 
 	@Inject
-	public SwitchLocationActionHander(
-			AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			AccountBLI accountBli,
-			LocationDAO locationDao) {
+	public SwitchLocationActionHander(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    LocationDAO locationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.locationDao = locationDao;
 	}
 
 	@Override
-	public SwitchLocationResult execute(SwitchLocationAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public SwitchLocationResult
+	    execute(SwitchLocationAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkNotNull(action.getLocationId());
-		
+
 		validateSession();
-		
+
 		Account loggedInAccount = session.getAccount();
 		if (!loggedInAccount.getLocations().contains(session.getLocation())) {
 			throw new AccessError(String.format("Unauthorized to switch locations"));
 		}
-		
+
 		Location location = locationDao.findById(action.getLocationId());
 		session.setLocation(location);
 		sessionDao.save(session);
-		
+
 		SwitchLocationResult result = new SwitchLocationResult();
 		AccountDTO account = EntityUtil.convert(loggedInAccount);
 		account.setCurrentLocation(EntityUtil.clone(session.getLocation()));

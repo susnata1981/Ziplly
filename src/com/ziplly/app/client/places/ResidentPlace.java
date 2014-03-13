@@ -9,7 +9,7 @@ public class ResidentPlace extends Place {
 	private String token;
 	private Long accountId;
 	private Long neighborhoodId;
-	
+
 	public ResidentPlace() {
 		this.setToken("");
 	}
@@ -59,8 +59,7 @@ public class ResidentPlace extends Place {
 						} catch (NumberFormatException nfe) {
 							return new ResidentPlace("");
 						}
-					}
-					else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+					} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
 						try {
 							long neighborhoodId = Long.parseLong(tokens[1]);
 							ResidentPlace place = new ResidentPlace();
@@ -80,8 +79,7 @@ public class ResidentPlace extends Place {
 		public String getToken(ResidentPlace place) {
 			if (place.getAccountId() != null) {
 				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId());
-			}
-			else if (place.getNeighborhoodId() != null) {
+			} else if (place.getNeighborhoodId() != null) {
 				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {
 				return "";

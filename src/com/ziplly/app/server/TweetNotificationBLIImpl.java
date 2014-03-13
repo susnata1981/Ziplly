@@ -42,9 +42,10 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	Logger logger = Logger.getLogger(TweetNotificationBLIImpl.class.getCanonicalName());
 
 	private ImmutableList<TweetType> emailNotificationTypeList = ImmutableList.of(
-			TweetType.ANNOUNCEMENT, 
-			TweetType.SECURITY_ALERTS, 
-			TweetType.OFFERS);
+	    TweetType.ANNOUNCEMENT,
+	    TweetType.SECURITY_ALERTS,
+	    TweetType.OFFERS,
+	    TweetType.HOT_DEALS);
 
 	private AccountDAO accountDao;
 
@@ -59,13 +60,12 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	private SessionDAO sessionDao;
 
 	@Inject
-	public TweetNotificationBLIImpl(
-			AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			NeighborhoodDAO neighborhoodDao,
-			TweetDAO tweetDao, 
-			AccountNotificationDAO accountNotificationDao,
-			EmailService emailService) {
+	public TweetNotificationBLIImpl(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    NeighborhoodDAO neighborhoodDao,
+	    TweetDAO tweetDao,
+	    AccountNotificationDAO accountNotificationDao,
+	    EmailService emailService) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.neighborhoodDao = neighborhoodDao;
@@ -80,7 +80,8 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 	/**
 	 * Called by TweetActionHandler
-	 * @throws NotFoundException 
+	 * 
+	 * @throws NotFoundException
 	 */
 	@Override
 	public void sendNotificationsIfRequired(TweetDTO tweet) throws NotFoundException {
@@ -91,88 +92,105 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 		EmailTemplate template;
 		switch (tweet.getType()) {
-		case ANNOUNCEMENT:
-			template = EmailTemplate.ANNOUNCEMENT;
-			break;
-		case OFFERS:
-			template = EmailTemplate.OFFER;
-		case SECURITY_ALERTS:
-		default:
-			template = EmailTemplate.SECURITY_ALERT;
+			case ANNOUNCEMENT:
+				template = EmailTemplate.ANNOUNCEMENT;
+				break;
+			case HOT_DEALS:
+			case OFFERS:
+				template = EmailTemplate.OFFER;
+			case SECURITY_ALERTS:
+			default:
+				template = EmailTemplate.SECURITY_ALERT;
 		}
 
 		AccountDTO sender = tweet.getSender();
 		Session session = sessionDao.findSessionByAccountId(sender.getAccountId());
 		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-		
-		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
-				System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
-		
+
+		String backendAddress =
+		    BackendServiceFactory.getBackendService().getBackendAddress(
+		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+
 		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
 
-		logger.info(String.format("Adding notification request to queue %s, backend(0) %s, endpoint %s", 
-				queue, backendAddress, mailEndpoint));
-		
-		TaskOptions options = TaskOptions.Builder
-				.withUrl(mailEndpoint)
-				.method(Method.POST)
-				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
-				.param(ZipllyServerConstants.NEIGHBORHOOD_ID_KEY,
-						Long.toString(session.getLocation().getNeighborhood().getNeighborhoodId()))
-				.param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY,
-						sender.getAccountId().toString())
-				.param(ZipllyServerConstants.TWEET_ID_KEY, tweet.getTweetId().toString())
-				.param(ZipllyServerConstants.NOTIFICATION_TYPE_KEY,
-						tweet.getType().getNotificationType().name())
-				.param(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY, template.name())
-				.header(ZipllyServerConstants.HOST_KEY, backendAddress);
+		logger.info(String.format(
+		    "Adding notification request to queue %s, backend(0) %s, endpoint %s",
+		    queue,
+		    backendAddress,
+		    mailEndpoint));
+
+		TaskOptions options =
+		    TaskOptions.Builder
+		        .withUrl(mailEndpoint)
+		        .method(Method.POST)
+		        .param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
+		        .param(
+		            ZipllyServerConstants.NEIGHBORHOOD_ID_KEY,
+		            Long.toString(session.getLocation().getNeighborhood().getNeighborhoodId()))
+		        .param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY, sender.getAccountId().toString())
+		        .param(ZipllyServerConstants.TWEET_ID_KEY, tweet.getTweetId().toString())
+		        .param(
+		            ZipllyServerConstants.NOTIFICATION_TYPE_KEY,
+		            tweet.getType().getNotificationType().name())
+		        .param(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY, template.name())
+		        .header(ZipllyServerConstants.HOST_KEY, backendAddress);
 		queue.add(options);
 	}
 
 	/**
-	 * Sends notification to subscribers in a given neighborhood. If
-	 * neighborhood is parent neighborhood, then it notifies residents in all
-	 * child neighborhoods otherwise just the residents of child neighborhoods.
+	 * Sends notification to subscribers in a given neighborhood. If neighborhood
+	 * is parent neighborhood, then it notifies residents in all child
+	 * neighborhoods otherwise just the residents of child neighborhoods.
 	 * 
 	 * This will be called by the servlet. It sends 1. Email notification to
 	 * subscribers 2. Account notification to every applicable resident
 	 */
 	@Override
-	public void sendNotification(Long senderAccountId, Long neighborhoodId, Long tweetId,
-			NotificationType ntype, EmailTemplate emailTemplate) {
+	public void sendNotification(Long senderAccountId,
+	    Long neighborhoodId,
+	    Long tweetId,
+	    NotificationType ntype,
+	    EmailTemplate emailTemplate) {
 
-		Preconditions.checkArgument(senderAccountId != null && senderAccountId != null,
-				"Invalid argument to sendNotification");
+		Preconditions.checkArgument(
+		    senderAccountId != null && senderAccountId != null,
+		    "Invalid argument to sendNotification");
 
-		logger.info(String.format("Received request to send notification - "
-				+ "sender %d, "
-				+ "neighborhood %d, "
-				+ "tweetId %d, "
-				+ "NotificationType %s, "
-				+ "Template %s", senderAccountId, neighborhoodId, tweetId, ntype, emailTemplate));
+		logger.info(String.format(
+		    "Received request to send notification - " + "sender %d, " + "neighborhood %d, "
+		        + "tweetId %d, " + "NotificationType %s, " + "Template %s",
+		    senderAccountId,
+		    neighborhoodId,
+		    tweetId,
+		    ntype,
+		    emailTemplate));
 		try {
 			TweetDTO tweet = tweetDao.findTweetById(tweetId);
 			AccountDTO sender = accountDao.findById(senderAccountId);
 			List<AccountDTO> unfilteredRecipients = getAllRecipients(neighborhoodId);
 
 			// Email notification
-			List<AccountDTO> emailSubscribers = filterRecipientsByNotificationAction(
-					unfilteredRecipients, tweet.getType(), NotificationAction.EMAIL);
+			List<AccountDTO> emailSubscribers =
+			    filterRecipientsByNotificationAction(
+			        unfilteredRecipients,
+			        tweet.getType(),
+			        NotificationAction.EMAIL);
 			sendEmails(emailSubscribers, sender, emailTemplate);
 
 			// Account notification
 			sendAccountNotifications(sender, unfilteredRecipients, tweet, ntype);
 
 		} catch (NotFoundException nfe) {
-			logger.log(Level.SEVERE,
-					String.format("Unable to find account with id %d", senderAccountId));
+			logger.log(Level.SEVERE, String.format("Unable to find account with id %d", senderAccountId));
 		} catch (NumberFormatException nfe) {
 			throw new IllegalArgumentException("Invalid zip passed to sendEmail");
 		}
 	}
 
-	private void sendAccountNotifications(AccountDTO sender, List<AccountDTO> recipients,
-			TweetDTO tweet, NotificationType ntype) {
+	private void sendAccountNotifications(AccountDTO sender,
+	    List<AccountDTO> recipients,
+	    TweetDTO tweet,
+	    NotificationType ntype) {
 
 		for (AccountDTO account : recipients) {
 			AccountNotificationDTO an = new AccountNotificationDTO();
@@ -190,51 +208,56 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 	private List<AccountDTO> getAllRecipients(Long neighborhoodId) {
 		try {
-			List<NeighborhoodDTO> neighborhoods = neighborhoodDao
-					.findAllDescendentNeighborhoodsIncludingItself(neighborhoodId);
+			List<NeighborhoodDTO> neighborhoods =
+			    neighborhoodDao.findAllDescendentNeighborhoodsIncludingItself(neighborhoodId);
 
 			List<AccountDTO> recipients = Lists.newArrayList();
 			for (NeighborhoodDTO neighborhood : neighborhoods) {
 				// retrieve upto MAX_VALUE personal accounts (might need to
 				// change in future)
 				recipients.addAll(accountDao.findAccountsByNeighborhood(
-						EntityType.PERSONAL_ACCOUNT, neighborhood.getNeighborhoodId(), 0, // start
-																							// index
-						Integer.MAX_VALUE)); // end index
+				    EntityType.PERSONAL_ACCOUNT,
+				    neighborhood.getNeighborhoodId(),
+				    0, // start
+				    // index
+				    Integer.MAX_VALUE)); // end index
 
 				recipients.addAll(accountDao.findAccountsByNeighborhood(
-						EntityType.BUSINESS_ACCOUNT, neighborhood.getNeighborhoodId(), 0, // start
-																							// index
-						Integer.MAX_VALUE)); // end index
+				    EntityType.BUSINESS_ACCOUNT,
+				    neighborhood.getNeighborhoodId(),
+				    0, // start
+				    // index
+				    Integer.MAX_VALUE)); // end index
 			}
 
 			return recipients;
 		} catch (NotFoundException ex) {
-			logger.severe(String.format("Unabled to find neighborhood with id %d, exception %s",
-					neighborhoodId, ex));
+			logger.severe(String.format(
+			    "Unabled to find neighborhood with id %d, exception %s",
+			    neighborhoodId,
+			    ex));
 		}
 
 		return ImmutableList.of();
 	}
 
-	private List<AccountDTO> filterRecipientsByNotificationAction(
-			final List<AccountDTO> recipients, 
-			final TweetType tweetType,
-			final NotificationAction naction) {
+	private List<AccountDTO> filterRecipientsByNotificationAction(final List<AccountDTO> recipients,
+	    final TweetType tweetType,
+	    final NotificationAction naction) {
 
-		Iterable<AccountDTO> recipientsNeedingEmailNotification = Iterables.filter(recipients,
-				new Predicate<AccountDTO>() {
-					@Override
-					public boolean apply(AccountDTO acct) {
-						NotificationType notificationType = tweetType.getNotificationType();
-						for (AccountNotificationSettingsDTO ans : acct.getNotificationSettings()) {
-							if (ans.getType() == notificationType) {
-								return ans.getAction() == naction;
-							}
-						}
-						return false;
-					}
-				});
+		Iterable<AccountDTO> recipientsNeedingEmailNotification =
+		    Iterables.filter(recipients, new Predicate<AccountDTO>() {
+			    @Override
+			    public boolean apply(AccountDTO acct) {
+				    NotificationType notificationType = tweetType.getNotificationType();
+				    for (AccountNotificationSettingsDTO ans : acct.getNotificationSettings()) {
+					    if (ans.getType() == notificationType) {
+						    return ans.getAction() == naction;
+					    }
+				    }
+				    return false;
+			    }
+		    });
 
 		return Lists.newArrayList(recipientsNeedingEmailNotification);
 	}
@@ -246,15 +269,17 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	 * @param sender
 	 * @param emailTemplate
 	 */
-	private void sendEmails(List<AccountDTO> emailSubscribers, AccountDTO sender,
-			EmailTemplate emailTemplate) {
+	private void sendEmails(List<AccountDTO> emailSubscribers,
+	    AccountDTO sender,
+	    EmailTemplate emailTemplate) {
 
 		for (AccountDTO acct : emailSubscribers) {
-			sendEmail(acct.getEmail(), 
-					acct.getDisplayName(), 
-					sender.getEmail(), 
-					sender.getDisplayName(),
-					emailTemplate);
+			sendEmail(
+			    acct.getEmail(),
+			    acct.getDisplayName(),
+			    sender.getEmail(),
+			    sender.getDisplayName(),
+			    emailTemplate);
 		}
 	}
 
@@ -262,41 +287,45 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	 * Called by Notification Servlet
 	 */
 	@Override
-	public void sendEmail(
-			String recipientEmail, 
-			String recipientName, 
-			String senderEmail, 
-			String senderName,
-			EmailTemplate emailTemplate) {
+	public void sendEmail(String recipientEmail,
+	    String recipientName,
+	    String senderEmail,
+	    String senderName,
+	    EmailTemplate emailTemplate) {
 
 		EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
-		builder.setRecipientName(recipientName)
+		builder
+		    .setRecipientName(recipientName)
 		    .setRecipientEmail(recipientEmail)
 		    .setSenderName(senderName)
 		    .setSenderEmail(senderEmail)
 		    .setEmailTemplate(emailTemplate);
-				
+
 		emailService.sendTemplatedEmailFromSender(builder);
 	}
-	
+
 	/**
 	 * Called by SendMessageActionHandler
 	 */
 	@Override
 	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
 		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-		String backendAddress = BackendServiceFactory.getBackendService().getBackendAddress(
-				System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+		String backendAddress =
+		    BackendServiceFactory.getBackendService().getBackendAddress(
+		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
 		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
 
-		TaskOptions options = TaskOptions.Builder.withUrl(mailEndpoint).method(Method.POST)
-				.param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
-				.param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
-				.param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
-				.param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
-				.param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
-				.param("emailTemplateId", template.name())
-				.header("Host", backendAddress);
+		TaskOptions options =
+		    TaskOptions.Builder
+		        .withUrl(mailEndpoint)
+		        .method(Method.POST)
+		        .param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
+		        .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
+		        .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
+		        .param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
+		        .param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
+		        .param("emailTemplateId", template.name())
+		        .header("Host", backendAddress);
 		queue.add(options);
 	}
 }

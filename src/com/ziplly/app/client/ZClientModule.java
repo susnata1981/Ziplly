@@ -52,10 +52,10 @@ public class ZClientModule extends AbstractGinModule {
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
-		
+
 		// main presenter
 		bind(ZipllyController.class).in(Singleton.class);
-		
+
 		// views
 		bind(INavView.class).to(NavView.class).in(Singleton.class);
 		bind(IAccountView.class).to(AccountView.class).in(Singleton.class);
@@ -72,112 +72,126 @@ public class ZClientModule extends AbstractGinModule {
 		bind(PasswordRecoveryView.class);
 		bind(EmailVerificationView.class);
 		bind(AboutView.class);
-		
+
 		// places
 		bind(HomePlace.class);
 		bind(LoginPlace.class);
 		bind(SignupPlace.class);
 		bind(BusinessAccountPlace.class);
-		
+
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
-		bind(ActivityMapper.class).annotatedWith(Names.named("nav")).to(NavActivityMapper.class).in(Singleton.class);
-		
+		bind(ActivityMapper.class)
+		    .annotatedWith(Names.named("nav"))
+		    .to(NavActivityMapper.class)
+		    .in(Singleton.class);
+
 		bind(PlaceHistoryMapper.class).toProvider(PlaceHistoryMapperProvider.class).in(Singleton.class);
-		bind(PlaceHistoryHandler.class).toProvider(PlaceHistoryHandlerProvider.class).in(Singleton.class);
-		
+		bind(PlaceHistoryHandler.class).toProvider(PlaceHistoryHandlerProvider.class).in(
+		    Singleton.class);
+
 		bind(ActivityManager.class).toProvider(ActivityManagerProvider.class).in(Singleton.class);
-		bind(ActivityManager.class).annotatedWith(Names.named("nav")).toProvider(NavActivityManagerProvider.class).in(Singleton.class);
-		
+		bind(ActivityManager.class)
+		    .annotatedWith(Names.named("nav"))
+		    .toProvider(NavActivityManagerProvider.class)
+		    .in(Singleton.class);
+
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
 	}
-	
+
 	public static class PlaceControllerProvider implements Provider<PlaceController> {
 		EventBus eventBus;
-		
+
 		@Inject
 		public PlaceControllerProvider(EventBus eventBus) {
 			this.eventBus = eventBus;
 		}
+
 		@Override
 		public PlaceController get() {
 			return new PlaceController(eventBus);
 		}
 	}
-	
+
 	public static class PlaceHistoryHandlerProvider implements Provider<PlaceHistoryHandler> {
 		PlaceHistoryMapper placeHistoryMapper;
+
 		@Inject
 		public PlaceHistoryHandlerProvider(PlaceHistoryMapper placeHistoryMapper) {
 			this.placeHistoryMapper = placeHistoryMapper;
 		}
+
 		@Override
 		public PlaceHistoryHandler get() {
 			PlaceHistoryHandler handler = new PlaceHistoryHandler(placeHistoryMapper);
 			return handler;
 		}
 	}
-	
+
 	public static class PlaceHistoryMapperProvider implements Provider<ZipllyPlaceHistoryMapper> {
 		@Override
 		public ZipllyPlaceHistoryMapper get() {
 			return GWT.create(ZipllyPlaceHistoryMapper.class);
 		}
 	}
-	
+
 	public static class ActivityManagerProvider implements Provider<ActivityManager> {
 		EventBus eventBus;
 		ActivityMapper mapper;
+
 		@Inject
 		public ActivityManagerProvider(ActivityMapper am, EventBus eventBus) {
 			this.mapper = am;
 			this.eventBus = eventBus;
 		}
+
 		@Override
 		public ActivityManager get() {
 			ActivityManager manager = new ActivityManager(mapper, eventBus);
 			return manager;
 		}
 	}
-	
+
 	public static class NavActivityManagerProvider implements Provider<ActivityManager> {
 		EventBus eventBus;
 		NavActivityMapper mapper;
+
 		@Inject
 		public NavActivityManagerProvider(NavActivityMapper am, EventBus eventBus) {
 			this.mapper = am;
 			this.eventBus = eventBus;
 		}
-		
+
 		@Override
 		public ActivityManager get() {
 			ActivityManager manager = new ActivityManager(mapper, eventBus);
 			return manager;
 		}
 	}
-	
+
 	public static class SendMessageWidgetFactory implements AsyncProvider<SendMessageWidget> {
 
 		@Override
 		public void get(final AsyncCallback<? super SendMessageWidget> callback) {
 			GWT.runAsync(new RunAsyncCallback() {
-				
+
 				@Override
 				public void onSuccess() {
 					callback.onSuccess(new SendMessageWidget(null));
 				}
-				
+
 				@Override
 				public void onFailure(Throwable reason) {
 				}
 			});
 		}
 	}
-	
-	public static class SendMessageWidgetProvider implements Provider<AsyncProvider<SendMessageWidget>> {
+
+	public static class SendMessageWidgetProvider implements
+	    Provider<AsyncProvider<SendMessageWidget>> {
 
 		@Inject
 		SendMessageWidgetFactory factory;
-		
+
 		@Override
 		public AsyncProvider<SendMessageWidget> get() {
 			return factory;

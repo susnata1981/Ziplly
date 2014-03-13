@@ -6,10 +6,10 @@ import java.util.List;
 
 public enum Gender {
 	NOT_SPECIFIED("Not specified", true, false),
-	MALE("Male", true, true), 
+	MALE("Male", true, true),
 	FEMALE("Female", true, true),
 	ALL("All", false, true);
-	
+
 	private String name;
 	private boolean appearsOnSignup;
 	private boolean searchFilter;
@@ -22,24 +22,24 @@ public enum Gender {
 
 	public static List<Gender> getValuesForSignup() {
 		List<Gender> result = new ArrayList<Gender>();
-		for(Gender g : values()) {
+		for (Gender g : values()) {
 			if (g.isAppearsOnSignup()) {
 				result.add(g);
 			}
 		}
 		return result;
 	}
-	
+
 	public static List<Gender> getValuesForSearch() {
 		List<Gender> result = new ArrayList<Gender>();
-		for(Gender g : values()) {
+		for (Gender g : values()) {
 			if (g.isSearchFilter()) {
 				result.add(g);
 			}
 		}
 		return result;
 	}
-	
+
 	public static List<Gender> getAllValues() {
 		return Arrays.asList(values());
 	}
@@ -63,7 +63,7 @@ public enum Gender {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}

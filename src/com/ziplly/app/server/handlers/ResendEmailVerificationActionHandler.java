@@ -5,7 +5,6 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -15,32 +14,31 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.ResendEmailVerificationAction;
 import com.ziplly.app.shared.ResendEmailVerificationResult;
 
-public class ResendEmailVerificationActionHandler extends AbstractAccountActionHandler<ResendEmailVerificationAction, ResendEmailVerificationResult> {
+public class ResendEmailVerificationActionHandler extends
+    AbstractAccountActionHandler<ResendEmailVerificationAction, ResendEmailVerificationResult> {
 
 	@Inject
-	public ResendEmailVerificationActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli) {
+	public ResendEmailVerificationActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public ResendEmailVerificationResult execute(ResendEmailVerificationAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	    ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkNotNull(action.getEmail());
 		try {
 			accountBli.resendEmailVerification(action.getEmail());
-		} 
-		catch(NotFoundException ex) {
+		} catch (NotFoundException ex) {
 			throw ex;
-		}
-		catch(AccountExistsException ex) {
+		} catch (AccountExistsException ex) {
 			throw ex;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new InternalError();
 		}
-		
+
 		return new ResendEmailVerificationResult();
 	}
 

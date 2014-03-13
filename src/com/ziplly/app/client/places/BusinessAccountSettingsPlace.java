@@ -7,7 +7,7 @@ import com.google.gwt.place.shared.Prefix;
 public class BusinessAccountSettingsPlace extends Place {
 	public BusinessAccountSettingsPlace() {
 	}
-	
+
 	@Prefix("businesssettings")
 	public static class Tokenizer implements PlaceTokenizer<BusinessAccountSettingsPlace> {
 		@Override

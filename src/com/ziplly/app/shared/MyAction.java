@@ -9,11 +9,11 @@ public class MyAction implements Action<MyResult>, Cacheable {
 
 	public MyAction() {
 	}
-	
+
 	public MyAction(String ms) {
 		message = ms;
 	}
-	
+
 	public String getMessage() {
 		return message;
 	}
@@ -21,7 +21,7 @@ public class MyAction implements Action<MyResult>, Cacheable {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

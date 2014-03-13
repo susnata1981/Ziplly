@@ -24,7 +24,7 @@ import com.ziplly.app.shared.ValidationResult;
 public class NotYetLaunchedWidget extends Composite implements HasClickHandlers {
 
 	private static NotYetLaunchedWidgetUiBinder uiBinder = GWT
-			.create(NotYetLaunchedWidgetUiBinder.class);
+	    .create(NotYetLaunchedWidgetUiBinder.class);
 
 	interface NotYetLaunchedWidgetUiBinder extends UiBinder<Widget, NotYetLaunchedWidget> {
 	}
@@ -35,24 +35,24 @@ public class NotYetLaunchedWidget extends Composite implements HasClickHandlers 
 
 	@UiField
 	Modal modal;
-	
+
 	@UiField
 	TextBox email;
 	@UiField
 	ControlGroup emailCg;
 	@UiField
 	HelpInline emailError;
-	
+
 	@UiField
 	TextBox zip;
 	@UiField
 	ControlGroup zipCg;
 	@UiField
 	HelpInline zipError;
-	
+
 	@UiField
 	Button submitBtn;
-	
+
 	@UiField
 	Button cancelBtn;
 
@@ -64,7 +64,7 @@ public class NotYetLaunchedWidget extends Composite implements HasClickHandlers 
 				validateEmail();
 			}
 		});
-		
+
 		zip.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -90,12 +90,17 @@ public class NotYetLaunchedWidget extends Composite implements HasClickHandlers 
 			modal.hide();
 		}
 	}
-	
+
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
 		ValidationResult result = FieldVerifier.validateEmail(emailInput);
 		if (!result.isValid()) {
-			displayValidationMessage(emailError, emailCg, result.getErrors().get(0).getErrorMessage(), true, ControlGroupType.ERROR);
+			displayValidationMessage(
+			    emailError,
+			    emailCg,
+			    result.getErrors().get(0).getErrorMessage(),
+			    true,
+			    ControlGroupType.ERROR);
 			return false;
 		}
 		return true;
@@ -104,8 +109,12 @@ public class NotYetLaunchedWidget extends Composite implements HasClickHandlers 
 	public String getEmail() {
 		return email.getText();
 	}
-	
-	public void displayValidationMessage(HelpInline field, ControlGroup cg, String errorMsg, boolean isVisible, ControlGroupType type) {
+
+	public void displayValidationMessage(HelpInline field,
+	    ControlGroup cg,
+	    String errorMsg,
+	    boolean isVisible,
+	    ControlGroupType type) {
 		if (isVisible) {
 			field.setVisible(true);
 			field.setText(errorMsg);
@@ -114,18 +123,23 @@ public class NotYetLaunchedWidget extends Composite implements HasClickHandlers 
 		}
 		cg.setType(type);
 	}
-	
+
 	boolean validateZip() {
 		String zipInput = zip.getText().trim();
 		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
 		if (!validateZip.isValid()) {
-			displayValidationMessage(zipError, zipCg, validateZip.getErrors().get(0).getErrorMessage(), true, ControlGroupType.ERROR);
+			displayValidationMessage(
+			    zipError,
+			    zipCg,
+			    validateZip.getErrors().get(0).getErrorMessage(),
+			    true,
+			    ControlGroupType.ERROR);
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public boolean validateInput() {
 		boolean valid = validateEmail();
 		valid &= validateZip();

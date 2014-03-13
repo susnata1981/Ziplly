@@ -7,11 +7,11 @@ public class GetFacebookRedirectUriResult implements Result {
 
 	public GetFacebookRedirectUriResult() {
 	}
-	
+
 	public GetFacebookRedirectUriResult(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
 	}
-	
+
 	public String getRedirectUrl() {
 		return redirectUrl;
 	}

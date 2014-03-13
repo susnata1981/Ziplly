@@ -9,11 +9,11 @@ public class LoginPlace extends Place {
 
 	public LoginPlace() {
 	}
-	
+
 	public LoginPlace(Long id) {
 		this.setAccountId(id);
 	}
-	
+
 	public Long getAccountId() {
 		return accountId;
 	}

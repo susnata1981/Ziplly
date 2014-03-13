@@ -21,20 +21,22 @@ import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityResult;
 
 public class GetEntityActionHandler extends
-		AbstractAccountActionHandler<GetEntityListAction, GetEntityResult> {
+    AbstractAccountActionHandler<GetEntityListAction, GetEntityResult> {
 
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public GetEntityActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, NeighborhoodDAO neighborhoodDao) {
+	public GetEntityActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    NeighborhoodDAO neighborhoodDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
-	public GetEntityResult execute(GetEntityListAction action, ExecutionContext ctx)
-			throws DispatchException {
+	public GetEntityResult
+	    execute(GetEntityListAction action, ExecutionContext ctx) throws DispatchException {
 
 		validateSession();
 		if (action.getEntityType() == EntityType.PERSONAL_ACCOUNT) {
@@ -42,7 +44,7 @@ public class GetEntityActionHandler extends
 		} else if (action.getEntityType() == EntityType.BUSINESS_ACCOUNT) {
 			return findBusinessAccounts(action);
 		}
-		
+
 		throw new IllegalArgumentException("Invalid entity type passed to GetEntityListActionHandler");
 	}
 
@@ -53,30 +55,30 @@ public class GetEntityActionHandler extends
 
 		List<NeighborhoodDTO> neighborhoods;
 		List<Long> allNeighborhoodIds = Lists.newArrayList();
-		
+
 		switch (action.getSearchType()) {
-		case BY_ZIP:
-			neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
-			allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
-			break;
-		case BY_NEIGHBORHOOD:
-		default:
-			allNeighborhoodIds.add(action.getNeighborhoodId());
-			neighborhoods = neighborhoodDao.findAllDescendentNeighborhoods(action.getNeighborhoodId());
-			allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
+			case BY_ZIP:
+				neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
+				allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
+				break;
+			case BY_NEIGHBORHOOD:
+			default:
+				allNeighborhoodIds.add(action.getNeighborhoodId());
+				neighborhoods = neighborhoodDao.findAllDescendentNeighborhoods(action.getNeighborhoodId());
+				allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
 		}
 
 		accounts.addAll(accountDao.findAccountsByNeighborhoods(
-				action.getEntityType(),
-				allNeighborhoodIds, 
-				action.getPage(), 
-				action.getPageSize()));
+		    action.getEntityType(),
+		    allNeighborhoodIds,
+		    action.getPage(),
+		    action.getPageSize()));
 
 		if (action.isNeedTotalEntityCount()) {
-			Long count = accountDao.getTotalAccountCountByNeighborhoods(
-					action.getEntityType(),
-					allNeighborhoodIds);
-			
+			Long count =
+			    accountDao
+			        .getTotalAccountCountByNeighborhoods(action.getEntityType(), allNeighborhoodIds);
+
 			result.setEntityCount(count);
 		}
 		result.setAccounts(accounts);
@@ -89,24 +91,25 @@ public class GetEntityActionHandler extends
 		List<AccountDTO> accounts = Lists.newArrayList();
 
 		switch (action.getSearchType()) {
-		case BY_GENDER:
-		default:
-			accounts.addAll(accountDao.findPersonalAccounts(
-					action.getGender(),
-					action.getNeighborhoodId(),
-					action.getPage(),
-					action.getPageSize()));
+			case BY_GENDER:
+			default:
+				accounts.addAll(accountDao.findPersonalAccounts(
+				    action.getGender(),
+				    action.getNeighborhoodId(),
+				    action.getPage(),
+				    action.getPageSize()));
 		}
 		result.setAccounts(accounts);
-		
+
 		if (action.isNeedTotalEntityCount()) {
-			Long count = accountDao.getTotalPersonalAccountCountByGender(
-					action.getGender(),
-					action.getNeighborhoodId());
+			Long count =
+			    accountDao.getTotalPersonalAccountCountByGender(
+			        action.getGender(),
+			        action.getNeighborhoodId());
 			result.setEntityCount(count);
 		}
 		result.setAccounts(accounts);
-		
+
 		return result;
 	}
 
@@ -114,12 +117,12 @@ public class GetEntityActionHandler extends
 	public Class<GetEntityListAction> getActionType() {
 		return GetEntityListAction.class;
 	}
-	
+
 	private List<Long> getNeighbodhoodIdList(List<NeighborhoodDTO> neighborhoods) {
 		if (neighborhoods.size() == 0) {
 			return Collections.emptyList();
 		}
-		
+
 		return Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {
 
 			@Override
@@ -127,7 +130,6 @@ public class GetEntityActionHandler extends
 				return n.getNeighborhoodId();
 			}
 		});
-		
-		
+
 	}
 }

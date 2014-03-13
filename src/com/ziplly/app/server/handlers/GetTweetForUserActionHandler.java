@@ -26,19 +26,21 @@ import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 
 public class GetTweetForUserActionHandler extends
-		AbstractAccountActionHandler<GetTweetForUserAction, GetTweetForUserResult> {
+    AbstractAccountActionHandler<GetTweetForUserAction, GetTweetForUserResult> {
 	private TweetDAO tweetDao;
 
 	@Inject
-	public GetTweetForUserActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, TweetDAO tweetDao) {
+	public GetTweetForUserActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    TweetDAO tweetDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.tweetDao = tweetDao;
 	}
 
 	@Override
-	public GetTweetForUserResult execute(GetTweetForUserAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public GetTweetForUserResult
+	    execute(GetTweetForUserAction action, ExecutionContext arg1) throws DispatchException {
 
 		// apply privacy settings
 		try {
@@ -48,8 +50,11 @@ public class GetTweetForUserActionHandler extends
 		}
 
 		try {
-			List<TweetDTO> tweets = tweetDao.findTweetsByAccountId(action.getAccountId(),
-					action.getPage(), action.getPageSize());
+			List<TweetDTO> tweets =
+			    tweetDao.findTweetsByAccountId(
+			        action.getAccountId(),
+			        action.getPage(),
+			        action.getPageSize());
 			GetTweetForUserResult result = new GetTweetForUserResult(tweets);
 			return result;
 		} catch (NotFoundException nfe) {
@@ -83,10 +88,12 @@ public class GetTweetForUserActionHandler extends
 					if (!locationIterator.hasNext()) {
 						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
-					
+
 					Location location = locationIterator.next();
-					if (session.getLocation().getNeighborhood().getParentNeighborhood().getNeighborhoodId() != 
-							location.getNeighborhood().getParentNeighborhood().getNeighborhoodId()) {
+					if (session.getLocation().getNeighborhood().getParentNeighborhood().getNeighborhoodId() != location
+					    .getNeighborhood()
+					    .getParentNeighborhood()
+					    .getNeighborhoodId()) {
 						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
 					}
 				}

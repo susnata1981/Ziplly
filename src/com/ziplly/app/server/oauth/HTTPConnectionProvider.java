@@ -12,11 +12,12 @@ public class HTTPConnectionProvider {
 
 	private static final int TIMEOUT = 5000;
 
-	public static HttpURLConnection getConnection(String url, HTTPRequestType type) throws IOException {
+	public static HttpURLConnection
+	    getConnection(String url, HTTPRequestType type) throws IOException {
 		// TODO: sanitise the url
 		URL safeUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) safeUrl.openConnection();
-		switch(type) {
+		switch (type) {
 			case POST:
 				conn.setDoInput(true);
 				conn.setDoOutput(true);
@@ -30,10 +31,10 @@ public class HTTPConnectionProvider {
 				return conn;
 		}
 	}
-	
+
 	public static HttpURLConnection getConnection(URL url, HTTPRequestType type) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		switch(type) {
+		switch (type) {
 			case POST:
 				conn.setDoInput(true);
 				conn.setDoOutput(true);
@@ -46,11 +47,13 @@ public class HTTPConnectionProvider {
 				return conn;
 		}
 	}
-	
-	public static URL getUrlWithParams(String url, Map<String,String> params) throws UnsupportedEncodingException, MalformedURLException {
+
+	public static URL
+	    getUrlWithParams(String url, Map<String, String> params) throws UnsupportedEncodingException,
+	        MalformedURLException {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
-		for(String key: params.keySet()) {
+		for (String key : params.keySet()) {
 			if (!first) {
 				sb.append("&");
 			} else {
@@ -58,7 +61,7 @@ public class HTTPConnectionProvider {
 			}
 			sb.append(key);
 			sb.append("=");
-			sb.append(URLEncoder.encode(params.get(key),"utf-8"));
+			sb.append(URLEncoder.encode(params.get(key), "utf-8"));
 		}
 		String nurl = url + "?" + sb.substring(0, sb.length()).toString();
 		return new URL(nurl);

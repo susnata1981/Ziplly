@@ -2,13 +2,13 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class ResetPasswordAction implements Action<ResetPasswordResult>{
+public class ResetPasswordAction implements Action<ResetPasswordResult> {
 	private Long accountId;
 	private String password;
 
 	public ResetPasswordAction() {
 	}
-	
+
 	public ResetPasswordAction(String password) {
 		this.setPassword(password);
 	}

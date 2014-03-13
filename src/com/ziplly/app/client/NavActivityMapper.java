@@ -18,20 +18,19 @@ public class NavActivityMapper implements ActivityMapper {
 	private ApplicationContext ctx;
 
 	@Inject
-	public NavActivityMapper(
-			NavView view,
-			CachingDispatcherAsync dispatcher,
-			EventBus eventBus,
-			PlaceController placeController,
-			ApplicationContext ctx) {
-		
+	public NavActivityMapper(NavView view,
+	    CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx) {
+
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
 		this.ctx = ctx;
 		this.view = view;
 	}
-	
+
 	@Override
 	public Activity getActivity(Place place) {
 		// always

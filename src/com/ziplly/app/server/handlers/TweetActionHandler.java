@@ -25,7 +25,6 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AccountBLIImpl;
 import com.ziplly.app.server.TweetNotificationBLI;
-import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 
@@ -34,62 +33,65 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 	private TweetNotificationBLI tweetNotificationBli;
 
 	@Inject
-	public TweetActionHandler(AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			TweetDAO tweetDao,
-			AccountBLI accountBli,
-			TweetNotificationBLI tweetNotificationBli) {
+	public TweetActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli,
+	    TweetNotificationBLI tweetNotificationBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 		this.tweetNotificationBli = tweetNotificationBli;
 	}
 
 	@Override
-	public TweetResult execute(TweetAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public TweetResult execute(TweetAction action, ExecutionContext arg1) throws DispatchException {
 		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();
 		}
 		validateSession();
-		
+
 		Account account = session.getAccount();
 		Tweet tweet = new Tweet(action.getTweet());
-		
+
 		// check usage limits for business tweets
 		if (account instanceof BusinessAccount) {
 			checkUsage();
 		}
-		
+
 		tweet.setSender(session.getAccount());
 		TweetDTO savedTweet = tweetDao.save(tweet);
-		
+
 		tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
-		
+
 		TweetResult result = new TweetResult();
 		result.setTweet(savedTweet);
 		return result;
 	}
 
-	private void checkUsage() throws NeedsSubscriptionException, InternalError, UsageLimitExceededException, NotFoundException {
-		boolean enablePaymentPlan = Boolean.valueOf(System.getProperty(StringConstants.ENABLE_PAYMENT_PLAN, "false"));
-		
+	private void checkUsage() throws NeedsSubscriptionException,
+	    InternalError,
+	    UsageLimitExceededException,
+	    NotFoundException {
+		boolean enablePaymentPlan =
+		    Boolean.valueOf(System.getProperty(StringConstants.ENABLE_PAYMENT_PLAN, "false"));
+
 		// Wire on Wire off
 		if (!enablePaymentPlan) {
 			return;
 		}
-		
-		BusinessAccount baccount = (BusinessAccount)session.getAccount();
+
+		BusinessAccount baccount = (BusinessAccount) session.getAccount();
 		long count = 0;
-		
+
 		try {
-			count = tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
-		} catch(NotFoundException nfe) {
+			count =
+			    tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
+		} catch (NotFoundException nfe) {
 			throw nfe;
-		}
-		catch (ParseException e) {
+		} catch (ParseException e) {
 			// should never reach here
 			throw new InternalError("Internal error");
 		}
-		
+
 		SubscriptionPlan plan = findActiveSubscriptionPlan(baccount);
 		if (plan == null) {
 			// haven't paid yet, check quota
@@ -104,7 +106,7 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 	}
 
 	private SubscriptionPlan findActiveSubscriptionPlan(BusinessAccount account) {
-		for(Transaction txn : account.getTransactions()) {
+		for (Transaction txn : account.getTransactions()) {
 			if (txn.getStatus() == TransactionStatus.ACTIVE) {
 				return txn.getPlan();
 			}

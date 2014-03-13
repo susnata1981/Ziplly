@@ -18,18 +18,17 @@ import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
-public class PersonalAccountWidgetModal extends Composite implements IAccountWidgetModal<PersonalAccountDTO> {
+public class PersonalAccountWidgetModal extends Composite implements
+    IAccountWidgetModal<PersonalAccountDTO> {
 
-	private static AccountWidgetModalUiBinder uiBinder = GWT
-			.create(AccountWidgetModalUiBinder.class);
+	private static AccountWidgetModalUiBinder uiBinder = GWT.create(AccountWidgetModalUiBinder.class);
 
-	interface AccountWidgetModalUiBinder extends
-			UiBinder<Widget, PersonalAccountWidgetModal> {
+	interface AccountWidgetModalUiBinder extends UiBinder<Widget, PersonalAccountWidgetModal> {
 	}
 
 	@UiField
 	Modal accountWidgetModal;
-	
+
 	@UiField
 	Image profileImageUrl;
 
@@ -47,14 +46,14 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 
 	@UiField
 	Button viewProfileBtn;
-	
+
 	@UiField
 	Button cancelBtn;
 
 	private Presenter presenter;
 
 	private PersonalAccountDTO account;
-	
+
 	public PersonalAccountWidgetModal() {
 		initWidget(uiBinder.createAndBindUi(this));
 		hide();
@@ -64,7 +63,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 	public void setWidth(String width) {
 		accountWidgetModal.setWidth(width);
 	}
-	
+
 	private void setupHandlers() {
 		viewProfileBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -73,7 +72,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 				hide();
 			}
 		});
-		
+
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -86,19 +85,19 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 	public void hide() {
 		accountWidgetModal.hide();
 	}
-	
+
 	@Override
 	public void show(PersonalAccountDTO account) {
 		this.account = account;
 		displayAccount(account);
 		accountWidgetModal.show();
 	}
-	
+
 	public void displayAccount(PersonalAccountDTO account) {
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		profileImageUrl.setUrl(account.getImageUrl());
 		name.setInnerHTML(account.getDisplayName());
 		if (account.getIntroduction() != null) {
@@ -114,6 +113,7 @@ public class PersonalAccountWidgetModal extends Composite implements IAccountWid
 			interestListPanel.add(new Label(interest.getName()));
 		}
 	}
+
 	public PersonalAccountWidgetModal(String firstName) {
 		initWidget(uiBinder.createAndBindUi(this));
 	}

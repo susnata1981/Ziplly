@@ -16,22 +16,22 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.RegisterAccountResult;
 
-public class RegisterAccountActionHandler
-		extends AbstractAccountActionHandler<RegisterAccountAction, RegisterAccountResult> {
+public class RegisterAccountActionHandler extends
+    AbstractAccountActionHandler<RegisterAccountAction, RegisterAccountResult> {
 
 	@Inject
 	public RegisterAccountActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public RegisterAccountResult execute(RegisterAccountAction action,
-			ExecutionContext ec) throws DispatchException {
+	public RegisterAccountResult
+	    execute(RegisterAccountAction action, ExecutionContext ec) throws DispatchException {
 
 		if (action == null || action.getAccount() == null) {
-			throw new IllegalArgumentException(
-					"Invalid argument to RegisterAccountResult");
+			throw new IllegalArgumentException("Invalid argument to RegisterAccountResult");
 		}
 		RegisterAccountResult result = new RegisterAccountResult();
 		AccountDTO accountDto = action.getAccount();
@@ -39,9 +39,9 @@ public class RegisterAccountActionHandler
 		try {
 			boolean saveImage = false;
 			if (accountDto instanceof PersonalAccountDTO) {
-				 saveImage = ((PersonalAccountDTO)accountDto).getFacebookRegistration();
+				saveImage = ((PersonalAccountDTO) accountDto).getFacebookRegistration();
 			}
-			
+
 			AccountDTO newAccount = accountBli.register(account, saveImage);
 			result.setAccount(newAccount);
 			result.setUid(accountDto.getUid());

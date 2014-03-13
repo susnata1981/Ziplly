@@ -18,11 +18,11 @@ import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
 public class MailHandlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private EmailService emailService;
-	
+
 	public MailHandlerServlet() {
 		emailService = new EmailServiceImpl();
 	}
-	
+
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		Properties props = new Properties();
@@ -38,7 +38,7 @@ public class MailHandlerServlet extends HttpServlet {
 			sender.email = from[0].toString();
 			EmailEntity recipient = new EmailEntity();
 			recipient.email = adminEmail;
-			
+
 			emailService.sendNonTemplatedEmail(subject, content, sender, recipient);
 		} catch (MessagingException e) {
 			e.printStackTrace();

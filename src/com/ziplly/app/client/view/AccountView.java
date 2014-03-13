@@ -76,7 +76,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	// Basic account info
 	@UiField
 	Alert message;
-	
+
 	@UiField
 	HTMLPanel profileImagePanel;
 	@UiField
@@ -137,11 +137,12 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	private String tweetWidgetWidth = "90%";
 	private String tweetBoxWidth = "93%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
-	
-	private BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+
+	private BasicDataFormatter basicDataFormatter =
+	    (BasicDataFormatter) AbstractValueFormatterFactory
+	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 
 	@Inject
 	public AccountView(EventBus eventBus) {
@@ -161,8 +162,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app
+	 * @see com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app
 	 * .model.AccountDTO)
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		message.setVisible(false);
 		this.account = account;
 
@@ -178,7 +178,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
 		adjustProfileImagePanel();
-		
+
 		name.setText(account.getDisplayName());
 
 		// about me section
@@ -187,8 +187,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		emailLink.setText(account.getEmail());
 		gender.setInnerHTML(basicDataFormatter.format(account.getGender(), ValueType.GENDER));
 		badgePanel.getElement().setInnerHTML(accountFormatter.format(account, ValueType.BADGE));
-		lastLoginTime.setInnerText(basicDataFormatter.format(account.getLastLoginTime(),
-				ValueType.DATE_VALUE_SHORT));
+		lastLoginTime.setInnerText(basicDataFormatter.format(
+		    account.getLastLoginTime(),
+		    ValueType.DATE_VALUE_SHORT));
 
 		// occupation panel
 		occupationSpan.setInnerHTML(account.getOccupation());
@@ -209,7 +210,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 				String height = profileImage.getHeight() + "px";
 				profileImagePanel.setHeight(height);
 			}
-			
+
 		});
 	}
 
@@ -301,7 +302,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		message.setType(type);
 		message.setVisible(true);
 	}
-	
+
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -422,8 +423,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	public void displayAccontUpdate() {
 		if (isAccountNotComplete()) {
 			addAccountProfileNotCompleteMessage();
-		} 
-		else {
+		} else {
 			String uploadImageHtml = "There are no updates at this moment";
 			updateAlertBlock.setHTML(uploadImageHtml);
 		}
@@ -432,11 +432,10 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	private void hideAccontUpdate() {
 		StyleHelper.show(updateAlertBlock.getElement(), false);
 	}
-	
+
 	private boolean isAccountNotComplete() {
-		return FieldVerifier.isEmpty(account.getIntroduction())
-				|| account.getInterests().size() == 0 
-				|| account.getImages().size() == 0;
+		return FieldVerifier.isEmpty(account.getIntroduction()) || account.getInterests().size() == 0
+		    || account.getImages().size() == 0;
 	}
 
 	private void addAccountProfileNotCompleteMessage() {

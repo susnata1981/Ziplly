@@ -2,12 +2,12 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class VerifyPasswordRecoveryHashAction implements Action<VerifyPasswordRecoveryHashResult>{
+public class VerifyPasswordRecoveryHashAction implements Action<VerifyPasswordRecoveryHashResult> {
 	private String hash;
 
 	public VerifyPasswordRecoveryHashAction() {
 	}
-	
+
 	public VerifyPasswordRecoveryHashAction(String hash) {
 		this.setHash(hash);
 	}

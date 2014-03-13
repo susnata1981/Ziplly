@@ -9,7 +9,7 @@ public class GetFacebookDetailsAction implements Action<GetFacebookDetailsResult
 
 	public GetFacebookDetailsAction() {
 	}
-	
+
 	public GetFacebookDetailsAction(String code) {
 		this.setCode(code);
 	}

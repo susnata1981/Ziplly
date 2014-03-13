@@ -8,13 +8,13 @@ import com.ziplly.app.model.FLike;
 public class MQueryResults {
 	@Facebook
 	public List<FStatus> statusList;
-	
+
 	@Facebook
 	public List<FLike> likes;
-	
+
 	@Facebook
 	public List<FFriend> friends;
-	
+
 	@Facebook
 	public List<FFriendRelation> friendRelations;
 }

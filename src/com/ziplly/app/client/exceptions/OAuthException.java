@@ -8,7 +8,7 @@ public class OAuthException extends DispatchException {
 	public OAuthException(String msg) {
 		super(msg);
 	}
-	
+
 	public OAuthException() {
 	}
 }

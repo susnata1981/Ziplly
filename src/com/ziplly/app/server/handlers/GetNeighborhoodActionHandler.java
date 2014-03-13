@@ -16,40 +16,42 @@ import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodResult;
 
 public class GetNeighborhoodActionHandler extends
-		AbstractAccountActionHandler<GetNeighborhoodAction, GetNeighborhoodResult> {
+    AbstractAccountActionHandler<GetNeighborhoodAction, GetNeighborhoodResult> {
 
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public GetNeighborhoodActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, NeighborhoodDAO neighborhoodDao) {
+	public GetNeighborhoodActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    NeighborhoodDAO neighborhoodDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
-	public GetNeighborhoodResult execute(GetNeighborhoodAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public GetNeighborhoodResult
+	    execute(GetNeighborhoodAction action, ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkArgument(action != null);
 
 		GetNeighborhoodResult result = new GetNeighborhoodResult();
 		List<NeighborhoodDTO> neighborhoods = null;
 		switch (action.getSearchType()) {
-		case ALL:
-			neighborhoods = neighborhoodDao.findAll();
-			for (NeighborhoodDTO n : neighborhoods) {
-				result.getNeighbordhoods().add(n);
-			}
-			return result;
-		case BY_ZIP:
-		default:
-			neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
-			result = new GetNeighborhoodResult();
-			for (NeighborhoodDTO n : neighborhoods) {
-				result.getNeighbordhoods().add(n);
-			}
-			return result;
+			case ALL:
+				neighborhoods = neighborhoodDao.findAll();
+				for (NeighborhoodDTO n : neighborhoods) {
+					result.getNeighbordhoods().add(n);
+				}
+				return result;
+			case BY_ZIP:
+			default:
+				neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
+				result = new GetNeighborhoodResult();
+				for (NeighborhoodDTO n : neighborhoods) {
+					result.getNeighbordhoods().add(n);
+				}
+				return result;
 		}
 	}
 

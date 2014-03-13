@@ -2,12 +2,12 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class LikeTweetAction implements Action<LikeResult>{
+public class LikeTweetAction implements Action<LikeResult> {
 	private Long tweetId;
 
 	public LikeTweetAction() {
 	}
-	
+
 	public LikeTweetAction(Long tweetId) {
 		this.setTweetId(tweetId);
 	}

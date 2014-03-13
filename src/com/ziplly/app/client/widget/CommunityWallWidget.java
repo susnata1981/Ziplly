@@ -16,10 +16,9 @@ public class CommunityWallWidget extends AbstractView {
 	private static final int PAGE_SIZE = 10;
 
 	private static CommunityWallWidgetUiBinder uiBinder = GWT
-			.create(CommunityWallWidgetUiBinder.class);
+	    .create(CommunityWallWidgetUiBinder.class);
 
-	interface CommunityWallWidgetUiBinder extends
-			UiBinder<Widget, CommunityWallWidget> {
+	interface CommunityWallWidgetUiBinder extends UiBinder<Widget, CommunityWallWidget> {
 	}
 
 	public CommunityWallWidget(EventBus eventBus) {
@@ -32,28 +31,28 @@ public class CommunityWallWidget extends AbstractView {
 
 	@UiField(provided = true)
 	SimplePager pager;
-	
-	@UiField(provided=true)
-	CellList<TweetDTO> tweetList;
-	
-	AsyncDataProvider<TweetDTO> dataProvider;
-	
-//	@Override
-//	protected void internalOnUserLogin() {
-//		dataProvider = new TweetDataProvider(this);
-//		dataProvider.addDataDisplay(tweetList);
-//		pager.setDisplay(tweetList);
-//	}
-//
-//	@Override
-//	protected void initWidget() {
-//		
-//	}
 
-//	@Override
-//	protected void setupUiElements() {
-//		
-//	}
+	@UiField(provided = true)
+	CellList<TweetDTO> tweetList;
+
+	AsyncDataProvider<TweetDTO> dataProvider;
+
+	// @Override
+	// protected void internalOnUserLogin() {
+	// dataProvider = new TweetDataProvider(this);
+	// dataProvider.addDataDisplay(tweetList);
+	// pager.setDisplay(tweetList);
+	// }
+	//
+	// @Override
+	// protected void initWidget() {
+	//
+	// }
+
+	// @Override
+	// protected void setupUiElements() {
+	//
+	// }
 
 	public CellList<TweetDTO> getTweetList() {
 		return tweetList;

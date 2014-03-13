@@ -9,11 +9,18 @@ import com.ziplly.app.model.PersonalAccountDTO;
 
 public interface ISignupView<T extends SignupActivityPresenter> extends View<T> {
 	void reset();
+
 	void setPresenter(T businessSignupActivity);
+
 	void clear();
+
 	void displayAccount(PersonalAccountDTO a);
+
 	void displayMessage(String accountDoesNotExist, AlertType error);
+
 	void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods);
+
 	void displayNotYetLaunchedWidget();
+
 	void displayNeighborhoodListLoading(boolean b);
 }

@@ -15,45 +15,40 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @NamedQueries({
-	@NamedQuery(
-		name = "findTransactionByAccountAndDate",
-		query = "from Transaction t where to_char(t.timeCreated,'MM-YYYY') = :monthYear"
-	),
-	@NamedQuery(
-		name = "findTransactionByAccount",
-		query = "from Transaction t where t.seller.accountId = :accountId and t.status != :status"
-	)
-})
+    @NamedQuery(name = "findTransactionByAccountAndDate",
+        query = "from Transaction t where to_char(t.timeCreated,'MM-YYYY') = :monthYear"),
+    @NamedQuery(name = "findTransactionByAccount",
+        query = "from Transaction t where t.seller.accountId = :accountId and t.status != :status") })
 @Entity
-@Table(name="transaction")
+@Table(name = "transaction")
 public class Transaction extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="transaction_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "transaction_id")
 	private Long transactionId;
-	
+
 	@ManyToOne
-	@JoinColumn(name="account_id")
+	@JoinColumn(name = "account_id")
 	private Account seller;
-	
+
 	@OneToOne
-	@JoinColumn(name="subscription_id")
+	@JoinColumn(name = "subscription_id")
 	private SubscriptionPlan plan;
-	
+
 	private BigDecimal amount;
-	
+
 	private TransactionStatus status;
 	private String currencyCode;
-	
+
 	public Transaction() {
 	}
-	
+
 	public Transaction(TransactionDTO txn) {
 		if (txn != null) {
 			transactionId = txn.getTransactionId();
-//			seller = new Account(txn.getSeller());
+			// seller = new Account(txn.getSeller());
 			plan = new SubscriptionPlan(txn.getPlan());
 			amount = txn.getAmount();
 			currencyCode = txn.getCurrencyCode();
@@ -62,11 +57,11 @@ public class Transaction extends AbstractTimestampAwareEntity {
 			setTimeUpdated(txn.getTimeUpdated());
 		}
 	}
-	
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
-	
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -74,6 +69,7 @@ public class Transaction extends AbstractTimestampAwareEntity {
 	public String getCurrencyCode() {
 		return currencyCode;
 	}
+
 	public void setCurrencyCode(String currencyCode) {
 		this.currencyCode = currencyCode;
 	}

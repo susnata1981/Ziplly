@@ -11,16 +11,16 @@ import javax.persistence.Table;
 @Table(name = "subscription_plan")
 public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="subscription_id")
+	@Column(name = "subscription_id")
 	private Long subscriptionId;
 	private String name;
 	private String description;
-	@Column(name="tweets_allowed")
+	@Column(name = "tweets_allowed")
 	private int tweetsAllowed;
-	@Column(name="status")
+	@Column(name = "status")
 	private String status;
 	private Double fee;
 

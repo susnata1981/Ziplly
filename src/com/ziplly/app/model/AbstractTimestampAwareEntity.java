@@ -16,18 +16,18 @@ public class AbstractTimestampAwareEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="time_created", updatable = false)
+	@Column(name = "time_created", updatable = false)
 	private Date timeCreated;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="time_updated")
+	@Column(name = "time_updated")
 	private Date timeUpdated;
-	
+
 	@PrePersist
 	protected void onCreate() {
 		setTimeCreated(setTimeUpdated(new Date()));
 	}
-	
+
 	@PreUpdate
 	protected void onUpdate() {
 		setTimeUpdated(new Date());

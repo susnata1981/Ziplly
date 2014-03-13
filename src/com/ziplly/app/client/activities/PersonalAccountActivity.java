@@ -38,30 +38,35 @@ import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.TweetResult;
 
-public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements InfiniteScrollHandler {
+public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements
+    InfiniteScrollHandler {
 	private PersonalAccountPlace place;
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
 	private List<TweetDTO> lastTweetList;
 	private TweetViewBinder binder;
-	private ScrollBottomHitActionHandler scrollBottomHitActionHandler = new ScrollBottomHitActionHandler();
+	private ScrollBottomHitActionHandler scrollBottomHitActionHandler =
+	    new ScrollBottomHitActionHandler();
 	private AsyncProvider<AccountView> viewProvider;
 
 	@Inject
-	public PersonalAccountActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, AsyncProvider<AccountView> viewProvider,
-			PersonalAccountPlace place) {
+	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    AsyncProvider<AccountView> viewProvider,
+	    PersonalAccountPlace place) {
 
 		super(dispatcher, eventBus, placeController, ctx, null);
 		this.place = place;
 		this.viewProvider = viewProvider;
 	}
-	
+
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
 		eventBus.addHandler(TweetNotAvailableEvent.TYPE, new TweetNotAvailableEventHandler() {
-			
+
 			@Override
 			public void onEvent(TweetNotAvailableEvent event) {
 				if (binder != null) {
@@ -70,7 +75,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			}
 		});
 	}
-	
+
 	@Override
 	public void bind() {
 		view.setPresenter(this);
@@ -86,7 +91,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		this.panel = panel;
 		checkAccountLogin();
 	}
-	
+
 	@Override
 	public void doStart() {
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<AccountView>() {
@@ -105,15 +110,14 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			}
 		});
 	}
-	
+
 	/**
 	 * Display people's profile
 	 */
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
-			dispatcher.execute(new GetAccountByIdAction(accountId),
-					new GetAccountByIdActionHandler());
+			dispatcher.execute(new GetAccountByIdAction(accountId), new GetAccountByIdActionHandler());
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			startInfiniteScrollThread();
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
@@ -140,7 +144,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		// Display target neighborhood
 		view.displayTargetNeighborhoods(getTargetNeighborhoodList());
-		
+
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
 		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
@@ -183,8 +187,11 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		if (place.getAccountId() != null) {
 			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE);
 		} else if (ctx.getAccount() != null) {
-			action = new GetTweetForUserAction(ctx.getAccount().getAccountId(), tweetPageIndex,
-					TWEETS_PER_PAGE);
+			action =
+			    new GetTweetForUserAction(
+			        ctx.getAccount().getAccountId(),
+			        tweetPageIndex,
+			        TWEETS_PER_PAGE);
 		}
 
 		dispatcher.execute(action, scrollBottomHitActionHandler);
@@ -267,7 +274,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	}
 
 	private class GetAccountDetailsActionHandler extends
-			DispatcherCallbackAsync<GetAccountDetailsResult> {
+	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
@@ -286,31 +293,32 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
 
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()),
-				new DispatcherCallbackAsync<DeleteTweetResult>() {
-					@Override
-					public void onSuccess(DeleteTweetResult result) {
-						view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
-						view.removeTweet(tweet);
-					}
+		dispatcher.execute(
+		    new DeleteTweetAction(tweet.getTweetId()),
+		    new DispatcherCallbackAsync<DeleteTweetResult>() {
+			    @Override
+			    public void onSuccess(DeleteTweetResult result) {
+				    view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+				    view.removeTweet(tweet);
+			    }
 
-					@Override
-					public void onFailure(Throwable th) {
-						if (th instanceof AccessError) {
-							view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-						} else {
-							view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-						}
-					}
-				});
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof AccessError) {
+					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				    } else {
+					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+		    });
 	}
 
 	private class GetPublicAccountDetailsActionHandler extends
-			DispatcherCallbackAsync<GetAccountDetailsResult> {
+	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
-//			onAccountDetailsUpdate(result);
+			// onAccountDetailsUpdate(result);
 			view.updatePublicAccountDetails(result);
 		}
 	}
@@ -335,7 +343,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		}
 	}
 
-	private class ScrollBottomHitActionHandler extends	DispatcherCallbackAsync<GetTweetForUserResult> {
+	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult> {
 		@Override
 		public void onSuccess(GetTweetForUserResult result) {
 			lastTweetList = result.getTweets();

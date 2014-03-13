@@ -9,7 +9,7 @@ public class UpdateCommentResult implements Result {
 
 	public UpdateCommentResult() {
 	}
-	
+
 	public UpdateCommentResult(CommentDTO comment) {
 		this.setComment(comment);
 	}

@@ -21,8 +21,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 		try {
 			em.getTransaction().begin();
 
-			Query query = em
-					.createQuery("from Transaction where seller.accountId = :accountId and status = :status");
+			Query query =
+			    em
+			        .createQuery("from Transaction where seller.accountId = :accountId and status = :status");
 			query.setParameter("accountId", txn.getSeller().getAccountId());
 			query.setParameter("status", TransactionStatus.ACTIVE);
 

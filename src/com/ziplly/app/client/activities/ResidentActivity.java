@@ -31,8 +31,9 @@ import com.ziplly.app.shared.GetEntityResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
-public class ResidentActivity extends AbstractActivity implements EntityListViewPresenter,
-		SendMessagePresenter {
+public class ResidentActivity extends AbstractActivity implements
+    EntityListViewPresenter,
+    SendMessagePresenter {
 	private ResidentsView view;
 	private ResidentPlace place;
 	private EntityListHandler handler = new EntityListHandler();
@@ -40,14 +41,18 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	private AsyncProvider<ResidentsView> viewProvider;
 
 	@Inject
-	public ResidentActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx, ResidentPlace place,
-			AsyncProvider<ResidentsView> viewProvider) {
+	public ResidentActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    ResidentPlace place,
+	    AsyncProvider<ResidentsView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.viewProvider = viewProvider;
 		this.place = place;
 	}
 
+	@Override
 	protected void setupHandlers() {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
@@ -90,8 +95,10 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
-		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : 
-			ctx.getCurrentNeighborhood().getNeighborhoodId();
+		Long neighborhoodId =
+		    (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
+		        .getCurrentNeighborhood()
+		        .getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		action.setGender(Gender.ALL);
 		view.setNeighborhoodId(neighborhoodId);
@@ -99,14 +106,15 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 	}
 
 	private void updateMessageWidgetWithAccountDetails(Long accountId) {
-		dispatcher.execute(new GetAccountByIdAction(accountId),
-				new DispatcherCallbackAsync<GetAccountByIdResult>() {
+		dispatcher.execute(
+		    new GetAccountByIdAction(accountId),
+		    new DispatcherCallbackAsync<GetAccountByIdResult>() {
 
-					@Override
-					public void onSuccess(GetAccountByIdResult result) {
-						view.updateMessageWidget(result.getAccount());
-					}
-				});
+			    @Override
+			    public void onSuccess(GetAccountByIdResult result) {
+				    view.updateMessageWidget(result.getAccount());
+			    }
+		    });
 	}
 
 	/**
@@ -133,6 +141,7 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 			view.display(accounts);
 		}
 
+		@Override
 		public void onFailure(Throwable caught) {
 			view.displayMessage(caught.getMessage(), AlertType.ERROR);
 		}
@@ -154,13 +163,14 @@ public class ResidentActivity extends AbstractActivity implements EntityListView
 		int size = conversation.getMessages().size();
 		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
-		dispatcher.execute(new SendMessageAction(conversation),
-				new DispatcherCallbackAsync<SendMessageResult>() {
-					@Override
-					public void onSuccess(SendMessageResult result) {
-						view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
-					}
-				});
+		dispatcher.execute(
+		    new SendMessageAction(conversation),
+		    new DispatcherCallbackAsync<SendMessageResult>() {
+			    @Override
+			    public void onSuccess(SendMessageResult result) {
+				    view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			    }
+		    });
 	}
 
 	@Override

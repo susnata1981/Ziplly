@@ -14,27 +14,27 @@ import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 
 @Entity
-@Table(name="privacy_settings")
+@Table(name = "privacy_settings")
 public class PrivacySettings extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name="section")
+	@Column(name = "section")
 	private String section;
-	
-	@Column(name="setting")
+
+	@Column(name = "setting")
 	private String setting;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="account_id")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "account_id")
 	private Account account;
 
 	public PrivacySettings() {
 	}
-	
+
 	public PrivacySettings(PrivacySettingsDTO asd) {
 		this.id = asd.getId();
 		this.setSection(asd.getSection());
@@ -44,7 +44,7 @@ public class PrivacySettings extends AbstractTimestampAwareEntity {
 			this.account.setAccountId(asd.getAccount().getAccountId());
 		}
 	}
-	
+
 	public ShareSetting getSetting() {
 		return ShareSetting.valueOf(setting);
 	}

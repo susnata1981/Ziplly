@@ -10,10 +10,10 @@ import com.ziplly.app.model.AccountDTO;
 public class SearchAccountResult implements Result {
 	private List<AccountDTO> accounts = new ArrayList<AccountDTO>();
 	private int totalAccounts;
-	
+
 	public SearchAccountResult() {
 	}
-	
+
 	public List<AccountDTO> getAccounts() {
 		return accounts;
 	}

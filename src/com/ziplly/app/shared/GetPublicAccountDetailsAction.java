@@ -2,12 +2,12 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetPublicAccountDetailsAction implements Action<GetAccountDetailsResult>{
+public class GetPublicAccountDetailsAction implements Action<GetAccountDetailsResult> {
 	private Long accountId;
 
 	public GetPublicAccountDetailsAction() {
 	}
-	
+
 	public GetPublicAccountDetailsAction(Long accountId) {
 		this.setAccountId(accountId);
 	}

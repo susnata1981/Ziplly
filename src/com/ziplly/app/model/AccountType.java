@@ -1,11 +1,8 @@
 package com.ziplly.app.model;
 
 public enum AccountType {
-	PERSONAL("personal"),
-	BUSINESS("BusinessAccount"),
-	NON_PROFIT("NonProfit"),
-	NONE("none");
-	
+	PERSONAL("personal"), BUSINESS("BusinessAccount"), NON_PROFIT("NonProfit"), NONE("none");
+
 	private String name;
 
 	private AccountType(String name) {

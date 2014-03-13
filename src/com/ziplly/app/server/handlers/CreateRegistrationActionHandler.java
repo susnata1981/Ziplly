@@ -19,32 +19,35 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.CreateRegistrationResult;
 
-public class CreateRegistrationActionHandler extends AbstractAccountActionHandler<CreateRegistrationAction, CreateRegistrationResult> {
+public class CreateRegistrationActionHandler extends
+    AbstractAccountActionHandler<CreateRegistrationAction, CreateRegistrationResult> {
 
 	private AccountRegistrationDAO registrationDao;
 
 	@Inject
-	public CreateRegistrationActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, AccountRegistrationDAO registrationDao) {
+	public CreateRegistrationActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    AccountRegistrationDAO registrationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.registrationDao = registrationDao;
 	}
-	
+
 	@Override
-	public CreateRegistrationResult execute(CreateRegistrationAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public CreateRegistrationResult
+	    execute(CreateRegistrationAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getEmail() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		Account account = session.getAccount();
 		if (account.getRole() != Role.ADMINISTRATOR) {
 			throw new IllegalAccessError();
 		}
-		
+
 		long code = generateRegistrationCode(action.getEmail());
 		AccountRegistration ar = new AccountRegistration();
 		ar.setEmail(action.getEmail());
@@ -54,7 +57,8 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 		ar.setStatus(AccountRegistrationStatus.ACTIVE);
 		registrationDao.save(ar);
 		try {
-			String registrationLink = URLEncoder.encode("code="+code+"email="+action.getEmail(),"utf-8");
+			String registrationLink =
+			    URLEncoder.encode("code=" + code + "email=" + action.getEmail(), "utf-8");
 			// TODO send email
 			return new CreateRegistrationResult(registrationLink);
 		} catch (UnsupportedEncodingException e) {
@@ -70,9 +74,9 @@ public class CreateRegistrationActionHandler extends AbstractAccountActionHandle
 	public Class<CreateRegistrationAction> getActionType() {
 		return CreateRegistrationAction.class;
 	}
-//
-//	@Override
-//	public int getResourceId() {
-//		return Resource.CREATE_REGISTRATION_ACTION;
-//	}
+	//
+	// @Override
+	// public int getResourceId() {
+	// return Resource.CREATE_REGISTRATION_ACTION;
+	// }
 }

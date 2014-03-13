@@ -1,15 +1,15 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.NeighborhoodDTO;
-
 import net.customware.gwt.dispatch.shared.Action;
+
+import com.ziplly.app.model.NeighborhoodDTO;
 
 public class CreateNeighborhoodAction implements Action<CreateNeighborhoodResult> {
 	private NeighborhoodDTO neighborhood;
 
 	public CreateNeighborhoodAction() {
 	}
-	
+
 	public CreateNeighborhoodAction(NeighborhoodDTO n) {
 		this.neighborhood = n;
 	}

@@ -14,22 +14,26 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsResult;
 
-public class GetTweetCategoryDetailsActionHandler extends AbstractTweetActionHandler<GetTweetCategoryDetailsAction, GetTweetCategoryDetailsResult>{
+public class GetTweetCategoryDetailsActionHandler extends
+    AbstractTweetActionHandler<GetTweetCategoryDetailsAction, GetTweetCategoryDetailsResult> {
 
 	@Inject
-	public GetTweetCategoryDetailsActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			TweetDAO tweetDao, AccountBLI accountBli) {
+	public GetTweetCategoryDetailsActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 	}
 
 	@Override
 	public GetTweetCategoryDetailsResult execute(GetTweetCategoryDetailsAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	    ExecutionContext arg1) throws DispatchException {
+
 		validateSession();
-		
-		Map<TweetType, Integer> tweetTypeCounts = tweetDao.findTweetCategoryCounts(action.getNeighborhoodId());
-		
+
+		Map<TweetType, Integer> tweetTypeCounts =
+		    tweetDao.findTweetCategoryCounts(action.getNeighborhoodId());
+
 		GetTweetCategoryDetailsResult result = new GetTweetCategoryDetailsResult();
 		result.setTweetCounts(tweetTypeCounts);
 		return result;

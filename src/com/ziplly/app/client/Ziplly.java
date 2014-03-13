@@ -15,7 +15,7 @@ public class Ziplly implements EntryPoint {
 	ZGinInjector injector = GWT.create(ZGinInjector.class);
 	CachingDispatcherAsync dispatcher = injector.getCachingDispatcher();
 	ZipllyController zcontroller = injector.getZipllyController();
-	
+
 	@Override
 	public void onModuleLoad() {
 		logger.log(Level.INFO, "Ziplly onModuleLoad initiated");

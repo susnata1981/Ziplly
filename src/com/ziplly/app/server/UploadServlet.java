@@ -28,18 +28,37 @@ import com.ziplly.app.model.RecordStatus;
 
 @Singleton
 public class UploadServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(UploadServlet.class.getCanonicalName());
-	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-	private ImageDAO imageDao;
-	private ImagesService imageService = ImagesServiceFactory.getImagesService();
+	private static final long serialVersionUID = 1L;
+	private final BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	private final ImageDAO imageDao;
+	private final ImagesService imageService = ImagesServiceFactory.getImagesService();
 
 	public UploadServlet() {
 		imageDao = new ImageDAOImpl();
 	}
 
 	@Override
-	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	public void doGet(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
+		String imageUrl = req.getParameter(StringConstants.IMAGE_URL_KEY);
+		String imageId = req.getParameter(StringConstants.IMAGE_ID);
+
+		logger
+		.log(Level.INFO, String.format(
+				"doGet method called with " + "image url %s, imageId %s",
+				imageUrl,
+				imageId));
+
+		String response = imageUrl + StringConstants.VALUE_SEPARATOR + imageId;
+		res.setHeader("Content-Type", "text/html");
+		res.setContentType("text/html");
+		res.getWriter().println(response);
+		res.getWriter().flush();
+		//		res.getWriter().close();
+	}
+
+	@Override
+	public void doPost(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
 		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
 
 		// "image" name of the input[type="file"] form field.
@@ -56,15 +75,15 @@ public class UploadServlet extends HttpServlet {
 		// Save the image
 		try {
 			Image image = new Image();
-			image.setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys
-					.get(0))));
+			image
+			.setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
 			image.setBlobKey(blobKeys.get(0).getKeyString());
 			image.setStatus(RecordStatus.ACTIVE);
 			image.setTimeCreated(new Date());
 			imageDao.save(image);
-			
-//			res.setHeader("Access-Control-Allow-Methods", "POST");
-//			res.setHeader("Access-Control-Allow-Origin", "*");
+
+			// res.setHeader("Access-Control-Allow-Methods", "POST");
+			// res.setHeader("Access-Control-Allow-Origin", "*");
 			// Redirect (302)
 			res.sendRedirect(getImageUrl(image));
 		} catch (RuntimeException ex) {
@@ -72,35 +91,16 @@ public class UploadServlet extends HttpServlet {
 		}
 	}
 
-	private String getImageUrl(Image image) {
+	private String getImageUrl(final Image image) {
 		String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
-		
+
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
 			uploadEndpoint = "http://127.0.0.1:8888/ziplly/upload";
 		}
-		
-		String url = uploadEndpoint
-				+ "?"
-				+ StringConstants.IMAGE_URL_KEY
-				+ "="
-				+ image.getUrl()
-				+ "&" + StringConstants.IMAGE_ID + "=" + image.getId();
+
+		String url =
+				uploadEndpoint + "?" + StringConstants.IMAGE_URL_KEY + "=" + image.getUrl() + "&"
+						+ StringConstants.IMAGE_ID + "=" + image.getId();
 		return url;
-	}
-
-	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		String imageUrl = req.getParameter(StringConstants.IMAGE_URL_KEY);
-		String imageId = req.getParameter(StringConstants.IMAGE_ID);
-
-		logger.log(Level.INFO, String.format("doPost method called with "
-				+ "image url %s, imageId %s", imageUrl, imageId));
-
-		String response = imageUrl + StringConstants.VALUE_SEPARATOR + imageId;
-		res.setHeader("Content-Type", "text/html");
-		res.setContentType("text/html");
-		res.getWriter().println(response);
-		res.getWriter().flush();
-		res.getWriter().close();
 	}
 }

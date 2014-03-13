@@ -16,7 +16,7 @@ public class SpamDAOImpl implements SpamDAO {
 		if (spam == null) {
 			throw new IllegalArgumentException("Invalid argument to save(...)");
 		}
-		
+
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();

@@ -5,11 +5,11 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.TweetDTO;
 
 public class PlaceUtils {
-	
+
 	public static String getPlaceTokenForNeighborhood(Long neighborhoodId) {
 		return StringConstants.NEIGHBORHOOD_TOKEN + StringConstants.PLACE_SEPARATOR + neighborhoodId;
 	}
-	
+
 	public static String getPlaceTokenForMessaging(Long accountId) {
 		return StringConstants.SEND_MESSAGE_TOKEN + StringConstants.PLACE_SEPARATOR + accountId;
 	}
@@ -19,11 +19,13 @@ public class PlaceUtils {
 	}
 
 	public static String getHomePlaceTokenForTweetType(String tweetType) {
-//		return StringConstants.HOME_TOKEN + StringConstants.PLACE_SEPARATOR + tweetType;
+		// return StringConstants.HOME_TOKEN + StringConstants.PLACE_SEPARATOR +
+		// tweetType;
 		return tweetType;
 	}
 
 	public static String getPlaceTokenForTweetDetails(TweetDTO tweet) {
-		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN + StringConstants.PLACE_SEPARATOR + tweet.getTweetId();
+		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN
+		    + StringConstants.PLACE_SEPARATOR + tweet.getTweetId();
 	}
 }

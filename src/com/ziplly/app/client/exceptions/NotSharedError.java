@@ -7,9 +7,8 @@ public class NotSharedError extends DispatchException {
 
 	public NotSharedError() {
 	}
-	
+
 	public NotSharedError(String msg) {
 		super(msg);
 	}
 }
-

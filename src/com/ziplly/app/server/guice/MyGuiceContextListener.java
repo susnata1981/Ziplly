@@ -9,8 +9,8 @@ public class MyGuiceContextListener extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		return Guice.createInjector(
-				new DispatchServletModule(),
-				new ZipllyActionHandlerModule(), 
-				new DAOModule());
+		    new DispatchServletModule(),
+		    new ZipllyActionHandlerModule(),
+		    new DAOModule());
 	}
 }

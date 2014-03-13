@@ -4,13 +4,13 @@ import net.customware.gwt.dispatch.shared.Result;
 
 import com.ziplly.app.model.AccountDTO;
 
-public class RegisterAccountResult implements Result{
+public class RegisterAccountResult implements Result {
 	private AccountDTO account;
 	private Long uid;
 
 	public RegisterAccountResult() {
 	}
-	
+
 	public RegisterAccountResult(AccountDTO account) {
 		this.setAccount(account);
 	}
@@ -26,7 +26,7 @@ public class RegisterAccountResult implements Result{
 	public void setUid(Long uid) {
 		this.uid = uid;
 	}
-	
+
 	public Long getUid() {
 		return uid;
 	}

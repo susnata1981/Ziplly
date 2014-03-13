@@ -27,21 +27,21 @@ import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 
-public class ConversationWidget extends Composite implements
-		View<ConversationViewPresenter> {
+public class ConversationWidget extends Composite implements View<ConversationViewPresenter> {
 
-	private static ConversationWidgetUiBinder uiBinder = GWT
-			.create(ConversationWidgetUiBinder.class);
+	private static ConversationWidgetUiBinder uiBinder = GWT.create(ConversationWidgetUiBinder.class);
 
-	interface ConversationWidgetUiBinder extends
-			UiBinder<Widget, ConversationWidget> {
+	interface ConversationWidgetUiBinder extends UiBinder<Widget, ConversationWidget> {
 	}
 
 	@UiField
 	HTMLPanel conversationPanel;
 	private ConversationViewPresenter presenter;
-	private Map<ConversationDTO, HTMLPanel> conversationToPanelMap = new HashMap<ConversationDTO, HTMLPanel>();
-	private Map<ConversationDTO, HTMLPanel> conversationToReplyPanelMap = new HashMap<ConversationDTO, HTMLPanel>();
+	private Map<ConversationDTO, HTMLPanel> conversationToPanelMap =
+	    new HashMap<ConversationDTO, HTMLPanel>();
+	private Map<ConversationDTO, HTMLPanel> conversationToReplyPanelMap =
+	    new HashMap<ConversationDTO, HTMLPanel>();
+
 	@Inject
 	public ConversationWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -66,16 +66,16 @@ public class ConversationWidget extends Composite implements
 			HTMLPanel replyPanel = conversationToReplyPanelMap.get(c);
 			if (replyPanel == null) {
 				// error
-				throw new RuntimeException("Couldn't find replypanel for conversation: "+c.getId());
+				throw new RuntimeException("Couldn't find replypanel for conversation: " + c.getId());
 			}
 			TextBox tbox = (TextBox) replyPanel.getWidget(0);
 			tbox.setText("");
 		} else {
 			int size = c.getMessages().size();
-			displayMessage(panel, c.getMessages().get(size-1), c);
+			displayMessage(panel, c.getMessages().get(size - 1), c);
 		}
 	}
-	
+
 	public void displayConversations(List<ConversationDTO> conversations) {
 		conversationPanel.clear();
 		for (final ConversationDTO c : conversations) {
@@ -98,7 +98,7 @@ public class ConversationWidget extends Composite implements
 			displayMessage(panel, message, c);
 		}
 	}
-	
+
 	private void addReplyPanel(final HTMLPanel panel, final ConversationDTO c) {
 		HTMLPanel replyPanel = new HTMLPanel("");
 		final TextBox replyTextBox = new TextBox();
@@ -135,15 +135,16 @@ public class ConversationWidget extends Composite implements
 		});
 	}
 
-	private void displayMessage(final HTMLPanel panel, final MessageDTO message, final ConversationDTO c) {
+	private void displayMessage(final HTMLPanel panel,
+	    final MessageDTO message,
+	    final ConversationDTO c) {
 		HTMLPanel senderDiv = new HTMLPanel("");
 		Anchor profileLink = new Anchor(message.getSender().getDisplayName());
 		profileLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (message.getSender() instanceof PersonalAccountDTO) {
-					presenter.goTo(new PersonalAccountPlace(message
-							.getSender().getAccountId()));
+					presenter.goTo(new PersonalAccountPlace(message.getSender().getAccountId()));
 				}
 			}
 		});
@@ -156,8 +157,10 @@ public class ConversationWidget extends Composite implements
 		senderDiv.add(profileImage);
 		panel.add(senderDiv);
 
-		HTMLPanel content = new HTMLPanel("<p>Subject:"+c.getSubject()+"</p><p>Message:"+message.getMessage()+"</p>");
+		HTMLPanel content =
+		    new HTMLPanel("<p>Subject:" + c.getSubject() + "</p><p>Message:" + message.getMessage()
+		        + "</p>");
 		panel.add(content);
 	}
-	
+
 }

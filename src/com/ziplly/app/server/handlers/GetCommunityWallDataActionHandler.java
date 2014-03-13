@@ -21,24 +21,25 @@ import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
 
-public class GetCommunityWallDataActionHandler
-		extends
-		AbstractTweetActionHandler<GetCommunityWallDataAction, GetCommunityWallDataResult> {
+public class GetCommunityWallDataActionHandler extends
+    AbstractTweetActionHandler<GetCommunityWallDataAction, GetCommunityWallDataResult> {
 
 	private HashtagDAO hashtagDao;
 	private Logger logger = Logger.getLogger(GetCommunityWallDataAction.class.getName());
 
 	@Inject
 	public GetCommunityWallDataActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, TweetDAO tweetDao, AccountBLI accountBli, HashtagDAO hashtagDao) {
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli,
+	    HashtagDAO hashtagDao) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 		this.hashtagDao = hashtagDao;
 	}
 
 	@Override
-	public GetCommunityWallDataResult execute(
-			GetCommunityWallDataAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public GetCommunityWallDataResult
+	    execute(GetCommunityWallDataAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action.getSearchType() != SearchType.TWEET_BY_ID) {
 			validateSession();
@@ -46,39 +47,39 @@ public class GetCommunityWallDataActionHandler
 
 		if (action.getSearchType() == SearchType.CATEGORY) {
 			return getTweetsByCategory(action);
-		} 
-		else if (action.getSearchType() == SearchType.HASHTAG) {
+		} else if (action.getSearchType() == SearchType.HASHTAG) {
 			return getTweetsByHashtag(action);
-		} 
-		else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
+		} else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
 			return getTweetById(action);
-		} 
-		else if (action.getSearchType() == SearchType.NEIGHBORHOOD) {
+		} else if (action.getSearchType() == SearchType.NEIGHBORHOOD) {
 			Preconditions.checkNotNull(action.getNeighborhood());
 			return getTweetsByNeighborhood(action);
 		}
 		throw new IllegalArgumentException();
 	}
 
-	private GetCommunityWallDataResult getTweetsByNeighborhood(GetCommunityWallDataAction action) 
-			throws NotFoundException {
-		
+	private GetCommunityWallDataResult
+	    getTweetsByNeighborhood(GetCommunityWallDataAction action) throws NotFoundException {
+
 		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
 		try {
-			List<TweetDTO> tweets = tweetDao.findTweetsByNeighborhood(
-				action.getNeighborhood().getNeighborhoodId(), 
-				action.getPage(), 
-				action.getPageSize());
+			List<TweetDTO> tweets =
+			    tweetDao.findTweetsByNeighborhood(
+			        action.getNeighborhood().getNeighborhoodId(),
+			        action.getPage(),
+			        action.getPageSize());
 			result.setTweets(tweets);
-		} catch(NotFoundException nfe) {
-			logger.severe(String.format("Couldn't find tweets for neighborhood %d",
-					action.getNeighborhood().getNeighborhoodId()));
+		} catch (NotFoundException nfe) {
+			logger.severe(String.format("Couldn't find tweets for neighborhood %d", action
+			    .getNeighborhood()
+			    .getNeighborhoodId()));
 			throw nfe;
 		}
 		return result;
 	}
 
-	private GetCommunityWallDataResult getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
+	private GetCommunityWallDataResult
+	    getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
 		GetCommunityWallDataResult result = new GetCommunityWallDataResult();
 		try {
 			Long tweetId = Long.parseLong(action.getTweetId());
@@ -86,46 +87,48 @@ public class GetCommunityWallDataActionHandler
 			ArrayList<TweetDTO> tweets = new ArrayList<TweetDTO>();
 			tweets.add(tweet);
 			result.setTweets(tweets);
-		} catch(NotFoundException nfe) {
-			logger.severe(String.format("Couldn't find tweets for tweetId %s",action.getTweetId()));
+		} catch (NotFoundException nfe) {
+			logger.severe(String.format("Couldn't find tweets for tweetId %s", action.getTweetId()));
 			throw nfe;
-		}
-		catch(NumberFormatException nfe) {
+		} catch (NumberFormatException nfe) {
 			throw new IllegalArgumentException();
 		}
 		return result;
 	}
 
-	private GetCommunityWallDataResult getTweetsByHashtag(GetCommunityWallDataAction action) throws NotFoundException {
+	private GetCommunityWallDataResult
+	    getTweetsByHashtag(GetCommunityWallDataAction action) throws NotFoundException {
 		Long neighborhoodId = session.getLocation().getNeighborhood().getNeighborhoodId();
-		List<TweetDTO> tweets = hashtagDao.getTweetsForTagAndNeighborhood(
-				action.getHashtag(),
-				neighborhoodId,
-				action.getPage(), 
-				action.getPageSize());
-		
+		List<TweetDTO> tweets =
+		    hashtagDao.getTweetsForTagAndNeighborhood(
+		        action.getHashtag(),
+		        neighborhoodId,
+		        action.getPage(),
+		        action.getPageSize());
+
 		GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
 		gcwdr.setTweets(tweets);
 		return gcwdr;
 	}
 
-	private GetCommunityWallDataResult getTweetsByCategory(GetCommunityWallDataAction action) throws NotFoundException {
+	private GetCommunityWallDataResult
+	    getTweetsByCategory(GetCommunityWallDataAction action) throws NotFoundException {
 		TweetType type = action.getType();
 		List<TweetDTO> tweets = null;
-		
+
 		if (type.equals(TweetType.ALL)) {
-			tweets = tweetDao.findTweetsByNeighborhood(
-					action.getNeighborhood().getNeighborhoodId(), 
-					action.getPage(), 
-					action.getPageSize());
+			tweets =
+			    tweetDao.findTweetsByNeighborhood(
+			        action.getNeighborhood().getNeighborhoodId(),
+			        action.getPage(),
+			        action.getPageSize());
 		} else {
-			tweets = tweetDao.findTweetsByTypeAndNeighborhood(
-					type, 
-					action.getNeighborhood().getNeighborhoodId(),
-					action.getPage(), 
-					action.getPageSize());
+			tweets =
+			    tweetDao.findTweetsByTypeAndNeighborhood(type, action
+			        .getNeighborhood()
+			        .getNeighborhoodId(), action.getPage(), action.getPageSize());
 		}
-		
+
 		GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
 		gcwdr.setTweets(tweets);
 		return gcwdr;

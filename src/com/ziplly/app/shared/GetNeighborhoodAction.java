@@ -2,16 +2,16 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetNeighborhoodAction implements Action<GetNeighborhoodResult>{
+public class GetNeighborhoodAction implements Action<GetNeighborhoodResult> {
 
 	private NeighborhoodSearchActionType searchType;
 	private String postalCode;
 	private int start;
 	private int maxResults;
-	
+
 	public GetNeighborhoodAction() {
 	}
-	
+
 	public GetNeighborhoodAction(String postalCode2) {
 		this.setPostalCode(postalCode2);
 	}

@@ -81,9 +81,10 @@ public class DAOModule extends AbstractModule {
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
 	}
 
-//	@Provides
-//	public EntityManager getEntityManager() {
-//		EntityManagerFactory emf = Persistence.createEntityManagerFactory("zipllydb");
-//		return emf.createEntityManager();
-//	}
+	// @Provides
+	// public EntityManager getEntityManager() {
+	// EntityManagerFactory emf =
+	// Persistence.createEntityManagerFactory("zipllydb");
+	// return emf.createEntityManager();
+	// }
 }

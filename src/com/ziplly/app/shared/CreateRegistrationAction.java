@@ -5,14 +5,14 @@ import net.customware.gwt.dispatch.shared.Action;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessType;
 
-public class CreateRegistrationAction implements Action<CreateRegistrationResult>{
+public class CreateRegistrationAction implements Action<CreateRegistrationResult> {
 	private AccountType type;
 	private String email;
 	private BusinessType businessType;
 
 	public CreateRegistrationAction() {
 	}
-	
+
 	public CreateRegistrationAction(String email, AccountType type, BusinessType btype) {
 		this.setEmail(email);
 		this.setType(type);

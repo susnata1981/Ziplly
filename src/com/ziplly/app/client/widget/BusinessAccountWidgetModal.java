@@ -23,13 +23,12 @@ import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 
 public class BusinessAccountWidgetModal extends Composite implements
-		IAccountWidgetModal<BusinessAccountDTO> {
+    IAccountWidgetModal<BusinessAccountDTO> {
 
 	private static BusinessAccountWidgetModalUiBinder uiBinder = GWT
-			.create(BusinessAccountWidgetModalUiBinder.class);
+	    .create(BusinessAccountWidgetModalUiBinder.class);
 
-	interface BusinessAccountWidgetModalUiBinder extends
-			UiBinder<Widget, BusinessAccountWidgetModal> {
+	interface BusinessAccountWidgetModalUiBinder extends UiBinder<Widget, BusinessAccountWidgetModal> {
 	}
 
 	@UiField
@@ -66,7 +65,7 @@ public class BusinessAccountWidgetModal extends Composite implements
 	public void setWidth(String width) {
 		accountWidgetModal.setWidth(width);
 	}
-	
+
 	private void setupHandlers() {
 		viewProfileBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -106,25 +105,25 @@ public class BusinessAccountWidgetModal extends Composite implements
 		profileImageUrl.setUrl(account.getImageUrl());
 	}
 
-//	public void displayLocationInMap(GetLatLngResult input) {
-//		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());
-//		MapOptions myOptions = MapOptions.create();
-//		myOptions.setZoom(10.0);
-//		myOptions.setCenter(myLatLng);
-//		myOptions.setMapMaker(true);
-//		myOptions.setMapTypeId(MapTypeId.ROADMAP);
-//
-//		GoogleMap map = GoogleMap.create(locationDiv, myOptions);
-//		MarkerOptions markerOpts = MarkerOptions.create();
-//		markerOpts.setMap(map);
-//		markerOpts.setPosition(myLatLng);
-//		Marker.create(markerOpts);
-//	}
+	// public void displayLocationInMap(GetLatLngResult input) {
+	// LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());
+	// MapOptions myOptions = MapOptions.create();
+	// myOptions.setZoom(10.0);
+	// myOptions.setCenter(myLatLng);
+	// myOptions.setMapMaker(true);
+	// myOptions.setMapTypeId(MapTypeId.ROADMAP);
+	//
+	// GoogleMap map = GoogleMap.create(locationDiv, myOptions);
+	// MarkerOptions markerOpts = MarkerOptions.create();
+	// markerOpts.setMap(map);
+	// markerOpts.setPosition(myLatLng);
+	// Marker.create(markerOpts);
+	// }
 
 	void displayFormattedAddress(GetLatLngResult result) {
 		address.setInnerHTML(result.getFormattedAddress());
 	}
-	
+
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;

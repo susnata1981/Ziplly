@@ -11,7 +11,7 @@ public class GetEntityResult implements Result {
 	private List<AccountDTO> accounts;
 	private EntityType entityType;
 	private Long count;
-	
+
 	public GetEntityResult(List<AccountDTO> accounts, EntityType type) {
 		this.setAccounts(accounts);
 		this.entityType = type;

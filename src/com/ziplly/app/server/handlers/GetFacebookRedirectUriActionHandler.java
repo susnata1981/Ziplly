@@ -13,18 +13,20 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 
-public class GetFacebookRedirectUriActionHandler extends AbstractAccountActionHandler<GetFacebookRedirectUriAction, GetFacebookRedirectUriResult>{
+public class GetFacebookRedirectUriActionHandler extends
+    AbstractAccountActionHandler<GetFacebookRedirectUriAction, GetFacebookRedirectUriResult> {
 
 	@Inject
-	public GetFacebookRedirectUriActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli) {
+	public GetFacebookRedirectUriActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public GetFacebookRedirectUriResult execute(GetFacebookRedirectUriAction arg0,
-			ExecutionContext arg1) throws DispatchException {
-		
+	    ExecutionContext arg1) throws DispatchException {
+
 		GetFacebookRedirectUriResult result = new GetFacebookRedirectUriResult();
 		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Development) {
 			result.setRedirectUrl(OAuthAppProperties.REDIRECT_URL_IN_DEVELOPMENT);
@@ -32,7 +34,7 @@ public class GetFacebookRedirectUriActionHandler extends AbstractAccountActionHa
 			String url = GWT.getModuleBaseURL();
 			result.setRedirectUrl(url);
 		}
-		
+
 		return result;
 	}
 

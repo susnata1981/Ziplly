@@ -12,7 +12,7 @@ public class GetAllSubscriptionPlanResult implements Result {
 
 	public GetAllSubscriptionPlanResult() {
 	}
-	
+
 	public Map<SubscriptionPlanDTO, String> getPlans() {
 		return plans;
 	}

@@ -11,12 +11,17 @@ public class CssStyleHelper {
 		icon.setType(type);
 		return icon;
 	}
-	
+
 	public static void setBackgroundImage(ImageResource image) {
-		RootPanel.get("wrapper").getElement().getStyle().setProperty("background", 
-				"url("+image.getSafeUri().asString()+") no-repeat center center fixed");
+		RootPanel
+		    .get("wrapper")
+		    .getElement()
+		    .getStyle()
+		    .setProperty(
+		        "background",
+		        "url(" + image.getSafeUri().asString() + ") no-repeat center center fixed");
 	}
-	
+
 	public static void clearBackgroundImage() {
 		RootPanel.get("wrapper").getElement().getStyle().clearBackgroundImage();
 	}

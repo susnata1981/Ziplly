@@ -9,23 +9,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ShareSettingsWidget extends Composite {
 	private static ShareSettingsWidgetUiBinder uiBinder = GWT
-			.create(ShareSettingsWidgetUiBinder.class);
+	    .create(ShareSettingsWidgetUiBinder.class);
 
-	interface ShareSettingsWidgetUiBinder extends
-			UiBinder<Widget, ShareSettingsWidget> {
+	interface ShareSettingsWidgetUiBinder extends UiBinder<Widget, ShareSettingsWidget> {
 	}
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	ListBox shareSettingsList;
 	private ShareSetting[] shareSettings;
-	
-	public ShareSettingsWidget(ShareSetting [] settings) {
+
+	public ShareSettingsWidget(ShareSetting[] settings) {
 		shareSettingsList = new ListBox();
-//		for(ShareSetting shareSetting : ShareSetting.values()) {
-//			shareSettingsList.addItem(shareSetting.name().toLowerCase());
-//		}
+		// for(ShareSetting shareSetting : ShareSetting.values()) {
+		// shareSettingsList.addItem(shareSetting.name().toLowerCase());
+		// }
 		this.shareSettings = settings;
-		for(ShareSetting shareSetting : settings) {
+		for (ShareSetting shareSetting : settings) {
 			shareSettingsList.addItem(shareSetting.name().toLowerCase());
 		}
 
@@ -37,20 +36,20 @@ public class ShareSettingsWidget extends Composite {
 		if (index < ShareSetting.values().length) {
 			return ShareSetting.values()[index];
 		}
-		
+
 		// default
 		return ShareSetting.values()[0];
 	}
-	
+
 	public void setSelection(ShareSetting setting) {
 		shareSettingsList.setSelectedIndex(getIndex(setting));
 	}
-	
+
 	private int getIndex(ShareSetting ss) {
 		int index = 0;
-		for(ShareSetting setting : shareSettings) {
+		for (ShareSetting setting : shareSettings) {
 			if (ss == setting) {
-				return index; 
+				return index;
 			}
 			index++;
 		}

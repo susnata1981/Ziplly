@@ -10,8 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class NotificationWidget extends Composite {
 
-	private static NotificationWidgetUiBinder uiBinder = GWT
-			.create(NotificationWidgetUiBinder.class);
+	private static NotificationWidgetUiBinder uiBinder = GWT.create(NotificationWidgetUiBinder.class);
 
 	interface NotificationWidgetUiBinder extends UiBinder<Widget, NotificationWidget> {
 	}
@@ -22,13 +21,13 @@ public class NotificationWidget extends Composite {
 
 	@UiField
 	Button accountSettingsBtn;
-	
+
 	@UiField
 	Button closeBtn;
-	
+
 	@UiField
 	HTMLPanel panel;
-	
+
 	public Button getAccountSettingButton() {
 		return accountSettingsBtn;
 	}
@@ -36,12 +35,11 @@ public class NotificationWidget extends Composite {
 	public Button getCloseButton() {
 		return closeBtn;
 	}
-	
-//	@UiHandler("closeBtn")
-//	public void close(ClickEvent event) {
-//		System.out.println("CALLING CLOSE");
-//		panel.hide(true);
-//	}
 
-	
+	// @UiHandler("closeBtn")
+	// public void close(ClickEvent event) {
+	// System.out.println("CALLING CLOSE");
+	// panel.hide(true);
+	// }
+
 }

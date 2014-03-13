@@ -9,7 +9,7 @@ public class SendMessageAction implements Action<SendMessageResult> {
 
 	public SendMessageAction() {
 	}
-	
+
 	public SendMessageAction(ConversationDTO conversation) {
 		this.setConversation(conversation);
 	}

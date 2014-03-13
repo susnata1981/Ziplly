@@ -20,12 +20,12 @@ public class BusinessAccount extends Account {
 	private String name;
 	private String phone;
 	private String website;
-//	private String street1;
-//	private String street2;
-	
-	@Column(name="business_type")
+	// private String street1;
+	// private String street2;
+
+	@Column(name = "business_type")
 	private String businessType;
-	
+
 	private String category;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -43,8 +43,8 @@ public class BusinessAccount extends Account {
 		this.name = account.getName();
 		this.phone = account.getPhone();
 		this.website = account.getWebsite();
-//		this.street1 = account.getStreet1();
-//		this.street2 = account.getStreet2();
+		// this.street1 = account.getStreet1();
+		// this.street2 = account.getStreet2();
 		this.businessType = BusinessType.COMMERCIAL.name();
 		this.category = account.getCategory().name();
 		this.properties = new BusinessProperties(account.getProperties());
@@ -109,20 +109,20 @@ public class BusinessAccount extends Account {
 	public void setCategory(BusinessCategory category) {
 		this.category = category.name();
 	}
-	
-//	public String getStreet1() {
-//		return street1;
-//	}
-//
-//	public void setStreet1(String street1) {
-//		this.street1 = street1;
-//	}
-//
-//	public String getStreet2() {
-//		return street2;
-//	}
-//
-//	public void setStreet2(String street2) {
-//		this.street2 = street2;
-//	}
+
+	// public String getStreet1() {
+	// return street1;
+	// }
+	//
+	// public void setStreet1(String street1) {
+	// this.street1 = street1;
+	// }
+	//
+	// public String getStreet2() {
+	// return street2;
+	// }
+	//
+	// public void setStreet2(String street2) {
+	// this.street2 = street2;
+	// }
 }

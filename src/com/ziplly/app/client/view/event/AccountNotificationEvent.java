@@ -6,16 +6,18 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.ziplly.app.client.view.handler.AccountNotificationEventHandler;
 import com.ziplly.app.model.AccountNotificationDTO;
 
-public class AccountNotificationEvent extends GwtEvent<AccountNotificationEventHandler>{
-	public static Type<AccountNotificationEventHandler> TYPE = new Type<AccountNotificationEventHandler>();
+public class AccountNotificationEvent extends GwtEvent<AccountNotificationEventHandler> {
+	public static Type<AccountNotificationEventHandler> TYPE =
+	    new Type<AccountNotificationEventHandler>();
 	private List<AccountNotificationDTO> accountNotifications;
-	
+
 	public AccountNotificationEvent(List<AccountNotificationDTO> accountNotifications) {
 		this.setAccountNotifications(accountNotifications);
 	}
-	
+
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<AccountNotificationEventHandler> getAssociatedType() {
+	public com.google.gwt.event.shared.GwtEvent.Type<AccountNotificationEventHandler>
+	    getAssociatedType() {
 		return TYPE;
 	}
 

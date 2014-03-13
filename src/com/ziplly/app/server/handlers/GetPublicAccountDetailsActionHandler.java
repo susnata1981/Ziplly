@@ -14,8 +14,9 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 
-public class GetPublicAccountDetailsActionHandler extends AbstractAccountActionHandler<GetPublicAccountDetailsAction, GetAccountDetailsResult>{
-	
+public class GetPublicAccountDetailsActionHandler extends
+    AbstractAccountActionHandler<GetPublicAccountDetailsAction, GetAccountDetailsResult> {
+
 	private ConversationDAO conversationDao;
 	private TweetDAO tweetDao;
 	private CommentDAO commentDao;
@@ -23,11 +24,12 @@ public class GetPublicAccountDetailsActionHandler extends AbstractAccountActionH
 
 	@Inject
 	public GetPublicAccountDetailsActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli, 
-			ConversationDAO conversationDao, 
-			TweetDAO tweetDao,
-			CommentDAO commentDao,
-			LikeDAO likeDao) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    ConversationDAO conversationDao,
+	    TweetDAO tweetDao,
+	    CommentDAO commentDao,
+	    LikeDAO likeDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.tweetDao = tweetDao;
@@ -36,19 +38,19 @@ public class GetPublicAccountDetailsActionHandler extends AbstractAccountActionH
 	}
 
 	@Override
-	public GetAccountDetailsResult execute(GetPublicAccountDetailsAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetAccountDetailsResult
+	    execute(GetPublicAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		Long accountId = action.getAccountId();
 		Long unreadMessageCount = conversationDao.getUnreadConversationCountForAccount(accountId);
 		Long totalTweets = tweetDao.findTweetsCountByAccountId(accountId);
 		Long totalComments = commentDao.findCommentCountByAccountId(accountId);
 		Long totalLikes = likeDao.findLikeCountByAccoutId(accountId);
-		
+
 		GetAccountDetailsResult result = new GetAccountDetailsResult();
 		result.setUnreadMessages(unreadMessageCount.intValue());
 		result.setTotalTweets(totalTweets.intValue());

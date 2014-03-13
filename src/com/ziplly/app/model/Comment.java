@@ -17,36 +17,36 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="comment")
+@Table(name = "comment")
 public class Comment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="comment_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "comment_id")
 	private Long commentId;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="tweet_id")
+	@JoinColumn(name = "tweet_id")
 	private Tweet tweet;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="account_id")
+	@JoinColumn(name = "account_id")
 	private Account author;
-	
-	@OneToMany(mappedBy="comment", fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
 	private Set<Love> likes = new HashSet<Love>();
-	
+
 	private String content;
-	
-	@Column(name="time_updated")
+
+	@Column(name = "time_updated")
 	private Date timeUpdated;
-	
-	@Column(name="time_created")
+
+	@Column(name = "time_created")
 	private Date timeCreated;
-	
+
 	public Comment() {
 	}
-	
+
 	public Comment(CommentDTO comment) {
 		this.commentId = comment.getCommentId();
 		if (comment.getTweet() != null) {
@@ -57,22 +57,27 @@ public class Comment implements Serializable {
 		this.timeUpdated = comment.getTimeUpdated();
 		this.timeCreated = comment.getTimeCreated();
 	}
-	
+
 	public String getContent() {
 		return content;
 	}
+
 	public void setContent(String content) {
 		this.content = content;
 	}
+
 	public Date getTimeCreated() {
 		return timeCreated;
 	}
+
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}
+
 	public Account getAuthor() {
 		return author;
 	}
+
 	public void setAuthor(Account author) {
 		this.author = author;
 	}
@@ -84,9 +89,11 @@ public class Comment implements Serializable {
 	public void setCommentId(Long commentId) {
 		this.commentId = commentId;
 	}
+
 	public Tweet getTweet() {
 		return tweet;
 	}
+
 	public void setTweet(Tweet tweet) {
 		this.tweet = tweet;
 	}

@@ -18,25 +18,24 @@ import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.model.NeighborhoodDTO;
-import com.ziplly.app.model.PostalCodeDTO;
 
 public class CommunitySummaryWidget extends AbstractView implements HasClickHandlers {
 
 	private static CommunitySummaryWidgetUiBinder uiBinder = GWT
-			.create(CommunitySummaryWidgetUiBinder.class);
+	    .create(CommunitySummaryWidgetUiBinder.class);
 
 	interface CommunitySummaryWidgetUiBinder extends UiBinder<Widget, CommunitySummaryWidget> {
 	}
 
 	@UiField
 	HTMLPanel communitySummaryPanel;
-	
+
 	@UiField
 	HTMLPanel mapPanel;
-	
+
 	@UiField
 	SpanElement communityNameSpan;
-	
+
 	@UiField
 	Anchor memberCountSpan;
 	@UiField
@@ -46,60 +45,60 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 		super(null);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-	
+
 	public void setWidth(String width) {
 		communitySummaryPanel.setWidth(width);
 	}
-	
+
 	public void displaySummaryData(NeighborhoodDTO neighborhood) {
 		if (neighborhood != null) {
 			communityNameSpan.setInnerHTML(getName(neighborhood));
 		}
 	}
-	
+
 	public void displayMap(LatLng ll) {
-	    MapOptions myOptions = MapOptions.create();
-	    myOptions.setZoom(11.0);
-	    myOptions.setCenter(ll);
-	    myOptions.setMapMaker(true);
-	    myOptions.setMapTypeId(MapTypeId.ROADMAP);
-	    
-	    GoogleMap map = GoogleMap.create(mapPanel.getElement(), myOptions);
+		MapOptions myOptions = MapOptions.create();
+		myOptions.setZoom(11.0);
+		myOptions.setCenter(ll);
+		myOptions.setMapMaker(true);
+		myOptions.setMapTypeId(MapTypeId.ROADMAP);
+
+		GoogleMap map = GoogleMap.create(mapPanel.getElement(), myOptions);
 		MarkerOptions markerOpts = MarkerOptions.create();
-        markerOpts.setMap(map);
-        markerOpts.setPosition(ll);
-        Marker.create(markerOpts);
+		markerOpts.setMap(map);
+		markerOpts.setPosition(ll);
+		Marker.create(markerOpts);
 	}
 
 	public void setResidentCount(int count) {
-		memberCountSpan.setText(count+" members");
+		memberCountSpan.setText(count + " members");
 	}
-	
+
 	public void setBusinessCount(int count) {
-		businessCountSpan.setText(count+" businesses");
+		businessCountSpan.setText(count + " businesses");
 	}
-	
+
 	public void setNeighborhoodName(String name) {
 		communityNameSpan.setInnerHTML(name);
 	}
-	
+
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return memberCountSpan.addClickHandler(handler);
 	}
-	
+
 	public HandlerRegistration addClickHandlerForBusinessLink(ClickHandler handler) {
 		return businessCountSpan.addClickHandler(handler);
 	}
-	
+
 	// TODO
 	private String getName(NeighborhoodDTO n) {
 		if (n != null) {
 			StringBuilder name = new StringBuilder();
-//			PostalCodeDTO postalCode = n.getPostalCodes().get(0);
+			// PostalCodeDTO postalCode = n.getPostalCodes().get(0);
 			name.append(n.getName());
 			name.append("<br/>");
-			
+
 			if (n.getParentNeighborhood() != null) {
 				name.append(n.getParentNeighborhood().getName());
 				name.append(",&nbsp;");

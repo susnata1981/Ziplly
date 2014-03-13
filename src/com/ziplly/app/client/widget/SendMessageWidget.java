@@ -38,11 +38,9 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class SendMessageWidget extends Composite implements View<SendMessagePresenter> {
 
-	private static SendMessageWidgetUiBinder uiBinder = GWT
-			.create(SendMessageWidgetUiBinder.class);
+	private static SendMessageWidgetUiBinder uiBinder = GWT.create(SendMessageWidgetUiBinder.class);
 
-	interface SendMessageWidgetUiBinder extends
-			UiBinder<Widget, SendMessageWidget> {
+	interface SendMessageWidgetUiBinder extends UiBinder<Widget, SendMessageWidget> {
 	}
 
 	@UiField
@@ -51,44 +49,44 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	ControlGroup subjectCg;
 	@UiField
 	HelpInline subjectHelpInline;
-	
+
 	@UiField
 	ControlGroup messageCg;
 	@UiField
 	HelpInline messageHelpInline;
 	@UiField
 	TextArea message;
-	
+
 	@UiField
 	SubmitButton sendBtn;
-	
+
 	@UiField
 	Alert status;
-	
+
 	@UiField
 	HTMLPanel rootPanel;
-	
+
 	@UiField
 	SpanElement receiverName;
 	@UiField
 	Image receiverProfileImage;
-	
+
 	@UiField
 	Modal modal;
 	private SendMessagePresenter presenter;
 	private AccountDTO receiver;
-	private AccountFormatter accountFormatter = 
-			(AccountFormatter) AbstractValueFormatterFactory.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
+	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 
 	public SendMessageWidget(AccountDTO receiver) {
 		this.receiver = receiver;
 		initWidget(uiBinder.createAndBindUi(this));
 		setup();
 	}
-	
+
 	private void setup() {
 		modal.hide();
-		
+
 		// Receiver profile image
 		receiverName.setInnerText(receiver.getDisplayName());
 		receiverProfileImage.setAltText(receiver.getDisplayName());
@@ -100,7 +98,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 				displayProfile();
 			}
 		});
-		
+
 		subjectHelpInline.setVisible(false);
 		messageHelpInline.setVisible(false);
 		status.setVisible(false);
@@ -109,7 +107,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	public void show() {
 		modal.show();
 	}
-	
+
 	public void hide() {
 		modal.hide();
 	}
@@ -134,7 +132,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		}
 		return response;
 	}
-	
+
 	@UiHandler("sendBtn")
 	void send(ClickEvent event) {
 		clearErrors();
@@ -160,7 +158,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	void close(ClickEvent event) {
 		hide();
 	}
-	
+
 	public void setStatus(String msg, AlertType type) {
 		status.setText(msg);
 		status.setType(type);
@@ -184,7 +182,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 	public void setPresenter(SendMessagePresenter presenter) {
 		this.presenter = presenter;
 	}
-	
+
 	public void displayProfile() {
 		modal.hide();
 		presenter.goTo(new PersonalAccountPlace(this.receiver.getAccountId()));
@@ -196,7 +194,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		receiverProfileImage.setAltText(receiver.getDisplayName());
 		receiverProfileImage.setUrl(accountFormatter.format(receiver, ValueType.PROFILE_IMAGE_URL));
 	}
-	
+
 	public void setSubject(String subjectInput) {
 		subject.setText(subjectInput);
 	}

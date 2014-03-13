@@ -24,10 +24,10 @@ import com.ziplly.app.shared.ResetPasswordAction;
 import com.ziplly.app.shared.ValidationResult;
 
 public class PasswordRecoveryView extends Composite implements
-		View<PasswordRecoveryView.PasswordRecoveryPresenter> {
+    View<PasswordRecoveryView.PasswordRecoveryPresenter> {
 
 	private static PasswordRecoveryViewUiBinder uiBinder = GWT
-			.create(PasswordRecoveryViewUiBinder.class);
+	    .create(PasswordRecoveryViewUiBinder.class);
 
 	interface PasswordRecoveryViewUiBinder extends UiBinder<Widget, PasswordRecoveryView> {
 	}
@@ -131,10 +131,10 @@ public class PasswordRecoveryView extends Composite implements
 		if (!validate(resendEmailTextBox, resendEmailCg, resendEmailError)) {
 			return;
 		}
-		
+
 		presenter.resendVerficationEmail(FieldVerifier.sanitize(resendEmailTextBox.getText()));
 	}
-	
+
 	public void showMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
@@ -188,8 +188,7 @@ public class PasswordRecoveryView extends Composite implements
 		boolean valid = validatePassword(newPasswordInput, newPasswordCg, newPasswordError);
 
 		String confirmPasswordInput = confirmNewPassword.getText().trim();
-		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg,
-				confirmNewPasswordError);
+		valid &= validatePassword(confirmPasswordInput, confirmNewPasswordCg, confirmNewPasswordError);
 
 		if (newPasswordInput != null && confirmPasswordInput != null) {
 			if (!confirmPasswordInput.equals(newPasswordInput)) {

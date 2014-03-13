@@ -6,7 +6,7 @@ import com.restfb.Facebook;
 
 public class FCurrentLocation implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Facebook
 	public String city;
 	@Facebook

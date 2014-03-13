@@ -127,10 +127,10 @@ public class EntityUtil {
 			}
 		}
 
-		for(Image image: account.getImages()) {
+		for (Image image : account.getImages()) {
 			acct.addImage(clone(image));
 		}
-		
+
 		if (account.getCurrentLocation() != null) {
 			acct.setCurrentLocation(clone(account.getCurrentLocation()));
 		}
@@ -229,10 +229,10 @@ public class EntityUtil {
 		}
 
 		// Image
-		for(Image image : tweet.getImages()) {
+		for (Image image : tweet.getImages()) {
 			resp.addImage(clone(image));
 		}
-		
+
 		// Sender
 		if (needSender && Hibernate.isInitialized(tweet.getSender())) {
 			resp.setSender(convert(tweet.getSender()));
@@ -421,8 +421,8 @@ public class EntityUtil {
 		return resp;
 	}
 
-	public static List<AccountNotificationDTO> cloneAccountNotificationList(
-			List<AccountNotification> result) {
+	public static List<AccountNotificationDTO>
+	    cloneAccountNotificationList(List<AccountNotification> result) {
 		// return Lists.transform(result, new Function<AccountNotification,
 		// AccountNotificationDTO>() {
 		// @Override
@@ -479,12 +479,12 @@ public class EntityUtil {
 		}
 
 		// Add postal code
-		for(PostalCode p : neighborhood.getPostalCodes()) {
+		for (PostalCode p : neighborhood.getPostalCodes()) {
 			dest.addPostalCode(clone(p));
 		}
 
 		// Add images.
-		for(Image image : neighborhood.getImages()) {
+		for (Image image : neighborhood.getImages()) {
 			dest.addImage(clone(image));
 		}
 		return dest;
@@ -502,7 +502,7 @@ public class EntityUtil {
 	public static PostalCodeDTO clone(PostalCode postalCode) {
 		PostalCodeDTO dest = new PostalCodeDTO();
 		dest.setPostalCode(postalCode.getPostalCode());
-//		dest.setPostalCodeId(postalCode.getPostalCodeId());
+		// dest.setPostalCodeId(postalCode.getPostalCodeId());
 		dest.setCity(postalCode.getCity());
 		dest.setState(postalCode.getState());
 		dest.setFullState(postalCode.getFullState());
@@ -528,8 +528,8 @@ public class EntityUtil {
 		return resp;
 	}
 
-	public static List<PendingInvitationsDTO> clonePendingInvidationList(
-			List<PendingInvitations> input) {
+	public static List<PendingInvitationsDTO>
+	    clonePendingInvidationList(List<PendingInvitations> input) {
 		List<PendingInvitationsDTO> result = new ArrayList<PendingInvitationsDTO>();
 		for (PendingInvitations pi : input) {
 			result.add(clone(pi));

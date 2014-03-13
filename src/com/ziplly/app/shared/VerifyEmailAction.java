@@ -6,9 +6,10 @@ public class VerifyEmailAction implements Action<VerifyEmailResult> {
 	private String code;
 	private String email;
 	private Long id;
+
 	public VerifyEmailAction() {
 	}
-	
+
 	public VerifyEmailAction(Long id, String code) {
 		this.setId(id);
 		this.code = code;
@@ -17,6 +18,7 @@ public class VerifyEmailAction implements Action<VerifyEmailResult> {
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
@@ -36,5 +38,5 @@ public class VerifyEmailAction implements Action<VerifyEmailResult> {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 }

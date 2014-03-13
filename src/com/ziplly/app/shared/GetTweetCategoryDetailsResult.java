@@ -9,7 +9,7 @@ import com.ziplly.app.model.TweetType;
 
 public class GetTweetCategoryDetailsResult implements Result {
 	private Map<TweetType, Integer> tweetCounts = new HashMap<TweetType, Integer>();
-	
+
 	public GetTweetCategoryDetailsResult() {
 	}
 
@@ -20,7 +20,7 @@ public class GetTweetCategoryDetailsResult implements Result {
 	public void setTweetCounts(Map<TweetType, Integer> tweetCounts) {
 		this.tweetCounts = tweetCounts;
 	}
-	
+
 	public void setTweetTypeCount(TweetType type, int count) {
 		tweetCounts.put(type, count);
 	}

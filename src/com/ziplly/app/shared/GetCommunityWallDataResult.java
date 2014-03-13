@@ -9,7 +9,7 @@ import com.ziplly.app.model.TweetDTO;
 
 public class GetCommunityWallDataResult implements Result {
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
-	
+
 	public GetCommunityWallDataResult() {
 	}
 

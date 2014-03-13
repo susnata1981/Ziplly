@@ -18,8 +18,10 @@ import com.ziplly.app.model.Message;
 public class ConversationDAOImpl implements ConversationDAO {
 
 	@Override
-	public List<ConversationDTO> getConversationForAccount(Long accountId, ConversationType type,
-			int start, int pageSize) {
+	public List<ConversationDTO> getConversationForAccount(Long accountId,
+	    ConversationType type,
+	    int start,
+	    int pageSize) {
 
 		if (accountId == null) {
 			throw new IllegalArgumentException();
@@ -29,22 +31,26 @@ public class ConversationDAOImpl implements ConversationDAO {
 		Query query = null;
 
 		switch (type) {
-		case SENT:
-			query = em
-					.createQuery("from Conversation where sender.accountId = :senderAccountId order by timeCreated desc");
-			query.setParameter("senderAccountId", accountId);
-			break;
-		case RECEIVED:
-			query = em
-					.createQuery("from Conversation where receiver.accountId = :receiverAccountId order by timeCreated desc");
-			query.setParameter("receiverAccountId", accountId);
-			break;
-		case ALL:
-		default:
-			query = em
-					.createQuery("from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId order by timeCreated desc");
-			query.setParameter("receiverAccountId", accountId).setParameter("senderAccountId",
-					accountId);
+			case SENT:
+				query =
+				    em
+				        .createQuery("from Conversation where sender.accountId = :senderAccountId order by timeCreated desc");
+				query.setParameter("senderAccountId", accountId);
+				break;
+			case RECEIVED:
+				query =
+				    em
+				        .createQuery("from Conversation where receiver.accountId = :receiverAccountId order by timeCreated desc");
+				query.setParameter("receiverAccountId", accountId);
+				break;
+			case ALL:
+			default:
+				query =
+				    em
+				        .createQuery("from Conversation where receiver.accountId = :receiverAccountId or sender.accountId = :senderAccountId order by timeCreated desc");
+				query.setParameter("receiverAccountId", accountId).setParameter(
+				    "senderAccountId",
+				    accountId);
 		}
 
 		query.setFirstResult(start).setMaxResults(pageSize);
@@ -84,9 +90,10 @@ public class ConversationDAOImpl implements ConversationDAO {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = em
-					.createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId "
-							+ "or sender_account_id = :senderAccountId");
+			Query query =
+			    em
+			        .createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId "
+			            + "or sender_account_id = :senderAccountId");
 			query.setParameter("receiverAccountId", accountId);
 			query.setParameter("senderAccountId", accountId);
 			BigInteger result = (BigInteger) query.getSingleResult();
@@ -102,16 +109,18 @@ public class ConversationDAOImpl implements ConversationDAO {
 		try {
 			Query query;
 			switch (type) {
-			case SENT:
-				query = em
-						.createNativeQuery("select count(*) from conversation where sender_account_id = :senderAccountId");
-				query.setParameter("senderAccountId", accountId);
-				break;
-			case RECEIVED:
-			default:
-				query = em
-						.createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId");
-				query.setParameter("receiverAccountId", accountId);
+				case SENT:
+					query =
+					    em
+					        .createNativeQuery("select count(*) from conversation where sender_account_id = :senderAccountId");
+					query.setParameter("senderAccountId", accountId);
+					break;
+				case RECEIVED:
+				default:
+					query =
+					    em
+					        .createNativeQuery("select count(*) from conversation where receiver_account_id = :receiverAccountId");
+					query.setParameter("receiverAccountId", accountId);
 			}
 			BigInteger result = (BigInteger) query.getSingleResult();
 			return result.longValue();
@@ -161,8 +170,9 @@ public class ConversationDAOImpl implements ConversationDAO {
 
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Query query = em.createNamedQuery("findConversationCountByAccountIdAndStatus");
-		query.setParameter("receiverAccountId", accountId).setParameter("status",
-				ConversationStatus.UNREAD.name());
+		query.setParameter("receiverAccountId", accountId).setParameter(
+		    "status",
+		    ConversationStatus.UNREAD.name());
 		try {
 			Long result = (Long) query.getSingleResult();
 			return result;

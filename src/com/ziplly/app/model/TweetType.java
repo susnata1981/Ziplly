@@ -3,6 +3,12 @@ package com.ziplly.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ziplly.app.server.TweetNotificationBLIImpl;
+
+/**
+ * Changes here need to be also made in {@link TweetNotificationBLIImpl}. TODO
+ * to abstract that.
+ */
 public enum TweetType {
 	ALL("All", NotificationType.NONE, false, false),
 	GENERAL("General", NotificationType.NONE, true, true),
@@ -10,33 +16,34 @@ public enum TweetType {
 	SECURITY_ALERTS("Security Alerts", NotificationType.SECURITY_ALERT, true, true),
 	HELP("Help", NotificationType.NONE, true, true),
 	CLASSIFIEDS("Classifieds", NotificationType.NONE, true, false),
-	OFFERS("Offers", NotificationType.OFFERS, true, true);
-	
+	OFFERS("Offers", NotificationType.OFFERS, true, true),
+	HOT_DEALS("Hot Deals", NotificationType.OFFERS, true, true);
+
 	private String tweetName;
 	private NotificationType notificationType;
 	private boolean canUsersPublish;
 	private boolean canBusinessPublish;
-	
+
 	TweetType(String name, NotificationType type, boolean canUsersPublish, boolean canBusinessPublish) {
 		this.tweetName = name;
 		this.setNotificationType(type);
 		this.setCanUsersPublish(canUsersPublish);
 		this.setCanBusinessPublish(canBusinessPublish);
 	}
-	
+
 	public static List<TweetType> getAllTweetTypeForPublishingByUser() {
 		ArrayList<TweetType> types = new ArrayList<TweetType>();
-		for(TweetType type : values()) {
+		for (TweetType type : values()) {
 			if (type.isCanUsersPublish()) {
 				types.add(type);
 			}
 		}
 		return types;
 	}
-	
+
 	public static List<TweetType> getAllTweetTypeForPublishingByBusiness() {
 		ArrayList<TweetType> types = new ArrayList<TweetType>();
-		for(TweetType type : values()) {
+		for (TweetType type : values()) {
 			if (type.isCanBusinessPublish()) {
 				types.add(type);
 			}

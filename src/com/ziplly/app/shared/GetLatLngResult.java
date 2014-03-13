@@ -6,10 +6,10 @@ public class GetLatLngResult implements Result {
 	private double lat, lng;
 	private String formattedAddress;
 	private Status status;
-	
+
 	public GetLatLngResult() {
 	}
-	
+
 	public double getLng() {
 		return lng;
 	}
@@ -33,7 +33,7 @@ public class GetLatLngResult implements Result {
 	public void setFormattedAddress(String formattedAddress) {
 		this.formattedAddress = formattedAddress;
 	}
-	
+
 	public Status getStatus() {
 		return status;
 	}
@@ -43,7 +43,6 @@ public class GetLatLngResult implements Result {
 	}
 
 	public static enum Status {
-		SUCCESS,
-		ERROR;
+		SUCCESS, ERROR;
 	}
 }

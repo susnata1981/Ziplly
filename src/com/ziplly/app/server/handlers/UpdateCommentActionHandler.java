@@ -15,28 +15,31 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.UpdateCommentAction;
 import com.ziplly.app.shared.UpdateCommentResult;
 
-public class UpdateCommentActionHandler extends AbstractAccountActionHandler<UpdateCommentAction, UpdateCommentResult>{
+public class UpdateCommentActionHandler extends
+    AbstractAccountActionHandler<UpdateCommentAction, UpdateCommentResult> {
 	private CommentDAO commentDao;
 
 	@Inject
-	public UpdateCommentActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, CommentDAO commentDao) {
+	public UpdateCommentActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    CommentDAO commentDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.commentDao = commentDao;
 	}
 
 	@Override
-	public UpdateCommentResult execute(UpdateCommentAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public UpdateCommentResult
+	    execute(UpdateCommentAction action, ExecutionContext arg1) throws DispatchException {
+
 		Preconditions.checkArgument(action != null && action.getComment() != null);
 		validateSession();
-		
+
 		CommentDTO commentDto = action.getComment();
 		if (!commentDto.getAuthor().equals(session.getAccount())) {
 			throw new AccessError();
 		}
-		
+
 		Comment comment = new Comment(commentDto);
 		commentDao.update(comment);
 		return new UpdateCommentResult(commentDto);

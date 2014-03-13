@@ -1,6 +1,5 @@
 package com.ziplly.app.client.view;
 
-
 public class StringConstants {
 	public static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
 	public static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
@@ -10,8 +9,8 @@ public class StringConstants {
 	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";
 	public static final String PASSWORD_UPDATED = "Password updated successfully";
 	public static final String PASSWORD_UPDATE_FAILURE = "Failed to update password";
-//	public static final String RECIPIENT_NAME_KEY = "recipientName";
-//	public static final String RECIPIENT_EMAIL = "recipientEmail";
+	// public static final String RECIPIENT_NAME_KEY = "recipientName";
+	// public static final String RECIPIENT_EMAIL = "recipientEmail";
 	public static final String PASSWORD_RECOVER_URL = "passwordResetUrl";
 	public static final String PASSWORD_RESET_LINK_SENT = "Password reset link has been emailed.";
 	public static final String INVALID_ACCESS = "Invalid access";
@@ -23,7 +22,8 @@ public class StringConstants {
 	public static final String OPERATION_FAILED = "Operation failed.";
 	public static final String TWEET_UPDATED = "Message updated.";
 	public static final String USAGE_LIMIT_EXCEEDED_EXCEPTION = "Usage limit exceeded";
-	public static final String NEEDS_SUBSCRIPTION_EXCEPTION = "You've filled up your quote for the month. Please subscribe to send more messages.";
+	public static final String NEEDS_SUBSCRIPTION_EXCEPTION =
+	    "You've filled up your quote for the month. Please subscribe to send more messages.";
 	public static final String TWEET_REMOVED = "Message removed successfully";
 	public static final String FAILED_TO_SAVE_LIKE = "Failed to update like";
 	public static final String NO_MESSAGES = "No messages to be displayed.";
@@ -31,21 +31,26 @@ public class StringConstants {
 	public static final String NOT_SHARED = "not shared";
 	public static final String EMAIL_SENT = "Email sent";
 	public static final String SENDER_NAME_KEY = "senderName";
-	public static final String RESTRICT_REGISTRATION_FEATURE = "app.feature.enableRestrictedRegistration";
+	public static final String RESTRICT_REGISTRATION_FEATURE =
+	    "app.feature.enableRestrictedRegistration";
 	public static final String NEEDS_INVITATION = "Needs invitation.";
 	public static final String HASHTAG_PREFIX = "#";
 	public static final String COMMENT_LENGTH_EXCEEDED = "Comment length exceeded.";
 	public static final String REPORT_SPAM_SUCCESSFUL = "Thank you for reporting spam";
-	public static final String MESSAGE_NOT_DELIVERED = "Sorry your message couldn't be delivered at this time.";
+	public static final String MESSAGE_NOT_DELIVERED =
+	    "Sorry your message couldn't be delivered at this time.";
 	public static final String NO_NEW_NOTIFICATION_MESSAGE = "No new notification";
 	public static final String PAYMENT_SUCCESSFULL = "Successfully made payment";
 	public static final String PAYMENT_UNSUCCESSFULL = "Failed to complete payment";
-	public static final String DUPLICATE_SUBSCRIPTION_ATTEMPT = "You already have a subscription. Please cancel the existing one before adding a new one.";
+	public static final String DUPLICATE_SUBSCRIPTION_ATTEMPT =
+	    "You already have a subscription. Please cancel the existing one before adding a new one.";
 	public static final String ENABLE_PAYMENT_PLAN = "app.feature.enablePaymentPlan";
 	public static final String NEIGHBORHOOD_NOT_SELECTED = "Please select a neighborhood.";
 	public static final String EMAIL_ALREADY_EXISTS = "This email address already exists.";
-	public static final String NOT_AVAILABLE_IN_AREA = "Sorry, ziplly is not yet available in your area";
-	public static final String SERVICE_NOT_AVAILABLE = "Sorry Ziplly isn't yet available in your area";
+	public static final String NOT_AVAILABLE_IN_AREA =
+	    "Sorry, ziplly is not yet available in your area";
+	public static final String SERVICE_NOT_AVAILABLE =
+	    "Sorry Ziplly isn't yet available in your area";
 	public static final String REDIRECT_URI = "app.dev.redirecturl";
 	public static final String APP_ENVIRONMENT = "app.environment";
 	public static final String BUCKET_NAME = "gcs_bucket_name";
@@ -56,24 +61,30 @@ public class StringConstants {
 	public static final String PERSONAL_ACCOUNT_DISCRIMINATOR = "personal";
 	public static final String BUSINESS_ACCOUNT_DISCRIMINATOR = "business";
 	public static final String NO_TWEETS = "User hasn't shared any messages yet.";
-//	public static final String MAIL_ENDPOINT = "app.mail.endpoint";
-//	public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
-	public static final String LOGIN_ERROR = "Sorry there was an error login in. Please try again later.";
-	public static final String INVALID_CREDENTIALS_ERROR = "Account with this email/password doesn't exist";
+	// public static final String MAIL_ENDPOINT = "app.mail.endpoint";
+	// public static final String UPLOAD_ENDPOINT = "app.upload.endpoint";
+	public static final String LOGIN_ERROR =
+	    "Sorry there was an error login in. Please try again later.";
+	public static final String INVALID_CREDENTIALS_ERROR =
+	    "Account with this email/password doesn't exist";
 	public static final String PLACE_SEPARATOR = ":";
 	public static final String SEND_MESSAGE_TOKEN = "sm";
 	public static final String NEIGHBORHOOD_TOKEN = "neighborhood";
-//	public static final String SMALL_IMAGE_LOADER = "images/ajax-loader-smaller.gif";
+	// public static final String SMALL_IMAGE_LOADER =
+	// "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";
-//	public static final String APP_ADMIN_EMAIL_ENABLE = "app.email.admin.enable";
+	// public static final String APP_ADMIN_EMAIL_ENABLE =
+	// "app.email.admin.enable";
 	public static final String TWEET_NOT_POSTED = "User hasn't posted any messages";
 	public static final String TWEET_NOT_SHARED = "User hasn't shared his messages";
 	public static final String INVALID_URL = "Invalid url";
-//	public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
-	public static final String FREE_INTRODUCTORY_PLAN = "We're offering free introductory plan till end of May, 2014!";
+	// public static final String APP_ADMIN_EMAIL_KEY = "app.admin.email";
+	public static final String FREE_INTRODUCTORY_PLAN =
+	    "We're offering free introductory plan till end of May, 2014!";
 	public static final String FEEDBACK = "Feedback";
 	public static final String FEEDBACK_SENT_SUCCESS = "Thanks for your feedback";
-	public static final String FEEDBACK_SENT_FAILURE = "Sorry, there was a problem sending the feedback";
+	public static final String FEEDBACK_SENT_FAILURE =
+	    "Sorry, there was a problem sending the feedback";
 	public static final String SAVE_SUCCESSFULL = "Save successful";
 	public static final String FAILURE = "Failure";
 	public static final String NEIGHBORHOOD_DELETED = "Deleted neighborhood";
@@ -90,19 +101,30 @@ public class StringConstants {
 	public static final String INVALID_IMAGE = "Invalid image file";
 	public static final String EMAIL_VERIFICATION_CODE_KEY = "code";
 	public static final String EMAILVERIFICATION_ID_KEY = "id";
-	public static final String EMAIL_VERIFICATION_SUCCESSFUL = "Email verification successful! You can login now and start exploring";
-	public static final String EMAIL_VERIFICATION_RESEND_SUCCESSFUL = "Email verification has been resent";
-	public static final String EMAIL_VERIFICATION_FEATURE_FLAG = "app.feature.requireEmailVerification";
-	public static final String EMAIL_VERIFICATION_SENT = "We've sent you an email with a verification link. Please verify your email address and start exploring";
+	public static final String EMAIL_VERIFICATION_SUCCESSFUL =
+	    "Email verification successful! You can login now and start exploring";
+	public static final String EMAIL_VERIFICATION_RESEND_SUCCESSFUL =
+	    "Email verification has been resent";
+	public static final String EMAIL_VERIFICATION_FEATURE_FLAG =
+	    "app.feature.requireEmailVerification";
+	public static final String EMAIL_VERIFICATION_SENT =
+	    "We've sent you an email with a verification link. Please verify your email address and start exploring";
 	public static final String URL_PARAMATER_SEPARATOR = "&";
 	public static final String ACCOUNT_ALEADY_VERIFIED = "Account has already been verified.";
 	public static final String ACCOUNT_DOESNT_EXISTS = "Account doesn't exist";
-	public static final String ACCOUNT_NOT_COMPLETE = "Your account is not complete yet <ol><li>Upload your picture</li> "
-			+ "<li>Fill out a brief introduction</li> <li>Select your interests</li></ol> by going into";
-	
-	public static final String ACCOUNT_NOT_COMPLETE_FOR_BUSINESS = "Your account is not complete yet <ol><li>Upload a picture of your business</li> "
-			+ "<li>Enter the website address</li> <li>Verify business category/hours of operation</li></ol> by going into";
+	public static final String ACCOUNT_NOT_COMPLETE =
+	    "Your account is not complete yet <ol><li>Upload your picture</li> "
+	        + "<li>Fill out a brief introduction</li> <li>Select your interests</li></ol> by going into";
+
+	public static final String ACCOUNT_NOT_COMPLETE_FOR_BUSINESS =
+	    "Your account is not complete yet <ol><li>Upload a picture of your business</li> "
+	        + "<li>Enter the website address</li> <li>Verify business category/hours of operation</li></ol> by going into";
 	public static final String VERIFICATION_EMAIL_SENT = "Password recovery email has been sent";
-	public static final String FAILURE_SENDING_VERIFICATION_EMAIL = "Failed to send verification email";
+	public static final String FAILURE_SENDING_VERIFICATION_EMAIL =
+	    "Failed to send verification email";
 	public static final String TWEET_DETAILS_TOKEN = "tweet";
+	public static final String REPLY_ANCHOR_POPOVER_TEXT = "Reply to the person directly";
+	public static final String CREATE_LINK_ANCHOR_POPOVER_TEXT =
+	    "Get link to the above message for sharing with your friends";
+	public static final String COMMENT_LINK_HOVER_TEXT = "You can comment on this post";
 }

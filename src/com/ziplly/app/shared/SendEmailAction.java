@@ -10,7 +10,7 @@ public class SendEmailAction implements Action<SendEmailResult> {
 	EmailTemplate emailTemplate;
 	ArrayList<String> emailList = new ArrayList<String>();
 	private HashMap<String, String> data = new HashMap<String, String>();
-	
+
 	public SendEmailAction() {
 	}
 
@@ -21,14 +21,14 @@ public class SendEmailAction implements Action<SendEmailResult> {
 	public void addEmail(String email) {
 		emailList.add(email);
 	}
-	
+
 	public void setEmailList(List<String> list) {
 		if (list != null) {
 			emailList.addAll(list);
 		}
 	}
-	
-	public ArrayList<String> getEmails(){
+
+	public ArrayList<String> getEmails() {
 		return emailList;
 	}
 
@@ -39,13 +39,12 @@ public class SendEmailAction implements Action<SendEmailResult> {
 	public void setData(HashMap<String, String> data) {
 		this.data = data;
 	}
-	
+
 	public EmailTemplate getEmailTemplate() {
 		return emailTemplate;
 	}
-	
+
 	public void setEmailTemplate(EmailTemplate template) {
 		this.emailTemplate = template;
 	}
 }
-

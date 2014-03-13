@@ -68,16 +68,19 @@ import com.ziplly.app.shared.UpdateCommentResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
-public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements AccountPresenter<T>, EmailPresenter {
+public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements
+    AccountPresenter<T>,
+    EmailPresenter {
 	protected static final int TWEETS_PER_PAGE = 5;
 	protected IAccountView<T> view;
-	protected AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
-	
+	protected AccountNotificationHandler accountNotificationHandler =
+	    new AccountNotificationHandler();
+
 	public AbstractAccountActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, 
-			PlaceController placeController,
-			ApplicationContext ctx,
-			IAccountView<T> view) {
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    IAccountView<T> view) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.view = view;
 		setupHandlers();
@@ -93,7 +96,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				displayProfile();
 			}
 		});
-		
+
 		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
@@ -103,27 +106,28 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	protected abstract void onAccountDetailsUpdate();
-	
+
 	@Override
 	public void save(T account) {
-		dispatcher.execute(new UpdateAccountAction(account),
-				new DispatcherCallbackAsync<UpdateAccountResult>() {
-					@Override
-					public void onSuccess(UpdateAccountResult result) {
-						view.displayModalMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
-						eventBus.fireEvent(new AccountUpdateEvent(result
-								.getAccount()));
-					}
+		dispatcher.execute(
+		    new UpdateAccountAction(account),
+		    new DispatcherCallbackAsync<UpdateAccountResult>() {
+			    @Override
+			    public void onSuccess(UpdateAccountResult result) {
+				    view.displayModalMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+				    eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
+			    }
 
-					public void onFailure(Throwable error) {
-						view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-					}
-				});
+			    @Override
+			    public void onFailure(Throwable error) {
+				    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			    }
+		    });
 	}
-	
+
 	@Override
 	public void sendTweet(TweetDTO tweet) {
-		//TODO(shaan): do we need this?
+		// TODO(shaan): do we need this?
 		AccountDTO account = ctx.getAccount();
 		if (account == null) {
 			placeController.goTo(new LoginPlace());
@@ -137,7 +141,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();
-	
+
 	@Override
 	public void postComment(final CommentDTO comment) {
 		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>() {
@@ -146,14 +150,14 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 				view.addComment(result.getComment());
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				view.displayModalMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.ERROR);
 			}
 		});
 	}
-	
+
 	@Override
 	public void likeTweet(Long tweetId) {
 		LikeTweetAction action = new LikeTweetAction();
@@ -165,7 +169,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				view.displayModalMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
 				view.updateTweetLike(result.getLike());
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof DuplicateException) {
@@ -174,70 +178,77 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	}
-	
+
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		if (tweet == null) {
 			return;
 		}
-		
-		dispatcher.execute(new UpdateTweetAction(tweet), new DispatcherCallbackAsync<UpdateTweetResult>() {
-			@Override
-			public void onSuccess(UpdateTweetResult result) {
-				view.updateTweet(result.getTweet());
-				view.displayModalMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				if (caught instanceof AccessError) {
-					view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
-					return;
-				} 
-				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
-		});
+
+		dispatcher.execute(
+		    new UpdateTweetAction(tweet),
+		    new DispatcherCallbackAsync<UpdateTweetResult>() {
+			    @Override
+			    public void onSuccess(UpdateTweetResult result) {
+				    view.updateTweet(result.getTweet());
+				    view.displayModalMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
+			    }
+
+			    @Override
+			    public void onFailure(Throwable caught) {
+				    if (caught instanceof AccessError) {
+					    view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
+					    return;
+				    }
+				    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			    }
+		    });
 	}
-	
+
 	@Override
 	public void deleteTweet(final TweetDTO tweet) {
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DispatcherCallbackAsync<DeleteTweetResult>() {
-			@Override
-			public void onSuccess(DeleteTweetResult result) {
-				view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
-				view.removeTweet(tweet);
-			}
+		dispatcher.execute(
+		    new DeleteTweetAction(tweet.getTweetId()),
+		    new DispatcherCallbackAsync<DeleteTweetResult>() {
+			    @Override
+			    public void onSuccess(DeleteTweetResult result) {
+				    view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+				    view.removeTweet(tweet);
+			    }
 
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				} else {
-					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
-		});
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof AccessError) {
+					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				    } else {
+					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+		    });
 	}
-	
+
 	@Override
 	public void logout() {
-		dispatcher.execute(new LogoutAction(ctx.getAccount().getUid()),
-				new DispatcherCallbackAsync<LogoutResult>() {
-					@Override
-					public void onSuccess(LogoutResult result) {
-						eventBus.fireEvent(new LogoutEvent());
-						ctx.setAccount(null);
-						goTo(new LoginPlace());
-					}
-					
-					public void onFailure(Throwable th) {
-						System.out.println("Failed to logout"+th);
-					}
-				});
+		dispatcher.execute(
+		    new LogoutAction(ctx.getAccount().getUid()),
+		    new DispatcherCallbackAsync<LogoutResult>() {
+			    @Override
+			    public void onSuccess(LogoutResult result) {
+				    eventBus.fireEvent(new LogoutEvent());
+				    ctx.setAccount(null);
+				    goTo(new LoginPlace());
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    System.out.println("Failed to logout" + th);
+			    }
+		    });
 	}
 
 	/**
 	 * Send message
+	 * 
 	 * @see com.ziplly.app.client.activities.AccountPresenter#sendMessage(com.ziplly.app.model.MessageDTO)
 	 */
 	@Override
@@ -245,31 +256,36 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		if (conversation == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
 			goTo(new LoginPlace());
 			return;
 		}
-		
+
 		// TODO check size
 		int size = conversation.getMessages().size();
-		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
-		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
-			@Override
-			public void onSuccess(SendMessageResult result) {
-				view.displayModalMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				view.displayModalMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
-			}
-		});
+		dispatcher.execute(
+		    new SendMessageAction(conversation),
+		    new DispatcherCallbackAsync<SendMessageResult>() {
+			    @Override
+			    public void onSuccess(SendMessageResult result) {
+				    view.displayModalMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    view.displayModalMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+			    }
+		    });
 	}
-	
-	protected void fetchTweets(long accountId, int page, int pageSize, final boolean displayNoTweetsMessage) {
+
+	protected void fetchTweets(long accountId,
+	    int page,
+	    int pageSize,
+	    final boolean displayNoTweetsMessage) {
 		eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
@@ -277,16 +293,14 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets(), displayNoTweetsMessage);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable th) {
 				if (th instanceof NotSharedError) {
 					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
-				} 
-				else if (th instanceof NotFoundException) {
-//					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-				}
-				else {
+				} else if (th instanceof NotFoundException) {
+					// view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+				} else {
 					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 				}
 				stopThreads();
@@ -296,12 +310,11 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 
-	
 	@Override
 	public void messagesLinkClicked() {
 		placeController.goTo(new ConversationPlace());
 	}
-	
+
 	void getLatLng(AccountDTO account, DispatcherCallbackAsync<GetLatLngResult> handler) {
 		GetLatLngAction action = new GetLatLngAction();
 		action.setAccount(account);
@@ -309,16 +322,17 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	public void getAccountDetails(DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
-		dispatcher.execute(new GetAccountDetailsAction(), callback); 
+		dispatcher.execute(new GetAccountDetailsAction(), callback);
 	}
 
 	// TODO (combine this with getAccountDetails)
-	public void getPublicAccountDetails(Long accountId, DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
-		dispatcher.execute(new GetPublicAccountDetailsAction(accountId), callback); 
+	public void getPublicAccountDetails(Long accountId,
+	    DispatcherCallbackAsync<GetAccountDetailsResult> callback) {
+		dispatcher.execute(new GetPublicAccountDetailsAction(accountId), callback);
 	}
-	
+
 	@Override
-	public void invitePeople(List<String> emails){
+	public void invitePeople(List<String> emails) {
 		SendEmailAction action = new SendEmailAction();
 		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
 		action.setEmailList(emails);
@@ -329,7 +343,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	};
-	
+
 	public void reportSpam(SpamDTO spam, DispatcherCallbackAsync<ReportSpamResult> handler) {
 		if (spam == null) {
 			throw new IllegalArgumentException();
@@ -337,33 +351,38 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		spam.setReporter(ctx.getAccount());
 		dispatcher.execute(new ReportSpamAction(spam), handler);
 	}
-	
+
+	@Override
 	public TweetWidget getTweetWidget() {
 		return ctx.getTweetWidget();
 	}
-	
+
+	@Override
 	public void displayMessage(String message, AlertType type) {
 		view.displayModalMessage(message, type);
 	}
-	
+
 	@Override
 	public void deleteImage(String url) {
-		dispatcher.execute(new DeleteImageAction(url), new DispatcherCallbackAsync<DeleteImageResult>() {
-			@Override
-			public void onSuccess(DeleteImageResult result) {
-				// Nothing to do.
-			}
-		});
+		dispatcher.execute(
+		    new DeleteImageAction(url),
+		    new DispatcherCallbackAsync<DeleteImageResult>() {
+			    @Override
+			    public void onSuccess(DeleteImageResult result) {
+				    // Nothing to do.
+			    }
+		    });
 	}
-	
+
 	public void setImageUploadUrl() {
-		dispatcher.execute(new GetImageUploadUrlAction(),
-				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-					@Override
-					public void onSuccess(GetImageUploadUrlResult result) {
-						view.setImageUploadUrl(result.getImageUrl());
-					}
-				});
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    view.setImageUploadUrl(result.getImageUrl());
+			    }
+		    });
 	}
 
 	public void setUploadImageHandler() {
@@ -377,26 +396,29 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			}
 		});
 	}
-	
-	public void updateComment(CommentDTO comment) {
-		dispatcher.execute(new UpdateCommentAction(comment), new DispatcherCallbackAsync<UpdateCommentResult>() {
 
-			@Override
-			public void onSuccess(UpdateCommentResult result) {
-				view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-				view.updateComment(result.getComment());
-			}
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				} else {
-					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
-		});
+	@Override
+	public void updateComment(CommentDTO comment) {
+		dispatcher.execute(
+		    new UpdateCommentAction(comment),
+		    new DispatcherCallbackAsync<UpdateCommentResult>() {
+
+			    @Override
+			    public void onSuccess(UpdateCommentResult result) {
+				    view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				    view.updateComment(result.getComment());
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof AccessError) {
+					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				    } else {
+					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+		    });
 	}
-	
+
 	abstract void stopThreads();
 }

@@ -2,13 +2,13 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class ValidateLoginAction implements Action<ValidateLoginResult>{
+public class ValidateLoginAction implements Action<ValidateLoginResult> {
 	private String password;
 	private String email;
-	
+
 	public ValidateLoginAction() {
 	}
-	
+
 	public ValidateLoginAction(String email, String password) {
 		this.setEmail(email);
 		this.setPassword(password);

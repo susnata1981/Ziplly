@@ -9,7 +9,7 @@ public class BusinessPlace extends Place {
 	private String token;
 	private Long accountId;
 	private Long neighborhoodId;
-	
+
 	public BusinessPlace() {
 		setToken("");
 	}
@@ -17,7 +17,7 @@ public class BusinessPlace extends Place {
 	public BusinessPlace(String token) {
 		setToken(token);
 	}
-	
+
 	public String getToken() {
 		return token;
 	}
@@ -59,8 +59,7 @@ public class BusinessPlace extends Place {
 							return new BusinessPlace("");
 						}
 					}
-				}
-				else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+				} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
 					try {
 						long neighborhoodId = Long.parseLong(tokens[1]);
 						BusinessPlace place = new BusinessPlace();
@@ -79,8 +78,7 @@ public class BusinessPlace extends Place {
 		public String getToken(BusinessPlace place) {
 			if (place.getAccountId() != null) {
 				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId());
-			}
-			else if (place.getNeighborhoodId() != null) {
+			} else if (place.getNeighborhoodId() != null) {
 				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {
 				return "";

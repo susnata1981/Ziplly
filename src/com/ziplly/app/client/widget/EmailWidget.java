@@ -22,19 +22,19 @@ public class EmailWidget extends Composite {
 	private static final String COMMA_SEPARATOR = ",";
 
 	private static EmailWidgetUiBinder uiBinder = GWT.create(EmailWidgetUiBinder.class);
-	
+
 	@UiField
 	Alert message;
-	
+
 	@UiField
 	TextBox emailList;
-	
+
 	@UiField
 	Button invitePeopleBtn;
-	
+
 	@UiField
 	Button cancelBtn;
-	
+
 	@UiField
 	Modal emailWidgetModal;
 
@@ -65,7 +65,7 @@ public class EmailWidget extends Composite {
 	public void cancel(ClickEvent event) {
 		emailWidgetModal.hide();
 	}
-	
+
 	private boolean validate() {
 		String input = emailList.getText();
 		ValidationResult result = FieldVerifier.validateEmailList(input);
@@ -85,15 +85,15 @@ public class EmailWidget extends Composite {
 	public void show() {
 		emailWidgetModal.show();
 	}
-	
+
 	public void hide() {
 		emailWidgetModal.hide();
 	}
-	
+
 	public void clear() {
 		message.setVisible(false);
 	}
-	
+
 	public void setPresenter(EmailPresenter presenter) {
 		this.presenter = presenter;
 	}

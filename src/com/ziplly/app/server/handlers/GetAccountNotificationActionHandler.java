@@ -14,26 +14,31 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetAccountNotificationResult;
 
-public class GetAccountNotificationActionHandler extends AbstractAccountActionHandler<GetAccountNotificationAction, GetAccountNotificationResult> {
+public class GetAccountNotificationActionHandler extends
+    AbstractAccountActionHandler<GetAccountNotificationAction, GetAccountNotificationResult> {
 
 	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
-	public GetAccountNotificationActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, AccountNotificationDAO accountNotificationDao) {
+	public GetAccountNotificationActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    AccountNotificationDAO accountNotificationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.accountNotificationDao = accountNotificationDao;
 	}
 
 	@Override
 	public GetAccountNotificationResult execute(GetAccountNotificationAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	    ExecutionContext arg1) throws DispatchException {
+
 		validateSession();
-		
-		List<AccountNotificationDTO> notifications = 
-				accountNotificationDao.findAccountNotificationByAccountId(session.getAccount().getAccountId());
-		
+
+		List<AccountNotificationDTO> notifications =
+		    accountNotificationDao.findAccountNotificationByAccountId(session
+		        .getAccount()
+		        .getAccountId());
+
 		GetAccountNotificationResult result = new GetAccountNotificationResult(notifications);
 		return result;
 	}

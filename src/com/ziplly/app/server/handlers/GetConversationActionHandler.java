@@ -20,54 +20,58 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetConversationsResult;
 
-public class GetConversationActionHandler extends AbstractAccountActionHandler<GetConversationsAction, GetConversationsResult>{
+public class GetConversationActionHandler extends
+    AbstractAccountActionHandler<GetConversationsAction, GetConversationsResult> {
 	ConversationDAO conversationDao;
 
 	@Inject
 	public GetConversationActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli, ConversationDAO conversationDao) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    ConversationDAO conversationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 	}
 
 	@Override
-	public GetConversationsResult execute(GetConversationsAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetConversationsResult
+	    execute(GetConversationsAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
 		List<ConversationDTO> conversations = Lists.newArrayList();
 		if (action.getType() != ConversationType.SINGLE) {
-			conversations.addAll(conversationDao.getConversationForAccount(
-				session.getAccount().getAccountId(),
-				action.getType(),
-				action.getStart(),
-				action.getPageSize()));
+			conversations.addAll(conversationDao.getConversationForAccount(session
+			    .getAccount()
+			    .getAccountId(), action.getType(), action.getStart(), action.getPageSize()));
 		} else {
 			try {
-				ConversationDTO conversation = conversationDao.findConversationById(action.getConversationId());
+				ConversationDTO conversation =
+				    conversationDao.findConversationById(action.getConversationId());
 				long accountId = session.getAccount().getAccountId();
-				if (conversation.getSender().getAccountId() != accountId && conversation.getReceiver().getAccountId() != accountId) {
+				if (conversation.getSender().getAccountId() != accountId
+				    && conversation.getReceiver().getAccountId() != accountId) {
 					throw new AccessError();
 				}
 				conversations.add(conversation);
-			} catch(NoResultException nre) {
+			} catch (NoResultException nre) {
 				throw new NotFoundException();
 			}
 		}
-		
+
 		GetConversationsResult result = new GetConversationsResult();
-		for(ConversationDTO c : conversations) {
+		for (ConversationDTO c : conversations) {
 			result.getConversations().add(c);
 		}
-		
+
 		if (action.isGetTotalConversation()) {
-			Long total = conversationDao.getTotalConversationCountOfType(
-					action.getType(),
-					session.getAccount().getAccountId());
+			Long total =
+			    conversationDao.getTotalConversationCountOfType(action.getType(), session
+			        .getAccount()
+			        .getAccountId());
 			result.setTotalConversations(total);
 		}
 		return result;

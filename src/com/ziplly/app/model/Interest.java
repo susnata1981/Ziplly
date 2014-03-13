@@ -17,40 +17,36 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-@NamedQueries(
-	@NamedQuery(
-		name="findInterestByName",
-		query = "from Interest i where i.name = :name"
-	)
-)
+@NamedQueries(@NamedQuery(name = "findInterestByName",
+    query = "from Interest i where i.name = :name"))
 @Entity
-@Table(name="interest")
+@Table(name = "interest")
 public class Interest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="interest_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "interest_id")
 	private Long interestId;
 
 	// Activity name in lowercase
 	private String name;
-	
-	@ManyToMany(mappedBy = "interests", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+
+	@ManyToMany(mappedBy = "interests", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<PersonalAccount> accounts = new HashSet<PersonalAccount>();
-	
-	@Column(name="time_created")
-	private Date timeCreated;	
+
+	@Column(name = "time_created")
+	private Date timeCreated;
 
 	public Interest() {
 	}
-	
+
 	public Interest(InterestDTO i) {
 		this.interestId = i.getInterestId();
 		this.setName(i.getName());
 		this.timeCreated = i.getTimeCreated();
 	}
-	
+
 	public Long getInterestId() {
 		return interestId;
 	}
@@ -66,7 +62,7 @@ public class Interest implements Serializable {
 	public void setTimeCreated(Date timeCreated) {
 		this.timeCreated = timeCreated;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

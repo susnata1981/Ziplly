@@ -58,14 +58,15 @@ public class NavView extends Composite implements INavView {
 	}
 
 	@SuppressWarnings("unchecked")
-	Formatter<AccountNotificationDTO> formatter = (Formatter<AccountNotificationDTO>) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION);
+	Formatter<AccountNotificationDTO> formatter =
+	    (Formatter<AccountNotificationDTO>) AbstractValueFormatterFactory
+	        .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_NOTIFICATION);
 
 	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	    .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 
 	AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
-			.getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
+	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 
 	@UiField
 	Style style;
@@ -268,8 +269,8 @@ public class NavView extends Composite implements INavView {
 
 	@Override
 	public void displayNoNewNotification() {
-		HTMLPanel panel = new HTMLPanel("<span>" + StringConstants.NO_NEW_NOTIFICATION_MESSAGE
-				+ "</span>");
+		HTMLPanel panel =
+		    new HTMLPanel("<span>" + StringConstants.NO_NEW_NOTIFICATION_MESSAGE + "</span>");
 		notifications.add(panel);
 	}
 
@@ -299,7 +300,7 @@ public class NavView extends Composite implements INavView {
 			locationDropdown.setVisible(true);
 		}
 	}
-	
+
 	@Override
 	public void displayLocationDropdown(boolean show) {
 		locationDropdown.setVisible(show);

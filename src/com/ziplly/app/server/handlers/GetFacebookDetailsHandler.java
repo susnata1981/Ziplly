@@ -13,25 +13,28 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
 import com.ziplly.app.shared.GetFacebookDetailsResult;
 
-public class GetFacebookDetailsHandler extends AbstractAccountActionHandler<GetFacebookDetailsAction, GetFacebookDetailsResult>{
+public class GetFacebookDetailsHandler extends
+    AbstractAccountActionHandler<GetFacebookDetailsAction, GetFacebookDetailsResult> {
 
 	Logger logger = Logger.getLogger(GetFacebookDetailsHandler.class.getCanonicalName());
-	
+
 	@Inject
-	public GetFacebookDetailsHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
+	public GetFacebookDetailsHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public GetFacebookDetailsResult execute(GetFacebookDetailsAction input,
-			ExecutionContext context) throws DispatchException {
-		
+	public GetFacebookDetailsResult
+	    execute(GetFacebookDetailsAction input, ExecutionContext context) throws DispatchException {
+
 		if (input == null || input.getCode() == null) {
 			throw new IllegalArgumentException();
 		}
-		logger.info(String.format("Initiating token exchange %s",input.getCode()));
+		logger.info(String.format("Initiating token exchange %s", input.getCode()));
 		AccountDTO account = accountBli.getFacebookDetails(input.getCode());
-		logger.info(String.format("Received account back from fb %s",account));
+		logger.info(String.format("Received account back from fb %s", account));
 		return new GetFacebookDetailsResult(account);
 	}
 

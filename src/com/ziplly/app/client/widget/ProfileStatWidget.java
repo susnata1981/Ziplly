@@ -10,11 +10,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ProfileStatWidget extends Composite {
 
-	private static ProfileStatWidgetUiBinder uiBinder = GWT
-			.create(ProfileStatWidgetUiBinder.class);
+	private static ProfileStatWidgetUiBinder uiBinder = GWT.create(ProfileStatWidgetUiBinder.class);
 
-	interface ProfileStatWidgetUiBinder extends
-			UiBinder<Widget, ProfileStatWidget> {
+	interface ProfileStatWidgetUiBinder extends UiBinder<Widget, ProfileStatWidget> {
 	}
 
 	public ProfileStatWidget() {
@@ -23,13 +21,13 @@ public class ProfileStatWidget extends Composite {
 
 	@UiField
 	HTMLPanel panel;
-	
+
 	@UiField
 	SpanElement title;
-	
+
 	@UiField
 	SpanElement value;
-	
+
 	public void setTitle(String t) {
 		title.setInnerHTML(t);
 	}
@@ -37,7 +35,7 @@ public class ProfileStatWidget extends Composite {
 	public void setValue(String v) {
 		value.setInnerHTML(v);
 	}
-	
+
 	public void setWidth(String width) {
 		panel.setWidth(width);
 	}

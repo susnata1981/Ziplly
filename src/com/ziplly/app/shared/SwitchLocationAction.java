@@ -2,12 +2,12 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class SwitchLocationAction implements Action<SwitchLocationResult>{
+public class SwitchLocationAction implements Action<SwitchLocationResult> {
 	private Long locationId;
-	
+
 	public SwitchLocationAction() {
 	}
-	
+
 	public SwitchLocationAction(Long locationId) {
 		this.setLocationId(locationId);
 	}

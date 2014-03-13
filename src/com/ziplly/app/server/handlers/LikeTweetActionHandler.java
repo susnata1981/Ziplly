@@ -19,27 +19,28 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 
-public class LikeTweetActionHandler extends AbstractAccountActionHandler<LikeTweetAction, LikeResult>{
+public class LikeTweetActionHandler extends
+    AbstractAccountActionHandler<LikeTweetAction, LikeResult> {
 	private LikeDAO likeDao;
 
 	@Inject
-	public LikeTweetActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli,
-			LikeDAO likeDao) {
+	public LikeTweetActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    LikeDAO likeDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.likeDao = likeDao;
 	}
 
 	@Override
-	public LikeResult execute(LikeTweetAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
+	public LikeResult execute(LikeTweetAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getTweetId() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		Love like = new Love();
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(action.getTweetId());
@@ -47,13 +48,13 @@ public class LikeTweetActionHandler extends AbstractAccountActionHandler<LikeTwe
 		Account a = session.getAccount();
 		like.setAuthor(a);
 		like.setTimeCreated(new Date());
-		try{
+		try {
 			LoveDTO loveDto = likeDao.save(like);
 			TweetDTO tweetDto = new TweetDTO();
 			tweetDto.setTweetId(action.getTweetId());
 			loveDto.setTweet(tweetDto);
 			return new LikeResult(loveDto);
-		} catch(DuplicateException ex) {
+		} catch (DuplicateException ex) {
 			throw ex;
 		}
 	}

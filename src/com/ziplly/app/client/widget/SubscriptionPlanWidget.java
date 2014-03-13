@@ -15,43 +15,43 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubscriptionPlanWidget extends Composite {
 
 	private static SubscriptionPlanWidgetUiBinder uiBinder = GWT
-			.create(SubscriptionPlanWidgetUiBinder.class);
+	    .create(SubscriptionPlanWidgetUiBinder.class);
 
 	interface SubscriptionPlanWidgetUiBinder extends UiBinder<Widget, SubscriptionPlanWidget> {
 	}
 
 	@UiField
 	Button buyButton;
-	
+
 	@UiField
 	Heading heading;
-	
+
 	@UiField
 	Paragraph description;
-	
+
 	@UiField
 	HTMLPanel subscriptionPlanPanel;
-	
+
 	public SubscriptionPlanWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-	
+
 	public void setHeading(String text) {
 		heading.setText(text);
 	}
-	
+
 	public void setDescription(String d) {
 		description.setText(d);
 	}
-	
+
 	public void addPayButtonClickHandler(ClickHandler handler) {
 		buyButton.addClickHandler(handler);
 	}
-	
+
 	public void setButtonType(ButtonType type) {
 		buyButton.setType(type);
 	}
-	
+
 	public void removeBuyButton() {
 		StyleHelper.show(buyButton.getElement(), false);
 	}

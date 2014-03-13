@@ -12,29 +12,34 @@ import com.ziplly.app.server.EmailServiceImpl;
 import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendEmailResult;
 
-public class SendEmailActionHandler extends AbstractAccountActionHandler<SendEmailAction, SendEmailResult>{
+public class SendEmailActionHandler extends
+    AbstractAccountActionHandler<SendEmailAction, SendEmailResult> {
 	private EmailService emailService;
 
 	@Inject
-	public SendEmailActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, EmailService emailService) {
+	public SendEmailActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    EmailService emailService) {
 		super(accountDao, sessionDao, accountBli);
 		this.emailService = emailService;
 	}
 
 	@Override
-	public SendEmailResult execute(SendEmailAction action, ExecutionContext arg1)
-			throws DispatchException {
-		if (action == null || action.getEmails() == null || action.getEmails().size() == 0 || action.getData() == null) {
+	public SendEmailResult
+	    execute(SendEmailAction action, ExecutionContext arg1) throws DispatchException {
+		if (action == null || action.getEmails() == null || action.getEmails().size() == 0
+		    || action.getData() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		String senderEmail = session.getAccount().getEmail();
-		for(String email : action.getEmails()) {
+		for (String email : action.getEmails()) {
 			EmailServiceImpl.Builder builder = new EmailServiceImpl.Builder();
-			builder.setRecipientName("recipientName")
+			builder
+			    .setRecipientName("recipientName")
 			    .setRecipientEmail(email)
 			    .setEmailTemplate(action.getEmailTemplate())
 			    .setSenderName(session.getAccount().getName())
@@ -48,5 +53,5 @@ public class SendEmailActionHandler extends AbstractAccountActionHandler<SendEma
 	public Class<SendEmailAction> getActionType() {
 		return SendEmailAction.class;
 	}
-	
+
 }

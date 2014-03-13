@@ -6,15 +6,15 @@ import com.google.gwt.place.shared.Prefix;
 
 public class BusinessSignupPlace extends Place {
 	private String code;
-	
+
 	public BusinessSignupPlace() {
 		this.code = "";
 	}
-	
+
 	public BusinessSignupPlace(String code) {
 		this.code = code;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}

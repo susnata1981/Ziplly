@@ -9,7 +9,7 @@ public class GetAccountByIdResult implements Result {
 
 	public GetAccountByIdResult() {
 	}
-	
+
 	public GetAccountByIdResult(AccountDTO account) {
 		this.setAccount(account);
 	}

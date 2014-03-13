@@ -11,9 +11,11 @@ import com.ziplly.app.model.PersonalAccountDTO;
 public class WidgetFactory {
 	public static PersonalAccountWidgetModal pAccountModal = new PersonalAccountWidgetModal();
 	public static BusinessAccountWidgetModal bAccountModal = new BusinessAccountWidgetModal();
-	
+
 	// Can't figure out how to enable type checking on return type
-	public static <T extends AccountDTO> IAccountWidgetModal<? extends AccountDTO> getAccountWidgetModal(T input, Presenter presenter) {
+	public static <T extends AccountDTO>
+	    IAccountWidgetModal<? extends AccountDTO>
+	    getAccountWidgetModal(T input, Presenter presenter) {
 		if (input instanceof PersonalAccountDTO) {
 			pAccountModal.setPresenter(presenter);
 			pAccountModal.setWidth("30%");
@@ -22,8 +24,8 @@ public class WidgetFactory {
 			bAccountModal.setPresenter(presenter);
 			bAccountModal.setWidth("25%");
 			return bAccountModal;
-		} 
-		
+		}
+
 		throw new IllegalArgumentException();
 	}
 }

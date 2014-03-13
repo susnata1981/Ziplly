@@ -18,31 +18,39 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.ViewNotificationAction;
 import com.ziplly.app.shared.ViewNotificationResult;
 
-public class ViewNotificationActionHandler extends AbstractAccountActionHandler<ViewNotificationAction, ViewNotificationResult>{
+public class ViewNotificationActionHandler extends
+    AbstractAccountActionHandler<ViewNotificationAction, ViewNotificationResult> {
 
 	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
-	public ViewNotificationActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			AccountBLI accountBli, AccountNotificationDAO accountNotificationDao) {
+	public ViewNotificationActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    AccountNotificationDAO accountNotificationDao) {
 		super(accountDao, sessionDao, accountBli);
 		this.accountNotificationDao = accountNotificationDao;
 	}
 
 	@Override
-	public ViewNotificationResult execute(ViewNotificationAction action, ExecutionContext arg1)
-			throws DispatchException {
-		
-		Preconditions.checkArgument(action.getAccountNotification() != null, "Invalid argument to ViewNotificationActionHandler");
-		
+	public ViewNotificationResult
+	    execute(ViewNotificationAction action, ExecutionContext arg1) throws DispatchException {
+
+		Preconditions.checkArgument(
+		    action.getAccountNotification() != null,
+		    "Invalid argument to ViewNotificationActionHandler");
+
 		validateSession();
-		
+
 		AccountNotification an = new AccountNotification(action.getAccountNotification());
 		an.setReadStatus(ReadStatus.READ);
 		an.setTimeUpdated(new Date());
 		accountNotificationDao.update(an);
-		
-		List<AccountNotificationDTO> notifications = accountNotificationDao.findAccountNotificationByAccountId(session.getAccount().getAccountId());
+
+		List<AccountNotificationDTO> notifications =
+		    accountNotificationDao.findAccountNotificationByAccountId(session
+		        .getAccount()
+		        .getAccountId());
 		ViewNotificationResult result = new ViewNotificationResult();
 		result.setAccountNotifications(notifications);
 		return result;
@@ -53,4 +61,3 @@ public class ViewNotificationActionHandler extends AbstractAccountActionHandler<
 		return ViewNotificationAction.class;
 	}
 }
-

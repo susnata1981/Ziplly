@@ -11,59 +11,59 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="account_notification")
+@Table(name = "account_notification")
 public class AccountNotification extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="notification_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "notification_id")
 	private Long notificationId;
-	
+
 	@ManyToOne
-	@JoinColumn(name="recipient_id")
+	@JoinColumn(name = "recipient_id")
 	private Account recipient;
-	
+
 	@OneToOne
 	private Account sender;
 
 	@OneToOne
-	@JoinColumn(name="tweet_id", nullable=true)
+	@JoinColumn(name = "tweet_id", nullable = true)
 	private Tweet tweet;
-	
+
 	@OneToOne
-	@JoinColumn(name="conversation_id", nullable=true)
+	@JoinColumn(name = "conversation_id", nullable = true)
 	private Conversation conversation;
-	
-	@Column(name="read_status")
+
+	@Column(name = "read_status")
 	private String readStatus;
-	
-	@Column(name="record_status", length=50)
+
+	@Column(name = "record_status", length = 50)
 	private String status;
-	
-	@Column(name="notification_type")
+
+	@Column(name = "notification_type")
 	private String type;
-	
+
 	public AccountNotification() {
 	}
-	
+
 	public AccountNotification(AccountNotificationDTO an) {
 		this.notificationId = an.getNotificationId();
-		
+
 		this.recipient = new Account();
 		this.recipient.setAccountId(an.getRecipient().getAccountId());
-		
+
 		this.sender = new Account();
 		this.sender.setAccountId(an.getSender().getAccountId());
-		
+
 		if (an.getTweet() != null) {
 			this.tweet = new Tweet(an.getTweet());
 		}
-		
+
 		if (an.getConversation() != null) {
 			this.conversation = new Conversation(an.getConversation());
 		}
-		
+
 		this.setReadStatus(an.getReadStatus());
 		this.setType(an.getType());
 		this.setTimeUpdated(an.getTimeUpdated());

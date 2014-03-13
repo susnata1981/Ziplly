@@ -118,40 +118,40 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 	@Override
 	protected void configureHandlers() {
 		bindHandler(MyAction.class, MyActionHandler.class);
-		
+
 		bindHandler(GetFacebookDetailsAction.class, GetFacebookDetailsHandler.class);
 		bindHandler(GetFacebookRedirectUriAction.class, GetFacebookRedirectUriActionHandler.class);
 		bindHandler(GetAccountByIdAction.class, GetAccountByIdActionHandler.class);
-		
+
 		// Account registration
 		bindHandler(RegisterAccountAction.class, RegisterAccountActionHandler.class);
 		bindHandler(CreateRegistrationAction.class, CreateRegistrationActionHandler.class);
 		bindHandler(UpdatePasswordAction.class, UpdatePasswordActionHandler.class);
 		bindHandler(VerifyEmailAction.class, VerifyEmailActionHandler.class);
 		bindHandler(ResendEmailVerificationAction.class, ResendEmailVerificationActionHandler.class);
-		
+
 		// Neighborhood
 		bindHandler(GetNeighborhoodAction.class, GetNeighborhoodActionHandler.class);
 		bindHandler(UpdateNeighborhoodAction.class, UpdateNeighborhoodActionHandler.class);
 		bindHandler(CreateNeighborhoodAction.class, CreateNeighborhoodActionHandler.class);
 		bindHandler(DeleteNeighborhoodAction.class, DeleteNeighborhoodActionHandler.class);
-		
+
 		// Location
 		bindHandler(SwitchLocationAction.class, SwitchLocationActionHander.class);
-		
+
 		bindHandler(ValidateLoginAction.class, ValidateLoginActionHandler.class);
-		
+
 		bindHandler(UpdateAccountAction.class, UpdateAccountActionHandler.class);
 
 		bindHandler(GetLoggedInUserAction.class, GetLoggedInUserActionHandler.class);
 		bindHandler(LogoutAction.class, LogoutActionHandler.class);
-		
+
 		bindHandler(GetImageUploadUrlAction.class, GetImageUploadUrlActionHandler.class);
 		bindHandler(GetNeighborhoodDetailsAction.class, GetNeighborhoodDetailsActionHandler.class);
-		
+
 		// Tweet handlers
 		bindHandler(TweetAction.class, TweetActionHandler.class);
-//		bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
+		// bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
 		bindHandler(UpdateTweetAction.class, UpdateTweetActionHandler.class);
 		bindHandler(GetCommunityWallDataAction.class, GetCommunityWallDataActionHandler.class);
 		bindHandler(CommentAction.class, CommentActionHandler.class);
@@ -164,47 +164,49 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetTweetCategoryDetailsAction.class, GetTweetCategoryDetailsActionHandler.class);
 		bindHandler(ReportSpamAction.class, ReportSpamActionHandler.class);
 		bindHandler(UpdateCommentAction.class, UpdateCommentActionHandler.class);
-		
+
 		bindHandler(GetPublicAccountDetailsAction.class, GetPublicAccountDetailsActionHandler.class);
-		
+
 		bindHandler(SendMessageAction.class, SendMessageActionHandler.class);
 		bindHandler(GetConversationsAction.class, GetConversationActionHandler.class);
 		bindHandler(ViewConversationAction.class, ViewConversationActionHandler.class);
-		
+
 		// Interest
 		bindHandler(GetInterestAction.class, GetInterestActionHandler.class);
-		
+
 		// Account Notification
 		bindHandler(GetAccountNotificationAction.class, GetAccountNotificationActionHandler.class);
 		bindHandler(ViewNotificationAction.class, ViewNotificationActionHandler.class);
-		
+
 		// Payment service
 		bindHandler(GetJwtTokenAction.class, GetJwtTokenActionHandler.class);
 		bindHandler(PayAction.class, PayActionHandler.class);
 		bindHandler(GetAllSubscriptionPlanAction.class, GetAllSubscriptionPlanActionHandler.class);
-		
+
 		bindHandler(GetLatLngAction.class, GetLatLngActionHandler.class);
-		
+
 		// password recover
 		bindHandler(SendPasswordRecoveryEmailAction.class, SendPasswordRecoveryActionHandler.class);
-		bindHandler(VerifyPasswordRecoveryHashAction.class, VerifyPasswordRecoveryHashActionHandler.class);
+		bindHandler(
+		    VerifyPasswordRecoveryHashAction.class,
+		    VerifyPasswordRecoveryHashActionHandler.class);
 		bindHandler(ResetPasswordAction.class, ResetPasswordActionHandler.class);
 
 		// community
 		bindHandler(GetEntityListAction.class, GetEntityActionHandler.class);
-		
+
 		// admin
 		bindHandler(GetTweetsAction.class, GetTweetActionHandler.class);
 		bindHandler(SearchAccountAction.class, SearchAccountActionHandler.class);
 		bindHandler(CheckEmailRegistrationAction.class, CheckEmailRegistrationActionHandler.class);
 		bindHandler(EmailAdminAction.class, EmailAdminActionHandler.class);
-		
+
 		// blobstore
 		bindHandler(DeleteImageAction.class, DeleteImageActionHandler.class);
-		
+
 		// invitation
 		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);
-		
+
 		// Environment
 		bindHandler(GetEnvironmentAction.class, GetEnvironmentActionHandler.class);
 	}

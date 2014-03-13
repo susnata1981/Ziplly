@@ -36,8 +36,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class LoginWidget extends Composite implements ILoginAccountView<LoginPresenter> {
 
-	private static LoginWidgetUiBinder uiBinder = GWT
-			.create(LoginWidgetUiBinder.class);
+	private static LoginWidgetUiBinder uiBinder = GWT.create(LoginWidgetUiBinder.class);
 
 	interface LoginWidgetUiBinder extends UiBinder<Widget, LoginWidget> {
 	}
@@ -58,28 +57,28 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		ZResources.IMPL.style().ensureInjected();
 		return ZResources.IMPL;
 	}
-	
+
 	public void setWidth(String width) {
 		loginWidgetPanel.setWidth(width);
 	}
-	
+
 	public void setResidentAccountSignupLink(String display) {
 		Boolean value = Boolean.valueOf(display);
 		if (!value.booleanValue()) {
 			residentSignupPanel.getElement().getStyle().setDisplay(Display.NONE);
 		}
 	}
-	
+
 	public void setBusinessAccountSignupLink(boolean display) {
 		Boolean value = Boolean.valueOf(display);
 		if (!value.booleanValue()) {
 			businessSignupPanel.getElement().getStyle().setDisplay(Display.NONE);
 		}
 	}
-	
+
 	@UiField
 	HTMLPanel loginWidgetPanel;
-	
+
 	@UiField
 	TextBox email;
 	@UiField
@@ -102,12 +101,12 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	Alert message;
-	
+
 	@UiField
 	Anchor residentSignupLink;
 	@UiField
 	HTMLPanel residentSignupPanel;
-	
+
 	@UiField
 	Anchor businessSignupLink;
 	@UiField
@@ -115,14 +114,15 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 
 	@UiField
 	Anchor passwordRecoveryLink;
-	
+
 	private LoginPresenter presenter;
 
 	@UiHandler("fbLoginBtn")
 	void fbLogin(ClickEvent event) {
 		try {
 			if (authConfig == null) {
-				authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
+				authConfig =
+				    OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
 			}
 			Window.Location.replace(authConfig.getAuthorizationUrl());
 		} catch (UnsupportedEncodingException e) {
@@ -188,7 +188,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	public void resetLoginForm() {
 		clearError();
 		email.setText("");
-		password.setText("");	
+		password.setText("");
 		loginBtn.setEnabled(true);
 		fbLoginBtn.setEnabled(true);
 	}
@@ -199,28 +199,28 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		passwordError.setText("");
 		passwordCg.setType(ControlGroupType.NONE);
 	}
-	
+
 	@Override
 	public void resetMessage() {
 		message.setVisible(false);
 		message.clear();
 	}
-	
+
 	@Override
 	public void setPresenter(LoginPresenter presenter) {
 		this.presenter = presenter;
 	}
-	
+
 	@UiHandler("residentSignupLink")
 	public void residentSignupLinkClicked(ClickEvent event) {
 		presenter.goTo(new SignupPlace());
 	}
-	
+
 	@UiHandler("businessSignupLink")
 	public void businessSignupLinkClicked(ClickEvent event) {
 		presenter.goTo(new BusinessSignupPlace(""));
 	}
-	
+
 	@UiHandler("passwordRecoveryLink")
 	public void passwordRecoveryLinkClicked(ClickEvent event) {
 		presenter.goTo(new PasswordRecoveryPlace());

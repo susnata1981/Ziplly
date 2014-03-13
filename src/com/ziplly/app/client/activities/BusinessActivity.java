@@ -17,8 +17,6 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.BusinessView.EntityListViewPresenter;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.LoadingEventEnd;
-import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.AccountDTO;
@@ -32,7 +30,9 @@ import com.ziplly.app.shared.GetEntityResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
-public class BusinessActivity extends AbstractActivity implements EntityListViewPresenter, SendMessagePresenter {
+public class BusinessActivity extends AbstractActivity implements
+    EntityListViewPresenter,
+    SendMessagePresenter {
 	private BusinessView view;
 	private BusinessPlace place;
 	private EntityListHandler handler = new EntityListHandler();
@@ -41,15 +41,17 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 
 	@Inject
 	public BusinessActivity(CachingDispatcherAsync dispatcher,
-			EventBus eventBus, PlaceController placeController,
-			ApplicationContext ctx,
-			BusinessPlace place, 
-			AsyncProvider<BusinessView> viewProvider) {
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx,
+	    BusinessPlace place,
+	    AsyncProvider<BusinessView> viewProvider) {
 		super(dispatcher, eventBus, placeController, ctx);
 		this.viewProvider = viewProvider;
 		this.place = place;
 	}
 
+	@Override
 	protected void setupHandlers() {
 		eventBus.addHandler(LoginEvent.TYPE, new LoginEventHandler() {
 			@Override
@@ -81,7 +83,7 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 			}
 		});
 	}
-	
+
 	void displayBusinessList() {
 		if (place.getAccountId() != null) {
 			view.displaySendMessageWidget(place.getAccountId());
@@ -91,12 +93,14 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		action.setPage(0);
 		action.setPageSize(view.getPageSize());
 		action.setNeedTotalEntityCount(true);
-		Long neighborhoodId = (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() 
-				: ctx.getCurrentNeighborhood().getNeighborhoodId();
+		Long neighborhoodId =
+		    (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
+		        .getCurrentNeighborhood()
+		        .getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		dispatcher.execute(action, handler);
 	}
-	
+
 	@Override
 	public void onRangeChangeEvent(int start, int pageSize) {
 		GetEntityListAction action = new GetEntityListAction(EntityType.BUSINESS_ACCOUNT);
@@ -105,40 +109,41 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 		action.setPageSize(pageSize);
 		dispatcher.execute(action, handler);
 	};
-	
+
 	@Override
 	public void getBusinessList(GetEntityListAction action) {
 		dispatcher.execute(action, handler);
 	}
-	
+
 	private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
 		@Override
 		public void onSuccess(GetEntityResult result) {
 			List<BusinessAccountDTO> accounts = new ArrayList<BusinessAccountDTO>();
 			if (result.getEntityType() == EntityType.BUSINESS_ACCOUNT) {
-				for(AccountDTO acct : result.getAccounts()) {
-					accounts.add((BusinessAccountDTO)acct);
+				for (AccountDTO acct : result.getAccounts()) {
+					accounts.add((BusinessAccountDTO) acct);
 				}
 			}
-			
+
 			if (result.getCount() != null) {
 				view.setTotalRowCount(result.getCount());
 			}
 			view.display(accounts);
 		}
-		
+
+		@Override
 		public void onFailure(Throwable caught) {
 			// TODO
 			view.displayMessage(caught.getMessage(), AlertType.ERROR);
 		}
 	}
-	
+
 	@Override
 	public void sendMessage(ConversationDTO conversation) {
 		if (conversation == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// make sure user is logged in
 		if (ctx.getAccount() == null) {
 			goTo(new LoginPlace());
@@ -147,37 +152,41 @@ public class BusinessActivity extends AbstractActivity implements EntityListView
 
 		// TODO check size
 		int size = conversation.getMessages().size();
-		conversation.getMessages().get(size-1).setSender(ctx.getAccount());
+		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
-		dispatcher.execute(new SendMessageAction(conversation), new DispatcherCallbackAsync<SendMessageResult>() {
-			@Override
-			public void onSuccess(SendMessageResult result) {
-				view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
-			}
-		});
+		dispatcher.execute(
+		    new SendMessageAction(conversation),
+		    new DispatcherCallbackAsync<SendMessageResult>() {
+			    @Override
+			    public void onSuccess(SendMessageResult result) {
+				    view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			    }
+		    });
 	}
-	
-	private void updateMessageWidgetWithAccountDetails(Long accountId) {
-		dispatcher.execute(new GetAccountByIdAction(accountId), new DispatcherCallbackAsync<GetAccountByIdResult>() {
 
-			@Override
-			public void onSuccess(GetAccountByIdResult result) {
-				view.updateMessageWidget(result.getAccount());
-			}
-			
-		});
+	private void updateMessageWidgetWithAccountDetails(Long accountId) {
+		dispatcher.execute(
+		    new GetAccountByIdAction(accountId),
+		    new DispatcherCallbackAsync<GetAccountByIdResult>() {
+
+			    @Override
+			    public void onSuccess(GetAccountByIdResult result) {
+				    view.updateMessageWidget(result.getAccount());
+			    }
+
+		    });
 	}
 
 	@Override
 	public void bind() {
 		view.setPresenter(this);
 	}
-	
+
 	@Override
 	public void onStop() {
 		view.clear();
 	}
-	
+
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}

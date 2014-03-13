@@ -60,10 +60,10 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
-		Query query = em.createQuery("select n from Neighborhood n join n.postalCodes p"
-				+ " where p.postalCode = :postalCode and n.type is :type");
-		query.setParameter("postalCode", postalCode)
-		    .setParameter("type", NeighborhoodType.X.name());
+		Query query =
+		    em.createQuery("select n from Neighborhood n join n.postalCodes p"
+		        + " where p.postalCode = :postalCode and n.type is :type");
+		query.setParameter("postalCode", postalCode).setParameter("type", NeighborhoodType.X.name());
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -74,8 +74,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 			}
 			return response;
 		} catch (NoResultException nre) {
-			logger.warn(String
-					.format("Couldn't find neighborhood with postal code: %d", postalCode));
+			logger.warn(String.format("Couldn't find neighborhood with postal code: %d", postalCode));
 			return ImmutableList.of();
 		} finally {
 			em.close();
@@ -110,27 +109,29 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	}
 
 	@Override
-	public List<NeighborhoodDTO> findAllDescendentNeighborhoods(Long neighborhoodId)
-			throws NotFoundException {
+	public List<NeighborhoodDTO>
+	    findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		
+
 		List<NeighborhoodDTO> result = Lists.newArrayList();
-		
+
 		try {
-			Query query = em
-					.createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId");
+			Query query =
+			    em
+			        .createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId");
 			query.setParameter("neighborhoodId", neighborhoodId);
 			List<Neighborhood> neighborhoods = query.getResultList();
-			for(Neighborhood neighborhood : neighborhoods) {
+			for (Neighborhood neighborhood : neighborhoods) {
 				result.add(EntityUtil.clone(neighborhood));
-				
-				List<NeighborhoodDTO> childNeighborhoods = findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
+
+				List<NeighborhoodDTO> childNeighborhoods =
+				    findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
 				if (childNeighborhoods.size() == 0) {
 					continue;
 				}
 				result.addAll(childNeighborhoods);
 			}
-			
+
 			return result;
 		} catch (NoResultException nre) {
 			return ImmutableList.of();
@@ -140,26 +141,28 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 	}
 
 	@Override
-	public List<NeighborhoodDTO> findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId)
-			throws NotFoundException {
+	public List<NeighborhoodDTO>
+	    findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId) throws NotFoundException {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		List<NeighborhoodDTO> result = Lists.newArrayList();
-		
+
 		try {
-			Query query = em
-					.createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId or neighborhoodId = :neighborhoodId");
+			Query query =
+			    em
+			        .createQuery("from Neighborhood n where n.parentNeighborhood.neighborhoodId = :neighborhoodId or neighborhoodId = :neighborhoodId");
 			query.setParameter("neighborhoodId", neighborhoodId);
 			List<Neighborhood> neighborhoods = query.getResultList();
-			for(Neighborhood neighborhood : neighborhoods) {
+			for (Neighborhood neighborhood : neighborhoods) {
 				result.add(EntityUtil.clone(neighborhood));
-				
-				List<NeighborhoodDTO> childNeighborhoods = findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
+
+				List<NeighborhoodDTO> childNeighborhoods =
+				    findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
 				if (childNeighborhoods.size() == 0) {
 					continue;
 				}
 				result.addAll(childNeighborhoods);
 			}
-			
+
 			return result;
 		} catch (NoResultException nre) {
 			return ImmutableList.of();
@@ -173,66 +176,74 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			em.getTransaction().begin();
-//			PostalCodeDTO postalCode = null;
-//			try {
-////				postalCode = postalCodeDao.findByPostalCode(neighborhood.getPostalCodes().iterator().next().getPostalCode());
-//				String zip = neighborhood.getPostalCodes().iterator().next().getPostalCode();
-//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode")
-//				    .setParameter("postalCode", zip);
-//				PostalCode p = (PostalCode) query.getSingleResult();
-//				neighborhood.addPostalCode(p);
-//			} catch(NoResultException nre) {
-////				System.out.println("Didn't find postal code");
-////				postalCode = new PostalCodeDTO();
-////				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-//				throw new RuntimeException("Postal code not found.");
-//			}
-////			neighborhood.addPostalCode(new PostalCode(postalCode));
+			// PostalCodeDTO postalCode = null;
+			// try {
+			// // postalCode =
+			// postalCodeDao.findByPostalCode(neighborhood.getPostalCodes().iterator().next().getPostalCode());
+			// String zip =
+			// neighborhood.getPostalCodes().iterator().next().getPostalCode();
+			// Query query =
+			// em.createQuery("from PostalCode where postalCode = :postalCode")
+			// .setParameter("postalCode", zip);
+			// PostalCode p = (PostalCode) query.getSingleResult();
+			// neighborhood.addPostalCode(p);
+			// } catch(NoResultException nre) {
+			// // System.out.println("Didn't find postal code");
+			// // postalCode = new PostalCodeDTO();
+			// //
+			// postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+			// throw new RuntimeException("Postal code not found.");
+			// }
+			// // neighborhood.addPostalCode(new PostalCode(postalCode));
 			em.merge(neighborhood);
 			em.getTransaction().commit();
 		} finally {
 			em.close();
 		}
 	}
-	
-//	@Override
-//	public void save(Neighborhood neighborhood) {
-//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-//
-//		try {
-//			em.getTransaction().begin();
-//			PostalCode postalCode = null;
-//			
-//			// parent neighborhood
-//			try {
-//				if (neighborhood.getParentNeighborhood() != null) {
-//					Long parentNeighborhoodId = neighborhood.getParentNeighborhood().getNeighborhoodId();
-//					Query query = em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
-//					query.setParameter("neighborhoodId", parentNeighborhoodId);
-//					Neighborhood parent = (Neighborhood) query.getSingleResult();
-//					neighborhood.setParentNeighborhood(parent);
-//				}
-//			} catch(NoResultException nre) {
-//				throw nre;
-//			}
-//			
-//			// postal code
-//			try {
-//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
-//				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
-//				postalCode = (PostalCode) query.getSingleResult();
-//			} catch(NoResultException nre) {
-//				postalCode = new PostalCode();
-//				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-//			}
-//			
-//			neighborhood.setPostalCode(postalCode);
-//			em.persist(neighborhood);
-//			em.getTransaction().commit();
-//		} finally {
-//			em.close();
-//		}
-//	}
+
+	// @Override
+	// public void save(Neighborhood neighborhood) {
+	// EntityManager em = EntityManagerService.getInstance().getEntityManager();
+	//
+	// try {
+	// em.getTransaction().begin();
+	// PostalCode postalCode = null;
+	//
+	// // parent neighborhood
+	// try {
+	// if (neighborhood.getParentNeighborhood() != null) {
+	// Long parentNeighborhoodId =
+	// neighborhood.getParentNeighborhood().getNeighborhoodId();
+	// Query query =
+	// em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
+	// query.setParameter("neighborhoodId", parentNeighborhoodId);
+	// Neighborhood parent = (Neighborhood) query.getSingleResult();
+	// neighborhood.setParentNeighborhood(parent);
+	// }
+	// } catch(NoResultException nre) {
+	// throw nre;
+	// }
+	//
+	// // postal code
+	// try {
+	// Query query =
+	// em.createQuery("from PostalCode where postalCode = :postalCode");
+	// query.setParameter("postalCode",
+	// neighborhood.getPostalCode().getPostalCode());
+	// postalCode = (PostalCode) query.getSingleResult();
+	// } catch(NoResultException nre) {
+	// postalCode = new PostalCode();
+	// postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+	// }
+	//
+	// neighborhood.setPostalCode(postalCode);
+	// em.persist(neighborhood);
+	// em.getTransaction().commit();
+	// } finally {
+	// em.close();
+	// }
+	// }
 
 	@Override
 	public void save(Neighborhood neighborhood) {
@@ -241,7 +252,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		try {
 			em.getTransaction().begin();
 			PostalCode postalCode = null;
-			
+
 			// parent neighborhood
 			try {
 				if (neighborhood.getParentNeighborhood() != null) {
@@ -251,21 +262,23 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 					Neighborhood parent = (Neighborhood) query.getSingleResult();
 					neighborhood.setParentNeighborhood(parent);
 				}
-			} catch(NoResultException nre) {
+			} catch (NoResultException nre) {
 				throw nre;
 			}
-			
-//			// postal code
-//			try {
-//				Query query = em.createQuery("from PostalCode where postalCode = :postalCode");
-//				query.setParameter("postalCode", neighborhood.getPostalCode().getPostalCode());
-//				postalCode = (PostalCode) query.getSingleResult();
-//			} catch(NoResultException nre) {
-//				postalCode = new PostalCode();
-//				postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-//			}
-//			
-//			neighborhood.setPostalCode(postalCode);
+
+			// // postal code
+			// try {
+			// Query query =
+			// em.createQuery("from PostalCode where postalCode = :postalCode");
+			// query.setParameter("postalCode",
+			// neighborhood.getPostalCode().getPostalCode());
+			// postalCode = (PostalCode) query.getSingleResult();
+			// } catch(NoResultException nre) {
+			// postalCode = new PostalCode();
+			// postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
+			// }
+			//
+			// neighborhood.setPostalCode(postalCode);
 			em.persist(neighborhood);
 			em.getTransaction().commit();
 		} finally {

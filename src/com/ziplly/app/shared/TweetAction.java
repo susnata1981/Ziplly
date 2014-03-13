@@ -4,12 +4,12 @@ import net.customware.gwt.dispatch.shared.Action;
 
 import com.ziplly.app.model.TweetDTO;
 
-public class TweetAction implements Action<TweetResult>{
+public class TweetAction implements Action<TweetResult> {
 	private TweetDTO tweet;
 
 	public TweetAction() {
 	}
-	
+
 	public TweetAction(TweetDTO tweet) {
 		this.setTweet(tweet);
 	}

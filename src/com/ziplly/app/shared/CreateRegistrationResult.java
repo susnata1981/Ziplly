@@ -7,11 +7,11 @@ public class CreateRegistrationResult implements Result {
 
 	public CreateRegistrationResult() {
 	}
-	
+
 	public CreateRegistrationResult(String link) {
 		this.registrationLink = link;
 	}
-	
+
 	public String getRegistrationLink() {
 		return registrationLink;
 	}

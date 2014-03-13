@@ -8,15 +8,18 @@ import com.ziplly.app.shared.EmailTemplate;
 
 public interface TweetNotificationBLI {
 	void sendNotificationsIfRequired(TweetDTO savedTweet) throws NotFoundException;
-	
-	void sendNotification(Long senderAccountId, Long neighborhoodId, Long tweetId,
-			NotificationType ntype, EmailTemplate emailTemplate);
 
-	void sendEmail(String recipientEmail, 
-			String recipientName,
-			String senderEmail,
-			String senderName,
-			EmailTemplate emailTemplate);
+	void sendNotification(Long senderAccountId,
+	    Long neighborhoodId,
+	    Long tweetId,
+	    NotificationType ntype,
+	    EmailTemplate emailTemplate);
+
+	void sendEmail(String recipientEmail,
+	    String recipientName,
+	    String senderEmail,
+	    String senderName,
+	    EmailTemplate emailTemplate);
 
 	void sendEmail(Account sender, Account receiver, EmailTemplate template);
 }

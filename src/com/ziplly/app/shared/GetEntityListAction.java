@@ -7,12 +7,9 @@ import com.ziplly.app.model.Gender;
 
 public class GetEntityListAction implements Action<GetEntityResult> {
 	public enum SearchType {
-		BY_ZIP,
-		BY_NEIGHBORHOOD,
-		BY_GENDER,
-		OTHER;
+		BY_ZIP, BY_NEIGHBORHOOD, BY_GENDER, OTHER;
 	}
-	
+
 	private int page;
 	private int pageSize;
 	private EntityType entityType;
@@ -21,10 +18,10 @@ public class GetEntityListAction implements Action<GetEntityResult> {
 	private String zip;
 	private Gender gender = Gender.ALL;
 	private Long neighborhoodId;
-	
+
 	public GetEntityListAction() {
 	}
-	
+
 	public GetEntityListAction(EntityType type) {
 		this.entityType = type;
 	}
@@ -88,7 +85,7 @@ public class GetEntityListAction implements Action<GetEntityResult> {
 	public void setNeighborhoodId(Long neighborhoodId) {
 		this.neighborhoodId = neighborhoodId;
 	}
-	
+
 	public Long getNeighborhoodId() {
 		return neighborhoodId;
 	}

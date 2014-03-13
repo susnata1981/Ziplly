@@ -9,11 +9,15 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AdminBLI;
 
-public abstract class AbstractAdminActionHandler<T extends Action<V>, V extends Result> extends AbstractTweetActionHandler<T,V>{
+public abstract class AbstractAdminActionHandler<T extends Action<V>, V extends Result> extends
+    AbstractTweetActionHandler<T, V> {
 	protected AdminBLI adminBli;
 
-	public AbstractAdminActionHandler(AccountDAO accountDao, SessionDAO sessionDao,
-			TweetDAO tweetDao, AccountBLI accountBli, AdminBLI adminBli) {
+	public AbstractAdminActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    AccountBLI accountBli,
+	    AdminBLI adminBli) {
 		super(accountDao, sessionDao, tweetDao, accountBli);
 		this.adminBli = adminBli;
 	}

@@ -15,10 +15,10 @@ public class NeighborhoodDTO implements Serializable {
 	private String imageUrl;
 	private NeighborhoodDTO parentNeighborhood;
 	private List<PostalCodeDTO> postalCodes = new ArrayList<PostalCodeDTO>();
-	
+
 	public NeighborhoodDTO() {
 	}
-	
+
 	public Long getNeighborhoodId() {
 		return neighborhoodId;
 	}
@@ -33,12 +33,12 @@ public class NeighborhoodDTO implements Serializable {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Neighborhood)) {
 			return false;
 		}
-		
-		Neighborhood n = (Neighborhood)o;
+
+		Neighborhood n = (Neighborhood) o;
 		return n.getNeighborhoodId() == this.getNeighborhoodId();
 	}
 
@@ -98,7 +98,7 @@ public class NeighborhoodDTO implements Serializable {
 	public void addImage(ImageDTO image) {
 		images.add(image);
 	}
-	
+
 	public void setImages(List<ImageDTO> images) {
 		this.images = images;
 	}
@@ -110,7 +110,7 @@ public class NeighborhoodDTO implements Serializable {
 	public void addPostalCode(PostalCodeDTO p) {
 		this.postalCodes.add(p);
 	}
-	
+
 	public void setPostalCodes(List<PostalCodeDTO> postalCodes) {
 		this.postalCodes = postalCodes;
 	}

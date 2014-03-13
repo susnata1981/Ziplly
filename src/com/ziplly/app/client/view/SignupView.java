@@ -56,10 +56,8 @@ import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class SignupView extends AbstractView implements
-		ISignupView<SignupActivityPresenter> {
-	private static SignupViewUiBinder uiBinder = GWT
-			.create(SignupViewUiBinder.class);
+public class SignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
+	private static SignupViewUiBinder uiBinder = GWT.create(SignupViewUiBinder.class);
 
 	interface SignupViewUiBinder extends UiBinder<Widget, SignupView> {
 	}
@@ -69,15 +67,15 @@ public class SignupView extends AbstractView implements
 		ZResources.IMPL.style().ensureInjected();
 		return ZResources.IMPL;
 	}
-	
+
 	boolean checkEmailInvitationStatus = false;
 	boolean isServiceAvailable = true;
 	private NeighborhoodDTO selectedNeighborhood;
 	private List<NeighborhoodDTO> neighborhoods;
-	
+
 	@UiField
 	Anchor howItWorksAnchor;
-	
+
 	@UiField
 	TextBox firstname;
 	@UiField
@@ -101,7 +99,7 @@ public class SignupView extends AbstractView implements
 
 	@UiField
 	ListBox genderListBox;
-	
+
 	@UiField
 	TextBox zip;
 	@UiField
@@ -119,7 +117,7 @@ public class SignupView extends AbstractView implements
 	HelpInline neighborhoodError;
 	@UiField
 	Image neighborhoodLoadingImage;
-	
+
 	@UiField
 	PasswordTextBox password;
 	@UiField
@@ -135,13 +133,13 @@ public class SignupView extends AbstractView implements
 
 	@UiField
 	Anchor signInAnchor;
-	
+
 	@UiField
 	Anchor facebookSignupAnchor;
-	
+
 	@UiField
 	Button businessSignupBtn;
-	
+
 	// How it works section
 	@UiField
 	Button createProfileBtn;
@@ -154,7 +152,7 @@ public class SignupView extends AbstractView implements
 	Anchor termsOfUseAnchor;
 	@UiField
 	Anchor privacyPolicyAnchor;
-	
+
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
@@ -171,8 +169,8 @@ public class SignupView extends AbstractView implements
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
 		neighborhoodControl.setVisible(false);
-		
-		for(Gender g : Gender.getValuesForSignup()) {
+
+		for (Gender g : Gender.getValuesForSignup()) {
 			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
 	}
@@ -189,21 +187,20 @@ public class SignupView extends AbstractView implements
 				if (!doValidation) {
 					return;
 				}
-				
-				boolean validateName = validateName(firstname.getText(), firstnameCg,
-						firstnameError);
+
+				boolean validateName = validateName(firstname.getText(), firstnameCg, firstnameError);
 				if (validateName) {
 					firstnameCg.setType(ControlGroupType.SUCCESS);
 					firstnameError.setVisible(false);
 				}
 			}
 		});
-		
+
 		zip.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
 				doValidation = true;
-				
+
 				boolean validateZip = validateZip();
 				if (validateZip) {
 					isServiceAvailable = true;
@@ -242,13 +239,13 @@ public class SignupView extends AbstractView implements
 			}
 		});
 	}
-	
+
 	public void clearNeighborhoodSection() {
 		neighborhoodListPanel.clear();
 		neighborhoodCg.setType(ControlGroupType.NONE);
 		neighborhoodControl.setVisible(false);
 	}
-	
+
 	public void reset() {
 		infoField.setVisible(false);
 	}
@@ -257,9 +254,10 @@ public class SignupView extends AbstractView implements
 		String zipInput = zip.getText().trim();
 		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
 		if (!validateZip.isValid()) {
-			setControlMessageForZipcodeField(validateZip.getErrors().get(0).getErrorMessage(),
-					true,
-					ControlGroupType.ERROR);
+			setControlMessageForZipcodeField(
+			    validateZip.getErrors().get(0).getErrorMessage(),
+			    true,
+			    ControlGroupType.ERROR);
 			return false;
 		}
 		return true;
@@ -270,7 +268,7 @@ public class SignupView extends AbstractView implements
 		zipError.setText(msg);
 		zipError.setVisible(msgVisible);
 	}
-	
+
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
 		if (!result.isValid()) {
@@ -285,7 +283,7 @@ public class SignupView extends AbstractView implements
 	public void verifiedEmailInvitationStatus() {
 		checkEmailInvitationStatus = true;
 	}
-	
+
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
 		ValidationResult result = FieldVerifier.validateEmail(emailInput);
@@ -295,20 +293,19 @@ public class SignupView extends AbstractView implements
 			emailError.setVisible(true);
 			return false;
 		}
-		
-//		if (isRegistrationRescricted) {
-//			String code = Window.Location.getParameter("code");
-//			presenter.verifyInvitationForEmail(FieldVerifier.sanitize(email.getText()), code);
-//			while (!checkEmailInvitationStatus) {
-//				
-//			}
-//		}
+
+		// if (isRegistrationRescricted) {
+		// String code = Window.Location.getParameter("code");
+		// presenter.verifyInvitationForEmail(FieldVerifier.sanitize(email.getText()),
+		// code);
+		// while (!checkEmailInvitationStatus) {
+		//
+		// }
+		// }
 		return true;
 	}
 
-	boolean validatePassword(String password, 
-			ControlGroup cg,
-			HelpInline helpInline) {
+	boolean validatePassword(String password, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validatePassword(password);
 		if (!result.isValid()) {
 			cg.setType(ControlGroupType.ERROR);
@@ -335,7 +332,7 @@ public class SignupView extends AbstractView implements
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
 		valid &= validateNeighborhood();
-		
+
 		return valid;
 	}
 
@@ -347,7 +344,7 @@ public class SignupView extends AbstractView implements
 			neighborhoodError.setVisible(false);
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -384,16 +381,16 @@ public class SignupView extends AbstractView implements
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
 		resetErrors();
-		
+
 		if (!isServiceAvailable) {
 			displayMessage(StringConstants.SERVICE_NOT_AVAILABLE, AlertType.ERROR);
 			return;
 		}
-		
+
 		if (!validateInput()) {
 			return;
 		}
-		
+
 		infoField.setType(AlertType.SUCCESS);
 		String firstnameInput = firstname.getText().trim();
 		String lastnameInput = lastname.getText().trim();
@@ -412,23 +409,23 @@ public class SignupView extends AbstractView implements
 		location.setTimeCreated(new Date());
 		location.setTimeUpdated(new Date());
 		account.addLocation(location);
-		
+
 		account.setRole(Role.USER);
 		account.setBadge(Badge.chipmunk);
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
-		
+
 		if (facebookRegistration) {
 			account.setFacebookRegistration(true);
 		}
-		
+
 		if (profileImageUrl != null) {
 			account.setImageUrl(profileImageUrl);
-		} 
+		}
 
 		//
 		// RESTRICT_REGISTRATION_FEATURE
-		//   
+		//
 		String value = System.getProperty(StringConstants.RESTRICT_REGISTRATION_FEATURE, "false");
 		boolean isRegistrationRescricted = Boolean.valueOf(value);
 		if (isRegistrationRescricted) {
@@ -441,13 +438,13 @@ public class SignupView extends AbstractView implements
 
 	private NeighborhoodDTO getNeighborhoodSelection() {
 		int count = neighborhoodListPanel.getWidgetCount();
-		for(int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
 			if (rb.getValue()) {
 				return neighborhoods.get(i);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -456,12 +453,12 @@ public class SignupView extends AbstractView implements
 		firstname.setText(account.getFirstName());
 		lastname.setText(account.getLastName());
 		email.setText(account.getEmail());
-		
+
 		genderListBox.setSelectedIndex(account.getGender().ordinal());
 		if (account.getImageUrl() != null) {
 			this.profileImageUrl = account.getImageUrl();
 		}
-		
+
 		zip.setText("");
 		neighborhoodControl.setVisible(false);
 		facebookRegistration = true;
@@ -481,29 +478,29 @@ public class SignupView extends AbstractView implements
 	public void businessSignup(ClickEvent event) {
 		presenter.goTo(new BusinessSignupPlace());
 	}
-	
+
 	@UiHandler("signInAnchor")
 	public void signIn(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		infoField.setText(msg);
 		infoField.setType(type);
 		infoField.setVisible(true);
 	}
-	
+
 	public void clearMessage() {
 		infoField.setText("");
 		infoField.setVisible(false);
 	}
-	
+
 	@Override
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
 		clearMessage();
 		neighborhoodListPanel.clear();
 		this.neighborhoods = neighborhoods;
-		for(NeighborhoodDTO n : neighborhoods) {
+		for (NeighborhoodDTO n : neighborhoods) {
 			RadioButton rb = new RadioButton("neighborhood");
 			rb.setText(n.getName());
 			neighborhoodListPanel.add(rb);
@@ -530,12 +527,12 @@ public class SignupView extends AbstractView implements
 				presenter.addToInviteList(email, Integer.parseInt(postalCode));
 				widget.show(false);
 			}
-			
+
 		});
 		selectedNeighborhood = null;
 		widget.show(true);
 	}
-	
+
 	public void displayNeighborhoodListLoading(boolean display) {
 		if (display) {
 			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
@@ -544,23 +541,25 @@ public class SignupView extends AbstractView implements
 			StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		}
 	}
-	
+
 	/**
 	 * Signup/Login using facebook
+	 * 
 	 * @param event
 	 */
 	@UiHandler("facebookSignupAnchor")
 	void signupUsingFacebook(ClickEvent event) {
 		try {
 			if (authConfig == null) {
-				authConfig = OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
+				authConfig =
+				    OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
 			}
 			Window.Location.replace(authConfig.getAuthorizationUrl());
 		} catch (UnsupportedEncodingException e) {
 			// It should never get here.
 		}
 	}
-	
+
 	/**
 	 * Link within page.
 	 */
@@ -580,22 +579,22 @@ public class SignupView extends AbstractView implements
 		Element elem = DOM.getElementById("signupFormLink");
 		navigateToElement(elem);
 	}
-	
-	@UiHandler({"exploreBtn","postMessageBtn"})
+
+	@UiHandler({ "exploreBtn", "postMessageBtn" })
 	void exploreNeighborhod(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
 	}
-	
+
 	@UiHandler("privacyPolicyAnchor")
 	public void privacyPolicyLinkClicked(ClickEvent event) {
 		presenter.goTo(new AboutPlace(AboutViewSection.PRIVACY));
 	}
-	
+
 	@UiHandler("termsOfUseAnchor")
 	public void tosLinkClicked(ClickEvent event) {
 		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
-	
+
 	private void navigateToElement(Element elem) {
 		if (elem != null) {
 			elem.scrollIntoView();

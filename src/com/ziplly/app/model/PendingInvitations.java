@@ -7,34 +7,37 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="pending_invitations")
+@Table(name = "pending_invitations")
 public class PendingInvitations extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	private String email;
 	private int zip;
-	
+
 	public PendingInvitations() {
 	}
-	
+
 	public PendingInvitations(PendingInvitationsDTO p) {
 		this.setId(p.getId());
 		this.email = p.getEmail();
 		this.zip = p.getZip();
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public int getZip() {
 		return zip;
 	}
+
 	public void setZip(int zip) {
 		this.zip = zip;
 	}

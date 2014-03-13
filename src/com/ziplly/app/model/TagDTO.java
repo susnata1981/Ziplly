@@ -12,19 +12,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-public class TagDTO implements Serializable{
+public class TagDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String keyword;
-	
-	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinTable(name="tag_tweet", joinColumns= {
-		@JoinColumn(name="tweet_id") }, 
-		inverseJoinColumns= {
-				@JoinColumn(name="tag_id")
-		})
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "tag_tweet", joinColumns = { @JoinColumn(name = "tweet_id") },
+	    inverseJoinColumns = { @JoinColumn(name = "tag_id") })
 	private List<Tweet> tweets;
 
 	public String getKeyword() {

@@ -32,7 +32,7 @@ import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetEntityListAction;
 
 public class ResidentsView extends AbstractView implements
-		View<ResidentsView.EntityListViewPresenter> {
+    View<ResidentsView.EntityListViewPresenter> {
 	private static final int PAGE_SIZE = 10;
 
 	public interface EntityListViewPresenter extends Presenter {
@@ -158,8 +158,9 @@ public class ResidentsView extends AbstractView implements
 		searchBtn.setEnabled(false);
 		Gender gender = genderList.get(genderListBox.getSelectedIndex());
 		state.searchByGender(gender);
-		state.setNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex())
-				.getNeighborhoodId());
+		state.setNeighborhood(neighborhoods
+		    .get(neighborhoodListBox.getSelectedIndex())
+		    .getNeighborhoodId());
 		presenter.getPersonalAccountList(state.getCurrentEntityListAction());
 	}
 
@@ -212,6 +213,8 @@ public class ResidentsView extends AbstractView implements
 	}
 
 	public void setBackground(NeighborhoodDTO neighborhood) {
-		StyleHelper.setBackgroundImage(basicDataFormatter.format(neighborhood, ValueType.NEIGHBORHOOD_IMAGE));
+		StyleHelper.setBackgroundImage(basicDataFormatter.format(
+		    neighborhood,
+		    ValueType.NEIGHBORHOOD_IMAGE));
 	}
 }

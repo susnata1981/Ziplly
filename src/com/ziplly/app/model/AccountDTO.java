@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AccountDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long accountId;
 	private String facebookId;
 	private String accessToken;
@@ -25,13 +25,15 @@ public class AccountDTO implements Serializable {
 	private List<TweetDTO> tweets = new ArrayList<TweetDTO>();
 	private Long uid;
 	private List<ImageDTO> images = new ArrayList<ImageDTO>();
-	private List<AccountNotificationDTO> accountNotifications = new ArrayList<AccountNotificationDTO>();
-	private List<AccountNotificationSettingsDTO> notificationSettings = new ArrayList<AccountNotificationSettingsDTO>();
+	private List<AccountNotificationDTO> accountNotifications =
+	    new ArrayList<AccountNotificationDTO>();
+	private List<AccountNotificationSettingsDTO> notificationSettings =
+	    new ArrayList<AccountNotificationSettingsDTO>();
 	private List<PrivacySettingsDTO> privacySettings = new ArrayList<PrivacySettingsDTO>();
-	
+
 	public AccountDTO() {
 	}
-	
+
 	public Long getAccountId() {
 		return accountId;
 	}
@@ -78,12 +80,12 @@ public class AccountDTO implements Serializable {
 		if (o == this) {
 			return true;
 		}
-		
+
 		if (!(o instanceof Account)) {
 			return false;
 		}
-		
-		Account a = (Account)o;
+
+		Account a = (Account) o;
 		return a.getAccountId() == this.getAccountId();
 	}
 
@@ -94,7 +96,7 @@ public class AccountDTO implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public Long getUid() {
 		return uid;
 	}
@@ -138,6 +140,7 @@ public class AccountDTO implements Serializable {
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
 	}
+
 	// to be overridden
 	public String getDisplayName() {
 		return "<NAME>";
@@ -174,7 +177,7 @@ public class AccountDTO implements Serializable {
 	public void setPrivacySettings(List<PrivacySettingsDTO> privacySettings) {
 		this.privacySettings = privacySettings;
 	}
-	
+
 	public void addPrivacySettings(PrivacySettingsDTO ps) {
 		privacySettings.add(ps);
 	}
@@ -202,7 +205,7 @@ public class AccountDTO implements Serializable {
 	public void addLocation(LocationDTO loc) {
 		locations.add(loc);
 	}
-	
+
 	public void setLocations(List<LocationDTO> locations) {
 		this.locations = locations;
 	}

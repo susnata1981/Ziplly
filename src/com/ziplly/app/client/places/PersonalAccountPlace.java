@@ -10,10 +10,10 @@ public class PersonalAccountPlace extends Place {
 	public PersonalAccountPlace(Long accountId) {
 		this.setAccountId(accountId);
 	}
-	
+
 	public PersonalAccountPlace() {
 	}
-	
+
 	public Long getAccountId() {
 		return accountId;
 	}

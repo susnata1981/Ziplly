@@ -10,10 +10,10 @@ import com.ziplly.app.model.ConversationDTO;
 public class GetConversationsResult implements Result {
 	private List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();
 	private Long totalConversations;
-	
+
 	public GetConversationsResult() {
 	}
-	
+
 	GetConversationsResult(List<ConversationDTO> conversations) {
 		this.setConversations(conversations);
 	}

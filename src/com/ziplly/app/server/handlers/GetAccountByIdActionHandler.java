@@ -18,27 +18,29 @@ import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 
-public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<GetAccountByIdAction, GetAccountByIdResult>{
+public class GetAccountByIdActionHandler extends
+    AbstractAccountActionHandler<GetAccountByIdAction, GetAccountByIdResult> {
 
 	@Inject
 	public GetAccountByIdActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		super(accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public GetAccountByIdResult execute(GetAccountByIdAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetAccountByIdResult
+	    execute(GetAccountByIdAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
 			AccountDTO account = accountBli.getAccountById(action.getAccountId());
 			if (account instanceof PersonalAccountDTO) {
-				applyPrivacySettings((PersonalAccountDTO)account);
+				applyPrivacySettings((PersonalAccountDTO) account);
 			}
 			result.setAccount(account);
 			return result;
@@ -55,20 +57,20 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		if (account == null) {
 			return;
 		}
-		
-		for(PrivacySettingsDTO ps : account.getPrivacySettings()) {
-			switch(ps.getSection()) {
-			case EMAIL:
-				if (!isAttributeVisible(account, ps)) {
-					account.setEmail(StringConstants.NOT_SHARED);
-				}
-				break;
-			case OCCUPATION:
-				if (!isAttributeVisible(account, ps)) {
-					account.setOccupation(StringConstants.NOT_SHARED);
-				}
-			case TWEETS:
-				// nothing to do
+
+		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
+			switch (ps.getSection()) {
+				case EMAIL:
+					if (!isAttributeVisible(account, ps)) {
+						account.setEmail(StringConstants.NOT_SHARED);
+					}
+					break;
+				case OCCUPATION:
+					if (!isAttributeVisible(account, ps)) {
+						account.setOccupation(StringConstants.NOT_SHARED);
+					}
+				case TWEETS:
+					// nothing to do
 			}
 		}
 	}
@@ -84,14 +86,14 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 		if (session == null || session.getAccount() == null) {
 			return ps.getSetting() == ShareSetting.PUBLIC;
 		}
-		
+
 		if (session.getAccount() != null) {
 			if (ps.getSetting() == ShareSetting.PUBLIC) {
 				return true;
 			}
-			
-			Account loggedInAccount = session.getAccount();			
-			if (belongToSameCommunity(account,loggedInAccount)) {
+
+			Account loggedInAccount = session.getAccount();
+			if (belongToSameCommunity(account, loggedInAccount)) {
 				return ps.getSetting() == ShareSetting.COMMUNITY;
 			}
 		}
@@ -99,8 +101,12 @@ public class GetAccountByIdActionHandler extends AbstractAccountActionHandler<Ge
 	}
 
 	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
-		return account.getLocations().get(0).getNeighborhood().getNeighborhoodId() == 
-				loggedInAccount.getLocations().iterator().next().getNeighborhood().getNeighborhoodId();
+		return account.getLocations().get(0).getNeighborhood().getNeighborhoodId() == loggedInAccount
+		    .getLocations()
+		    .iterator()
+		    .next()
+		    .getNeighborhood()
+		    .getNeighborhoodId();
 	}
 
 	@Override

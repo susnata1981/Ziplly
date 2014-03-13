@@ -12,7 +12,7 @@ public class GetInterestResult implements Result {
 
 	public GetInterestResult() {
 	}
-	
+
 	public List<InterestDTO> getInterests() {
 		return interests;
 	}

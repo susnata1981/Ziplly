@@ -7,7 +7,7 @@ public class AccountAlreadySubscribedException extends DispatchException {
 
 	public AccountAlreadySubscribedException() {
 	}
-	
+
 	public AccountAlreadySubscribedException(String msg) {
 		super(msg);
 	}

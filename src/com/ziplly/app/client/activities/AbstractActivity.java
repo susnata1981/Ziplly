@@ -42,8 +42,10 @@ public abstract class AbstractActivity implements Activity {
 	protected ApplicationContext ctx;
 	protected LoadingPanelWidget loadingModal;
 
-	public AbstractActivity(CachingDispatcherAsync dispatcher, EventBus eventBus,
-			PlaceController placeController, ApplicationContext ctx) {
+	public AbstractActivity(CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    PlaceController placeController,
+	    ApplicationContext ctx) {
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -54,20 +56,22 @@ public abstract class AbstractActivity implements Activity {
 
 	private void initializeEnvironment() {
 		if (!ctx.isEnvironmentSet()) {
-			dispatcher.execute(new GetEnvironmentAction(), new DispatcherCallbackAsync<GetEnvironmentResult>() {
+			dispatcher.execute(
+			    new GetEnvironmentAction(),
+			    new DispatcherCallbackAsync<GetEnvironmentResult>() {
 
-				@Override
-				public void onSuccess(GetEnvironmentResult result) {
-					ctx.setEnvironment(result.getEnvironment());
-				}
-			});
+				    @Override
+				    public void onSuccess(GetEnvironmentResult result) {
+					    ctx.setEnvironment(result.getEnvironment());
+				    }
+			    });
 		}
 	}
 
 	public Environment getEnvironment() {
 		return ctx.getEnvironment();
 	}
-	
+
 	protected void setupHandlers() {
 		eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
 
@@ -113,7 +117,11 @@ public abstract class AbstractActivity implements Activity {
 
 	@Deprecated
 	public void setBackgroundImage() {
-		RootPanel.get("wrapper").getElement().getStyle().setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
+		RootPanel
+		    .get("wrapper")
+		    .getElement()
+		    .getStyle()
+		    .setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
 		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
 	}
 
@@ -132,7 +140,7 @@ public abstract class AbstractActivity implements Activity {
 			doStart();
 			return;
 		}
-		
+
 		GetLoggedInUserAction action = new GetLoggedInUserAction();
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
 			@Override
@@ -159,7 +167,7 @@ public abstract class AbstractActivity implements Activity {
 	 * Activity needs to define behavior in case user is logged in.
 	 */
 	protected abstract void doStart();
-	
+
 	/**
 	 * If user is not logged in, default behavior is to redirect to Login view.
 	 */
@@ -178,7 +186,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	/**
-	 * Get the list of target neighborhoods in child to parent order. 
+	 * Get the list of target neighborhoods in child to parent order.
 	 */
 	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
 		if (ctx.getAccount() != null) {
@@ -190,15 +198,15 @@ public abstract class AbstractActivity implements Activity {
 				neighborhoods.add(parentNeighborhood);
 				parentNeighborhood = parentNeighborhood.getParentNeighborhood();
 			}
-			
+
 			return neighborhoods;
 		} else {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	public class AccountNotificationHandler extends
-			DispatcherCallbackAsync<GetAccountNotificationResult> {
+	    DispatcherCallbackAsync<GetAccountNotificationResult> {
 
 		@Override
 		public void onSuccess(GetAccountNotificationResult result) {
@@ -207,7 +215,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public static native void log(String msg) /*-{
-		$wnd.console.log(msg);
-	}-*/;
+	                                          $wnd.console.log(msg);
+	                                          }-*/;
 
 }

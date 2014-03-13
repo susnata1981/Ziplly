@@ -19,8 +19,7 @@ public class GoogleAuthFlowManager extends OAuthFlowManager {
 	}
 
 	@Override
-	public Map<String, String> getRequestParams(String code)
-			throws UnsupportedEncodingException {
+	public Map<String, String> getRequestParams(String code) throws UnsupportedEncodingException {
 		Map<String, String> paramsMap = new HashMap<String, String>();
 		paramsMap.put("code", code);
 		paramsMap.put("client_id", clientId);
@@ -32,27 +31,26 @@ public class GoogleAuthFlowManager extends OAuthFlowManager {
 	}
 
 	public AccessToken parseResponse(String response) throws JSONException {
-//		Gson gson = new Gson();
-//		return gson.fromJson(response, AccessToken.class);
+		// Gson gson = new Gson();
+		// return gson.fromJson(response, AccessToken.class);
 		return null;
 	}
 
 	@Override
 	public String doExchange(Map<String, String> params) throws IOException {
 		String data = OAuthUtil.getParamUrl(params);
-		HttpURLConnection conn = HTTPConnectionProvider.getConnection(
-				provider.getTokenUrl(), HTTPRequestType.POST);
+		HttpURLConnection conn =
+		    HTTPConnectionProvider.getConnection(provider.getTokenUrl(), HTTPRequestType.POST);
 		doPost(conn, data);
 		return getResponse(conn);
 	}
 
 	private void doPost(HttpURLConnection conn, String data) throws IOException {
-		OutputStreamWriter writer = new OutputStreamWriter(
-				conn.getOutputStream());
+		OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
 		writer.write(data);
 		writer.close();
 	}
-	
+
 	// @Override
 	// public User getUser(AccessToken token) throws IOException {
 	// // get user id

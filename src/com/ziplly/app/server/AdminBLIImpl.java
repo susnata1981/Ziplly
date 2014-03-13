@@ -32,9 +32,14 @@ public class AdminBLIImpl implements AdminBLI {
 	private TweetDAO tweetDao;
 
 	@Inject
-	public AdminBLIImpl(AccountDAO accountDao, SessionDAO sessionDao, TweetDAO tweetDao, InterestDAO interestDao,
-			TransactionDAO transactionDao, SubscriptionPlanDAO subscriptionPlanDao,
-			PasswordRecoveryDAO passwordRecoveryDao, EmailService emailService) {
+	public AdminBLIImpl(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    TweetDAO tweetDao,
+	    InterestDAO interestDao,
+	    TransactionDAO transactionDao,
+	    SubscriptionPlanDAO subscriptionPlanDao,
+	    PasswordRecoveryDAO passwordRecoveryDao,
+	    EmailService emailService) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.tweetDao = tweetDao;
@@ -53,7 +58,7 @@ public class AdminBLIImpl implements AdminBLI {
 		}
 
 		String query = buildQuery(tsc);
-		System.out.println("Query = "+query);
+		System.out.println("Query = " + query);
 		return tweetDao.findTweets(query, start, end);
 	}
 
@@ -67,12 +72,12 @@ public class AdminBLIImpl implements AdminBLI {
 		String countQuery = "select count(*) " + query;
 		return tweetDao.findTotalTweetCount(countQuery);
 	}
-	
+
 	// Builds the where clause for Tweet search
 	private String buildQuery(TweetSearchCriteria tsc) {
 		StringBuilder sb = new StringBuilder("from Tweet t ");
 		boolean addedWhereClause = false;
-		
+
 		if (tsc.getZip() != 0) {
 			addedWhereClause = true;
 			sb.append("where t.sender.zip = " + tsc.getZip());
@@ -83,7 +88,7 @@ public class AdminBLIImpl implements AdminBLI {
 		if (totalTypes > 0) {
 			for (int i = 0; i < totalTypes; i++) {
 				temp.append(tsc.getType().get(i).ordinal());
-				if (i != (totalTypes-1)) {
+				if (i != (totalTypes - 1)) {
 					temp.append(", ");
 				}
 			}
@@ -93,9 +98,9 @@ public class AdminBLIImpl implements AdminBLI {
 				sb.append("and");
 			}
 			addedWhereClause = true;
-			sb.append(" type in ("+temp+") ");			
+			sb.append(" type in (" + temp + ") ");
 		}
-		
+
 		TweetStatus status = tsc.getStatus();
 		if (status != TweetStatus.ALL) {
 			if (!addedWhereClause) {
@@ -104,9 +109,9 @@ public class AdminBLIImpl implements AdminBLI {
 				sb.append("and");
 			}
 			addedWhereClause = true;
-			sb.append(" status = "+status.ordinal());
+			sb.append(" status = " + status.ordinal());
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -117,10 +122,10 @@ public class AdminBLIImpl implements AdminBLI {
 		}
 
 		String query = buildQuery(asc);
-		System.out.println("Query = "+query);
+		System.out.println("Query = " + query);
 		return accountDao.findAccounts(query, start, end);
 	}
-	
+
 	@Override
 	public Long getTotalAccounts(AccountSearchCriteria asc) {
 		if (asc == null) {
@@ -131,25 +136,25 @@ public class AdminBLIImpl implements AdminBLI {
 		String countQuery = "select count(*) " + query;
 		return accountDao.findTotalAccounts(countQuery);
 	}
-	
+
 	private String buildQuery(AccountSearchCriteria asc) {
 		StringBuilder sb = new StringBuilder("from Account a ");
 		boolean addedWhereClause = false;
-		
+
 		if (isNonEmpty(asc.getEmail())) {
-			sb.append(" where a.email like '"+asc.getEmail()+"%'");
+			sb.append(" where a.email like '" + asc.getEmail() + "%'");
 			addedWhereClause = true;
 		}
-		
-//		if (isNonEmpty(asc.getName())) {
-//			if (addedWhereClause) {
-//				sb.append(" and ");
-//			} else {
-//				sb.append(" where ");
-//			}
-//			sb.append("a.firstname like '"+asc.getName()+"%'");
-//		}
-		
+
+		// if (isNonEmpty(asc.getName())) {
+		// if (addedWhereClause) {
+		// sb.append(" and ");
+		// } else {
+		// sb.append(" where ");
+		// }
+		// sb.append("a.firstname like '"+asc.getName()+"%'");
+		// }
+
 		if (asc.getType() != AccountType.NONE) {
 			if (addedWhereClause) {
 				sb.append(" and ");
@@ -157,18 +162,18 @@ public class AdminBLIImpl implements AdminBLI {
 				sb.append(" where ");
 			}
 			addedWhereClause = true;
-			sb.append("type = '"+asc.getType().getName()+"'");
+			sb.append("type = '" + asc.getType().getName() + "'");
 		}
-		
+
 		if (asc.getZipCode() != 0) {
 			if (addedWhereClause) {
 				sb.append(" and ");
 			} else {
 				sb.append(" where ");
 			}
-			sb.append("zip = "+asc.getZipCode());
+			sb.append("zip = " + asc.getZipCode());
 		}
-		
+
 		return sb.toString();
 	}
 

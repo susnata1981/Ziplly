@@ -14,7 +14,7 @@ public class AccountSettingDTO implements Serializable {
 
 	public AccountSettingDTO() {
 	}
-	
+
 	public AccountSettingDTO(PrivacySettings as) {
 		this.id = as.getId();
 		this.section = as.getSection();
@@ -22,7 +22,7 @@ public class AccountSettingDTO implements Serializable {
 		this.account = new AccountDTO();
 		this.account.setAccountId(as.getAccount().getAccountId());
 	}
-	
+
 	public AccountSettingDTO(AccountSettingDTO as) {
 		this.id = as.getId();
 		this.section = as.getSection();

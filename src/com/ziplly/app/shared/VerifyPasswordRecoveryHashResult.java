@@ -4,12 +4,12 @@ import net.customware.gwt.dispatch.shared.Result;
 
 import com.ziplly.app.model.AccountDTO;
 
-public class VerifyPasswordRecoveryHashResult implements Result{
+public class VerifyPasswordRecoveryHashResult implements Result {
 	private AccountDTO account;
 
 	public VerifyPasswordRecoveryHashResult() {
 	}
-	
+
 	public VerifyPasswordRecoveryHashResult(AccountDTO account) {
 		this.setAccount(account);
 	}

@@ -9,17 +9,17 @@ public enum ValueType {
 	DATE_VALUE_MEDIUM,
 	UNREAD_MESSAGE_COUNT,
 	NOTIFICATION_TYPE,
-	
+
 	// Tweet
 	TWEET_TYPE,
-	
+
 	// Account Notification
 	PERSONAL_MESSAGE,
 	SECURITY_ALERT,
 	ANNOUNCEMENT,
 	OFFERS,
 	ACCOUNT_NOTIFICATION_SENDER_IMAGE,
-	
+
 	// Account
 	EMAIL_VALUE,
 	NAME_VALUE,
@@ -33,25 +33,25 @@ public enum ValueType {
 	LARGE_IMAGE_VALUE,
 	GENDER,
 	BADGE,
-	
+
 	// Personal Account
 	PERSON_NAME_VALUE,
 	PERSON_IMAGE_VALUE,
-	
+
 	// Business Account
 	BUSINESS_NAME_VALUE,
 	BUSINESS_IMAGE_VALUE,
 	BUSINESS_ADDRESS_VALUE,
-	
+
 	// Privacy Settings
 	PRIVACY_FIELD_NAME,
-	
+
 	// Account Notification Settings
 	ACCOUNT_NOTIFICATION_TYPE,
-	
+
 	// Neighborhood
 	NEIGHBORHOOD,
-	NEIGHBORHOOD_IMAGE, 
-	ADDRESS, 
+	NEIGHBORHOOD_IMAGE,
+	ADDRESS,
 	POSTAL_CODE;
 }

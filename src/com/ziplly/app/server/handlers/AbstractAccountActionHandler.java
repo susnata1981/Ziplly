@@ -20,8 +20,9 @@ import com.ziplly.app.model.Session;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.ZipllyServerConstants;
 
-public abstract class AbstractAccountActionHandler<T extends Action<R>,R extends Result> implements ActionHandler<T,R>{
-	protected final long hoursInMillis = 60*60*2;
+public abstract class AbstractAccountActionHandler<T extends Action<R>, R extends Result> implements
+    ActionHandler<T, R> {
+	protected final long hoursInMillis = 60 * 60 * 2;
 	protected SessionDAO sessionDao;
 	protected AccountDAO accountDao;
 
@@ -30,7 +31,9 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>,R extends
 	protected AccountBLI accountBli;
 	protected Session session;
 
-	public AbstractAccountActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
+	public AbstractAccountActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.accountBli = accountBli;
@@ -51,21 +54,19 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>,R extends
 		}
 		throw new NeedsLoginException();
 	}
-	
+
 	protected boolean isValidSession(Session session) {
 		if (session == null) {
 			return false;
 		}
 		return session.getExpireAt().after(new Date());
 	}
-	
+
 	protected Long getUidFromCookie() {
 		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 	}
-	
+
 	@Override
-	public void rollback(T arg0,
-			R arg1, ExecutionContext arg2)
-			throws DispatchException {
+	public void rollback(T arg0, R arg1, ExecutionContext arg2) throws DispatchException {
 	}
 }

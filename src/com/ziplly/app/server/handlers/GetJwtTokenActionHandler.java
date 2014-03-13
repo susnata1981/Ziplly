@@ -17,33 +17,36 @@ import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetJwtTokenResult;
 
-public class GetJwtTokenActionHandler extends AbstractAccountActionHandler<GetJwtTokenAction, GetJwtTokenResult>{
+public class GetJwtTokenActionHandler extends
+    AbstractAccountActionHandler<GetJwtTokenAction, GetJwtTokenResult> {
 	PaymentService paymentService;
 	SubscriptionPlanDAO subscriptionPlanDAO;
 
 	@Inject
 	public GetJwtTokenActionHandler(AccountDAO accountDao,
-			SessionDAO sessionDao, AccountBLI accountBli,
-			PaymentService paymentService, SubscriptionPlanDAO subscriptionPlanDAO) {
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    PaymentService paymentService,
+	    SubscriptionPlanDAO subscriptionPlanDAO) {
 		super(accountDao, sessionDao, accountBli);
 		this.paymentService = paymentService;
 		this.subscriptionPlanDAO = subscriptionPlanDAO;
 	}
 
 	@Override
-	public GetJwtTokenResult execute(GetJwtTokenAction action,
-			ExecutionContext arg1) throws DispatchException {
-		
+	public GetJwtTokenResult
+	    execute(GetJwtTokenAction action, ExecutionContext arg1) throws DispatchException {
+
 		if (action == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		validateSession();
-		
+
 		List<SubscriptionPlanDTO> subscriptionPlans = subscriptionPlanDAO.getAll();
 		GetJwtTokenResult result = new GetJwtTokenResult();
 		try {
-			for(SubscriptionPlanDTO plan : subscriptionPlans) {
+			for (SubscriptionPlanDTO plan : subscriptionPlans) {
 				String token = paymentService.getJWT(session.getAccount().getAccountId(), plan.getFee());
 				result.addToken(plan, token);
 			}

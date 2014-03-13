@@ -9,10 +9,16 @@ import com.ziplly.app.shared.facebook.FacebookUserStats;
 
 public interface IFUserDAO {
 	User getUser();
+
 	Connection<Post> getPosts();
+
 	LatLong getLocationInfo(User user);
+
 	FacebookUserStats getStats();
+
 	FacebookUserInterest getInterests();
+
 	FacebookUserStats getUserLikeDetails(String uid);
+
 	FacebookUserStats getUserFriendDetails(String uid);
 }

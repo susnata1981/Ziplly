@@ -39,8 +39,7 @@ public class LikeDAOImpl implements LikeDAO {
 		try {
 			if (like.getTweet() != null) {
 				try {
-					findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor()
-							.getAccountId());
+					findLikeByTweetAndAccountId(like.getTweet().getTweetId(), like.getAuthor().getAccountId());
 					throw new DuplicateException();
 				} catch (NoResultException nre) {
 					// ignore it
@@ -80,8 +79,7 @@ public class LikeDAOImpl implements LikeDAO {
 		}
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = em
-					.createQuery("select count(*) from Love where author.accountId = :accountId");
+			Query query = em.createQuery("select count(*) from Love where author.accountId = :accountId");
 			query.setParameter("accountId", accountId);
 			Long count = (Long) query.getSingleResult();
 			return count;

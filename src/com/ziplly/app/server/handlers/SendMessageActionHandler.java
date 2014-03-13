@@ -28,18 +28,18 @@ import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
 public class SendMessageActionHandler extends
-		AbstractAccountActionHandler<SendMessageAction, SendMessageResult> {
+    AbstractAccountActionHandler<SendMessageAction, SendMessageResult> {
 	private ConversationDAO conversationDao;
 	private AccountNotificationDAO accountNotificationDao;
 	private TweetNotificationBLI tweetNotificationBli;
 
 	@Inject
-	public SendMessageActionHandler(AccountDAO accountDao, 
-			SessionDAO sessionDao,
-			AccountBLI accountBli, 
-			ConversationDAO conversationDao,
-			AccountNotificationDAO accountNotificationDao,
-			TweetNotificationBLI tweetNotificationBli) {
+	public SendMessageActionHandler(AccountDAO accountDao,
+	    SessionDAO sessionDao,
+	    AccountBLI accountBli,
+	    ConversationDAO conversationDao,
+	    AccountNotificationDAO accountNotificationDao,
+	    TweetNotificationBLI tweetNotificationBli) {
 		super(accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.accountNotificationDao = accountNotificationDao;
@@ -47,8 +47,8 @@ public class SendMessageActionHandler extends
 	}
 
 	@Override
-	public SendMessageResult execute(SendMessageAction action, ExecutionContext arg1)
-			throws DispatchException {
+	public SendMessageResult
+	    execute(SendMessageAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getConversation() == null) {
 			throw new IllegalArgumentException();
@@ -79,12 +79,9 @@ public class SendMessageActionHandler extends
 		Set<AccountNotificationSettings> notificationSettings = recipient.getNotificationSettings();
 		for (AccountNotificationSettings notificationSetting : notificationSettings) {
 			if (notificationSetting.getType() == NotificationType.PERSONAL_MESSAGE
-					&& notificationSetting.getAction() == NotificationAction.EMAIL) {
-				
-				tweetNotificationBli.sendEmail(
-						sender, 
-						recipient, 
-						EmailTemplate.PENDING_MESSAGE);
+			    && notificationSetting.getAction() == NotificationAction.EMAIL) {
+
+				tweetNotificationBli.sendEmail(sender, recipient, EmailTemplate.PENDING_MESSAGE);
 			}
 		}
 
@@ -93,8 +90,8 @@ public class SendMessageActionHandler extends
 
 	private void updateAccountNotification(Conversation conversation) {
 		// save account notification
-		AccountNotification result = accountNotificationDao
-				.findAccountNotificationByConversationId(conversation.getId());
+		AccountNotification result =
+		    accountNotificationDao.findAccountNotificationByConversationId(conversation.getId());
 		if (result == null) {
 			AccountNotification an = new AccountNotification();
 			an.setRecipient(conversation.getReceiver());

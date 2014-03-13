@@ -11,10 +11,10 @@ public class AccountNotificationSettingsDTO implements Serializable {
 	private NotificationAction action;
 	private Date timeUpdated;
 	private Date timeCreated;
-	
+
 	public AccountNotificationSettingsDTO() {
 	}
-	
+
 	public Long getNotificationId() {
 		return notificationId;
 	}

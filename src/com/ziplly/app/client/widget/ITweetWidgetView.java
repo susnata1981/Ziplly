@@ -9,7 +9,7 @@ import com.ziplly.app.model.TweetDTO;
 public interface ITweetWidgetView<T extends TweetPresenter> extends View<T> {
 
 	void setWidth(String width);
-	
+
 	void displayTweet(TweetDTO tweet);
 
 	void addComment(CommentDTO comment);

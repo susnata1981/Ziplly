@@ -1,13 +1,12 @@
 package com.ziplly.app.client.oauth;
 
-
 public enum OAuthProvider {
-	GOOGLE(OAuthConfigConstants.GOOGLE_AUTH_URL, OAuthConfigConstants.GOOGLE_TOKEN_URL), 
+	GOOGLE(OAuthConfigConstants.GOOGLE_AUTH_URL, OAuthConfigConstants.GOOGLE_TOKEN_URL),
 	FACEBOOK(OAuthConfigConstants.FB_AUTH_URL, OAuthConfigConstants.FB_TOKEN_URL);
 
 	private String authUrl;
 	private String tokenUrl;
-	
+
 	OAuthProvider(String authUrl, String tokenUrl) {
 		this.setAuthUrl(authUrl);
 		this.setTokenUrl(tokenUrl);

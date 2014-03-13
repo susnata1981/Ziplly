@@ -9,8 +9,8 @@ public class TweetResult implements Result {
 
 	public TweetResult() {
 	}
-	
-	public TweetResult(TweetDTO tweet){
+
+	public TweetResult(TweetDTO tweet) {
 		this.setTweet(tweet);
 	}
 

@@ -17,8 +17,12 @@ public class OAuthConfig implements Serializable {
 	private String key;
 	private Environment environment;
 
-	private OAuthConfig(OAuthProvider provider, String clientId, String key, String[] scopes,
-			String redirectUri, Environment environment) {
+	private OAuthConfig(OAuthProvider provider,
+	    String clientId,
+	    String key,
+	    String[] scopes,
+	    String redirectUri,
+	    Environment environment) {
 		this.setProvider(provider);
 		this.setScopes(scopes);
 		this.setRedirectUri(redirectUri);
@@ -29,8 +33,12 @@ public class OAuthConfig implements Serializable {
 
 	public String getAuthorizationUrl() throws UnsupportedEncodingException {
 		Map<String, String> paramsMap = new HashMap<String, String>();
-		String scope = Arrays.asList(getScopes()).toString().replaceAll(", ", " &amp; ")
-				.replaceAll("^\\[|\\]$", "");
+		String scope =
+		    Arrays
+		        .asList(getScopes())
+		        .toString()
+		        .replaceAll(", ", " &amp; ")
+		        .replaceAll("^\\[|\\]$", "");
 		paramsMap.put("scope", scope);
 		paramsMap.put("client_id", getClientId());
 		paramsMap.put("redirect_uri", getRedirectUri());

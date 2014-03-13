@@ -19,20 +19,20 @@ import com.ziplly.app.client.view.NavView;
 
 public class ZipllyController {
 	EventBus eventBus;
-	
+
 	// main content
-	ActivityMapper activityMapper;	
+	ActivityMapper activityMapper;
 	ActivityManager activityManager;
-	
+
 	// nav area
 	ActivityMapper navActivityMapper;
 	ActivityManager navActivityManager;
 
 	PlaceHistoryMapper placeHistoryMapper;
-	
+
 	PlaceHistoryHandler historyHandler;
 	PlaceController placeController;
-	
+
 	Place defaultPlace;
 	RootPanel container;
 	SimplePanel panel = new SimplePanel();
@@ -46,19 +46,18 @@ public class ZipllyController {
 	private RootPanel navContainer;
 
 	@Inject
-	public ZipllyController(
-			ApplicationContext ctx,
-			CachingDispatcherAsync dispatcher,
-			EventBus eventBus,
-			com.google.gwt.event.shared.EventBus appEventBus,
-			ActivityMapper activityMapper,
-			ActivityManager activityManager,
-			@Named("nav")ActivityMapper navActivityMapper,
-			@Named("nav")ActivityManager navActivityManager,
-			PlaceController placeController,
-			PlaceHistoryMapper placeHistoryMapper,
-			PlaceHistoryHandler placeHistoryHandler,
-			NavView navView) {
+	public ZipllyController(ApplicationContext ctx,
+	    CachingDispatcherAsync dispatcher,
+	    EventBus eventBus,
+	    com.google.gwt.event.shared.EventBus appEventBus,
+	    ActivityMapper activityMapper,
+	    ActivityManager activityManager,
+	    @Named("nav") ActivityMapper navActivityMapper,
+	    @Named("nav") ActivityManager navActivityManager,
+	    PlaceController placeController,
+	    PlaceHistoryMapper placeHistoryMapper,
+	    PlaceHistoryHandler placeHistoryHandler,
+	    NavView navView) {
 		this.ctx = ctx;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
@@ -73,21 +72,21 @@ public class ZipllyController {
 		this.navActivityMapper = navActivityMapper;
 		this.navActivityManager = navActivityManager;
 		this.navActivityManager.setDisplay(navPanel);
-		this.placeHistoryMapper = placeHistoryMapper; 		
-		this.historyHandler = placeHistoryHandler; 			
-		this.placeController = placeController; 		
+		this.placeHistoryMapper = placeHistoryMapper;
+		this.historyHandler = placeHistoryHandler;
+		this.placeController = placeController;
 		this.defaultPlace = new SignupPlace();
 		historyHandler.register(placeController, eventBus, defaultPlace);
 	}
-	
+
 	public static native void consolelog(String msg) /*-{
-		$wnd.console.log(msg);
-	}-*/;
-	
+	                                                 $wnd.console.log(msg);
+	                                                 }-*/;
+
 	public void go() {
 		String code = Window.Location.getParameter("code");
 
-		if (code!=null) {
+		if (code != null) {
 			consolelog("going to OauthPlace");
 			placeController.goTo(new OAuthPlace(code));
 			return;

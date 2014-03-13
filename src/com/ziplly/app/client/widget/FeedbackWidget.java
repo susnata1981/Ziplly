@@ -26,7 +26,7 @@ public class FeedbackWidget extends Composite {
 		feedbackModal.hide();
 		StyleHelper.show(message.getElement(), false);
 	}
-	
+
 	@UiField
 	Alert message;
 	@UiField
@@ -37,7 +37,7 @@ public class FeedbackWidget extends Composite {
 	Button submitBtn;
 	@UiField
 	Button closeBtn;
-	
+
 	public void show(boolean show) {
 		StyleHelper.show(message.getElement(), false);
 		if (show) {
@@ -46,30 +46,30 @@ public class FeedbackWidget extends Composite {
 			feedbackModal.hide();
 		}
 	}
-	
+
 	public ValidationResult validate() {
 		return FieldVerifier.validateMessage(feedbackTextArea.getText());
 	}
-	
+
 	public String getContent() {
 		return FieldVerifier.sanitize(feedbackTextArea.getText());
 	}
-	
+
 	public Button getSubmitButton() {
 		StyleHelper.show(message.getElement(), false);
 		return submitBtn;
 	}
-	
+
 	public Button closeButton() {
 		return closeBtn;
 	}
-	
+
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
 		StyleHelper.show(message.getElement(), true);
 	}
-	
+
 	@UiHandler("closeBtn")
 	public void close(ClickEvent event) {
 		feedbackModal.hide();
