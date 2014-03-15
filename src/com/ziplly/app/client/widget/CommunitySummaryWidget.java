@@ -10,12 +10,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.maps.gwt.client.GoogleMap;
-import com.google.maps.gwt.client.LatLng;
-import com.google.maps.gwt.client.MapOptions;
-import com.google.maps.gwt.client.MapTypeId;
-import com.google.maps.gwt.client.Marker;
-import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.model.NeighborhoodDTO;
 
@@ -41,6 +35,9 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 	@UiField
 	Anchor businessCountSpan;
 
+	private NeighborhoodDTO neighborhood;
+	private GoogleMapWidget mapWidget = new GoogleMapWidget();
+	
 	public CommunitySummaryWidget() {
 		super(null);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -52,24 +49,15 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 
 	public void displaySummaryData(NeighborhoodDTO neighborhood) {
 		if (neighborhood != null) {
+			this.neighborhood = neighborhood;
 			communityNameSpan.setInnerHTML(getName(neighborhood));
 		}
 	}
-
-	public void displayMap(LatLng ll) {
-		MapOptions myOptions = MapOptions.create();
-		myOptions.setZoom(11.0);
-		myOptions.setCenter(ll);
-		myOptions.setMapMaker(true);
-		myOptions.setMapTypeId(MapTypeId.ROADMAP);
-
-		GoogleMap map = GoogleMap.create(mapPanel.getElement(), myOptions);
-		MarkerOptions markerOpts = MarkerOptions.create();
-		markerOpts.setMap(map);
-		markerOpts.setPosition(ll);
-		Marker.create(markerOpts);
+	
+	public void displayMap(String address) {
+		mapWidget.displayMap(mapPanel.getElement(), address);
 	}
-
+	
 	public void setResidentCount(int count) {
 		memberCountSpan.setText(count + " members");
 	}

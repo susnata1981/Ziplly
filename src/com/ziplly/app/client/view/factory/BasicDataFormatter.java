@@ -6,6 +6,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationType;
@@ -37,11 +38,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case NOTIFICATION_TYPE:
 				return ((NotificationType) value).getNotificationName();
 			case PROFILE_IMAGE_URL:
-				String imgUrl = (String) value;
-				if (imgUrl == null) {
-					imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
-				}
-				return imgUrl;
+				return getImageUrl((AccountDTO) value);
 			case ADDRESS:
 				return value.toString();
 			case NEIGHBORHOOD:
@@ -68,6 +65,16 @@ public class BasicDataFormatter implements Formatter<Object> {
 			default:
 				throw new IllegalArgumentException("Invalid value type to render");
 		}
+	}
+
+	String getImageUrl(AccountDTO value) {
+		String imgUrl = "";
+		if (value.getImages().size() > 0) {
+			imgUrl = value.getImages().get(0).getUrl() + "=s1600";
+		} else {
+			imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
+		}
+		return imgUrl;
 	}
 
 }

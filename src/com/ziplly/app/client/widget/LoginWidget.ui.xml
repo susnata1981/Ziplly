@@ -5,7 +5,6 @@
 		field="zresources" />
 	<ui:style>
 		.loginSection {
-		width: 340px;
 		margin: auto;
 		padding: 5px;
 		}

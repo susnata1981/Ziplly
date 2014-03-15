@@ -4,7 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.editTextArea {
-			width: 120%;
+			width: 98%;
 			font-size: 1em;
 			font-family: sans;
 			color: #666;

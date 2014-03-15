@@ -101,6 +101,9 @@
 		.popoverLink {
 		font-size: 12px !important;
 		}
+		.lightgray {
+			color: #666;
+		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
@@ -225,10 +228,10 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Complete your profile and upload a photo.
 						</b:Paragraph>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">>
 							Say a bit about your business.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="createProfileBtn"
@@ -240,10 +243,10 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Pick a messaging plan</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Basic, Pro and Premium plans, pricing based on usage.
 						</b:Paragraph>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Send 3 messages/month for free.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="exploreBtn"
@@ -255,11 +258,11 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Reach local customers</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Post messages to inform local customers about
 							specials.
 						</b:Paragraph>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Get instant results.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="postMessageBtn"
@@ -275,7 +278,7 @@
 					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
 						<b:Heading size="3">One stop shop for your community</b:Heading>
 						<b:Heading size="4">Signup</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Pick your neighborhood based on your zip code</li>
 								<li>Complete your profile</li>
@@ -296,7 +299,7 @@
 							</ol>
 						</g:HTMLPanel>
 						<b:Heading size="4">Reach out to your local customers</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Reach out to all local customers with 1 short message</li>
 								<li>Get instant spike in sales by promoting to local customers</li>
@@ -304,14 +307,14 @@
 							</ol>
 						</g:HTMLPanel>
 						<b:Heading size="4">Get customer feedback</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Get invaluable feedback from your local customers</li>
 								<li>Improvise your business strategy based on customer feedback</li>
 							</ol>
 						</g:HTMLPanel>
 						<b:Heading size="4">Learn about other businesses</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Learn about other businesses in your neighborhood</li>
 								<li>Promote your business to other businesses</li>

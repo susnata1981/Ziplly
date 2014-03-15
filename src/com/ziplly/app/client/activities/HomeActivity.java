@@ -147,6 +147,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
 
 		void displayNeighborhoodImage(NeighborhoodDTO neighborhood);
+
+		void displayMap(String address);
 	}
 
 	@Inject
@@ -173,9 +175,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	protected void doStart() {
 		state.setCurrentNeighborhood(ctx.getCurrentNeighborhood());
 		displayCommunityWall();
-
 		// account specific.
-		getLatLng(ctx.getAccount());
 		getAccountNotifications();
 		setImageUploadUrl();
 		setUploadImageHandler();
@@ -226,6 +226,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				getHashtagList();
 				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
 				getNeighborhoodDetails();
+				log("neighborhood="+ctx.getCurrentNeighborhood().getPostalCodes().get(0).getPostalCode());
+				displayMap(ctx.getCurrentNeighborhood());
 				homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
 				displayHomeView();
 				eventBus.fireEvent(new LoadingEventStart());
@@ -476,16 +478,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		    });
 	}
 
-	private void getLatLng(AccountDTO account) {
-		GetLatLngAction action = new GetLatLngAction();
-		action.setAccount(account);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetLatLngResult>() {
-
-			@Override
-			public void onSuccess(GetLatLngResult result) {
-				homeView.displayMap(result);
-			}
-		});
+	private void displayMap(NeighborhoodDTO n) {
+		homeView.displayMap(n.getPostalCodes().get(0).toString());
 	}
 
 	private void getAccountNotifications() {

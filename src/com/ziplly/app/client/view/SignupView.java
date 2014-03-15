@@ -129,6 +129,9 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	Alert infoField;
 
 	@UiField
+	Anchor loginAnchor;
+	
+	@UiField
 	Button signupBtn;
 
 	@UiField
@@ -587,6 +590,11 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
 
+	@UiHandler("loginAnchor")
+	public void gotoLogin(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
+	}
+	
 	private void navigateToElement(Element elem) {
 		if (elem != null) {
 			elem.scrollIntoView();

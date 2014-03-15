@@ -32,6 +32,11 @@ public class OAuthActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget panel, final EventBus eventBus) {
 		log("calling GetFacebookDetailsAction");
 		eventBus.fireEvent(new LoadingEventStart());
+		checkAccountLogin();
+	}
+
+	@Override
+	public void doStartOnUserNotLoggedIn() {
 		dispatcher.execute(
 		    new GetFacebookDetailsAction(place.getCode()),
 		    new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
@@ -60,7 +65,7 @@ public class OAuthActivity extends AbstractActivity {
 			    }
 		    });
 	}
-
+	
 	@Override
 	public void doStart() {
 	}

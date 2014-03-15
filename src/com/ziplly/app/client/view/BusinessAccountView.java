@@ -48,6 +48,7 @@ import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.CssStyleHelper;
+import com.ziplly.app.client.widget.GoogleMapWidget;
 import com.ziplly.app.client.widget.NotificationWidget;
 import com.ziplly.app.client.widget.PriceRangeWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
@@ -348,6 +349,13 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		}
 	}
 
+	GoogleMapWidget mapWidget = new GoogleMapWidget();
+	@Override
+	public void displayMap(String address) {
+		mapWidget.displayMap(locationDiv, address);
+	}
+
+	@Deprecated
 	@Override
 	public void displayLocationInMap(GetLatLngResult input) {
 		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());

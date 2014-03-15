@@ -49,7 +49,7 @@ public class FieldVerifier {
 	private static final int MAX_MESSAGE_LENGTH = 1024;
 	private static final String MESSAGE_TOO_LONG_ERROR = "Message can't be more than "
 	    + MAX_MESSAGE_LENGTH + " characters.";
-	private static final int MIN_PASSWORD_LENGTH = 4;
+	private static final int MIN_PASSWORD_LENGTH = 8;
 	public static final int MAX_PASSWORD_LENGTH = 16;
 	private static final String MINIMUN_PASSWORD_LENGTH_ERROR = "Password should be atleast "
 	    + MIN_PASSWORD_LENGTH + " characters.";

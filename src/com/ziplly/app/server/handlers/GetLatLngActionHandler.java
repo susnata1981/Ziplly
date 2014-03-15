@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
@@ -37,9 +39,12 @@ public class GetLatLngActionHandler extends
 		super(accountDao, sessionDao, accountBli);
 	}
 
+	// TODO remove hardcoding.
 	private final static String GEO_ENCODING_SERVICE_ENDPOINT =
 	    "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
 
+	private Logger logger = Logger.getLogger(GetLatLngActionHandler.class.getCanonicalName());
+	
 	@Override
 	public GetLatLngResult
 	    execute(GetLatLngAction action, ExecutionContext arg1) throws DispatchException {
@@ -48,7 +53,7 @@ public class GetLatLngActionHandler extends
 			throw new IllegalArgumentException();
 		}
 
-		// validateSession();
+		logger.log(Level.INFO, String.format("Calling geo encoding service endpoint %s ", GEO_ENCODING_SERVICE_ENDPOINT));
 
 		AccountDTO account = action.getAccount();
 		String restUrl = "";
@@ -66,6 +71,12 @@ public class GetLatLngActionHandler extends
 		} else {
 			parse.setStatus(Status.SUCCESS);
 		}
+		
+		logger.log(Level.INFO, String.format("Received latlng result %f, %f with Status %s ",
+				parse.getLat(),
+				parse.getLng(),
+				parse.getStatus().name()));
+		
 		return parse;
 	}
 

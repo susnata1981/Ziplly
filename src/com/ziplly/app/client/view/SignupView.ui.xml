@@ -31,17 +31,24 @@
 		display: block;
 		clear: both;
 		font-size: 22px;
-		font-family: Tahoma, sans;
+		font-family:
+		Tahoma, sans;
 		sans-serif;
 		color: #555;
 		margin-bottom: 16px;
 		}
+		.heading4 {
+		display: block;
+		font-size: 16px;
+		font-family: sans;
+		color: #666;
+		padding:
+		4px;
+		}
 		.singupForm {
 		float: left;
 		width: 360px;
-		padding:
-		12px;
-		margin-left: 20px;
+		padding:12px;
 		background: #f1f1f1;
 		-webkit-border-radius: 4px;
 		}
@@ -89,7 +96,8 @@
 		.profileImagePreviewDiv {
 		float: left;
 		width: 140px;
-		height: 130px;
+		height:
+		130px;
 		}
 		.profileImagePreview {
 		width: 90% !important;
@@ -132,8 +140,6 @@
 		padding-top: 20px;
 		}
 		.fluid-row {
-		diplay:
-		block;
 		margin-top: 40px;
 		}
 		.signup-hero-unit {
@@ -144,10 +150,10 @@
 		padding: 60px 30px !important;
 		}
 		.signup-hero-unit-small {
-		position:
-		relative;
-		opacity: .8;
-		padding: 30px !important;
+		position: relative;
+		opacity: .85;
+		padding: 30px
+		!important;
 		}
 		.hero-unit-btn {
 		position:
@@ -159,11 +165,23 @@
 		font-size: 12px;
 		}
 		.popoverHover {
-			display: inline;
-			font-size: 12px;			
+		display: inline;
+		font-size: 12px;
 		}
 		.popoverLink {
-			font-size: 12px !important;
+		font-size: 12px
+		!important;
+		}
+		.demoDiv {
+		background: #f1f1f1;
+		border-radius: 5px;
+		margin-top: 20px;
+		padding: 14px;
+		width: 320px;
+		margin: 20px 0 20px 0;
+		}
+		.lightgray {
+			color: #666;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -174,21 +192,40 @@
 		</b:FluidRow>
 		<b:FluidRow addStyleNames="{style.row}">
 			<b:Column size="5">
-				<g:HTMLPanel addStyleNames="{style.mainPageHeadingPanel}">
-					<span class="{style.heading1}">
-						Ziplly
-						<sup class="smalltext">beta</sup>
-					</span>
-					<span class="{style.heading2}">connecting local residents</span>
-					<br />
-					<span class="{style.heading2}">&amp;</span>
-					<br />
-					<div class="{style.heading2}">
-						businesses
-						<g:Anchor ui:field="howItWorksAnchor" addStyleNames="{style.inlineAnchor}">learn
-							more</g:Anchor>
-					</div>
-				</g:HTMLPanel>
+				<b:Row addStyleNames="{style.mainPageHeadingPanel}">
+					<b:Column offset="1" size="9">
+						<g:HTMLPanel>
+							<span class="{style.heading1}">
+								Ziplly
+								<sup class="smalltext">beta</sup>
+							</span>
+							<span class="{style.heading2}">connecting local residents</span>
+							<br />
+							<span class="{style.heading2}">&amp;</span>
+							<br />
+							<div class="{style.heading2}">
+								businesses
+								<g:Anchor ui:field="howItWorksAnchor" addStyleNames="{style.inlineAnchor}">learn
+									more</g:Anchor>
+								<br />
+							</div>
+						</g:HTMLPanel>
+					</b:Column>
+				</b:Row>
+				<b:Row>
+					<b:Column offset="1" size="9">
+						<g:HTMLPanel addStyleNames="{style.demoDiv}">
+							<span class="{style.heading4}">
+								Checkout our demo
+								<g:Anchor ui:field="loginAnchor">Login Here</g:Anchor>
+								<br />
+								username: terry@yahoo.com
+								<br />
+								password: 11111111
+							</span>
+						</g:HTMLPanel>
+					</b:Column>
+				</b:Row>
 			</b:Column>
 			<b:Column offset="1" size="5">
 				<g:HTMLPanel addStyleNames="{style.singupForm}">
@@ -304,7 +341,7 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Complete your profile and upload a photo.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="createProfileBtn"
@@ -316,7 +353,7 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Explore your neighborhood</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Find residents and local businesses in your
 							neighborhood.
 						</b:Paragraph>
@@ -329,7 +366,7 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Broadcast to your neighbors</b:Heading>
-						<b:Paragraph>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Share with your neighbors and local businesses.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="postMessageBtn"
@@ -345,26 +382,28 @@
 					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
 						<b:Heading size="3">One stop shop for your community</b:Heading>
 						<b:Heading size="4">Signup</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Pick your neighborhood based on your zip code</li>
 								<li>Complete your profile</li>
-								<li>Instantly broadcast to your neighborhood or the larger
+								<li>
+									Instantly broadcast to your neighborhood or the larger
 									community
 									<g:HTMLPanel addStyleNames="{style.popoverHover}">
-									<b:Popover
-										text="For example, lets say Lower Queen Ann is your neighborhood based on your zip 98109, then
+										<b:Popover
+											text="For example, lets say Lower Queen Ann is your neighborhood based on your zip 98109, then
 								    you would be able to broadcast to either Lower Queen Ann(neighborhood) or to your larger community Queen Ann(community)"
-										heading="learn more">
-										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-									</b:Popover>
-								</g:HTMLPanel>
+											heading="learn more">
+											<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+										</b:Popover>
+									</g:HTMLPanel>
 								</li>
-								<li>Community wall visible only to the residents of that neighborhood</li>
+								<li>Community wall visible only to the residents of that
+									neighborhood</li>
 							</ol>
 						</g:HTMLPanel>
 						<b:Heading size="4">Know your neighbors</b:Heading>
-						<g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
 							<ol>
 								<li>Find events in your community.</li>
 								<li>Learn about your neighbors, their interest, their
@@ -374,8 +413,8 @@
 							</ol>
 						</g:HTMLPanel>
 						<b:Heading size="4">Get local businesses deals</b:Heading>
-						<g:HTMLPanel>
-							<ol>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
+							<ol addStyleNames="{style.lightgray}">
 								<li>Learn about the specials from local businesses.</li>
 								<li>Provide feedback to the business</li>
 								<li>Share your experience</li>

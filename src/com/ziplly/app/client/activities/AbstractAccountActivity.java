@@ -30,6 +30,7 @@ import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.CommentAction;
@@ -315,6 +316,11 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		placeController.goTo(new ConversationPlace());
 	}
 
+	void displayMap(NeighborhoodDTO n) {
+		view.displayMap(n.getPostalCodes().get(0).toString());
+  }
+
+	@Deprecated
 	void getLatLng(AccountDTO account, DispatcherCallbackAsync<GetLatLngResult> handler) {
 		GetLatLngAction action = new GetLatLngAction();
 		action.setAccount(account);

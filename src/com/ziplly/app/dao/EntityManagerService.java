@@ -17,21 +17,15 @@ public class EntityManagerService {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
 			properties.put(
 			    "javax.persistence.jdbc.url",
-			    "jdbc:google:mysql://zipplyrocks:z1/zipllydb?user=root");
-			// properties.put("hibernate.connection.url",
-			// "jdbc:google:mysql://zipplyrocks:z/zipllydb");
-
-			// properties.put("javax.persistence.jdbc.user", "root");
-			// properties.put("javax.persistence.jdbc.password", "");
-		} else {
+			    "jdbc:google:mysql://zipplyrocks:z1/zipllydb?user=zipllyadmin");
+			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
+			properties.put("javax.persistence.jdbc.password", "Sherica12");
+		} 
+		else {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
 			properties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/zipllydb");
-			properties.put("javax.persistence.jdbc.user", "root");
-
-			// properties.put("javax.persistence.jdbc.url",
-			// System.getProperty("cloudsql.url.dev"));
-			// properties.put("javax.persistence.jdbc.url",
-			// System.getProperty("jdbc:google:mysql://zipplyrocks:zipllydb1/zipllydb"));
+			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
+			properties.put("javax.persistence.jdbc.password", "Sherica12");
 		}
 	}
 

@@ -17,12 +17,7 @@ import javax.persistence.Table;
 @Table(name = "postalcode")
 public class PostalCode implements Serializable {
 	private static final long serialVersionUID = 1L;
-	// @Id
-	// @NotNull
-	// @GeneratedValue(strategy = GenerationType.AUTO)
-	// @Column(name = "id")
-	// private Long postalCodeId;
-
+	
 	@Id
 	@Column(name = "zip")
 	private String postalCode;

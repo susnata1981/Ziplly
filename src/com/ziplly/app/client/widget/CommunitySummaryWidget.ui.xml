@@ -30,7 +30,7 @@
 		}
 		
 		.mapPanel {
-			height: 80%;
+			height: 85%;
 		}
 	</ui:style>
 	<g:HTMLPanel ui:field="communitySummaryPanel" addStyleNames="{style.commnunitySummaryPanel}">

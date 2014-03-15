@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.maps.gwt.client.Geocoder;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
@@ -48,6 +49,7 @@ import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.EmailWidget;
+import com.ziplly.app.client.widget.GoogleMapWidget;
 import com.ziplly.app.client.widget.ProfileStatWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -214,6 +216,14 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		});
 	}
 
+	private GoogleMapWidget mapWidget = new GoogleMapWidget();
+	
+	@Override
+	public void displayMap(String address) {
+		mapWidget.displayMap(locationDiv, address);
+	}
+
+	@Deprecated
 	@Override
 	public void displayLocationInMap(GetLatLngResult input) {
 		LatLng myLatLng = LatLng.create(input.getLat(), input.getLng());

@@ -57,7 +57,8 @@
 						<g:HTMLPanel ui:field="interestPanel"></g:HTMLPanel>
 					</div>
 					<div class="{style.profileInfoBox}">
-						<div style="width:320px; height:270px" ui:field="locationDiv"></div>
+						<div style="width:320px; height:270px" ui:field="locationDiv">
+						</div>
 					</div>
 					<div class="{style.profileInfoBox}">
 						<h2 class="heading">Activity</h2>

@@ -57,8 +57,8 @@ import com.ziplly.app.shared.ValidationResult;
  */
 public class HomeView extends AbstractView implements IHomeView {
 
-	private static final String TWEET_WIDGET_WIDTH = "90%";
-	private String tweetWidth = "90%";
+	private static final String TWEET_WIDGET_WIDTH = "91%";
+	private String tweetWidth = "91%";
 	private BasicDataFormatter basicDataFormatter =
 	    (BasicDataFormatter) AbstractValueFormatterFactory
 	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
@@ -363,12 +363,18 @@ public class HomeView extends AbstractView implements IHomeView {
 		tview.remove(tweet);
 	}
 
+	@Deprecated
 	@Override
 	public void displayMap(GetLatLngResult result) {
 		if (result != null) {
 			LatLng ll = LatLng.create(result.getLat(), result.getLng());
-			communitySummaryWidget.displayMap(ll);
+//			communitySummaryWidget.displayMap(
 		}
+	}
+
+	@Override
+	public void displayMap(String address) {
+			communitySummaryWidget.displayMap(address);
 	}
 
 	@Override

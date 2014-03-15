@@ -167,7 +167,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getAccountNotifications();
 		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
-		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
+//		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
+		displayMap(ctx.getAccount().getLocations().get(0).getAddress());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
 		view.displayAccontUpdate();
@@ -264,14 +265,21 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		}
 	}
 
+	void displayMap(String address) {
+		view.displayMap(address);
+		((BusinessAccountView) view).displayFormattedAddress(address);
+  }
+
 	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
 		@Override
 		public void onSuccess(GetAccountByIdResult result) {
 			AccountDTO account = result.getAccount();
 			if (account instanceof BusinessAccountDTO) {
+				BusinessAccountDTO baccount = (BusinessAccountDTO) account;
 				view.displayPublicProfile((BusinessAccountDTO) account);
-				getLatLng(account, new GetLatLngResultHandler());
+//				getLatLng(account, new GetLatLngResultHandler());
+				displayMap(account.getLocations().get(0).getAddress());
 			} else if (account instanceof PersonalAccountDTO) {
 				// take some action here
 				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));

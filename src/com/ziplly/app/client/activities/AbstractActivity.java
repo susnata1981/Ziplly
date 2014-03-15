@@ -41,6 +41,8 @@ public abstract class AbstractActivity implements Activity {
 	protected EventBus eventBus;
 	protected ApplicationContext ctx;
 	protected LoadingPanelWidget loadingModal;
+	// Maximum number of target neighborhoods visible
+	private int maxNeighborhoodsVisible = 2;
 
 	public AbstractActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
@@ -194,9 +196,11 @@ public abstract class AbstractActivity implements Activity {
 			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
 			neighborhoods.add(neighborhood);
 			NeighborhoodDTO parentNeighborhood = neighborhood.getParentNeighborhood();
-			while (parentNeighborhood != null) {
+			int count = 0;
+			while (parentNeighborhood != null && count < maxNeighborhoodsVisible) {
 				neighborhoods.add(parentNeighborhood);
 				parentNeighborhood = parentNeighborhood.getParentNeighborhood();
+				count++;
 			}
 
 			return neighborhoods;
@@ -215,7 +219,7 @@ public abstract class AbstractActivity implements Activity {
 	}
 
 	public static native void log(String msg) /*-{
-	                                          $wnd.console.log(msg);
-	                                          }-*/;
+		$wnd.console.log(msg);
+	}-*/;
 
 }

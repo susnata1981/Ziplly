@@ -166,15 +166,15 @@ div.comment_text {
 }
 
 .commentInputTextBox {
-	margin: 2%;
-	width: 90%;
-	height: 20px;
+	margin: 2ppx;
+	width: 96% !important;
+	height: 40px;
 	padding: 4px;
 }
 
 .commentInputActionSection {
 	clear: both;
-	margin: 1% 2%;
+	margin: 2px 4px;
 }
 
 .commentInputTextBoxCg {

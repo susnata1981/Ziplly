@@ -70,4 +70,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayAccontUpdate();
 
 	void displayMessage(String msg, AlertType type);
+
+	void displayMap(String address);
 }

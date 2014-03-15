@@ -4,7 +4,7 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatte
 
 public abstract class AbstractValueFormatter<T> implements Formatter<T> {
 	protected Formatter<Object> basicValueFormatter;
-
+	
 	@SuppressWarnings("unchecked")
 	public AbstractValueFormatter() {
 		basicValueFormatter =

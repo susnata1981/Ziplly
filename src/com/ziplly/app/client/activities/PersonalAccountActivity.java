@@ -147,7 +147,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
-		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
+//		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
+		displayMap(ctx.getCurrentNeighborhood());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		getAccountNotifications();
 		setupImageUpload();
@@ -244,6 +245,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		public void onSuccess(GetLatLngResult result) {
 			if (result != null) {
 				PersonalAccountActivity.this.view.displayLocationInMap(result);
+				log("FA="+result.getFormattedAddress());
 			}
 		}
 	}
@@ -255,7 +257,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			AccountDTO account = result.getAccount();
 			if (account instanceof PersonalAccountDTO) {
 				view.displayPublicProfile((PersonalAccountDTO) account);
-				getLatLng(account, new GetLatLngResultHandler());
+//				getLatLng(account, new GetLatLngResultHandler());
+				displayMap(result.getAccount().getLocations().get(0).getNeighborhood());
 			} else {
 				// take some action here
 				placeController.goTo(new BusinessAccountPlace(account.getAccountId()));
