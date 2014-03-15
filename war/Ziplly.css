@@ -2,9 +2,10 @@
 header,hgroup,nav,section,article,aside,footer {
 	display: block;
 }
+
 /*header area*/
 header {
-	height: 100px;
+	height: auto;
 	text-align: center;
 }
 
@@ -19,79 +20,85 @@ h2 {
 	font-family: cursive;
 	font-size: 20px;
 	padding: 4px;
+	color : #555;
 }
 
-/* nav area
-nav {
+h1, h2, h3, h4 {
+	color : #111;
+}
+
+html {
 	width: 100%;
-	height: 42px;
-	margin: 10px 0px 0px 0px;
-	background: #f8f6f2;
-	overflow: auto;
+	height: 100%;
 }
 
-nav ul {
-	margin: 0 auto;
-	width: 940px;
-	list-style: none;
+body {
+	width: 100%;
+	height: 100%;
 }
 
-nav ul li {
-	float: right;
-}
-
-nav ul li a {
-	display: block;
-	margin-right: 20px;
-	width: 140px;
-	font-size: 12px;
-	font-family: sans-serif;
-	line-height: 44px;
-	text-align: center;
-	text-decoration: none;
-	color: #777;
-}
-
-nav ul li a:hover {
-	color: green;
-}
-
-nav ul li.selected a {
-	color: #fff;
-}
-
-nav ul li.subscribe a {
-	margin-left: 22px;
-	padding-left: 33px;
-	text-align: left;
-	background: url("rss.png") left center no-repeat;
-} 
-*/
-/* .gwt-Anchor {
-	float: left;
-	width: 100px;
-	height: 40px;
-	font-style: Arial;
-	font-size: 16px;
-	margin-right: 5px;
-	padding: 4px;
-} */
 hr {
 	margin: 10px;
 }
 
+.link {
+	color: #0080FF !important;
+}
+
+.link:hover {
+	color: #555 !important;
+}
+
 .heading {
-	font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia,
-		serif;
-	font-size: 20px;
-	border-bottom: 2px solid #ddd;
-	margin: 2px 0px 20px 0px;
+	font-family: Gargoyle, Serif, sans-serif;
+	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #555333;
+	line-height: 30px;
+	margin: 0;
+}
+
+.heading4 {
+	font-family: Gargoyle, Serif, sans-serif;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #555333;
+	line-height: 30px;
+	margin: 0;
+}
+
+.heading:first-letter {
+	text-transform: capitalize;
+}
+
+.paragraph {
+	font-family: sans-serif;
+	font-size: 1.2em;
+	color: #555333;
+	line-height: 30px;
+	margin: 0;
 }
 
 #wrapper {
 	width: 100%;
 	overflow-x: hidden;
-	height: 700px;
+	height: auto;
+	min-height: 100%;
+}
+
+footer {
+ clear: both;
+ position: relative;
+ z-index: 10;
+ height: 3em;
+ margin-top: -3em;
+}
+
+footer p a {
+	font-size: 12px;
+	font-family: sans-serif;
+	color: #555;
 }
 
 .backgroundImage {
@@ -111,17 +118,10 @@ section {
 article#main {
 	float: left;
 	width: 100%;
-	margin: 10px;
+	height: 100%;
+	max-height: 1000px;
 }
 
-/*aside area
-aside {
-	width: 160px;
-	height: 400px;
-	background: #f9f9f9;
-	float: left;
-}
-*/
 /*footer area*/
 footer {
 	clear: both;
@@ -150,12 +150,12 @@ footer {
 
 .smalltext {
 	font-family: sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .tinytext {
-	font-family: sans-serif;
-	font-size: 12px;
+	font-family: Georgia, sans-serif;
+	font-size: 10px;
 }
 
 .datefont {
@@ -172,22 +172,6 @@ footer {
 	text-align: center;
 }
 
-#mainPageSingupForm {
-	position: absolute;
-	width: 300px;
-	top: 200px;
-	right: 40px;
-	float: right;
-	text-align: center;
-}
-
-#mainPageBusinessSingupForm {
-	position: absolute;
-	width: 300px;
-	top: 420px;
-	right: 40px;
-	text-align: center;
-}
 /*********Main View Ends********/
 /******** Account **************/
 .profile_section_heading {
@@ -197,6 +181,7 @@ footer {
 	height: 30px;
 	border-bottom: 2px solid #ddd;
 	margin: 5px 0px 20px 0px;
+	width: 200%;
 }
 /*************End of Account****************/
 .tweetFilterLink {
@@ -214,23 +199,59 @@ footer {
 	background: #ddd;
 }
 
-#mainContent {
-	margin: 0;
-	width: 100%;
-}
-
 .pcell {
-	width: 420px;
-	height: 100px;
+	display: block;
 	float: left;
-	margin: 10px;
+	margin: 2px 2px;
+	margin: 5px 5px 20px 10px;
 	padding: 3px;
 	border: 1px solid #ddd;
 }
 
-.pcell img {
-	width: 140px;
-	height: 100px;
+.pcell-image {
+	float: left;
+	width: 200px;
+	height: 180px;
+}
+
+.pcell-image img {
+	max-height: 100%;
+	max-width: 100%;
+}
+
+.pcell-info {
+	float: left;
+	width: 250px;
+	margin-left: 10px;
+}
+
+.pcell-row {
+	display: block;
+	padding: 4px 8px;
+}
+
+.pcell-row-heading {
+	display: block;
+	font-family: sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #666;
+	padding: 4px 8px;
+	text-transform: capitalize;
+}
+
+.pcell-row-info-heading {
+	display: inline-block;
+	font-family: serif;
+	font-size: 1.1em;
+	font-weight: bold;
+	padding: 0;
+	margin: 0;
+	color: #666;
+}
+
+.pcell-btn {
+	padding: 4px 8px;
 }
 
 .filterheader {
@@ -242,3 +263,67 @@ footer {
 	height: 30px;
 	background: #ddd;
 }
+
+.vertical-panel {
+	display: block;
+}
+
+.fontawesome {
+	font-family: FontAwesome;
+	font-size: 12px;
+}
+
+.price-range {
+	color: #b2b2b2;
+}
+
+.horizontal-panel {
+	clear: both;
+	display: block;
+	float: left;
+	padding: 2px;
+}
+
+.horizontal-widget {
+	display: inline-block;
+	float: left;
+	margin: 2px 8px;
+}
+
+.vertical-panel {
+	display: block;
+	padding: 2px;
+}
+
+.vertical-widget {
+	display: block;
+	margin: 2px 8px;
+}
+
+.clearfix {
+	clear: both;
+}
+
+.facebookSignupLink {
+	font-family: sans-serif;
+	font-size: 1em;
+	color: #4383c5;	
+	text-align: center;
+	font-weight: bold;
+}
+
+.caret {
+	margin-top: 10px;
+}
+
+.label {
+	background: none !important;
+	color: #666 !important;
+	font-size: 14px !important;
+	font-weight: 400 !important;
+}
+
+textarea {
+	font-size: 16px !important;
+}
+/* This is used for notification drop down */
