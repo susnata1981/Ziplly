@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.LocationDTO;
@@ -64,13 +65,8 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 			return;
 		}
 
-		String imgUrl = null;
-		if (value.getImages().size() > 0) {
-			imgUrl = value.getImages().get(0).getUrl() + "=s300";
-		} else {
-			imgUrl = "images/no-photo.jpg";
-		}
-
+		String imgUrl = ImageUtil.getImageUtil(value);
+		
 		String category =
 		    value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
 		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;

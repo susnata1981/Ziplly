@@ -1,23 +1,27 @@
 @CHARSET "US-ASCII";
 
+@external .tab-content, .updateAlertBlock;
+
 .rootPanel {
 	width: 100%;
+	height: auto;
 }
 
 .asidePanel {
-	float: left;
-	width: 10%;
-	margin-right: 1%;
-	padding: 6px;
-	background: #faf8f6;
+	border: 1px solid #ddd;
+	background: #fff;
+	margin: 6px;
 }
 
 .asidePanel dt {
 	margin: 12px 2px;
+	background: #f9f9f9;
+	font-family: monospace;
+	font-size: 1em;
 }
 
 dt:hover {
-	background: #FFF0FF;
+	background: #ddd;
 }
 
 a.link {
@@ -32,12 +36,19 @@ a.link:hover {
 }
 
 .mainSection {
-	float: left;
-	width: 85%;
-	height: 30%;
+	position: relative;
+	left: 12%;
+	width: 100%;
 	margin: auto;
 	background: #faf8f6;
 	font-size: 100%;
+}
+
+.profileDiv {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1000px
 }
 
 .profileSection {
@@ -49,6 +60,7 @@ a.link:hover {
 .profileImageSection h2 {
 	text-align: center;
 	padding: 4px;
+	padding-top: 0px;
 	background: #fff;
 	border-right: 1px solid #ddd;
 	border-left: 1px solid #ddd;
@@ -64,33 +76,34 @@ a.link:hover {
 
 .profileImageSection {
 	float: left;
-	margin: 3% 1%;
-	width: 94%;
+	margin: 0 2px;
+	width: 92%;
+	margin: 5px;
 	height: 30%;
+	padding: 6px;
+	border: 2px solid #ddd;
 }
 
 .profileImageDiv {
 	margin: auto;
 	background: #fff;
-	border-right: 1px solid #c2c2c2;
-	border-left: 1px solid #c2c2c2;
-	border-top: 1px solid #c2c2c2;
 	padding-top: 6px;
+	width: 200px;
+	height: 220px;
+	overflow: hidden;
 }
 
 .profileImageSection img {
-	margin: auto;
-	display: block;
-	width: 80%;
-	height: auto;
+	max-height: 100%;
+	max-width: 100%;
 }
 
 .profileInfoBox {
 	clear: both;
 	width: 92%;
-	margin: 3% 1%;
-	padding: 1%;
-	border: 1px solid #ddd;
+	margin: 5px;
+	padding: 6px;
+	border: 2px solid #ddd;
 	background: #fff;
 	overflow: hidden;
 }
@@ -104,7 +117,11 @@ h2.heading {
 }
 
 .profileCaption {
-	background: #fff;
+	font-family: Georgia, serif;
+	font-size: 18px;
+	color: #555444;
+	text-align: center !important;
+	text-transform: capitalize;
 }
 
 .description {
@@ -113,32 +130,37 @@ h2.heading {
 }
 
 .businessInfoItem {
+	clear: both;
 	display: block;
 	padding: 3px;
-	margin: 10px 3px;
+	margin: 4px 3px;
 	color: #555;
 }
 
 .tweetBoxDiv {
-	margin: 1.3%;
+	margin-left: 12px;
 }
 
 .tweetSection {
-	margin-left: 1%;
-/* 	overflow: hidden; */
-	height: 1000px;
-	overflow: auto;
-	border: 1px solid #ddd;
+	margin-top: 6px;
+	padding: 8px;
+	background: #ddd;
 }
 
-.occupationSpan {
+.rootTweetSection {
+	position: relative;
+	float: left;
+	width: 60%;
+	border: 1px solid #ddd;
+	margin-left: 1%;
 }
 
 .accountStatDiv {
+	display: block;
 	float: left;
-	width: 80px;
+	width: 25%;
 	height: 80px;
-	margin-right: 5px;
+	margin-right: 2px;
 }
 
 /****************************** personal account settings view ****************************/
@@ -146,29 +168,41 @@ h2.heading {
 	margin: 20px 0px 0px 40px;
 	width: 90%;
 	border: 1px solid #ddd;
-	overflow: auto;
 	padding: 8px;
 }
+
 .settingsPanel {
+	position: relative;
 	float: left;
-	width: 60%;
+	width: 90%;
+	background: #f1f1f1;
+	opacity: 0.9;
+	margin-left: 2px;
+	padding: 10px;
 	border: 1px solid #ddd;
-	margin-left: 1%;
-	padding: 20px;
 }
+
 .updatePasswordBtn {
 	margin-top: 20px;
 	float: left;
 }
 
+.passwordTextBox {
+	height: 38px !important;
+	font-size: 16px !important;
+}
+
 .introductionTextBox {
 	float: left;
-	width: 60%;
-	height: 50px;
+	width: 110%;
+	height: 120px;
+	padding: 6px;
+	margin-bottom: 30px;
+	font-size: 14px !important;
 }
 
 .label {
-	font-family: Georgia, Times," Times New Roman ", serif;
+	font-family: Georgia, Times, " Times New Roman ", serif;
 	font-size: 14px;
 	color: #848484;
 }
@@ -185,24 +219,35 @@ h2.heading {
 	clear: both;
 }
 
+.basicInfoPanel {
+	margin-left: 20px;
+}
+
 .profileInfoTextBlock {
 	float: left;
 	width: 30%;
 }
 
 .profileInfoImageBlock {
-	float: right;
-	width: 30%;
+	position: absolute;
+	top: 30px;
+	right: 10px;
+	width: 35%;
 }
 
-.profileImage {
-	width: 160px;
-	height: 140px;
-	border: 2px solid #ddd;
+.settingsProfileImageSection {
+	margin: 0 20px 0 0;
+}
+
+.uploadFormActionPanel {
+	position: absolute;
+	top: 100px;
 }
 
 .buttonsPanel {
 	clear: both;
+	margin-top: 10px;
+	margin-left: 160px;
 }
 
 .buttonsPanel .btn {
@@ -230,4 +275,130 @@ h2.heading {
 .notificationTable td select {
 	width: 100%;
 	display: block;
+}
+
+.navlink {
+	list-style: none !important;
+}
+
+.navlink2 {
+	position: relative;
+}
+
+.navlink2:before {
+	content: "\f000";
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: inherit;
+}
+
+.smallfont {
+	font-size: 12px;
+}
+
+.leftAlignedLabel {
+	float: left;
+	width: 50px;
+	margin-right: 5px;
+}
+
+.leftAlignedPanel {
+	float: left;
+}
+
+.addressPanel {
+	padding: 4px;
+}
+
+.basicInfoTab {
+	min-height: 320px;
+	padding: 10px;
+	overflow: hidden;
+}
+
+.uploadProfileImagePanel {
+	position: relative;
+	top: 50px;
+	margin-left: 100px;
+}
+
+.profileImagePanel {
+	width: 180px;
+	height: 200px;
+	margin-bottom: 2px;
+}
+
+.profileImage {
+	max-height: 100%;
+	max-width: 100%;
+}
+
+.tab-heading {
+	font-family: sans-serif, sans;
+	font-size: .8em;
+	list-style: none;
+}
+
+.locationTab {
+	position: relative;
+	left: 36px;
+}
+
+.alertMsg {
+	margin-top: 8px;
+}
+
+.badgePanel {
+	display: inline-block;
+}
+
+.accountAttribute {
+	font-weight: 600;
+}
+
+.container {
+	margin-top: 10px;
+}
+
+.popoverLink {
+	font-size: 11px !important;
+}
+
+.popoverText {
+	display: inline;
+	font-size: 11px !important;
+}
+
+.tab-content {
+	overflow: hidden;
+}
+
+.passwordField {
+	height: 38px;
+	font-size: 16px;
+}
+
+input[type="text"], input[type="password"] {
+	height: 38px;
+	font-size: 18px;
+}
+
+.updateAlertBlock {
+	color: #888;
+	padding: 10px;
+	margin: 6px;
+	background: #fff !important;
+}
+
+.updateAlertBlock h4 {
+	color: #666;
+	border-bottom: 1px solid #666;	
+	margin-bottom: 12px;
+}
+
+.updateAlertBlock a {
+	display: inline-block;
+	font-size: 16px;
+	margin-left: 4px;
 }

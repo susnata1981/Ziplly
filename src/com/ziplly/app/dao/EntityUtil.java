@@ -561,6 +561,7 @@ public class EntityUtil {
 		resp.setId(image.getId());
 		resp.setBlobKey(image.getBlobKey());
 		resp.setUrl(image.getUrl());
+		resp.setStatus(image.getStatus());
 		resp.setTimeCreated(image.getTimeCreated());
 		return resp;
 	}

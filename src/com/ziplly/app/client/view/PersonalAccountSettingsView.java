@@ -63,6 +63,7 @@ import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PrivacySettingsDTO;
+import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
@@ -479,6 +480,10 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		// Image
 		if (imageUploaded) {
 			// TODO: change it to take multiple images.
+			for(ImageDTO imageDto : account.getImages()) {
+				imageDto.setStatus(RecordStatus.DELETED);
+			}
+			
 			account.getImages().add(currentUploadedImage);
 		}
 

@@ -1,27 +1,97 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:style>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style type="com.ziplly.app.client.view.NavView.Style">
+		@external notificationDropdown dropdown-menu;
+		.navbarPanel {
+			width: 100%;
+		}
 		.navPillList {
+		float: right;
+		margin: 15px 100px
+		5px 0px;
+		}
+		.notificationLink {
+		display: block;
+		height: 30px;
+		width: 300px;
+		border: 1px solid #ddd;
+		padding: 4px;
+		font-size: 13px;
+		text-align: left;
+		line-height: 30px;
+		}
+		.unreadNotificationCountPanel {
+		position: relative;
+		float: right;
+		width: 18px;
+		min-height: 18px;
+		height: auto;
+		background:
+		#FA5858;
+		top: -10px;
+		color: #fff;
+		font-size: 10px;
+		max-height: 300px;
+		overflow: scroll;
+		}
+		.unreadNotificationCountSpan {
+		display: block;
+		padding: 2px;
+		line-height: 16px;
+		}
+		.notificationDropdown {
+		}
+		.notificationDropdown .dropdown-menu {
+			height: auto;
+			max-height: 320px;
+			overflow: scroll;
+		}
+		.logo {
+			float: left;
+			width: 84px;
+			height: 40px;
+		}
+		.feedbackLink {
 			float: right;
-			margin: 15px 100px 5px 0px;
+		}
+		.navlink {
+			line-height: 20px;
+		}
+		.rightNavLink {
+			float: right !important;
+			margin-right: 30px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<b:NavPills addStyleNames="{style.navPillList}">
-		    <b:NavLink ui:field="homeLink">Home</b:NavLink>
-			<b:Dropdown text="Account">
-				<b:NavLink ui:field="accountLink">Profile</b:NavLink>
-				<b:NavLink ui:field="messageLink">Messages</b:NavLink>
-				<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
-				<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
-			</b:Dropdown>
-			<b:Dropdown text="Community">
-			    <b:NavLink ui:field="residentsLink">Residents</b:NavLink>
-			    <b:NavLink ui:field="businessLink">Businesses</b:NavLink>
-			</b:Dropdown>
-			<b:NavLink ui:field="aboutLink">About</b:NavLink>
-		</b:NavPills>
+		<b:ResponsiveNavbar>
+			<b:Nav addStyleNames="{style.navbarPanel}">
+			    <b:Image ui:field="logo" addStyleNames="{style.logo}" />
+				<b:NavLink ui:field="homeLink" icon="HOME" addStyleNames="{style.navlink}">Home</b:NavLink>
+				<b:NavLink ui:field="loginLink" icon="USER" addStyleNames="{style.navlink}">Login</b:NavLink>
+				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER" addStyleNames="{style.navlink}">
+					<b:NavLink ui:field="accountLink">Profile</b:NavLink>
+					<b:NavLink ui:field="messageLink">Messages</b:NavLink>
+					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
+					<b:NavLink ui:field="logoutLink">Logout</b:NavLink>
+				</b:Dropdown>
+				<b:Dropdown icon="BELL" ui:field="notifications" addStyleNames="{style.notificationDropdown} {style.navlink}">
+					<b:customTrigger>
+						<g:HTMLPanel ui:field="unreadNotificationCountPanel"
+							addStyleNames="{style.unreadNotificationCountPanel}">
+							<span ui:field="unreadNotificationCountSpan" addStyleNames="{style.unreadNotificationCountSpan}" />
+						</g:HTMLPanel>
+					</b:customTrigger>
+				</b:Dropdown>
+				<b:Dropdown text="Community" addStyleNames="{style.navlink}">
+					<b:NavLink ui:field="residentsLink">Residents</b:NavLink>
+					<b:NavLink ui:field="businessListLink">Businesses</b:NavLink>
+				</b:Dropdown>
+				<!-- <b:NavLink ui:field="blogLink" addStyleNames="{style.navlink}">Blog</b:NavLink> -->
+				<b:NavLink ui:field="aboutLink" addStyleNames="{style.navlink}">About</b:NavLink>
+				<b:Dropdown ui:field="locationDropdown" text="location" icon="BOOKMARK" addStyleNames="{style.navlink} {style.rightNavLink}">
+				</b:Dropdown>
+			</b:Nav>
+		</b:ResponsiveNavbar>
 	</g:HTMLPanel>
 </ui:UiBinder> 

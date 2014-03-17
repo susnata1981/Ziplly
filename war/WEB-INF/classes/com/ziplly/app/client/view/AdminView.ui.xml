@@ -1,10 +1,20 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.tweetSearchForm {
 		border: 1px solid #ddd;
 		padding: 6px;
+		}
+		.longTextBox {
+		width: 280px;
+		}
+		.row {
+		overflow: auto;
+		}
+		.panel {
+			margin-top: 20px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
@@ -53,6 +63,22 @@
 							</g:HTMLPanel>
 						</b:Column>
 					</b:FluidRow>
+					<b:FluidRow>
+					    <b:Column size="8">
+					        <g:HTMLPanel ui:field="accountDetailsPanel">
+					            <b:Label>Name:</b:Label>
+					            <b:TextBox ui:field="accountName"></b:TextBox>
+					            <br/>
+					            <b:Label>Neighborhood</b:Label>
+					            <b:TextBox ui:field="accountNeighborhoodName"></b:TextBox>
+					            <br/>
+					            <b:Label>Neighborhood ID</b:Label>
+					            <b:TextBox ui:field="accountNeighborhoodId"></b:TextBox>
+					            <br/>
+					        </g:HTMLPanel>
+					        <b:Button ui:field="updateAccountBtn">Update</b:Button>
+					    </b:Column>
+					</b:FluidRow>
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="registrationPanel">
 					<b:FluidRow>
@@ -66,7 +92,7 @@
 								<b:RadioButton ui:field="businessAccountType"
 									name="accountTypeRadioButton">Business</b:RadioButton>
 								<g:HTMLPanel ui:field="businessTypePanel">
-								    <b:ListBox ui:field="businessTypeListBox"/>
+									<b:ListBox ui:field="businessTypeListBox" />
 								</g:HTMLPanel>
 							</b:Controls>
 							<b:Button type="PRIMARY" ui:field="inviteBtn">Invite</b:Button>
@@ -110,6 +136,120 @@
 					<b:Column size="8">
 						<g:HTMLPanel ui:field="tweetCellTablePanel">
 						</g:HTMLPanel>
+					</b:Column>
+				</b:FluidRow>
+			</b:Tab>
+			<b:Tab heading="Neighborhoods">
+				<b:FluidRow>
+					<b:Column size="5">
+						<b:WellForm>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:Label>Zip</b:Label>
+									<b:TextBox ui:field="neighborhoodZip" placeholder="Zip..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:Label>Neighborhood Name</b:Label>
+									<b:TextBox ui:field="neighborhoodName" placeholder="Neighborhood..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:Label>City</b:Label>
+									<b:TextBox ui:field="neighborhoodCity" placeholder="City..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:Label>State</b:Label>
+									<b:TextBox ui:field="neighborhoodState" placeholder="State..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:Controls>
+									<b:Label>Parent neighborhood id</b:Label>
+									<b:TextBox ui:field="parentNeighborhoodId"
+										placeholder="Parent ID..."></b:TextBox>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:SubmitButton addStyleNames="btn"
+								ui:field="searchNeighborhoodBtn">Search</b:SubmitButton>
+							<b:SubmitButton addStyleNames="btn"
+								ui:field="createNeighborhoodBtn">Create</b:SubmitButton>
+						</b:WellForm>
+					</b:Column>
+					<b:Column size="4">
+
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow addStyleNames="{style.row}">
+					<b:Column size="8">
+						<g:HTMLPanel ui:field="neighborhoodListPanel">
+						</g:HTMLPanel>
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow addStyleNames="{style.row}">
+					<b:Column size="6">
+						<g:HTMLPanel ui:field="neighborhoodDetailsPanel" addStyleNames="{style.panel}">
+						    <b:Label>
+								Neighborhood ID
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodIdTextBox"
+								placeholder=""></b:TextBox>
+							<br />
+							<b:Label>
+								Name
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodNameTextBox"
+								placeholder="Name..."></b:TextBox>
+							<br />
+							<b:Label>
+								City
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodCityTextBox"
+								placeholder="City..."></b:TextBox>
+							<br />
+							<b:Label>
+								Zip
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodZipCodeTextBox"
+								placeholder="Zip..."></b:TextBox>
+							<br />
+							<b:Label>
+								Parent Neighborhood
+							</b:Label>
+							<b:TextBox ui:field="neighborhoodParentIdTextBox"
+								placeholder="parent..."></b:TextBox>
+							<br />
+							<g:HTMLPanel addStyleNames="{style.panel}">
+								<g:HTMLPanel>
+									<b:Image ui:field="neighborhoodImagePreview" />
+									<b:Label>Image Link</b:Label>
+									<b:TextBox ui:field="imageUrlTextField"
+										addStyleNames="{style.longTextBox}" />
+									<br/>
+									<b:Label>Image ID</b:Label>
+									<b:TextBox ui:field="imageIdTextField"
+										addStyleNames="{style.longTextBox}" />
+								</g:HTMLPanel>
+								<g:FormPanel ui:field="uploadForm">
+									<g:HTMLPanel>
+										<b:Label>Upload image</b:Label>
+										<b:FileUpload ui:field="uploadField" name="image" />
+									</g:HTMLPanel>
+								</g:FormPanel>
+								<g:HTMLPanel ui:field="neighborhoodButtonPanel">
+								    <b:Button ui:field="imageAddBtn">Add Image</b:Button>
+								    <b:Button ui:field="saveNeighborhoodBtn">Save</b:Button>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Column>
+					<b:Column size="6">
+					    <g:FlowPanel ui:field="neighborhoodImagePanel">
+						</g:FlowPanel>
 					</b:Column>
 				</b:FluidRow>
 			</b:Tab>

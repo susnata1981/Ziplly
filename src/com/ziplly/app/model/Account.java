@@ -25,7 +25,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -69,11 +68,7 @@ public class Account extends AbstractTimestampAwareEntity {
 	@Column(name = "profile_url")
 	private String url;
 
-//	@Column(name = "image_url")
-//	@Size(max = 1024)
-//	private String imageUrl;
-
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@OneToMany(cascade = CascadeType.MERGE)
 	@Fetch(FetchMode.JOIN)
 	@JoinTable(name = "account_images", joinColumns = { @JoinColumn(name = "account_id") },
 	    inverseJoinColumns = { @JoinColumn(name = "image_id") })

@@ -3,45 +3,107 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+		.mainPageHeadingPanel {
+		text-align: center;
+		margin-top: 110px;
+		}
+		.heading1 {
+		font-size: 90px;
+		font-weight: bold;
+		font-family:
+		fantasy,cursive, sans;
+		color: #fff;
+		display: block;
+		padding: 4px;
+		margin-bottom: 60px;
+		}
+		.heading2 {
+		display: block;
+		clear: both;
+		font-size:
+		30px;
+		font-weight: bold;
+		font-family:
+		fantasy,cursive, sans;
+		color: #fff;
+		text-align: center;
+		}
+		.heading3 {
+		display: block;
+		clear: both;
+		font-size: 22px;
+		font-family:
+		Tahoma, sans;
+		sans-serif;
+		color: #555;
+		margin-bottom: 16px;
+		}
+		.heading4 {
+		display: block;
+		font-size: 16px;
+		font-family: sans;
+		color: #666;
+		padding:
+		4px;
+		}
 		.singupForm {
 		float: left;
-		width: 30%;
-		padding: 8px;
-		margin: 2% 5%;
+		width: 360px;
+		padding:12px;
 		background: #f1f1f1;
+		-webkit-border-radius: 4px;
 		}
 		.loginForm {
-		position: absolute;
-		top: 60%;
-		right:
-		10%;
-		width: 28%;
-		background: #fff;
+		position:
+		absolute;
+		top: 37%;
+		right: 26px;
+		float: right;
+		width: 360px;
+		background:
+		#fff;
 		}
 		input[type="text"],input[type="password"] {
-		height: 30px;
+		height:
+		32px
+		!important;
+		font-color: #555;
+		font-family: Verdana, Geneva,
+		sans-serif;
+		font-size:
+		1.1em;
+		margin: 0;
+		padding: 4px;
 		}
 		.uploadImageForm {
-		clear: both;
-		height: 180px;
+		clear:
+		both;
+		height:
+		180px;
 		}
 		.chooseFileUploadButton {
-		float: left;
+		display: block;
+		clear:
+		left;
 		width: 20%;
 		}
 		.uploadImageButton {
 		clear: left;
-		display: block;
-		width: 14%;
+		display:
+		block;
+		width:
+		14%;
 		}
 		.profileImagePreviewDiv {
 		float: left;
-		width: 50%;
-		height: 130px;
+		width: 140px;
+		height:
+		130px;
 		}
 		.profileImagePreview {
 		width: 90% !important;
-		height: 90% !important;
+		height: 90%
+		!important;
 		border: 1px solid #ddd;
 		}
 		.namePanel {
@@ -51,98 +113,318 @@
 		.nameField {
 		float: left;
 		width: 45%;
-		margin-right: 3%;
+		margin-right: 10px;
 		}
 		.textBox {
-		width: 94%;
+		width:
+		94%;
 		}
-		.emailField {
-		clear: both;
-		float: left;
+		.button {
+		height: 40px;
+		line-height: 30px;
+		font-size: 1.2em;
+		font-weight: bold;
+		}
+		.businessSignupBtn {
+		display: block;
+		border-top:
+		10px;
+		}
+		.row {
+		display: block;
+		margin-bottom: 20px;
+		float:left;
+		}
+		.herounit {
+		margin-top: 20px;
+		padding: 40px;
+		padding-top: 20px;
+		}
+		.fluid-row {
+		margin-top: 40px;
+		}
+		.signup-hero-unit {
+		height: 180px;
+		position:
+		relative;
+		opacity: .8;
+		padding: 60px 30px !important;
+		}
+		.signup-hero-unit-small {
+		position: relative;
+		opacity: .85;
+		padding: 30px
+		!important;
+		}
+		.hero-unit-btn {
+		position:
+		absolute;
+		bottom: 30px;
+		}
+		.inlineAnchor {
+		display: inline;
+		font-size: 12px;
+		color: blue;
+		}
+		.popoverHover {
+		display: inline;
+		font-size: 12px;
+		}
+		.popoverLink {
+		font-size: 12px
+		!important;
+		}
+		.demoDiv {
+		background: #f1f1f1;
+		border-radius: 5px;
+		margin-top: 20px;
+		padding: 14px;
+		width: 320px;
+		margin: 20px 0 20px 0;
+		}
+		.lightgray {
+			color: #666;
 		}
 	</ui:style>
-	<ui:with type="com.ziplly.app.client.resource.ZResources"
-		field="resources" />
-
-	<g:HTMLPanel>
-		<div id="mainContent">
-			<b:Alert ui:field="infoField" animation="true" />
-			<div class="{style.singupForm}">
-				<div class="heading">Signup</div>
-				<b:Form>
-					<g:HTMLPanel addStyleNames="{style.namePanel}">
-						<b:ControlGroup ui:field="firstnameCg"
-							addStyleNames="{style.nameField}">
-							<b:Controls>
-								<b:Label>Firstname</b:Label>
-								<br />
-								<b:TextBox ui:field="firstname" placeholder="firstname..."
-									addStyleNames="{style.textBox}" />
-								<b:HelpInline ui:field="firstnameError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:ControlGroup ui:field="lastnameCg"
-							addStyleNames="{style.nameField}">
-							<b:Controls>
-								<b:Label>Lastname</b:Label>
-								<br />
-								<b:TextBox ui:field="lastname" placeholder="lastname..."
-									addStyleNames="{style.textBox}" />
-								<b:HelpInline ui:field="lastnameError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-					</g:HTMLPanel>
-					<b:ControlGroup ui:field="emailCg" addStyleNames="{style.emailField}">
-						<b:Controls>
-							<b:Label>Email</b:Label>
-							<br />
-							<b:TextBox ui:field="email" placeholder="email..." />
-							<b:HelpInline ui:field="emailError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadImageForm}">
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column offset="6" size="5">
+				<b:Alert ui:field="infoField" animation="true" close="false" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.row}">
+			<b:Column size="5">
+				<b:Row addStyleNames="{style.mainPageHeadingPanel}">
+					<b:Column offset="1" size="9">
 						<g:HTMLPanel>
-							<div class="{style.profileImagePreviewDiv}">
-								<b:Image ui:field="profileImagePreview" addStyleNames="{style.profileImagePreview}" />
+							<span class="{style.heading1}">
+								Ziplly
+								<sup class="smalltext">beta</sup>
+							</span>
+							<span class="{style.heading2}">connecting local residents</span>
+							<br />
+							<span class="{style.heading2}">&amp;</span>
+							<br />
+							<div class="{style.heading2}">
+								&nbsp;&nbsp;&nbsp;&nbsp;businesses
+								<g:Anchor ui:field="howItWorksAnchor" addStyleNames="{style.inlineAnchor}">learn
+									more</g:Anchor>
+								<br />
 							</div>
-							<g:FileUpload ui:field="uploadField" name="image"
-								addStyleNames="{style.chooseFileUploadButton}" />
-							<b:Button ui:field="uploadBtn" addStyleNames="{style.uploadImageButton}">Upload</b:Button>
 						</g:HTMLPanel>
-					</g:FormPanel>
-					<b:ControlGroup ui:field="zipCg">
-						<b:Controls>
-							<b:Label>Zip</b:Label>
+					</b:Column>
+				</b:Row>
+				<b:Row>
+					<b:Column offset="1" size="9">
+						<g:HTMLPanel addStyleNames="{style.demoDiv}">
+							<span class="{style.heading4}">
+								<g:Anchor ui:field="loginAnchor">Try out our demo with the following account</g:Anchor>
+								<br />
+								<i>username: <b>terry@yahoo.com</b></i>
+								<br />
+								<i>password: <b>11111111</b></i>
+							</span>
+						</g:HTMLPanel>
+					</b:Column>
+				</b:Row>
+			</b:Column>
+			<b:Column offset="1" size="5">
+				<g:HTMLPanel addStyleNames="{style.singupForm}">
+					<a id="signupFormLink" />
+					<div class="facebookSignupLink">
+						<g:Anchor ui:field="facebookSignupAnchor">Sign up using Facebook</g:Anchor>
+					</div>
+					<hr />
+					<span class="{style.heading3}">Resident Sign up</span>
+					<b:Form>
+						<g:HTMLPanel addStyleNames="{style.row}">
+							<b:ControlGroup ui:field="firstnameCg"
+								addStyleNames="{style.nameField}">
+								<b:Controls>
+									<b:Label>First name</b:Label>
+									<br />
+									<b:TextBox ui:field="firstname" placeholder="firstname..."
+										addStyleNames="{style.textBox}" />
+									<b:HelpInline ui:field="firstnameError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="lastnameCg"
+								addStyleNames="{style.nameField}">
+								<b:Controls>
+									<b:Label>Last name</b:Label>
+									<br />
+									<b:TextBox ui:field="lastname" placeholder="lastname..."
+										addStyleNames="{style.textBox}" />
+									<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+						</g:HTMLPanel>
+						<b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Email</b:Label>
+								<br />
+								<b:TextBox ui:field="email" placeholder="email..." />
+								<b:HelpInline ui:field="emailError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<g:HTMLPanel addStyleNames="{style.row}">
+							<b:Label>Gender</b:Label>
 							<br />
-							<b:TextBox ui:field="zip" placeholder="zip..." />
-							<b:HelpInline ui:field="zipError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="passwordCg">
-						<b:Controls>
-							<b:Label>Password</b:Label>
-							<br />
-							<b:PasswordTextBox ui:field="password"
-								placeholder="password..." />
-							<b:HelpInline ui:field="passwordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:ControlGroup ui:field="confirmPasswordCg">
-						<b:Controls>
-							<b:Label>Confirm password</b:Label>
-							<br />
-							<b:PasswordTextBox ui:field="confirmPassword"
-								placeholder="confirm password..." />
-							<b:HelpInline ui:field="confirmPasswordError"></b:HelpInline>
-						</b:Controls>
-					</b:ControlGroup>
-					<b:Button block="true" type="SUCCESS" ui:field="signupBtn">Signup</b:Button>
-				</b:Form>
-			</div>
-			<div class="{style.loginForm}">
-				<dt:LoginWidget ui:field="loginWidget" width="90%"
-					residentAccountSignupLink="false" />
-			</div>
-		</div>
-	</g:HTMLPanel>
+							<b:ListBox ui:field="genderListBox">
+							</b:ListBox>
+						</g:HTMLPanel>
+						<b:ControlGroup ui:field="zipCg" addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Zip</b:Label>
+								<br />
+								<b:TextBox ui:field="zip" placeholder="zip..." />
+								<b:HelpInline ui:field="zipError"></b:HelpInline>
+								<b:Image ui:field="neighborhoodLoadingImage" />
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="neighborhoodCg"
+							addStyleNames="{style.row}">
+							<b:Controls ui:field="neighborhoodControl">
+								<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
+								<g:HTMLPanel ui:field="neighborhoodListPanel">
+								</g:HTMLPanel>
+								<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
+								<b:HelpBlock>Pick your neighborhood to learn about whats
+									going on
+									in there</b:HelpBlock>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:ControlGroup ui:field="passwordCg"
+							addStyleNames="{style.row}">
+							<b:Controls>
+								<b:Label>Password</b:Label>
+								<br />
+								<b:PasswordTextBox ui:field="password"
+									placeholder="password..." />
+								<b:HelpInline ui:field="passwordError"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<b:Button block="true" type="SUCCESS" ui:field="signupBtn"
+							addStyleNames="{style.row} {style.button}">Join for free</b:Button>
+						<g:HTMLPanel addStyleNames="{style.row}">
+							<span class="tiny_text">
+								By joining, you agree to our
+								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
+								and
+								<g:Anchor ui:field="privacyPolicyAnchor">Privacy Policy</g:Anchor>
+							</span>
+						</g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="{style.row}">
+							<span class="tiny_text">
+								Already a member
+								<g:Anchor ui:field="signInAnchor">Sign in</g:Anchor>
+								here
+							</span>
+						</g:HTMLPanel>
+					</b:Form>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="6" size="6">
+				<g:HTMLPanel addStyleNames="{style.singupForm}">
+					<span class="heading">Free for businesses to join &amp; use</span>
+					<hr />
+					<b:Button type="WARNING" block="true" ui:field="businessSignupBtn"
+						addStyleNames="{style.button} {style.businessSignupBtn}">
+						Join Now
+					</b:Button>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.fluid-row}">
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
+						<b:Paragraph addStyleNames="{style.lightgray}">
+							Complete your profile and upload a photo.
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="createProfileBtn"
+							addStyleNames="{style.hero-unit-btn}">Sign up</b:Button>
+					</b:Hero>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Explore your neighborhood</b:Heading>
+						<b:Paragraph addStyleNames="{style.lightgray}">
+							Find residents and local businesses in your
+							neighborhood.
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="exploreBtn"
+							addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
+					</b:Hero>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="4">
+				<g:HTMLPanel>
+					<b:Hero addStyleNames="{style.signup-hero-unit}">
+						<b:Heading size="4">Broadcast to your neighbors</b:Heading>
+						<b:Paragraph addStyleNames="{style.lightgray}">
+							Share with your neighbors and local businesses.
+						</b:Paragraph>
+						<b:Button type="INFO" ui:field="postMessageBtn"
+							addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
+					</b:Hero>
+					<a id="howItWorksLink" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow addStyleNames="{style.fluid-row}">
+			<b:Column offset="2" size="8">
+				<g:HTMLPanel>
+					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
+						<b:Heading size="3">One stop shop for your community</b:Heading>
+						<b:Heading size="4">Signup</b:Heading>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
+							<ol>
+								<li>Pick your neighborhood based on your zip code</li>
+								<li>Complete your profile</li>
+								<li>
+									Instantly broadcast to your neighborhood or the larger
+									community
+									<g:HTMLPanel addStyleNames="{style.popoverHover}">
+										<b:Popover
+											text="For example, lets say Lower Queen Ann is your neighborhood based on your zip 98109, then
+								    you would be able to broadcast to either Lower Queen Ann(neighborhood) or to your larger community Queen Ann(community)"
+											heading="learn more">
+											<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+										</b:Popover>
+									</g:HTMLPanel>
+								</li>
+								<li>Community wall visible only to the residents of that
+									neighborhood</li>
+							</ol>
+						</g:HTMLPanel>
+						<b:Heading size="4">Know your neighbors</b:Heading>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
+							<ol>
+								<li>Find events in your community.</li>
+								<li>Learn about your neighbors, their interest, their
+									occupation.</li>
+								<li>Broadcast within your community.</li>
+								<li>Send personal messages to your neighbors</li>
+							</ol>
+						</g:HTMLPanel>
+						<b:Heading size="4">Get local businesses deals</b:Heading>
+						<g:HTMLPanel addStyleNames="{style.lightgray}">
+							<ol addStyleNames="{style.lightgray}">
+								<li>Learn about the specials from local businesses.</li>
+								<li>Provide feedback to the business</li>
+								<li>Share your experience</li>
+							</ol>
+						</g:HTMLPanel>
+					</b:Hero>
+					<a id="howItWorksLink" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

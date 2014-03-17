@@ -1,18 +1,71 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style>
-		#residentListId {
-			width: 700px;
-			border: 1px solid #ddd;
-			margin: 10px;
+		.heading {
+		color: #555;
+		}
+		.listBox {
+		display: block;
+		width: 170px;
+		}
+		.filterLabel {
+		display: block;
+		font-size: 1em;
+		padding: 4px;
+		}
+		.filterPanel {
+		background: #f1f1f1;
+		padding: 20px;
+		width: 75%;
+		opacity: .95;
+		margin-top: 30px;
+		}
+		.residentListPanel {
+		background: #f1f1f1;
+		opacity: .85;
 		}
 	</ui:style>
-	<g:HTMLPanel>
-	    <div>
-		    <cell:SimplePager ui:field="pager"/>
-			<cell:CellList ui:field="residentsList" />
-		</div>
-	</g:HTMLPanel>
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column offset="3" size="7">
+				<b:Alert ui:field="status" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="3">
+				<g:HTMLPanel addStyleNames="{style.filterPanel}">
+					<b:Heading size="4" addStyleNames="{style.heading}">Search Residents</b:Heading>
+					<div>
+						<span class="{style.filterLabel}">Select neighborhood</span>
+						<b:ListBox ui:field="neighborhoodListBox" addStyleNames="{style.listBox}" />
+					</div>
+					<div>
+						<span class="{style.filterLabel}">Select gender	</span>
+						<b:ListBox ui:field="genderListBox" addStyleNames="{style.listBox}" />
+					</div>
+					<b:Button size="SMALL" ui:field="searchBtn">Search</b:Button>
+					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="8">
+				<b:FluidRow>
+					<b:Column offset="1" size="10">
+						<cell:SimplePager ui:field="pager" />
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column size="10" addStyleNames="{style.residentListPanel}">
+						<cell:CellList ui:field="residentList" />
+					</b:Column>
+				</b:FluidRow>
+				<b:FluidRow>
+					<b:Column size="10">
+						<b:Alert ui:field="message" close="false" />
+					</b:Column>
+				</b:FluidRow>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

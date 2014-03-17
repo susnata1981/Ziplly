@@ -13,6 +13,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -38,6 +39,8 @@ import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.LocationDTO;
 
 public class NavView extends Composite implements INavView {
+	private static final String BLOG_LINK = "http://ziplly.blogspot.com";
+
 	private static NavigationUiBinder uiBinder = GWT.create(NavigationUiBinder.class);
 
 	public static interface NavPresenter extends Presenter {
@@ -274,6 +277,11 @@ public class NavView extends Composite implements INavView {
 		notifications.add(panel);
 	}
 
+//	@UiHandler("blogLink")
+//	public void blog(ClickEvent event) {
+//		Window.Location.replace(BLOG_LINK);
+//	}
+	
 	@UiHandler("aboutLink")
 	public void displayAboutView(ClickEvent event) {
 		presenter.goTo(new AboutPlace());

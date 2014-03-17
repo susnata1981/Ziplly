@@ -164,7 +164,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		}
 
 		String emailInput = FieldVerifier.getEscapedText(email.getText());
-		String passwordInput = FieldVerifier.getEscapedText(password.getText());
+		String passwordInput = password.getText().trim();
 		presenter.onLogin(emailInput, passwordInput);
 		loginBtn.setEnabled(false);
 	}

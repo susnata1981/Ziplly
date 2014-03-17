@@ -1,11 +1,24 @@
 <html>
-<head>Welcome to Ziplly.com</head>
 <body>
-Hi,
+Hi,<br/>
+<p>
+Your friend ${senderName} has invited you to join <a href="http://www.ziplly.com">Ziplly.com</a>, connecting residents 
+and businesses. At <a href="http://www.ziplly.com">Ziplly</a> you can
 
-Your friend ${senderName} has invited you to join Ziplly, connecting the residents and businesses. Come on-board and explore
-the people who live around you and checkout the offerings by local businesses.
+<ul>
+	<li>Find out about ongoing events within your community</li>
+	<li>Learn about your neighbors, their interest, their occupation</li>
+	<li>Broadcast messages just within your community</li>
+	<li>Send personal messages to your neighbors</li>
+	<li>Get deals from local businesses</li>
+</ul>
+<p>
+Login <a href="http://www.ziplly.com#login:">here</a> and start exploring your neighborhood.
+</p>
 
-Ziplly team.
+Sincerely, <br/>
+Ziplly team <br/>
+<a href="http://www.ziplly.com"><img src="http://www.ziplly.com/images/ziplly-logo.png"/></a>
+
 </body>
 </html> 

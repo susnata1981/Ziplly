@@ -1,18 +1,28 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="zresources" />
 	<ui:style>
 		.loginSection {
-		width: 29%;
 		margin: auto;
 		padding: 5px;
 		}
-		.button {
-		margin-left: 10px;
+		.inputTextBox {
+			width: 96%;
+			height: 40px !important;
+			font-size: 18px !important;
+		}
+		.button
+		{
+		display: block;
+		height: 30px;
+		line-height: 30px;
+		font-size: 1.12em;
 		}
 		.residentSignupDiv {
 		margin-top:8px;
-		height: 20px;
+		height: 55px;
 		padding: 2px;
 		font-size: 12px;
 		font-style: helvetica;
@@ -21,47 +31,45 @@
 		font-size: 12px;
 		font-style:
 		helvetica;
-		height: 20px !important;
+		height: 20px
+		!important;
 		background: none !important;
 		}
 		.passwordRecoveryLink {
-			margin-top: 10px;
+		margin-top: 10px;
 		font-size: 12px;
 		font-style:
 		helvetica;
-		height: 20px !important;
+		height: 20px
+		!important;
 		background: none !important;
 		}
+		.hr {
+			margin: 10px 0;
+		}
 	</ui:style>
-	<!-- <b:Alert ui:field="message"/> <div class="loginSection"> <b:Form> <b:ControlGroup 
-		ui:field="emailCg"> <b:Controls> <b:TextBox ui:field="email" placeholder="email..." 
-		/> <b:HelpInline ui:field="emailError"></b:HelpInline> </b:Controls> </b:ControlGroup> 
-		<b:ControlGroup ui:field="passwordCg"> <b:Controls> <b:PasswordTextBox ui:field="password" 
-		placeholder="password..." /> <b:HelpInline ui:field="passwordError"></b:HelpInline> 
-		</b:Controls> </b:ControlGroup> <b:Button type="SUCCESS" addStyleNames="{style.loginBtn}" 
-		ui:field="loginBtn">SignIn</b:Button> <b:Button type="INFO" addStyleNames="{style.loginBtn}" 
-		ui:field="fbLoginBtn">Facebook Login</b:Button> </b:Form> </div> -->
 
 	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
-		<b:Alert ui:field="message" />
+		<b:Alert ui:field="message"  close="false"/>
 		<b:WellForm>
 			<b:ControlGroup ui:field="emailCg">
 				<b:Controls>
-					<b:TextBox ui:field="email" placeholder="email..." />
+					<b:TextBox ui:field="email" placeholder="email..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="emailError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
 			<b:ControlGroup ui:field="passwordCg">
 				<b:Controls>
-					<b:PasswordTextBox ui:field="password"
-						placeholder="password..." />
+					<b:PasswordTextBox ui:field="password" placeholder="password..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="passwordError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
-			<b:Button type="SUCCESS" addStyleNames="{style.button}"
-				ui:field="loginBtn">SignIn</b:Button>
-			<b:Button type="WARNING" addStyleNames="{style.button}"
-				ui:field="fbLoginBtn">Facebook Login</b:Button>
+			<b:Button type="SUCCESS" ui:field="loginBtn" addStyleNames="{style.button}">Sign in</b:Button>
+			<g:HTMLPanel>
+			    <hr class="{style.hr}"/>
+				<g:Button addStyleNames="{style.button} {zresources.style.fbBtnImage}"
+					ui:field="fbLoginBtn" />
+			</g:HTMLPanel>
 			<g:HTMLPanel addStyleNames="{style.residentSignupDiv}">
 				<g:HTMLPanel ui:field="residentSignupPanel">
 					<span>Not
@@ -80,12 +88,14 @@
 					</span>
 				</g:HTMLPanel>
 				<g:HTMLPanel>
-					<span>Forgot your password
-						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click here</g:Anchor>
-						here
+					<span>
+						Forgot your password
+						<g:Anchor ui:field="passwordRecoveryLink" styleName="{style.passwordRecoveryLink}">click
+							here</g:Anchor>
 					</span>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</b:WellForm>
 	</g:HTMLPanel>
+
 </ui:UiBinder> 

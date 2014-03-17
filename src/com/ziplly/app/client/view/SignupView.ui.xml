@@ -26,6 +26,7 @@
 		font-family:
 		fantasy,cursive, sans;
 		color: #fff;
+		text-align: center;
 		}
 		.heading3 {
 		display: block;
@@ -163,6 +164,7 @@
 		.inlineAnchor {
 		display: inline;
 		font-size: 12px;
+		color: blue;
 		}
 		.popoverHover {
 		display: inline;
@@ -204,7 +206,7 @@
 							<span class="{style.heading2}">&amp;</span>
 							<br />
 							<div class="{style.heading2}">
-								businesses
+								&nbsp;&nbsp;&nbsp;&nbsp;businesses
 								<g:Anchor ui:field="howItWorksAnchor" addStyleNames="{style.inlineAnchor}">learn
 									more</g:Anchor>
 								<br />
@@ -216,12 +218,11 @@
 					<b:Column offset="1" size="9">
 						<g:HTMLPanel addStyleNames="{style.demoDiv}">
 							<span class="{style.heading4}">
-								Checkout our demo
-								<g:Anchor ui:field="loginAnchor">Login Here</g:Anchor>
+								<g:Anchor ui:field="loginAnchor">Try out our demo with the following account</g:Anchor>
 								<br />
-								username: terry@yahoo.com
+								<i>username: <b>terry@yahoo.com</b></i>
 								<br />
-								password: 11111111
+								<i>password: <b>11111111</b></i>
 							</span>
 						</g:HTMLPanel>
 					</b:Column>

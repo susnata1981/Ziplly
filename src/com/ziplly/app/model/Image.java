@@ -29,6 +29,7 @@ public class Image extends AbstractTimestampAwareEntity {
 		this.id = image.getId();
 		this.blobKey = image.getBlobKey();
 		this.url = image.getUrl();
+		this.status = image.getStatus().name();
 		this.setTimeCreated(image.getTimeCreated());
 	}
 

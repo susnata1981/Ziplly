@@ -3,15 +3,17 @@
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-	.loginWidgetSection {
-			width: 80%;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 8%;
+		.loginWidgetSection {
+			margin: 13% auto;
+			border: none;
 		}
 	</ui:style>
 
-	<g:HTMLPanel ui:field="loginMessagePanel" addStyleNames="{style.loginWidgetSection}">
-		<dt:LoginWidget ui:field="loginWidget" width="29%" residentAccountSignupLink="false"/>
-	</g:HTMLPanel>
+	<b:FluidContainer ui:field="loginMessagePanel" addStyleNames="{style.loginWidgetSection}">
+		<b:FluidRow>
+			<b:Column offset="4" size="4">
+				<dt:LoginWidget ui:field="loginWidget" width="340px" />
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

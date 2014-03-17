@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.PersonalAccountDTO;
 
@@ -67,7 +68,7 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 			return;
 		}
 
-		String imgUrl = value.getImages().size() > 0 ? value.getImages().get(0).getUrl() : "images/no-photo.jpg";
+		String imgUrl = ImageUtil.getImageUtil(value);
 
 		String introduction =
 		    value.getIntroduction() != null ? value.getIntroduction() : "Not Available";

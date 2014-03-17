@@ -2,77 +2,173 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="accountview.css" />
-	<g:HTMLPanel addStyleNames="{style.rootPanel}">
-		<b:Alert ui:field="message" />
-		<g:HTMLPanel ui:field="asidePanel" addStyleNames="{style.asidePanel}">
-			<dl>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="messagesLink">
-						Inbox
-						<span ui:field="unreadMessageCountField" />
-					</g:Anchor>
-				</dt>
-				<dt>
-					<g:Anchor addStyleNames="{style.link}" ui:field="settingsLink">Settings</g:Anchor>
-				</dt>
-			</dl>
-		</g:HTMLPanel>
-		<g:HTMLPanel ui:field="mainSection" addStyleNames="{style.mainSection}">
-			<div class="{style.profileSection}">
-				<div class="{style.profileImageSection}">
-				    <div class="{style.profileImageDiv}">
-						<b:Image ui:field="profileImage" />
-					</div>
-					<h2 addStyleNames="{style.profileCaption}" ui:field="name" />
+	<ui:style src="accountview.css"
+		type="com.ziplly.app.client.view.BusinessAccountView.Style" />
+	<ui:style field="bstyle">
+	    .locationDiv {
+			width:300px; 
+			height:270px; 
+			padding: 4px;
+		}
+		.profileInfoBoxHeading {
+			font-size: 24px;
+			border-bottom: 2px solid #ddd;
+			text-align: center;
+		}
+		.transparentColumn {
+			opacity: .95;	
+		}	
+		.center {
+			text-align: center;
+		}
+		.businessAttribtue {
+			color: #555;
+			font-weight: 600;
+		}
+	</ui:style>
+	<b:FluidContainer addStyleNames="{style.rootPanel}" ui:field="container">
+		<b:FluidRow>
+			<b:Column size="10" ui:field="messageSection">
+				<b:Alert ui:field="message" close="false"/>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow ui:field="profileSectionRow">
+			<b:Column size="3" addStyleNames="{bstyle.transparentColumn}">
+				<g:HTMLPanel>
 					<div>
-						<b:Button type="PRIMARY" size="MINI" ui:field="sendMsgBtn">Send
-							Message</b:Button>
+						<div>
+							<g:HTMLPanel ui:field="profileImagePanel" addStyleNames="{style.profileImageSection}">
+								<div class="{style.profileImageDiv}">
+									<b:Image ui:field="profileImage" />
+								</div>
+								<h3 class="{style.profileCaption}" ui:field="name" />
+							</g:HTMLPanel>
+							<div class="{style.profileInfoBox}">
+								<h3 ui:field="businessName" class="{bstyle.profileInfoBoxHeading}"/>
+								<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
+								<div class="{style.businessInfoItem}">
+								    <b:Label>Neigborhood</b:Label>
+								    <span class="{bstyle.businessAttribtue}" ui:field="neighborhoodName" />
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label>Business Type</b:Label>
+									<span ui:field="businessCategory" class="{style.description} {bstyle.businessAttribtue}" />
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label>Email</b:Label>
+									<g:Anchor ui:field="emailLink">
+										<span ui:field="email" addStyleNames="{style.description}" />
+									</g:Anchor>
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label>Phone</b:Label>
+									<span ui:field="phoneSpan" class="{style.description} {bstyle.businessAttribtue}" />
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label>Website</b:Label>
+									<g:Anchor ui:field="websiteLink">
+										<span ui:field="websiteSpan" class="{style.description} {bstyle.businessAttribtue}" />
+									</g:Anchor>
+								</div>
+								<div class="{style.businessInfoItem}">
+									<span>
+										<b:Label>Price range</b:Label>
+										<dt:PriceRangeWidget ui:field="priceRangeWidget" />
+									</span>
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label addStyleNames="{style.leftAlignedLabel}">Parking</b:Label>
+									<g:HTMLPanel ui:field="parkingAvailableSpan"
+										addStyleNames="{style.leftAlignedPanel}" />
+								</div>
+								<div class="{style.businessInfoItem}">
+									<b:Label addStyleNames="{style.leftAlignedLabel}">Wifi</b:Label>
+									<g:HTMLPanel ui:field="wifiAvailableSpan"
+										addStyleNames="{style.leftAlignedPanel}" />
+								</div>
+								<div class="{style.businessInfoItem}">
+									<span>
+										<b:Label>Last login</b:Label>
+										<span ui:field="lastLoginTime" />
+									</span>
+								</div>
+								<div>
+									<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
+								</div>
+							</div>
+							<div class="{style.profileInfoBox}">
+								<h2 class="heading">Address</h2>
+								<g:HTMLPanel ui:field="addressPanel" addStyleNames="{style.addressPanel}">
+									<span ui:field="formattedAddress" />
+								</g:HTMLPanel>
+							</div>
+							<div class="{style.profileInfoBox}">
+								<div ui:field="locationDiv" class="{bstyle.locationDiv}"></div>
+							</div>
+							<g:HTMLPanel addStyleNames="{style.profileInfoBox} {style.smallfont}">
+								<h2 class="heading">Hours of operation</h2>
+								<span>
+									Monday&nbsp;
+									<span ui:field="mondayStart" />
+									-
+									<span ui:field="mondayEnd" />
+									<br />
+									Tuesday&nbsp;
+									<span ui:field="tuesdayStart" />
+									-
+									<span ui:field="tuesdayEnd" />
+									<br />
+									Wednesday&nbsp;
+									<span ui:field="wednesdayStart" />
+									-
+									<span ui:field="wednesdayEnd" />
+									<br />
+									Thursday&nbsp;
+									<span ui:field="thursdayStart" />
+									-
+									<span ui:field="thursdayEnd" />
+									<br />
+									Friday&nbsp;
+									<span ui:field="fridayStart" />
+									-
+									<span ui:field="fridayEnd" />
+									<br />
+									Saturday&nbsp;
+									<span ui:field="saturdayStart" />
+									-
+									<span ui:field="saturdayEnd" />
+									<br />
+									Sunday&nbsp;
+									<span ui:field="sundayStart" />
+									-
+									<span ui:field="sundayEnd" />
+									<br />
+								</span>
+							</g:HTMLPanel>
+							<div class="{style.profileInfoBox}">
+								<h2 class="heading">Activity</h2>
+								<dt:ProfileStatWidget title="Messages"
+									ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
+								<dt:ProfileStatWidget title="Comments"
+									ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}" />
+								<dt:ProfileStatWidget title="Likes"
+									ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}" />
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Business details</h2>
-					<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
-					<div class="{style.businessInfoItem}">
-					    <b:Label>Email</b:Label>
-						<g:Anchor ui:field="emailLink">
-							<span ui:field="email" addStyleNames="{style.description}" />
-						</g:Anchor>
-					</div>
-					<div class="{style.businessInfoItem}">
-					    <b:Label>Website</b:Label>
-						<g:Anchor ui:field="websiteLink">
-							<span ui:field="websiteSpan" addStyleNames="{style.description}" />
-						</g:Anchor>
-					</div>
-					<div class="{style.businessInfoItem}">
-						<span>
-							<b:Label>Last login</b:Label>
-							<span ui:field="lastLoginTime" />
-						</span>
-					</div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Address</h2>
-					<g:HTMLPanel ui:field="addressPanel">
-					    <span ui:field="formattedAddress"/>
-					</g:HTMLPanel>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<div style="width:320px; height:270px" ui:field="locationDiv"></div>
-				</div>
-				<div class="{style.profileInfoBox}">
-					<h2 class="heading">Activity</h2>
-					<dt:ProfileStatWidget title="Tweets" ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Comments" ui:field="commentCountWidget" addStyleNames="{style.accountStatDiv}"/>
-					<dt:ProfileStatWidget title="Likes" ui:field="likeCountWidget" addStyleNames="{style.accountStatDiv}"/>
-				</div>
-			</div>
-			<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
-				<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
-					<dt:TweetBox ui:field="tweetBox" width="60%" />
 				</g:HTMLPanel>
-			</g:HTMLPanel>
-		</g:HTMLPanel>
-	</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="6" addStyleNames="{bstyle.transparentColumn}">
+				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
+					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
+						<dt:TweetBox ui:field="tweetBox" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</b:Column>
+			<b:Column size="2">
+			    <b:AlertBlock type="INFO" heading="Updates" close="false" ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
+			    </b:AlertBlock>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
 </ui:UiBinder> 

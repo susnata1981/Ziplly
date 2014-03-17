@@ -2,6 +2,7 @@ package com.ziplly.app.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -214,6 +215,15 @@ public class AccountDTO implements Serializable {
 		return images;
 	}
 
+	public ImageDTO getProfileImage() {
+		for(ImageDTO imageDto : images) {
+			if (imageDto.getStatus() == RecordStatus.ACTIVE) {
+				return imageDto;
+			}
+		}
+		return null;
+	}
+	
 	public void setImages(List<ImageDTO> images) {
 		this.images = images;
 	}
