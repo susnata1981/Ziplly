@@ -11,3 +11,9 @@ gwt-unitCache/*
 *.war
 *.ear
 *generated*
+
+addressbook.db
+war/.DS_Store
+war/ziplly
+*/WEB-INF/deploy/*
+*/WEB-INF/classes/*
