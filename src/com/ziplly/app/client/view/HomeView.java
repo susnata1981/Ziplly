@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.maps.gwt.client.LatLng;
 import com.ziplly.app.client.activities.HomeActivity.IHomeView;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
@@ -40,8 +39,10 @@ import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.CommunitySummaryWidget;
 import com.ziplly.app.client.widget.FeedbackWidget;
+import com.ziplly.app.client.widget.ProfileListWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -119,18 +120,24 @@ public class HomeView extends AbstractView implements IHomeView {
 	@UiField
 	HTMLPanel neighborhoodsPanel;
 
+	@UiField
+	HTMLPanel newMembersListPanel;
+	
+	@UiField(provided = true)
+	ProfileListWidget profileListWidget;
+	
 	HomePresenter presenter;
 	Map<TweetType, Anchor> filters = new HashMap<TweetType, Anchor>();
 	ArrayList<Anchor> hashtagAnchors = new ArrayList<Anchor>();
 	ITweetView<TweetPresenter> tview = new TweetView();
-
+	
 	interface HomeViewUiBinder extends UiBinder<Widget, HomeView> {
 	}
 
 	@Inject
 	public HomeView(EventBus eventBus) {
 		super(eventBus);
-
+		profileListWidget = new ProfileListWidget(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		buildTweetFilters();
 		message.setAnimation(true);
@@ -253,6 +260,7 @@ public class HomeView extends AbstractView implements IHomeView {
 	public void setPresenter(HomePresenter presenter) {
 		this.presenter = presenter;
 		tweetBox.setPresenter(presenter);
+		profileListWidget.setPresenter(presenter);
 		tview.setPresenter(presenter);
 	}
 
@@ -366,10 +374,6 @@ public class HomeView extends AbstractView implements IHomeView {
 	@Deprecated
 	@Override
 	public void displayMap(GetLatLngResult result) {
-		if (result != null) {
-			LatLng ll = LatLng.create(result.getLat(), result.getLng());
-//			communitySummaryWidget.displayMap(
-		}
 	}
 
 	@Override
@@ -377,6 +381,11 @@ public class HomeView extends AbstractView implements IHomeView {
 			communitySummaryWidget.displayMap(address);
 	}
 
+	@Override
+	public void resizeMap() {
+		communitySummaryWidget.resize();
+	}
+	
 	@Override
 	public void updateTweetCategoryCount(Map<TweetType, Integer> data) {
 		int totalTweetCount = 0;
@@ -475,5 +484,16 @@ public class HomeView extends AbstractView implements IHomeView {
 		StyleHelper.setBackgroundImage(basicDataFormatter.format(
 		    neighborhood,
 		    ValueType.NEIGHBORHOOD_IMAGE));
+	}
+
+	@Override
+	public void displayNewMembers(List<AccountDTO> accounts) {
+		if (accounts.size() == 0) {
+			StyleHelper.show(newMembersListPanel.getElement(), false);
+			return;
+		}
+		
+		StyleHelper.show(newMembersListPanel.getElement(), true);
+		profileListWidget.displayProfiles(accounts);
 	}
 }

@@ -30,7 +30,8 @@
 		}
 		
 		.mapPanel {
-			height: 85%;
+			width:320px; 
+			height:270px;
 		}
 	</ui:style>
 	<g:HTMLPanel ui:field="communitySummaryPanel" addStyleNames="{style.commnunitySummaryPanel}">
@@ -45,7 +46,8 @@
 				<g:Anchor ui:field="businessCountSpan" addStyleNames="{style.text}"></g:Anchor>
 			</p>
 		</div>
-		<g:HTMLPanel ui:field="mapPanel" addStyleNames="{style.mapPanel}">
-		</g:HTMLPanel>
+		<div style="width:320px; height:270px" ui:field="mapPanel">
+		<!-- <div ui:field="mapPanel" addStyleNames="{style.mapPanel}"> -->
+		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

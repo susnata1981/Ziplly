@@ -1,14 +1,16 @@
 package com.ziplly.app.shared;
 
+import com.ziplly.app.model.NeighborhoodDTO;
+
 import net.customware.gwt.dispatch.shared.Action;
 
 public class GetNeighborhoodAction implements Action<GetNeighborhoodResult> {
-
 	private NeighborhoodSearchActionType searchType;
 	private String postalCode;
 	private int start;
 	private int maxResults;
-
+	private NeighborhoodDTO neighborhood;
+	
 	public GetNeighborhoodAction() {
 	}
 
@@ -47,4 +49,12 @@ public class GetNeighborhoodAction implements Action<GetNeighborhoodResult> {
 	public void setStart(int start) {
 		this.start = start;
 	}
+
+	public NeighborhoodDTO getNeighborhood() {
+	  return neighborhood;
+  }
+
+	public void setNeighborhood(NeighborhoodDTO neighborhood) {
+	  this.neighborhood = neighborhood;
+  }
 }

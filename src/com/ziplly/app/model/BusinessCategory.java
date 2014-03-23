@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 public enum BusinessCategory {
+	COMMUNITY_CENTER("Community Center"),
+	Library("Library"),
 	RESTAURANT("Restaurant"),
 	SPECIALTY_FOOD("Specialty food"),
 	FASTFOOD("Fastfood"),

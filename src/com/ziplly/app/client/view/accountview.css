@@ -125,6 +125,7 @@ h2.heading {
 }
 
 .description {
+	font-size: 13px;
 	margin: 15px 0;
 	color: #555;
 }

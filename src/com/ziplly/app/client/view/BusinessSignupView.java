@@ -7,6 +7,7 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
+import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -40,6 +41,8 @@ import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.GooglePlacesWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -157,16 +160,27 @@ public class BusinessSignupView extends AbstractView implements
 	@UiField
 	Anchor termsOfUseAnchor;
 
+	@UiField
+	Anchor clearAddressAnchor;
+	
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
 	private boolean imageUploaded;
-
+	private GooglePlacesWidget placesWidget;
+	
 	@Inject
 	public BusinessSignupView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		neighborhoodControl.setVisible(false);
+		placesWidget = new GooglePlacesWidget(street1, street1Cg, street1Error, clearAddressAnchor, new GooglePlacesWidget.Listener() {
 
+			@Override
+      public void onChange(NeighborhoodDTO n) {
+				presenter.getNeighborhoodData(n);
+      }
+		});
+		
 		populateBusinessCategory();
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
@@ -200,18 +214,18 @@ public class BusinessSignupView extends AbstractView implements
 			}
 		});
 
-		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if (!doValidation) {
-					return;
-				}
-
-				streetNumber = streetName = neighborhood = city = state = zipCode = null;
-				clearNeighborhoodSection();
-				validateAddressField();
-			}
-		});
+//		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
+//			@Override
+//			public void onValueChange(ValueChangeEvent<String> event) {
+//				if (!doValidation) {
+//					return;
+//				}
+//
+//				streetNumber = streetName = neighborhood = city = state = zipCode = null;
+//				clearNeighborhoodSection();
+//				validateAddressField();
+//			}
+//		});
 
 		email.addBlurHandler(new BlurHandler() {
 			@Override
@@ -266,7 +280,7 @@ public class BusinessSignupView extends AbstractView implements
 	@Override
 	public void onAttach() {
 		super.onAttach();
-		initializePlacesApi(street1.getElement());
+//		initializePlacesApi(street1.getElement());
 	}
 
 	public void reset() {
@@ -313,14 +327,15 @@ public class BusinessSignupView extends AbstractView implements
 		valid &= validateName(businessNameInput, businessNameCg, businessNameError);
 
 		String street = street1.getText().trim();
-		valid &= validateAddress(street, street1Cg, street1Error);
+//		valid &= validateAddress(street, street1Cg, street1Error);
+		
+		valid &= placesWidget.validateAddress();
 
-		valid &= validateNeighborhood();
+//		valid &= validateNeighborhood();
 
 		valid &= validateEmail();
 
 		valid &= validatePhone();
-		// valid &= validateZip();
 
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
@@ -495,6 +510,7 @@ public class BusinessSignupView extends AbstractView implements
 	@Override
 	public void clear() {
 		resetForm();
+		placesWidget.clear();
 	}
 
 	public void clearMessage() {
@@ -511,6 +527,7 @@ public class BusinessSignupView extends AbstractView implements
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
 		this.presenter = presenter;
+		placesWidget.setPresenter(presenter);
 	}
 
 	@Override
@@ -527,7 +544,7 @@ public class BusinessSignupView extends AbstractView implements
 
 	/**
 	 * GOOGLE PLACES API INITIALIZATION
-	 */
+	 *
 	public native void initializePlacesApi(Element elem) /*-{
 	                                                     var options = {
 	                                                     types : [ 'geocode' ]
@@ -559,7 +576,7 @@ public class BusinessSignupView extends AbstractView implements
 
 	/**
 	 * Callback handler to populate Address fields
-	 */
+	 *
 	public void populateAddressFields() {
 		// streetNumber = streetName = neighborhood = city = state = zipCode = "";
 		JsArray<AddressComponent> components = getAddressComponents();
@@ -587,14 +604,14 @@ public class BusinessSignupView extends AbstractView implements
 
 	/**
 	 * @return Array of address components in JSON format
-	 */
+	 *
 	public native JsArray<AddressComponent> getAddressComponents() /*-{
 	                                                               return $wnd.places.address_components;
 	                                                               }-*/;
 
 	/**
 	 * Displays neighborhood data
-	 */
+	 *
 	@Override
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
 		clearMessage();
@@ -607,6 +624,7 @@ public class BusinessSignupView extends AbstractView implements
 		}
 		neighborhoodControl.setVisible(true);
 	}
+	*/
 
 	/**
 	 * Displays a modal window to get user information
@@ -684,4 +702,30 @@ public class BusinessSignupView extends AbstractView implements
 	public void tosLinkClicked(ClickEvent event) {
 		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
+
+	@Deprecated
+	@Override
+  public void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods) {
+  }
+
+	@Override
+	public void displayNeighborhood(NeighborhoodDTO n) {
+		selectedNeighborhood = n;
+		String foundNeighborhoodMessage = basicDataFormatter.format(n, ValueType.FOUND_NEIGHBORHOOD_MESSAGE);
+		placesWidget.setStatus(foundNeighborhoodMessage, ControlGroupType.SUCCESS);
+		placesWidget.addedNewNeighborhood(n);
+  }
+
+	@Override
+  public void displayNewNeighborhood(NeighborhoodDTO n) {
+		selectedNeighborhood = n;
+		String foundNeighborhoodMessage = basicDataFormatter.format(n, ValueType.FOUND_NEIGHBORHOOD_MESSAGE);
+		placesWidget.setStatus(foundNeighborhoodMessage, ControlGroupType.SUCCESS);
+		placesWidget.addedNewNeighborhood(n);
+  }
+
+	@Override
+  public void displayNeighborhoodList(List<NeighborhoodDTO> foundNeighborhoods) {
+		placesWidget.displayNeighborhoodList(foundNeighborhoods);
+  }
 }

@@ -135,6 +135,21 @@
 		margin-bottom: 20px;
 		float:left;
 		}
+		.extendedrow {
+		display: block;
+		margin-bottom: 20px;
+		float:left;
+		width: 100%;
+		}
+		.addressTextBox {
+			width: 96% !important;
+		}
+		.addressHelp {
+			font-size: 13px;
+			font-weight: 600;
+			margin: 0;
+			padding: 1px;
+		}
 		.herounit {
 		margin-top: 20px;
 		padding: 40px;
@@ -185,10 +200,18 @@
 		.lightgray {
 			color: #666;
 		}
+		.popoverText {
+			display: inline;
+			font-size: 11px !important;
+		}
+		.signInAnchor {
+			display: inline-block;
+			margin: 4px;
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="6" size="5">
+			<b:Column offset="1" size="10">
 				<b:Alert ui:field="infoField" animation="true" close="false" />
 			</b:Column>
 		</b:FluidRow>
@@ -273,7 +296,7 @@
 							<b:ListBox ui:field="genderListBox">
 							</b:ListBox>
 						</g:HTMLPanel>
-						<b:ControlGroup ui:field="zipCg" addStyleNames="{style.row}">
+						<!-- <b:ControlGroup ui:field="zipCg" addStyleNames="{style.row}">
 							<b:Controls>
 								<b:Label>Zip</b:Label>
 								<br />
@@ -281,8 +304,24 @@
 								<b:HelpInline ui:field="zipError"></b:HelpInline>
 								<b:Image ui:field="neighborhoodLoadingImage" />
 							</b:Controls>
+						</b:ControlGroup> -->
+						<b:ControlGroup ui:field="addressCg" addStyleNames="{style.extendedrow}">
+							<b:Controls>
+								<b:Label>Address</b:Label>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover text="We don't save your address, it's only used for locating your neighborhood"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+								<br/>
+								<b:TextBox ui:field="address" placeholder="address..." addStyleNames="{style.addressTextBox}"/>
+								<b:HelpInline ui:field="addressError" addStyleNames="{style.addressHelp}"></b:HelpInline>
+								<b:Image ui:field="neighborhoodLoadingImage" />
+								<g:Anchor ui:field="clearAddressAnchor" addStyleNames="{style.popoverText}">No that's not right, enter a different address</g:Anchor>
+							</b:Controls>
 						</b:ControlGroup>
-						<b:ControlGroup ui:field="neighborhoodCg"
+						<!-- <b:ControlGroup ui:field="neighborhoodCg"
 							addStyleNames="{style.row}">
 							<b:Controls ui:field="neighborhoodControl">
 								<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
@@ -293,7 +332,7 @@
 									going on
 									in there</b:HelpBlock>
 							</b:Controls>
-						</b:ControlGroup>
+						</b:ControlGroup> -->
 						<b:ControlGroup ui:field="passwordCg"
 							addStyleNames="{style.row}">
 							<b:Controls>
@@ -317,7 +356,7 @@
 						<g:HTMLPanel addStyleNames="{style.row}">
 							<span class="tiny_text">
 								Already a member
-								<g:Anchor ui:field="signInAnchor">Sign in</g:Anchor>
+								<g:Anchor ui:field="signInAnchor" addStyleNames="{style.signInAnchor}">Sign in</g:Anchor>
 								here
 							</span>
 						</g:HTMLPanel>

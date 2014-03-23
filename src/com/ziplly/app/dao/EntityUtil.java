@@ -466,12 +466,16 @@ public class EntityUtil {
 
 	public static NeighborhoodDTO clone(Neighborhood neighborhood) {
 		NeighborhoodDTO dest = new NeighborhoodDTO();
-		dest.setCity(neighborhood.getCity());
+		
+		if (neighborhood.getCity() != null) {
+			dest.setCity(neighborhood.getCity());
+		}
 		dest.setState(neighborhood.getState());
 		dest.setName(neighborhood.getName());
 		dest.setType(neighborhood.getType());
 		dest.setImageUrl(neighborhood.getImageUrl());
 		dest.setNeighborhoodId(neighborhood.getNeighborhoodId());
+		dest.setTimeCreated(neighborhood.getTimeCreated());
 
 		// Add parent neighborhood.
 		if (neighborhood.getParentNeighborhood() != null) {

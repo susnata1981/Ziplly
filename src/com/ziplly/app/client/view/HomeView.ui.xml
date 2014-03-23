@@ -21,7 +21,7 @@
 		border-bottom: 2px solid #555;
 		}
 		.fontBold {
-			font-weight: 600;
+		font-weight: 600;
 		}
 		.tweetFilterLink {
 		clear: both;
@@ -49,11 +49,13 @@
 		position: absolute;
 		left: 0;
 		right:0;
-		margin-left: 20px;
+		margin-left:
+		20px;
 		background-color: #ddd;
 		padding-top: 10px;
 		min-height: 700px;
 		opacity: .9;
+		width: 92%;
 		}
 		.communityInfoPanel {
 		height:
@@ -72,36 +74,58 @@
 		left: 10px;
 		}
 		.communitySummaryDiv {
-		border: 1px solid #ddd;
+		border: 1px
+		solid #ddd;
 		padding: 4px;
-		width: 220px;
+		width: 96%;
 		height: 340px;
-		background: #f1f1f1;
+		background:
+		#f1f1f1;
 		opacity: .9;
 		overflow: hidden;
 		}
 		.feedbackPanel {
-			margin-top: 20px;
+		margin-top: 20px;
 		}
 		.link {
 		list-style: none;
 		}
 		.popoverLink {
-			display: inline;
-			font-size: 8px;
+		display: inline;
+		font-size: 8px;
 		}
 		.filterPanel {
-			background: #f1f1f1;
-			opacity: .8;
+		background: #f1f1f1;
+		opacity: .8;
 		}
 		.gwt-Anchor {
 			font-weight: 600;
+		}
+		.newMembersListPanel {
+			background: #f1f1f1;
+			maring-top: 4px;
+			color: #555;	
+			max-height: 330px;
+			overflow: auto;	
+		}
+		.row {
+			margin-top: 20px;
+		}
+		.header-bottom-border {
+			font-size: 17px;
+			color: #555;
+			background: #ddd;
+			padding: 2%;
+			display: inline-block;	
+			border-bottom: 1px solid #bbb;
+			width: 96%;
 		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="8">
-				<b:Alert ui:field="message" addStyleNames="{style.message}" close="false" />
+				<b:Alert ui:field="message" addStyleNames="{style.message}"
+					close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
@@ -109,22 +133,21 @@
 				<g:HTMLPanel addStyleNames="{style.filterPanel}">
 					<div class="{style.leftnavHeaderContainer}">
 						<g:HTMLPanel>
-						    <span class="{style.leftnavHeaderSpan}">
-							<i class="fa fa-tags">&nbsp;
-							    <span class="{style.fontBold}">Neighborhoods</span>
-							</i>
-						<!-- 	<b:Popover text="You can broadcast to your neighborhood or to the greater community for more visibility"
-								heading="Learn more">
-								<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-							</b:Popover> -->
-						</span>
+							<span class="{style.leftnavHeaderSpan}">
+								<i class="fa fa-tags">&nbsp;
+									<span class="{style.fontBold}">Neighborhoods</span>
+								</i>
+								<!-- <b:Popover text="You can broadcast to your neighborhood or to 
+									the greater community for more visibility" heading="Learn more"> <g:Anchor 
+									addStyleNames="{style.popoverLink}">learn more</g:Anchor> </b:Popover> -->
+							</span>
 							<g:HTMLPanel ui:field="neighborhoodsPanel"></g:HTMLPanel>
 						</g:HTMLPanel>
 					</div>
 					<div class="{style.leftnavHeaderContainer}">
 						<span class="{style.leftnavHeaderSpan}">
 							<i class="fa fa-list">&nbsp;
-							     <span class="{style.fontBold}">Category</span>
+								<span class="{style.fontBold}">Category</span>
 							</i>
 						</span>
 						<g:HTMLPanel ui:field="filterTweetsPanel"></g:HTMLPanel>
@@ -132,7 +155,7 @@
 					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
 						<span class="{style.leftnavHeaderSpan}">
 							<i class="fa fa-tags">&nbsp;
-							     <span class="{style.fontBold}">Hashtags</span>
+								<span class="{style.fontBold}">Hashtags</span>
 							</i>
 						</span>
 						<g:HTMLPanel ui:field="hashtagPanel"></g:HTMLPanel>
@@ -140,7 +163,7 @@
 					<div class="{style.leftnavHeaderContainer} {style.marginTop}">
 						<span class="{style.leftnavHeaderSpan}">
 							<i class='fa fa-inbox'>&nbsp;
-							     <span class="{style.fontBold}">Personal Messages</span>
+								<span class="{style.fontBold}">Personal Messages</span>
 							</i>
 						</span>
 						<g:HTMLPanel>
@@ -160,14 +183,26 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="3">
-				<b:Container ui:field="communitySummaryContainer"
-					addStyleNames="{style.communitySummaryDiv}">
-					<g:HTMLPanel addStyleNames="{style.feedbackPanel}">
-						<b:NavLink ui:field="feedbackLink" icon="COMMENT"
-							addStyleNames="{style.link}">Provide feedback</b:NavLink>
-					</g:HTMLPanel>
-					<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" />
-				</b:Container>
+				<b:Row>
+					<b:Column size="11">
+						<b:Container ui:field="communitySummaryContainer"
+							addStyleNames="{style.communitySummaryDiv}">
+							<g:HTMLPanel addStyleNames="{style.feedbackPanel}">
+								<b:NavLink ui:field="feedbackLink" icon="COMMENT"
+									addStyleNames="{style.link}">Provide feedback</b:NavLink>
+							</g:HTMLPanel>
+							<dt:CommunitySummaryWidget ui:field="communitySummaryWidget" />
+						</b:Container>
+					</b:Column>
+				</b:Row>
+				<b:Row addStyleNames="{style.row}">
+					<b:Column size="11">
+					    <g:HTMLPanel ui:field="newMembersListPanel" addStyleNames="{style.newMembersListPanel}">
+					        <span class="{style.header-bottom-border}">New members</span>
+					    	<dt:ProfileListWidget ui:field="profileListWidget"></dt:ProfileListWidget>
+					    </g:HTMLPanel>
+					</b:Column>
+				</b:Row>
 			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>

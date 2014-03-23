@@ -70,7 +70,6 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {
 
-	// private static final int PROFILE_COUNT_FOR_LIKE = 2;
 	private static final int DEFAULT_COMMENT_COUNT = 4;
 
 	private static TweetWidgetUiBinder uiBinder = GWT.create(TweetWidgetUiBinder.class);
@@ -683,7 +682,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private void displayTweetSection() {
 		StyleHelper.show(tweetContentSpan.getElement(), true);
-		tweetContentSpan.getElement().setInnerHTML(TweetUtils.getContent(tweet.getContent()));
+		tweetContentSpan.getElement().setInnerHTML(basicDataFormatter.format(tweet.getContent(), ValueType.TEXT_VALUE));
 
 		categoryLink.setHTML(basicDataFormatter.format(tweet.getType(), ValueType.TWEET_TYPE));
 		categoryLink.addClickHandler(new ClickHandler() {

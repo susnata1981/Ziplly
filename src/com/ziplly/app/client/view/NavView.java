@@ -277,10 +277,10 @@ public class NavView extends Composite implements INavView {
 		notifications.add(panel);
 	}
 
-//	@UiHandler("blogLink")
-//	public void blog(ClickEvent event) {
-//		Window.Location.replace(BLOG_LINK);
-//	}
+	@UiHandler("blogLink")
+	public void blog(ClickEvent event) {
+		Window.open(BLOG_LINK, "_blank", "");
+	}
 	
 	@UiHandler("aboutLink")
 	public void displayAboutView(ClickEvent event) {

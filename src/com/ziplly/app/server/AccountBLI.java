@@ -7,6 +7,7 @@ import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
+import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
@@ -25,7 +26,7 @@ public interface AccountBLI {
 	    NoSuchAlgorithmException;
 
 	AccountDTO validateLogin(String email, String password) throws InvalidCredentialsException,
-	    NotFoundException;
+	    NotFoundException, AccountNotActiveException;
 
 	AccountDTO updateAccount(Account account) throws NeedsLoginException, NotFoundException;
 

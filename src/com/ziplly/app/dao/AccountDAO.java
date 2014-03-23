@@ -83,4 +83,16 @@ public interface AccountDAO {
 
 
 	void updateLocation(AccountDTO accountDTO, LocationDTO location) throws NotFoundException;
+
+	/**
+	 * Gets the list of new accounts of the specified type based on the {@link EntityType}.
+	 * @param daysLookback
+	 * @param neighborhoodId
+	 * @param entityType
+	 * @return
+	 */
+	List<AccountDTO> getAccountCreatedWithin(
+			int daysLookback, 
+			long neighborhoodId, 
+			EntityType entityType);
 }

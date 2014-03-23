@@ -451,7 +451,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 			col2.setOffset(1);
 			col2.add(new HTMLPanel(basicDataFormatter.format(
 			    conversation.getSubject(),
-			    ValueType.STRING_VALUE)));
+			    ValueType.TEXT_VALUE)));
 			row.add(col2);
 			conversationPanel.add(row);
 			conversationPanel.add(new HTMLPanel("<hr/>"));
@@ -482,7 +482,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		com.github.gwtbootstrap.client.ui.Column messageCol =
 		    new com.github.gwtbootstrap.client.ui.Column(9);
 		HTMLPanel messagePanel =
-		    new HTMLPanel("<span class='medium_text'>" + msg.getMessage() + "</span>");
+		    new HTMLPanel("<span class='medium_text'>" + basicDataFormatter.format(msg.getMessage(), ValueType.TEXT_VALUE) + "</span>");
 		messageCol.add(messagePanel);
 		row.add(messageCol);
 		container.add(row);

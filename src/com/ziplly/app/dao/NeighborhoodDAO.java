@@ -34,4 +34,13 @@ public interface NeighborhoodDAO {
 	void save(Neighborhood neighborhood);
 
 	void delete(Long neighborhoodId);
+
+	/**
+	 * Finds neighborhood by NAME
+	 * @param neighborhood
+	 * @return 
+	 */
+	NeighborhoodDTO findOrCreateNeighborhood(NeighborhoodDTO neighborhood);
+
+	List<NeighborhoodDTO> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood);
 }

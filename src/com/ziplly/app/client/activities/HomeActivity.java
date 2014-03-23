@@ -41,6 +41,7 @@ import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -64,10 +65,11 @@ import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
-import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetNeighborhoodDetailsAction;
 import com.ziplly.app.shared.GetNeighborhoodDetailsResult;
+import com.ziplly.app.shared.GetNewMemberAction;
+import com.ziplly.app.shared.GetNewMemberResult;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsResult;
 import com.ziplly.app.shared.LikeResult;
@@ -85,6 +87,7 @@ import com.ziplly.app.shared.UpdateTweetResult;
 
 public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
 	private static final int MAX_HASHTAG_COUNT = 5;
+	private static final int LOOKBACK_DAYS = 30;
 	private IHomeView homeView;
 	private AsyncProvider<HomeView> homeViewProvider;
 	private HomeViewState state;
@@ -149,6 +152,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		void displayNeighborhoodImage(NeighborhoodDTO neighborhood);
 
 		void displayMap(String address);
+
+		void displayNewMembers(List<AccountDTO> accounts);
+
+		void resizeMap();
 	}
 
 	@Inject
@@ -181,6 +188,23 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		setUploadImageHandler();
 		getAccountDetails();
 	}
+
+	private void displayNewMemberList() {
+		GetNewMemberAction action = new GetNewMemberAction();
+		action.setDaysLookback(LOOKBACK_DAYS);
+		action.setEntityType(EntityType.PERSONAL_ACCOUNT);
+		action.setNeighborhoodId(ctx.getCurrentNeighborhood().getNeighborhoodId());
+		
+		dispatcher.execute(action, 
+				new DispatcherCallbackAsync<GetNewMemberResult>() {
+
+			@Override
+      public void onSuccess(GetNewMemberResult result) {
+				homeView.displayNewMembers(result.getAccounts());
+				homeView.resizeMap();
+      }
+		});
+  }
 
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
@@ -224,13 +248,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				setupHandlers();
 				getCommunityWallData(state.getSearchCriteria(place));
 				getHashtagList();
+				displayMap(ctx.getCurrentNeighborhood());
 				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
 				getNeighborhoodDetails();
-				log("neighborhood="+ctx.getCurrentNeighborhood().getPostalCodes().get(0).getPostalCode());
-				displayMap(ctx.getCurrentNeighborhood());
 				homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
 				displayHomeView();
 				eventBus.fireEvent(new LoadingEventStart());
+				displayNewMemberList();
 			}
 		});
 	}

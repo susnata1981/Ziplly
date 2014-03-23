@@ -39,6 +39,9 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		}
 
 		NodeList<Element> buttons = parent.getElementsByTagName("button");
+		NodeList<Element> anchors = parent.getElementsByTagName("a");
+		Element websiteAnchor = getAnchorWithClass(anchors, "website-row-anchor");
+		
 		Element button = buttons.getItem(0);
 		EventTarget target = event.getEventTarget();
 
@@ -46,11 +49,26 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 			redirectUrl =
 			    redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN
 			        + StringConstants.PLACE_SEPARATOR + accountId;
-		} else {
+			Window.Location.replace(redirectUrl);
+		} 
+		else if (!websiteAnchor.isOrHasChild(Element.as(target))) {
+			// Redirect only if it's a click on the profile
 			redirectUrl = redirectUrl + "#businessaccount:" + accountId;
+			Window.Location.replace(redirectUrl);
 		}
-		Window.Location.replace(redirectUrl);
 	}
+
+	private Element getAnchorWithClass(NodeList<Element> anchors, String className) {
+		int len = anchors.getLength();
+		for(int i=0; i<len; i++) {
+			Element elem = anchors.getItem(i);
+			if (elem.getClassName().equals(className)) {
+				return elem;
+			}
+		}
+		
+		return null;
+  }
 
 	public BusinessAccountCell() {
 		super(BrowserEvents.CLICK);
@@ -90,7 +108,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 			        + "<span class='pcell-row-heading'>"
 			        + value.getDisplayName()
 			        + "</span>"
-			        + "<span class='pcell-row'>Website: <a href='#'>"
+			        + "<span class='pcell-row'>Website: <a class='website-row-anchor' target='_blank' href='"+website+"'>"
 			        + website
 			        + "</a></span>"
 			        + "<span class='pcell-row'> Category: "

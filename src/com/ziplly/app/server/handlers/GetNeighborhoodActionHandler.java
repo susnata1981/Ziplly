@@ -44,10 +44,19 @@ public class GetNeighborhoodActionHandler extends
 					result.getNeighbordhoods().add(n);
 				}
 				return result;
+			case BY_NEIGHBORHOOD:
+				Preconditions.checkNotNull(action.getNeighborhood());
+				NeighborhoodDTO neighborhood = neighborhoodDao.findOrCreateNeighborhood(action.getNeighborhood());
+				result.getNeighbordhoods().add(neighborhood);
+				return result;
+			case BY_NEIGHBORHOOD_LOCALITY:
+				Preconditions.checkNotNull(action.getNeighborhood());
+				neighborhoods = neighborhoodDao.findNeighborhoodsByLocality(action.getNeighborhood());
+				result.getNeighbordhoods().addAll(neighborhoods);
+				return result;
 			case BY_ZIP:
 			default:
 				neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
-				result = new GetNeighborhoodResult();
 				for (NeighborhoodDTO n : neighborhoods) {
 					result.getNeighbordhoods().add(n);
 				}

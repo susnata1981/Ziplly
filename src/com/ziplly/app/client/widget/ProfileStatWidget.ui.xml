@@ -2,9 +2,34 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		
+		.panel {
+			height: 80px;
+			margin: 4px;
+			position: relative;
+			background: #B3E6C2;
+			border: 1px solid #ddd;
+			text-align: center;
+		}
+		.title {
+			clear: left;
+			padding: 4px;
+			font-size: .8em;
+		}
+		.value {
+			padding: 5px;	
+			padding-bottom: 10px;
+			height: 40px;
+			background: #fff;
+			border-bottom: 1px solid #ddd;
+			font-size: 22px;
+		}
 	</ui:style>
-	<g:HTMLPanel ui:field="panel">
-	    
+	<g:HTMLPanel ui:field="panel" addStyleNames="{style.panel}">
+	    <div class="{style.value}">
+	    	<span ui:field="value"></span>
+	    </div>
+	    <div class="{style.title}">
+	    	<span ui:field="title"></span>
+	    </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

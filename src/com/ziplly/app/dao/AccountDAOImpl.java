@@ -3,6 +3,7 @@ package com.ziplly.app.dao;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,6 +12,7 @@ import javax.persistence.Query;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -162,12 +164,10 @@ public class AccountDAOImpl implements AccountDAO {
 		Preconditions.checkNotNull(account);
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query =
-			    em
-			        .createNativeQuery("update account set password = :password where account_id = :accountId");
-			query.setParameter("accountId", account.getAccountId()).setParameter(
-			    "password",
-			    account.getPassword());
+			Query query = em.createNativeQuery("update account set password = :password where account_id = :accountId");
+			query.setParameter("accountId", account.getAccountId())
+			    .setParameter("password", account.getPassword());
+			
 			em.getTransaction().begin();
 			query.executeUpdate();
 			em.getTransaction().commit();
@@ -234,7 +234,8 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public List<AccountDTO> findAccountsByNeighborhood(EntityType entityType,
+	public List<AccountDTO> findAccountsByNeighborhood(
+			EntityType entityType,
 	    Long neighborhoodId,
 	    int pageStart,
 	    int pageSize) {
@@ -244,7 +245,7 @@ public class AccountDAOImpl implements AccountDAO {
 		Query query =
 		    em
 		        .createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
-		            + " order by a.timeCreated");
+		            + " order by a.timeCreated desc");
 
 		query
 		    .setParameter("type", entityType.getType())
@@ -268,7 +269,8 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 
 	@Override
-	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType,
+	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(
+			EntityType entityType,
 	    List<Long> neighborhoodIds,
 	    int start,
 	    int pageSize) {
@@ -281,7 +283,7 @@ public class AccountDAOImpl implements AccountDAO {
 
 		Query query =
 		    em.createQuery("select distinct a from Account a join a.locations l where a.class = :type "
-		        + "and l.neighborhood.neighborhoodId " + "in (:neighborhoodId) order by a.timeCreated");
+		        + "and l.neighborhood.neighborhoodId " + "in (:neighborhoodId) order by a.timeCreated desc");
 
 		query
 		    .setParameter("type", entityType.getType())
@@ -423,12 +425,12 @@ public class AccountDAOImpl implements AccountDAO {
 			query =
 			    em
 			        .createQuery("select a from Account a join a.locations l "
-			            + " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)");
+			            + " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
 		} else {
 			query =
 			    em.createQuery("select a from Account a join a.locations l "
 			        + " where a.class = PersonalAccount and gender = :gender and "
-			        + " l.neighborhood.neighborhoodId in (:neighborhoodId)");
+			        + " l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
 			query.setParameter("gender", gender.name());
 		}
 
@@ -468,7 +470,7 @@ public class AccountDAOImpl implements AccountDAO {
 		query =
 		    em
 		        .createQuery("select a from Account a join a.locations l "
-		            + " where a.class = BusinessAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)");
+		            + " where a.class = BusinessAccount and l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
 		query
 		    .setParameter("neighborhoodId", allNeighborhoodIds)
 		    .setFirstResult(start)
@@ -566,5 +568,27 @@ public class AccountDAOImpl implements AccountDAO {
 		loc.setNeighborhood(new Neighborhood(location.getNeighborhood()));
 		em.merge(loc);
 		em.getTransaction().commit();
+  }
+
+	@Override
+  public List<AccountDTO> getAccountCreatedWithin(
+  		int daysLookback, 
+  		long neighborhoodId,
+  		EntityType type) {
+		
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		
+		DateTime timeCreated = new DateTime();
+		Date startingDate = timeCreated.minusDays(daysLookback).toDate();
+		Query query = em.createQuery("select a from Account a join a.locations al, Neighborhood n where a.class = :class and " 
+				+ "al.neighborhood.neighborhoodId = n.neighborhoodId and n.neighborhoodId = :neighborhoodId and a.timeCreated >= :timeCreated "
+				+ "order by a.timeCreated desc");
+		
+		query.setParameter("timeCreated", startingDate)
+		    .setParameter("neighborhoodId", neighborhoodId)
+		    .setParameter("class", type.getType());
+		
+		List<Account> accounts = query.getResultList();
+		return EntityUtil.cloneAccountList(accounts);
   }
 }

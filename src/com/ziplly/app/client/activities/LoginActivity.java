@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.HomePlace;
@@ -93,6 +94,8 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 			    public void onFailure(Throwable caught) {
 				    if (caught instanceof NotFoundException) {
 					    view.displayMessage(LoginWidget.ACCOUNT_DOES_NOT_EXIST, AlertType.ERROR);
+				    } else if (caught instanceof AccountNotActiveException) {
+				    	view.displayMessage(LoginWidget.ACCOUNT_NOT_ACTIVE, AlertType.ERROR);
 				    } else if (caught instanceof InvalidCredentialsException) {
 					    view.displayMessage(LoginWidget.INVALID_ACCOUNT_CREDENTIALS, AlertType.ERROR);
 				    } else {

@@ -7,11 +7,9 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
-import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
-import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -29,7 +27,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -42,6 +39,7 @@ import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.GooglePlacesWidget;
 import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -54,6 +52,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
+import com.ziplly.app.shared.GetNeighborhoodResult;
 import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
@@ -100,21 +99,21 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	@UiField
 	ListBox genderListBox;
 
-	@UiField
-	TextBox zip;
-	@UiField
-	ControlGroup zipCg;
-	@UiField
-	HelpInline zipError;
+//	@UiField
+//	TextBox zip;
+//	@UiField
+//	ControlGroup zipCg;
+//	@UiField
+//	HelpInline zipError;
 
-	@UiField
-	ControlGroup neighborhoodCg;
-	@UiField
-	Controls neighborhoodControl;
-	@UiField
-	HTMLPanel neighborhoodListPanel;
-	@UiField
-	HelpInline neighborhoodError;
+//	@UiField
+//	ControlGroup neighborhoodCg;
+//	@UiField
+//	Controls neighborhoodControl;
+//	@UiField
+//	HTMLPanel neighborhoodListPanel;
+//	@UiField
+//	HelpInline neighborhoodError;
 	@UiField
 	Image neighborhoodLoadingImage;
 
@@ -156,6 +155,19 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	@UiField
 	Anchor privacyPolicyAnchor;
 
+	@UiField
+	TextBox address;
+	@UiField
+	ControlGroup addressCg;
+	@UiField
+	HelpInline addressError;
+	@UiField
+	Anchor clearAddressAnchor;
+//	@UiField
+//	HelpInline neighborhoodHelpBlock;
+	
+	private GooglePlacesWidget placesWidget;
+	
 	String profileImageUrl;
 	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
 	SignupActivityPresenter presenter;
@@ -171,11 +183,20 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		StyleHelper.show(lastnameError.getElement(), false);
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
-		neighborhoodControl.setVisible(false);
-
+//		neighborhoodControl.setVisible(false);
 		for (Gender g : Gender.getValuesForSignup()) {
 			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
+		
+		placesWidget = new GooglePlacesWidget(address, addressCg, addressError, clearAddressAnchor, new GooglePlacesWidget.Listener() {
+			
+			@Override
+			public void onChange(NeighborhoodDTO n) {
+				if (n != null) {
+					presenter.getNeighborhoodData(n);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -199,20 +220,20 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			}
 		});
 
-		zip.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				doValidation = true;
-
-				boolean validateZip = validateZip();
-				if (validateZip) {
-					isServiceAvailable = true;
-					setControlMessageForZipcodeField(null, false, ControlGroupType.SUCCESS);
-					clearNeighborhoodSection();
-					presenter.getNeighborhoodData(FieldVerifier.sanitize(zip.getText()));
-				}
-			}
-		});
+//		zip.addBlurHandler(new BlurHandler() {
+//			@Override
+//			public void onBlur(BlurEvent event) {
+//				doValidation = true;
+//
+//				boolean validateZip = validateZip();
+//				if (validateZip) {
+//					isServiceAvailable = true;
+//					setControlMessageForZipcodeField(null, false, ControlGroupType.SUCCESS);
+//					clearNeighborhoodSection();
+//					presenter.getNeighborhoodData(FieldVerifier.sanitize(zip.getText()));
+//				}
+//			}
+//		});
 
 		email.addBlurHandler(new BlurHandler() {
 			@Override
@@ -243,34 +264,34 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		});
 	}
 
-	public void clearNeighborhoodSection() {
-		neighborhoodListPanel.clear();
-		neighborhoodCg.setType(ControlGroupType.NONE);
-		neighborhoodControl.setVisible(false);
-	}
+//	public void clearNeighborhoodSection() {
+//		neighborhoodListPanel.clear();
+//		neighborhoodCg.setType(ControlGroupType.NONE);
+//		neighborhoodControl.setVisible(false);
+//	}
 
 	public void reset() {
 		infoField.setVisible(false);
 	}
 
-	boolean validateZip() {
-		String zipInput = zip.getText().trim();
-		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-		if (!validateZip.isValid()) {
-			setControlMessageForZipcodeField(
-			    validateZip.getErrors().get(0).getErrorMessage(),
-			    true,
-			    ControlGroupType.ERROR);
-			return false;
-		}
-		return true;
-	}
-
-	void setControlMessageForZipcodeField(String msg, boolean msgVisible, ControlGroupType type) {
-		zipCg.setType(type);
-		zipError.setText(msg);
-		zipError.setVisible(msgVisible);
-	}
+//	boolean validateZip() {
+//		String zipInput = zip.getText().trim();
+//		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
+//		if (!validateZip.isValid()) {
+//			setControlMessageForZipcodeField(
+//			    validateZip.getErrors().get(0).getErrorMessage(),
+//			    true,
+//			    ControlGroupType.ERROR);
+//			return false;
+//		}
+//		return true;
+//	}
+//
+//	void setControlMessageForZipcodeField(String msg, boolean msgVisible, ControlGroupType type) {
+//		zipCg.setType(type);
+//		zipError.setText(msg);
+//		zipError.setVisible(msgVisible);
+//	}
 
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
@@ -329,31 +350,33 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 
 		valid &= validateEmail();
 
-		valid &= validateZip();
+//		valid &= validateZip();
 
+		valid &= placesWidget.validateAddress();
+		
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
 
-		valid &= validateNeighborhood();
+//		valid &= validateNeighborhood();
 
 		return valid;
 	}
 
-	private boolean validateNeighborhood() {
-		selectedNeighborhood = getNeighborhoodSelection();
-		if (selectedNeighborhood == null) {
-			neighborhoodCg.setType(ControlGroupType.ERROR);
-			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
-			neighborhoodError.setVisible(false);
-			return false;
-		}
-
-		return true;
-	}
+//	private boolean validateNeighborhood() {
+//		selectedNeighborhood = getNeighborhoodSelection();
+//		if (selectedNeighborhood == null) {
+//			neighborhoodCg.setType(ControlGroupType.ERROR);
+//			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
+//			neighborhoodError.setVisible(false);
+//			return false;
+//		}
+//
+//		return true;
+//	}
 
 	void resetForm() {
 		resetFormFields();
-		clearNeighborhoodSection();
+//		clearNeighborhoodSection();
 		resetErrors();
 		infoField.setVisible(false);
 	}
@@ -363,7 +386,7 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		lastname.setText("");
 		email.setText("");
 		password.setText("");
-		zip.setText("");
+//		zip.setText("");
 	}
 
 	void resetErrors() {
@@ -371,12 +394,12 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		firstnameError.setVisible(false);
 		lastnameCg.setType(ControlGroupType.NONE);
 		lastnameError.setVisible(false);
-		zipCg.setType(ControlGroupType.NONE);
-		zipError.setVisible(false);
+//		zipCg.setType(ControlGroupType.NONE);
+//		zipError.setVisible(false);
 		passwordCg.setType(ControlGroupType.NONE);
 		passwordError.setVisible(false);
-		neighborhoodCg.setType(ControlGroupType.NONE);
-		neighborhoodError.setVisible(false);
+//		neighborhoodCg.setType(ControlGroupType.NONE);
+//		neighborhoodError.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
 	}
@@ -407,6 +430,7 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		account.setGender(selectedGender);
 		account.setPassword(password.getText().trim());
 		LocationDTO location = new LocationDTO();
+//		location.setNeighborhood(selectedNeighborhood);
 		location.setNeighborhood(selectedNeighborhood);
 		location.setType(LocationType.PRIMARY);
 		location.setTimeCreated(new Date());
@@ -435,17 +459,17 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		}
 	}
 
-	private NeighborhoodDTO getNeighborhoodSelection() {
-		int count = neighborhoodListPanel.getWidgetCount();
-		for (int i = 0; i < count; i++) {
-			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
-			if (rb.getValue()) {
-				return neighborhoods.get(i);
-			}
-		}
-
-		return null;
-	}
+//	private NeighborhoodDTO getNeighborhoodSelection() {
+//		int count = neighborhoodListPanel.getWidgetCount();
+//		for (int i = 0; i < count; i++) {
+//			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
+//			if (rb.getValue()) {
+//				return neighborhoods.get(i);
+//			}
+//		}
+//
+//		return null;
+//	}
 
 	public void displayAccount(PersonalAccountDTO account) {
 		resetForm();
@@ -454,19 +478,21 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		email.setText(account.getEmail());
 
 		genderListBox.setSelectedIndex(account.getGender().ordinal());
-		zip.setText("");
-		neighborhoodControl.setVisible(false);
+//		zip.setText("");
+//		neighborhoodControl.setVisible(false);
 		facebookRegistration = true;
 	}
 
 	@Override
 	public void clear() {
 		resetForm();
+		placesWidget.clear();
 	}
 
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
-		this.presenter = (SignupActivityPresenter) presenter;
+		this.presenter = presenter;
+		placesWidget.setPresenter(presenter);
 	}
 
 	@UiHandler("businessSignupBtn")
@@ -490,17 +516,18 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		infoField.setVisible(false);
 	}
 
+	@Deprecated
 	@Override
 	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
-		clearMessage();
-		neighborhoodListPanel.clear();
-		this.neighborhoods = neighborhoods;
-		for (NeighborhoodDTO n : neighborhoods) {
-			RadioButton rb = new RadioButton("neighborhood");
-			rb.setText(n.getName());
-			neighborhoodListPanel.add(rb);
-		}
-		neighborhoodControl.setVisible(true);
+//		clearMessage();
+//		neighborhoodListPanel.clear();
+//		this.neighborhoods = neighborhoods;
+//		for (NeighborhoodDTO n : neighborhoods) {
+//			RadioButton rb = new RadioButton("neighborhood");
+//			rb.setText(n.getName());
+//			neighborhoodListPanel.add(rb);
+//		}
+//		neighborhoodControl.setVisible(true);
 	}
 
 	@Override
@@ -600,4 +627,25 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			elem.scrollIntoView();
 		}
 	}
+	
+	@Override
+	public void displayNeighborhood(NeighborhoodDTO n) {
+		selectedNeighborhood = n;
+		String foundNeighborhoodMessage = basicDataFormatter.format(n, ValueType.FOUND_NEIGHBORHOOD_MESSAGE);
+		placesWidget.setStatus(foundNeighborhoodMessage, ControlGroupType.SUCCESS);
+		placesWidget.addedNewNeighborhood(n);
+  }
+
+	@Override
+  public void displayNewNeighborhood(NeighborhoodDTO n) {
+		selectedNeighborhood = n;
+		String foundNeighborhoodMessage = basicDataFormatter.format(n, ValueType.FOUND_NEIGHBORHOOD_MESSAGE);
+		placesWidget.setStatus(foundNeighborhoodMessage, ControlGroupType.SUCCESS);
+		placesWidget.addedNewNeighborhood(n);
+  }
+
+	@Override
+  public void displayNeighborhoodList(List<NeighborhoodDTO> foundNeighborhoods) {
+		placesWidget.displayNeighborhoodList(foundNeighborhoods);
+  }
 }

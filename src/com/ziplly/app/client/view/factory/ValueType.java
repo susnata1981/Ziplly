@@ -3,6 +3,7 @@ package com.ziplly.app.client.view.factory;
 public enum ValueType {
 	// General
 	STRING_VALUE,
+	TEXT_VALUE,
 	DATE_VALUE,
 	DATE_VALUE_SHORT,
 	INTEGER_VALUE,
@@ -51,6 +52,7 @@ public enum ValueType {
 
 	// Neighborhood
 	NEIGHBORHOOD,
+	FOUND_NEIGHBORHOOD_MESSAGE,
 	NEIGHBORHOOD_IMAGE,
 	ADDRESS,
 	POSTAL_CODE;

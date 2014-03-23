@@ -31,6 +31,7 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "neighborhood")
 public class Neighborhood extends AbstractTimestampAwareEntity {
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@NotNull
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -74,10 +75,17 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	public Neighborhood(NeighborhoodDTO neighborhood) {
 		this.setNeighborhoodId(neighborhood.getNeighborhoodId());
 		this.setName(neighborhood.getName());
-		this.setCity(neighborhood.getCity());
-		this.setState(neighborhood.getState());
 		this.type = neighborhood.getType().name();
-
+		this.timeCreated = neighborhood.getTimeCreated();
+		
+		if (neighborhood.getCity() != null) {
+			this.setCity(neighborhood.getCity());
+		}
+		
+		if (neighborhood.getState() != null) {
+			this.setState(neighborhood.getState());
+		}
+		
 		if (neighborhood.getParentNeighborhood() != null) {
 			this.parentNeighborhood = new Neighborhood(neighborhood.getParentNeighborhood());
 		}

@@ -30,6 +30,7 @@ import com.ziplly.app.server.handlers.GetLatLngActionHandler;
 import com.ziplly.app.server.handlers.GetLoggedInUserActionHandler;
 import com.ziplly.app.server.handlers.GetNeighborhoodActionHandler;
 import com.ziplly.app.server.handlers.GetNeighborhoodDetailsActionHandler;
+import com.ziplly.app.server.handlers.GetNewMembersActionHandler;
 import com.ziplly.app.server.handlers.GetPublicAccountDetailsActionHandler;
 import com.ziplly.app.server.handlers.GetTweetActionHandler;
 import com.ziplly.app.server.handlers.GetTweetCategoryDetailsActionHandler;
@@ -85,6 +86,7 @@ import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodDetailsAction;
+import com.ziplly.app.shared.GetNewMemberAction;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetForUserAction;
@@ -180,7 +182,8 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		// Account Notification
 		bindHandler(GetAccountNotificationAction.class, GetAccountNotificationActionHandler.class);
 		bindHandler(ViewNotificationAction.class, ViewNotificationActionHandler.class);
-
+		bindHandler(GetNewMemberAction.class, GetNewMembersActionHandler.class);
+		
 		// Payment service
 		bindHandler(GetJwtTokenAction.class, GetJwtTokenActionHandler.class);
 		bindHandler(PayAction.class, PayActionHandler.class);

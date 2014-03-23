@@ -54,7 +54,7 @@ public class StringConstants {
 	public static final String REDIRECT_URI = "app.dev.redirecturl";
 	public static final String APP_ENVIRONMENT = "app.environment";
 	public static final String BUCKET_NAME = "gcs_bucket_name";
-	public static final String INVALID_ADDRESS = "Please select an address from the list.";
+	public static final String INVALID_ADDRESS = "Invalid address. Please select a valid address";
 	public static final String EMAIL_SAVED_FOR_INVITATION = "Thanks, your email has been saved.";
 	public static final String UNKNOWN = "Unknown";
 	public static final String NO_RESULT_FOUND = "Sorry no results were found.";
@@ -127,4 +127,6 @@ public class StringConstants {
 	public static final String CREATE_LINK_ANCHOR_POPOVER_TEXT =
 	    "Get link to the above message for sharing with your friends";
 	public static final String COMMENT_LINK_HOVER_TEXT = "You can comment on this post";
+	public static final String NEIGHBORHOOD_ADDED_SUCCESSFULLY = "Successfully added neighborhood";
+	public static final String NO_NEIGHBORHOODS_FOUND = "No neighborhoods were found, please enter the name of your neighborhood";
 }

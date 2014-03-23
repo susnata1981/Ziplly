@@ -17,11 +17,11 @@ public class AbstractTimestampAwareEntity implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "time_created", updatable = false)
-	private Date timeCreated;
+	protected Date timeCreated;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "time_updated")
-	private Date timeUpdated;
+	protected Date timeUpdated;
 
 	@PrePersist
 	protected void onCreate() {

@@ -2,6 +2,7 @@ package com.ziplly.app.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NeighborhoodDTO implements Serializable {
@@ -15,7 +16,8 @@ public class NeighborhoodDTO implements Serializable {
 	private String imageUrl;
 	private NeighborhoodDTO parentNeighborhood;
 	private List<PostalCodeDTO> postalCodes = new ArrayList<PostalCodeDTO>();
-
+	private Date timeCreated;
+	
 	public NeighborhoodDTO() {
 	}
 
@@ -122,4 +124,12 @@ public class NeighborhoodDTO implements Serializable {
 	public void setType(NeighborhoodType type) {
 		this.type = type.name();
 	}
+
+	public Date getTimeCreated() {
+	  return timeCreated;
+  }
+
+	public void setTimeCreated(Date timeCreated) {
+	  this.timeCreated = timeCreated;
+  }
 }

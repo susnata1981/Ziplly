@@ -4,6 +4,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.maps.gwt.client.Geocoder;
+import com.google.maps.gwt.client.Geocoder.Callback;
 import com.google.maps.gwt.client.GeocoderRequest;
 import com.google.maps.gwt.client.GeocoderResult;
 import com.google.maps.gwt.client.GeocoderStatus;
@@ -13,7 +14,6 @@ import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
-import com.google.maps.gwt.client.Geocoder.Callback;
 
 public class GoogleMapWidget {
 	private GoogleMap map;
@@ -25,9 +25,21 @@ public class GoogleMapWidget {
     myOptions.setZoom(11.0);
     myOptions.setCenter(LatLng.create(-34.397, 150.644));
     myOptions.setMapTypeId(MapTypeId.ROADMAP);
+    myOptions.setMapTypeControl(false);
+    myOptions.setNoClear(true);
     map = GoogleMap.create(element, myOptions);
     codeAddress(address);
   }
+
+	public void resize() {
+		LatLng center = map.getCenter();
+		resizeMap(map);
+		map.setCenter(center);
+	}
+	
+	final native void resizeMap(GoogleMap map) /*-{
+  		$wnd.google.maps.event.trigger(map, 'resize');
+	}-*/;
 	
   private void codeAddress(final String address) {
   	if (address == null) {

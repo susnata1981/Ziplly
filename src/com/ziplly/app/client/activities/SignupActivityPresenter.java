@@ -2,6 +2,7 @@ package com.ziplly.app.client.activities;
 
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 
 public interface SignupActivityPresenter extends Presenter {
 	// void onFacebookLogin();
@@ -18,4 +19,12 @@ public interface SignupActivityPresenter extends Presenter {
 	void deleteImage(String profileImageUrl);
 
 	Environment getEnvironment();
+
+	void getNeighborhoodData(NeighborhoodDTO n);
+
+	void createNeighborhood(NeighborhoodDTO n);
+
+	void getNeighborhoodList(NeighborhoodDTO parentNeighborhood);
+
+	void setCurrentNeighborhood(NeighborhoodDTO selectedNeighborhood);
 }

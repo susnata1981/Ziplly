@@ -18,6 +18,7 @@ import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.AddInvitationResult;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
@@ -60,6 +61,51 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		dispatcher.execute(action, new NeighborhoodHandler());
 	}
 
+	@Override
+  public void getNeighborhoodData(NeighborhoodDTO n) {
+		view.displayNeighborhoodListLoading(true); 
+		GetNeighborhoodAction action = new GetNeighborhoodAction();
+		action.setNeighborhood(n);
+		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD);
+		dispatcher.execute(action, new NeighborhoodHandler());
+  }
+	
+	@Override
+	public void createNeighborhood(NeighborhoodDTO n) {
+		GetNeighborhoodAction action = new GetNeighborhoodAction();
+		action.setNeighborhood(n);
+		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>() {
+
+			@Override
+      public void onSuccess(GetNeighborhoodResult result) {
+				view.displayNewNeighborhood(result.getNeighbordhoods().get(0));
+      }
+		});
+	}
+	
+	public void setCurrentNeighborhood(NeighborhoodDTO currNeighborhood) {
+		view.displayNeighborhood(currNeighborhood);
+	}
+	
+	public void getNeighborhoodList(NeighborhoodDTO rootNeighborhood) {
+		GetNeighborhoodAction action = new GetNeighborhoodAction();
+		action.setNeighborhood(rootNeighborhood);
+		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD_LOCALITY);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>() {
+
+			@Override
+      public void onSuccess(GetNeighborhoodResult result) {
+				view.displayNeighborhoodList(result.getNeighbordhoods());
+      }
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
+			}
+		});
+	}
+	
 	@Override
 	public void addToInviteList(String email, int postalCode) {
 		AddInvitationAction action = new AddInvitationAction(email, postalCode);
@@ -173,13 +219,8 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
 		@Override
 		public void onSuccess(GetNeighborhoodResult result) {
-			if (result.getNeighbordhoods() != null && result.getNeighbordhoods().size() > 0) {
-				view.displayNeighborhoods(result.getNeighbordhoods());
-			} else {
-				view.displayNotYetLaunchedWidget();
-				view.displayMessage(StringConstants.NOT_AVAILABLE_IN_AREA, AlertType.ERROR);
-			}
 			view.displayNeighborhoodListLoading(false);
+			view.displayNeighborhood(result.getNeighbordhoods().get(0));
 		}
 	}
 }

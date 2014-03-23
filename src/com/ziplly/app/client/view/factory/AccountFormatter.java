@@ -41,16 +41,6 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 		}
 	}
 
-//	String getImageUrl(AccountDTO value) {
-//		String imgUrl = "";
-//		if (value.getImages().size() > 0) {
-//			imgUrl = value.getImages().get(0).getUrl() + "=s1600";
-//		} else {
-//			imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
-//		}
-//		return imgUrl;
-//	}
-	
 	String getImageUrl(AccountDTO value) {
 		String imgUrl = "";
 		if (value.getProfileImage() != null) {

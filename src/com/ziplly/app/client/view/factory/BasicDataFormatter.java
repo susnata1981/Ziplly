@@ -4,8 +4,11 @@ import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
+import com.ziplly.app.client.widget.TweetUtils;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -14,11 +17,17 @@ import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.TweetType;
 
 public class BasicDataFormatter implements Formatter<Object> {
+	private static final RegExp urlsPattern = RegExp.compile("(https?:\\/\\/[^\\s]+)");
+	private static final RegExp urlPattern = RegExp.compile("(.*)(https?:\\/\\/[^(\\s|,)]+)(\\s*.*)");
+	private static final String BR_CODE = "<br/>";
+	private static final String NEW_LINE = "\n";
 
 	@Override
 	public String format(Object value, ValueType type) {
 		switch (type) {
 			case INTEGER_VALUE:
+			case TEXT_VALUE:
+				return getContent((String)value);
 			case STRING_VALUE:
 				return value.toString();
 			case DATE_VALUE_MEDIUM:
@@ -48,20 +57,15 @@ public class BasicDataFormatter implements Formatter<Object> {
 				} else {
 					return n.getName();
 				}
+			case FOUND_NEIGHBORHOOD_MESSAGE:
+				n = (NeighborhoodDTO) value;
+				return "You live in "+format(n, ValueType.NEIGHBORHOOD);
 			case POSTAL_CODE:
 				PostalCodeDTO p = (PostalCodeDTO) value;
 				return p.getCity() + ", " + p.getState();
 			case NEIGHBORHOOD_IMAGE:
 				NeighborhoodDTO neighborhood = (NeighborhoodDTO) value;
-				NeighborhoodDTO nn =
-				    neighborhood.getImages().size() > 0 ? neighborhood : neighborhood
-				        .getParentNeighborhood();
-				if (nn != null && nn.getImages().size() > 0) {
-					String v = nn.getImages().get(0).getUrl();
-					return nn.getImages().get(0).getUrl() + "=s1600";
-				} else {
-					return "";
-				}
+				return getNeighborhoodImageUrl(neighborhood);
 			default:
 				throw new IllegalArgumentException("Invalid value type to render");
 		}
@@ -77,4 +81,67 @@ public class BasicDataFormatter implements Formatter<Object> {
 		return imgUrl;
 	}
 
+	public static String getContent(String content) {
+		StringBuilder newContent = new StringBuilder();
+		boolean foundPattern = true;
+		MatchResult matcher = null;//urlsPattern.exec(content);
+		
+		if (content == null || content.length() == 0) {
+			return "";
+		}
+		
+		int sindex = 0;
+		while(foundPattern) {
+			matcher = urlsPattern.exec(content.substring(sindex));
+			if (matcher != null) {
+				String group = matcher.getGroup(0);
+				int patternStartIndex = content.indexOf(group);
+				int patternEndIndex = patternStartIndex + group.length() ;//content.indexOf(' ', patternStartIndex);
+				newContent.append(content.substring(sindex, patternStartIndex));
+				replaceUrlWithAnchorTag(group, newContent);
+				sindex = patternEndIndex;
+				
+				if (sindex == -1 || sindex >= content.length()) {
+					foundPattern = false;
+				}
+			} else {
+				newContent.append(content.substring(sindex));
+				foundPattern = false;
+			}
+		}
+
+		return newContent.toString().replaceAll(NEW_LINE, BR_CODE);
+	}
+	
+	public static void replaceUrlWithAnchorTag(String content, StringBuilder result) {
+		MatchResult matcher = urlPattern.exec(content);
+		if (matcher != null) {
+			String grp1 = matcher.getGroup(1);
+			String grp2 = matcher.getGroup(2);
+			String grp3 = matcher.getGroup(3);
+			result.append(grp1);
+			result.append("<a class='link' href='" + grp2 + "' target='_blank'>" + grp2 + "</a>");
+			result.append(grp3);
+		}
+	}
+
+	public String getNeighborhoodImageUrl(NeighborhoodDTO n) {
+		while (n != null) {
+			if (n.getImages().size() > 0) {
+				return n.getImages().get(0).getUrl() + "=s1600";
+			}
+			
+			n = n.getParentNeighborhood();
+		}
+		return "";
+	}
+	public static void main(String[] args) {
+		String content = "Check this out \n\nhttp://www.yahoo.com/susnata/01923.html hi http://www.msn.com/01923.html";
+		String content2 = "Take a look at this - http://www.yahoo.com/susnata/01923.html, http://www.ziplly.com";
+		String content3 = "Take a look at this";
+		StringBuilder sb = new StringBuilder();
+		System.out.println(TweetUtils.getContent(content));
+//		TweetUtils.replaceUrlWithAnchorTag(content2, sb);
+//		System.out.println(sb);
+	}
 }
