@@ -3,10 +3,13 @@ package com.ziplly.app.server.handlers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
@@ -25,17 +28,19 @@ public class CreateRegistrationActionHandler extends
 	private AccountRegistrationDAO registrationDao;
 
 	@Inject
-	public CreateRegistrationActionHandler(AccountDAO accountDao,
+	public CreateRegistrationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    AccountRegistrationDAO registrationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.registrationDao = registrationDao;
 	}
 
 	@Override
 	public CreateRegistrationResult
-	    execute(CreateRegistrationAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(CreateRegistrationAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getEmail() == null) {
 			throw new IllegalArgumentException();

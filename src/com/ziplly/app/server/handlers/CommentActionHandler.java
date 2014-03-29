@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.EntityUtil;
@@ -18,17 +21,19 @@ public class CommentActionHandler extends
 	private CommentDAO commentDao;
 
 	@Inject
-	public CommentActionHandler(AccountDAO accountDao,
+	public CommentActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    CommentDAO commentDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.commentDao = commentDao;
 	}
 
 	@Override
 	public CommentResult
-	    execute(CommentAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(CommentAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getComment() == null) {
 			throw new IllegalArgumentException();

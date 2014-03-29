@@ -531,15 +531,12 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public String getImageUploadUrl() {
-
 		String bucketName = System.getProperty("gcs_bucket_name");
 		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
 		String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
 		String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
 
 		String result = uploadUrl;
-		logger.log(Level.INFO, String.format("UPLOAD URL SET to %s", uploadUrl));
-
 		// Hack to make this work in dev environment
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
 			result = uploadUrl.replace("susnatas-MacBook-Pro.local:8888",

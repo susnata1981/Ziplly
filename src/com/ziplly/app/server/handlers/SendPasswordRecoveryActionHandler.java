@@ -3,10 +3,13 @@ package com.ziplly.app.server.handlers;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -18,14 +21,16 @@ public class SendPasswordRecoveryActionHandler extends
     AbstractAccountActionHandler<SendPasswordRecoveryEmailAction, SendPasswordRecoveryEmailResult> {
 
 	@Inject
-	public SendPasswordRecoveryActionHandler(AccountDAO accountDao,
+	public SendPasswordRecoveryActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public SendPasswordRecoveryEmailResult execute(SendPasswordRecoveryEmailAction action,
+	public SendPasswordRecoveryEmailResult doExecute(SendPasswordRecoveryEmailAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getEmail() == null) {

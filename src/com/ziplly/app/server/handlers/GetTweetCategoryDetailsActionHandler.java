@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
@@ -18,15 +21,17 @@ public class GetTweetCategoryDetailsActionHandler extends
     AbstractTweetActionHandler<GetTweetCategoryDetailsAction, GetTweetCategoryDetailsResult> {
 
 	@Inject
-	public GetTweetCategoryDetailsActionHandler(AccountDAO accountDao,
+	public GetTweetCategoryDetailsActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 	}
 
 	@Override
-	public GetTweetCategoryDetailsResult execute(GetTweetCategoryDetailsAction action,
+	public GetTweetCategoryDetailsResult doExecute(GetTweetCategoryDetailsAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		validateSession();

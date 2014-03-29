@@ -9,14 +9,18 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Session;
 
-public class SessionDAOImpl implements SessionDAO {
+public class SessionDAOImpl extends BaseDAO implements SessionDAO {
 	// private EntityManager em;
 	private Logger logger = Logger.getLogger(SessionDAOImpl.class.getCanonicalName());
 
-	public SessionDAOImpl() {
+	@Inject
+	public SessionDAOImpl(Provider<EntityManager> entityManagerProvider) {
+		super(entityManagerProvider);
 	}
 
 	@Override
@@ -25,8 +29,8 @@ public class SessionDAOImpl implements SessionDAO {
 			logger.log(Level.SEVERE, "Invalid argument to findSessionByUid");
 			throw new IllegalArgumentException("Invalid argument to findSessionByUid");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNamedQuery("fetchSessionByUid");
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = getEntityManager().createNamedQuery("fetchSessionByUid");
 		query.setParameter("uid", uid);
 		Session session = null;
 		try {
@@ -35,9 +39,10 @@ public class SessionDAOImpl implements SessionDAO {
 			Hibernate.initialize(session.getAccount());
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
-		} finally {
-			em.close();
-		}
+		} 
+//		finally {
+//			em.close();
+//		}
 
 		return session;
 	}
@@ -48,17 +53,18 @@ public class SessionDAOImpl implements SessionDAO {
 			logger.log(Level.SEVERE, "Invalid argument to findSessionByAccountId");
 			throw new IllegalArgumentException("Invalid argument to findSessionByAccountId");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		Query query = em.createNamedQuery("fetchSessionByAccountId");
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		Query query = getEntityManager().createNamedQuery("fetchSessionByAccountId");
 		query.setParameter("account_id", accountId);
 		Session session = null;
 		try {
 			session = (Session) query.getSingleResult();
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
-		} finally {
-			em.close();
-		}
+		} 
+//		finally {
+//			em.close();
+//		}
 
 		return session;
 	}
@@ -69,8 +75,8 @@ public class SessionDAOImpl implements SessionDAO {
 			logger.log(Level.SEVERE, "Invalid argument to save");
 			throw new IllegalArgumentException("Invalid argument to save");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
+//		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+//		try {
 			Session existingSession = null;
 			try {
 				existingSession = findSessionByAccountId(session.getAccount().getAccountId());
@@ -81,24 +87,25 @@ public class SessionDAOImpl implements SessionDAO {
 				logger.log(Level.INFO, "Duplicate session for user:" + session.getAccount().getAccountId());
 
 				// update it
-				em.getTransaction().begin();
+				getEntityManager().getTransaction().begin();
 				existingSession.setTimeCreated(session.getTimeCreated());
 				existingSession.setExpireAt(session.getExpireAt());
 				existingSession.setUid(session.getUid());
 				existingSession.setLocation(session.getLocation());
-				em.merge(existingSession);
-				em.getTransaction().commit();
+				getEntityManager().merge(existingSession);
+				getEntityManager().getTransaction().commit();
 				return;
 				// removeByAccountId(session.getAccount().getAccountId());
 			}
 
-			em.getTransaction().begin();
-			em.persist(session);
-			em.getTransaction().commit();
+			getEntityManager().getTransaction().begin();
+			getEntityManager().persist(session);
+			getEntityManager().getTransaction().commit();
 
-		} finally {
-			em.close();
-		}
+//		} 
+//		finally {
+//			em.close();
+//		}
 	}
 
 	@Override
@@ -106,7 +113,7 @@ public class SessionDAOImpl implements SessionDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		Session session = null;
 		try {
-			em.getTransaction().begin();
+			getEntityManager().getTransaction().begin();
 			Query query = em.createNamedQuery("fetchSessionByAccountId");
 			query.setParameter("account_id", accountId);
 			session = (Session) query.getSingleResult();
@@ -115,9 +122,10 @@ public class SessionDAOImpl implements SessionDAO {
 		} catch (NoResultException nre) {
 			// do nothing.
 			logger.warning(String.format("Couldn't find session with account %d", accountId));
-		} finally {
-			em.close();
-		}
+		} 
+//		finally {
+//			em.close();
+//		}
 	}
 
 	@Override
@@ -125,7 +133,8 @@ public class SessionDAOImpl implements SessionDAO {
 		if (uid == null) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager(); 
+//				EntityManagerService.getInstance().getEntityManager();
 
 		em.getTransaction().begin();
 		Query query = em.createNamedQuery("fetchSessionByUid");
@@ -138,8 +147,9 @@ public class SessionDAOImpl implements SessionDAO {
 		} catch (NoResultException nre) {
 			logger.warning(String.format("Couldn't find session with uid %d", uid));
 			throw new NotFoundException();
-		} finally {
-			em.close();
-		}
+		} 
+//		finally {
+//			em.close();
+//		}
 	}
 }

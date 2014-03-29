@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
@@ -15,15 +18,17 @@ public class UpdatePasswordActionHandler extends
     AbstractAccountActionHandler<UpdatePasswordAction, UpdatePasswordResult> {
 
 	@Inject
-	public UpdatePasswordActionHandler(AccountDAO accountDao,
+	public UpdatePasswordActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public UpdatePasswordResult
-	    execute(UpdatePasswordAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(UpdatePasswordAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getOldPassword() == null || action.getNewPassword() == null) {
 			throw new IllegalArgumentException();

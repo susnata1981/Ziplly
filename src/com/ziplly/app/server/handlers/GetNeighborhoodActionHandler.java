@@ -2,11 +2,14 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -21,17 +24,19 @@ public class GetNeighborhoodActionHandler extends
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public GetNeighborhoodActionHandler(AccountDAO accountDao,
+	public GetNeighborhoodActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    NeighborhoodDAO neighborhoodDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
 	public GetNeighborhoodResult
-	    execute(GetNeighborhoodAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetNeighborhoodAction action, ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkArgument(action != null);
 

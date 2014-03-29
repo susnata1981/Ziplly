@@ -4,10 +4,13 @@ import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
@@ -23,19 +26,21 @@ public class GetJwtTokenActionHandler extends
 	SubscriptionPlanDAO subscriptionPlanDAO;
 
 	@Inject
-	public GetJwtTokenActionHandler(AccountDAO accountDao,
+	public GetJwtTokenActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    PaymentService paymentService,
 	    SubscriptionPlanDAO subscriptionPlanDAO) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.paymentService = paymentService;
 		this.subscriptionPlanDAO = subscriptionPlanDAO;
 	}
 
 	@Override
 	public GetJwtTokenResult
-	    execute(GetJwtTokenAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetJwtTokenAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null) {
 			throw new IllegalArgumentException();

@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -21,17 +24,19 @@ public class GetHashtagActionHandler extends
 	private HashtagDAO hashtagDao;
 
 	@Inject
-	public GetHashtagActionHandler(AccountDAO accountDao,
+	public GetHashtagActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    HashtagDAO hashtagDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.hashtagDao = hashtagDao;
 	}
 
 	@Override
 	public GetHashtagResult
-	    execute(GetHashtagAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetHashtagAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null) {
 			throw new IllegalArgumentException();

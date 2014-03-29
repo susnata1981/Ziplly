@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
@@ -28,18 +31,20 @@ public class GetCommunityWallDataActionHandler extends
 	private Logger logger = Logger.getLogger(GetCommunityWallDataAction.class.getName());
 
 	@Inject
-	public GetCommunityWallDataActionHandler(AccountDAO accountDao,
+	public GetCommunityWallDataActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
 	    HashtagDAO hashtagDao) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 		this.hashtagDao = hashtagDao;
 	}
 
 	@Override
 	public GetCommunityWallDataResult
-	    execute(GetCommunityWallDataAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetCommunityWallDataAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action.getSearchType() != SearchType.TWEET_BY_ID) {
 			validateSession();

@@ -1,5 +1,7 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -8,6 +10,7 @@ import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.AccountBLI;
@@ -20,15 +23,18 @@ public class DeleteImageActionHandler extends
 	private static final String BLOBSTORE_KEY_STRING = "encoded_gs_key";
 
 	@Inject
-	public DeleteImageActionHandler(AccountDAO accountDao,
+	public DeleteImageActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public DeleteImageResult
-	    execute(DeleteImageAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(DeleteImageAction action, ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkArgument(action.getImageUrl() != null);
 

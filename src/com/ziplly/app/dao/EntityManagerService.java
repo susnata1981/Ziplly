@@ -10,7 +10,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.google.common.collect.Maps;
 
 public class EntityManagerService {
-	static Map<String, String> properties = Maps.newHashMap();
+	public static Map<String, String> properties = Maps.newHashMap();
 
 	static {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
@@ -29,12 +29,10 @@ public class EntityManagerService {
 		}
 	}
 
-	private EntityManagerFactory emf = Persistence.createEntityManagerFactory("zipllydb", properties);
-
+	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("zipllydb", properties);
 	private static EntityManagerService INSTANCE = new EntityManagerService();
 
-	private EntityManagerService() {
-		// testDbConnection();
+	public EntityManagerService() {
 	}
 
 	public static EntityManagerService getInstance() {
@@ -42,7 +40,7 @@ public class EntityManagerService {
 	}
 
 	public EntityManager getEntityManager() {
-		return INSTANCE.emf.createEntityManager();
+		return emf.createEntityManager();
 	}
 
 	// private void testDbConnection() {

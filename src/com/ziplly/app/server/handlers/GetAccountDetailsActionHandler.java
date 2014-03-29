@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.CommentDAO;
@@ -27,7 +30,9 @@ public class GetAccountDetailsActionHandler extends
 	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
-	public GetAccountDetailsActionHandler(AccountDAO accountDao,
+	public GetAccountDetailsActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    ConversationDAO conversationDao,
@@ -35,7 +40,7 @@ public class GetAccountDetailsActionHandler extends
 	    CommentDAO commentDao,
 	    LikeDAO likeDao,
 	    AccountNotificationDAO accountNotificationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.tweetDao = tweetDao;
 		this.commentDao = commentDao;
@@ -45,7 +50,7 @@ public class GetAccountDetailsActionHandler extends
 
 	@Override
 	public GetAccountDetailsResult
-	    execute(GetAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
 
 		validateSession();
 

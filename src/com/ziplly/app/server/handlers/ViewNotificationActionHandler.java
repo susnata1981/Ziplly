@@ -3,11 +3,14 @@ package com.ziplly.app.server.handlers;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -24,17 +27,19 @@ public class ViewNotificationActionHandler extends
 	private AccountNotificationDAO accountNotificationDao;
 
 	@Inject
-	public ViewNotificationActionHandler(AccountDAO accountDao,
+	public ViewNotificationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    AccountNotificationDAO accountNotificationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.accountNotificationDao = accountNotificationDao;
 	}
 
 	@Override
 	public ViewNotificationResult
-	    execute(ViewNotificationAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(ViewNotificationAction action, ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkArgument(
 		    action.getAccountNotification() != null,

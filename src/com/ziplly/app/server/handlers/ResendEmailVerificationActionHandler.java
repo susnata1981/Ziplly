@@ -1,10 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -18,14 +21,16 @@ public class ResendEmailVerificationActionHandler extends
     AbstractAccountActionHandler<ResendEmailVerificationAction, ResendEmailVerificationResult> {
 
 	@Inject
-	public ResendEmailVerificationActionHandler(AccountDAO accountDao,
+	public ResendEmailVerificationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public ResendEmailVerificationResult execute(ResendEmailVerificationAction action,
+	public ResendEmailVerificationResult doExecute(ResendEmailVerificationAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkNotNull(action.getEmail());

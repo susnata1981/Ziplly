@@ -4,35 +4,34 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.model.Image;
 
-public class ImageDAOImpl implements ImageDAO {
+public class ImageDAOImpl extends BaseDAO implements ImageDAO {
+
+	@Inject
+	public ImageDAOImpl(Provider<EntityManager> entityManagerProvider) {
+		super(entityManagerProvider);
+	}
 
 	@Override
 	public Image save(Image image) {
 		Preconditions.checkNotNull(image);
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			em.getTransaction().begin();
-			em.persist(image);
-			em.getTransaction().commit();
-			return image;
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		em.getTransaction().begin();
+		em.persist(image);
+		em.getTransaction().commit();
+		return image;
 	}
 
 	@Override
 	public Image findById(Long id) {
 		Preconditions.checkNotNull(id);
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createQuery("from Image where id = :id").setParameter("id", id);
-			Image image = (Image) query.getSingleResult();
-			return image;
-		} finally {
-			em.close();
-		}
+		Query query =
+		    getEntityManager().createQuery("from Image where id = :id").setParameter("id", id);
+		Image image = (Image) query.getSingleResult();
+		return image;
 	}
 }

@@ -3,10 +3,13 @@ package com.ziplly.app.server.handlers;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.NotSharedError;
@@ -30,17 +33,19 @@ public class GetTweetForUserActionHandler extends
 	private TweetDAO tweetDao;
 
 	@Inject
-	public GetTweetForUserActionHandler(AccountDAO accountDao,
+	public GetTweetForUserActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    TweetDAO tweetDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.tweetDao = tweetDao;
 	}
 
 	@Override
 	public GetTweetForUserResult
-	    execute(GetTweetForUserAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetTweetForUserAction action, ExecutionContext arg1) throws DispatchException {
 
 		// apply privacy settings
 		try {

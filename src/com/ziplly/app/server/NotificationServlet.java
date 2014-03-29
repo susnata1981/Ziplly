@@ -10,18 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.dao.AccountNotificationDAO;
-import com.ziplly.app.dao.AccountNotificationDAOImpl;
-import com.ziplly.app.dao.NeighborhoodDAOImpl;
+import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.PostalCodeDAO;
-import com.ziplly.app.dao.PostalCodeDAOImpl;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.dao.SessionDAOImpl;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.dao.TweetDAOImpl;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -35,27 +31,52 @@ public class NotificationServlet extends HttpServlet {
 	private SessionDAO sessionDao;
 	private TweetDAO tweetDao;
 	private AccountNotificationDAO accountNotificationDao;
-	private NeighborhoodDAOImpl neighborhoodDao;
+	private NeighborhoodDAO neighborhoodDao;
 	private TweetNotificationBLI tweetNotificationBli;
 	private PostalCodeDAO postalCodeDao;
 
 	// TODO: need to figure out how to use guice to inject dependency
-	public NotificationServlet() {
-		this.emailService = new EmailServiceImpl();
-		this.postalCodeDao = new PostalCodeDAOImpl();
-		this.neighborhoodDao = new NeighborhoodDAOImpl(postalCodeDao);
-		this.accountDao = new AccountDAOImpl(neighborhoodDao);
-		this.sessionDao = new SessionDAOImpl();
-		this.tweetDao = new TweetDAOImpl(null, null);
-		this.accountNotificationDao = new AccountNotificationDAOImpl();
-		this.tweetNotificationBli =
-		    new TweetNotificationBLIImpl(
-		        accountDao,
-		        sessionDao,
-		        neighborhoodDao,
-		        tweetDao,
-		        accountNotificationDao,
-		        emailService);
+	// TODO: guice injection blocker
+//	@Inject
+//	public NotificationServlet(
+//			NeighborhoodDAO neighborhoodDao,
+//			PostalCodeDAO postalCodeDao) {
+//		this.emailService = new EmailServiceImpl();
+//		this.postalCodeDao = postalCodeDao;
+//		this.neighborhoodDao = this.neighborhoodDao;
+//		this.accountDao = new AccountDAOImpl(null, neighborhoodDao);
+//		this.sessionDao = new SessionDAOImpl(null);
+//		this.tweetDao = new TweetDAOImpl(null, null);
+//		this.accountNotificationDao = new AccountNotificationDAOImpl();
+//		this.tweetNotificationBli =
+//		    new TweetNotificationBLIImpl(
+//		        accountDao,
+//		        sessionDao,
+//		        neighborhoodDao,
+//		        tweetDao,
+//		        accountNotificationDao,
+//		        emailService);
+//	}
+
+	
+	@Inject
+	public NotificationServlet(
+			EmailService emailService,
+			TweetDAO tweetDao,
+			SessionDAO sessionDao,
+			AccountDAO accountDao,
+			NeighborhoodDAO neighborhoodDao,
+			PostalCodeDAO postalCodeDao,
+			AccountNotificationDAO accountNotificationDAO,
+			TweetNotificationBLI tweetNotificationBLI) {
+		this.emailService = emailService;
+		this.postalCodeDao = postalCodeDao;
+		this.neighborhoodDao = neighborhoodDao;
+		this.accountDao = accountDao;
+		this.sessionDao = sessionDao;
+		this.tweetDao = tweetDao;
+		this.accountNotificationDao = accountNotificationDAO;
+		this.tweetNotificationBli = tweetNotificationBLI;
 	}
 
 	@Override

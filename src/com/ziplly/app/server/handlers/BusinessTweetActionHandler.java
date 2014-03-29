@@ -4,10 +4,13 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
@@ -28,16 +31,18 @@ public class BusinessTweetActionHandler extends
     AbstractTweetActionHandler<BusinessTweetAction, BusinessTweetResult> {
 
 	@Inject
-	public BusinessTweetActionHandler(AccountDAO accountDao,
+	public BusinessTweetActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 	}
 
 	@Override
 	public BusinessTweetResult
-	    execute(BusinessTweetAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(BusinessTweetAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();

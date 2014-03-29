@@ -2,11 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
-import com.ziplly.app.client.exceptions.NeedsLoginException;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
@@ -20,15 +22,17 @@ public class GetFacebookDetailsHandler extends
 	Logger logger = Logger.getLogger(GetFacebookDetailsHandler.class.getCanonicalName());
 
 	@Inject
-	public GetFacebookDetailsHandler(AccountDAO accountDao,
+	public GetFacebookDetailsHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public GetFacebookDetailsResult
-	    execute(GetFacebookDetailsAction input, ExecutionContext context) throws DispatchException {
+	    doExecute(GetFacebookDetailsAction input, ExecutionContext context) throws DispatchException {
 
 		if (input == null || input.getCode() == null) {
 			throw new IllegalArgumentException();

@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Hashtag;
@@ -16,12 +17,13 @@ import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.TweetDTO;
 
-public class HashtagDAOImpl implements HashtagDAO {
+public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 
 	private TweetDAO tweetDao;
 
 	@Inject
-	public HashtagDAOImpl(TweetDAO tweetDao) {
+	public HashtagDAOImpl(Provider<EntityManager> entityManagerFactory, TweetDAO tweetDao) {
+		super(entityManagerFactory);
 		this.tweetDao = tweetDao;
 	}
 
@@ -31,15 +33,11 @@ public class HashtagDAOImpl implements HashtagDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			em.getTransaction().begin();
-			em.persist(hashtag);
-			em.getTransaction().commit();
-			em.flush();
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		em.getTransaction().begin();
+		em.persist(hashtag);
+		em.getTransaction().commit();
+		em.flush();
 	}
 
 	@Override
@@ -47,7 +45,8 @@ public class HashtagDAOImpl implements HashtagDAO {
 		if (name == null) {
 			throw new IllegalArgumentException("Invalid argument");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		
+		EntityManager em = getEntityManager();
 		try {
 			em.getTransaction().begin();
 			Query query = em.createQuery("from Hashtag where tag = :name");
@@ -58,31 +57,26 @@ public class HashtagDAOImpl implements HashtagDAO {
 			return resp;
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
 	@Override
 	public List<HashtagDTO> findAll() throws NotFoundException {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		try {
 			Query query = em.createQuery("from Hashtag");
 			@SuppressWarnings("unchecked")
 			List<Hashtag> result = query.getResultList();
-			em.close();
 			return EntityUtil.cloneHashtahList(result);
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
 	@Override
 	public List<HashtagDTO>
 	    findTopHashtagForNeighborhood(Long neighborhoodId, int maxResult) throws NotFoundException {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 
 		try {
 			Query query =
@@ -110,18 +104,18 @@ public class HashtagDAOImpl implements HashtagDAO {
 			return response;
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
 	@Override
 	public List<TweetDTO>
 	    getTweetsForTag(String hashtag, int page, int pageSize) throws NotFoundException {
+
 		if (hashtag == null) {
 			throw new IllegalArgumentException("Invalid argument");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		EntityManager em = getEntityManager();
 		List<TweetDTO> tweets = Lists.newArrayList();
 		try {
 			HashtagDTO result = findByName(hashtag);
@@ -141,8 +135,6 @@ public class HashtagDAOImpl implements HashtagDAO {
 			}
 		} catch (NoResultException nre) {
 			throw nre;
-		} finally {
-			em.close();
 		}
 
 		return tweets;
@@ -156,7 +148,8 @@ public class HashtagDAOImpl implements HashtagDAO {
 		if (hashtag == null) {
 			throw new IllegalArgumentException("Invalid argument");
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+
+		EntityManager em = getEntityManager();
 		List<TweetDTO> tweets = Lists.newArrayList();
 		try {
 			HashtagDTO result = findByName(hashtag);
@@ -181,9 +174,8 @@ public class HashtagDAOImpl implements HashtagDAO {
 			}
 		} catch (NotFoundException e) {
 			throw e;
-		} finally {
-			em.close();
 		}
+
 		return tweets;
 	}
 

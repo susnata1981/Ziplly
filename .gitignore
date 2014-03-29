@@ -22,3 +22,4 @@ war/WEB-INF/*
 war/ziplly
 */WEB-INF/deploy/*
 */WEB-INF/classes/*
+/test-classes

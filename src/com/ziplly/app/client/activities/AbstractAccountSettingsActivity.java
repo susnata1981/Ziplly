@@ -3,6 +3,7 @@ package com.ziplly.app.client.activities;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.ziplly.app.client.ApplicationContext;
@@ -81,6 +82,11 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO, V ex
 				        result.getImageUrl().replace("susnatas-MacBook-Pro.local:8888", "127.0.0.1:8888");
 				    System.out.println("Setting upload image form action to:" + url);
 				    view.setUploadFormActionUrl(url);
+			    }
+			    
+			    @Override
+			    public void onFailure(Throwable th) {
+			    	Window.alert("Failed to set upload link");
 			    }
 		    });
 	}

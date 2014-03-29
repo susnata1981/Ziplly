@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.ConversationDAO;
@@ -23,14 +26,16 @@ public class GetPublicAccountDetailsActionHandler extends
 	private LikeDAO likeDao;
 
 	@Inject
-	public GetPublicAccountDetailsActionHandler(AccountDAO accountDao,
+	public GetPublicAccountDetailsActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    ConversationDAO conversationDao,
 	    TweetDAO tweetDao,
 	    CommentDAO commentDao,
 	    LikeDAO likeDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.tweetDao = tweetDao;
 		this.commentDao = commentDao;
@@ -39,7 +44,7 @@ public class GetPublicAccountDetailsActionHandler extends
 
 	@Override
 	public GetAccountDetailsResult
-	    execute(GetPublicAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetPublicAccountDetailsAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();

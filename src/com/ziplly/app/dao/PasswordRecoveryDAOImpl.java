@@ -7,10 +7,17 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.model.PasswordRecoveryStatus;
 
-public class PasswordRecoveryDAOImpl implements PasswordRecoveryDAO {
+public class PasswordRecoveryDAOImpl extends BaseDAO implements PasswordRecoveryDAO {
+
+	@Inject
+	public PasswordRecoveryDAOImpl(Provider<EntityManager> entityManagerProvider) {
+		super(entityManagerProvider);
+	}
 
 	// TODO: move business logic out of this method.
 	@Override
@@ -19,73 +26,55 @@ public class PasswordRecoveryDAOImpl implements PasswordRecoveryDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 
+		boolean found = true;
+		PasswordRecovery resp = null;
 		try {
-			boolean found = true;
-			PasswordRecovery resp = null;
-			try {
-				resp = findByEmail(pr.getEmail());
-			} catch (NoResultException nre) {
-				found = false;
-			}
-
-			// if we already have a non-used row, just update it
-			if (found && resp.getStatus() != PasswordRecoveryStatus.DONE) {
-				resp.setHash(pr.getHash());
-				resp.setTimeCreated(new Date());
-				em.getTransaction().begin();
-				em.merge(resp);
-				em.getTransaction().commit();
-				return;
-			}
-
-			em.getTransaction().begin();
-			em.persist(pr);
-			em.getTransaction().commit();
-		} finally {
-			em.close();
+			resp = findByEmail(pr.getEmail());
+		} catch (NoResultException nre) {
+			found = false;
 		}
+
+		// if we already have a non-used row, just update it
+		if (found && resp.getStatus() != PasswordRecoveryStatus.DONE) {
+			resp.setHash(pr.getHash());
+			resp.setTimeCreated(new Date());
+			em.getTransaction().begin();
+			em.merge(resp);
+			em.getTransaction().commit();
+			return;
+		}
+
+		em.getTransaction().begin();
+		em.persist(pr);
+		em.getTransaction().commit();
 	}
 
 	@Override
 	public PasswordRecovery findByHash(String hash) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createNamedQuery("findPasswordRecoverByHash");
-			query.setParameter("hash", hash);
-			query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
-			return (PasswordRecovery) query.getSingleResult();
-		} finally {
-			em.close();
-		}
+		Query query = getEntityManager().createNamedQuery("findPasswordRecoverByHash");
+		query.setParameter("hash", hash);
+		query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
+		return (PasswordRecovery) query.getSingleResult();
 	}
 
 	@Override
 	public PasswordRecovery findByEmail(String email) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createNamedQuery("findPasswordRecoverByEmail");
-			query.setParameter("email", email);
-			query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
-			return (PasswordRecovery) query.getSingleResult();
-		} finally {
-			em.close();
-		}
+		Query query = getEntityManager().createNamedQuery("findPasswordRecoverByEmail");
+		query.setParameter("email", email);
+		query.setParameter("status", PasswordRecoveryStatus.PENDING.name());
+		return (PasswordRecovery) query.getSingleResult();
 	}
 
 	@Override
 	public void update(PasswordRecovery pr) {
 		Preconditions.checkNotNull(pr);
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			em.getTransaction().begin();
-			em.merge(pr);
-			em.getTransaction().commit();
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		em.getTransaction().begin();
+		em.merge(pr);
+		em.getTransaction().commit();
 	}
 
 	@Override

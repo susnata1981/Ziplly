@@ -1,11 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -22,17 +24,19 @@ public class UpdateTweetActionHandler extends
 	private TweetDAO tweetDao;
 
 	@Inject
-	public UpdateTweetActionHandler(AccountDAO accountDao,
+	public UpdateTweetActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    TweetDAO tweetDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.tweetDao = tweetDao;
 	}
 
 	@Override
 	public UpdateTweetResult
-	    execute(UpdateTweetAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(UpdateTweetAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();
