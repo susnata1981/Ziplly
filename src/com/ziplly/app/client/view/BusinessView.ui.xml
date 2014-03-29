@@ -36,16 +36,19 @@
 		height: 34px !important;
 		margin: 0 !important;
 		}
+		.colSpan {
+			max-width: 90%;
+		}
 	</ui:style>
 
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column offset="3" size="7">
+			<b:Column offset="3" size="7" addStyleNames="{style.colSpan}">
 				<b:Alert ui:field="message" close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column size="3">
+			<b:Column size="3" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.filterPanel}">
 					<b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
 					<b:ControlGroup ui:field="zipCg" addStyleNames="{style.inputControlGroup}">
@@ -63,7 +66,7 @@
 					<b:Button size="SMALL" ui:field="resetBtn">Reset</b:Button>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="8">
+			<b:Column size="8" addStyleNames="{style.colSpan}">
 				<b:FluidRow>
 					<b:Column offset="1" size="10">
 						<cell:SimplePager ui:field="pager" />

@@ -65,7 +65,9 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		Query query =
 		    em.createQuery("select n from Neighborhood n join n.postalCodes p"
 		        + " where p.postalCode = :postalCode and n.type is :type");
-		query.setParameter("postalCode", postalCode).setParameter("type", NeighborhoodType.X.name());
+		query.setParameter("postalCode", postalCode).setParameter(
+		    "type",
+		    NeighborhoodType.NEIGHBORHOOD.name());
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -204,56 +206,14 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		}
 	}
 
-	// @Override
-	// public void save(Neighborhood neighborhood) {
-	// EntityManager em = EntityManagerService.getInstance().getEntityManager();
-	//
-	// try {
-	// em.getTransaction().begin();
-	// PostalCode postalCode = null;
-	//
-	// // parent neighborhood
-	// try {
-	// if (neighborhood.getParentNeighborhood() != null) {
-	// Long parentNeighborhoodId =
-	// neighborhood.getParentNeighborhood().getNeighborhoodId();
-	// Query query =
-	// em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
-	// query.setParameter("neighborhoodId", parentNeighborhoodId);
-	// Neighborhood parent = (Neighborhood) query.getSingleResult();
-	// neighborhood.setParentNeighborhood(parent);
-	// }
-	// } catch(NoResultException nre) {
-	// throw nre;
-	// }
-	//
-	// // postal code
-	// try {
-	// Query query =
-	// em.createQuery("from PostalCode where postalCode = :postalCode");
-	// query.setParameter("postalCode",
-	// neighborhood.getPostalCode().getPostalCode());
-	// postalCode = (PostalCode) query.getSingleResult();
-	// } catch(NoResultException nre) {
-	// postalCode = new PostalCode();
-	// postalCode.setPostalCode(neighborhood.getPostalCode().getPostalCode());
-	// }
-	//
-	// neighborhood.setPostalCode(postalCode);
-	// em.persist(neighborhood);
-	// em.getTransaction().commit();
-	// } finally {
-	// em.close();
-	// }
-	// }
-
+	@Deprecated
 	@Override
 	public void save(Neighborhood neighborhood) {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
 			em.getTransaction().begin();
-			PostalCode postalCode = null;
+			// PostalCode postalCode = null;
 
 			// parent neighborhood
 			try {
@@ -312,12 +272,11 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		try {
 			try {
 				em.getTransaction().begin();
-				Query query =
-				    em
-				        .createQuery("select n from Neighborhood n where lower(name) = :neighborhoodName and lower(n.state) = :state and type = :type");
+				Query query = em.createQuery("select n from Neighborhood n where lower(name) = :neighborhoodName and lower(n.city) = :city and type = :type");
+
 				query
 				    .setParameter("neighborhoodName", neighborhood.getName().toLowerCase())
-				    .setParameter("state", neighborhood.getState().toLowerCase())
+				    .setParameter("city", neighborhood.getParentNeighborhood().getName().toLowerCase())
 				    .setParameter("type", neighborhood.getType().name());
 
 				existingNeighborhood = (Neighborhood) query.getSingleResult();
@@ -328,24 +287,37 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 				    neighborhood.getPostalCodes().get(0).getPostalCode()));
 			}
 
+			// We found a match!
 			if (existingNeighborhood != null) {
-				// We found a match!
 				return EntityUtil.clone(existingNeighborhood);
 			}
 
+			
+			return createNeighborhoodTree(neighborhood);
+		} catch(RuntimeException ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		} finally {
+			em.close();
+		}
+		
 			// Create the neighborhood chain
+			/*
 			Neighborhood newNeighborhood = new Neighborhood(neighborhood);
 			Neighborhood parent = newNeighborhood.getParentNeighborhood();
 			Neighborhood current = newNeighborhood;
+
 			while (parent != null) {
 				Neighborhood parentNeighborhood = null;
 				try {
+					// Countries have "" in state field - so this is so we don't duplicate
+					// countries.
 					Query query =
 					    em
 					        .createQuery("from Neighborhood where lower(name) = :name and lower(state) = :state and type = :type");
 					query
 					    .setParameter("name", parent.getName().toLowerCase())
-					    .setParameter("state", neighborhood.getState())
+					    .setParameter("state", parent.getState())
 					    .setParameter("type", parent.getType().name());
 
 					parentNeighborhood = (Neighborhood) query.getSingleResult();
@@ -360,6 +332,17 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 				current = parent;
 				parent = parent.getParentNeighborhood();
 			}
+
+			Query query = em.createQuery("from PostalCode where zip = :zip");
+			query.setParameter("zip", newNeighborhood.getPostalCodes().iterator().next().getPostalCode());
+			try {
+				PostalCode pc = (PostalCode) query.getSingleResult();
+				newNeighborhood.getPostalCodes().clear();
+				newNeighborhood.addPostalCode(pc);
+			} catch (NoResultException nre) {
+				// postal code doesn't exist.
+			}
+
 			em.persist(newNeighborhood);
 			em.getTransaction().commit();
 
@@ -367,6 +350,7 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		} finally {
 			em.close();
 		}
+		*/
 	}
 
 	@Override
@@ -375,15 +359,74 @@ public class NeighborhoodDAOImpl implements NeighborhoodDAO {
 		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
 		try {
-			Query query = em.createQuery("from Neighborhood where city = :city");
-			query.setParameter("city", neighborhood.getCity());
+			Query query = em.createQuery("from Neighborhood where city = :city and type = :type and state = :state");
+			query
+			    .setParameter("city", neighborhood.getCity())
+			    .setParameter("type", NeighborhoodType.NEIGHBORHOOD.name())
+			    .setParameter("state", neighborhood.getState());
 			List<Neighborhood> neighborhoods = query.getResultList();
 			return EntityUtil.cloneNeighborhoodList(neighborhoods);
-		} catch(NoResultException nre) {
+		} catch (NoResultException nre) {
 			return Collections.emptyList();
-		}
-		finally {
+		} finally {
 			em.close();
 		}
+	}
+
+	private NeighborhoodDTO createNeighborhoodTree(NeighborhoodDTO neighborhood) {
+		if (neighborhood == null) {
+			throw new IllegalArgumentException();
+		}
+
+		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		em.getTransaction().begin();
+
+		Neighborhood newNeighborhood = new Neighborhood(neighborhood);
+		Neighborhood parent = newNeighborhood.getParentNeighborhood();
+		Neighborhood current = newNeighborhood;
+
+		while (parent != null) {
+			Neighborhood parentNeighborhood = null;
+			Query query = null;
+			try {
+				// Countries have "" in state field - so this is so we don't duplicate
+				// countries.
+				if (parent.getType() == NeighborhoodType.COUNTRY) {
+					query = em.createQuery("from Neighborhood where lower(name) = :name");
+					query.setParameter("name", parent.getName().toLowerCase());
+				} else {
+					query =
+					    em.createQuery("from Neighborhood where lower(name) = :name and lower(state) = :state and type = :type");
+					query
+					    .setParameter("name", parent.getName().toLowerCase())
+					    .setParameter("state", parent.getState())
+					    .setParameter("type", parent.getType().name());
+				}
+				parentNeighborhood = (Neighborhood) query.getSingleResult();
+			} catch (NoResultException nre) {
+				// break;
+			}
+
+			if (parentNeighborhood != null) {
+				current.setParentNeighborhood(parentNeighborhood);
+			}
+
+			current = parent;
+			parent = parent.getParentNeighborhood();
+		}
+
+		Query query = em.createQuery("from PostalCode where zip = :zip");
+		query.setParameter("zip", newNeighborhood.getPostalCodes().iterator().next().getPostalCode());
+		try {
+			PostalCode pc = (PostalCode) query.getSingleResult();
+			newNeighborhood.getPostalCodes().clear();
+			newNeighborhood.addPostalCode(pc);
+		} catch (NoResultException nre) {
+			// postal code doesn't exist.
+		}
+
+		em.persist(newNeighborhood);
+		em.getTransaction().commit();
+		return EntityUtil.clone(newNeighborhood);
 	}
 }

@@ -19,7 +19,7 @@ public class PostalCode implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "zip")
+	@Column(name = "zip", length=10)
 	private String postalCode;
 
 	@Column(name = "state", updatable = false)
@@ -42,6 +42,11 @@ public class PostalCode implements Serializable {
 
 	public PostalCode(PostalCodeDTO postalCode) {
 		this.setPostalCode(postalCode.getPostalCode());
+		this.setLatitude(postalCode.getLatitude());
+		this.setLongitude(postalCode.getLongitude());
+		this.setCity(postalCode.getCity());
+		this.setState(postalCode.getState());
+		this.setFullState(postalCode.getFullState());
 	}
 
 	// public Long getPostalCodeId() {

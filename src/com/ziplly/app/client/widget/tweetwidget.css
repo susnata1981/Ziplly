@@ -166,7 +166,7 @@ div.comment_text {
 }
 
 .commentInputTextBox {
-	margin: 2ppx;
+	margin: 6px;
 	width: 96% !important;
 	height: 40px;
 	padding: 4px;

@@ -511,7 +511,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 		FluidContainer container = new FluidContainer();
 
 		// alert row
-		Row row = new Row();
+		Row row = new FluidRow();
 		com.github.gwtbootstrap.client.ui.Column col = new com.github.gwtbootstrap.client.ui.Column(10);
 		final Alert info = new Alert();
 		info.setVisible(false);

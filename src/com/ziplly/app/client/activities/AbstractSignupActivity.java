@@ -53,6 +53,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		dispatcher.execute(new RegisterAccountAction(account), registerAccountHandler);
 	}
 
+	@Deprecated
 	@Override
 	public void getNeighborhoodData(String postalCode) {
 		view.displayNeighborhoodListLoading(true);
@@ -81,6 +82,11 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
       public void onSuccess(GetNeighborhoodResult result) {
 				view.displayNewNeighborhood(result.getNeighbordhoods().get(0));
       }
+			
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayErrorDuringNeighborhoodSelection(StringConstants.FAILED_TO_ADD_NEIGHBORHOOD, AlertType.ERROR);
+			}
 		});
 	}
 	

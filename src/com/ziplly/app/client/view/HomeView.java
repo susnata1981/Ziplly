@@ -121,7 +121,7 @@ public class HomeView extends AbstractView implements IHomeView {
 	HTMLPanel neighborhoodsPanel;
 
 	@UiField
-	HTMLPanel newMembersListPanel;
+	Container newMembersListContainer;
 	
 	@UiField(provided = true)
 	ProfileListWidget profileListWidget;
@@ -151,6 +151,7 @@ public class HomeView extends AbstractView implements IHomeView {
 		tview.setWidth(TWEET_WIDGET_WIDTH);
 
 		communitySummaryContainer.setShowOn(Device.DESKTOP);
+		newMembersListContainer.setShowOn(Device.DESKTOP);
 		communityWallPanel.add(tview);
 		communitySummaryWidget.setHeight("270px");
 		communitySummaryWidget.addClickHandler(new ClickHandler() {
@@ -489,11 +490,11 @@ public class HomeView extends AbstractView implements IHomeView {
 	@Override
 	public void displayNewMembers(List<AccountDTO> accounts) {
 		if (accounts.size() == 0) {
-			StyleHelper.show(newMembersListPanel.getElement(), false);
+			StyleHelper.show(newMembersListContainer.getElement(), false);
 			return;
 		}
 		
-		StyleHelper.show(newMembersListPanel.getElement(), true);
+		StyleHelper.show(newMembersListContainer.getElement(), true);
 		profileListWidget.displayProfiles(accounts);
 	}
 }

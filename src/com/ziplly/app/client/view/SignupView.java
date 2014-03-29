@@ -52,7 +52,6 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.GetNeighborhoodResult;
 import com.ziplly.app.shared.ValidationResult;
 
 public class SignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
@@ -75,6 +74,9 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	@UiField
 	Anchor howItWorksAnchor;
 
+	@UiField
+	Anchor howItWorksInDetailAnchor;
+	
 	@UiField
 	TextBox firstname;
 	@UiField
@@ -99,21 +101,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	@UiField
 	ListBox genderListBox;
 
-//	@UiField
-//	TextBox zip;
-//	@UiField
-//	ControlGroup zipCg;
-//	@UiField
-//	HelpInline zipError;
-
-//	@UiField
-//	ControlGroup neighborhoodCg;
-//	@UiField
-//	Controls neighborhoodControl;
-//	@UiField
-//	HTMLPanel neighborhoodListPanel;
-//	@UiField
-//	HelpInline neighborhoodError;
 	@UiField
 	Image neighborhoodLoadingImage;
 
@@ -352,6 +339,8 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 
 //		valid &= validateZip();
 
+//		valid &= (selectedNeighborhood != null);
+		
 		valid &= placesWidget.validateAddress();
 		
 		String passwordInput = password.getText().trim();
@@ -592,6 +581,12 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		navigateToElement(elem);
 	}
 
+	@UiHandler("howItWorksInDetailAnchor")
+	void howItWorksInDetailAnchor(ClickEvent event) {
+		event.preventDefault();
+		navigateToElement(DOM.getElementById("howItWorksInDetailLink"));
+	}
+	
 	/**
 	 * Link within page.
 	 */
@@ -647,5 +642,12 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	@Override
   public void displayNeighborhoodList(List<NeighborhoodDTO> foundNeighborhoods) {
 		placesWidget.displayNeighborhoodList(foundNeighborhoods);
+  }
+
+	@Override
+  public void displayErrorDuringNeighborhoodSelection(String failedToAddNeighborhood,
+      AlertType error) {
+		
+		placesWidget.displayErrorDuringNeighborhoodSelection(failedToAddNeighborhood, error);
   }
 }

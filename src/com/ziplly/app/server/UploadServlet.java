@@ -43,22 +43,21 @@ public class UploadServlet extends HttpServlet {
 		String imageUrl = req.getParameter(StringConstants.IMAGE_URL_KEY);
 		String imageId = req.getParameter(StringConstants.IMAGE_ID);
 
-		logger
-		.log(Level.INFO, String.format(
-				"doGet method called with " + "image url %s, imageId %s",
-				imageUrl,
-				imageId));
+		logger.log(
+		    Level.INFO,
+		    String.format("doGet method called with " + "image url %s, imageId %s", imageUrl, imageId));
 
 		String response = imageUrl + StringConstants.VALUE_SEPARATOR + imageId;
 		res.setHeader("Content-Type", "text/html");
 		res.setContentType("text/html");
 		res.getWriter().println(response);
 		res.getWriter().flush();
-		//		res.getWriter().close();
+		res.getWriter().close();
 	}
 
 	@Override
-	public void doPost(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
+	public void
+	    doPost(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
 		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
 
 		// "image" name of the input[type="file"] form field.
@@ -76,7 +75,7 @@ public class UploadServlet extends HttpServlet {
 		try {
 			Image image = new Image();
 			image
-			.setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
+			    .setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
 			image.setBlobKey(blobKeys.get(0).getKeyString());
 			image.setStatus(RecordStatus.ACTIVE);
 			image.setTimeCreated(new Date());
@@ -99,8 +98,8 @@ public class UploadServlet extends HttpServlet {
 		}
 
 		String url =
-				uploadEndpoint + "?" + StringConstants.IMAGE_URL_KEY + "=" + image.getUrl() + "&"
-						+ StringConstants.IMAGE_ID + "=" + image.getId();
+		    uploadEndpoint + "?" + StringConstants.IMAGE_URL_KEY + "=" + image.getUrl() + "&"
+		        + StringConstants.IMAGE_ID + "=" + image.getId();
 		return url;
 	}
 }

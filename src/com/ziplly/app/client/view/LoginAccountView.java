@@ -42,7 +42,6 @@ public class LoginAccountView extends AbstractView implements ILoginAccountView<
 
 	@Override
 	public void clear() {
-
 		loginWidget.clear();
 	}
 

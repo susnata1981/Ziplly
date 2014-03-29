@@ -37,6 +37,7 @@
 		25px 0;
 		}
 		.contactForm {
+		width: 100%;
 		margin: 20px 0;
 		padding: 6px;
 		border: 1px solid
@@ -45,7 +46,7 @@
 		}
 		.contentArea {
 		height: 130px;
-		width: 460px;
+		width: 90%;
 		}
 		.headingWithBorder {
 		border-bottom: 1px solid #ddd;
@@ -72,10 +73,13 @@
 		padding: 20px;
 		border-radius: 5px;
 		}
+		.colSpan {
+			max-width: 90%;
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="2">
+			<b:Column size="2" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.navPanel}">
 					<g:Anchor ui:field="aboutUsAnchor" addStyleNames="{style.navLink}">About Us</g:Anchor>
 					<g:Anchor ui:field="tosAnchor" addStyleNames="{style.navLink}">Terms of
@@ -84,7 +88,7 @@
 						Policy</g:Anchor>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="9" addStyleNames="{style.aboutUsPanel}">
+			<b:Column size="9" addStyleNames="{style.aboutUsPanel} {style.colSpan}">
 				<g:HTMLPanel ui:field="aboutUsPanel">
 					<b:Heading size="3" addStyleNames="{style.headingWithBorder}">Our story</b:Heading>
 					<p class="{style.text}">
