@@ -1,7 +1,7 @@
 Ziplly.com (CONFIDENTIAL)
 ======
 
-INSTALLATION
+INSTALLATION INSTRUCTIONS
 
 1. Download the source code
 2. Install google app engine plugin
