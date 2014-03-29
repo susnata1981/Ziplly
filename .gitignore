@@ -2,6 +2,10 @@ gwt-unitCache/*
 .settings
 .classpath
 /bin
+.gitignore_global
+.gwt
+.metadata
+extras
 
 # java ignore 
 *.class

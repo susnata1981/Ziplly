@@ -54,7 +54,7 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(updatable = false)
 	private String type;
 
-	@OneToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@Fetch(FetchMode.JOIN)
 	@JoinTable(name = "neighborhood_images", joinColumns = { @JoinColumn(name = "neighborhood_id") },
 	    inverseJoinColumns = { @JoinColumn(name = "image_id") })
@@ -63,7 +63,7 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	@Column(name = "image_url")
 	private String imageUrl;
 
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinTable(name = "neighborhood_postalcode",
 	    joinColumns = { @JoinColumn(name = "neighborhood_id") }, inverseJoinColumns = { @JoinColumn(
 	        name = "postal_code") })
@@ -117,8 +117,9 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 		this.name = name;
 	}
 
+	// Return empty string in case it's null.
 	public String getCity() {
-		return this.city;
+		return city == null ? "" : city;
 	}
 
 	public void setCity(String city) {
@@ -126,7 +127,7 @@ public class Neighborhood extends AbstractTimestampAwareEntity {
 	}
 
 	public String getState() {
-		return this.state;
+		return state;
 	}
 
 	public void setState(String state) {

@@ -37,7 +37,7 @@ public class FieldVerifier {
 		return result;
 	}
 
-	private static final RegExp emailPattern = RegExp.compile("\\w+@[a-z]+\\.[a-z]{2,3}");
+	private static final RegExp emailPattern = RegExp.compile("\\w+@\\w+\\.\\w{2,3}$");
 	private static final RegExp phonePattern = RegExp.compile("\\d{3}-\\d{3}-\\d{4}");
 	private static final RegExp zipPattern = RegExp.compile("(\\d+){3,5}");
 	public static final int MAX_TWEET_LENGTH = 512;

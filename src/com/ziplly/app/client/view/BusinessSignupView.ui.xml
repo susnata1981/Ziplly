@@ -41,10 +41,13 @@
 		.signupPanel {
 		border: 1px solid #ddd;
 		background: #f1f1f1;
-		padding:
-		12px;
+		padding:12px;
 		width: 340px;
 		border-radius: 4px;
+		margin-top: 40px;
+		}
+		.listitem {
+			list-style: none;
 		}
 		.button {
 		height: 40px;
@@ -74,13 +77,15 @@
 		font-weight: normal;
 		}
 		.promotionPanel {
-		margin-top: 100px;
-		padding: 6px;
+			margin-top: 100px;
+			padding: 10px;
+			background: #f1f1f1;
+			border-radius: 5px;
 		}
 		.heading {
 		font-family: Verdana, sans-serif;
-		font-size: 30px;
-		color: #fff;
+		font-size: 22px;
+		color: #555;
 		padding: 20px 4px;
 		}
 		.signup-hero-unit {
@@ -118,6 +123,9 @@
 		.signInAnchor {
 			margin: 0 4px !important;
 		}
+		.colSpan {
+			max-width: 90%;
+		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
 		field="resources" />
@@ -128,22 +136,22 @@
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column size="5">
+			<b:Column size="5" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.promotionPanel}">
 					<ul>
-						<li class="{style.heading}">
+						<li class="{style.heading} {style.listitem}">
 							Instantly boost sales
 						</li>
-						<li class="{style.heading}">
+						<li class="{style.heading} {style.listitem}">
 						    Sign up with Ziplly
 						</li>
-						<li class="{style.heading}">
+						<li class="{style.heading} {style.listitem}">
 							Free trial till August, 2014
 						</li>
 					</ul>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column offset="1" size="5">
+			<b:Column offset="1" size="5" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.signupPanel}">
 					<div class="heading">
 						Business Sign up
@@ -238,14 +246,14 @@
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow addStyleNames="{style.fluid-row}">
-			<b:Column size="4">
+			<b:Column size="4" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
 						<b:Paragraph addStyleNames="{style.lightgray}">
 							Complete your profile and upload a photo.
 						</b:Paragraph>
-						<b:Paragraph addStyleNames="{style.lightgray}">>
+						<b:Paragraph addStyleNames="{style.lightgray}">
 							Say a bit about your business.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="createProfileBtn"
@@ -253,7 +261,7 @@
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="4">
+			<b:Column size="4" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Pick a messaging plan</b:Heading>
@@ -268,7 +276,7 @@
 					</b:Hero>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="4">
+			<b:Column size="4" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Reach local customers</b:Heading>
@@ -287,7 +295,7 @@
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow addStyleNames="{style.fluid-row}">
-			<b:Column offset="2" size="8">
+			<b:Column offset="2" size="8" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
 						<b:Heading size="3">One stop shop for your community</b:Heading>

@@ -93,14 +93,7 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 			// PostalCodeDTO postalCode = n.getPostalCodes().get(0);
 			name.append(n.getName());
 			name.append("<br/>");
-
-			if (n.getParentNeighborhood() != null) {
-				name.append(n.getParentNeighborhood().getName());
-				name.append(",&nbsp;");
-				name.append(n.getCity());
-			} else {
-				name.append(n.getCity());
-			}
+			name.append(n.getCity() + ", "+n.getState());
 			return name.toString();
 		}
 		return "";

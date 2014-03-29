@@ -330,7 +330,8 @@ public class BusinessSignupView extends AbstractView implements
 //		valid &= validateAddress(street, street1Cg, street1Error);
 		
 		valid &= placesWidget.validateAddress();
-
+//			valid &= (selectedNeighborhood != null);
+			
 //		valid &= validateNeighborhood();
 
 		valid &= validateEmail();
@@ -727,5 +728,12 @@ public class BusinessSignupView extends AbstractView implements
 	@Override
   public void displayNeighborhoodList(List<NeighborhoodDTO> foundNeighborhoods) {
 		placesWidget.displayNeighborhoodList(foundNeighborhoods);
+  }
+	
+	@Override
+  public void displayErrorDuringNeighborhoodSelection(String failedToAddNeighborhood,
+      AlertType error) {
+		
+		placesWidget.displayErrorDuringNeighborhoodSelection(failedToAddNeighborhood, error);
   }
 }

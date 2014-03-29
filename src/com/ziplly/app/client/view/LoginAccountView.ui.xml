@@ -7,11 +7,14 @@
 			margin: 13% auto;
 			border: none;
 		}
+		.colSpan {
+			max-width: 90%;
+		}
 	</ui:style>
 
 	<b:FluidContainer ui:field="loginMessagePanel" addStyleNames="{style.loginWidgetSection}">
 		<b:FluidRow>
-			<b:Column offset="4" size="4">
+			<b:Column offset="4" size="4" addStyleNames="{style.colSpan}">
 				<dt:LoginWidget ui:field="loginWidget" width="340px" />
 			</b:Column>
 		</b:FluidRow>

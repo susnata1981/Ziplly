@@ -28,12 +28,12 @@
 	</ui:style>
 	<b:FluidContainer addStyleNames="{style.rootPanel}" ui:field="container">
 		<b:FluidRow>
-			<b:Column size="10" ui:field="messageSection">
+			<b:Column size="10" ui:field="messageSection" addStyleNames="{style.colSpan}">
 				<b:Alert ui:field="message" close="false"/>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">
-			<b:Column size="3" addStyleNames="{bstyle.transparentColumn}">
+			<b:Column size="3" addStyleNames="{bstyle.transparentColumn} {style.colSpan}">
 				<g:HTMLPanel>
 					<div>
 						<div>
@@ -158,14 +158,14 @@
 					</div>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="6" addStyleNames="{bstyle.transparentColumn}">
+			<b:Column size="6" addStyleNames="{bstyle.transparentColumn} {style.colSpan}">
 				<g:HTMLPanel ui:field="tweetSection" addStyleNames="{style.tweetSection}">
 					<g:HTMLPanel ui:field="tweetBoxDiv" addStyleNames="{style.tweetBoxDiv}">
 						<dt:TweetBox ui:field="tweetBox" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="2">
+			<b:Column size="2" addStyleNames="{style.colSpan}">
 			    <b:AlertBlock type="INFO" heading="Updates" close="false" ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
 			    </b:AlertBlock>
 			</b:Column>

@@ -108,6 +108,8 @@
 		.conversationPanel {
 		float: left;
 		width: 98%;
+		margin-top: 20px;
+		overflow: hidden;
 		border:
 		1px solid #ddd;
 		}
@@ -127,6 +129,7 @@
 		padding: 4px 10px;
 		line-height: 40px;
 		color: #424242;
+		background: #f1f1f1;
 		}
 		.conversationColumn {
 			margin-left: 20px !important;	
@@ -155,10 +158,13 @@
 			height: auto;
 			padding: 20px;	
 		}
+		.colSpan {
+		max-width: 90%;
+		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="3" addStyleNames="{style.transparentColumn} {style.messageFiltersPanel}">
+			<b:Column size="3" addStyleNames="{style.transparentColumn} {style.messageFiltersPanel} {style.colSpan}">
 				<g:HTMLPanel>
 					<dl>
 						<dt>
@@ -201,14 +207,14 @@
 					</dl>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="9">
+			<b:Column size="9" addStyleNames="{style.colSpan}">
 			    <b:Row>
 					<b:Column offset="1" size="8">
 					    <b:Alert ui:field="message" close="false" addStyleNames="{style.message}"/>
 					</b:Column>
 				</b:Row>	    
 				<b:Row ui:field="conversationRow">
-					<b:Column size="9" addStyleNames="{style.transparentColumn} {style.conversationColumn}">
+					<b:Column size="9" addStyleNames="{style.transparentColumn} {style.conversationColumn} {style.colSpan}">
 						<g:HTMLPanel ui:field="conversationPanel"
 							addStyleNames="{style.conversationPanel}">
 						</g:HTMLPanel>

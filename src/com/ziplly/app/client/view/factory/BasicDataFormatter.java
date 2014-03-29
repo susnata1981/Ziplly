@@ -53,10 +53,11 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case NEIGHBORHOOD:
 				NeighborhoodDTO n = (NeighborhoodDTO) value;
 				if (n.getParentNeighborhood() != null) {
-					return n.getName() + ", " + n.getCity();
+					return n.getName() + ", " + n.getParentNeighborhood().getName();
 				} else {
 					return n.getName();
 				}
+//				return n.getName() + "," + n.getParentNeighborhood().getName();
 			case FOUND_NEIGHBORHOOD_MESSAGE:
 				n = (NeighborhoodDTO) value;
 				return "You live in "+format(n, ValueType.NEIGHBORHOOD);

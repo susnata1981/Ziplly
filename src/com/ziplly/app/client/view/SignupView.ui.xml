@@ -31,12 +31,14 @@
 		.heading3 {
 		display: block;
 		clear: both;
-		font-size: 22px;
+		font-size:
+		22px;
 		font-family:
 		Tahoma, sans;
 		sans-serif;
 		color: #555;
-		margin-bottom: 16px;
+		margin-bottom:
+		16px;
 		}
 		.heading4 {
 		display: block;
@@ -46,9 +48,18 @@
 		padding:
 		4px;
 		}
+		.howItWorksInDetailAnchor {
+			color: #555;
+			font-size: 20px;
+			font-weight: 600;
+			margin-top: 20px;
+			font-family: sans;
+			text-style: underline;
+		}
 		.singupForm {
 		float: left;
 		width: 360px;
+		max-width: 90%;
 		padding:12px;
 		background: #f1f1f1;
 		-webkit-border-radius: 4px;
@@ -124,6 +135,7 @@
 		line-height: 30px;
 		font-size: 1.2em;
 		font-weight: bold;
+		color: #fff !important;
 		}
 		.businessSignupBtn {
 		display: block;
@@ -132,23 +144,25 @@
 		}
 		.row {
 		display: block;
-		margin-bottom: 20px;
+		margin-bottom:
+		20px;
 		float:left;
 		}
 		.extendedrow {
 		display: block;
 		margin-bottom: 20px;
 		float:left;
-		width: 100%;
+		width:
+		100%;
 		}
 		.addressTextBox {
-			width: 96% !important;
+		width: 96% !important;
 		}
 		.addressHelp {
-			font-size: 13px;
-			font-weight: 600;
-			margin: 0;
-			padding: 1px;
+		font-size: 13px;
+		font-weight: 600;
+		margin: 0;
+		padding: 1px;
 		}
 		.herounit {
 		margin-top: 20px;
@@ -182,7 +196,8 @@
 		color: blue;
 		}
 		.popoverHover {
-		display: inline;
+		display:
+		inline;
 		font-size: 12px;
 		}
 		.popoverLink {
@@ -198,272 +213,306 @@
 		margin: 20px 0 20px 0;
 		}
 		.lightgray {
-			color: #666;
+		color:
+		#666;
 		}
 		.popoverText {
-			display: inline;
-			font-size: 11px !important;
+		display:
+		inline;
+		font-size: 11px !important;
 		}
 		.signInAnchor {
-			display: inline-block;
-			margin: 4px;
+		display:
+		inline-block;
+		margin: 4px;
+		}
+		.colSpan {
+		max-width: 90%;
+		}
+		.lightColoredLink {
+		color: #0198E1 !important;
 		}
 	</ui:style>
-	<b:FluidContainer>
-		<b:FluidRow>
-			<b:Column offset="1" size="10">
-				<b:Alert ui:field="infoField" animation="true" close="false" />
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow addStyleNames="{style.row}">
-			<b:Column size="5">
-				<b:Row addStyleNames="{style.mainPageHeadingPanel}">
-					<b:Column offset="1" size="9">
-						<g:HTMLPanel>
-							<span class="{style.heading1}">
-								Ziplly
-								<sup class="smalltext">beta</sup>
-							</span>
-							<span class="{style.heading2}">connecting local residents</span>
-							<br />
-							<span class="{style.heading2}">&amp;</span>
-							<br />
-							<div class="{style.heading2}">
+	<g:FlowPanel>
+		<b:FluidContainer>
+			<b:FluidRow>
+				<b:Column offset="1" size="10">
+					<b:Alert ui:field="infoField" animation="true" close="false" />
+				</b:Column>
+			</b:FluidRow>
+			<b:FluidRow addStyleNames="{style.row}">
+				<b:Column size="5" addStyleNames="{style.colSpan}">
+					<b:Row addStyleNames="{style.mainPageHeadingPanel}">
+						<b:Column offset="1" size="9">
+							<g:HTMLPanel>
+								<span class="{style.heading1}">
+									Ziplly
+									<sup class="smalltext">beta</sup>
+								</span>
+								<span class="{style.heading2}">connecting local residents</span>
+								<br />
+								<span class="{style.heading2}">&amp;</span>
+								<br />
+								<div class="{style.heading2}">
 								&nbsp;&nbsp;&nbsp;&nbsp;businesses
-								<g:Anchor ui:field="howItWorksAnchor" addStyleNames="{style.inlineAnchor}">learn
-									more</g:Anchor>
-								<br />
-							</div>
-						</g:HTMLPanel>
-					</b:Column>
-				</b:Row>
-				<b:Row>
-					<b:Column offset="1" size="9">
-						<g:HTMLPanel addStyleNames="{style.demoDiv}">
-							<span class="{style.heading4}">
-								<g:Anchor ui:field="loginAnchor">Try out our demo with the following account</g:Anchor>
-								<br />
-								<i>username: <b>terry@yahoo.com</b></i>
-								<br />
-								<i>password: <b>11111111</b></i>
-							</span>
-						</g:HTMLPanel>
-					</b:Column>
-				</b:Row>
-			</b:Column>
-			<b:Column offset="1" size="5">
-				<g:HTMLPanel addStyleNames="{style.singupForm}">
-					<a id="signupFormLink" />
-					<div class="facebookSignupLink">
-						<g:Anchor ui:field="facebookSignupAnchor">Sign up using Facebook</g:Anchor>
-					</div>
-					<hr />
-					<span class="{style.heading3}">Resident Sign up</span>
-					<b:Form>
-						<g:HTMLPanel addStyleNames="{style.row}">
-							<b:ControlGroup ui:field="firstnameCg"
-								addStyleNames="{style.nameField}">
-								<b:Controls>
-									<b:Label>First name</b:Label>
+									<g:Anchor ui:field="howItWorksAnchor"
+										addStyleNames="{style.inlineAnchor} {style.lightColoredLink}">learn
+										more</g:Anchor>
 									<br />
-									<b:TextBox ui:field="firstname" placeholder="firstname..."
-										addStyleNames="{style.textBox}" />
-									<b:HelpInline ui:field="firstnameError"></b:HelpInline>
+								</div>
+							</g:HTMLPanel>
+						</b:Column>
+					</b:Row>
+					<b:Row>
+						<b:Column offset="1" size="9" addStyleNames="{style.colSpan}">
+							<g:HTMLPanel addStyleNames="{style.demoDiv}">
+								<span class="{style.heading4}">
+									<g:Anchor ui:field="loginAnchor">Try out our demo with the following
+										account</g:Anchor>
+									<br />
+									<i>
+										username:
+										<b>terry@yahoo.com</b>
+									</i>
+									<br />
+									<i>
+										password:
+										<b>11111111</b>
+									</i>
+								</span>
+								<g:Anchor ui:field="howItWorksInDetailAnchor" addStyleNames="{style.howItWorksInDetailAnchor}">How It works</g:Anchor>
+							</g:HTMLPanel>
+						</b:Column>
+					</b:Row>
+				</b:Column>
+				<b:Column offset="1" size="5" addStyleNames="{style.colSpan}">
+					<g:HTMLPanel addStyleNames="{style.singupForm}">
+						<a id="signupFormLink" />
+						<div class="facebookSignupLink">
+							<g:Anchor ui:field="facebookSignupAnchor" addStyleNames="{style.lightColoredLink}">Sign
+								up using Facebook</g:Anchor>
+						</div>
+						<hr />
+						<span class="{style.heading3}">Resident Sign up</span>
+						<b:Form>
+							<g:HTMLPanel addStyleNames="{style.row}">
+								<b:ControlGroup ui:field="firstnameCg"
+									addStyleNames="{style.nameField}">
+									<b:Controls>
+										<b:Label>First name</b:Label>
+										<br />
+										<b:TextBox ui:field="firstname" placeholder="firstname..."
+											addStyleNames="{style.textBox}" />
+										<b:HelpInline ui:field="firstnameError"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="lastnameCg"
+									addStyleNames="{style.nameField}">
+									<b:Controls>
+										<b:Label>Last name</b:Label>
+										<br />
+										<b:TextBox ui:field="lastname" placeholder="lastname..."
+											addStyleNames="{style.textBox}" />
+										<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+							</g:HTMLPanel>
+							<b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}">
+								<b:Controls>
+									<b:Label>Email</b:Label>
+									<br />
+									<b:TextBox ui:field="email" placeholder="email..." />
+									<b:HelpInline ui:field="emailError"></b:HelpInline>
 								</b:Controls>
 							</b:ControlGroup>
-							<b:ControlGroup ui:field="lastnameCg"
-								addStyleNames="{style.nameField}">
+							<g:HTMLPanel addStyleNames="{style.row}">
+								<b:Label>Gender</b:Label>
+								<br />
+								<b:ListBox ui:field="genderListBox">
+								</b:ListBox>
+							</g:HTMLPanel>
+							<b:ControlGroup ui:field="addressCg"
+								addStyleNames="{style.extendedrow}">
 								<b:Controls>
-									<b:Label>Last name</b:Label>
+									<b:Label>Address</b:Label>
+									<g:HTMLPanel addStyleNames="{style.popoverText}">
+										<b:Popover
+											text="We don't save your address, it's only used for locating your neighborhood"
+											heading="help">
+											<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+										</b:Popover>
+									</g:HTMLPanel>
 									<br />
-									<b:TextBox ui:field="lastname" placeholder="lastname..."
-										addStyleNames="{style.textBox}" />
-									<b:HelpInline ui:field="lastnameError"></b:HelpInline>
+									<b:TextBox ui:field="address" placeholder="address..."
+										addStyleNames="{style.addressTextBox}" />
+									<b:HelpInline ui:field="addressError"
+										addStyleNames="{style.addressHelp}"></b:HelpInline>
+									<b:Image ui:field="neighborhoodLoadingImage" />
+									<g:Anchor ui:field="clearAddressAnchor" addStyleNames="{style.popoverText}">No
+										that's not right, enter a different address</g:Anchor>
 								</b:Controls>
 							</b:ControlGroup>
-						</g:HTMLPanel>
-						<b:ControlGroup ui:field="emailCg" addStyleNames="{style.row}">
-							<b:Controls>
-								<b:Label>Email</b:Label>
-								<br />
-								<b:TextBox ui:field="email" placeholder="email..." />
-								<b:HelpInline ui:field="emailError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<g:HTMLPanel addStyleNames="{style.row}">
-							<b:Label>Gender</b:Label>
-							<br />
-							<b:ListBox ui:field="genderListBox">
-							</b:ListBox>
-						</g:HTMLPanel>
-						<!-- <b:ControlGroup ui:field="zipCg" addStyleNames="{style.row}">
-							<b:Controls>
-								<b:Label>Zip</b:Label>
-								<br />
-								<b:TextBox ui:field="zip" placeholder="zip..." />
-								<b:HelpInline ui:field="zipError"></b:HelpInline>
-								<b:Image ui:field="neighborhoodLoadingImage" />
-							</b:Controls>
-						</b:ControlGroup> -->
-						<b:ControlGroup ui:field="addressCg" addStyleNames="{style.extendedrow}">
-							<b:Controls>
-								<b:Label>Address</b:Label>
-								<g:HTMLPanel addStyleNames="{style.popoverText}">
-									<b:Popover text="We don't save your address, it's only used for locating your neighborhood"
-										heading="help">
-										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-									</b:Popover>
-								</g:HTMLPanel>
-								<br/>
-								<b:TextBox ui:field="address" placeholder="address..." addStyleNames="{style.addressTextBox}"/>
-								<b:HelpInline ui:field="addressError" addStyleNames="{style.addressHelp}"></b:HelpInline>
-								<b:Image ui:field="neighborhoodLoadingImage" />
-								<g:Anchor ui:field="clearAddressAnchor" addStyleNames="{style.popoverText}">No that's not right, enter a different address</g:Anchor>
-							</b:Controls>
-						</b:ControlGroup>
-						<!-- <b:ControlGroup ui:field="neighborhoodCg"
-							addStyleNames="{style.row}">
-							<b:Controls ui:field="neighborhoodControl">
-								<b:ControlLabel for="neighborhood">Select Neighborhood</b:ControlLabel>
-								<g:HTMLPanel ui:field="neighborhoodListPanel">
-								</g:HTMLPanel>
-								<b:HelpInline ui:field="neighborhoodError"></b:HelpInline>
-								<b:HelpBlock>Pick your neighborhood to learn about whats
-									going on
-									in there</b:HelpBlock>
-							</b:Controls>
-						</b:ControlGroup> -->
-						<b:ControlGroup ui:field="passwordCg"
-							addStyleNames="{style.row}">
-							<b:Controls>
-								<b:Label>Password</b:Label>
-								<br />
-								<b:PasswordTextBox ui:field="password"
-									placeholder="password..." />
-								<b:HelpInline ui:field="passwordError"></b:HelpInline>
-							</b:Controls>
-						</b:ControlGroup>
-						<b:Button block="true" type="SUCCESS" ui:field="signupBtn"
-							addStyleNames="{style.row} {style.button}">Join for free</b:Button>
-						<g:HTMLPanel addStyleNames="{style.row}">
-							<span class="tiny_text">
-								By joining, you agree to our
-								<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
-								and
-								<g:Anchor ui:field="privacyPolicyAnchor">Privacy Policy</g:Anchor>
-							</span>
-						</g:HTMLPanel>
-						<g:HTMLPanel addStyleNames="{style.row}">
-							<span class="tiny_text">
-								Already a member
-								<g:Anchor ui:field="signInAnchor" addStyleNames="{style.signInAnchor}">Sign in</g:Anchor>
-								here
-							</span>
-						</g:HTMLPanel>
-					</b:Form>
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow>
-			<b:Column offset="6" size="6">
-				<g:HTMLPanel addStyleNames="{style.singupForm}">
-					<span class="heading">Free for businesses to join &amp; use</span>
-					<hr />
-					<b:Button type="WARNING" block="true" ui:field="businessSignupBtn"
-						addStyleNames="{style.button} {style.businessSignupBtn}">
-						Join Now
-					</b:Button>
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow addStyleNames="{style.fluid-row}">
-			<b:Column size="4">
-				<g:HTMLPanel>
+							<b:ControlGroup ui:field="passwordCg"
+								addStyleNames="{style.row}">
+								<b:Controls>
+									<b:Label>Password</b:Label>
+									<br />
+									<b:PasswordTextBox ui:field="password"
+										placeholder="password..." />
+									<b:HelpInline ui:field="passwordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:Button block="true" type="SUCCESS" ui:field="signupBtn"
+								addStyleNames="{style.row} {style.button}">Join for free</b:Button>
+							<g:HTMLPanel addStyleNames="{style.row}">
+								<span class="tiny_text">
+									By joining, you agree to our
+									<g:Anchor ui:field="termsOfUseAnchor">Terms of Use</g:Anchor>
+									and
+									<g:Anchor ui:field="privacyPolicyAnchor">Privacy Policy</g:Anchor>
+								</span>
+							</g:HTMLPanel>
+							<g:HTMLPanel addStyleNames="{style.row}">
+								<span class="tiny_text">
+									Already a member
+									<g:Anchor ui:field="signInAnchor" addStyleNames="{style.signInAnchor}">Sign
+										in</g:Anchor>
+									here
+								</span>
+							</g:HTMLPanel>
+						</b:Form>
+					</g:HTMLPanel>
+				</b:Column>
+			</b:FluidRow>
+			<b:FluidRow>
+				<b:Column offset="6" size="6" addStyleNames="{style.colSpan}">
+					<g:HTMLPanel addStyleNames="{style.singupForm}">
+						<span class="heading">Free for businesses to join &amp; use</span>
+						<hr />
+						<b:Button type="WARNING" block="true" ui:field="businessSignupBtn"
+							addStyleNames="{style.button} {style.businessSignupBtn}">
+							Join Now
+						</b:Button>
+					</g:HTMLPanel>
+				</b:Column>
+			</b:FluidRow>
+			<b:FluidRow addStyleNames="{style.fluid-row}">
+				<b:Column size="4" addStyleNames="{style.colSpan}">
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4" ui:field="heading">Create your profile</b:Heading>
 						<b:Paragraph addStyleNames="{style.lightgray}">
-							Complete your profile and upload a photo.
+							Complete your profile and
+							upload a photo.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="createProfileBtn"
 							addStyleNames="{style.hero-unit-btn}">Sign up</b:Button>
 					</b:Hero>
-				</g:HTMLPanel>
-			</b:Column>
-			<b:Column size="4">
-				<g:HTMLPanel>
+				</b:Column>
+				<b:Column size="4" addStyleNames="{style.colSpan}">
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Explore your neighborhood</b:Heading>
 						<b:Paragraph addStyleNames="{style.lightgray}">
-							Find residents and local businesses in your
+							Find residents and local
+							businesses in your
 							neighborhood.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="exploreBtn"
 							addStyleNames="{style.hero-unit-btn}">Explore</b:Button>
 					</b:Hero>
-				</g:HTMLPanel>
-			</b:Column>
-			<b:Column size="4">
-				<g:HTMLPanel>
+				</b:Column>
+				<b:Column size="4" addStyleNames="{style.colSpan}">
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Broadcast to your neighbors</b:Heading>
 						<b:Paragraph addStyleNames="{style.lightgray}">
-							Share with your neighbors and local businesses.
+							Share with your neighbors
+							and local businesses.
 						</b:Paragraph>
 						<b:Button type="INFO" ui:field="postMessageBtn"
 							addStyleNames="{style.hero-unit-btn}">Post message</b:Button>
 					</b:Hero>
-					<a id="howItWorksLink" />
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow addStyleNames="{style.fluid-row}">
-			<b:Column offset="2" size="8">
-				<g:HTMLPanel>
-					<b:Hero addStyleNames="{style.signup-hero-unit-small}">
-						<b:Heading size="3">One stop shop for your community</b:Heading>
-						<b:Heading size="4">Signup</b:Heading>
-						<g:HTMLPanel addStyleNames="{style.lightgray}">
-							<ol>
-								<li>Pick your neighborhood based on your zip code</li>
-								<li>Complete your profile</li>
-								<li>
-									Instantly broadcast to your neighborhood or the larger
-									community
-									<g:HTMLPanel addStyleNames="{style.popoverHover}">
-										<b:Popover
-											text="For example, lets say Lower Queen Ann is your neighborhood based on your zip 98109, then
+				</b:Column>
+			</b:FluidRow>
+			<b:FluidRow addStyleNames="{style.fluid-row}">
+				<b:Column offset="2" size="8" addStyleNames="{style.colSpan}">
+					<g:HTMLPanel>
+						<b:Hero addStyleNames="{style.signup-hero-unit-small}">
+							<b:Heading size="3">One stop shop for your community</b:Heading>
+							<b:Heading size="4">Signup</b:Heading>
+							<g:HTMLPanel addStyleNames="{style.lightgray}">
+								<ol>
+									<li>Pick your neighborhood based on your zip code</li>
+									<li>Complete your profile</li>
+									<li>
+										Instantly broadcast to your neighborhood or the larger
+										community
+										<g:HTMLPanel addStyleNames="{style.popoverHover}">
+											<b:Popover
+												text="For example, lets say Lower Queen Ann is your neighborhood based on your zip 98109, then
 								    you would be able to broadcast to either Lower Queen Ann(neighborhood) or to your larger community Queen Ann(community)"
-											heading="learn more">
-											<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-										</b:Popover>
-									</g:HTMLPanel>
-								</li>
-								<li>Community wall visible only to the residents of that
-									neighborhood</li>
-							</ol>
-						</g:HTMLPanel>
-						<b:Heading size="4">Know your neighbors</b:Heading>
-						<g:HTMLPanel addStyleNames="{style.lightgray}">
-							<ol>
-								<li>Find events in your community.</li>
-								<li>Learn about your neighbors, their interest, their
-									occupation.</li>
-								<li>Broadcast within your community.</li>
-								<li>Send personal messages to your neighbors</li>
-							</ol>
-						</g:HTMLPanel>
-						<b:Heading size="4">Get local businesses deals</b:Heading>
-						<g:HTMLPanel addStyleNames="{style.lightgray}">
-							<ol addStyleNames="{style.lightgray}">
-								<li>Learn about the specials from local businesses.</li>
-								<li>Provide feedback to the business</li>
-								<li>Share your experience</li>
-							</ol>
-						</g:HTMLPanel>
-					</b:Hero>
-					<a id="howItWorksLink" />
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-	</b:FluidContainer>
+												heading="learn more">
+												<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+											</b:Popover>
+										</g:HTMLPanel>
+									</li>
+									<li>Community wall visible only to the residents of that
+										neighborhood</li>
+								</ol>
+							</g:HTMLPanel>
+							<b:Heading size="4">Know your neighbors</b:Heading>
+							<g:HTMLPanel addStyleNames="{style.lightgray}">
+								<ol>
+									<li>Find events in your community.</li>
+									<li>Learn about your neighbors, their interest, their
+										occupation.</li>
+									<li>Broadcast within your community.</li>
+									<li>Send personal messages to your neighbors</li>
+								</ol>
+							</g:HTMLPanel>
+							<b:Heading size="4">Get local businesses deals</b:Heading>
+							<g:HTMLPanel addStyleNames="{style.lightgray}">
+								<ol addStyleNames="{style.lightgray}">
+									<li>Learn about the specials from local businesses.</li>
+									<li>Provide feedback to the business</li>
+									<li>Share your experience</li>
+								</ol>
+							</g:HTMLPanel>
+						</b:Hero>
+						<a id="howItWorksLink" />
+					</g:HTMLPanel>
+				</b:Column>
+			</b:FluidRow>
+			<b:FluidRow addStyleNames="{style.fluid-row}">
+				<b:Column offset="2" size="8" addStyleNames="{style.colSpan}">
+					<g:HTMLPanel>
+						<b:Hero addStyleNames="{style.signup-hero-unit-small}">
+							<b:Heading size="3">How It Works</b:Heading>
+							<b:Heading size="4">For residents</b:Heading>
+							<g:HTMLPanel addStyleNames="{style.lightgray}">
+								<ol>
+									<li>Fill out the signup form with name and email</li>
+									<li>Fill out your home address so we can locate your neighborhood. We don't
+									    store your address information.</li>
+									<li>Once you signup, you'll receive an email from Ziplly with a confirmaiton link</li>
+									<li>Click and activate your account</li>
+									<li>Sign into your account and start exploring your neighborhood</li>
+								</ol>
+							</g:HTMLPanel>
+							<b:Heading size="4">For businesses</b:Heading>
+							<g:HTMLPanel addStyleNames="{style.lightgray}">
+								<ol>
+									<li>Fill out the business signup form</li>
+									<li>Once you signup, you'll receive a email from Ziplly with a confirmaiton link</li>
+									<li>Click and active your account</li>
+									<li>Log in and start promoting your business within your locality</li>
+									<li>It's completely free to use till August 2014, when you'll be charged based on the
+									    number of messages you share</li>
+								</ol>
+							</g:HTMLPanel>
+						</b:Hero>
+						<a id="howItWorksInDetailLink" />
+					</g:HTMLPanel>
+				</b:Column>
+			</b:FluidRow>	
+		</b:FluidContainer>
+	</g:FlowPanel>
 </ui:UiBinder> 

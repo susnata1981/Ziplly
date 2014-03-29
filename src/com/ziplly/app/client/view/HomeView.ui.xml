@@ -7,7 +7,7 @@
 		margin-top: 15px;
 		}
 		.leftnavHeaderContainer {
-		overflow: hidden;
+			overflow: hidden;
 		}
 		.leftnavHeaderSpan {
 		display: inline-block;
@@ -25,7 +25,8 @@
 		}
 		.tweetFilterLink {
 		clear: both;
-		float: left;
+		float:
+		left;
 		display: block;
 		font-size: .85em;
 		width: 100%;
@@ -43,19 +44,20 @@
 		.communityWallColumn {
 		position: relative;
 		height: auto;
-		border-radius: 5px;
+		border-radius:
+		5px;
+		max-width: 92%;
 		}
 		.communityWallPanel {
 		position: absolute;
 		left: 0;
 		right:0;
-		margin-left:
-		20px;
 		background-color: #ddd;
 		padding-top: 10px;
-		min-height: 700px;
+		min-height:
+		700px;
 		opacity: .9;
-		width: 92%;
+		width: 98%;
 		}
 		.communityInfoPanel {
 		height:
@@ -91,34 +93,40 @@
 		list-style: none;
 		}
 		.popoverLink {
-		display: inline;
+		display:
+		inline;
 		font-size: 8px;
 		}
 		.filterPanel {
 		background: #f1f1f1;
 		opacity: .8;
+		margin-bottom: 20px;
 		}
 		.gwt-Anchor {
-			font-weight: 600;
+		font-weight: 600;
 		}
 		.newMembersListPanel {
-			background: #f1f1f1;
-			maring-top: 4px;
-			color: #555;	
-			max-height: 330px;
-			overflow: auto;	
+		background: #f1f1f1;
+		maring-top: 4px;
+		color: #555;
+		max-height: 330px;
+		overflow: auto;
+		width: 96%;
 		}
 		.row {
-			margin-top: 20px;
+		margin-top: 20px;
 		}
 		.header-bottom-border {
-			font-size: 17px;
-			color: #555;
-			background: #ddd;
-			padding: 2%;
-			display: inline-block;	
-			border-bottom: 1px solid #bbb;
-			width: 96%;
+		font-size: 17px;
+		color: #555;
+		background: #ddd;
+		padding: 2%;
+		display: inline-block;
+		border-bottom: 1px solid #bbb;
+		width: 96%;
+		}
+		.colSpan {
+			max-width: 90%;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -130,7 +138,7 @@
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column size="2">
-				<g:HTMLPanel addStyleNames="{style.filterPanel}">
+				<g:HTMLPanel addStyleNames="{style.filterPanel} {style.colSpan}">
 					<div class="{style.leftnavHeaderContainer}">
 						<g:HTMLPanel>
 							<span class="{style.leftnavHeaderSpan}">
@@ -196,11 +204,14 @@
 					</b:Column>
 				</b:Row>
 				<b:Row addStyleNames="{style.row}">
-					<b:Column size="11">
-					    <g:HTMLPanel ui:field="newMembersListPanel" addStyleNames="{style.newMembersListPanel}">
-					        <span class="{style.header-bottom-border}">New members</span>
-					    	<dt:ProfileListWidget ui:field="profileListWidget"></dt:ProfileListWidget>
-					    </g:HTMLPanel>
+					<b:Column size="11" addStyleNames="{style.colSpan}">
+						<b:Container ui:field="newMembersListContainer"
+							addStyleNames="{style.newMembersListPanel}">
+							<g:HTMLPanel>
+								<span class="{style.header-bottom-border}">New members</span>
+								<dt:ProfileListWidget ui:field="profileListWidget"></dt:ProfileListWidget>
+							</g:HTMLPanel>
+						</b:Container>
 					</b:Column>
 				</b:Row>
 			</b:Column>

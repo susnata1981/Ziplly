@@ -42,8 +42,8 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	}
 
 	public static final String ACCOUNT_DOES_NOT_EXIST = "Account with this email doesn't exist";
-	public static final String INVALID_ACCOUNT_CREDENTIALS = "Invalid account credentials.";
-	public static final String ACCOUNT_NOT_ACTIVE = "Please verify your email, account isn't act";
+	public static final String INVALID_ACCOUNT_CREDENTIALS = "Invalid account credentials";
+	public static final String ACCOUNT_NOT_ACTIVE = "Please verify your email, account isn't active";
 	private OAuthConfig authConfig;
 
 	@Inject
@@ -160,6 +160,7 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 	@UiHandler("loginBtn")
 	void login(ClickEvent event) {
 		clearError();
+		resetMessage();
 		if (!validateInput()) {
 			return;
 		}

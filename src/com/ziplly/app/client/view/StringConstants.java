@@ -110,7 +110,7 @@ public class StringConstants {
 	public static final String EMAIL_VERIFICATION_SENT =
 	    "We've sent you an email with a verification link. Please verify your email address and start exploring";
 	public static final String URL_PARAMATER_SEPARATOR = "&";
-	public static final String ACCOUNT_ALEADY_VERIFIED = "Account has already been verified.";
+	public static final String ACCOUNT_ALEADY_VERIFIED = "Account has already been verified";
 	public static final String ACCOUNT_DOESNT_EXISTS = "Account doesn't exist";
 	public static final String ACCOUNT_NOT_COMPLETE =
 	    "Your account is not complete yet <ol><li>Upload your picture</li> "
@@ -129,4 +129,8 @@ public class StringConstants {
 	public static final String COMMENT_LINK_HOVER_TEXT = "You can comment on this post";
 	public static final String NEIGHBORHOOD_ADDED_SUCCESSFULLY = "Successfully added neighborhood";
 	public static final String NO_NEIGHBORHOODS_FOUND = "No neighborhoods were found, please enter the name of your neighborhood";
+	public static final String ADD_OR_SELECT_NEIGHBORHOOD = "Please select or add a neighborhood";
+	public static final String NEIGHBORHOOD_NOT_FOUND = "We didn't find a neighborhood, please add one";
+	public static final String DUPLICATE_NEIGHBORHOOD_NAME = "Neighborhood name already exists, please select from the list";
+	public static final String FAILED_TO_ADD_NEIGHBORHOOD = "Sorry, we couldn't add your neighborhood";
 }

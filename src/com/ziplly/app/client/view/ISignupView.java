@@ -6,7 +6,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.shared.GetNeighborhoodResult;
 
 public interface ISignupView<T extends SignupActivityPresenter> extends View<T> {
 	void reset();
@@ -30,4 +29,6 @@ public interface ISignupView<T extends SignupActivityPresenter> extends View<T> 
 	void displayNewNeighborhood(NeighborhoodDTO neighborhoodDTO);
 
 	void displayNeighborhoodList(List<NeighborhoodDTO> neighbordhoods);
+
+	void displayErrorDuringNeighborhoodSelection(String failedToAddNeighborhood, AlertType error);
 }
