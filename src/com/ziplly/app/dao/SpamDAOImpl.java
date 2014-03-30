@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.Spam;
 import com.ziplly.app.model.SpamDTO;
 
@@ -18,6 +19,7 @@ public class SpamDAOImpl extends BaseDAO implements SpamDAO {
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(Spam spam) {
 		if (spam == null) {
@@ -25,9 +27,7 @@ public class SpamDAOImpl extends BaseDAO implements SpamDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(spam);
-		em.getTransaction().commit();
 	}
 
 	@Override

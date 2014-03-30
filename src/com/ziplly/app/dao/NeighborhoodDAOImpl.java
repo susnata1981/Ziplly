@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -43,13 +44,13 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
 	@Override
 	public List<Neighborhood> getAll(int start, int end) {
-
 		Query query = getEntityManager().createNamedQuery("findAllNeighborhoods");
 		@SuppressWarnings("unchecked")
 		List<Neighborhood> result = query.getResultList();
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
 		Query query =
@@ -74,13 +75,12 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		}
 	}
 
+	@Transactional
 	@Override
 	public List<NeighborhoodDTO> findAll() {
-		getEntityManager().getTransaction().begin();
 		Query query = getEntityManager().createQuery("from Neighborhood");
 		@SuppressWarnings("unchecked")
 		List<Neighborhood> result = query.getResultList();
-		getEntityManager().getTransaction().commit();
 		return EntityUtil.cloneNeighborhoodList(result);
 	}
 
@@ -92,6 +92,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		return count;
 	}
 
+	@Transactional
 	@Override
 	public List<NeighborhoodDTO>
 	    findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException {
@@ -121,6 +122,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		}
 	}
 
+	@Transactional
 	@Override
 	public List<NeighborhoodDTO>
 	    findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId) throws NotFoundException {
@@ -151,21 +153,20 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		}
 	}
 
+	@Transactional
 	@Override
 	public void update(Neighborhood neighborhood) {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.merge(neighborhood);
-		em.getTransaction().commit();
 	}
 
 	@Deprecated
+	@Transactional
 	@Override
 	public void save(Neighborhood neighborhood) {
 		EntityManager em = getEntityManager();
 
 		try {
-			em.getTransaction().begin();
 			// PostalCode postalCode = null;
 
 			// parent neighborhood
@@ -194,20 +195,19 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		//
 		// neighborhood.setPostalCode(postalCode);
 		em.persist(neighborhood);
-		em.getTransaction().commit();
 	}
 
+	@Transactional
 	@Override
 	public void delete(Long neighborhoodId) {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		Query query = em.createQuery("from Neighborhood where neighborhoodId = :neighborhoodId");
 		query.setParameter("neighborhoodId", neighborhoodId);
 		Neighborhood n = (Neighborhood) query.getSingleResult();
 		em.remove(n);
-		em.getTransaction().commit();
 	}
 
+	@Transactional
 	@Override
 	public NeighborhoodDTO findOrCreateNeighborhood(NeighborhoodDTO neighborhood) {
 		Preconditions.checkNotNull(neighborhood);
@@ -215,72 +215,32 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		Neighborhood existingNeighborhood = null;
 
 		try {
-			try {
-				em.getTransaction().begin();
-				Query query =
-				    em
-				        .createQuery("select n from Neighborhood n where lower(name) = :neighborhoodName and lower(n.city) = :city and type = :type");
+			Query query =
+			    em
+			        .createQuery("select n from Neighborhood n where lower(name) = :neighborhoodName and lower(n.city) = :city and type = :type");
 
-				query
-				    .setParameter("neighborhoodName", neighborhood.getName().toLowerCase())
-				    .setParameter("city", neighborhood.getParentNeighborhood().getName().toLowerCase())
-				    .setParameter("type", neighborhood.getType().name());
+			query
+			    .setParameter("neighborhoodName", neighborhood.getName().toLowerCase())
+			    .setParameter("city", neighborhood.getParentNeighborhood().getName().toLowerCase())
+			    .setParameter("type", neighborhood.getType().name());
 
-				existingNeighborhood = (Neighborhood) query.getSingleResult();
-			} catch (NoResultException nre) {
-				logger.info(String.format(
-				    "Didn't find neighborhood %s, in postal code %s",
-				    neighborhood.getName(),
-				    neighborhood.getPostalCodes().get(0).getPostalCode()));
-			}
-
-			// We found a match!
-			if (existingNeighborhood != null) {
-				return EntityUtil.clone(existingNeighborhood);
-			}
-
-			return createNeighborhoodTree(neighborhood);
-		} catch (RuntimeException ex) {
-			em.getTransaction().rollback();
-			throw ex;
+			existingNeighborhood = (Neighborhood) query.getSingleResult();
+		} catch (NoResultException nre) {
+			logger.info(String.format(
+			    "Didn't find neighborhood %s, in postal code %s",
+			    neighborhood.getName(),
+			    neighborhood.getPostalCodes().get(0).getPostalCode()));
 		}
 
-		// Create the neighborhood chain
-		/*
-		 * Neighborhood newNeighborhood = new Neighborhood(neighborhood);
-		 * Neighborhood parent = newNeighborhood.getParentNeighborhood();
-		 * Neighborhood current = newNeighborhood;
-		 * 
-		 * while (parent != null) { Neighborhood parentNeighborhood = null; try { //
-		 * Countries have "" in state field - so this is so we don't duplicate //
-		 * countries. Query query = em .createQuery(
-		 * "from Neighborhood where lower(name) = :name and lower(state) = :state and type = :type"
-		 * ); query .setParameter("name", parent.getName().toLowerCase())
-		 * .setParameter("state", parent.getState()) .setParameter("type",
-		 * parent.getType().name());
-		 * 
-		 * parentNeighborhood = (Neighborhood) query.getSingleResult(); } catch
-		 * (NoResultException nre) { // break; }
-		 * 
-		 * if (parentNeighborhood != null) {
-		 * current.setParentNeighborhood(parentNeighborhood); }
-		 * 
-		 * current = parent; parent = parent.getParentNeighborhood(); }
-		 * 
-		 * Query query = em.createQuery("from PostalCode where zip = :zip");
-		 * query.setParameter("zip",
-		 * newNeighborhood.getPostalCodes().iterator().next().getPostalCode()); try
-		 * { PostalCode pc = (PostalCode) query.getSingleResult();
-		 * newNeighborhood.getPostalCodes().clear();
-		 * newNeighborhood.addPostalCode(pc); } catch (NoResultException nre) { //
-		 * postal code doesn't exist. }
-		 * 
-		 * em.persist(newNeighborhood); em.getTransaction().commit();
-		 * 
-		 * return EntityUtil.clone(newNeighborhood); } finally { em.close(); }
-		 */
+		// We found a match!
+		if (existingNeighborhood != null) {
+			return EntityUtil.clone(existingNeighborhood);
+		}
+
+		return createNeighborhoodTree(neighborhood);
 	}
 
+	@Transactional
 	@Override
 	public List<NeighborhoodDTO> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood) {
 		Preconditions.checkNotNull(neighborhood);
@@ -306,7 +266,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
+		// em.getTransaction().begin();
 
 		Neighborhood newNeighborhood = new Neighborhood(neighborhood);
 		Neighborhood parent = newNeighborhood.getParentNeighborhood();
@@ -354,7 +314,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 		}
 
 		em.persist(newNeighborhood);
-		em.getTransaction().commit();
+		// em.getTransaction().commit();
 		return EntityUtil.clone(newNeighborhood);
 	}
 }

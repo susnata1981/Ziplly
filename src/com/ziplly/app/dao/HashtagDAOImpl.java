@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Hashtag;
@@ -27,6 +28,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		this.tweetDao = tweetDao;
 	}
 
+	@Transactional
 	@Override
 	public void create(Hashtag hashtag) {
 		if (hashtag == null) {
@@ -34,12 +36,11 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(hashtag);
-		em.getTransaction().commit();
 		em.flush();
 	}
 
+	@Transactional
 	@Override
 	public HashtagDTO findByName(String name) throws NotFoundException {
 		if (name == null) {
@@ -48,11 +49,9 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		
 		EntityManager em = getEntityManager();
 		try {
-			em.getTransaction().begin();
 			Query query = em.createQuery("from Hashtag where tag = :name");
 			query.setParameter("name", name);
 			Hashtag result = (Hashtag) query.getSingleResult();
-			em.getTransaction().commit();
 			HashtagDTO resp = EntityUtil.clone(result);
 			return resp;
 		} catch (NoResultException nre) {
@@ -73,6 +72,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		}
 	}
 
+	@Transactional
 	@Override
 	public List<HashtagDTO>
 	    findTopHashtagForNeighborhood(Long neighborhoodId, int maxResult) throws NotFoundException {
@@ -107,6 +107,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		}
 	}
 
+	@Transactional
 	@Override
 	public List<TweetDTO>
 	    getTweetsForTag(String hashtag, int page, int pageSize) throws NotFoundException {

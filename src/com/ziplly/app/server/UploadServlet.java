@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,10 +20,12 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
-import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.ImageDAO;
+import com.ziplly.app.dao.ImageDAOImpl;
 import com.ziplly.app.model.Image;
 import com.ziplly.app.model.RecordStatus;
 
@@ -35,9 +38,9 @@ public class UploadServlet extends HttpServlet {
 	private final ImageDAO imageDao;
 	private final ImagesService imageService = ImagesServiceFactory.getImagesService();
 
-	@Inject
-	public UploadServlet(ImageDAO imageDao) {
-		this.imageDao = imageDao;
+	public UploadServlet() {
+		System.out.println("Creating upload servlet...");
+		this.imageDao = new ImageDAOImpl(new EntityManagerProvider()); 
 	}
 
 	@Override
@@ -103,5 +106,14 @@ public class UploadServlet extends HttpServlet {
 		    uploadEndpoint + "?" + StringConstants.IMAGE_URL_KEY + "=" + image.getUrl() + "&"
 		        + StringConstants.IMAGE_ID + "=" + image.getId();
 		return url;
+	}
+	
+	// A hack to bypass dependency injection
+	private static class EntityManagerProvider implements Provider<EntityManager> {
+
+		@Override
+    public EntityManager get() {
+			return EntityManagerService.getInstance().getEntityManager();
+    }
 	}
 }

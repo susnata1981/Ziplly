@@ -5,21 +5,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.util.Properties;
 
 import com.google.appengine.api.backends.BackendServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.servlet.RequestScoped;
+import com.google.inject.persist.jpa.JpaPersistModule;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.dao.AccountNotificationDAO;
@@ -75,7 +70,8 @@ public class DAOModule extends AbstractModule {
 
 	private static final String LOCALHOST_APP_URL = "http://localhost:8888/Ziplly.html?gwt.codesvr=127.0.0.1%3A9997";
 	public static Map<String, String> dbProperties = Maps.newHashMap();
-
+	public static Properties dbConfig = new Properties();
+	
 	static {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
@@ -91,6 +87,7 @@ public class DAOModule extends AbstractModule {
 			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
 			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
 		}
+		dbConfig.putAll(dbProperties);
 	}
 	
 	@BindingAnnotation
@@ -126,8 +123,10 @@ public class DAOModule extends AbstractModule {
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		
-		bind(EntityManager.class).toProvider(EntityManagerProvider.class).in(RequestScoped.class);
+//		bind(EntityManager.class).toProvider(EntityManagerProvider.class).in(RequestScoped.class);
 		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);
+		
+		install(new JpaPersistModule("zipllydb").properties(dbConfig));
 	}
 
 	public static class BackendUrlProvider implements Provider<String> {
@@ -143,25 +142,25 @@ public class DAOModule extends AbstractModule {
     }
 	}
 	
-	@Provides
-	@Singleton
-	public EntityManagerFactory getEntityManagerFactory() {
-		System.out.println("CREATING ENTITY FACTORY...");
-		return Persistence.createEntityManagerFactory("zipllydb", dbProperties);
-	}
-	
-	public static class EntityManagerProvider implements Provider<EntityManager> {
-		private EntityManagerFactory entityManagerFactory;
-
-		@Inject
-		public EntityManagerProvider(EntityManagerFactory factory) {
-			this.entityManagerFactory = factory;
-    }
-		
-		@Override
-    public EntityManager get() {
-			System.out.println("CREATING ENTITY MANAGER...");
-			return entityManagerFactory.createEntityManager();
-    }
-	}
+//	@Provides
+//	@Singleton
+//	public EntityManagerFactory getEntityManagerFactory() {
+//		System.out.println("CREATING ENTITY FACTORY...");
+//		return Persistence.createEntityManagerFactory("zipllydb", dbProperties);
+//	}
+//	
+//	public static class EntityManagerProvider implements Provider<EntityManager> {
+//		private EntityManagerFactory entityManagerFactory;
+//
+//		@Inject
+//		public EntityManagerProvider(EntityManagerFactory factory) {
+//			this.entityManagerFactory = factory;
+//    }
+//		
+//		@Override
+//    public EntityManager get() {
+//			System.out.println("CREATING ENTITY MANAGER...");
+//			return entityManagerFactory.createEntityManager();
+//    }
+//	}
 }

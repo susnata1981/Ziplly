@@ -6,6 +6,7 @@ import javax.persistence.Query;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
@@ -18,6 +19,7 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public TransactionDTO save(Transaction txn) throws DuplicateException {
 		if (txn == null) {
@@ -25,8 +27,6 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
-
 		Query query =
 		    em.createQuery("from Transaction where seller.accountId = :accountId and status = :status");
 		query.setParameter("accountId", txn.getSeller().getAccountId());
@@ -44,7 +44,6 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 		}
 
 		em.persist(txn);
-		em.getTransaction().commit();
 		TransactionDTO result = EntityUtil.clone(txn);
 		return result;
 	}

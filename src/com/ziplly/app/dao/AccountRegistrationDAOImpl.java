@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
@@ -25,6 +26,7 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(AccountRegistration ar) {
 		if (ar == null) {
@@ -32,9 +34,7 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(ar);
-		em.getTransaction().commit();
 	}
 
 	@Override
@@ -90,6 +90,7 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public void update(AccountRegistration ar) {
 		if (ar == null) {
@@ -97,9 +98,7 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.merge(ar);
-		em.getTransaction().commit();
 	}
 
 	@Override
@@ -108,12 +107,12 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 		return null;
 	}
 
+	@Transactional
 	@Override
 	public void findAndVerifyAccount(Long id, String code) throws NotFoundException,
 	    DuplicateException {
 		EntityManager em = getEntityManager();
 		try {
-			em.getTransaction().begin();
 			Query query =
 			    em
 			        .createQuery("from AccountRegistration where accountId = :id and code = :code")
@@ -137,8 +136,6 @@ public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegist
 			account.setStatus(AccountStatus.ACTIVE);
 			account.setTimeUpdated(new Date());
 			em.merge(account);
-
-			em.getTransaction().commit();
 		} catch (NoResultException e) {
 			logger.warning(String.format(
 			    "Couldn't find AccountRegistration with id %d, code %s",

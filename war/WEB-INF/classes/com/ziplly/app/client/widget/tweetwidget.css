@@ -227,7 +227,12 @@ div.comment_text {
 }
 
 .commentEditLink {
-	float: right;
+	position: absolute;
+	top: 0;
+	right: 10px;
+	display: inline-block;
+	height: 20px;
+	width: 20px;
 	list-style: none;
 }
 

@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 
@@ -16,13 +17,11 @@ public class SubscriptionPlanDAOImpl extends BaseDAO implements SubscriptionPlan
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(SubscriptionPlan plan) {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(plan);
-		em.getTransaction().commit();
-
 	}
 
 	@Override

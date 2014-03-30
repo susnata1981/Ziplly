@@ -227,7 +227,7 @@
 		margin: 4px;
 		}
 		.colSpan {
-		max-width: 90%;
+			max-width: 90%;
 		}
 		.lightColoredLink {
 		color: #0198E1 !important;

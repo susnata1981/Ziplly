@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.PendingInvitations;
 import com.ziplly.app.model.PendingInvitationsDTO;
 
@@ -18,13 +19,12 @@ public class PendingInvitationsDAOImpl extends BaseDAO implements PendingInvitat
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(PendingInvitations pi) {
 		Preconditions.checkArgument(pi != null);
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(pi);
-		em.getTransaction().commit();
 	}
 
 	@Override

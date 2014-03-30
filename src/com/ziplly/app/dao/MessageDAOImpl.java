@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.Message;
 
 public class MessageDAOImpl extends BaseDAO implements MessageDAO {
@@ -13,6 +14,7 @@ public class MessageDAOImpl extends BaseDAO implements MessageDAO {
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(Message msg) {
 		if (msg == null) {
@@ -20,8 +22,6 @@ public class MessageDAOImpl extends BaseDAO implements MessageDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(msg);
-		em.getTransaction().commit();
 	}
 }

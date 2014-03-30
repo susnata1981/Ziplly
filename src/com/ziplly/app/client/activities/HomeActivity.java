@@ -452,6 +452,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	// TODO handle image deletion on multiple file uploads
 	public void setUploadImageHandler() {
 		homeView.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
+			/* (non-Javadoc)
+			 * @see com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler#onSubmitComplete(com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent)
+			 */
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				try {

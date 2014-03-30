@@ -19,31 +19,29 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountNotificationSettings;
-import com.ziplly.app.model.Activity;
 import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.PrivacySettings;
 
 public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class.getCanonicalName());
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public AccountDAOImpl(Provider<EntityManager> entityManagerProvider,
+	public AccountDAOImpl(
+			Provider<EntityManager> entityManagerProvider,
 	    NeighborhoodDAO neighborhoodDao) {
 		super(entityManagerProvider);
 		this.neighborhoodDao = neighborhoodDao;
@@ -52,27 +50,19 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	@Override
 	public AccountDTO findByEmail(String email) throws NotFoundException {
 		if (email == null) {
-			logger.log(Level.ERROR, String.format("Invalid arguements to findByEmail %s", email));
 			throw new IllegalArgumentException("Invalid arguement to findByEmail");
 		}
 
 		Query query = getEntityManager().createNamedQuery("findAccountByEmail");
 		query.setParameter("email", email);
-		Account account = null;
-		AccountDTO resp = null;
 		try {
-			account = (Account) query.getSingleResult();
+			Account account = (Account) query.getSingleResult();
 			account.getTweets();
+			return EntityUtil.convert(account);
 		} catch (NoResultException ex) {
 			logger.info(String.format("Didn't find account with %s", email));
 			throw new NotFoundException();
-		} finally {
-			if (account == null) {
-				throw new NotFoundException();
-			}
-			resp = EntityUtil.convert(account);
-		}
-		return resp;
+		} 
 	}
 
 	@Override
@@ -113,39 +103,33 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public AccountDTO save(Account account) {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 
-		for (AccountNotificationSettings as : account.getNotificationSettings()) {
-			em.persist(as);
-		}
-
-		// Privacy Settings.
-		for (PrivacySettings ps : account.getPrivacySettings()) {
-			em.persist(ps);
-		}
+//		for (AccountNotificationSettings as : account.getNotificationSettings()) {
+//			em.persist(as);
+//		}
+//
+//		// Privacy Settings.
+//		for (PrivacySettings ps : account.getPrivacySettings()) {
+//			em.persist(ps);
+//		}
 
 		em.persist(account);
-		em.getTransaction().commit();
-		AccountDTO result = EntityUtil.convert(account);
-		return result;
+		return EntityUtil.convert(account);
 	}
 
+	@Transactional
 	@Override
 	public AccountDTO update(Account account) {
 		EntityManager em = getEntityManager();
-		try {
-			em.getTransaction().begin();
-			em.merge(account);
-			em.getTransaction().commit();
-			return EntityUtil.convert(account);
-		} catch (NoResultException ex) {
-			throw new IllegalArgumentException();
-		}
+		Account updatedAccount = em.merge(account);
+		return EntityUtil.convert(updatedAccount);
 	}
 
+	@Transactional
 	@Override
 	public void updatePassword(Account account) {
 		Preconditions.checkNotNull(account);
@@ -157,10 +141,7 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 			query.setParameter("accountId", account.getAccountId()).setParameter(
 			    "password",
 			    account.getPassword());
-
-			em.getTransaction().begin();
 			query.executeUpdate();
-			em.getTransaction().commit();
 		} catch (NoResultException ex) {
 			throw new IllegalArgumentException();
 		}
@@ -172,15 +153,6 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 
 		@SuppressWarnings("unchecked")
 		List<Account> result = query.getResultList();
-		return result;
-	}
-
-	@SuppressWarnings("unused")
-	private Interest getInterest(Activity activity) {
-		Query query = getEntityManager().createQuery("from Interest where activity = :activity");
-		query.setParameter("activity", activity);
-
-		Interest result = (Interest) query.getSingleResult();
 		return result;
 	}
 
@@ -215,7 +187,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	@Override
-	public List<AccountDTO> findAccountsByNeighborhood(EntityType entityType,
+	public List<AccountDTO> findAccountsByNeighborhood(
+			EntityType entityType,
 	    Long neighborhoodId,
 	    int pageStart,
 	    int pageSize) {
@@ -223,10 +196,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		int start = pageStart;// * pageSize;
 		EntityManager em = getEntityManager();
 		Query query =
-		    em
-		        .createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
+		    em.createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
 		            + " order by a.timeCreated desc");
-
 		query
 		    .setParameter("type", entityType.getType())
 		    .setParameter("neighborhoodId", neighborhoodId)
@@ -247,7 +218,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	@Override
-	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(EntityType entityType,
+	public Collection<? extends AccountDTO> findAccountsByNeighborhoods(
+			EntityType entityType,
 	    List<Long> neighborhoodIds,
 	    int start,
 	    int pageSize) {
@@ -284,15 +256,12 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	@Override
-	public Long
-	    getTotalAccountCountByNeighborhoods(EntityType entityType, List<Long> neighborhoodIds) {
-
+	public Long getTotalAccountCountByNeighborhoods(EntityType entityType, List<Long> neighborhoodIds) {
 		if (neighborhoodIds.size() == 0) {
 			return 0L;
 		}
 
 		EntityManager em = getEntityManager();
-
 		Query query =
 		    em
 		        .createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
@@ -310,7 +279,6 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	@Override
 	public List<AccountDTO> findAll() {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		Query query = em.createQuery("from Account");
 		@SuppressWarnings("unchecked")
 		List<Account> result = query.getResultList();
@@ -378,7 +346,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	 * @throws NotFoundException
 	 */
 	@Override
-	public List<PersonalAccountDTO> findPersonalAccounts(Gender gender,
+	public List<PersonalAccountDTO> findPersonalAccounts(
+			Gender gender,
 	    long neighborhoodId,
 	    int start,
 	    int pageSize) throws NotFoundException {
@@ -394,8 +363,7 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 
 		if (gender == Gender.ALL) {
 			query =
-			    em
-			        .createQuery("select a from Account a join a.locations l "
+			    em.createQuery("select a from Account a join a.locations l "
 			            + " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
 		} else {
 			query =
@@ -517,32 +485,29 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	/**
 	 * Only called by ADMINISTRATOR to change locations.
 	 */
+	@Transactional
 	@Override
 	public void updateLocation(AccountDTO account, LocationDTO location) throws NotFoundException {
 		EntityManager em = getEntityManager();
-
-		em.getTransaction().begin();
 		Query query = em.createQuery("from Account where accountId = :accountId");
 		query.setParameter("accountId", account.getAccountId());
 		Account acct = (Account) query.getSingleResult();
 		Location loc = acct.getLocations().iterator().next();
 		loc.setNeighborhood(new Neighborhood(location.getNeighborhood()));
 		em.merge(loc);
-		em.getTransaction().commit();
 	}
 
 	@Override
-	public List<AccountDTO> getAccountCreatedWithin(int daysLookback,
+	public List<AccountDTO> getAccountCreatedWithin(
+			int daysLookback,
 	    long neighborhoodId,
 	    EntityType type) {
 
 		EntityManager em = getEntityManager();
-
 		DateTime timeCreated = new DateTime();
 		Date startingDate = timeCreated.minusDays(daysLookback).toDate();
 		Query query =
-		    em
-		        .createQuery("select a from Account a join a.locations al, Neighborhood n where a.class = :class and "
+		    em.createQuery("select a from Account a join a.locations al, Neighborhood n where a.class = :class and "
 		            + "al.neighborhood.neighborhoodId = n.neighborhoodId and n.neighborhoodId = :neighborhoodId and a.timeCreated >= :timeCreated "
 		            + "order by a.timeCreated desc");
 

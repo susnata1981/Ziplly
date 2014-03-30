@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.Comment;
 
 public class CommentDAOImpl extends BaseDAO implements CommentDAO {
@@ -16,6 +17,7 @@ public class CommentDAOImpl extends BaseDAO implements CommentDAO {
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(Comment comment) {
 		if (comment == null) {
@@ -23,11 +25,10 @@ public class CommentDAOImpl extends BaseDAO implements CommentDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(comment);
-		em.getTransaction().commit();
 	}
 
+	@Transactional
 	@Override
 	public void delete(Comment comment) {
 		if (comment == null) {
@@ -35,9 +36,7 @@ public class CommentDAOImpl extends BaseDAO implements CommentDAO {
 		}
 		EntityManager em = getEntityManager();
 		try {
-			em.getTransaction().begin();
 			em.remove(comment);
-			em.getTransaction().commit();
 		} catch (NoResultException nre) {
 			throw new IllegalArgumentException();
 		}
@@ -58,14 +57,13 @@ public class CommentDAOImpl extends BaseDAO implements CommentDAO {
 		return count;
 	}
 
+	@Transactional
 	@Override
 	public void update(Comment comment) {
 		Preconditions.checkArgument(comment != null);
 		EntityManager em = getEntityManager();
 		try {
-			em.getTransaction().begin();
 			em.merge(comment);
-			em.getTransaction().commit();
 		} catch (NoResultException nre) {
 			throw new IllegalArgumentException();
 		}

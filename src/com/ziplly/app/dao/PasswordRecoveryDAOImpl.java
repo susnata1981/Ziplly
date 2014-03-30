@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.model.PasswordRecoveryStatus;
 
@@ -20,6 +21,7 @@ public class PasswordRecoveryDAOImpl extends BaseDAO implements PasswordRecovery
 	}
 
 	// TODO: move business logic out of this method.
+	@Transactional
 	@Override
 	public void save(PasswordRecovery pr) {
 		if (pr == null) {
@@ -40,15 +42,11 @@ public class PasswordRecoveryDAOImpl extends BaseDAO implements PasswordRecovery
 		if (found && resp.getStatus() != PasswordRecoveryStatus.DONE) {
 			resp.setHash(pr.getHash());
 			resp.setTimeCreated(new Date());
-			em.getTransaction().begin();
 			em.merge(resp);
-			em.getTransaction().commit();
 			return;
 		}
 
-		em.getTransaction().begin();
 		em.persist(pr);
-		em.getTransaction().commit();
 	}
 
 	@Override
@@ -67,16 +65,16 @@ public class PasswordRecoveryDAOImpl extends BaseDAO implements PasswordRecovery
 		return (PasswordRecovery) query.getSingleResult();
 	}
 
+	@Transactional
 	@Override
 	public void update(PasswordRecovery pr) {
 		Preconditions.checkNotNull(pr);
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.merge(pr);
-		em.getTransaction().commit();
 	}
 
+	@Transactional
 	@Override
 	public void createOrUpdate(String email, String hash) {
 		boolean foundPasswordRecoveryLink = false;

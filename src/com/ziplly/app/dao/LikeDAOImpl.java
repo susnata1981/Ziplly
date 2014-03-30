@@ -6,6 +6,7 @@ import javax.persistence.Query;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
@@ -30,6 +31,7 @@ public class LikeDAOImpl extends BaseDAO implements LikeDAO {
 		return EntityUtil.clone(result);
 	}
 
+	@Transactional
 	@Override
 	public LoveDTO save(Love like) throws DuplicateException {
 		if (like == null) {
@@ -47,12 +49,11 @@ public class LikeDAOImpl extends BaseDAO implements LikeDAO {
 
 		// else check the Comment
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.persist(like);
-		em.getTransaction().commit();
 		return EntityUtil.clone(like);
 	}
 
+	@Transactional
 	@Override
 	public void delete(Love like) {
 		if (like == null) {
@@ -60,9 +61,7 @@ public class LikeDAOImpl extends BaseDAO implements LikeDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.remove(like);
-		em.getTransaction().commit();
 	}
 
 	@Override

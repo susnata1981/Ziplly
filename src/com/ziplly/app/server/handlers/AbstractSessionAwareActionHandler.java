@@ -26,11 +26,9 @@ public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R e
   }
 
 	protected void postHandler() {
-		entityManagerProvider.get().close();
   }
 
 	protected void preHandler() {
-		entityManagerProvider.get();
   }
 
 	@Override

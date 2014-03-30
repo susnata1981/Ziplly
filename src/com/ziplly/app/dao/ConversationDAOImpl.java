@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
@@ -123,16 +124,16 @@ public class ConversationDAOImpl extends BaseDAO implements ConversationDAO {
 		return result.longValue();
 	}
 
+	@Transactional
 	@Override
 	public Conversation save(Conversation conversation) {
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		Conversation result = em.merge(conversation);
 		em.flush();
-		em.getTransaction().commit();
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public void markConversationAsRead(Long conversationId) {
 		if (conversationId == null) {
@@ -142,10 +143,8 @@ public class ConversationDAOImpl extends BaseDAO implements ConversationDAO {
 		Query query = em.createNamedQuery("findConversationById");
 		query.setParameter("id", conversationId);
 		Conversation c = (Conversation) query.getSingleResult();
-		em.getTransaction().begin();
 		c.setStatus(ConversationStatus.READ);
 		em.merge(c);
-		em.getTransaction().commit();
 	}
 
 	@Override

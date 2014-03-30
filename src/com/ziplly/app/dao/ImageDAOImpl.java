@@ -6,6 +6,7 @@ import javax.persistence.Query;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.Image;
 
 public class ImageDAOImpl extends BaseDAO implements ImageDAO {

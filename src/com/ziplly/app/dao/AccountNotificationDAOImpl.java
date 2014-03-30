@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.model.AccountNotification;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.ReadStatus;
@@ -20,13 +21,12 @@ public class AccountNotificationDAOImpl extends BaseDAO implements AccountNotifi
 		super(entityManagerProvider);
 	}
 
+	@Transactional
 	@Override
 	public void save(AccountNotification an) {
 		Preconditions.checkArgument(an != null, "Invalid argument to save");
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.merge(an);
-		em.getTransaction().commit();
 	}
 
 	@Override
@@ -48,13 +48,12 @@ public class AccountNotificationDAOImpl extends BaseDAO implements AccountNotifi
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public void update(AccountNotification an) {
 		Preconditions.checkArgument(an != null, "Invalid argument to save");
 		EntityManager em = getEntityManager();
-		em.getTransaction().begin();
 		em.merge(an);
-		em.getTransaction().commit();
 	}
 
 	@Override

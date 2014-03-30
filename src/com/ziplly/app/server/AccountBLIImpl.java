@@ -179,6 +179,7 @@ public class AccountBLIImpl implements AccountBLI {
 	    InternalError,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException {
+		
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
@@ -312,6 +313,7 @@ public class AccountBLIImpl implements AccountBLI {
 		String fname = UUID.randomUUID().toString();
 		String bucketName = System.getProperty(StringConstants.BUCKET_NAME);
 		GcsFilename file = new GcsFilename(bucketName, fname);
+		
 		try {
 			GcsOutputChannel outputChannel =
 			    gcsService.createOrReplace(file, GcsFileOptions.getDefaultInstance());
@@ -323,6 +325,7 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 
@@ -508,7 +511,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		throw new RuntimeException();
 	}
-
+	
 	@Override
 	public AccountDTO updateAccount(Account account) throws NeedsLoginException, NotFoundException {
 		if (!isValidSession()) {
@@ -546,7 +549,6 @@ public class AccountBLIImpl implements AccountBLI {
 
 		logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", result));
 		return result;
-
 	}
 
 	private Account getLoggedInUserBasedOnCookie() {
