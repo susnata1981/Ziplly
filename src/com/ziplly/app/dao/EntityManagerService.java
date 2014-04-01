@@ -13,13 +13,21 @@ public class EntityManagerService {
 	public static Map<String, String> properties = Maps.newHashMap();
 
 	static {
+//		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+//			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
+//			properties.put(
+//			    "javax.persistence.jdbc.url",
+//			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
+//			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
+//			properties.put("javax.persistence.jdbc.password", "Sherica12");
+//		} 
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
 			properties.put(
 			    "javax.persistence.jdbc.url",
-			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
-			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
-			properties.put("javax.persistence.jdbc.password", "Sherica12");
+			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=root");
+			properties.put("javax.persistence.jdbc.user", "root");
+			properties.put("javax.persistence.jdbc.password", "1111");
 		} 
 		else {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");

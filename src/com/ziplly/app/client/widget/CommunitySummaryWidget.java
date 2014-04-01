@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.NeighborhoodType;
 
 public class CommunitySummaryWidget extends AbstractView implements HasClickHandlers {
 
@@ -40,7 +41,7 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 
 	private NeighborhoodDTO neighborhood;
 	private GoogleMapWidget mapWidget = new GoogleMapWidget();
-	
+
 	public CommunitySummaryWidget() {
 		super(null);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -56,15 +57,15 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 			communityNameSpan.setInnerHTML(getName(neighborhood));
 		}
 	}
-	
+
 	public void displayMap(String address) {
 		mapWidget.displayMap(mapPanel, address);
 	}
-	
+
 	public void resize() {
 		mapWidget.resize();
 	}
-	
+
 	public void setResidentCount(int count) {
 		memberCountSpan.setText(count + " members");
 	}
@@ -90,10 +91,13 @@ public class CommunitySummaryWidget extends AbstractView implements HasClickHand
 	private String getName(NeighborhoodDTO n) {
 		if (n != null) {
 			StringBuilder name = new StringBuilder();
-			// PostalCodeDTO postalCode = n.getPostalCodes().get(0);
-			name.append(n.getName());
-			name.append("<br/>");
-			name.append(n.getCity() + ", "+n.getState());
+			if (n.getType() == NeighborhoodType.NEIGHBORHOOD) {
+				name.append(n.getName());
+				name.append("<br/>");
+				name.append(n.getCity() + ", " + n.getState());
+			} else {
+				name.append(n.getName() + ", " + n.getState());
+			}
 			return name.toString();
 		}
 		return "";

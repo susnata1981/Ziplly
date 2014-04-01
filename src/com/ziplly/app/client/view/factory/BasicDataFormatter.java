@@ -2,10 +2,13 @@ package com.ziplly.app.client.view.factory;
 
 import java.util.Date;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
 import com.ziplly.app.client.widget.TweetUtils;
@@ -15,6 +18,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.FieldVerifier;
 
 public class BasicDataFormatter implements Formatter<Object> {
 	private static final RegExp urlsPattern = RegExp.compile("(https?:\\/\\/[^\\s]+)");
@@ -22,6 +26,13 @@ public class BasicDataFormatter implements Formatter<Object> {
 	private static final String BR_CODE = "<br/>";
 	private static final String NEW_LINE = "\n";
 
+	public static final TimeTemplate timeTemplate = GWT.create(TimeTemplate.class);
+	
+	public interface TimeTemplate extends SafeHtmlTemplates {
+		@Template("{0} {1} ago")
+		SafeHtml timeElapsed(Long elapsedTime, String key);
+	}
+	
 	@Override
 	public String format(Object value, ValueType type) {
 		switch (type) {
@@ -31,12 +42,10 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case STRING_VALUE:
 				return value.toString();
 			case DATE_VALUE_MEDIUM:
-				String date =
-				    DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format((Date) value);
-				return date;
-			case DATE_VALUE:
 			case DATE_VALUE_SHORT:
-				date = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format((Date) value);
+				return getTimeDiff((Date) value);
+			case DATE_VALUE:
+				String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format((Date) value);
 				return date;
 			case UNREAD_MESSAGE_COUNT:
 				return "(" + value.toString() + ")";
@@ -136,13 +145,47 @@ public class BasicDataFormatter implements Formatter<Object> {
 		}
 		return "";
 	}
+	
+	public String getNeighborhoodName(NeighborhoodDTO n) {
+		if (n == null) {
+			return "";
+		}
+		
+		if (n.getParentNeighborhood() != null && FieldVerifier.isEmpty(n.getParentNeighborhood().getName())) {
+			return n.getName() + ", " + n.getParentNeighborhood().getName();
+		} else {
+			return n.getName();
+		}
+	}
+	public String getTimeDiff(Date date) {
+		Date now = new Date();
+		Long seconds = (now.getTime() - date.getTime())/1000;
+		
+		if (seconds > 60 * 60 * 24) {
+			long days = seconds / (60*60*24);
+			String daysKey = days > 1 ? "days" : "day";
+			return timeTemplate.timeElapsed(days, daysKey).asString();
+		} else if (seconds > 60 * 60) {
+			long hours = seconds / (60*60);
+			String hoursKey = hours > 1 ? "hours" : "hour";
+			return timeTemplate.timeElapsed(hours, hoursKey).asString();
+		} else	if (seconds > 60) {
+			long mins = seconds / 60;
+			String minsKey = mins > 1 ? "mins" : "min";
+			return timeTemplate.timeElapsed(mins, minsKey).asString();
+		} else {
+			String secondsKey = seconds > 1 ? "seconds" : "second";
+			return timeTemplate.timeElapsed(seconds, secondsKey).asString();
+		}
+	}
+
 	public static void main(String[] args) {
 		String content = "Check this out \n\nhttp://www.yahoo.com/susnata/01923.html hi http://www.msn.com/01923.html";
 		String content2 = "Take a look at this - http://www.yahoo.com/susnata/01923.html, http://www.ziplly.com";
 		String content3 = "Take a look at this";
 		StringBuilder sb = new StringBuilder();
 		System.out.println(TweetUtils.getContent(content));
-//		TweetUtils.replaceUrlWithAnchorTag(content2, sb);
-//		System.out.println(sb);
+		TweetUtils.replaceUrlWithAnchorTag(content2, sb);
+		System.out.println(sb);
 	}
 }

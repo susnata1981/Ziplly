@@ -695,7 +695,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 		tweet.getTimeCreated();
 
-		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM);
 		timeCreated.setInnerHTML(time);
 
 		authorImage.setUrl(accountFormatter.format(tweet.getSender(), ValueType.PROFILE_IMAGE_URL));

@@ -67,7 +67,6 @@ import com.ziplly.app.server.TweetNotificationBLIImpl;
 import com.ziplly.app.server.ZipllyServerConstants;
 
 public class DAOModule extends AbstractModule {
-
 	private static final String LOCALHOST_APP_URL = "http://localhost:8888/Ziplly.html?gwt.codesvr=127.0.0.1%3A9997";
 	public static Map<String, String> dbProperties = Maps.newHashMap();
 	public static Properties dbConfig = new Properties();
@@ -80,7 +79,16 @@ public class DAOModule extends AbstractModule {
 			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
 			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
 			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
-		} 
+		}
+//		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+//			// DEVEL SETUP
+//			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
+//			dbProperties.put(
+//			    "javax.persistence.jdbc.url",
+//			    "jdbc:google:mysql://zipllydevel:zipllydb/newzipllydb?user=zipllyadmin");
+//			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
+//			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
+//		}
 		else {
 			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
 			dbProperties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/newzipllydb");

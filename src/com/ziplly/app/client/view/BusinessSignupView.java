@@ -7,7 +7,6 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
-import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -17,14 +16,14 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -57,7 +56,6 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.Role;
-import com.ziplly.app.model.overlay.AddressComponent;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -74,12 +72,6 @@ public class BusinessSignupView extends AbstractView implements
 	boolean isServiceAvailable = true;
 	boolean doValidation = true;
 
-	private static final String STREET_NUMBER_KEY = "street_number";
-	private static final String ROUTE_KEY = "route";
-	private static final String NEIGHBORHOOD_KEY = "neighborhood";
-	private static final String LOCALITY_KEY = "locality";
-	private static final String ADMINISTRATIVE_AREA_KEY = "administrative_area_level_1";
-	private static final String POSTAL_CODE_KEY = "postal_code";
 	private static final String START_TIME = "9AM";
 	private static final String END_TIME = "9PM";
 	private static BusinessSignupViewUiBinder uiBinder = GWT.create(BusinessSignupViewUiBinder.class);
@@ -165,7 +157,6 @@ public class BusinessSignupView extends AbstractView implements
 	
 	SignupActivityPresenter presenter;
 	private List<NeighborhoodDTO> neighborhoods;
-	private boolean imageUploaded;
 	private GooglePlacesWidget placesWidget;
 	
 	@Inject
@@ -214,19 +205,6 @@ public class BusinessSignupView extends AbstractView implements
 			}
 		});
 
-//		street1.addValueChangeHandler(new ValueChangeHandler<String>() {
-//			@Override
-//			public void onValueChange(ValueChangeEvent<String> event) {
-//				if (!doValidation) {
-//					return;
-//				}
-//
-//				streetNumber = streetName = neighborhood = city = state = zipCode = null;
-//				clearNeighborhoodSection();
-//				validateAddressField();
-//			}
-//		});
-
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -249,13 +227,23 @@ public class BusinessSignupView extends AbstractView implements
 					return;
 				}
 
-				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
+				boolean validateName = validatePassword(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
 					passwordError.setVisible(false);
 				}
 			}
 		});
+		
+		this.addDomHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					signup(null);
+				}
+			}
+		}, KeyDownEvent.getType());
 	}
 
 	void validateAddressField() {
@@ -326,7 +314,7 @@ public class BusinessSignupView extends AbstractView implements
 		boolean valid = true;
 		valid &= validateName(businessNameInput, businessNameCg, businessNameError);
 
-		String street = street1.getText().trim();
+//		String street = street1.getText().trim();
 //		valid &= validateAddress(street, street1Cg, street1Error);
 		
 		valid &= placesWidget.validateAddress();
@@ -356,16 +344,16 @@ public class BusinessSignupView extends AbstractView implements
 		return true;
 	}
 
-	private boolean validateNeighborhood() {
-		selectedNeighborhood = getNeighborhoodSelection();
-		if (selectedNeighborhood == null) {
-			neighborhoodCg.setType(ControlGroupType.ERROR);
-			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
-			neighborhoodError.setVisible(false);
-			return false;
-		}
-		return true;
-	}
+//	private boolean validateNeighborhood() {
+//		selectedNeighborhood = getNeighborhoodSelection();
+//		if (selectedNeighborhood == null) {
+//			neighborhoodCg.setType(ControlGroupType.ERROR);
+//			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
+//			neighborhoodError.setVisible(false);
+//			return false;
+//		}
+//		return true;
+//	}
 
 	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
 		if (streetName == null || city == null || state == null || zipCode == null) {
@@ -471,17 +459,17 @@ public class BusinessSignupView extends AbstractView implements
 		}
 	}
 
-	private NeighborhoodDTO getNeighborhoodSelection() {
-		int count = neighborhoodListPanel.getWidgetCount();
-		for (int i = 0; i < count; i++) {
-			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
-			if (rb.getValue()) {
-				return neighborhoods.get(i);
-			}
-		}
-
-		return null;
-	}
+//	private NeighborhoodDTO getNeighborhoodSelection() {
+//		int count = neighborhoodListPanel.getWidgetCount();
+//		for (int i = 0; i < count; i++) {
+//			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
+//			if (rb.getValue()) {
+//				return neighborhoods.get(i);
+//			}
+//		}
+//
+//		return null;
+//	}
 
 	private BusinessPropertiesDTO getDefaultProperties() {
 		BusinessPropertiesDTO properties = new BusinessPropertiesDTO();
@@ -542,90 +530,6 @@ public class BusinessSignupView extends AbstractView implements
 		infoField.setType(type);
 		infoField.setVisible(true);
 	}
-
-	/**
-	 * GOOGLE PLACES API INITIALIZATION
-	 *
-	public native void initializePlacesApi(Element elem) /*-{
-	                                                     var options = {
-	                                                     types : [ 'geocode' ]
-	                                                     };
-
-	                                                     var autocomplete = new $wnd.google.maps.places.Autocomplete(elem,
-	                                                     options);
-
-	                                                     var componentForm = {
-	                                                     street_number : 'short_name',
-	                                                     route : 'long_name',
-	                                                     locality : 'long_name',
-	                                                     administrative_area_level_1 : 'short_name',
-	                                                     country : 'long_name',
-	                                                     postal_code : 'short_name'
-	                                                     };
-	                                                     var that = this;
-	                                                     $wnd.google.maps.event
-	                                                     .addListener(
-	                                                     autocomplete,
-	                                                     'place_changed',
-	                                                     function() {
-	                                                     var places = autocomplete.getPlace();
-	                                                     console.log(places);
-	                                                     $wnd.places = autocomplete.getPlace();
-	                                                     that.@com.ziplly.app.client.view.BusinessSignupView::populateAddressFields()();
-	                                                     });
-	                                                     }-*/;
-
-	/**
-	 * Callback handler to populate Address fields
-	 *
-	public void populateAddressFields() {
-		// streetNumber = streetName = neighborhood = city = state = zipCode = "";
-		JsArray<AddressComponent> components = getAddressComponents();
-		for (int i = 0; i < components.length(); i++) {
-			AddressComponent ac = components.get(i);
-			System.out.println(ac.getType() + "-->" + ac.getShortName());
-			if (ac.getType().equals(STREET_NUMBER_KEY)) {
-				streetNumber = ac.getLongName();
-			} else if (ac.getType().equals(ROUTE_KEY)) {
-				streetName = ac.getLongName();
-			} else if (ac.getType().equals(NEIGHBORHOOD_KEY)) {
-				neighborhood = ac.getLongName();
-			} else if (ac.getType().equals(LOCALITY_KEY)) {
-				city = ac.getLongName();
-			} else if (ac.getType().equals(ADMINISTRATIVE_AREA_KEY)) {
-				state = ac.getLongName();
-			} else if (ac.getType().equals(POSTAL_CODE_KEY)) {
-				// zip.setText(ac.getLongName());
-				zipCode = ac.getLongName();
-			}
-		}
-		clearNeighborhoodSection();
-		validateAddressField();
-	}
-
-	/**
-	 * @return Array of address components in JSON format
-	 *
-	public native JsArray<AddressComponent> getAddressComponents() /*-{
-	                                                               return $wnd.places.address_components;
-	                                                               }-*/;
-
-	/**
-	 * Displays neighborhood data
-	 *
-	@Override
-	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
-		clearMessage();
-		this.neighborhoods = neighborhoods;
-		neighborhoodListPanel.clear();
-		for (NeighborhoodDTO n : neighborhoods) {
-			RadioButton rb = new RadioButton("neighborhood");
-			rb.setText(n.getName());
-			neighborhoodListPanel.add(rb);
-		}
-		neighborhoodControl.setVisible(true);
-	}
-	*/
 
 	/**
 	 * Displays a modal window to get user information
