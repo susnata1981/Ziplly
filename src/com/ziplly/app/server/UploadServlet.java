@@ -50,7 +50,7 @@ public class UploadServlet extends HttpServlet {
 
 		logger.log(
 		    Level.INFO,
-		    String.format("doGet method called with " + "image url %s, imageId %s", imageUrl, imageId));
+		    String.format("doGet method called with image url %s, imageId %s", imageUrl, imageId));
 
 		String response = imageUrl + StringConstants.VALUE_SEPARATOR + imageId;
 		res.setHeader("Content-Type", "text/html");
@@ -79,8 +79,7 @@ public class UploadServlet extends HttpServlet {
 		// Save the image
 		try {
 			Image image = new Image();
-			image
-			    .setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
+			image.setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
 			image.setBlobKey(blobKeys.get(0).getKeyString());
 			image.setStatus(RecordStatus.ACTIVE);
 			image.setTimeCreated(new Date());

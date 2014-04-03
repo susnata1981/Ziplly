@@ -1,7 +1,5 @@
 package com.ziplly.app.dao;
 
-import java.util.logging.Logger;
-
 import javax.persistence.EntityManager;
 
 import com.google.inject.Inject;

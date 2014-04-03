@@ -184,8 +184,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		displayCommunityWall();
 		// account specific.
 		getAccountNotifications();
-		setImageUploadUrl();
-		setUploadImageHandler();
 		getAccountDetails();
 	}
 
@@ -246,6 +244,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 				HomeActivity.this.homeView = result;
 				bind();
 				setupHandlers();
+				setImageUploadUrl();
+				setUploadImageHandler();
 				getCommunityWallData(state.getSearchCriteria(place));
 				getHashtagList();
 				displayMap(ctx.getCurrentNeighborhood());

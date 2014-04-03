@@ -157,6 +157,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 			return n.getName();
 		}
 	}
+	
 	public String getTimeDiff(Date date) {
 		Date now = new Date();
 		Long seconds = (now.getTime() - date.getTime())/1000;

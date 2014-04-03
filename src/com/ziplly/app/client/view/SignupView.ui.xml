@@ -97,21 +97,32 @@
 		bottom: 30px; }
 		.inlineAnchor { display: inline; font-size: 12px; color:
 		blue; }
-		.popoverHover { display: inline; font-size: 12px; }
-		.popoverLink
-		{
-		font-size: 12px !important; } .demoDiv { background: #f1f1f1;
-		border-radius:
-		5px; margin-top: 20px; padding: 14px; width: 320px;
-		margin: 20px 0 20px 0;
-		} .lightgray { color: #666; } .popoverText {
-		display: inline;
-		font-size:
-		11px !important; } 
+		.popoverHover { 
+			display: inline; 
+			font-size: 12px; 
+		}
+		.popoverLink {	
+			font-size: 12px !important; 
+		} 
+		.demoDiv { 
+			background: #f1f1f1;
+			border-radius: 5px; 
+			margin: 20px auto; 
+			padding: 14px; 
+			width: 100%;
+		} 
+		.lightgray { 
+			color: #666; 
+		} 
+		.popoverText {
+			display: inline;
+			font-size: 11px !important; 
+		} 
 		.signInAnchor { display:
 		inline-block; margin: 4px; }
 		.colSpan {
-			max-width: 90%; 
+			max-width: 90%;
+			margin: auto;
 		} 
 		.lightColoredLink { color:
 		#0198E1 !important;
@@ -154,11 +165,10 @@
 						</b:Column>
 					</b:Row>
 					<b:Row>
-						<b:Column offset="1" size="9" addStyleNames="{style.colSpan}">
+						<b:Column offset="1" size="11" addStyleNames="{style.colSpan}">
 							<g:HTMLPanel addStyleNames="{style.demoDiv}">
 								<span class="{style.heading4}">
-									<g:Anchor ui:field="loginAnchor">Try out our demo with the following
-										account</g:Anchor>
+									<g:Anchor ui:field="loginAnchor">Try out our demo</g:Anchor>
 									<br />
 									<i>
 										username:

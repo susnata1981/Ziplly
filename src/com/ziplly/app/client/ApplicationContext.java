@@ -1,5 +1,6 @@
 package com.ziplly.app.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Timer;
@@ -8,7 +9,10 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 
-public class ApplicationContext {
+public class ApplicationContext implements Serializable {
+  private static final long serialVersionUID = 1L;
+  
+
 	public enum Environment {
 		DEVEL, PROD;
 	}
