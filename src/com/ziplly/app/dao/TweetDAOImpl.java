@@ -19,6 +19,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Hashtag;
@@ -28,17 +30,15 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
 
-public class TweetDAOImpl implements TweetDAO {
+public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 	private Logger logger = Logger.getLogger(TweetDAOImpl.class.getCanonicalName());
-	private HashtagDAO hashtagDao;
-	private ImageDAO imageDao;
 
 	@Inject
-	public TweetDAOImpl(HashtagDAO hashtagDao, ImageDAO imageDao) {
-		this.hashtagDao = hashtagDao;
-		this.imageDao = imageDao;
+	public TweetDAOImpl(Provider<EntityManager> entityManagerFactory) {
+		super(entityManagerFactory);
 	}
 
+	@Transactional
 	@Override
 	public TweetDTO save(Tweet tweet) {
 		if (tweet == null) {
@@ -46,59 +46,51 @@ public class TweetDAOImpl implements TweetDAO {
 		}
 
 		logger.info(String.format("About to save tweet %s", tweet.getContent()));
+		EntityManager em = getEntityManager();
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			em.getTransaction().begin();
-
-			// save hashtags
-			Set<String> hashtags = extractHashtags(tweet.getContent());
-			Set<Hashtag> existingTags = new HashSet<Hashtag>();
-			for (String hashtag : hashtags) {
-				try {
-					Query query =
-					    em.createQuery("from Hashtag where tag = :name").setParameter("name", hashtag);
-					Hashtag result = (Hashtag) query.getSingleResult();
-					existingTags.add(result);
-				} catch (NoResultException nre) {
-					Hashtag h = new Hashtag();
-					h.setTag(hashtag);
-					h.addTweet(tweet);
-					h.setTimeCreated(new Date());
-					em.persist(h);
-					existingTags.add(h);
-				}
+		// save hashtags
+		Set<String> hashtags = extractHashtags(tweet.getContent());
+		Set<Hashtag> existingTags = new HashSet<Hashtag>();
+		for (String hashtag : hashtags) {
+			try {
+				Query query =
+				    em.createQuery("from Hashtag where tag = :name").setParameter("name", hashtag);
+				Hashtag result = (Hashtag) query.getSingleResult();
+				existingTags.add(result);
+			} catch (NoResultException nre) {
+				Hashtag h = new Hashtag();
+				h.setTag(hashtag);
+				h.addTweet(tweet);
+				h.setTimeCreated(new Date());
+				em.persist(h);
+				existingTags.add(h);
 			}
-
-			if (existingTags.size() > 0) {
-				tweet.setHashtags(existingTags);
-			}
-
-			// load images
-			Set<Image> images = new HashSet<Image>();
-			for (Image image : tweet.getImages()) {
-				try {
-					Query query =
-					    em.createQuery("from Image where id = :id").setParameter("id", image.getId());
-					Image existingImage = (Image) query.getSingleResult();
-					images.add(existingImage);
-				} catch (NoResultException ex) {
-					// do nothing.
-					logger.severe(String.format("Failed to load image with id %d", image.getId()));
-				}
-			}
-
-			if (images.size() > 0) {
-				tweet.setImages(images);
-			}
-
-			em.persist(tweet);
-			em.getTransaction().commit();
-			TweetDTO result = EntityUtil.clone(tweet);
-			return result;
-		} finally {
-			em.close();
 		}
+
+		if (existingTags.size() > 0) {
+			tweet.setHashtags(existingTags);
+		}
+
+		// load images
+		Set<Image> images = new HashSet<Image>();
+		for (Image image : tweet.getImages()) {
+			try {
+				Query query = em.createQuery("from Image where id = :id").setParameter("id", image.getId());
+				Image existingImage = (Image) query.getSingleResult();
+				images.add(existingImage);
+			} catch (NoResultException ex) {
+				// do nothing.
+				logger.severe(String.format("Failed to load image with id %d", image.getId()));
+			}
+		}
+
+		if (images.size() > 0) {
+			tweet.setImages(images);
+		}
+
+		em.persist(tweet);
+		TweetDTO result = EntityUtil.clone(tweet);
+		return result;
 	}
 
 	private Set<String> extractHashtags(String content) {
@@ -114,28 +106,6 @@ public class TweetDAOImpl implements TweetDAO {
 		return ImmutableSet.of();
 	}
 
-	// @Deprecated
-	// @Override
-	// public List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize)
-	// {
-	// if (zip == null) {
-	// throw new IllegalArgumentException();
-	// }
-	// EntityManager em = EntityManagerService.getInstance().getEntityManager();
-	// try {
-	// Query query = (Query) em.createNamedQuery("findTweetsByZip");
-	// query.setParameter("zip", zip);
-	// query.setParameter("status", TweetStatus.ACTIVE.name());
-	// query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-	//
-	// @SuppressWarnings("unchecked")
-	// List<Tweet> tweets = (List<Tweet>) query.getResultList();
-	// return EntityUtil.cloneList(tweets);
-	// } finally {
-	// em.close();
-	// }
-	// }
-
 	@Override
 	public List<TweetDTO>
 	    findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException {
@@ -144,9 +114,8 @@ public class TweetDAOImpl implements TweetDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = (Query) em.createNamedQuery("findTweetsByNeighborhood");
+			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByNeighborhood");
 			query.setParameter("neighborhoodId", neighborhoodId);
 			query.setParameter("status", TweetStatus.ACTIVE.name());
 			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
@@ -160,8 +129,6 @@ public class TweetDAOImpl implements TweetDAO {
 			    neighborhoodId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
@@ -170,11 +137,11 @@ public class TweetDAOImpl implements TweetDAO {
 	    Long neighborhoodId,
 	    int page,
 	    int pageSize) throws NotFoundException {
+
 		Preconditions.checkArgument(neighborhoodId != null);
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = (Query) em.createNamedQuery("findTweetsByTypeAndNeighborhood");
+			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByTypeAndNeighborhood");
 			query.setParameter("neighborhoodId", neighborhoodId);
 			query.setParameter("type", type.name());
 			query.setParameter("status", TweetStatus.ACTIVE.name());
@@ -195,19 +162,17 @@ public class TweetDAOImpl implements TweetDAO {
 			    neighborhoodId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
 	@Override
 	public List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException {
+
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
-			Query query = (Query) em.createNamedQuery("findTweetsByAccountId");
+			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByAccountId");
 			query.setParameter("accountId", accountId);
 			query.setParameter("status", TweetStatus.ACTIVE.name());
 			@SuppressWarnings("unchecked")
@@ -219,19 +184,17 @@ public class TweetDAOImpl implements TweetDAO {
 			    accountId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
+	@Transactional
 	@Override
 	public TweetDTO update(Tweet tweet) throws NotFoundException {
 		if (tweet == null) {
 			throw new IllegalArgumentException();
 		}
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 
-		em.getTransaction().begin();
 		Query query = (Query) em.createNamedQuery("findTweetsById");
 		query.setParameter("tweetId", tweet.getTweetId());
 		try {
@@ -240,7 +203,6 @@ public class TweetDAOImpl implements TweetDAO {
 			result.setType(tweet.getType());
 			result.setStatus(tweet.getStatus());
 			em.merge(result);
-			em.getTransaction().commit();
 			return EntityUtil.clone(result);
 		} catch (NoResultException nre) {
 			logger.warning(String.format(
@@ -248,34 +210,29 @@ public class TweetDAOImpl implements TweetDAO {
 			    tweet.getTweetId(),
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
+	@Transactional
 	@Override
 	public void delete(Tweet tweet) throws NotFoundException {
 		if (tweet == null) {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		try {
-			em.getTransaction().begin();
 			Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
 			query.setParameter("tweetId", tweet.getTweetId());
 			Tweet result = (Tweet) query.getSingleResult();
 			result.setStatus(TweetStatus.DELETED);
 			em.merge(result);
-			em.getTransaction().commit();
 		} catch (NoResultException nre) {
 			logger.warning(String.format(
 			    "Failed to retrieve tweets with id [%d] exception %s",
 			    tweet.getTweetId(),
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
@@ -286,11 +243,11 @@ public class TweetDAOImpl implements TweetDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			Query query =
-			    (Query) em
-			        .createQuery("from Tweet t where t.sender.accountId = :accountId and status = :status order by t.timeCreated desc");
+			    (Query) getEntityManager()
+			        .createQuery(
+			            "from Tweet t where t.sender.accountId = :accountId and status = :status order by t.timeCreated desc");
 			query.setParameter("accountId", accountId);
 			query.setParameter("status", TweetStatus.ACTIVE.name());
 			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
@@ -303,14 +260,13 @@ public class TweetDAOImpl implements TweetDAO {
 			    accountId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
 	@Override
 	public Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException,
 	    NotFoundException {
+
 		if (accountId == null || date == null) {
 			throw new IllegalArgumentException("Invalid accountId");
 		}
@@ -318,7 +274,7 @@ public class TweetDAOImpl implements TweetDAO {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		try {
 			Query query =
 			    em
@@ -336,8 +292,6 @@ public class TweetDAOImpl implements TweetDAO {
 			    accountId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
@@ -347,11 +301,11 @@ public class TweetDAOImpl implements TweetDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
 		try {
 			Query query =
-			    em
-			        .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId and status = :status");
+			    getEntityManager()
+			        .createQuery(
+			            "select count(*) from Tweet t where t.sender.accountId = :accountId and status = :status");
 			query.setParameter("accountId", accountId);
 			query.setParameter("status", TweetStatus.ACTIVE.name());
 			Long count = (Long) query.getSingleResult();
@@ -362,8 +316,6 @@ public class TweetDAOImpl implements TweetDAO {
 			    accountId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
 	}
 
@@ -373,7 +325,7 @@ public class TweetDAOImpl implements TweetDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		try {
 			Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
 			query.setParameter("tweetId", tweetId);
@@ -385,59 +337,37 @@ public class TweetDAOImpl implements TweetDAO {
 			    tweetId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
-	}
-
-	public static void main(String[] args) throws ParseException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-
-		System.out.println("M=" + (cal.get(Calendar.MONTH) + 1));
-		System.out.println("Y=" + cal.get(Calendar.YEAR));
 	}
 
 	@Override
 	public List<TweetDTO> findAll() {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createQuery("from Tweet order by timeCreated desc");
-			@SuppressWarnings("unchecked")
-			List<Tweet> result = query.getResultList();
-			return EntityUtil.cloneList(result);
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		Query query = em.createQuery("from Tweet order by timeCreated desc");
+		@SuppressWarnings("unchecked")
+		List<Tweet> result = query.getResultList();
+		return EntityUtil.cloneList(result);
 	}
 
 	@Deprecated
 	@Override
 	public List<TweetDTO> findTweets(String queryStr, int start, int end) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createQuery(queryStr);
-			query.setFirstResult(start);
-			query.setMaxResults(end - start);
-			@SuppressWarnings("unchecked")
-			List<Tweet> result = query.getResultList();
-			List<TweetDTO> resp = EntityUtil.cloneList(result);
-			return resp;
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		Query query = em.createQuery(queryStr);
+		query.setFirstResult(start);
+		query.setMaxResults(end - start);
+		@SuppressWarnings("unchecked")
+		List<Tweet> result = query.getResultList();
+		List<TweetDTO> resp = EntityUtil.cloneList(result);
+		return resp;
 	}
 
 	@Override
 	public Long findTotalTweetCount(String queryStr) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
-		try {
-			Query query = em.createQuery(queryStr);
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} finally {
-			em.close();
-		}
+		EntityManager em = getEntityManager();
+		Query query = em.createQuery(queryStr);
+		Long count = (Long) query.getSingleResult();
+		return count;
 	}
 
 	/*
@@ -446,12 +376,13 @@ public class TweetDAOImpl implements TweetDAO {
 	@Override
 	public Map<TweetType, Integer>
 	    findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException {
+
 		if (neighborhoodId == null) {
 			throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
 		}
 
 		Map<TweetType, Integer> result = Maps.newHashMap();
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 
 		try {
 			Query query =
@@ -474,8 +405,14 @@ public class TweetDAOImpl implements TweetDAO {
 			    neighborhoodId,
 			    nre));
 			throw new NotFoundException();
-		} finally {
-			em.close();
 		}
+	}
+
+	public static void main(String[] args) throws ParseException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+
+		System.out.println("M=" + (cal.get(Calendar.MONTH) + 1));
+		System.out.println("Y=" + cal.get(Calendar.YEAR));
 	}
 }

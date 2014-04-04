@@ -3,12 +3,15 @@ package com.ziplly.app.server.handlers;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
@@ -26,17 +29,19 @@ public class GetEntityActionHandler extends
 	private NeighborhoodDAO neighborhoodDao;
 
 	@Inject
-	public GetEntityActionHandler(AccountDAO accountDao,
+	public GetEntityActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    NeighborhoodDAO neighborhoodDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.neighborhoodDao = neighborhoodDao;
 	}
 
 	@Override
 	public GetEntityResult
-	    execute(GetEntityListAction action, ExecutionContext ctx) throws DispatchException {
+	    doExecute(GetEntityListAction action, ExecutionContext ctx) throws DispatchException {
 
 		validateSession();
 		if (action.getEntityType() == EntityType.PERSONAL_ACCOUNT) {

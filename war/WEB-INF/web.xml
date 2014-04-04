@@ -18,7 +18,7 @@
 		<listener-class>com.ziplly.app.server.guice.MyGuiceContextListener</listener-class>
 	</listener>
 
-	<servlet>
+ 	<servlet>
 		<servlet-name>UploadServlet</servlet-name>
 		<servlet-class>com.ziplly.app.server.UploadServlet</servlet-class>
 	</servlet>
@@ -28,7 +28,7 @@
 		<url-pattern>/ziplly/upload</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
+	<!-- <servlet>
 		<servlet-name>ConfirmPaymentServlet</servlet-name>
 		<servlet-class>com.ziplly.app.server.ConfirmPaymentServlet
 		</servlet-class>
@@ -38,8 +38,8 @@
 		<servlet-name>ConfirmPaymentServlet</servlet-name>
 		<url-pattern>/ziplly/confirmpayment</url-pattern>
 	</servlet-mapping>
-
-	 <servlet>
+ -->
+	<!-- <servlet>
 		<servlet-name>NotificationServlet</servlet-name>
 		<servlet-class>com.ziplly.app.server.NotificationServlet</servlet-class>
 	</servlet>
@@ -49,7 +49,7 @@
 		<url-pattern>/_ah/start</url-pattern>
 		<url-pattern>/ziplly/sendmail</url-pattern>
 	</servlet-mapping> 
-	
+ -->	
 	<servlet>
 		<servlet-name>mailhandler</servlet-name>
 		<servlet-class>com.ziplly.app.server.MailHandlerServlet</servlet-class>

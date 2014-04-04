@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -16,17 +19,19 @@ public class ViewConversationActionHandler extends
 	private ConversationDAO conversationDao;
 
 	@Inject
-	public ViewConversationActionHandler(AccountDAO accountDao,
+	public ViewConversationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    ConversationDAO conversationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 	}
 
 	@Override
 	public ViewConversationResult
-	    execute(ViewConversationAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(ViewConversationAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getConversationId() == null) {
 			throw new IllegalArgumentException();

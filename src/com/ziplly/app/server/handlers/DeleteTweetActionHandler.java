@@ -1,11 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
@@ -23,16 +25,18 @@ public class DeleteTweetActionHandler extends
     AbstractTweetActionHandler<DeleteTweetAction, DeleteTweetResult> {
 
 	@Inject
-	public DeleteTweetActionHandler(AccountDAO accountDao,
+	public DeleteTweetActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 	}
 
 	@Override
 	public DeleteTweetResult
-	    execute(DeleteTweetAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(DeleteTweetAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getTweetId() == null) {
 			throw new IllegalArgumentException();

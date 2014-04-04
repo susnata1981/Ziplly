@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
@@ -22,15 +25,17 @@ public class GetAccountByIdActionHandler extends
     AbstractAccountActionHandler<GetAccountByIdAction, GetAccountByIdResult> {
 
 	@Inject
-	public GetAccountByIdActionHandler(AccountDAO accountDao,
+	public GetAccountByIdActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public GetAccountByIdResult
-	    execute(GetAccountByIdAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetAccountByIdAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getAccountId() == null) {
 			throw new IllegalArgumentException();

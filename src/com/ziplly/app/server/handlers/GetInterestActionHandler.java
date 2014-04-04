@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -19,18 +22,20 @@ public class GetInterestActionHandler extends
 	private InterestDAO interestDao;
 
 	@Inject
-	public GetInterestActionHandler(AccountDAO accountDao,
+	public GetInterestActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    InterestDAO interestDao) {
 
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.interestDao = interestDao;
 	}
 
 	@Override
 	public GetInterestResult
-	    execute(GetInterestAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetInterestAction action, ExecutionContext arg1) throws DispatchException {
 
 		validateSession();
 		List<InterestDTO> interests = interestDao.findAll();

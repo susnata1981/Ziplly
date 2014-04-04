@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
@@ -17,15 +20,17 @@ public class UpdateAccountActionHandler extends
     AbstractAccountActionHandler<UpdateAccountAction, UpdateAccountResult> {
 
 	@Inject
-	public UpdateAccountActionHandler(AccountDAO accountDao,
+	public UpdateAccountActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public UpdateAccountResult
-	    execute(UpdateAccountAction action, ExecutionContext ec) throws DispatchException {
+	    doExecute(UpdateAccountAction action, ExecutionContext ec) throws DispatchException {
 
 		if (action == null || action.getAccount() == null) {
 			throw new IllegalArgumentException();

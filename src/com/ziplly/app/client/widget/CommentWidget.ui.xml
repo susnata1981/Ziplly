@@ -11,7 +11,6 @@
 		display: block;
 		}
 		.profileImagePanel {
-			margin-left: 10px;
 		}
 		.profileImage {
 		width: 40px;
@@ -19,6 +18,9 @@
 		}
 		.content {
 			font-size: 14px;
+		}
+		.contentPanel {
+			position: relative;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.commentPanel}">
@@ -30,7 +32,7 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="9">
-				<dt:MouseHoverPanel ui:field="contentPanel">
+				<dt:MouseHoverPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}">
 					<span ui:field="content" addStyleNames="{style.content}" />
 				</dt:MouseHoverPanel>
 			</b:Column>

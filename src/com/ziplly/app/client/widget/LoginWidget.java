@@ -12,6 +12,9 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -51,7 +54,20 @@ public class LoginWidget extends Composite implements ILoginAccountView<LoginPre
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);
 		setWidth("90%");
+		setupHandlers();
 	}
+
+	private void setupHandlers() {
+		this.addDomHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					login(null);
+				}
+			}
+		}, KeyDownEvent.getType());
+  }
 
 	@UiFactory
 	ZResources resources() {

@@ -3,10 +3,13 @@ package com.ziplly.app.server.handlers;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.ConversationDAO;
@@ -34,13 +37,15 @@ public class SendMessageActionHandler extends
 	private TweetNotificationBLI tweetNotificationBli;
 
 	@Inject
-	public SendMessageActionHandler(AccountDAO accountDao,
+	public SendMessageActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    ConversationDAO conversationDao,
 	    AccountNotificationDAO accountNotificationDao,
 	    TweetNotificationBLI tweetNotificationBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 		this.accountNotificationDao = accountNotificationDao;
 		this.tweetNotificationBli = tweetNotificationBli;
@@ -48,7 +53,7 @@ public class SendMessageActionHandler extends
 
 	@Override
 	public SendMessageResult
-	    execute(SendMessageAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(SendMessageAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getConversation() == null) {
 			throw new IllegalArgumentException();

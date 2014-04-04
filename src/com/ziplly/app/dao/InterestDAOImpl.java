@@ -1,19 +1,24 @@
 package com.ziplly.app.dao;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.InterestDTO;
 
-public class InterestDAOImpl implements InterestDAO {
+public class InterestDAOImpl extends BaseDAO implements InterestDAO {
+
+	@Inject
+	public InterestDAOImpl(Provider<EntityManager> entityManagerProvider) {
+		super(entityManagerProvider);
+	}
 
 	@Override
 	public Interest findInterestByName(String name) {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		Query query = em.createNamedQuery("findInterestByName");
 		query.setParameter("name", name);
 		try {
@@ -21,15 +26,12 @@ public class InterestDAOImpl implements InterestDAO {
 			return interest;
 		} catch (NoResultException nre) {
 			return null;
-		} finally {
-			em.close();
 		}
-
 	}
 
 	@Override
 	public List<InterestDTO> findAll() {
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		Query query = em.createQuery("from Interest");
 		try {
 			@SuppressWarnings("unchecked")
@@ -37,8 +39,6 @@ public class InterestDAOImpl implements InterestDAO {
 			return EntityUtil.cloneInterestList(result);
 		} catch (NoResultException nre) {
 			return null;
-		} finally {
-			em.close();
 		}
 	}
 
@@ -48,19 +48,14 @@ public class InterestDAOImpl implements InterestDAO {
 			throw new IllegalArgumentException();
 		}
 
-		EntityManager em = EntityManagerService.getInstance().getEntityManager();
+		EntityManager em = getEntityManager();
 		em.getTransaction().begin();
 		Interest existingInterest = findInterestByName(interest.getName());
 		if (existingInterest != null) {
 			// throw new IllegalArgumentException("Duplicate entry");
 			return;
 		}
-		try {
-			em.persist(interest);
-			em.getTransaction().commit();
-		} finally {
-			em.close();
-		}
+		em.persist(interest);
+		em.getTransaction().commit();
 	}
-
 }

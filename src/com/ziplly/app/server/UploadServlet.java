@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,8 +20,10 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.ImageDAO;
 import com.ziplly.app.dao.ImageDAOImpl;
 import com.ziplly.app.model.Image;
@@ -29,13 +32,15 @@ import com.ziplly.app.model.RecordStatus;
 @Singleton
 public class UploadServlet extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(UploadServlet.class.getCanonicalName());
+	
 	private static final long serialVersionUID = 1L;
 	private final BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	private final ImageDAO imageDao;
 	private final ImagesService imageService = ImagesServiceFactory.getImagesService();
 
 	public UploadServlet() {
-		imageDao = new ImageDAOImpl();
+		System.out.println("Creating upload servlet...");
+		this.imageDao = new ImageDAOImpl(new EntityManagerProvider()); 
 	}
 
 	@Override
@@ -45,7 +50,7 @@ public class UploadServlet extends HttpServlet {
 
 		logger.log(
 		    Level.INFO,
-		    String.format("doGet method called with " + "image url %s, imageId %s", imageUrl, imageId));
+		    String.format("doGet method called with image url %s, imageId %s", imageUrl, imageId));
 
 		String response = imageUrl + StringConstants.VALUE_SEPARATOR + imageId;
 		res.setHeader("Content-Type", "text/html");
@@ -74,8 +79,7 @@ public class UploadServlet extends HttpServlet {
 		// Save the image
 		try {
 			Image image = new Image();
-			image
-			    .setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
+			image.setUrl(imageService.getServingUrl(ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0))));
 			image.setBlobKey(blobKeys.get(0).getKeyString());
 			image.setStatus(RecordStatus.ACTIVE);
 			image.setTimeCreated(new Date());
@@ -101,5 +105,14 @@ public class UploadServlet extends HttpServlet {
 		    uploadEndpoint + "?" + StringConstants.IMAGE_URL_KEY + "=" + image.getUrl() + "&"
 		        + StringConstants.IMAGE_ID + "=" + image.getId();
 		return url;
+	}
+	
+	// A hack to bypass dependency injection
+	private static class EntityManagerProvider implements Provider<EntityManager> {
+
+		@Override
+    public EntityManager get() {
+			return EntityManagerService.getInstance().getEntityManager();
+    }
 	}
 }

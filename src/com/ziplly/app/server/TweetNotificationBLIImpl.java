@@ -36,6 +36,7 @@ import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.Session;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.server.guice.DAOModule.BackendAddress;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {
@@ -47,31 +48,30 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	    TweetType.OFFERS,
 	    TweetType.HOT_DEALS);
 
-	private AccountDAO accountDao;
-
-	private NeighborhoodDAO neighborhoodDao;
-
-	private TweetDAO tweetDao;
-
-	private EmailService emailService;
-
-	private AccountNotificationDAO accountNotificationDao;
-
-	private SessionDAO sessionDao;
+	private final AccountDAO accountDao;
+	private final NeighborhoodDAO neighborhoodDao;
+	private final TweetDAO tweetDao;
+	private final EmailService emailService;
+	private final AccountNotificationDAO accountNotificationDao;
+	private final SessionDAO sessionDao;
+	private String backendAddress;
 
 	@Inject
-	public TweetNotificationBLIImpl(AccountDAO accountDao,
+	public TweetNotificationBLIImpl(
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    NeighborhoodDAO neighborhoodDao,
 	    TweetDAO tweetDao,
 	    AccountNotificationDAO accountNotificationDao,
-	    EmailService emailService) {
+	    EmailService emailService,
+	    @BackendAddress String backendAddress) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.neighborhoodDao = neighborhoodDao;
 		this.tweetDao = tweetDao;
 		this.accountNotificationDao = accountNotificationDao;
 		this.emailService = emailService;
+		this.backendAddress = backendAddress;
 	}
 
 	private boolean shouldSendNotification(TweetDTO tweet) {
@@ -106,10 +106,6 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		AccountDTO sender = tweet.getSender();
 		Session session = sessionDao.findSessionByAccountId(sender.getAccountId());
 		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-
-		String backendAddress =
-		    BackendServiceFactory.getBackendService().getBackendAddress(
-		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
 
 		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
 

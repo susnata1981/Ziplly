@@ -19,6 +19,9 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -69,7 +72,7 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	boolean checkEmailInvitationStatus = false;
 	boolean isServiceAvailable = true;
 	private NeighborhoodDTO selectedNeighborhood;
-	private List<NeighborhoodDTO> neighborhoods;
+//	private List<NeighborhoodDTO> neighborhoods;
 
 	@UiField
 	Anchor howItWorksAnchor;
@@ -150,8 +153,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	HelpInline addressError;
 	@UiField
 	Anchor clearAddressAnchor;
-//	@UiField
-//	HelpInline neighborhoodHelpBlock;
 	
 	private GooglePlacesWidget placesWidget;
 	
@@ -170,7 +171,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		StyleHelper.show(lastnameError.getElement(), false);
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
-//		neighborhoodControl.setVisible(false);
 		for (Gender g : Gender.getValuesForSignup()) {
 			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
 		}
@@ -207,21 +207,21 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			}
 		});
 
-//		zip.addBlurHandler(new BlurHandler() {
-//			@Override
-//			public void onBlur(BlurEvent event) {
-//				doValidation = true;
-//
-//				boolean validateZip = validateZip();
-//				if (validateZip) {
-//					isServiceAvailable = true;
-//					setControlMessageForZipcodeField(null, false, ControlGroupType.SUCCESS);
-//					clearNeighborhoodSection();
-//					presenter.getNeighborhoodData(FieldVerifier.sanitize(zip.getText()));
-//				}
-//			}
-//		});
+		lastname.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				if (!doValidation) {
+					return;
+				}
 
+				boolean validateName = validateName(lastname.getText(), lastnameCg, lastnameError);
+				if (validateName) {
+					lastnameCg.setType(ControlGroupType.SUCCESS);
+					lastnameError.setVisible(false);
+				}
+			}
+		});
+		
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -242,43 +242,28 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 				if (!doValidation) {
 					return;
 				}
-				boolean validateName = validateName(password.getText(), passwordCg, passwordError);
+				boolean validateName = validatePassword(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
 					passwordError.setVisible(false);
 				}
 			}
 		});
+		
+		this.addDomHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					signup(null);
+				}
+			}
+		}, KeyDownEvent.getType());
 	}
-
-//	public void clearNeighborhoodSection() {
-//		neighborhoodListPanel.clear();
-//		neighborhoodCg.setType(ControlGroupType.NONE);
-//		neighborhoodControl.setVisible(false);
-//	}
 
 	public void reset() {
 		infoField.setVisible(false);
 	}
-
-//	boolean validateZip() {
-//		String zipInput = zip.getText().trim();
-//		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-//		if (!validateZip.isValid()) {
-//			setControlMessageForZipcodeField(
-//			    validateZip.getErrors().get(0).getErrorMessage(),
-//			    true,
-//			    ControlGroupType.ERROR);
-//			return false;
-//		}
-//		return true;
-//	}
-//
-//	void setControlMessageForZipcodeField(String msg, boolean msgVisible, ControlGroupType type) {
-//		zipCg.setType(type);
-//		zipError.setText(msg);
-//		zipError.setVisible(msgVisible);
-//	}
 
 	boolean validateName(String name, ControlGroup cg, HelpInline helpInline) {
 		ValidationResult result = FieldVerifier.validateName(name);
@@ -383,12 +368,8 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		firstnameError.setVisible(false);
 		lastnameCg.setType(ControlGroupType.NONE);
 		lastnameError.setVisible(false);
-//		zipCg.setType(ControlGroupType.NONE);
-//		zipError.setVisible(false);
 		passwordCg.setType(ControlGroupType.NONE);
 		passwordError.setVisible(false);
-//		neighborhoodCg.setType(ControlGroupType.NONE);
-//		neighborhoodError.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
 	}

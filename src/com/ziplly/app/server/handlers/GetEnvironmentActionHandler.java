@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.AccountBLI;
@@ -14,15 +17,17 @@ public class GetEnvironmentActionHandler extends
     AbstractAccountActionHandler<GetEnvironmentAction, GetEnvironmentResult> {
 
 	@Inject
-	public GetEnvironmentActionHandler(AccountDAO accountDao,
+	public GetEnvironmentActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public GetEnvironmentResult
-	    execute(GetEnvironmentAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetEnvironmentAction action, ExecutionContext arg1) throws DispatchException {
 
 		GetEnvironmentResult result = new GetEnvironmentResult();
 		result.setEnvironment(accountBli.getEnvironment());

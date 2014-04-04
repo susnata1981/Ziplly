@@ -1,11 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -19,14 +21,16 @@ public class VerifyPasswordRecoveryHashActionHandler
     AbstractAccountActionHandler<VerifyPasswordRecoveryHashAction, VerifyPasswordRecoveryHashResult> {
 
 	@Inject
-	public VerifyPasswordRecoveryHashActionHandler(AccountDAO accountDao,
+	public VerifyPasswordRecoveryHashActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
-	public VerifyPasswordRecoveryHashResult execute(VerifyPasswordRecoveryHashAction action,
+	public VerifyPasswordRecoveryHashResult doExecute(VerifyPasswordRecoveryHashAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getHash() == null) {

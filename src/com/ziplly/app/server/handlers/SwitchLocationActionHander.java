@@ -1,10 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
@@ -22,17 +25,19 @@ public class SwitchLocationActionHander extends
 	private LocationDAO locationDao;
 
 	@Inject
-	public SwitchLocationActionHander(AccountDAO accountDao,
+	public SwitchLocationActionHander(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    LocationDAO locationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.locationDao = locationDao;
 	}
 
 	@Override
 	public SwitchLocationResult
-	    execute(SwitchLocationAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(SwitchLocationAction action, ExecutionContext arg1) throws DispatchException {
 
 		Preconditions.checkNotNull(action.getLocationId());
 

@@ -166,7 +166,7 @@ div.comment_text {
 }
 
 .commentInputTextBox {
-	margin: 2ppx;
+	margin: 6px;
 	width: 96% !important;
 	height: 40px;
 	padding: 4px;
@@ -227,7 +227,12 @@ div.comment_text {
 }
 
 .commentEditLink {
-	float: right;
+	position: absolute;
+	top: 0;
+	right: 10px;
+	display: inline-block;
+	height: 20px;
+	width: 20px;
 	list-style: none;
 }
 

@@ -1,9 +1,12 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.dao.AccountDAO;
@@ -20,19 +23,22 @@ public class RegisterAccountActionHandler extends
     AbstractAccountActionHandler<RegisterAccountAction, RegisterAccountResult> {
 
 	@Inject
-	public RegisterAccountActionHandler(AccountDAO accountDao,
+	public RegisterAccountActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	@Override
 	public RegisterAccountResult
-	    execute(RegisterAccountAction action, ExecutionContext ec) throws DispatchException {
+	    doExecute(RegisterAccountAction action, ExecutionContext ec) throws DispatchException {
 
 		if (action == null || action.getAccount() == null) {
 			throw new IllegalArgumentException("Invalid argument to RegisterAccountResult");
 		}
+		
 		RegisterAccountResult result = new RegisterAccountResult();
 		AccountDTO accountDto = action.getAccount();
 		Account account = EntityUtil.convert(accountDto);

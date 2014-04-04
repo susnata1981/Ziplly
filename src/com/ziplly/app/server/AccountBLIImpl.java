@@ -179,6 +179,7 @@ public class AccountBLIImpl implements AccountBLI {
 	    InternalError,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException {
+		
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
@@ -312,6 +313,7 @@ public class AccountBLIImpl implements AccountBLI {
 		String fname = UUID.randomUUID().toString();
 		String bucketName = System.getProperty(StringConstants.BUCKET_NAME);
 		GcsFilename file = new GcsFilename(bucketName, fname);
+		
 		try {
 			GcsOutputChannel outputChannel =
 			    gcsService.createOrReplace(file, GcsFileOptions.getDefaultInstance());
@@ -323,6 +325,7 @@ public class AccountBLIImpl implements AccountBLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 
@@ -508,7 +511,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		throw new RuntimeException();
 	}
-
+	
 	@Override
 	public AccountDTO updateAccount(Account account) throws NeedsLoginException, NotFoundException {
 		if (!isValidSession()) {
@@ -531,15 +534,12 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public String getImageUploadUrl() {
-
 		String bucketName = System.getProperty("gcs_bucket_name");
 		UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
 		String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
 		String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
 
 		String result = uploadUrl;
-		logger.log(Level.INFO, String.format("UPLOAD URL SET to %s", uploadUrl));
-
 		// Hack to make this work in dev environment
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
 			result = uploadUrl.replace("susnatas-MacBook-Pro.local:8888",
@@ -549,7 +549,6 @@ public class AccountBLIImpl implements AccountBLI {
 
 		logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", result));
 		return result;
-
 	}
 
 	private Account getLoggedInUserBasedOnCookie() {

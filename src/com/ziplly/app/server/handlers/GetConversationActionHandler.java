@@ -2,6 +2,7 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -9,6 +10,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
@@ -25,17 +27,19 @@ public class GetConversationActionHandler extends
 	ConversationDAO conversationDao;
 
 	@Inject
-	public GetConversationActionHandler(AccountDAO accountDao,
+	public GetConversationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    ConversationDAO conversationDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.conversationDao = conversationDao;
 	}
 
 	@Override
 	public GetConversationsResult
-	    execute(GetConversationsAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetConversationsAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null) {
 			throw new IllegalArgumentException();

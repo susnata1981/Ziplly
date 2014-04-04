@@ -2,16 +2,16 @@ package com.ziplly.app.server.handlers;
 
 import java.util.Date;
 
-import javax.inject.Provider;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 
-import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.Action;
 import net.customware.gwt.dispatch.shared.DispatchException;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
@@ -20,8 +20,9 @@ import com.ziplly.app.model.Session;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.ZipllyServerConstants;
 
-public abstract class AbstractAccountActionHandler<T extends Action<R>, R extends Result> implements
-    ActionHandler<T, R> {
+public abstract class AbstractAccountActionHandler<T extends Action<R>, R extends Result> 
+    extends AbstractSessionAwareActionHandler<T, R> {
+	
 	protected final long hoursInMillis = 60 * 60 * 2;
 	protected SessionDAO sessionDao;
 	protected AccountDAO accountDao;
@@ -31,9 +32,13 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>, R extend
 	protected AccountBLI accountBli;
 	protected Session session;
 
-	public AbstractAccountActionHandler(AccountDAO accountDao,
+	public AbstractAccountActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli) {
+		
+		super(entityManagerProvider);
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.accountBli = accountBli;

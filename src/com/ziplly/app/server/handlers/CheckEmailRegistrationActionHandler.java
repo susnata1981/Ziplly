@@ -1,11 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
@@ -21,16 +23,19 @@ public class CheckEmailRegistrationActionHandler extends
 	private AccountRegistrationDAO registrationDao;
 
 	@Inject
-	public CheckEmailRegistrationActionHandler(AccountDAO accountDao,
+	public CheckEmailRegistrationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    AccountRegistrationDAO registrationDao) {
-		super(accountDao, sessionDao, accountBli);
+		
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.registrationDao = registrationDao;
 	}
 
 	@Override
-	public CheckEmailRegistrationResult execute(CheckEmailRegistrationAction action,
+	public CheckEmailRegistrationResult doExecute(CheckEmailRegistrationAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getEmail() == null) {

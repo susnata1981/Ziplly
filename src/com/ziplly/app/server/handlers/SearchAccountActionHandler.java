@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
@@ -19,17 +22,19 @@ public class SearchAccountActionHandler extends
     AbstractAdminActionHandler<SearchAccountAction, SearchAccountResult> {
 
 	@Inject
-	public SearchAccountActionHandler(AccountDAO accountDao,
+	public SearchAccountActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
 	    AdminBLI adminBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli, adminBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli, adminBli);
 	}
 
 	@Override
 	public SearchAccountResult
-	    execute(SearchAccountAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(SearchAccountAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getCriteria() == null) {
 			throw new IllegalArgumentException();

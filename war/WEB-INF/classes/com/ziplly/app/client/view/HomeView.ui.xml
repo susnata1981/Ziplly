@@ -111,7 +111,7 @@
 		color: #555;
 		max-height: 330px;
 		overflow: auto;
-		width: 96%;
+		width: 100%;
 		}
 		.row {
 		margin-top: 20px;

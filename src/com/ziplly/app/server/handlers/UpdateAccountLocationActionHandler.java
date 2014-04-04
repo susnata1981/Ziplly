@@ -1,10 +1,13 @@
 package com.ziplly.app.server.handlers;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Role;
@@ -15,15 +18,17 @@ import com.ziplly.app.shared.UpdateAccountLocationResult;
 public class UpdateAccountLocationActionHandler extends AbstractAccountActionHandler<UpdateAccountLocationAction, UpdateAccountLocationResult>{
 
 	@Inject
-	public UpdateAccountLocationActionHandler(AccountDAO accountDao,
+	public UpdateAccountLocationActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli) {
-	  super(accountDao, sessionDao, accountBli);
+	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
   }
 
 	@Override
   public UpdateAccountLocationResult
-      execute(UpdateAccountLocationAction action, ExecutionContext arg1) throws DispatchException {
+      doExecute(UpdateAccountLocationAction action, ExecutionContext arg1) throws DispatchException {
 		
 		validateSession();
 		

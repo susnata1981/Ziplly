@@ -3,10 +3,13 @@ package com.ziplly.app.server.handlers;
 import java.text.ParseException;
 import java.util.Date;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -33,17 +36,19 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 	private TweetNotificationBLI tweetNotificationBli;
 
 	@Inject
-	public TweetActionHandler(AccountDAO accountDao,
+	public TweetActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
 	    TweetNotificationBLI tweetNotificationBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 		this.tweetNotificationBli = tweetNotificationBli;
 	}
 
 	@Override
-	public TweetResult execute(TweetAction action, ExecutionContext arg1) throws DispatchException {
+	public TweetResult doExecute(TweetAction action, ExecutionContext arg1) throws DispatchException {
 		if (action == null || action.getTweet() == null) {
 			throw new IllegalArgumentException();
 		}

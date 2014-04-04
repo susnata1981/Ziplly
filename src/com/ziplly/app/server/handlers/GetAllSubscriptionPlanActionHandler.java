@@ -4,10 +4,13 @@ import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
@@ -23,18 +26,20 @@ public class GetAllSubscriptionPlanActionHandler extends
 	private PaymentService paymentService;
 
 	@Inject
-	public GetAllSubscriptionPlanActionHandler(AccountDAO accountDao,
+	public GetAllSubscriptionPlanActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    AccountBLI accountBli,
 	    PaymentService paymentService,
 	    SubscriptionPlanDAO subscriptionPlanDao) {
-		super(accountDao, sessionDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.paymentService = paymentService;
 		this.subscriptionPlanDao = subscriptionPlanDao;
 	}
 
 	@Override
-	public GetAllSubscriptionPlanResult execute(GetAllSubscriptionPlanAction action,
+	public GetAllSubscriptionPlanResult doExecute(GetAllSubscriptionPlanAction action,
 	    ExecutionContext arg1) throws DispatchException {
 
 		validateSession();

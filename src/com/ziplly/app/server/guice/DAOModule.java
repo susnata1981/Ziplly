@@ -1,7 +1,20 @@
 package com.ziplly.app.server.guice;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Map;
+import java.util.Properties;
+
+import com.google.appengine.api.backends.BackendServiceFactory;
+import com.google.appengine.api.utils.SystemProperty;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.persist.jpa.JpaPersistModule;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountDAOImpl;
 import com.ziplly.app.dao.AccountNotificationDAO;
@@ -12,6 +25,7 @@ import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.CommentDAOImpl;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.ConversationDAOImpl;
+import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.HashtagDAOImpl;
 import com.ziplly.app.dao.ImageDAO;
@@ -50,9 +64,45 @@ import com.ziplly.app.server.PaymentService;
 import com.ziplly.app.server.PaymentServiceImpl;
 import com.ziplly.app.server.TweetNotificationBLI;
 import com.ziplly.app.server.TweetNotificationBLIImpl;
+import com.ziplly.app.server.ZipllyServerConstants;
 
 public class DAOModule extends AbstractModule {
-
+	private static final String LOCALHOST_APP_URL = "http://localhost:8888/Ziplly.html?gwt.codesvr=127.0.0.1%3A9997";
+	public static Map<String, String> dbProperties = Maps.newHashMap();
+	public static Properties dbConfig = new Properties();
+	
+	static {
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
+			dbProperties.put(
+			    "javax.persistence.jdbc.url",
+			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
+			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
+			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
+		}
+//		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+//			// DEVEL SETUP
+//			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
+//			dbProperties.put(
+//			    "javax.persistence.jdbc.url",
+//			    "jdbc:google:mysql://zipllydevel:zipllydb/newzipllydb?user=zipllyadmin");
+//			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
+//			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
+//		}
+		else {
+			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
+			dbProperties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/newzipllydb");
+			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
+			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
+		}
+		dbConfig.putAll(dbProperties);
+	}
+	
+	@BindingAnnotation
+	@Target({ElementType.FIELD, ElementType.PARAMETER})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface BackendAddress {}
+	
 	@Override
 	protected void configure() {
 		bind(AccountDAO.class).to(AccountDAOImpl.class).in(Singleton.class);
@@ -79,12 +129,46 @@ public class DAOModule extends AbstractModule {
 		bind(PendingInvitationsDAO.class).to(PendingInvitationsDAOImpl.class).in(Singleton.class);
 		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
+		bind(EntityManagerService.class).in(Singleton.class);
+		
+//		bind(EntityManager.class).toProvider(EntityManagerProvider.class).in(RequestScoped.class);
+		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);
+		
+		install(new JpaPersistModule("zipllydb").properties(dbConfig));
 	}
 
-	// @Provides
-	// public EntityManager getEntityManager() {
-	// EntityManagerFactory emf =
-	// Persistence.createEntityManagerFactory("zipllydb");
-	// return emf.createEntityManager();
-	// }
+	public static class BackendUrlProvider implements Provider<String> {
+
+		@Override
+    public String get() {
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+			  return BackendServiceFactory.getBackendService().getBackendAddress(
+		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+			} else {
+				return LOCALHOST_APP_URL;
+			}
+    }
+	}
+	
+//	@Provides
+//	@Singleton
+//	public EntityManagerFactory getEntityManagerFactory() {
+//		System.out.println("CREATING ENTITY FACTORY...");
+//		return Persistence.createEntityManagerFactory("zipllydb", dbProperties);
+//	}
+//	
+//	public static class EntityManagerProvider implements Provider<EntityManager> {
+//		private EntityManagerFactory entityManagerFactory;
+//
+//		@Inject
+//		public EntityManagerProvider(EntityManagerFactory factory) {
+//			this.entityManagerFactory = factory;
+//    }
+//		
+//		@Override
+//    public EntityManager get() {
+//			System.out.println("CREATING ENTITY MANAGER...");
+//			return entityManagerFactory.createEntityManager();
+//    }
+//	}
 }

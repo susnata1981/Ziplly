@@ -11,6 +11,8 @@ import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -18,6 +20,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -35,8 +38,12 @@ public class GetLatLngActionHandler extends
     AbstractAccountActionHandler<GetLatLngAction, GetLatLngResult> {
 
 	@Inject
-	public GetLatLngActionHandler(AccountDAO accountDao, SessionDAO sessionDao, AccountBLI accountBli) {
-		super(accountDao, sessionDao, accountBli);
+	public GetLatLngActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao, 
+			SessionDAO sessionDao, 
+			AccountBLI accountBli) {
+		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	}
 
 	// TODO remove hardcoding.
@@ -47,7 +54,7 @@ public class GetLatLngActionHandler extends
 	
 	@Override
 	public GetLatLngResult
-	    execute(GetLatLngAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetLatLngAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null) {
 			throw new IllegalArgumentException();

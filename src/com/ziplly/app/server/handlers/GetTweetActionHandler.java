@@ -2,10 +2,13 @@ package com.ziplly.app.server.handlers;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
@@ -21,18 +24,20 @@ public class GetTweetActionHandler extends
 	private AdminBLI adminBli;
 
 	@Inject
-	public GetTweetActionHandler(AccountDAO accountDao,
+	public GetTweetActionHandler(
+			Provider<EntityManager> entityManagerProvider,
+			AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
 	    AdminBLI adminBli) {
-		super(accountDao, sessionDao, tweetDao, accountBli);
+		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
 		this.adminBli = adminBli;
 	}
 
 	@Override
 	public GetTweetsResult
-	    execute(GetTweetsAction action, ExecutionContext arg1) throws DispatchException {
+	    doExecute(GetTweetsAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getCriteria() == null) {
 			throw new IllegalArgumentException();
