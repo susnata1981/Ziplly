@@ -44,32 +44,60 @@ public class BusinessPlace extends Place {
 
 	@Prefix("business")
 	public static class Tokenizer implements PlaceTokenizer<BusinessPlace> {
+		
 		@Override
 		public BusinessPlace getPlace(String token) {
+//			if (token != null) {
+//				String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
+//				if (tokens.length > 1) {
+//					if (tokens[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
+//						try {
+//							long accountId = Long.parseLong(tokens[1]);
+//							BusinessPlace place = new BusinessPlace();
+//							place.setAccountId(accountId);
+//							return place;
+//						} catch (NumberFormatException nfe) {
+//							return new BusinessPlace("");
+//						}
+//					}
+//				} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+//					try {
+//						long neighborhoodId = Long.parseLong(tokens[1]);
+//						BusinessPlace place = new BusinessPlace();
+//						place.setNeighborhoodId(neighborhoodId);
+//						return place;
+//					} catch (NumberFormatException nfe) {
+//						return new BusinessPlace("");
+//					}
+//				}
+//				return new BusinessPlace(token);
+//			}
+//			return new BusinessPlace("");
+			
 			if (token != null) {
-				String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-				if (tokens.length > 1) {
-					if (tokens[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
-						try {
-							long accountId = Long.parseLong(tokens[1]);
-							BusinessPlace place = new BusinessPlace();
-							place.setAccountId(accountId);
-							return place;
-						} catch (NumberFormatException nfe) {
-							return new BusinessPlace("");
-						}
-					}
-				} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
-					try {
-						long neighborhoodId = Long.parseLong(tokens[1]);
+				try {
+					String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
+					if (tokens.length > 1) {
 						BusinessPlace place = new BusinessPlace();
-						place.setNeighborhoodId(neighborhoodId);
+						for (int i = 0; i < tokens.length;i++) {
+							String tok = tokens[i];
+							String[] split = tok.split(StringConstants.PLACE_VALUE_SEPARATOR);
+							if (split[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
+								long accountId = Long.parseLong(split[1]);
+								place.setAccountId(accountId);
+							} else if (split[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+								long neighborhoodId = Long.parseLong(split[1]);
+								place.setNeighborhoodId(neighborhoodId);
+							} else {
+								throw new RuntimeException("Invalid url in resident view");
+							}
+						}
 						return place;
-					} catch (NumberFormatException nfe) {
-						return new BusinessPlace("");
 					}
+				} catch (Exception ex) {
+					// Something happened.
+					return new BusinessPlace(token);
 				}
-				return new BusinessPlace(token);
 			}
 			return new BusinessPlace("");
 		}
@@ -77,7 +105,7 @@ public class BusinessPlace extends Place {
 		@Override
 		public String getToken(BusinessPlace place) {
 			if (place.getAccountId() != null) {
-				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId());
+				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId(), place.getNeighborhoodId());
 			} else if (place.getNeighborhoodId() != null) {
 				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {

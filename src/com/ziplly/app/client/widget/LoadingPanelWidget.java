@@ -10,7 +10,7 @@ import com.ziplly.app.client.resource.ZResources;
 
 public class LoadingPanelWidget extends Composite {
 
-	private static final String IMAGE_HEIGHT = "40px";
+	private static final String IMAGE_HEIGHT = "36px";
 
 	HTMLPanel panel = new HTMLPanel("");
 	Modal modal = new Modal();
@@ -29,7 +29,6 @@ public class LoadingPanelWidget extends Composite {
 		modal.add(container);
 		panel.add(modal);
 		panel.getElement().getStyle().setProperty("margin", "auto");
-		panel.getElement().getStyle().setProperty("width", "auto");
 		modal.hide();
 	}
 

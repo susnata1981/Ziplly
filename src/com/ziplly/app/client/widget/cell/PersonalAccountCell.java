@@ -10,7 +10,9 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.view.ImageUtil;
+import com.ziplly.app.client.view.ResidentViewState;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.PersonalAccountDTO;
 
@@ -18,9 +20,11 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 	// ZGinInjector injector = GWT.create(ZGinInjector.class);
 	// private PlaceController placeController;
 
-	public PersonalAccountCell() {
+	private ResidentViewState state;
+
+	public PersonalAccountCell(ResidentViewState state) {
 		super(BrowserEvents.CLICK);
-		// this.placeController = injector.getPlaceController();
+		this.state = state;
 	}
 
 	@Override
@@ -49,9 +53,10 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
 		EventTarget target = event.getEventTarget();
 
 		if (button.isOrHasChild(Element.as(target))) {
-			redirectUrl =
-			    redirectUrl + "#residents:" + StringConstants.SEND_MESSAGE_TOKEN
-			        + StringConstants.PLACE_SEPARATOR + accountId;
+//			redirectUrl =
+//			    redirectUrl + "#residents:" + StringConstants.SEND_MESSAGE_TOKEN
+//			        + StringConstants.PLACE_SEPARATOR + accountId;
+			redirectUrl = redirectUrl + "#residents:" + PlaceUtils.getPlaceTokenForMessaging(value.getAccountId(), state.getNeighborhoodId(), state.getGender());
 		} else {
 			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
 		}

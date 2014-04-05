@@ -11,6 +11,8 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,6 +26,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -87,12 +90,12 @@ public class BusinessView extends AbstractView implements
 	@Inject
 	public BusinessView(EventBus eventBus) {
 		super(eventBus);
-		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell());
+		state = new CommunityViewState(EntityType.BUSINESS_ACCOUNT, PAGE_SIZE);
+		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell(state));
 		businessList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
 		pager.setDisplay(businessList);
 		initWidget(uiBinder.createAndBindUi(this));
-		state = new CommunityViewState(EntityType.BUSINESS_ACCOUNT, PAGE_SIZE);
 		StyleHelper.show(message.getElement(), false);
 		setupHandlers();
 	}
@@ -104,6 +107,15 @@ public class BusinessView extends AbstractView implements
 				state.setRange(event.getNewRange());
 				presenter.getBusinessList(state.getCurrentEntityListAction());
 			}
+		});
+		
+		neighborhoodListBox.addChangeHandler(new ChangeHandler() {
+
+			@Override
+      public void onChange(ChangeEvent event) {
+				state.setNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
+      }
+			
 		});
 	}
 
@@ -234,4 +246,13 @@ public class BusinessView extends AbstractView implements
 		    neighborhood,
 		    ValueType.NEIGHBORHOOD_IMAGE));
 	}
+
+	public void setNeighborhoodId(Long neighborhoodId) {
+		for(NeighborhoodDTO n : neighborhoods) {
+			if (n.getNeighborhoodId().equals(neighborhoodId)) {
+				neighborhoodListBox.setSelectedValue(n.getName());
+				state.setNeighborhood(neighborhoodId);
+			}
+		}
+  }
 }

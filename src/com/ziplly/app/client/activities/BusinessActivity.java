@@ -75,10 +75,10 @@ public class BusinessActivity extends AbstractActivity implements
 			public void onSuccess(BusinessView result) {
 				BusinessActivity.this.view = result;
 				bind();
-				setupHandlers();
-				displayBusinessList();
 				view.setBackground(ctx.getCurrentNeighborhood());
 				view.displayNeighborhoodFilters(getTargetNeighborhoodList());
+				setupHandlers();
+				displayBusinessList();
 				panel.setWidget(view);
 			}
 		});
@@ -99,6 +99,7 @@ public class BusinessActivity extends AbstractActivity implements
 		        .getNeighborhoodId();
 		action.setNeighborhoodId(neighborhoodId);
 		dispatcher.execute(action, handler);
+		view.setNeighborhoodId(neighborhoodId);
 	}
 
 	@Override

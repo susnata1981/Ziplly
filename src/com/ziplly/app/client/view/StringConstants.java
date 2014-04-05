@@ -68,8 +68,10 @@ public class StringConstants {
 	public static final String INVALID_CREDENTIALS_ERROR =
 	    "Account with this email/password doesn't exist";
 	public static final String PLACE_SEPARATOR = ":";
+	public static final String PLACE_VALUE_SEPARATOR = "=";
 	public static final String SEND_MESSAGE_TOKEN = "sm";
 	public static final String NEIGHBORHOOD_TOKEN = "neighborhood";
+	public static final String GENDER_TOKEN = "gender";
 	// public static final String SMALL_IMAGE_LOADER =
 	// "images/ajax-loader-smaller.gif";
 	public static final String APP_EMAIL_ENABLE = "app.email.general.enable";

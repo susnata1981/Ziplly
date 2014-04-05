@@ -4,11 +4,13 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.model.Gender;
 
 public class ResidentPlace extends Place {
 	private String token;
 	private Long accountId;
 	private Long neighborhoodId;
+	private Gender gender;
 
 	public ResidentPlace() {
 		this.setToken("");
@@ -42,35 +44,46 @@ public class ResidentPlace extends Place {
 		this.neighborhoodId = neighborhoodId;
 	}
 
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
 	@Prefix("residents")
 	public static class Tokenizer implements PlaceTokenizer<ResidentPlace> {
 
 		@Override
 		public ResidentPlace getPlace(String token) {
 			if (token != null) {
-				String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-				if (tokens.length > 1) {
-					if (tokens[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
-						try {
-							long accountId = Long.parseLong(tokens[1]);
-							ResidentPlace place = new ResidentPlace();
-							place.setAccountId(accountId);
-							return place;
-						} catch (NumberFormatException nfe) {
-							return new ResidentPlace("");
+				try {
+					String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
+					if (tokens.length > 1) {
+						ResidentPlace place = new ResidentPlace();
+						for (int i = 0; i < tokens.length;i++) {
+							String tok = tokens[i];
+							String[] split = tok.split(StringConstants.PLACE_VALUE_SEPARATOR);
+							if (split[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
+								long accountId = Long.parseLong(split[1]);
+								place.setAccountId(accountId);
+							} else if (split[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
+								long neighborhoodId = Long.parseLong(split[1]);
+								place.setNeighborhoodId(neighborhoodId);
+							} else if (split[0].equalsIgnoreCase(StringConstants.GENDER_TOKEN)) {
+								String gender = split[1];
+								place.setGender(Gender.valueOf(gender));
+							} else {
+								throw new RuntimeException("Invalid url in resident view");
+							}
 						}
-					} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
-						try {
-							long neighborhoodId = Long.parseLong(tokens[1]);
-							ResidentPlace place = new ResidentPlace();
-							place.setNeighborhoodId(neighborhoodId);
-							return place;
-						} catch (NumberFormatException nfe) {
-							return new ResidentPlace("");
-						}
+						return place;
 					}
+				} catch (Exception ex) {
+					// Something happened.
+					return new ResidentPlace(token);
 				}
-				return new ResidentPlace(token);
 			}
 			return new ResidentPlace("");
 		}
@@ -78,7 +91,7 @@ public class ResidentPlace extends Place {
 		@Override
 		public String getToken(ResidentPlace place) {
 			if (place.getAccountId() != null) {
-				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId());
+				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId(), place.getNeighborhoodId(), place.getGender());
 			} else if (place.getNeighborhoodId() != null) {
 				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
 			} else {

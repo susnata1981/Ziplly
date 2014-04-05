@@ -10,6 +10,8 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.PlaceUtils;
+import com.ziplly.app.client.view.CommunityViewState;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -17,12 +19,15 @@ import com.ziplly.app.model.LocationDTO;
 
 public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 
+	private final CommunityViewState state;
+
 	@Override
 	public void onBrowserEvent(Context context,
 	    Element parent,
 	    BusinessAccountDTO value,
 	    NativeEvent event,
 	    ValueUpdater<BusinessAccountDTO> valueUpdater) {
+		
 		if (value == null) {
 			return;
 		}
@@ -46,9 +51,10 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		EventTarget target = event.getEventTarget();
 
 		if (button.isOrHasChild(Element.as(target))) {
-			redirectUrl =
-			    redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN
-			        + StringConstants.PLACE_SEPARATOR + accountId;
+//			redirectUrl =
+//			    redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN
+//			        + StringConstants.PLACE_SEPARATOR + accountId;
+			redirectUrl += "#business:" + PlaceUtils.getPlaceTokenForMessaging(Long.parseLong(accountId), state.getNeighborhoodId());
 			Window.Location.replace(redirectUrl);
 		} 
 		else if (!websiteAnchor.isOrHasChild(Element.as(target))) {
@@ -70,8 +76,9 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		return null;
   }
 
-	public BusinessAccountCell() {
+	public BusinessAccountCell(CommunityViewState state) {
 		super(BrowserEvents.CLICK);
+		this.state = state;
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,6 +22,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -78,7 +81,7 @@ public class ResidentsView extends AbstractView implements
 	@Inject
 	public ResidentsView(EventBus eventBus) {
 		super(eventBus);
-		residentList = new CellList<PersonalAccountDTO>(new PersonalAccountCell());
+		residentList = new CellList<PersonalAccountDTO>(new PersonalAccountCell(state));
 		residentList.setPageSize(PAGE_SIZE);
 		pager = new SimplePager();
 		pager.setDisplay(residentList);
@@ -99,12 +102,31 @@ public class ResidentsView extends AbstractView implements
 	}
 
 	private void setupHandlers() {
+		
 		residentList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
 				state.setRange(event.getNewRange());
 				presenter.getPersonalAccountList(state.getCurrentEntityListAction());
 			}
+		});
+		
+		neighborhoodListBox.addChangeHandler(new ChangeHandler() {
+
+			@Override
+      public void onChange(ChangeEvent event) {
+				state.setNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
+      }
+			
+		});
+		
+		genderListBox.addChangeHandler(new ChangeHandler() {
+
+			@Override
+      public void onChange(ChangeEvent event) {
+				state.setGender(genderList.get(genderListBox.getSelectedIndex()));
+      }
+			
 		});
 	}
 
@@ -194,7 +216,6 @@ public class ResidentsView extends AbstractView implements
 		smw = new SendMessageWidget(receiver);
 		smw.setPresenter((SendMessagePresenter) presenter);
 		smw.show();
-		System.out.println("SHOWING MODAL");
 	}
 
 	public void updateMessageWidget(AccountDTO account) {
@@ -209,13 +230,22 @@ public class ResidentsView extends AbstractView implements
 		StyleHelper.show(status.getElement(), true);
 	}
 
-	public void setNeighborhoodId(Long neighborhoodId) {
-		state.setNeighborhood(neighborhoodId);
-	}
-
 	public void setBackground(NeighborhoodDTO neighborhood) {
 		StyleHelper.setBackgroundImage(basicDataFormatter.format(
 		    neighborhood,
 		    ValueType.NEIGHBORHOOD_IMAGE));
 	}
+
+	public void setNeighborhoodId(Long neighborhoodId) {
+		for(NeighborhoodDTO n : neighborhoods) {
+			if (n.getNeighborhoodId().equals(neighborhoodId)) {
+				neighborhoodListBox.setSelectedValue(n.getName());
+				state.setNeighborhood(neighborhoodId);
+			}
+		}
+  }
+
+	public void setGender(Gender gender) {
+		genderListBox.setSelectedIndex(genderList.indexOf(gender));
+  }
 }

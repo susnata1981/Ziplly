@@ -76,10 +76,10 @@ public class ResidentActivity extends AbstractActivity implements
 			public void onSuccess(ResidentsView result) {
 				ResidentActivity.this.view = result;
 				bind();
-				setupHandlers();
-				displayInitalRange();
 				view.setBackground(ctx.getCurrentNeighborhood());
 				view.displayNeighborhoodFilters(getTargetNeighborhoodList());
+				setupHandlers();
+				displayInitalRange();
 				panel.setWidget(view);
 			}
 		});
@@ -99,10 +99,12 @@ public class ResidentActivity extends AbstractActivity implements
 		    (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
 		        .getCurrentNeighborhood()
 		        .getNeighborhoodId();
+		Gender gender = place.getGender() != null ? place.getGender() : Gender.ALL;
 		action.setNeighborhoodId(neighborhoodId);
-		action.setGender(Gender.ALL);
-		view.setNeighborhoodId(neighborhoodId);
+		action.setGender(gender);
 		getPersonalAccountList(action);
+		view.setNeighborhoodId(neighborhoodId);
+		view.setGender(gender);
 	}
 
 	private void updateMessageWidgetWithAccountDetails(Long accountId) {
@@ -143,7 +145,7 @@ public class ResidentActivity extends AbstractActivity implements
 
 		@Override
 		public void onFailure(Throwable caught) {
-			view.displayMessage(caught.getMessage(), AlertType.ERROR);
+			view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 		}
 	}
 
