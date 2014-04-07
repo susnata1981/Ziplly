@@ -39,7 +39,7 @@ public class TweetDetailsView extends Composite {
 		StyleHelper.show(message.getElement(), false);
 		clearDisplay();
 		TweetWidget tw = new TweetWidget();
-		tw.setWidth("60%");
+		tw.setWidth("80%");
 		tw.setPresenter(presenter);
 		tw.displayTweet(tweet);
 		communityWallPanel.add(tw);
