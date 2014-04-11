@@ -1,5 +1,7 @@
 package com.ziplly.app.server.handlers;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -12,6 +14,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
@@ -20,6 +23,7 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.TweetBLI;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
@@ -29,6 +33,7 @@ public class GetCommunityWallDataActionHandler extends
 
 	private HashtagDAO hashtagDao;
 	private Logger logger = Logger.getLogger(GetCommunityWallDataAction.class.getName());
+	private TweetBLI tweetBli;
 
 	@Inject
 	public GetCommunityWallDataActionHandler(
@@ -37,8 +42,10 @@ public class GetCommunityWallDataActionHandler extends
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
+	    TweetBLI tweetBli,
 	    HashtagDAO hashtagDao) {
 		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
+		this.tweetBli = tweetBli;
 		this.hashtagDao = hashtagDao;
 	}
 
@@ -139,6 +146,17 @@ public class GetCommunityWallDataActionHandler extends
 		return gcwdr;
 	}
 
+	@Override
+	protected void postHandler(GetCommunityWallDataResult result) throws InternalError {
+		try {
+	    tweetBli.injectJwtToken(result.getTweets());
+    } catch (InvalidKeyException e) {
+    	throw new InternalError();
+    } catch (SignatureException e) {
+    	throw new InternalError();
+    }
+	}
+	
 	@Override
 	public Class<GetCommunityWallDataAction> getActionType() {
 		return GetCommunityWallDataAction.class;

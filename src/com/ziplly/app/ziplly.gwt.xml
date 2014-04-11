@@ -8,6 +8,7 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
+	<inherits name='com.github.gwtbootstrap.datetimepicker.Datetimepicker' />
 	<inherits name="com.google.gwt.user.theme.standard.Standard" />
 	<inherits name="com.google.gwt.http.HTTP"/>
 	

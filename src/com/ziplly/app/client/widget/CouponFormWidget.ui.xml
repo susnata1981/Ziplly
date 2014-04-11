@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:b2="urn:import:com.github.gwtbootstrap.datetimepicker.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.btn {
+		margin-right: 10px;
+		}
+		.uploadProfileImagePanel {
+		}
+		.profileImagePanel {
+		}
+		.profileImage {
+		}
+	</ui:style>
+
+	<b:Form ui:field="couponForm">
+		<b:Fieldset>
+			<g:VerticalPanel>
+				<b:ControlGroup ui:field="descriptionCg">
+					<b:ControlLabel>Coupon description</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox alternateSize="LARGE" ui:field="descriptionTextBox"></b:TextBox>
+						<b:HelpInline ui:field="descriptionHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="startDateCg">
+					<b:ControlLabel>Start date</b:ControlLabel>
+					<b:Controls>
+						<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
+							autoClose="true" ui:field="startDate" />
+						<b:HelpInline ui:field="startDateHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="endDateCg">
+					<b:ControlLabel>End date</b:ControlLabel>
+					<b:Controls>
+						<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
+							autoClose="true" ui:field="endDate" />
+						<b:HelpInline ui:field="endDateHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="priceCg">
+					<b:ControlLabel>Unit price ($)</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox alternateSize="MEDIUM" placeholder="Price..."
+							ui:field="priceTextBox" />
+						<b:HelpInline ui:field="priceHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="discountCg">
+					<b:ControlLabel>Discount (%)</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox alternateSize="MEDIUM" placeholder="Discount(%)..."
+							ui:field="discountTextBox" />
+						<b:HelpInline ui:field="discountHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="quantityCg">
+					<b:ControlLabel>Total coupons to be issued</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox alternateSize="MEDIUM" placeholder="Quantity..."
+							ui:field="quantityTextBox" />
+						<b:HelpInline ui:field="quantityHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<b:ControlGroup ui:field="totalCouponAllowedCg">
+					<b:ControlLabel>Maximum individual count</b:ControlLabel>
+					<b:Controls>
+						<b:TextBox alternateSize="MEDIUM" placeholder="Number allowed per person..."
+							ui:field="totalCouponAllowedTextBox" />
+						<b:HelpInline ui:field="totalCouponAllowedHelpInline"></b:HelpInline>
+					</b:Controls>
+				</b:ControlGroup>
+				<g:HTMLPanel ui:field="uploadProfileImagePanel" addStyleNames="{style.uploadProfileImagePanel}">
+				</g:HTMLPanel>
+				<g:HorizontalPanel ui:field="horizontalButtonPanel">
+					<b:Button type="PRIMARY" ui:field="previewBtn"
+						addStyleNames="{style.btn}">Preview</b:Button>
+					<b:Button ui:field="cancelBtn" addStyleNames="{style.btn}">Cancel</b:Button>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</b:Fieldset>
+	</b:Form>
+</ui:UiBinder> 

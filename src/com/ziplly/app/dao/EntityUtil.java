@@ -20,6 +20,10 @@ import com.ziplly.app.model.Comment;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.Coupon;
+import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.CouponTransaction;
+import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Image;
@@ -42,6 +46,8 @@ import com.ziplly.app.model.PostalCode;
 import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.PrivacySettingsDTO;
+import com.ziplly.app.model.PurchasedCoupon;
+import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.Spam;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.SubscriptionPlan;
@@ -114,7 +120,7 @@ public class EntityUtil {
 		acct.setFacebookId(account.getFacebookId());
 		acct.setEmail(account.getEmail());
 		acct.setUrl(account.getUrl());
-//		acct.setImageUrl(account.getImageUrl());
+		// acct.setImageUrl(account.getImageUrl());
 		acct.setRole(account.getRole());
 		acct.setStatus(account.getStatus());
 		acct.setLastLoginTime(account.getLastLoginTime());
@@ -228,6 +234,10 @@ public class EntityUtil {
 			resp.getTargetNeighborhoods().add(clone(n));
 		}
 
+		if (tweet.getCoupon() != null) {
+			resp.setCoupon(clone(tweet.getCoupon()));
+		}
+		
 		// Image
 		for (Image image : tweet.getImages()) {
 			resp.addImage(clone(image));
@@ -466,7 +476,7 @@ public class EntityUtil {
 
 	public static NeighborhoodDTO clone(Neighborhood neighborhood) {
 		NeighborhoodDTO dest = new NeighborhoodDTO();
-		
+
 		if (neighborhood.getCity() != null) {
 			dest.setCity(neighborhood.getCity());
 		}
@@ -567,6 +577,48 @@ public class EntityUtil {
 		resp.setUrl(image.getUrl());
 		resp.setStatus(image.getStatus());
 		resp.setTimeCreated(image.getTimeCreated());
+		return resp;
+	}
+
+	public static CouponDTO clone(Coupon coupon) {
+		CouponDTO resp = new CouponDTO();
+		resp.setCouponId(coupon.getCouponId());
+		resp.setDescription(coupon.getDescription());
+		resp.setStartDate(coupon.getStartDate());
+		resp.setEndDate(coupon.getEndDate());
+		resp.setCouponPrice(coupon.getCouponPrice());
+		resp.setPrice(coupon.getPrice());
+		resp.setItemPrice(coupon.getItemPrice());
+		resp.setDiscount(coupon.getDiscount());
+		resp.setQuanity(coupon.getQuanity());
+		resp.setQuantityPurchased(coupon.getQuantityPurchased());
+		resp.setNumberAllowerPerIndividual(coupon.getNumberAllowerPerIndividual());
+		resp.setTimeCreated(coupon.getTimeCreated());
+		return resp;
+	}
+	
+	public static PurchasedCouponDTO clone(PurchasedCoupon coupon) {
+		PurchasedCouponDTO resp = new PurchasedCouponDTO();
+		resp.setPurchasedCouponId(coupon.getPurchasedCouponId());
+		resp.setQrcode(coupon.getQrcode());
+		resp.setStatus(coupon.getStatus());
+// 	Avoid recursion
+//	resp.setCouponTransaction(clone(coupon.getCouponTransaction()));
+		resp.setTimeUpdated(coupon.getTimeUpdated());
+		resp.setTimeCreated(coupon.getTimeCreated());
+		return resp;
+	}
+	
+	public static CouponTransactionDTO clone(CouponTransaction coupon) {
+		CouponTransactionDTO resp = new CouponTransactionDTO();
+		resp.setTransactionId(coupon.getTransactionId());
+		resp.setCoupon(clone(coupon.getCoupon()));
+		resp.setBuyer(convert(coupon.getBuyer()));
+		resp.setPurchasedCoupon(clone(coupon.getPurchasedCoupon()));
+		resp.setCurrency(coupon.getCurrency());
+		resp.setType(coupon.getType());
+		resp.setTimeUpdated(coupon.getTimeUpdated());
+		resp.setTimeCreated(coupon.getTimeCreated());
 		return resp;
 	}
 }

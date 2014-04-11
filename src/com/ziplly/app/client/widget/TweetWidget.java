@@ -19,6 +19,7 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.BackdropType;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.Placement;
@@ -61,8 +62,11 @@ import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonHandler;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.FieldVerifier;
@@ -105,6 +109,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		String tweetModalImage();
 
 		String tweetImageModalCloseButton();
+
+		String couponBoxDiv();
 	}
 
 	@UiFactory
@@ -137,7 +143,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	Element authorName;
 	@UiField
-	HTMLPanel tweetContentSpan;
+	HTMLPanel tweetContentPanel;
 
 	@UiField
 	TextArea tweetContentTextArea;
@@ -191,7 +197,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private TweetPresenter presenter;
 	private TweetDTO tweet;
-	// final Modal modal = new Modal();
+	private GoogleWalletPayButtonWidget paymentButton;
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
@@ -243,7 +249,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
-				tweetContentSpan.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+				tweetContentPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 				// tweetContentTextArea.getElement().getStyle()
 				// .setVisibility(Visibility.HIDDEN);
 				// saveBtn.setVisible(false);
@@ -386,7 +392,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void hideTweetUpdateButtons() {
-		tweetContentSpan.getElement().getStyle().setDisplay(Display.BLOCK);
+		tweetContentPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.NONE);
 		tweetContentTextArea.setReadOnly(true);
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -394,7 +400,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	void showTweetUpdateButtons() {
 		// tweetContentSpan.getStyle().setDisplay(Display.NONE);
-		StyleHelper.show(tweetContentSpan.getElement(), false);
+		StyleHelper.show(tweetContentPanel.getElement(), false);
 		tweetContentTextArea.setText(tweet.getContent());
 		tweetContentTextArea.setReadOnly(false);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.BLOCK);
@@ -681,8 +687,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	private void displayTweetSection() {
-		StyleHelper.show(tweetContentSpan.getElement(), true);
-		tweetContentSpan.getElement().setInnerHTML(basicDataFormatter.format(tweet.getContent(), ValueType.TEXT_VALUE));
+		StyleHelper.show(tweetContentPanel.getElement(), true);
+		tweetContentPanel.getElement().setInnerHTML(basicDataFormatter.format(tweet.getContent(), ValueType.TEXT_VALUE));
+		
+		if (tweet.getCoupon() != null) {
+			displayCoupon(tweet.getCoupon());
+		}
 
 		categoryLink.setHTML(basicDataFormatter.format(tweet.getType(), ValueType.TWEET_TYPE));
 		categoryLink.addClickHandler(new ClickHandler() {
@@ -692,8 +702,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				presenter.goTo(new HomePlace(tweet.getType()));
 			}
 		});
-
-		tweet.getTimeCreated();
 
 		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM);
 		timeCreated.setInnerHTML(time);
@@ -711,6 +719,47 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		displayTweetImageIfPresent();
 	}
 
+	private void displayCoupon(CouponDTO coupon) {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(style.couponBoxDiv());
+		panel.add(new HTMLPanel(basicDataFormatter.format(tweet.getCoupon(), ValueType.COUPON)));
+		Button buyCouponBtn = new Button("Buy Now");
+		buyCouponBtn.setType(ButtonType.PRIMARY);
+		
+		paymentButton = new GoogleWalletPayButtonWidget(buyCouponBtn, tweet.getCoupon().getJwtToken(), new GoogleWalletPayButtonHandler() {
+			
+			@Override
+			public void onSuccess() {
+				presenter.purchaseCoupon(tweet.getCoupon());
+			}
+			
+			@Override
+			public void onFailure() {
+				Window.alert("Sorry, the coupon can't be purchased at the moment");
+			}
+		});
+		
+		paymentButton.addClickHandler(new ClickHandler() {
+
+			@Override
+      public void onClick(ClickEvent event) {
+				presenter.checkCouponPurchaseEligibility(tweet.getCoupon(), TweetWidget.this);
+      }
+		});
+		
+		panel.add(buyCouponBtn);
+		tweetContentPanel.add(panel);
+  }
+
+	/**
+	 * Called by the presenter once {@code checkForBuyerEligiility} returns success.
+	 */
+	public void initiatePay() {
+		if (paymentButton != null) {
+			paymentButton.pay();
+		}
+	}
+	
 	private void displayTweetImageIfPresent() {
 		if (tweet.getImages().size() > 0) {
 			tweetImage.setUrl(tweet.getImages().get(0).getUrl());

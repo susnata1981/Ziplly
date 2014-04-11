@@ -10,6 +10,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -57,6 +58,11 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		Account account = session.getAccount();
 		Tweet tweet = new Tweet(action.getTweet());
 
+		// Only business accounts can publish this
+		if (tweet.getCoupon() != null) {
+			checkAccountPermission();
+		}
+		
 		// check usage limits for business tweets
 		if (account instanceof BusinessAccount) {
 			checkUsage();
@@ -71,6 +77,16 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 		result.setTweet(savedTweet);
 		return result;
 	}
+
+	/**
+	 * Checks to see if the current business account has permissiont o publish coupons
+	 * @throws AccessError 
+	 */
+	private void checkAccountPermission() throws AccessError {
+	  if (!(session.getAccount() instanceof BusinessAccount)) {
+	  	throw new AccessError();
+	  }
+  }
 
 	private void checkUsage() throws NeedsSubscriptionException,
 	    InternalError,

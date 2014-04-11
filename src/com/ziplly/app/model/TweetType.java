@@ -17,7 +17,8 @@ public enum TweetType {
 	HELP("Help", NotificationType.NONE, true, true),
 	CLASSIFIEDS("Classifieds", NotificationType.NONE, true, false),
 	OFFERS("Offers", NotificationType.OFFERS, true, true),
-	HOT_DEALS("Hot Deals", NotificationType.OFFERS, true, true);
+	HOT_DEALS("Hot Deals", NotificationType.OFFERS, true, true),
+	COUPON("Coupon", NotificationType.OFFERS, false, true);
 
 	private String tweetName;
 	private NotificationType notificationType;

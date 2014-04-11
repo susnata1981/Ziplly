@@ -253,3 +253,9 @@ div.comment_text {
 	top: 0;
 	right: 0;
 }
+
+.couponBoxDiv {
+	border: 1px solid #555;
+	padding: 4px;
+	background: #f1f1f1;
+}

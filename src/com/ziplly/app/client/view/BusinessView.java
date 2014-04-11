@@ -28,6 +28,7 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.BusinessAccountCell;

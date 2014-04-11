@@ -30,6 +30,9 @@
 		<class>com.ziplly.app.model.Spam</class>
 		<class>com.ziplly.app.model.PendingInvitations</class>
 		<class>com.ziplly.app.model.Image</class>
+		<class>com.ziplly.app.model.Coupon</class>
+		<class>com.ziplly.app.model.CouponTransaction</class>
+		<class>com.ziplly.app.model.PurchasedCoupon</class>
 		
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />

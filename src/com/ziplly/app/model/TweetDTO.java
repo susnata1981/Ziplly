@@ -20,6 +20,7 @@ public class TweetDTO implements Serializable {
 	private String image;
 	private List<ImageDTO> images = new ArrayList<ImageDTO>();
 	private Set<NeighborhoodDTO> targetNeighborhoods = new HashSet<NeighborhoodDTO>();
+	private CouponDTO coupon;
 	private Date timeUpdated;
 	private Date timeCreated;
 
@@ -139,4 +140,19 @@ public class TweetDTO implements Serializable {
 	public void addImage(ImageDTO image) {
 		this.images.add(image);
 	}
+
+	public CouponDTO getCoupon() {
+	  return coupon;
+  }
+
+	public void setCoupon(CouponDTO coupon) {
+	  this.coupon = coupon;
+  }
+
+	public void setJwtToken(String jwtToken) {
+		if (coupon == null) {
+			throw new RuntimeException("Invalid call to setJwtToken");
+		}
+		coupon.setJwtToken(jwtToken);
+  }
 }

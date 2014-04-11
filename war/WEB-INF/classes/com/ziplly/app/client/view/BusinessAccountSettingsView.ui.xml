@@ -391,11 +391,6 @@
 					</b:Tab>
 				</b:TabPanel>
 			</b:Column>
-			<b:Column size="3">
-			    <g:HTMLPanel>
-			        Updates
-			    </g:HTMLPanel>
-			</b:Column>
 		</b:FluidRow>
 	</b:FluidContainer>
 </ui:UiBinder> 

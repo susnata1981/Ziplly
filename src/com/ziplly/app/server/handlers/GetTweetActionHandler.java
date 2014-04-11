@@ -1,5 +1,7 @@
 package com.ziplly.app.server.handlers;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -15,6 +17,7 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AdminBLI;
+import com.ziplly.app.server.TweetBLI;
 import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.GetTweetsResult;
 
@@ -22,6 +25,7 @@ public class GetTweetActionHandler extends
     AbstractTweetActionHandler<GetTweetsAction, GetTweetsResult> {
 
 	private AdminBLI adminBli;
+	private TweetBLI tweetBli;
 
 	@Inject
 	public GetTweetActionHandler(
@@ -30,8 +34,10 @@ public class GetTweetActionHandler extends
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
+	    TweetBLI tweetBli,
 	    AdminBLI adminBli) {
 		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
+		this.tweetBli = tweetBli;
 		this.adminBli = adminBli;
 	}
 
@@ -53,6 +59,19 @@ public class GetTweetActionHandler extends
 		return result;
 	}
 
+	@Override
+	protected void postHandler(GetTweetsResult result) {
+		try {
+	    tweetBli.injectJwtToken(result.getTweets());
+    } catch (InvalidKeyException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+    } catch (SignatureException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+    }
+	}
+	
 	@Override
 	public Class<GetTweetsAction> getActionType() {
 		return GetTweetsAction.class;

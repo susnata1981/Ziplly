@@ -25,6 +25,8 @@ import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.CommentDAOImpl;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.ConversationDAOImpl;
+import com.ziplly.app.dao.CouponTransactionDAO;
+import com.ziplly.app.dao.CouponTransactionDAOImpl;
 import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.HashtagDAOImpl;
@@ -112,10 +114,6 @@ public class DAOModule extends AbstractModule {
 		bind(CommentDAO.class).to(CommentDAOImpl.class).in(Singleton.class);
 		bind(LikeDAO.class).to(LikeDAOImpl.class).in(Singleton.class);
 		bind(TweetNotificationBLI.class).to(TweetNotificationBLIImpl.class).in(Singleton.class);
-		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
-		bind(AdminBLI.class).to(AdminBLIImpl.class).in(Singleton.class);
-		bind(PaymentService.class).to(PaymentServiceImpl.class).in(Singleton.class);
-		bind(EmailService.class).to(EmailServiceImpl.class).in(Singleton.class);
 		bind(ConversationDAO.class).to(ConversationDAOImpl.class).in(Singleton.class);
 		bind(TransactionDAO.class).to(TransactionDAOImpl.class).in(Singleton.class);
 		bind(SubscriptionPlanDAO.class).to(SubscriptionPlanDAOImpl.class).in(Singleton.class);
@@ -129,6 +127,7 @@ public class DAOModule extends AbstractModule {
 		bind(PendingInvitationsDAO.class).to(PendingInvitationsDAOImpl.class).in(Singleton.class);
 		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
+		bind(CouponTransactionDAO.class).to(CouponTransactionDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		
 //		bind(EntityManager.class).toProvider(EntityManagerProvider.class).in(RequestScoped.class);

@@ -29,7 +29,7 @@
 				</g:HTMLPanel>
 				<div class="{style.tweet_content}">
 					<g:HTMLPanel addStyleNames='{style.tweet_text}'
-						ui:field="tweetContentSpan" />
+						ui:field="tweetContentPanel" />
 					<b:TextArea ui:field="tweetContentTextArea"
 						addStyleNames="{style.tweetContentTextArea}" />
 					<g:HTMLPanel ui:field="tweetEditButtonPanel">
@@ -93,7 +93,7 @@
 				</b:ControlGroup>
 				<g:HTMLPanel ui:field="commentInputActionSection"
 					addStyleNames="{style.commentInputActionSection}">
-					<b:Button type="PRIMARY" addStyleNames="{style.btn}" size="SMALL"
+					<b:Button type="PRIMARY" addStyleNames="{style.btn}" 
 						ui:field="commentBtn">comment</b:Button>
 					<b:Button size="SMALL" addStyleNames="{style.btn}"
 						ui:field="cancelCommentBtn">cancel</b:Button>

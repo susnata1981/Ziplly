@@ -5,8 +5,10 @@ import java.util.List;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -17,6 +19,7 @@ import com.ziplly.app.client.exceptions.NotSharedError;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.IAccountView;
+import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
@@ -26,13 +29,20 @@ import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
+import com.ziplly.app.client.widget.AlertModal;
+import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.TweetWidget;
+import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
+import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.DeleteImageAction;
@@ -54,6 +64,8 @@ import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
+import com.ziplly.app.shared.PurchaseCouponResult;
+import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SendEmailAction;
@@ -318,7 +330,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	void displayMap(NeighborhoodDTO n) {
 		view.displayMap(n.getPostalCodes().get(0).toString());
-  }
+	}
 
 	@Deprecated
 	void getLatLng(AccountDTO account, DispatcherCallbackAsync<GetLatLngResult> handler) {
@@ -403,6 +415,57 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 
+	@Deprecated
+	@Override
+	public void getCouponFormActionUrl(final CouponFormWidget couponFormWidget) {
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    couponFormWidget.setFormUploadActionUrl(result.getImageUrl());
+			    }
+		    });
+	}
+
+	@Override
+	public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
+		setFormUploadActionUrl(formUploadWidget);
+
+		formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
+
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				try {
+					if (event.getResults() != null) {
+						ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
+						formUploadWidget.displayImagePreview(imageDto.getUrl());
+						setFormUploadActionUrl(formUploadWidget);
+					}
+				} catch (Error error) {
+					view.displayMessage(StringConstants.INVALID_IMAGE, AlertType.ERROR);
+					setFormUploadActionUrl(formUploadWidget);
+				}
+			}
+
+		});
+	}
+
+	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    if (result.getImageUrl() != null) {
+					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
+					    formUploadWidget.enableUploadButton();
+				    }
+			    }
+		    });
+	}
+
 	@Override
 	public void updateComment(CommentDTO comment) {
 		dispatcher.execute(
@@ -424,6 +487,49 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 				    }
 			    }
 		    });
+	}
+
+	@Override
+	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
+		CheckBuyerEligibilityForCouponAction eligibilityAction =
+		    new CheckBuyerEligibilityForCouponAction();
+		eligibilityAction.setCoupon(coupon);
+
+		dispatcher.execute(
+		    eligibilityAction,
+		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
+
+			    @Override
+			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
+				    Window.alert("Eligible for buy...");
+				    widget.initiatePay();
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    view.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+			    }
+
+		    });
+	}
+
+	@Override
+	public void purchaseCoupon(final CouponDTO coupon) {
+		PurchasedCouponAction action = new PurchasedCouponAction();
+		action.setCoupon(coupon);
+		action.setBuyer(ctx.getAccount());
+		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
+
+			@Override
+			public void onSuccess(PurchaseCouponResult result) {
+				Window.alert("success");
+			}
+
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getLocalizedMessage());
+			}
+		});
 	}
 
 	abstract void stopThreads();

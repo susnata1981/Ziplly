@@ -54,7 +54,7 @@ hr {
 .heading {
 	font-family: Gargoyle, Serif, sans-serif;
 	font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-	font-size: 1.5em;
+	font-size: 20px;
 	font-weight: bold;
 	color: #555333;
 	line-height: 30px;
@@ -63,7 +63,7 @@ hr {
 
 .heading4 {
 	font-family: Gargoyle, Serif, sans-serif;
-	font-size: 1.2em;
+	font-size: 18px;
 	font-weight: bold;
 	color: #555333;
 	line-height: 30px;
@@ -337,4 +337,27 @@ textarea {
 	font-size: 16px !important;
 }
 
+.couponDiv { 
+  margin-top: 5px;
+  padding: 10px;	
+}
+
+.couponDiv h4 {
+	border-bottom: 1px solid #777;
+}
+
+.couponDiv ul {
+	margin: 0;
+}
+.couponDiv ul li{
+  list-style: none;	
+  font-size: 14px;
+  font-weight: 777;
+}
+
+.couponDiv .heading {
+	font-family: sans, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
 /* This is used for notification drop down */

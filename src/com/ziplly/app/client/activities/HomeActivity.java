@@ -30,24 +30,31 @@ import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.HomeView;
 import com.ziplly.app.client.view.HomeView.HomePresenter;
+import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
+import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetWidget;
+import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.HashtagDTO;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
+import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 import com.ziplly.app.shared.DeleteImageAction;
@@ -74,6 +81,8 @@ import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsResult;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
+import com.ziplly.app.shared.PurchaseCouponResult;
+import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SendMessageAction;
@@ -192,17 +201,16 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		action.setDaysLookback(LOOKBACK_DAYS);
 		action.setEntityType(EntityType.PERSONAL_ACCOUNT);
 		action.setNeighborhoodId(ctx.getCurrentNeighborhood().getNeighborhoodId());
-		
-		dispatcher.execute(action, 
-				new DispatcherCallbackAsync<GetNewMemberResult>() {
+
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNewMemberResult>() {
 
 			@Override
-      public void onSuccess(GetNewMemberResult result) {
+			public void onSuccess(GetNewMemberResult result) {
 				homeView.displayNewMembers(result.getAccounts());
 				homeView.resizeMap();
-      }
+			}
 		});
-  }
+	}
 
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
@@ -452,8 +460,12 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	// TODO handle image deletion on multiple file uploads
 	public void setUploadImageHandler() {
 		homeView.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
-			/* (non-Javadoc)
-			 * @see com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler#onSubmitComplete(com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler#
+			 * onSubmitComplete
+			 * (com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent)
 			 */
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
@@ -505,6 +517,88 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		    });
 	}
 
+	@Override
+	public void purchaseCoupon(final CouponDTO coupon) {
+		PurchasedCouponAction action = new PurchasedCouponAction();
+		action.setCoupon(coupon);
+		action.setBuyer(ctx.getAccount());
+		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
+
+			@Override
+			public void onSuccess(PurchaseCouponResult result) {
+				Window.alert("success");
+			}
+
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getLocalizedMessage());
+			}
+		});
+	}
+
+	@Override
+	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
+		CheckBuyerEligibilityForCouponAction eligibilityAction =
+		    new CheckBuyerEligibilityForCouponAction();
+		eligibilityAction.setCoupon(coupon);
+
+		dispatcher.execute(
+		    eligibilityAction,
+		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
+
+			    @Override
+			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
+				    Window.alert("Eligible for buy...");
+				    widget.initiatePay();
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+			    }
+
+		    });
+	}
+
+	@Override
+	public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
+		setFormUploadActionUrl(formUploadWidget);
+		
+		formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
+
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				if (event.getResults() != null) {
+					ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
+					formUploadWidget.displayImagePreview(imageDto.getUrl());
+					setFormUploadActionUrl(formUploadWidget);
+				}
+			}
+
+		});
+	}
+
+	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    if (result.getImageUrl() != null) {
+					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
+					    formUploadWidget.enableUploadButton();
+				    }
+			    }
+		    });
+	}
+	
 	private void displayMap(NeighborhoodDTO n) {
 		homeView.displayMap(n.getPostalCodes().get(0).toString());
 	}

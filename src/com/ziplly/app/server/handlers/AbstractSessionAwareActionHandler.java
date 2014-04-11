@@ -9,9 +9,11 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.inject.Provider;
+import com.ziplly.app.client.exceptions.InternalError;
 
 public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R extends Result> implements ActionHandler<T, R> {
-	private Provider<EntityManager> entityManagerProvider;
+	@SuppressWarnings("unused")
+  private Provider<EntityManager> entityManagerProvider;
 
 	public AbstractSessionAwareActionHandler(Provider<EntityManager> entityManagerProvider) {
 		this.entityManagerProvider = entityManagerProvider;
@@ -21,11 +23,11 @@ public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R e
   public R execute(T action, ExecutionContext context) throws DispatchException {
 		preHandler();
 		R result = doExecute(action, context);
-		postHandler();
+		postHandler(result);
 		return result;
   }
 
-	protected void postHandler() {
+	protected void postHandler(R result) throws InternalError {
   }
 
 	protected void preHandler() {

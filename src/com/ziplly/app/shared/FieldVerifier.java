@@ -1,5 +1,7 @@
 package com.ziplly.app.shared;
 
+import java.util.Date;
+
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -57,6 +59,11 @@ public class FieldVerifier {
 	    + MAX_PASSWORD_LENGTH + " characters.";
 	private static final String INVALID_PHONE = "Phone number needs to be in XXX-XXX-XXXX format";
 	public static final int MAX_ADDRESS_LENGTH = 255;
+	public static final int MAX_COUPON_TEXT_LENGTH = 50;
+	private static final int maxLength = 4;
+	private static final String INVALID_NUMBER = "Invalid number";
+	private static final String START_DATE_IN_PAST = "Start date can't be in the past";
+	private static final String END_DATE_BEFORE_START = "End date must be after start";
 
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
@@ -97,6 +104,61 @@ public class FieldVerifier {
 		return result;
 	}
 
+	public static ValidationResult validateInteger(String input, int maxLength) {
+		ValidationResult result = new ValidationResult();
+		if (input == null || input.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+
+		input = SafeHtmlUtils.htmlEscape(input);
+		if (input.length() > maxLength) {
+			result.addError(INVALID_NUMBER);
+		}
+		
+		try {
+		     Integer.parseInt(input);
+		} catch(NumberFormatException nfe) {
+			result.addError(INVALID_NUMBER);
+		}
+		
+		return result;
+  }
+	
+	public static ValidationResult validateStartDate(Date input) {
+		ValidationResult result = new ValidationResult();
+		if (input == null || input.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+
+		try {
+			Date now = new Date();
+			if (now.after(input)) {
+				result.addError(START_DATE_IN_PAST);
+			}
+		} catch(NumberFormatException nfe) {
+			result.addError(INVALID_NUMBER);
+		}
+		
+		return result;
+  }
+	
+	public static ValidationResult validateEndDate(Date input, Date start) {
+		ValidationResult result = new ValidationResult();
+		if (input == null || input.equals("")) {
+			result.addError(CANT_BE_EMPTY);
+		}
+
+		try {
+			if (start.after(input)) {
+				result.addError(END_DATE_BEFORE_START);
+			}
+		} catch(NumberFormatException nfe) {
+			result.addError(INVALID_NUMBER);
+		}
+		
+		return result;
+  }
+	
 	/*
 	 * Special purpose: to be used in TweetBox only
 	 */

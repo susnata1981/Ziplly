@@ -21,6 +21,7 @@ import com.ziplly.app.client.view.TweetDetailsView;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
+import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
@@ -175,4 +176,14 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	public void bind() {
 
 	}
+
+	@Override
+  public void purchaseCoupon(CouponDTO coupon) {
+		placeController.goTo(new LoginPlace());
+  }
+
+	@Override
+  public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {
+		placeController.goTo(new LoginPlace());
+  }
 }

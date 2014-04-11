@@ -4,6 +4,7 @@ import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.server.handlers.AddInvitationActionHandler;
+import com.ziplly.app.server.handlers.CheckBuyerEligibilityForCouponActionHandler;
 import com.ziplly.app.server.handlers.CheckEmailRegistrationActionHandler;
 import com.ziplly.app.server.handlers.CommentActionHandler;
 import com.ziplly.app.server.handlers.CreateNeighborhoodActionHandler;
@@ -38,6 +39,7 @@ import com.ziplly.app.server.handlers.GetTweetForUserActionHandler;
 import com.ziplly.app.server.handlers.LikeTweetActionHandler;
 import com.ziplly.app.server.handlers.LogoutActionHandler;
 import com.ziplly.app.server.handlers.PayActionHandler;
+import com.ziplly.app.server.handlers.PurchaseCouponActionHandler;
 import com.ziplly.app.server.handlers.RegisterAccountActionHandler;
 import com.ziplly.app.server.handlers.ReportSpamActionHandler;
 import com.ziplly.app.server.handlers.ResendEmailVerificationActionHandler;
@@ -60,6 +62,7 @@ import com.ziplly.app.server.handlers.VerifyPasswordRecoveryHashActionHandler;
 import com.ziplly.app.server.handlers.ViewConversationActionHandler;
 import com.ziplly.app.server.handlers.ViewNotificationActionHandler;
 import com.ziplly.app.shared.AddInvitationAction;
+import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateNeighborhoodAction;
@@ -95,6 +98,7 @@ import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.MyAction;
 import com.ziplly.app.shared.PayAction;
+import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ResendEmailVerificationAction;
@@ -210,6 +214,10 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		// blobstore
 		bindHandler(DeleteImageAction.class, DeleteImageActionHandler.class);
 
+		// Coupon transaction
+		bindHandler(CheckBuyerEligibilityForCouponAction.class, CheckBuyerEligibilityForCouponActionHandler.class);
+		bindHandler(PurchasedCouponAction.class, PurchaseCouponActionHandler.class);
+		
 		// invitation
 		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);
 

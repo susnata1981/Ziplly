@@ -146,7 +146,6 @@ public class HomeView extends AbstractView implements IHomeView {
 
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tweetBox.setWidth(tweetWidth);
-		tweetBox.setPresenter(presenter);
 
 		tview.setWidth(TWEET_WIDGET_WIDTH);
 

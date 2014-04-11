@@ -1,5 +1,6 @@
 package com.ziplly.app.client.view.factory;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.google.gwt.core.shared.GWT;
@@ -13,6 +14,7 @@ import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory.Formatter;
 import com.ziplly.app.client.widget.TweetUtils;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationType;
@@ -27,11 +29,32 @@ public class BasicDataFormatter implements Formatter<Object> {
 	private static final String NEW_LINE = "\n";
 
 	public static final TimeTemplate timeTemplate = GWT.create(TimeTemplate.class);
+	public static final CouponTimeTemplate couponTimeTemplate = GWT.create(CouponTimeTemplate.class);
 	
 	public interface TimeTemplate extends SafeHtmlTemplates {
 		@Template("{0} {1} ago")
 		SafeHtml timeElapsed(Long elapsedTime, String key);
 	}
+	
+	public interface CouponTimeTemplate extends TimeTemplate {
+		@Override
+		@Template("{0} more {1}")
+		SafeHtml timeElapsed(Long elapsedTime, String key);
+	}
+	
+	public interface CouponTemplate extends SafeHtmlTemplates {
+		@Template("<div class='couponDiv'><h4>{0}</h4>"
+				+ "<ul>"
+				+ "<li><span class='heading'>Description</span> {1}$</li>"
+				+ "<li><span class='heading'>Regular Price</span> {2}$</li>"
+				+ "<li><span class='heading'>Discount</span> {3}</li>"
+				+ "<li><span class='heading'>Quantity remaining</span> {4}</li>"
+				+ "<li><span class='heading'>Start date</span> {5}</li>"
+				+ "<li><span class='heading'>End date</span> {6}</li></ul></div>")
+		SafeHtml getCouponDetailsTemplate(String title, String description, BigDecimal price, String discount, Long quantity, String start, String end);
+	}
+	
+	public static final CouponTemplate couponTemplate = GWT.create(CouponTemplate.class);
 	
 	@Override
 	public String format(Object value, ValueType type) {
@@ -43,7 +66,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 				return value.toString();
 			case DATE_VALUE_MEDIUM:
 			case DATE_VALUE_SHORT:
-				return getTimeDiff((Date) value);
+				return getTimeDiff(new Date(), (Date) value, timeTemplate);
 			case DATE_VALUE:
 				String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format((Date) value);
 				return date;
@@ -66,7 +89,6 @@ public class BasicDataFormatter implements Formatter<Object> {
 				} else {
 					return n.getName();
 				}
-//				return n.getName() + "," + n.getParentNeighborhood().getName();
 			case FOUND_NEIGHBORHOOD_MESSAGE:
 				n = (NeighborhoodDTO) value;
 				return "You live in "+format(n, ValueType.NEIGHBORHOOD);
@@ -76,6 +98,20 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case NEIGHBORHOOD_IMAGE:
 				NeighborhoodDTO neighborhood = (NeighborhoodDTO) value;
 				return getNeighborhoodImageUrl(neighborhood);
+			case PRICE:
+				BigDecimal price = (BigDecimal)value;
+				return price.toPlainString() +"$";
+			case PERCENT:
+				BigDecimal percent = (BigDecimal)value;
+				return percent.toPlainString() +"%";
+			case COUPON:
+				CouponDTO c = (CouponDTO)value;
+				String startDate = getTimeDiff(c.getStartDate(), new Date(), timeTemplate);
+				String endDate = getTimeDiff(c.getEndDate(), new Date(), couponTimeTemplate);
+				String title = capitalize(c.getDescription()) + " (" + format(c.getPrice(), ValueType.PRICE) + ")";
+				String discount = format(c.getDiscount(), ValueType.PERCENT) +" off";
+				return couponTemplate.getCouponDetailsTemplate(
+						title, c.getDescription(), c.getPrice(), discount, c.getQuanity(), startDate, endDate).asString();
 			default:
 				throw new IllegalArgumentException("Invalid value type to render");
 		}
@@ -158,9 +194,8 @@ public class BasicDataFormatter implements Formatter<Object> {
 		}
 	}
 	
-	public String getTimeDiff(Date date) {
-		Date now = new Date();
-		Long seconds = (now.getTime() - date.getTime())/1000;
+	public String getTimeDiff(Date futureDate, Date date, TimeTemplate timeTemplate) {
+		Long seconds = (futureDate.getTime() - date.getTime())/1000;
 		
 		if (seconds > 60 * 60 * 24) {
 			long days = seconds / (60*60*24);
@@ -188,5 +223,13 @@ public class BasicDataFormatter implements Formatter<Object> {
 		System.out.println(TweetUtils.getContent(content));
 		TweetUtils.replaceUrlWithAnchorTag(content2, sb);
 		System.out.println(sb);
+	}
+	
+	public String capitalize(String input) {
+		if (input != null) {
+			return Character.toUpperCase(input.charAt(0)) + input.substring(1);
+		}
+		
+		return "";
 	}
 }

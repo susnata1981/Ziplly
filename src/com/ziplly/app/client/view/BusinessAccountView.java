@@ -590,4 +590,12 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	private void hideAccontUpdate() {
 		StyleHelper.show(updateAlertBlock.getElement(), false);
 	}
+
+//	public void setCouponImageUploadUrl(String url) {
+//	  tweetBox.setCouponFormUploadActionUrl(url);
+//  }
+//
+//	public void displayCouponImagePreview(String imageUrl) {
+//		tweetBox.displayCouponImagePreview(imageUrl);
+//  }
 }

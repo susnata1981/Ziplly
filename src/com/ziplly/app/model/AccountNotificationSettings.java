@@ -1,5 +1,6 @@
 package com.ziplly.app.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,7 +14,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "notification_settings")
-public class AccountNotificationSettings {
+public class AccountNotificationSettings implements Serializable {
+  private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long notificationId;
@@ -21,14 +24,11 @@ public class AccountNotificationSettings {
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
-
 	private String type;
-
 	private String action;
 
-	@Column(name = "time_created")
+	@Column(name="time_created")
 	private Date timeCreated;
-
 	public AccountNotificationSettings() {
 	}
 

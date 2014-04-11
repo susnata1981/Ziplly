@@ -11,6 +11,7 @@ public class MyGuiceContextListener extends GuiceServletContextListener {
 		return Guice.createInjector(
 		    new DispatchServletModule(),
 		    new ZipllyActionHandlerModule(),
-		    new DAOModule());
+		    new DAOModule(),
+		    new ServiceModule());
 	}
 }

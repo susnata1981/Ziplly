@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
@@ -95,6 +96,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	    inverseJoinColumns = { @JoinColumn(name = "neighborhood_id") })
 	private Set<Neighborhood> targetNeighborhoods = new HashSet<Neighborhood>();
 
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="coupon_id")
+	private Coupon coupon;
+	
 	public Tweet() {
 	}
 
@@ -116,6 +121,10 @@ public class Tweet extends AbstractTimestampAwareEntity {
 
 		for (ImageDTO image : tweet.getImages()) {
 			images.add(new Image(image));
+		}
+		
+		if (tweet.getCoupon() != null) {
+			this.coupon = new Coupon(tweet.getCoupon());
 		}
 	}
 
@@ -232,4 +241,12 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	public void setImages(Set<Image> images) {
 		this.images = images;
 	}
+
+	public Coupon getCoupon() {
+	  return coupon;
+  }
+
+	public void setCoupon(Coupon coupon) {
+	  this.coupon = coupon;
+  }
 }
