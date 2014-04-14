@@ -494,6 +494,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		CheckBuyerEligibilityForCouponAction eligibilityAction =
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);
+		eligibilityAction.setBuyer(ctx.getAccount());
 
 		dispatcher.execute(
 		    eligibilityAction,

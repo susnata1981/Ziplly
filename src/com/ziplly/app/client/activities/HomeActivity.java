@@ -541,6 +541,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		CheckBuyerEligibilityForCouponAction eligibilityAction =
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);
+		eligibilityAction.setBuyer(ctx.getAccount());
 
 		dispatcher.execute(
 		    eligibilityAction,
@@ -554,7 +555,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 
 			    @Override
 			    public void onFailure(Throwable th) {
-				    homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+				    //homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+			    	Window.alert(th.getLocalizedMessage());
 			    }
 
 		    });
