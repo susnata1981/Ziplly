@@ -14,8 +14,8 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.CouponCampaignEnded;
-import com.ziplly.app.client.exceptions.CouponCampaignNotStarted;
+import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
+import com.ziplly.app.client.exceptions.CouponCampaignNotStartedException;
 import com.ziplly.app.client.exceptions.SoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.dao.AccountDAO;
@@ -74,11 +74,11 @@ public class CheckBuyerEligibilityForCouponActionHandler
 		// The Buy button should be disabled in the view for these date validity fail. 
 		Date now = new Date();
 		if(now.before(coupon.getStartDate())) {
-			throw new CouponCampaignNotStarted(coupon.getDescription());
+			throw new CouponCampaignNotStartedException(String.format("Coupon:%s discount campaign not strated", coupon.getDescription()));
 		}
 		
 		if(now.after(coupon.getEndDate())) {
-			throw new CouponCampaignEnded(coupon.getDescription());
+			throw new CouponCampaignEndedException(String.format("Coupon: %s discount ended", coupon.getDescription()));
 		}
 		
 		return new CheckBuyerEligibilityForCouponResult();
