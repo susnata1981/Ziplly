@@ -7,7 +7,6 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.TweetType;
 
 public class HomePlace extends Place {
-	// private String filter;
 	private Long tweetId;
 	private String tweetType;
 
@@ -16,25 +15,12 @@ public class HomePlace extends Place {
 	}
 
 	public HomePlace(TweetType type) {
-		// setFilter(type.name().toLowerCase());
 		this.tweetType = type.name().toLowerCase();
 	}
 
 	public HomePlace(Long tweetId) {
 		this.tweetId = tweetId;
 	}
-
-	// protected HomePlace(String filter) {
-	// setFilter(filter);
-	// }
-	//
-	// public String getFilter() {
-	// return filter;
-	// }
-	//
-	// public void setFilter(String filter) {
-	// this.filter = filter;
-	// }
 
 	public String getTweetType() {
 		return tweetType;
@@ -57,26 +43,25 @@ public class HomePlace extends Place {
 		@Override
 		public HomePlace getPlace(String token) {
 			if (token != null) {
-				String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-				if (tokens.length > 1) {
-					if (tokens[0].startsWith(StringConstants.HOME_TWEET_TOKEN)) {
-						try {
-							long tweetId = Long.parseLong(tokens[1]);
-							HomePlace place = new HomePlace();
-							place.setTweetId(tweetId);
-							return place;
-						} catch (NumberFormatException ex) {
-							return new HomePlace();
-						}
-					} else {
-						TweetType type;
-						try {
-							type = TweetType.valueOf(tokens[1].toUpperCase());
+				try {
+					String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
+					if (tokens.length > 1) {
+						if (tokens[0].startsWith(StringConstants.HOME_TWEET_TOKEN)) {
+							try {
+								long tweetId = Long.parseLong(tokens[1]);
+								HomePlace place = new HomePlace();
+								place.setTweetId(tweetId);
+								return place;
+							} catch (NumberFormatException ex) {
+								return new HomePlace();
+							}
+						} else {
+							TweetType type = TweetType.valueOf(tokens[1].toUpperCase());
 							return new HomePlace(type);
-						} catch (IllegalArgumentException ex) {
-							return new HomePlace();
 						}
 					}
+				} catch (IllegalArgumentException ex) {
+					return new HomePlace();
 				}
 			}
 			return new HomePlace();
@@ -84,10 +69,6 @@ public class HomePlace extends Place {
 
 		@Override
 		public String getToken(HomePlace place) {
-			// if (place.getFilter() != null) {
-			// return place.getFilter();
-			// }
-			// return TweetType.ALL.name();
 			if (place.getTweetId() != null) {
 				return PlaceUtils.getHomePlaceTokenForMessaging(place.getTweetId());
 			} else if (place.getTweetType() != null) {

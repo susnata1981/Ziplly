@@ -7,7 +7,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -38,8 +37,7 @@ import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.TweetResult;
 
-public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements
-    InfiniteScrollHandler {
+public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements InfiniteScrollHandler {
 	private PersonalAccountPlace place;
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
@@ -49,7 +47,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	    new ScrollBottomHitActionHandler();
 	private AsyncProvider<AccountView> viewProvider;
 
-	@Inject
 	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -79,6 +76,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	@Override
 	public void bind() {
 		view.setPresenter(this);
+		view.getTweetView().setPresenter(this);
+		view.getTweetWidget().setPresenter(this);
+		view.getEmailWidget().setPresenter(this);
 	}
 
 	@Override

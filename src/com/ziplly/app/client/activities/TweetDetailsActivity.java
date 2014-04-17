@@ -18,7 +18,9 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.TweetDetailsView;
+import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.TweetWidget;
+import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
@@ -148,11 +150,6 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	}
 
 	@Override
-	public TweetWidget getTweetWidget() {
-		return null;
-	}
-
-	@Override
 	public void displayMessage(String msg, AlertType error) {
 		view.displayMessage(msg, error);
 	}
@@ -174,7 +171,6 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 	@Override
 	public void bind() {
-
 	}
 
 	@Override
@@ -184,6 +180,16 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 	@Override
   public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {
+		placeController.goTo(new LoginPlace());
+  }
+
+	@Override
+  public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+		placeController.goTo(new LoginPlace());
+  }
+
+	@Override
+  public void initializeUploadForm(FormUploadWidget formUploadWidget) {
 		placeController.goTo(new LoginPlace());
   }
 }

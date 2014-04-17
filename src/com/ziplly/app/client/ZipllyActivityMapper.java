@@ -52,7 +52,7 @@ import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.EmailVerificationView;
-import com.ziplly.app.client.view.HomeView;
+import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
@@ -65,7 +65,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private CachingDispatcherAsync dispatcher;
 	private EventBus eventBus;
 	private ApplicationContext ctx;
-	private AsyncProvider<HomeView> homeView;
+	private AsyncProvider<HomeViewImpl> homeView;
 	private AsyncProvider<TweetDetailsView> tweetDetailsView;
 	private AsyncProvider<LoginAccountView> loginAccountView;
 	private AsyncProvider<AccountView> accountView;
@@ -83,7 +83,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<AboutView> aboutView;
 
 	@Inject
-	public ZipllyActivityMapper(AsyncProvider<HomeView> homeView,
+	public ZipllyActivityMapper(AsyncProvider<HomeViewImpl> homeView,
 	    AsyncProvider<TweetDetailsView> tweetDetailsView,
 	    AsyncProvider<LoginAccountView> loginAccountView,
 	    AsyncProvider<AccountView> accountView,
@@ -128,6 +128,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 
 	@Override
 	public Activity getActivity(final Place place) {
+		ctx.setNewPlace(place);
 		if (place instanceof HomePlace) {
 			return new ActivityProxy<HomeActivity>(new AsyncProvider<HomeActivity>() {
 
@@ -373,5 +374,4 @@ public class ZipllyActivityMapper implements ActivityMapper {
 
 		throw new IllegalArgumentException();
 	}
-
 }

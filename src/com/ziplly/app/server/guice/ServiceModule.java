@@ -29,5 +29,4 @@ public class ServiceModule extends AbstractModule {
 		bind(EmailService.class).to(EmailServiceImpl.class).in(Singleton.class);
 		bind(CouponBLI.class).to(CouponBLIImpl.class).in(Singleton.class);
   }
-
 }

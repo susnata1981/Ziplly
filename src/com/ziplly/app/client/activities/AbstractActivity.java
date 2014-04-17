@@ -9,7 +9,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -17,7 +16,6 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
@@ -115,21 +113,6 @@ public abstract class AbstractActivity implements Activity {
 
 	@Override
 	public void onStop() {
-	}
-
-	@Deprecated
-	public void setBackgroundImage() {
-		RootPanel
-		    .get("wrapper")
-		    .getElement()
-		    .getStyle()
-		    .setBackgroundImage(ZResources.IMPL.neighborhoodLargePic().getSafeUri().asString());
-		RootPanel.get("wrapper").getElement().getStyle().setProperty("backgroundSize", "cover");
-	}
-
-	@Deprecated
-	public void clearBackgroundImage() {
-		RootPanel.getBodyElement().getStyle().clearBackgroundImage();
 	}
 
 	/**

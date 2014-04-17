@@ -24,6 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -64,7 +65,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class AccountView extends AbstractView implements IAccountView<PersonalAccountDTO> {
+public class AccountView extends AbstractView implements IAccountView<PersonalAccountDTO>, TopLevelView {
 
 	private static AccountViewUiBinder uiBinder = GWT.create(AccountViewUiBinder.class);
 
@@ -112,7 +113,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField
 	ProfileStatWidget likeCountWidget;
 
-	ITweetView<TweetPresenter> tview = new TweetView();
+	private ITweetView<TweetPresenter> tview = new TweetView();
 
 	/*
 	 * Tweet section
@@ -294,9 +295,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
 		this.presenter = presenter;
-		tweetBox.setPresenter(presenter);
-		tview.setPresenter(presenter);
-		emailWidget.setPresenter(presenter);
 	}
 
 	@Override
@@ -311,7 +309,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		message.setType(type);
 		message.setVisible(true);
 	}
-
+	
 	@Override
 	public Element getTweetSectionElement() {
 		return tweetSection.getElement();
@@ -373,7 +371,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void openMessageWidget() {
 		smw = new SendMessageWidget(account);
-		smw.setPresenter(presenter);
+		smw.setPresenter(presenter.getSendMessagePresenter());
 		smw.show();
 	}
 
@@ -461,4 +459,19 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 
 		updateAlertBlock.add(accountSettingsAnchor);
 	}
+
+	@Override
+  public ITweetView<TweetPresenter> getTweetView() {
+		return tview;
+  }
+
+	@Override
+  public TweetBox getTweetWidget() {
+		return tweetBox;
+  }
+
+	@Override
+  public EmailWidget getEmailWidget() {
+		return emailWidget;
+  }
 }

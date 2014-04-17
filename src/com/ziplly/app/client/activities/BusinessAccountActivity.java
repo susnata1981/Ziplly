@@ -3,17 +3,15 @@ package com.ziplly.app.client.activities;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.ZClientModule.TweetsPerPage;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
@@ -25,24 +23,18 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.view.BusinessAccountView;
-import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.IAccountView;
-import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
-import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetImageUploadUrlAction;
-import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
@@ -65,7 +57,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		void displayFormattedAddress(String fAddress);
 	}
 
-	@Inject
 	public BusinessAccountActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -95,6 +86,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void bind() {
 		view.setPresenter(this);
+		view.getTweetView().setPresenter(this);
+		view.getTweetWidget().setPresenter(this);
 	}
 
 	@Override
@@ -167,7 +160,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			placeController.goTo(new PersonalAccountPlace());
 			return;
 		}
-
 		view.displayProfile((BusinessAccountDTO) ctx.getAccount());
 
 		// Display target neighborhood
@@ -177,7 +169,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getAccountNotifications();
 		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
-//		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		displayMap(ctx.getAccount().getLocations().get(0).getAddress());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
@@ -189,33 +180,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		setUploadImageHandler();
 	}
 
-//	public void getCouponImageUploadActionUrl() {
-//		dispatcher.execute(
-//		    new GetImageUploadUrlAction(),
-//		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-//			    @Override
-//			    public void onSuccess(GetImageUploadUrlResult result) {
-//				    ((BusinessAccountView)view).setCouponImageUploadUrl(result.getImageUrl());
-//			    }
-//		    });
-//	}
-//
-//	public void setUploadImageHandler() {
-//		view.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
-//			@Override
-//			public void onSubmitComplete(SubmitCompleteEvent event) {
-//				String imageUrl = event.getResults();
-//				try {
-//					ImageDTO currentUploadedImage = ImageUtil.parseImageUrl(imageUrl);
-//					((BusinessAccountView)view).displayCouponImagePreview(currentUploadedImage.getUrl());
-////					view.resetImageUploadUrl();
-//				} catch (RuntimeException ex) {
-//					Window.alert("Invalid image url/format: " + imageUrl);
-//				}
-//			}
-//		});
-//	}
-	
 	@Override
 	public void settingsLinkClicked() {
 		placeController.goTo(new BusinessAccountSettingsPlace());

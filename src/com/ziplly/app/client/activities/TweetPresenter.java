@@ -9,6 +9,7 @@ import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public interface TweetPresenter extends SendMessagePresenter {
+	
 	void postComment(CommentDTO comment);
 
 	void likeTweet(Long tweetId);
@@ -20,8 +21,6 @@ public interface TweetPresenter extends SendMessagePresenter {
 	void displayPublicProfile(Long accountId);
 
 	void sendTweet(TweetDTO tweet);
-
-	TweetWidget getTweetWidget();
 
 	void displayMessage(String errorMessage, AlertType error);
 
@@ -38,4 +37,6 @@ public interface TweetPresenter extends SendMessagePresenter {
 	void getCouponFormActionUrl(CouponFormWidget couponFormWidget);
 
 	void initializeUploadForm(FormUploadWidget formUploadWidget);
+	
+//	TweetWidget getTweetWidget();
 }

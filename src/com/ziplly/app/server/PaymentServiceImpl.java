@@ -17,7 +17,6 @@ import org.joda.time.Instant;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponDTO;
 
 public class PaymentServiceImpl implements PaymentService {

@@ -28,8 +28,9 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
-import com.ziplly.app.client.view.HomeView;
-import com.ziplly.app.client.view.HomeView.HomePresenter;
+import com.ziplly.app.client.view.HomeViewImpl;
+import com.ziplly.app.client.view.HomeViewImpl.HomePresenter;
+import com.ziplly.app.client.view.ITweetView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
@@ -39,6 +40,7 @@ import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.StyleHelper;
+import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
@@ -72,7 +74,6 @@ import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
-import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetNeighborhoodDetailsAction;
 import com.ziplly.app.shared.GetNeighborhoodDetailsResult;
 import com.ziplly.app.shared.GetNewMemberAction;
@@ -94,78 +95,27 @@ import com.ziplly.app.shared.UpdateCommentResult;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
-public class HomeActivity extends AbstractActivity implements HomePresenter, InfiniteScrollHandler {
-	private static final int MAX_HASHTAG_COUNT = 5;
+public class HomeActivity extends AbstractActivity implements HomePresenter, TweetPresenter, InfiniteScrollHandler {
+	
 	private static final int LOOKBACK_DAYS = 30;
-	private IHomeView homeView;
-	private AsyncProvider<HomeView> homeViewProvider;
-	private HomeViewState state;
-	private TweetViewBinder binder;
-	private HomePlace place;
-	private AcceptsOneWidget panel;
-
+	private static final int MAX_HASHTAG_COUNT = 5;
+	
 	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
+	
+	private TweetViewBinder binder;
+	
 	private CommunityDataHandler communityDataHandler = new CommunityDataHandler();
+	
 	private GetNeighborhoodDetailsHandler neighborhoodDetailsHandler =
 	    new GetNeighborhoodDetailsHandler();
+	private AcceptsOneWidget panel;
+	
+	private HomePlace place;
 
-	public static interface IHomeView extends View<HomePresenter> {
-		void display(List<TweetDTO> tweets);
-
-		void updateTweet(TweetDTO tweet);
-
-		void removeTweet(TweetDTO tweet);
-
-		void updateComment(CommentDTO comment);
-
-		void updateTweetLike(LoveDTO like);
-
-		void updateTweets(List<TweetDTO> tweets);
-
-		Element getTweetSectionElement();
-
-		void displayMessage(String message, AlertType error);
-
-		void addTweet(TweetDTO tweet);
-
-		void addTweets(List<TweetDTO> tweets);
-
-		void displayHashtag(List<HashtagDTO> hashtags);
-
-		void displayMap(GetLatLngResult result);
-
-		void updateTweetCategoryCount(Map<TweetType, Integer> tweetCounts);
-
-		void insertTweet(TweetDTO tweet);
-
-		void displaySummaryData(NeighborhoodDTO neighborhood);
-
-		void highlightTweetType(TweetType type);
-
-		void setUnreadMessageCount(Long count);
-
-		void setImageUploadUrl(String imageUrl);
-
-		void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler);
-
-		void displayProfileImagePreview(String imageUrl);
-
-		void resetImageUploadUrl();
-
-		void displayCommunitySummaryDetails(GetNeighborhoodDetailsResult result);
-
-		void addComment(CommentDTO comment);
-
-		void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
-
-		void displayNeighborhoodImage(NeighborhoodDTO neighborhood);
-
-		void displayMap(String address);
-
-		void displayNewMembers(List<AccountDTO> accounts);
-
-		void resizeMap();
-	}
+	private HomeViewState state;
+	
+	private HomeView view;
+	private AsyncProvider<HomeViewImpl> viewProvider;
 
 	@Inject
 	public HomeActivity(CachingDispatcherAsync dispatcher,
@@ -173,311 +123,43 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	    HomePlace place,
 	    PlaceController placeController,
 	    ApplicationContext ctx,
-	    AsyncProvider<HomeView> homeViewProvider) {
+	    AsyncProvider<HomeViewImpl> viewProvider) {
 
 		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.homeViewProvider = homeViewProvider;
+		this.viewProvider = viewProvider;
 		state = new HomeViewState();
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		this.panel = panel;
-		checkAccountLogin();
-	}
-
-	@Override
-	protected void doStart() {
-		state.setCurrentNeighborhood(ctx.getCurrentNeighborhood());
-		displayCommunityWall();
-		// account specific.
-		getAccountNotifications();
-		getAccountDetails();
-	}
-
-	private void displayNewMemberList() {
-		GetNewMemberAction action = new GetNewMemberAction();
-		action.setDaysLookback(LOOKBACK_DAYS);
-		action.setEntityType(EntityType.PERSONAL_ACCOUNT);
-		action.setNeighborhoodId(ctx.getCurrentNeighborhood().getNeighborhoodId());
-
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetNewMemberResult>() {
-
-			@Override
-			public void onSuccess(GetNewMemberResult result) {
-				homeView.displayNewMembers(result.getAccounts());
-				homeView.resizeMap();
-			}
-		});
-	}
-
-	@Override
-	protected void doStartOnUserNotLoggedIn() {
-		if (place.getTweetId() != null) {
-			GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(place);
-			getTweetData(searchCriteria);
-			return;
-		}
-
-		placeController.goTo(new SignupPlace());
-	}
-
-	@Override
-	protected void setupHandlers() {
-		super.setupHandlers();
-		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
-
-			@Override
-			public void onEvent(AccountDetailsUpdateEvent event) {
-				ctx.updateAccountDetails(event.getAccountDetails());
-				homeView.setUnreadMessageCount(new Long(ctx.getUnreadMessageCount()));
-			}
-		});
-	}
-
-	/**
-	 * Loads the following data into home view 1. Tweets 2. Community Summary 3.
-	 * Location 4. Top hashtags 5. Counts on Tweet types
-	 */
-	private void displayCommunityWall() {
-		homeViewProvider.get(new AsyncCallback<HomeView>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Failed to load information.");
-			}
-
-			@Override
-			public void onSuccess(HomeView result) {
-				HomeActivity.this.homeView = result;
-				bind();
-				setupHandlers();
-				setImageUploadUrl();
-				setUploadImageHandler();
-				getCommunityWallData(state.getSearchCriteria(place));
-				getHashtagList();
-				displayMap(ctx.getCurrentNeighborhood());
-				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
-				getNeighborhoodDetails();
-				homeView.displayTargetNeighborhoods(getTargetNeighborhoodList());
-				displayHomeView();
-				eventBus.fireEvent(new LoadingEventStart());
-				displayNewMemberList();
-			}
-		});
-	}
-
-	@Override
-	public void displayCommunityWallForNeighborhood(NeighborhoodDTO neighborhood) {
-		GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(neighborhood);
-		getCommunityWallData(searchCriteria);
-		getHashtagList();
-		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
-		getNeighborhoodDetails();
-	}
-
-	private void getNeighborhoodDetails() {
-		GetNeighborhoodDetailsAction action =
-		    new GetNeighborhoodDetailsAction(state.getCurrentNeighborhood().getNeighborhoodId());
-		dispatcher.execute(action, neighborhoodDetailsHandler);
-		homeView.displaySummaryData(state.getCurrentNeighborhood());
-	}
-
-	private void getCountsForTweetTypes(Long neighborhoodId) {
-		dispatcher.execute(
-		    new GetTweetCategoryDetailsAction(neighborhoodId),
-		    new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>() {
-			    @Override
-			    public void onSuccess(GetTweetCategoryDetailsResult result) {
-				    // do something.
-				    homeView.updateTweetCategoryCount(result.getTweetCounts());
-			    }
-		    });
-	}
-
-	private void getHashtagList() {
-		GetHashtagAction action =
-		    new GetHashtagAction(state.getCurrentNeighborhood().getNeighborhoodId());
-		action.setSize(MAX_HASHTAG_COUNT);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>() {
-			@Override
-			public void onSuccess(GetHashtagResult result) {
-				homeView.displayHashtag(result.getHashtags());
-			}
-		});
-	}
-
-	private void getAccountDetails() {
-		dispatcher.execute(
-		    new GetAccountDetailsAction(),
-		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
-
-			    @Override
-			    public void onSuccess(GetAccountDetailsResult result) {
-				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
-			    }
-		    });
-	}
-
-	@Override
-	public void onStop() {
-		StyleHelper.clearBackground();
-		if (binder != null) {
-			binder.stop();
-		}
-		hideLoadingIcon();
-		homeView.clear();
-	}
-
-	@Override
 	public void bind() {
-		homeView.setPresenter(this);
-	}
-
-	void displayHomeView() {
-		hideLoadingIcon();
-		panel.setWidget(homeView);
-		homeView.displayNeighborhoodImage(ctx.getCurrentNeighborhood());
+		view.setPresenter(this);
+		view.getTweetView().setPresenter(this);
+		view.getTweetWidget().setPresenter(this);
 	}
 
 	@Override
-	public void displayTweets(List<TweetDTO> tweets) {
-		homeView.display(tweets);
-		panel.setWidget(homeView);
-	}
+	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
+		CheckBuyerEligibilityForCouponAction eligibilityAction =
+		    new CheckBuyerEligibilityForCouponAction();
+		eligibilityAction.setCoupon(coupon);
 
-	@Override
-	public void displayTweetsForCategory(TweetType type) {
-		getCommunityWallData(type);
-	}
-
-	@Override
-	public void displayPublicProfile(Long accountId) {
-		placeController.goTo(new LoginPlace(accountId));
-	}
-
-	@Override
-	public void postComment(final CommentDTO comment) {
-		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
-	}
-
-	@Override
-	public void likeTweet(Long tweetId) {
-		LikeTweetAction action = new LikeTweetAction();
-		action.setTweetId(tweetId);
-		dispatcher.execute(action, new TweetLikeActionHandler());
-	}
-
-	@Override
-	public void updateTweet(TweetDTO tweet) {
-		if (tweet == null) {
-			// do nothing
-			return;
-		}
-		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler());
-	}
-
-	@Override
-	public void deleteTweet(TweetDTO tweet) {
-		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
-			homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-		}
-
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
-	}
-
-	@Override
-	public void sendTweet(TweetDTO tweet) {
-		AccountDTO account = ctx.getAccount();
-		if (account == null) {
-			placeController.goTo(new LoginPlace());
-		}
-		dispatcher.execute(new TweetAction(tweet), new TweetHandler());
-	}
-
-	@Override
-	public boolean hasMoreElements() {
-		return state.hasMorePages();
-	}
-
-	/**
-	 * Loads the messages for the next page.
-	 */
-	@Override
-	public void onScrollBottomHit() {
-		if (state.isFetchingData()) {
-			return;
-		}
-
-		if (ctx.getAccount() != null && state.hasMorePages()) {
-			GetCommunityWallDataAction nextSearchAction = state.getNextSearchAction();
-			dispatcher.execute(
-			    nextSearchAction,
-			    new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
-				    @Override
-				    public void onSuccess(GetCommunityWallDataResult result) {
-					    state.setCurrentTweetList(result.getTweets());
-					    homeView.addTweets(result.getTweets());
-				    }
-			    });
-		}
-	}
-
-	@Override
-	public void displayHashtag(String hashtag) {
-		if (hashtag != null) {
-			eventBus.fireEvent(new LoadingEventStart());
-			GetCommunityWallDataAction searchCriteriaForHashtag =
-			    state.getSearchCriteriaForHashtag(hashtag);
-			dispatcher.execute(searchCriteriaForHashtag, communityDataHandler);
-		}
-	}
-
-	@Override
-	public void displayMessage(String message, AlertType type) {
-		homeView.displayMessage(message, type);
-	}
-
-	@Override
-	public void reportTweetAsSpam(TweetDTO tweet) {
-		SpamDTO spam = new SpamDTO();
-		spam.setTweet(tweet);
-		spam.setReporter(ctx.getAccount());
-		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
-	}
-
-	public void setImageUploadUrl() {
 		dispatcher.execute(
-		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-			    @Override
-			    public void onSuccess(GetImageUploadUrlResult result) {
-				    homeView.setImageUploadUrl(result.getImageUrl());
-			    }
-		    });
-	}
+		    eligibilityAction,
+		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
 
-	// TODO handle image deletion on multiple file uploads
-	public void setUploadImageHandler() {
-		homeView.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler#
-			 * onSubmitComplete
-			 * (com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent)
-			 */
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				try {
-					String imageUrl = event.getResults();
-					homeView.displayProfileImagePreview(imageUrl);
-				} finally {
-					homeView.resetImageUploadUrl();
-					setImageUploadUrl();
-				}
-			}
-		});
+			    @Override
+			    public void onFailure(Throwable th) {
+				    view.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+			    }
+
+			    @Override
+			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
+				    Window.alert("Eligible for buy...");
+				    widget.initiatePay();
+			    }
+
+		    });
 	}
 
 	/**
@@ -496,74 +178,74 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 	}
 
 	@Override
-	public void updateComment(CommentDTO comment) {
-		dispatcher.execute(
-		    new UpdateCommentAction(comment),
-		    new DispatcherCallbackAsync<UpdateCommentResult>() {
-			    @Override
-			    public void onSuccess(UpdateCommentResult result) {
-				    homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-				    homeView.updateComment(result.getComment());
-			    }
+	public void deleteTweet(TweetDTO tweet) {
+		if (ctx.getAccount().getAccountId() != tweet.getSender().getAccountId()) {
+			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+		}
 
-			    @Override
-			    public void onFailure(Throwable th) {
-				    if (th instanceof AccessError) {
-					    homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				    } else {
-					    homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				    }
-			    }
-		    });
+		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
 	}
 
 	@Override
-	public void purchaseCoupon(final CouponDTO coupon) {
-		PurchasedCouponAction action = new PurchasedCouponAction();
-		action.setCoupon(coupon);
-		action.setBuyer(ctx.getAccount());
-		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-
-			@Override
-			public void onSuccess(PurchaseCouponResult result) {
-				Window.alert("success");
-			}
-
-			@Override
-			public void onFailure(Throwable th) {
-				Window.alert(th.getLocalizedMessage());
-			}
-		});
+	public void displayCommunityWallForNeighborhood(NeighborhoodDTO neighborhood) {
+		GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(neighborhood);
+		getCommunityWallData(searchCriteria);
+		getHashtagList();
+		getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
+		getNeighborhoodDetails();
 	}
 
 	@Override
-	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
-		CheckBuyerEligibilityForCouponAction eligibilityAction =
-		    new CheckBuyerEligibilityForCouponAction();
-		eligibilityAction.setCoupon(coupon);
+	public void displayHashtag(String hashtag) {
+		if (hashtag != null) {
+			eventBus.fireEvent(new LoadingEventStart());
+			GetCommunityWallDataAction searchCriteriaForHashtag =
+			    state.getSearchCriteriaForHashtag(hashtag);
+			dispatcher.execute(searchCriteriaForHashtag, communityDataHandler);
+		}
+	}
 
-		dispatcher.execute(
-		    eligibilityAction,
-		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
+	@Override
+	public void displayMessage(String message, AlertType type) {
+		view.displayMessage(message, type);
+	}
 
-			    @Override
-			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
-				    Window.alert("Eligible for buy...");
-				    widget.initiatePay();
-			    }
+	@Override
+	public void displayPublicProfile(Long accountId) {
+		placeController.goTo(new LoginPlace(accountId));
+	}
 
-			    @Override
-			    public void onFailure(Throwable th) {
-				    homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
-			    }
-
-		    });
+	@Override
+	public void displayTweets(List<TweetDTO> tweets) {
+		view.display(tweets);
+		panel.setWidget(view);
 	}
 
 	@Override
 	public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
-		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public void go(AcceptsOneWidget container) {
+	}
+
+	@Override
+	public void gotoBusinessPlace() {
+		BusinessPlace place = new BusinessPlace();
+		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
+		placeController.goTo(place);
+	}
+
+	@Override
+	public void gotoResidentPlace() {
+		ResidentPlace place = new ResidentPlace();
+		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
+		placeController.goTo(place);
+	}
+
+	@Override
+	public boolean hasMoreElements() {
+		return state.hasMorePages();
 	}
 
 	@Override
@@ -584,154 +266,95 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		});
 	}
 
-	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
-		dispatcher.execute(
-		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+	@Override
+	public void likeTweet(Long tweetId) {
+		LikeTweetAction action = new LikeTweetAction();
+		action.setTweetId(tweetId);
+		dispatcher.execute(action, new TweetLikeActionHandler());
+	}
 
-			    @Override
-			    public void onSuccess(GetImageUploadUrlResult result) {
-				    if (result.getImageUrl() != null) {
-					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
-					    formUploadWidget.enableUploadButton();
+	/**
+	 * Loads the messages for the next page.
+	 */
+	@Override
+	public void onScrollBottomHit() {
+		if (state.isFetchingData()) {
+			return;
+		}
+
+		if (ctx.getAccount() != null && state.hasMorePages()) {
+			GetCommunityWallDataAction nextSearchAction = state.getNextSearchAction();
+			dispatcher.execute(
+			    nextSearchAction,
+			    new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+				    @Override
+				    public void onSuccess(GetCommunityWallDataResult result) {
+					    state.setCurrentTweetList(result.getTweets());
+					    view.addTweets(result.getTweets());
 				    }
-			    }
-		    });
-	}
-	
-	private void displayMap(NeighborhoodDTO n) {
-		homeView.displayMap(n.getPostalCodes().get(0).toString());
-	}
-
-	private void getAccountNotifications() {
-		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
-	}
-
-	// ------------------------------------------------------------------------------------------------------
-	//
-	// Action Handlers are defined here
-	//
-	// ------------------------------------------------------------------------------------------------------
-	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
-		@Override
-		public void onSuccess(TweetResult result) {
-			homeView.insertTweet(result.getTweet());
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof NeedsSubscriptionException) {
-				homeView.displayMessage(th.getMessage(), AlertType.ERROR);
-			} else if (th instanceof UsageLimitExceededException) {
-				homeView.displayMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
-			} else {
-				homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
+			    });
 		}
 	}
-
-	private class DeleteTweetHandler extends DispatcherCallbackAsync<DeleteTweetResult> {
-		private TweetDTO tweet;
-
-		public DeleteTweetHandler(TweetDTO tweet) {
-			this.tweet = tweet;
-		}
-
-		@Override
-		public void onSuccess(DeleteTweetResult result) {
-			homeView.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
-			homeView.removeTweet(tweet);
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof AccessError) {
-				homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-			} else {
-				homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
-		}
-	};
-
-	private class UpdateTweetHandler extends DispatcherCallbackAsync<UpdateTweetResult> {
-		@Override
-		public void onSuccess(UpdateTweetResult result) {
-			homeView.updateTweet(result.getTweet());
-			homeView.displayMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			if (caught instanceof AccessError) {
-				homeView.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				return;
-			}
-			homeView.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-		}
-	}
-
-	private class CommunityDataHandler extends DispatcherCallbackAsync<GetCommunityWallDataResult> {
-		@Override
-		public void onSuccess(GetCommunityWallDataResult result) {
-			if (result != null) {
-				List<TweetDTO> tweets = result.getTweets();
-				state.setCurrentTweetList(tweets);
-				state.setFetchingData(false);
-				displayTweets(tweets);
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof IllegalArgumentException) {
-				homeView.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-			} else if (th instanceof NotFoundException) {
-				getCommunityWallData(TweetType.ALL);
-				homeView.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-			}
-			eventBus.fireEvent(new LoadingEventEnd());
-		}
-	}
-
-	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
-
-		@Override
-		public void onSuccess(CommentResult result) {
-			homeView.addComment(result.getComment());
-			homeView.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			homeView.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.SUCCESS);
-		}
-	};
 
 	@Override
-	public TweetWidget getTweetWidget() {
-		return ctx.getTweetWidget();
+	public void onStop() {
+		StyleHelper.clearBackground();
+		if (binder != null) {
+			binder.stop();
+		}
+		hideLoadingIcon();
+		view.clear();
 	}
 
-	private class TweetLikeActionHandler extends DispatcherCallbackAsync<LikeResult> {
-		@Override
-		public void onSuccess(LikeResult result) {
-			homeView.updateTweetLike(result.getLike());
-			homeView.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
-		}
+	@Override
+	public void postComment(final CommentDTO comment) {
+		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
+	}
 
-		@Override
-		public void onFailure(Throwable caught) {
-			if (caught instanceof DuplicateException) {
-				homeView.displayMessage(StringConstants.FAILED_TO_SAVE_LIKE, AlertType.ERROR);
+	@Override
+	public void purchaseCoupon(final CouponDTO coupon) {
+		PurchasedCouponAction action = new PurchasedCouponAction();
+		action.setCoupon(coupon);
+		action.setBuyer(ctx.getAccount());
+		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
+
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getLocalizedMessage());
 			}
-		}
+
+			@Override
+			public void onSuccess(PurchaseCouponResult result) {
+				Window.alert("success");
+			}
+		});
 	}
 
-	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
-		@Override
-		public void onSuccess(ReportSpamResult result) {
-			homeView.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
-		}
+	@Override
+	public void reportTweetAsSpam(TweetDTO tweet) {
+		SpamDTO spam = new SpamDTO();
+		spam.setTweet(tweet);
+		spam.setReporter(ctx.getAccount());
+		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
+	}
+
+	@Override
+	public void sendFeedback(String content) {
+		EmailAdminAction action = new EmailAdminAction();
+		action.setContent(content);
+		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
+		action.setFrom(ctx.getAccount().getEmail());
+		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
+			@Override
+			public void onFailure(Throwable th) {
+				view.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
+			}
+
+			@Override
+			public void onSuccess(EmailAdminResult result) {
+				view.displayMessage(StringConstants.FEEDBACK_SENT_SUCCESS, AlertType.SUCCESS);
+			}
+		});
 	}
 
 	@Override
@@ -755,69 +378,127 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		    new SendMessageAction(conversation),
 		    new DispatcherCallbackAsync<SendMessageResult>() {
 			    @Override
-			    public void onSuccess(SendMessageResult result) {
-				    homeView.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
+			    public void onFailure(Throwable th) {
+				    view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
 			    }
 
 			    @Override
-			    public void onFailure(Throwable th) {
-				    homeView.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+			    public void onSuccess(SendMessageResult result) {
+				    view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
 			    }
 		    });
-	};
-
-	private class GetNeighborhoodDetailsHandler extends
-	    DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
-		@Override
-		public void onSuccess(GetNeighborhoodDetailsResult result) {
-			homeView.displayCommunitySummaryDetails(result);
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			System.out.println("Resutl: " + th.getMessage());
-		}
 	}
 
 	@Override
-	public void sendFeedback(String content) {
-		EmailAdminAction action = new EmailAdminAction();
-		action.setContent(content);
-		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
-		action.setFrom(ctx.getAccount().getEmail());
-		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
-			@Override
-			public void onSuccess(EmailAdminResult result) {
-				homeView.displayMessage(StringConstants.FEEDBACK_SENT_SUCCESS, AlertType.SUCCESS);
-			}
+	public void sendTweet(TweetDTO tweet) {
+		AccountDTO account = ctx.getAccount();
+		if (account == null) {
+			placeController.goTo(new LoginPlace());
+		}
+		dispatcher.execute(new TweetAction(tweet), new TweetHandler());
+	}
 
+	public void setImageUploadUrl() {
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    view.setImageUploadUrl(result.getImageUrl());
+			    }
+		    });
+	}
+
+	// TODO handle image deletion on multiple file uploads
+	public void setUploadImageHandler() {
+		view.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
 			@Override
-			public void onFailure(Throwable th) {
-				homeView.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				try {
+					String imageUrl = event.getResults();
+					view.displayProfileImagePreview(imageUrl);
+				} finally {
+					view.resetImageUploadUrl();
+					setImageUploadUrl();
+				}
 			}
 		});
 	}
 
 	@Override
-	public void gotoResidentPlace() {
-		ResidentPlace place = new ResidentPlace();
-		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
-		placeController.goTo(place);
+	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+		this.panel = panel;
+		checkAccountLogin();
 	}
 
 	@Override
-	public void gotoBusinessPlace() {
-		BusinessPlace place = new BusinessPlace();
-		place.setNeighborhoodId(state.getCurrentNeighborhood().getNeighborhoodId());
-		placeController.goTo(place);
+	public void updateComment(CommentDTO comment) {
+		dispatcher.execute(
+		    new UpdateCommentAction(comment),
+		    new DispatcherCallbackAsync<UpdateCommentResult>() {
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof AccessError) {
+					    view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				    } else {
+					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+
+			    @Override
+			    public void onSuccess(UpdateCommentResult result) {
+				    view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+				    view.updateComment(result.getComment());
+			    }
+		    });
 	}
 
-	void getCommunityWallData(TweetType type) {
-		eventBus.fireEvent(new LoadingEventStart());
-		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
-		state.setFetchingData(true);
-		dispatcher.execute(searchCriteria, communityDataHandler);
-		startViewBinder();
+	@Override
+	public void updateTweet(TweetDTO tweet) {
+		if (tweet == null) {
+			// do nothing
+			return;
+		}
+		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler());
+	}
+
+	@Override
+	protected void doStart() {
+		state.setCurrentNeighborhood(ctx.getCurrentNeighborhood());
+		displayCommunityWall();
+		// account specific.
+		getAccountNotifications();
+		getAccountDetails();
+	}
+
+	@Override
+	protected void doStartOnUserNotLoggedIn() {
+		if (place.getTweetId() != null) {
+			GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(place);
+			getTweetData(searchCriteria);
+			return;
+		}
+
+		placeController.goTo(new SignupPlace());
+	}
+
+	@Override
+	protected void setupHandlers() {
+		super.setupHandlers();
+		eventBus.addHandler(AccountDetailsUpdateEvent.TYPE, new AccountDetailsUpdateEventHandler() {
+
+			@Override
+			public void onEvent(AccountDetailsUpdateEvent event) {
+				ctx.updateAccountDetails(event.getAccountDetails());
+				view.setUnreadMessageCount(new Long(ctx.getUnreadMessageCount()));
+			}
+		});
+	}
+
+	void displayHomeView() {
+		hideLoadingIcon();
+		panel.setWidget(view);
+		view.displayNeighborhoodImage(ctx.getCurrentNeighborhood());
 	}
 
 	void getCommunityWallData(GetCommunityWallDataAction action) {
@@ -828,6 +509,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		startViewBinder();
 	}
 
+	void getCommunityWallData(TweetType type) {
+		eventBus.fireEvent(new LoadingEventStart());
+		GetCommunityWallDataAction searchCriteria = state.getSearchCriteriaForTweetType(type);
+		state.setFetchingData(true);
+		dispatcher.execute(searchCriteria, communityDataHandler);
+		startViewBinder();
+	}
+	
 	void getTweetData(GetCommunityWallDataAction action) {
 		// Load first batch of data
 		eventBus.fireEvent(new LoadingEventStart());
@@ -835,16 +524,319 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Inf
 		dispatcher.execute(action, communityDataHandler);
 	}
 
+	/**
+	 * Loads the following data into home view 
+	 * 1. Tweets 
+	 * 2. Community Summary 
+	 * 3. Location 
+	 * 4. Top hashtags 
+	 * 5. Counts on Tweet types
+	 */
+	private void displayCommunityWall() {
+		viewProvider.get(new AsyncCallback<HomeViewImpl>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Failed to load information.");
+			}
+
+			@Override
+			public void onSuccess(HomeViewImpl result) {
+				HomeActivity.this.view = result;
+				bind();
+				setupHandlers();
+				setImageUploadUrl();
+				setUploadImageHandler();
+				getCommunityWallData(state.getSearchCriteria(place));
+				getHashtagList();
+				displayMap(ctx.getCurrentNeighborhood());
+				getCountsForTweetTypes(state.getCurrentNeighborhood().getNeighborhoodId());
+				getNeighborhoodDetails();
+				view.displayTargetNeighborhoods(getTargetNeighborhoodList());
+				displayHomeView();
+				eventBus.fireEvent(new LoadingEventStart());
+				displayNewMemberList();
+			}
+		});
+	}
+
+	private void displayMap(NeighborhoodDTO n) {
+		view.displayMap(n.getPostalCodes().get(0).toString());
+	}
+
+	private void displayNewMemberList() {
+		GetNewMemberAction action = new GetNewMemberAction();
+		action.setDaysLookback(LOOKBACK_DAYS);
+		action.setEntityType(EntityType.PERSONAL_ACCOUNT);
+		action.setNeighborhoodId(ctx.getCurrentNeighborhood().getNeighborhoodId());
+
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNewMemberResult>() {
+
+			@Override
+			public void onSuccess(GetNewMemberResult result) {
+				view.displayNewMembers(result.getAccounts());
+				view.resizeMap();
+			}
+		});
+	};
+
+	private void getAccountDetails() {
+		dispatcher.execute(
+		    new GetAccountDetailsAction(),
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+
+			    @Override
+			    public void onSuccess(GetAccountDetailsResult result) {
+				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
+			    }
+		    });
+	}
+
+	private void getAccountNotifications() {
+		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
+	}
+
+	private void getCountsForTweetTypes(Long neighborhoodId) {
+		dispatcher.execute(
+		    new GetTweetCategoryDetailsAction(neighborhoodId),
+		    new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>() {
+			    @Override
+			    public void onSuccess(GetTweetCategoryDetailsResult result) {
+				    // do something.
+				    view.updateTweetCategoryCount(result.getTweetCounts());
+			    }
+		    });
+	};
+
+	private void getHashtagList() {
+		GetHashtagAction action =
+		    new GetHashtagAction(state.getCurrentNeighborhood().getNeighborhoodId());
+		action.setSize(MAX_HASHTAG_COUNT);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>() {
+			@Override
+			public void onSuccess(GetHashtagResult result) {
+				view.displayHashtag(result.getHashtags());
+			}
+		});
+	}
+
+	private void getNeighborhoodDetails() {
+		GetNeighborhoodDetailsAction action =
+		    new GetNeighborhoodDetailsAction(state.getCurrentNeighborhood().getNeighborhoodId());
+		dispatcher.execute(action, neighborhoodDetailsHandler);
+		view.displaySummaryData(state.getCurrentNeighborhood());
+	}
+
+	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
+		dispatcher.execute(
+		    new GetImageUploadUrlAction(),
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+
+			    @Override
+			    public void onSuccess(GetImageUploadUrlResult result) {
+				    if (result.getImageUrl() != null) {
+					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
+					    formUploadWidget.enableUploadButton();
+				    }
+			    }
+		    });
+	}
+
 	private void startViewBinder() {
 		if (binder != null) {
 			binder.stop();
 		}
 
-		binder = new TweetViewBinder(homeView.getTweetSectionElement(), this);// getDefaultTweetBinder();
+		binder = new TweetViewBinder(view.getTweetSectionElement(), this);// getDefaultTweetBinder();
 		binder.start();
+	};
+
+	public static interface HomeView extends View<HomePresenter> {
+		void addComment(CommentDTO comment);
+
+		void addTweet(TweetDTO tweet);
+
+		void addTweets(List<TweetDTO> tweets);
+
+		void addUploadFormHandler(SubmitCompleteHandler submitCompleteHandler);
+
+		void display(List<TweetDTO> tweets);
+
+		void displayCommunitySummaryDetails(GetNeighborhoodDetailsResult result);
+
+		void displayHashtag(List<HashtagDTO> hashtags);
+
+		void displayMap(String address);
+
+		void displayMessage(String message, AlertType error);
+
+		void displayNeighborhoodImage(NeighborhoodDTO neighborhood);
+
+		void displayNewMembers(List<AccountDTO> accounts);
+
+		void displayProfileImagePreview(String imageUrl);
+
+		void displaySummaryData(NeighborhoodDTO neighborhood);
+
+		void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
+
+		Element getTweetSectionElement();
+
+		ITweetView<TweetPresenter> getTweetView();
+
+		TweetBox getTweetWidget();
+
+		void highlightTweetType(TweetType type);
+
+		void insertTweet(TweetDTO tweet);
+
+		void removeTweet(TweetDTO tweet);
+
+		void resetImageUploadUrl();
+
+		void resizeMap();
+
+		void setImageUploadUrl(String imageUrl);
+
+		void setUnreadMessageCount(Long count);
+
+		void updateComment(CommentDTO comment);
+
+		void updateTweet(TweetDTO tweet);
+
+		void updateTweetCategoryCount(Map<TweetType, Integer> tweetCounts);
+
+		void updateTweetLike(LoveDTO like);
+
+		void updateTweets(List<TweetDTO> tweets);
 	}
 
-	@Override
-	public void go(AcceptsOneWidget container) {
+	private class CommunityDataHandler extends DispatcherCallbackAsync<GetCommunityWallDataResult> {
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof IllegalArgumentException) {
+				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+			} else if (th instanceof NotFoundException) {
+				getCommunityWallData(TweetType.ALL);
+				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+			}
+			eventBus.fireEvent(new LoadingEventEnd());
+		}
+
+		@Override
+		public void onSuccess(GetCommunityWallDataResult result) {
+			if (result != null) {
+				List<TweetDTO> tweets = result.getTweets();
+				state.setCurrentTweetList(tweets);
+				state.setFetchingData(false);
+				displayTweets(tweets);
+			}
+		}
+	}
+
+	private class DeleteTweetHandler extends DispatcherCallbackAsync<DeleteTweetResult> {
+		private TweetDTO tweet;
+
+		public DeleteTweetHandler(TweetDTO tweet) {
+			this.tweet = tweet;
+		}
+
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof AccessError) {
+				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			}
+		}
+
+		@Override
+		public void onSuccess(DeleteTweetResult result) {
+			view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
+			view.removeTweet(tweet);
+		}
+	}
+
+	private class GetNeighborhoodDetailsHandler extends
+	    DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
+		@Override
+		public void onFailure(Throwable th) {
+			System.out.println("Resutl: " + th.getMessage());
+		}
+
+		@Override
+		public void onSuccess(GetNeighborhoodDetailsResult result) {
+			view.displayCommunitySummaryDetails(result);
+		}
+	}
+
+	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
+
+		@Override
+		public void onFailure(Throwable caught) {
+			view.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.SUCCESS);
+		}
+
+		@Override
+		public void onSuccess(CommentResult result) {
+			view.addComment(result.getComment());
+			view.displayMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
+		}
+	}
+
+	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+		@Override
+		public void onSuccess(ReportSpamResult result) {
+			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
+		}
+	}
+
+	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
+		@Override
+		public void onFailure(Throwable th) {
+			if (th instanceof NeedsSubscriptionException) {
+				view.displayMessage(th.getMessage(), AlertType.ERROR);
+			} else if (th instanceof UsageLimitExceededException) {
+				view.displayMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
+			} else {
+				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+			}
+		}
+
+		@Override
+		public void onSuccess(TweetResult result) {
+			view.insertTweet(result.getTweet());
+		}
+	}
+
+	private class TweetLikeActionHandler extends DispatcherCallbackAsync<LikeResult> {
+		@Override
+		public void onFailure(Throwable caught) {
+			if (caught instanceof DuplicateException) {
+				view.displayMessage(StringConstants.FAILED_TO_SAVE_LIKE, AlertType.ERROR);
+			}
+		}
+
+		@Override
+		public void onSuccess(LikeResult result) {
+			view.updateTweetLike(result.getLike());
+			view.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
+		}
+	}
+
+	private class UpdateTweetHandler extends DispatcherCallbackAsync<UpdateTweetResult> {
+		@Override
+		public void onFailure(Throwable caught) {
+			if (caught instanceof AccessError) {
+				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+				return;
+			}
+			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+		}
+
+		@Override
+		public void onSuccess(UpdateTweetResult result) {
+			view.updateTweet(result.getTweet());
+			view.displayMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
+		}
 	}
 }

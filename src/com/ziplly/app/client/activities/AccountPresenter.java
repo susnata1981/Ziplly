@@ -2,7 +2,7 @@ package com.ziplly.app.client.activities;
 
 import com.ziplly.app.model.AccountDTO;
 
-public interface AccountPresenter<T extends AccountDTO> extends TweetPresenter, EmailPresenter {
+public interface AccountPresenter<T extends AccountDTO> extends Presenter {
 	void save(T account);
 
 	void displayProfile();
@@ -13,4 +13,6 @@ public interface AccountPresenter<T extends AccountDTO> extends TweetPresenter, 
 	void settingsLinkClicked();
 
 	void messagesLinkClicked();
+
+	SendMessagePresenter getSendMessagePresenter();
 }

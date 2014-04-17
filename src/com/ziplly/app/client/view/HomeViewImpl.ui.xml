@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:dt="urn:import:com.ziplly.app.client.widget" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style type="com.ziplly.app.client.view.HomeView.Style">
+	<ui:style type="com.ziplly.app.client.view.HomeViewImpl.Style">
 		.marginTop {
 		margin-top: 15px;
 		}

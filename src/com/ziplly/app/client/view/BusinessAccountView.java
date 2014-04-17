@@ -39,6 +39,7 @@ import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.ZClientModule.TweetsPerPage;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
@@ -48,6 +49,7 @@ import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.CssStyleHelper;
+import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.GoogleMapWidget;
 import com.ziplly.app.client.widget.NotificationWidget;
 import com.ziplly.app.client.widget.PriceRangeWidget;
@@ -68,7 +70,7 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class BusinessAccountView extends AbstractView implements IBusinessAccountView {
+public class BusinessAccountView extends AbstractView implements IBusinessAccountView, TopLevelView {
 
 	interface BusinessAccountViewUiBinder extends UiBinder<Widget, BusinessAccountView> {
 	}
@@ -200,7 +202,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	AccountPresenter<BusinessAccountDTO> presenter;
 	BusinessAccountDTO account;
 	PopupPanel popupPanel;
-
+	
 	@Inject
 	public BusinessAccountView(EventBus eventBus) {
 		super(eventBus);
@@ -212,6 +214,11 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetSection.add(tview);
 		notificationWidget = new NotificationWidget();
+		StyleHelper.show(profileImagePanel.getElement(), false);
+		setupHandlers();
+	}
+
+	private void setupHandlers() {
 		notificationWidget.getAccountSettingButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -227,9 +234,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 				messageSection.remove(popupPanel);
 			}
 		});
-
-		StyleHelper.show(profileImagePanel.getElement(), false);
-	}
+  }
 
 	@Override
 	public void displayProfile(BusinessAccountDTO account) {
@@ -425,29 +430,29 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void openMessageWidget() {
 		smw = new SendMessageWidget(account);
-		smw.setPresenter(presenter);
+		smw.setPresenter(presenter.getSendMessagePresenter());
 		smw.show();
 	}
 
 	@Override
 	public void setPresenter(AccountPresenter<BusinessAccountDTO> presenter) {
 		this.presenter = presenter;
-		tweetBox.setPresenter(presenter);
-		tview.setPresenter(presenter);
-	}
-
-	@Override
-	public void displayModalMessage(String msg, AlertType type) {
-		AlertModal modal = new AlertModal();
-		modal.showMessage(msg, type);
 	}
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-		message.setText(msg);
-		message.setType(type);
-		message.setVisible(true);
+		internalDisplayModalMessage(msg, type);
 	}
+
+	@Override
+	public void displayModalMessage(String msg, AlertType type) {
+		internalDisplayModalMessage(msg, type);
+	}
+
+	private void internalDisplayModalMessage(String msg, AlertType type) {
+		AlertModal modal = new AlertModal();
+		modal.showMessage(msg, type);
+  }
 
 	@Override
 	public Element getTweetSectionElement() {
@@ -479,7 +484,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	@Override
 	public void updateComment(CommentDTO comment) {
-		tview.addComment(comment);
+		tview.updateComment(comment);
 	}
 
 	@Override
@@ -590,6 +595,21 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	private void hideAccontUpdate() {
 		StyleHelper.show(updateAlertBlock.getElement(), false);
 	}
+
+	@Override
+  public ITweetView<TweetPresenter> getTweetView() {
+		return tview;
+  }
+
+	@Override
+  public TweetBox getTweetWidget() {
+		return tweetBox;
+  }
+
+	@Override
+  public EmailWidget getEmailWidget() {
+		return null;
+  }
 
 //	public void setCouponImageUploadUrl(String url) {
 //	  tweetBox.setCouponFormUploadActionUrl(url);

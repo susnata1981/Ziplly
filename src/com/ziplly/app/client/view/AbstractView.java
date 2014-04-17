@@ -1,7 +1,5 @@
 package com.ziplly.app.client.view;
 
-import java.util.logging.Logger;
-
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -13,7 +11,6 @@ import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 
 public abstract class AbstractView extends Composite {
-	protected Logger logger = Logger.getLogger("AbstractView");
 	protected EventBus eventBus;
 	protected PlaceController placeController;
 	protected BasicDataFormatter basicDataFormatter;

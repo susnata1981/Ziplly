@@ -1,82 +1,58 @@
 package com.ziplly.app.client;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-import com.google.gwt.user.client.Timer;
-import com.ziplly.app.client.widget.TweetWidget;
+import com.google.gwt.place.shared.Place;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 
 public class ApplicationContext implements Serializable {
   private static final long serialVersionUID = 1L;
   
-
 	public enum Environment {
-		DEVEL, PROD;
+		DEVEL, 
+		PROD;
 	}
 
-	private Environment environment = Environment.DEVEL;
-	private boolean environmentSet = false;
-	private AccountDTO account;
-	private int unreadMessageCount;
-	private int totalTweets;
-	private int totalComments;
-	private int totalLikes;
-	ArrayList<TweetWidget> widgets = new ArrayList<TweetWidget>();
-	int index = 0, x = 0;
-	Timer timer;
+	private static Environment environment = Environment.DEVEL;
+	private static boolean environmentSet = false;
+	private static FeatureFlags features;
+	private static AccountDetails accountDetails = new AccountDetails();
+	
+	private Place lastPlace;
+	private Place newPlace;
 
 	public ApplicationContext() {
 	}
 
 	public AccountDTO getAccount() {
-		return account;
+		return accountDetails.account;
 	}
 
 	public void setAccount(AccountDTO account) {
-		this.account = account;
+		accountDetails.account = account;
 	}
 
 	public NeighborhoodDTO getCurrentNeighborhood() {
-		return account.getCurrentLocation().getNeighborhood();
-	}
-
-	public TweetWidget getTweetWidget() {
-		return widgets.get(index++);
+		return accountDetails.account.getCurrentLocation().getNeighborhood();
 	}
 
 	public int getUnreadMessageCount() {
-		return unreadMessageCount;
-	}
-
-	public void setUnreadMessageCount(int unreadMessageCount) {
-		this.unreadMessageCount = unreadMessageCount;
+		return accountDetails.unreadMessageCount;
 	}
 
 	public int getTotalLikes() {
-		return totalLikes;
-	}
-
-	public void setTotalLikes(int totalLikes) {
-		this.totalLikes = totalLikes;
+		return accountDetails.totalLikes;
 	}
 
 	public int getTotalComments() {
-		return totalComments;
-	}
-
-	public void setTotalComments(int totalComments) {
-		this.totalComments = totalComments;
+		return accountDetails.totalComments;
 	}
 
 	public int getTotalTweets() {
-		return totalTweets;
-	}
-
-	public void setTotalTweets(int totalTweets) {
-		this.totalTweets = totalTweets;
+		return accountDetails.totalTweets;
 	}
 
 	public Environment getEnvironment() {
@@ -91,20 +67,45 @@ public class ApplicationContext implements Serializable {
 		if (environmentSet) {
 			return;
 		}
-		this.environment = environment;
+		ApplicationContext.environment = environment;
 		environmentSet = true;
 	}
 
-	/**
-	 * Updated account details based on the response of GetAccountDetailsAction
-	 * rpc
-	 * 
-	 * @param result
-	 */
 	public void updateAccountDetails(GetAccountDetailsResult result) {
-		this.unreadMessageCount = result.getUnreadMessages();
-		this.totalComments = result.getTotalComments();
-		this.totalLikes = result.getTotalLikes();
-		this.totalTweets = result.getTotalTweets();
+		accountDetails.unreadMessageCount = result.getUnreadMessages();
+		accountDetails.totalComments = result.getTotalComments();
+		accountDetails.totalLikes = result.getTotalLikes();
+		accountDetails.totalTweets = result.getTotalTweets();
+	}
+
+	public void setLastPlace(Place place) {
+		this.lastPlace = place;
+  }
+	
+	public Place getLastPlace() {
+		return lastPlace;
+	}
+
+	public void setNewPlace(Place place) {
+		if (newPlace != null) {
+			lastPlace = newPlace;
+		}
+		this.newPlace = place;
+  }
+	
+	public Place getNewPlace() {
+		return newPlace;
+	}
+	
+	public static FeatureFlags getFeatures() {
+	  return features;
+  }
+
+	private static class AccountDetails {
+		public AccountDTO account;
+		public int unreadMessageCount;
+		public int totalTweets;
+		public int totalComments;
+		public int totalLikes;
 	}
 }

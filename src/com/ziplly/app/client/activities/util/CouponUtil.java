@@ -1,7 +1,5 @@
 package com.ziplly.app.client.activities.util;
 
-import java.util.Date;
-
 import com.ziplly.app.model.CouponDTO;
 
 public class CouponUtil {

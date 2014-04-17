@@ -4,6 +4,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -86,6 +87,10 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 				    if (result != null && result.getAccount() != null) {
 					    ctx.setAccount(result.getAccount());
 					    eventBus.fireEvent(new LoginEvent(result.getAccount()));
+					    if (ctx.getLastPlace() != null) {
+					    	goTo(ctx.getLastPlace());
+					    	return;
+					    }
 					    goTo(new HomePlace());
 				    }
 			    }

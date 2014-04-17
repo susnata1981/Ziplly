@@ -7,6 +7,9 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
+import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.widget.EmailWidget;
+import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.LoveDTO;
@@ -72,4 +75,10 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayMessage(String msg, AlertType type);
 
 	void displayMap(String address);
+	
+	ITweetView<TweetPresenter> getTweetView();
+	
+	TweetBox getTweetWidget();
+
+	EmailWidget getEmailWidget();
 }

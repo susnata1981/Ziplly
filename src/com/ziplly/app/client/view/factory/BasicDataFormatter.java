@@ -106,12 +106,13 @@ public class BasicDataFormatter implements Formatter<Object> {
 				return percent.toPlainString() +"%";
 			case COUPON:
 				CouponDTO c = (CouponDTO)value;
-				String startDate = getTimeDiff(c.getStartDate(), new Date(), timeTemplate);
-				String endDate = getTimeDiff(c.getEndDate(), new Date(), couponTimeTemplate);
 				String title = capitalize(c.getDescription()) + " (" + format(c.getPrice(), ValueType.PRICE) + ")";
 				String discount = format(c.getDiscount(), ValueType.PERCENT) +" off";
+				long quantityRemaining = c.getQuanity() - c.getQuantityPurchased();
+		    DateTimeFormat fmt = DateTimeFormat.getFormat("EEEE, MMMM dd, yyyy hh:mm a");
 				return couponTemplate.getCouponDetailsTemplate(
-						title, c.getDescription(), c.getPrice(), discount, c.getQuanity(), startDate, endDate).asString();
+						title, c.getDescription(), c.getPrice(), discount, quantityRemaining, fmt.format(c.getStartDate()), 
+						fmt.format(c.getEndDate())).asString();
 			default:
 				throw new IllegalArgumentException("Invalid value type to render");
 		}
