@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -17,6 +18,8 @@ import javax.inject.Provider;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import net.customware.gwt.dispatch.shared.DispatchException;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -40,12 +43,16 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
+import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
+import com.ziplly.app.client.exceptions.CouponCampaignNotStartedException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InternalError;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
+import com.ziplly.app.client.exceptions.SoldOutException;
+import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
 import com.ziplly.app.client.oauth.OAuthFactory;
@@ -55,6 +62,7 @@ import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
+import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -69,6 +77,8 @@ import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.Coupon;
+import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
@@ -118,17 +128,20 @@ public class AccountBLIImpl implements AccountBLI {
 	        .retryMaxAttempts(10)
 	        .totalRetryPeriodMillis(15000)
 	        .build());
+	private CouponTransactionDAO couponTransactionDao;
 
 	@Inject
 	public AccountBLIImpl(AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TransactionDAO transactionDao,
+	    CouponTransactionDAO couponTransactionDao,
 	    PasswordRecoveryDAO passwordRecoveryDao,
 	    EmailService emailService,
 	    AccountRegistrationDAO accountRegistrationDao) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.transactionDao = transactionDao;
+		this.couponTransactionDao = couponTransactionDao;
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
@@ -781,5 +794,47 @@ public class AccountBLIImpl implements AccountBLI {
 		}
 
 		return true;
+	}
+
+	/**
+	 * 1. coupon quantity available > 0
+	 * 2. coupon date within range
+	 * 3. TODO: add state in coupon and then check coupon active state.
+	 * 4. check quantity allowed per user
+	 */
+	@Override
+	public void checkAccountEligibleForCouponPurchase(Account account,
+			Long couponId) throws DispatchException {
+		Coupon coupon = couponTransactionDao.findByCouponId(couponId);
+		//Check coupon quantity availability 
+		if (coupon.getQuantityPurchased() == coupon.getQuanity()) {
+			// Log error
+			throw new SoldOutException(String.format("Coupon: %s sold out.", coupon.getDescription()));
+		}
+		
+		// Should the publisher be allowed to buy??
+		
+		//Check the number of same coupons allowed per user.
+		try {
+			List<CouponTransaction> transactions =
+			    couponTransactionDao.findCouponTransactionByAccountId(account.getAccountId());
+			
+			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
+				throw new UsageLimitExceededException("You have previously purchased the coupon.");
+			}
+		} catch (NoResultException nre) {
+			//Log the exception but this is expected if the buyer did not purchase these coupons previously.
+		}
+		
+		// check date validity
+		// The Buy button should be disabled in the view for these date validity fail. 
+		Date now = new Date();
+		if(now.before(coupon.getStartDate())) {
+			throw new CouponCampaignNotStartedException(String.format("Coupon:%s discount not yet started.", coupon.getDescription()));
+		}
+		
+		if(now.after(coupon.getEndDate())) {
+			throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
+		}
 	}
 }

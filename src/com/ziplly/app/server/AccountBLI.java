@@ -3,6 +3,8 @@ package com.ziplly.app.server;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
+import net.customware.gwt.dispatch.shared.DispatchException;
+
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
@@ -71,4 +73,6 @@ public interface AccountBLI {
 	    InternalError,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException;
+	
+	public void checkAccountEligibleForCouponPurchase(Account account, Long couponId) throws DispatchException;
 }
