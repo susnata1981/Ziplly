@@ -588,6 +588,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			    public void onSuccess(GetAccountDetailsResult result) {
 				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
 			    }
+			    
+			    public void onFailure(Throwable th) {
+				    //homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+			    	Window.alert(th.getLocalizedMessage());
+			    }
 		    });
 	}
 
