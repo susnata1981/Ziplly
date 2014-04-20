@@ -71,7 +71,7 @@ public class ApplicationContext implements Serializable {
 		environmentSet = true;
 	}
 
-	public void updateAccountDetails(GetAccountDetailsResult result) {
+	public void setAccountDetails(GetAccountDetailsResult result) {
 		accountDetails.unreadMessageCount = result.getUnreadMessages();
 		accountDetails.totalComments = result.getTotalComments();
 		accountDetails.totalLikes = result.getTotalLikes();

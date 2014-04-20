@@ -17,26 +17,47 @@ import org.joda.time.Instant;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
 import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.server.guice.ServiceModule.SellerIdentifier;
+import com.ziplly.app.server.guice.ServiceModule.SellerSecret;
 
 public class PaymentServiceImpl implements PaymentService {
-	private static final String SELLER_ID = "15732117996604841954";
-	private static final String SELLER_SECRET = "zYfFCJLbvBgnVsAxa0wMpQ";
+	private static final String CURRENCY_CODE_LABEL = "currencyCode";
+	private static final String PRICE_LABEL = "price";
+	private static final String DESCRIPTION_LABEL = "description";
+	private static final String NAME_LABEL = "name";
+//	private static final String SELLER_ID = "15732117996604841954";
+//	private static final String SELLER_SECRET = "zYfFCJLbvBgnVsAxa0wMpQ";
 	private static final String ZIPLLY_INC = "Ziplly Inc.";
+	private static final String COUPON_ID_LABEL = "couponId";
+	private static final String BUYER_ID_LABEL = "buyerId";
+	private static final String TRANSACTION_ID_LABEL = "transactionId";
+	
+	private final String sellerSecret;
+	private final String sellerId;
 
+	@Inject
+	public PaymentServiceImpl(@SellerIdentifier String sellerId, @SellerSecret String sellerSecret) {
+		this.sellerId = sellerId;
+		this.sellerSecret = sellerSecret;
+  }
+	
+	@Deprecated
 	@Override
 	public String getJWT(Long sellerId, Double amount) throws InvalidKeyException, SignatureException {
 		// Configure request object
 		JsonObject request = new JsonObject();
-		request.addProperty("name", "ziplly marketing service");
-		request.addProperty("description", "ziplly marketing service fee");
-		request.addProperty("price", amount);
-		request.addProperty("currencyCode", Currency.getInstance(Locale.US).getCurrencyCode());
+		request.addProperty(NAME_LABEL, "ziplly marketing service");
+		request.addProperty(DESCRIPTION_LABEL, "ziplly marketing service fee");
+		request.addProperty(PRICE_LABEL, amount);
+		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
 		request.addProperty("sellerData", "seller_id:" + sellerId);
 		JsonToken token = createToken(request);
 		return token.serializeAndSign();
 	}
 
+	@Override
 	public String deserialize(String tokenString) {
 		String[] pieces = splitTokenString(tokenString);
 		String jwtPayloadSegment = pieces[1];
@@ -64,14 +85,16 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public String getJWTTokenForCoupon(CouponDTO coupon) throws InvalidKeyException, SignatureException {
+	public String getJWTTokenForCoupon(Long transactionId, CouponDTO coupon, Long buyerAccountId) throws InvalidKeyException, SignatureException {
 		// Configure request object
 		JsonObject request = new JsonObject();
-		request.addProperty("name", ZIPLLY_INC);
-		request.addProperty("description", coupon.getDescription());
-		request.addProperty("price", coupon.getPrice());
-		request.addProperty("currencyCode", Currency.getInstance(Locale.US).getCurrencyCode());
-		// TODO do we need buyer here?
+		request.addProperty(NAME_LABEL, ZIPLLY_INC);
+		request.addProperty(DESCRIPTION_LABEL, coupon.getDescription());
+		request.addProperty(PRICE_LABEL, coupon.getPrice());
+		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
+		request.addProperty(COUPON_ID_LABEL, coupon.getCouponId());
+		request.addProperty(BUYER_ID_LABEL, buyerAccountId);
+		request.addProperty(TRANSACTION_ID_LABEL, transactionId);
 //		request.addProperty("buyer", "buyer_id:" + buyer.getAccountId());
 		JsonToken token = createToken(request);
 		return token.serializeAndSign();
@@ -80,7 +103,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private JsonToken createToken(JsonObject request) throws InvalidKeyException {
 		// Current time and signing algorithm
 		Calendar cal = Calendar.getInstance();
-		HmacSHA256Signer signer = new HmacSHA256Signer(SELLER_ID, null, SELLER_SECRET.getBytes());
+		HmacSHA256Signer signer = new HmacSHA256Signer(sellerId, null, sellerSecret.getBytes());
 
 		// Configure JSON token
 		JsonToken token = new JsonToken(signer);
@@ -93,4 +116,9 @@ public class PaymentServiceImpl implements PaymentService {
 		payload.add("request", request);
 		return token;
 	}
+
+	@Override
+  public String getIssuer() {
+		return sellerId;
+  }
 }

@@ -59,18 +59,16 @@ public class GetTweetActionHandler extends
 		return result;
 	}
 
-	@Override
-	protected void postHandler(GetTweetsResult result) {
-		try {
-	    tweetBli.injectJwtToken(result.getTweets());
-    } catch (InvalidKeyException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-    } catch (SignatureException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-    }
-	}
+//	@Override
+//	protected void postHandler(GetTweetsResult result) {
+//		try {
+//	    tweetBli.injectJwtToken(result.getTweets());
+//    } catch (InvalidKeyException e) {
+//	    e.printStackTrace();
+//    } catch (SignatureException e) {
+//	    e.printStackTrace();
+//    }
+//	}
 	
 	@Override
 	public Class<GetTweetsAction> getActionType() {

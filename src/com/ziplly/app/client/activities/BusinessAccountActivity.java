@@ -216,10 +216,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	}
 
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
-		ctx.setUnreadMessageCount(result.getUnreadMessages());
-		ctx.setTotalTweets(result.getTotalTweets());
-		ctx.setTotalComments(result.getTotalComments());
-		ctx.setTotalLikes(result.getTotalLikes());
+		ctx.setAccountDetails(result);
 		view.updateAccountDetails(ctx);
 	}
 

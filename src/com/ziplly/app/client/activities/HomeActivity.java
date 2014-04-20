@@ -156,7 +156,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
 				    Window.alert("Eligible for buy...");
-				    widget.initiatePay();
+				    widget.initiatePay(result.getJwtToken());
 			    }
 
 		    });
@@ -489,7 +489,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 			@Override
 			public void onEvent(AccountDetailsUpdateEvent event) {
-				ctx.updateAccountDetails(event.getAccountDetails());
+				ctx.setAccountDetails(event.getAccountDetails());
 				view.setUnreadMessageCount(new Long(ctx.getUnreadMessageCount()));
 			}
 		});

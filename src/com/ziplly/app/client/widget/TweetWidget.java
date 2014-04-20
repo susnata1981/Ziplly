@@ -62,7 +62,7 @@ import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonHandler;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
@@ -726,7 +726,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		Button buyCouponBtn = new Button("Buy Now");
 		buyCouponBtn.setType(ButtonType.PRIMARY);
 		
-		paymentButton = new GoogleWalletPayButtonWidget(buyCouponBtn, tweet.getCoupon().getJwtToken(), new GoogleWalletPayButtonHandler() {
+		paymentButton = new GoogleWalletPayButtonWidget(buyCouponBtn, new GoogleWalletPostPayButtonHandler() {
 			
 			@Override
 			public void onSuccess() {
@@ -735,6 +735,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			
 			@Override
 			public void onFailure() {
+				// TODO handle different failures.
 				Window.alert("Sorry, the coupon can't be purchased at the moment");
 			}
 		});
@@ -753,10 +754,11 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	/**
 	 * Called by the presenter once {@code checkForBuyerEligiility} returns success.
+	 * @param jwtToken 
 	 */
-	public void initiatePay() {
+	public void initiatePay(String jwtToken) {
 		if (paymentButton != null) {
-			paymentButton.pay();
+			paymentButton.pay(jwtToken);
 		}
 	}
 	

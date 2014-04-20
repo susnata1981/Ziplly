@@ -1,6 +1,12 @@
 package com.ziplly.app.server.guice;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Singleton;
 import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.AccountBLIImpl;
@@ -20,8 +26,29 @@ import com.ziplly.app.server.TweetBLIImpl;
  */
 public class ServiceModule extends AbstractModule {
 
+	/*
+	 * Seller ID
+	 */
+	@BindingAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(value= {ElementType.FIELD, ElementType.PARAMETER})
+	public @interface SellerIdentifier {
+	}
+	
+	/*
+	 * Seller secret
+	 */
+	@BindingAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(value= {ElementType.FIELD, ElementType.PARAMETER})
+	public @interface SellerSecret {
+	}
+	
 	@Override
   protected void configure() {
+		bindConstant().annotatedWith(SellerIdentifier.class).to("01544868397547783964");
+		bindConstant().annotatedWith(SellerSecret.class).to("xnKebOqL59b1P45EF1PUmg");
+		
 		bind(TweetBLI.class).to(TweetBLIImpl.class).in(Singleton.class);
 		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
 		bind(AdminBLI.class).to(AdminBLIImpl.class).in(Singleton.class);

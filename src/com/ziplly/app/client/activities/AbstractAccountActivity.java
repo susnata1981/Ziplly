@@ -116,7 +116,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
 				    Window.alert("Eligible for buy...");
-				    widget.initiatePay();
+				    widget.initiatePay(result.getJwtToken());
 			    }
 
 		    });

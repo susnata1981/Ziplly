@@ -212,10 +212,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	 * @param result
 	 */
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
-		ctx.setUnreadMessageCount(result.getUnreadMessages());
-		ctx.setTotalTweets(result.getTotalTweets());
-		ctx.setTotalComments(result.getTotalComments());
-		ctx.setTotalLikes(result.getTotalLikes());
+		ctx.setAccountDetails(result);
 		if (view != null) {
 			view.updateAccountDetails(ctx);
 		}

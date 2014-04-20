@@ -25,6 +25,8 @@ import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.CommentDAOImpl;
 import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.ConversationDAOImpl;
+import com.ziplly.app.dao.CouponDAO;
+import com.ziplly.app.dao.CouponDAOImpl;
 import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.CouponTransactionDAOImpl;
 import com.ziplly.app.dao.EntityManagerService;
@@ -119,6 +121,7 @@ public class DAOModule extends AbstractModule {
 		bind(PendingInvitationsDAO.class).to(PendingInvitationsDAOImpl.class).in(Singleton.class);
 		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
+		bind(CouponDAO.class).to(CouponDAOImpl.class).in(Singleton.class);
 		bind(CouponTransactionDAO.class).to(CouponTransactionDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		

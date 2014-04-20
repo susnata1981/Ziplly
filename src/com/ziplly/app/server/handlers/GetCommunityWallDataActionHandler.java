@@ -146,16 +146,16 @@ public class GetCommunityWallDataActionHandler extends
 		return gcwdr;
 	}
 
-	@Override
-	protected void postHandler(GetCommunityWallDataResult result) throws InternalError {
-		try {
-	    tweetBli.injectJwtToken(result.getTweets());
-    } catch (InvalidKeyException e) {
-    	throw new InternalError();
-    } catch (SignatureException e) {
-    	throw new InternalError();
-    }
-	}
+//	@Override
+//	protected void postHandler(GetCommunityWallDataResult result) throws InternalError {
+//		try {
+//	    tweetBli.injectJwtToken(result.getTweets());
+//    } catch (InvalidKeyException e) {
+//    	throw new InternalError();
+//    } catch (SignatureException e) {
+//    	throw new InternalError();
+//    }
+//	}
 	
 	@Override
 	public Class<GetCommunityWallDataAction> getActionType() {
