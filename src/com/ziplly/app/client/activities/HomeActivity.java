@@ -212,7 +212,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	@Override
 	public void displayPublicProfile(Long accountId) {
-		placeController.goTo(new LoginPlace(accountId));
+		placeController.goTo(new LoginPlace());
 	}
 
 	@Override

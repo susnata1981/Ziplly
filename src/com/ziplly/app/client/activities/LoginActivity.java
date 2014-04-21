@@ -4,7 +4,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -26,7 +25,8 @@ import com.ziplly.app.shared.ValidateLoginResult;
 
 public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	private ILoginAccountView<LoginPresenter> view;
-	LoginPlace place;
+	@SuppressWarnings("unused")
+  private LoginPlace place;
 	private AcceptsOneWidget panel;
 	private AsyncProvider<LoginAccountView> viewProvider;
 
@@ -45,11 +45,16 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		this.panel = panel;
-		doStart();
+		checkAccountLogin();
 	}
 
 	@Override
 	protected void doStart() {
+		placeController.goTo(new HomePlace());
+	}
+	
+	@Override
+	protected void doStartOnUserNotLoggedIn() {
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<LoginAccountView>() {
 
 			@Override

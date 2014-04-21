@@ -121,7 +121,7 @@ public abstract class AbstractActivity implements Activity {
 	 */
 	public void checkAccountLogin() {
 		// If user already logged in then just call doStart.
-		if (ctx.getAccount() != null) {
+		if (userLoggedIn()) {
 			doStart();
 			return;
 		}
@@ -135,7 +135,7 @@ public abstract class AbstractActivity implements Activity {
 					eventBus.fireEvent(new LoginEvent(result.getAccount()));
 					doStart();
 				} else {
-					// This could be overriden by client.
+					// This could be overridden by client.
 					doStartOnUserNotLoggedIn();
 				}
 			}
@@ -147,6 +147,10 @@ public abstract class AbstractActivity implements Activity {
 
 		});
 	}
+
+	protected boolean userLoggedIn() {
+		return ctx.getAccount() != null;
+  }
 
 	/**
 	 * Activity needs to define behavior in case user is logged in.
