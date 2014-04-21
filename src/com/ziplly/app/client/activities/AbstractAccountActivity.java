@@ -41,6 +41,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
+import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;

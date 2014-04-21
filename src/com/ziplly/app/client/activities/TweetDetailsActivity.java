@@ -25,6 +25,7 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
@@ -174,11 +175,6 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	}
 
 	@Override
-  public void purchaseCoupon(CouponDTO coupon) {
-		placeController.goTo(new LoginPlace());
-  }
-
-	@Override
   public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {
 		placeController.goTo(new LoginPlace());
   }
@@ -190,6 +186,11 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 	@Override
   public void initializeUploadForm(FormUploadWidget formUploadWidget) {
+		placeController.goTo(new LoginPlace());
+  }
+
+	@Override
+  public void purchaseCoupon(GoogleWalletSuccessResult result, CouponDTO coupon) {
 		placeController.goTo(new LoginPlace());
   }
 }
