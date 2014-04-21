@@ -1,4 +1,4 @@
-package com.ziplly.app.server.guice;
+package com.ziplly.app.dao;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,49 +15,6 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.jpa.JpaPersistModule;
-import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.AccountDAOImpl;
-import com.ziplly.app.dao.AccountNotificationDAO;
-import com.ziplly.app.dao.AccountNotificationDAOImpl;
-import com.ziplly.app.dao.AccountRegistrationDAO;
-import com.ziplly.app.dao.AccountRegistrationDAOImpl;
-import com.ziplly.app.dao.CommentDAO;
-import com.ziplly.app.dao.CommentDAOImpl;
-import com.ziplly.app.dao.ConversationDAO;
-import com.ziplly.app.dao.ConversationDAOImpl;
-import com.ziplly.app.dao.CouponDAO;
-import com.ziplly.app.dao.CouponDAOImpl;
-import com.ziplly.app.dao.CouponTransactionDAO;
-import com.ziplly.app.dao.CouponTransactionDAOImpl;
-import com.ziplly.app.dao.EntityManagerService;
-import com.ziplly.app.dao.HashtagDAO;
-import com.ziplly.app.dao.HashtagDAOImpl;
-import com.ziplly.app.dao.ImageDAO;
-import com.ziplly.app.dao.ImageDAOImpl;
-import com.ziplly.app.dao.InterestDAO;
-import com.ziplly.app.dao.InterestDAOImpl;
-import com.ziplly.app.dao.LikeDAO;
-import com.ziplly.app.dao.LikeDAOImpl;
-import com.ziplly.app.dao.LocationDAO;
-import com.ziplly.app.dao.LocationDAOImpl;
-import com.ziplly.app.dao.NeighborhoodDAO;
-import com.ziplly.app.dao.NeighborhoodDAOImpl;
-import com.ziplly.app.dao.PasswordRecoveryDAO;
-import com.ziplly.app.dao.PasswordRecoveryDAOImpl;
-import com.ziplly.app.dao.PendingInvitationsDAO;
-import com.ziplly.app.dao.PendingInvitationsDAOImpl;
-import com.ziplly.app.dao.PostalCodeDAO;
-import com.ziplly.app.dao.PostalCodeDAOImpl;
-import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.dao.SessionDAOImpl;
-import com.ziplly.app.dao.SpamDAO;
-import com.ziplly.app.dao.SpamDAOImpl;
-import com.ziplly.app.dao.SubscriptionPlanDAO;
-import com.ziplly.app.dao.SubscriptionPlanDAOImpl;
-import com.ziplly.app.dao.TransactionDAO;
-import com.ziplly.app.dao.TransactionDAOImpl;
-import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.dao.TweetDAOImpl;
 import com.ziplly.app.server.TweetNotificationBLI;
 import com.ziplly.app.server.TweetNotificationBLIImpl;
 import com.ziplly.app.server.ZipllyServerConstants;
@@ -125,7 +82,6 @@ public class DAOModule extends AbstractModule {
 		bind(CouponTransactionDAO.class).to(CouponTransactionDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		
-//		bind(EntityManager.class).toProvider(EntityManagerProvider.class).in(RequestScoped.class);
 		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);
 		
 		install(new JpaPersistModule("zipllydb").properties(dbConfig));
@@ -143,26 +99,4 @@ public class DAOModule extends AbstractModule {
 			}
     }
 	}
-	
-//	@Provides
-//	@Singleton
-//	public EntityManagerFactory getEntityManagerFactory() {
-//		System.out.println("CREATING ENTITY FACTORY...");
-//		return Persistence.createEntityManagerFactory("zipllydb", dbProperties);
-//	}
-//	
-//	public static class EntityManagerProvider implements Provider<EntityManager> {
-//		private EntityManagerFactory entityManagerFactory;
-//
-//		@Inject
-//		public EntityManagerProvider(EntityManagerFactory factory) {
-//			this.entityManagerFactory = factory;
-//    }
-//		
-//		@Override
-//    public EntityManager get() {
-//			System.out.println("CREATING ENTITY MANAGER...");
-//			return entityManagerFactory.createEntityManager();
-//    }
-//	}
 }

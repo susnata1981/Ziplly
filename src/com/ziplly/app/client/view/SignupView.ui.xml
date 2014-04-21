@@ -14,16 +14,21 @@
 			display: block; padding: 4px;
 			margin-bottom: 60px; 
 		}
-		.heading2
-		{ display: block; clear: both;
-		font-size: 30px; font-weight: bold;
-		font-family:
-		fantasy,cursive, sans;
-		color: #fff; text-align: center; } .heading3 { display:
-		block; clear:
-		both; font-size: 22px; font-family: Tahoma, sans; sans-serif;
-		color:
-		#555; margin-bottom: 16px; } .heading4 { display: block;
+		.heading2 { 
+			display: block; clear: both;
+			font-size: 30px; 
+			font-weight: bold;
+			color: #fff; text-align: center; 
+		} 
+		.heading3 { 
+			display: block; 
+			clear: both; 
+			font-size: 22px; 
+			font-family: Tahoma, sans; sans-serif;
+			color: #555; 
+			margin-bottom: 16px; 
+		} 
+		.heading4 { display: block;
 		font-size:
 		16px; font-family: sans; color: #666; padding: 4px; }
 		.howItWorksInDetailAnchor

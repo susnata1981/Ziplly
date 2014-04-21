@@ -85,7 +85,11 @@ public class PurchaseCouponActionHandler extends
 		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
 		purchasedCoupon.setCouponTransaction(couponTransaction);
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
-		purchasedCoupon.setQrcode(couponBLI.getQrcode(action.getBuyer().getAccountId(), coupon));
+		purchasedCoupon.setQrcode(couponBLI.getQrcode(
+				action.getBuyer().getAccountId(), 
+				coupon.getTweet().getSender().getAccountId(),
+				coupon.getCouponId()));
+		
 		purchasedCoupon.setTimeUpdated(now);
 		purchasedCoupon.setTimeCreated(now);
 		couponTransaction.setPurchasedCoupon(purchasedCoupon);

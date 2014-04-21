@@ -1,5 +1,6 @@
 package com.ziplly.app.server.bli.payment;
 
+
 public class Request {
 	private String name;
 	private String description;

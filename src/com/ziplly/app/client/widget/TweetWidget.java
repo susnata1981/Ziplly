@@ -69,6 +69,9 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.overlay.GoogleWalletResponse;
+import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
+import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -729,12 +732,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		paymentButton = new GoogleWalletPayButtonWidget(buyCouponBtn, new GoogleWalletPostPayButtonHandler() {
 			
 			@Override
-			public void onSuccess() {
-				presenter.purchaseCoupon(tweet.getCoupon());
+			public void onSuccess(GoogleWalletSuccessResult result) {
+				presenter.purchaseCoupon(result, tweet.getCoupon());
 			}
 			
 			@Override
-			public void onFailure() {
+			public void onFailure(GoogleWalletFailureResult result) {
 				// TODO handle different failures.
 				Window.alert("Sorry, the coupon can't be purchased at the moment");
 			}

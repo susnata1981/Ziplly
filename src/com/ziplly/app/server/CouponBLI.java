@@ -15,4 +15,6 @@ public interface CouponBLI {
 	
 	void markAsUsed(String url) 
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException;
+
+	String getEncryptedQRCode(String qrcode);
 }

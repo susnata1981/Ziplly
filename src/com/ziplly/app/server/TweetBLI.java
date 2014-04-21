@@ -7,5 +7,5 @@ import java.util.List;
 import com.ziplly.app.model.TweetDTO;
 
 public interface TweetBLI {
-	public void injectJwtToken(List<TweetDTO> tweet) throws InvalidKeyException, SignatureException;
+//	public void injectJwtToken(List<TweetDTO> tweet) throws InvalidKeyException, SignatureException;
 }

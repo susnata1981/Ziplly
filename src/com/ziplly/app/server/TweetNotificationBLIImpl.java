@@ -22,6 +22,7 @@ import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.dao.DAOModule.BackendAddress;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotification;
@@ -36,7 +37,6 @@ import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.Session;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
-import com.ziplly.app.server.guice.DAOModule.BackendAddress;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {

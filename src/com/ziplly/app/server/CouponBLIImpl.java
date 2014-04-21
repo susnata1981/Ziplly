@@ -1,5 +1,8 @@
 package com.ziplly.app.server;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -12,18 +15,16 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.apache.commons.codec.binary.Base64;
-
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.dao.DAOModule;
 import com.ziplly.app.server.crypto.CryptoUtil;
-import com.ziplly.app.server.guice.DAOModule;
 import com.ziplly.app.server.guice.DispatchServletModule;
 import com.ziplly.app.server.guice.ServiceModule;
-import com.ziplly.app.server.guice.ZipllyActionHandlerModule;
 import com.ziplly.app.server.guice.ServiceModule.QrcodeEndpoint;
+import com.ziplly.app.server.guice.ZipllyActionHandlerModule;
 
 public class CouponBLIImpl implements CouponBLI {
 	private static final String SEPARATOR = ":";
@@ -65,9 +66,10 @@ public class CouponBLIImpl implements CouponBLI {
 			Long couponId) throws UnsupportedEncodingException {
 		
 		String value = buyerAccountId + SEPARATOR + sellerAccountId + SEPARATOR + couponId;
-		System.out.println("Clear text:"+value);
-		byte[] encodedValue = Base64.encodeBase64(value.getBytes("utf-8"));
-		return new String(encodedValue);
+//		System.out.println("Clear text:"+value);
+//		byte[] encodedValue = Base64.encodeBase64(value.getBytes("utf-8"));
+//		return new String(encodedValue);
+		return value;
 	}
 
 	@Override
@@ -76,7 +78,8 @@ public class CouponBLIImpl implements CouponBLI {
 		
 		if (url != null) {
 //			url = URLDecoder.decode(url, "utf-8");
-			String encryptedText = url.substring(url.indexOf(REDEEM_TOKEN) + REDEEM_TOKEN.length());
+//			String encryptedText = url.substring(url.indexOf(REDEEM_TOKEN) + REDEEM_TOKEN.length());
+			String encryptedText = getEncryptedQRCode(url);
 			System.out.println("U="+url);
 			System.out.println("ecrypted text="+URLDecoder.decode(encryptedText, "utf-8"));
 			String decryptText = cryptoUtil.decrypt(URLDecoder.decode(encryptedText, "utf-8"));
@@ -106,4 +109,11 @@ public class CouponBLIImpl implements CouponBLI {
 		System.out.println("Encoded url = "+url);
 		couponBli.markAsUsed(url);
 	}
+
+	@Override
+  public String getEncryptedQRCode(String url) {
+		checkNotNull(url);
+		checkArgument(url.indexOf(REDEEM_TOKEN) > 0 && url.length() > url.indexOf(REDEEM_TOKEN) + REDEEM_TOKEN.length());
+		return url.substring(url.indexOf(REDEEM_TOKEN) + REDEEM_TOKEN.length());
+  }
 }

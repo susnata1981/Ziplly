@@ -38,6 +38,7 @@ public class CryptoUtil {
 	    UnsupportedEncodingException, EncoderException {
 		// Get a cipher object.
 //		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+		System.out.println("Encryption text="+message);
 		cipher.init(Cipher.ENCRYPT_MODE, key);
 
 		// Gets the raw bytes to encrypt, UTF8 is needed for
@@ -50,7 +51,7 @@ public class CryptoUtil {
 		// converts to base64 for easier display.
 		// BASE64Encoder encoder = new BASE64Encoder();
 		// String base64 = encoder.encode(raw);
-
+		System.out.println("Encrypted text="+encode(raw));
 		// return base64;
 		return new String(encode(raw));
 	}
