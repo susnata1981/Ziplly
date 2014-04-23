@@ -807,7 +807,7 @@ public class AccountBLIImpl implements AccountBLI {
 			Long couponId) throws DispatchException {
 		Coupon coupon = couponTransactionDao.findByCouponId(couponId);
 		//Check coupon quantity availability 
-		if (coupon.getQuantityPurchased() == coupon.getQuanity()) {
+		if (coupon.getQuantityPurchased() >= coupon.getQuanity()) {
 			// Log error
 			throw new SoldOutException(String.format("Coupon: %s sold out.", coupon.getDescription()));
 		}

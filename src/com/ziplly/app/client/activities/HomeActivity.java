@@ -152,7 +152,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 			    @Override
 			    public void onFailure(Throwable th) {
-				    view.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+				    view.displayMessage(th.getLocalizedMessage(), AlertType.ERROR);
 			    }
 
 			    @Override

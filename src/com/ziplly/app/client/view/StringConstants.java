@@ -137,4 +137,5 @@ public class StringConstants {
 	public static final String FAILED_TO_ADD_NEIGHBORHOOD = "Sorry, we couldn't add your neighborhood";
 	public static final String FAILED_TO_BUY_COUPON = "Failed to buy coupon";
 	public static final String PUBLISH_COUPON_CONFIRMATION = "Are you sure you want to publish your coupon?";
+	public static final String DISPLAY_MESSAGE_VIEW_TIME = "app.feature.displayMessageTime";
 }
