@@ -18,7 +18,7 @@ import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 

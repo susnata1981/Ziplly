@@ -3,9 +3,9 @@ package com.ziplly.app.server;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.ziplly.app.dao.DAOModule;
+import com.ziplly.app.server.bli.ServiceModule;
 import com.ziplly.app.server.guice.DispatchServletModule;
-import com.ziplly.app.server.guice.ServiceModule;
-import com.ziplly.app.server.guice.ZipllyActionHandlerModule;
+import com.ziplly.app.server.handlers.ZipllyActionHandlerModule;
 
 public class AbstractBase {
 	private Injector injector;

@@ -15,7 +15,7 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 

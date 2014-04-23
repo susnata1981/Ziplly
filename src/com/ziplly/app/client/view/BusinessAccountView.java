@@ -39,7 +39,6 @@ import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
-import com.ziplly.app.client.ZClientModule.TweetsPerPage;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
@@ -60,6 +59,7 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.LoveDTO;
@@ -192,6 +192,17 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@UiField
 	HTMLPanel tweetBoxDiv;
 
+	/*
+	 * Coupon transaction section
+	 */
+	@UiField
+	HTMLPanel couponTransactionPanel;
+	@UiField(provided = true)
+	CouponTransactionView couponTransactionView;
+	
+	@UiField
+	Anchor transactionDetailsAnchor;
+	
 	// Update section
 	@UiField
 	AlertBlock updateAlertBlock;
@@ -211,6 +222,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		tweetBox = new TweetBox();
 		tweetBox.setWidth(TWEET_BOX_WIDTH);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByBusiness());
+		couponTransactionView = new CouponTransactionView(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetSection.add(tview);
 		notificationWidget = new NotificationWidget();
@@ -245,8 +257,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		this.account = account;
 
 		// image section
-		StyleHelper.setBackgroundImage(accountFormatter
-		    .format(account, ValueType.PROFILE_BACKROUND_URL));
+		StyleHelper.setBackgroundImage(
+				accountFormatter.format(account, ValueType.PROFILE_BACKROUND_URL));
 
 		name.setInnerHTML(account.getDisplayName());
 		// TODO
@@ -437,6 +449,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void setPresenter(AccountPresenter<BusinessAccountDTO> presenter) {
 		this.presenter = presenter;
+		couponTransactionView.setPresenter(presenter);
 	}
 
 	@Override
@@ -611,11 +624,30 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		return null;
   }
 
-//	public void setCouponImageUploadUrl(String url) {
-//	  tweetBox.setCouponFormUploadActionUrl(url);
-//  }
-//
-//	public void displayCouponImagePreview(String imageUrl) {
-//		tweetBox.displayCouponImagePreview(imageUrl);
-//  }
+	@Override
+  public void displayCouponTransaction(List<CouponTransactionDTO> transactions) {
+		displayCouponTransactionPanel(true);
+		couponTransactionView.displayCouponTransactions(transactions);
+  }
+	
+	@UiHandler("transactionDetailsAnchor")
+	public void viewCouponTransactions(ClickEvent event) {
+		couponTransactionView.loadCouponTransaction();
+		displayCouponTransactionPanel(true);
+	}
+	
+	@Override
+	public void setCouponTransactionCount(Long couponTransactionCount) {
+		couponTransactionView.setRowCount(couponTransactionCount);
+	}
+	
+	private void displayCouponTransactionPanel(boolean display) {
+		StyleHelper.show(couponTransactionPanel.getElement(), display);
+		StyleHelper.show(tweetSection.getElement(), !display);
+	}
+
+	@Override
+  public void displayQrCode(String url) {
+		Window.open(url, "_blank", "");
+  }
 }

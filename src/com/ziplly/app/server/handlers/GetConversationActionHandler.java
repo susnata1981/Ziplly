@@ -18,7 +18,7 @@ import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationType;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetConversationsResult;
 

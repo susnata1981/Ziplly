@@ -13,7 +13,7 @@ import com.ziplly.app.dao.ConversationDAO;
 import com.ziplly.app.dao.LikeDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 

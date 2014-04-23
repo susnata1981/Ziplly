@@ -11,7 +11,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SpamDAO;
 import com.ziplly.app.model.Spam;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SpamStatus;

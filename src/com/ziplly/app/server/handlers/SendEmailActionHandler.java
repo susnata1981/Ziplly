@@ -9,9 +9,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.EmailService;
-import com.ziplly.app.server.EmailServiceImpl;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.EmailService;
+import com.ziplly.app.server.bli.EmailServiceImpl;
 import com.ziplly.app.shared.SendEmailAction;
 import com.ziplly.app.shared.SendEmailResult;
 

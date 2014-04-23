@@ -19,7 +19,7 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			case PROFILE_IMAGE_URL:
 				return getImageUrl(value);
 			case PROFILE_BACKROUND_URL:
-				return getImageUrl(value);
+				return getProfileImageUrl(value);
 			case TINY_IMAGE_VALUE:
 				content.append("<img src='" + getImageUrl(value) + "' width='40px' height='40px'/>");
 				return content.toString();
@@ -45,9 +45,18 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 		String imgUrl = "";
 		if (value.getProfileImage() != null) {
 			imgUrl = value.getProfileImage().getUrl() + "=s1600";
-		} else {
+		} 
+		else {
 			imgUrl = ZResources.IMPL.noImage().getSafeUri().asString();
 		}
+		return imgUrl;
+	}
+	
+	String getProfileImageUrl(AccountDTO value) {
+		String imgUrl = "";
+		if (value.getProfileImage() != null) {
+			imgUrl = value.getProfileImage().getUrl() + "=s1600";
+		} 
 		return imgUrl;
 	}
 }

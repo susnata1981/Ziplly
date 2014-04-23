@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.bli.EmailService;
+import com.ziplly.app.server.bli.EmailServiceImpl;
+import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 
 public class MailHandlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

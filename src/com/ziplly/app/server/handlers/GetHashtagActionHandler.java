@@ -13,7 +13,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.HashtagDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetHashtagResult;
 

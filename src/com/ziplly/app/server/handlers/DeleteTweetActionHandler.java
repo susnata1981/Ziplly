@@ -17,7 +17,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
 

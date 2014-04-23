@@ -13,7 +13,7 @@ import com.ziplly.app.client.exceptions.AccessError;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.VerifyEmailAction;
 import com.ziplly.app.shared.VerifyEmailResult;
 

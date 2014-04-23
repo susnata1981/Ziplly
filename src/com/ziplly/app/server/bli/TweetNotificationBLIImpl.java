@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.util.Date;
 import java.util.List;
@@ -37,6 +37,9 @@ import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.Session;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.server.EmailAction;
+import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.bli.EmailServiceImpl.Builder;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {

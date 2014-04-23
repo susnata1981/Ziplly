@@ -15,9 +15,9 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.jpa.JpaPersistModule;
-import com.ziplly.app.server.TweetNotificationBLI;
-import com.ziplly.app.server.TweetNotificationBLIImpl;
 import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.bli.TweetNotificationBLI;
+import com.ziplly.app.server.bli.TweetNotificationBLIImpl;
 
 public class DAOModule extends AbstractModule {
 	private static final String LOCALHOST_APP_URL = "http://localhost:8888/Ziplly.html?gwt.codesvr=127.0.0.1%3A9997";

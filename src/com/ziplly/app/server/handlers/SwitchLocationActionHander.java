@@ -16,7 +16,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Location;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.SwitchLocationAction;
 import com.ziplly.app.shared.SwitchLocationResult;
 

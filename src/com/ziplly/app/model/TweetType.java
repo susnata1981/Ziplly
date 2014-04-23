@@ -3,7 +3,7 @@ package com.ziplly.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ziplly.app.server.TweetNotificationBLIImpl;
+import com.ziplly.app.server.bli.TweetNotificationBLIImpl;
 
 /**
  * Changes here need to be also made in {@link TweetNotificationBLIImpl}. TODO

@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Currency;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import javax.persistence.EntityManager;
@@ -29,8 +28,8 @@ import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponStatus;
 import com.ziplly.app.model.TransactionStatus;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.CouponBLI;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.shared.PurchaseCouponResult;
 import com.ziplly.app.shared.PurchasedCouponAction;
 
@@ -59,7 +58,7 @@ public class PurchaseCouponActionHandler extends
 		checkNotNull(action.getCoupon());
 
 		validateSession();
-		checkIfAccountEligible(action.getBuyer(), action.getCoupon());
+//		checkIfAccountEligible(action.getBuyer(), action.getCoupon());
 		
 		// Update quantity 
 		Coupon coupon = couponTransactionDao.findByCouponId(action.getCoupon().getCouponId());
@@ -85,7 +84,7 @@ public class PurchaseCouponActionHandler extends
 		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
 		purchasedCoupon.setCouponTransaction(couponTransaction);
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
-		purchasedCoupon.setQrcode(couponBLI.getQrcode(
+		purchasedCoupon.setQrcode(couponBLI.getQrcodeUrl(
 				action.getBuyer().getAccountId(), 
 				coupon.getTweet().getSender().getAccountId(),
 				coupon.getCouponId()));
@@ -106,16 +105,17 @@ public class PurchaseCouponActionHandler extends
 		
 		// Should the publisher be allowed to buy??
 		try {
-			List<CouponTransaction> transactions =
-			    couponTransactionDao.findCouponTransactionByAccountId(buyer.getAccountId());
-
-			if (transactions.size() == 0) {
-				return;
-			}
+			// Vipin (TODO): add a check here (call into the bli)
+//			List<CouponTransaction> transactions =
+//			    couponTransactionDao.findCouponTransactionByAccountId(buyer.getAccountId());
+//
+//			if (transactions.size() == 0) {
+//				return;
+//			}
 			
-			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
-				throw new UsageLimitExceededException();
-			}
+//			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
+//				throw new UsageLimitExceededException();
+//			}
 		} catch (NoResultException nre) {
 			return;
 		}

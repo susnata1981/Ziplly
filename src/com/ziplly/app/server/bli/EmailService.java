@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.util.List;
 import java.util.Map;
@@ -7,8 +7,8 @@ import javax.mail.MessagingException;
 
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.server.EmailServiceImpl.Builder;
-import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.bli.EmailServiceImpl.Builder;
+import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface EmailService {

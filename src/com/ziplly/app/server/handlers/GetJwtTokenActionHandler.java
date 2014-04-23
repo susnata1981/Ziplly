@@ -15,8 +15,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.PaymentService;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetJwtTokenResult;
 

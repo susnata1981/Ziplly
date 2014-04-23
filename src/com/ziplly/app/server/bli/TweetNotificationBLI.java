@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;

@@ -19,7 +19,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.NeighborhoodDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityResult;
 

@@ -12,7 +12,7 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.oauth.OAuthAppProperties;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetFacebookRedirectUriResult;
 
