@@ -13,7 +13,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.InterestDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.InterestDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetInterestAction;
 import com.ziplly.app.shared.GetInterestResult;
 

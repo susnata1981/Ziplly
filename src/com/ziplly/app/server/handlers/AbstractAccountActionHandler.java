@@ -17,8 +17,8 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Session;
-import com.ziplly.app.server.AccountBLI;
 import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.bli.AccountBLI;
 
 public abstract class AbstractAccountActionHandler<T extends Action<R>, R extends Result> 
     extends AbstractSessionAwareActionHandler<T, R> {

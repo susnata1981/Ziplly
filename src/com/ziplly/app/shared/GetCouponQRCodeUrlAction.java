@@ -4,7 +4,8 @@ import net.customware.gwt.dispatch.shared.Action;
 
 public class GetCouponQRCodeUrlAction implements Action<GetCouponQRCodeUrlResult> {
 	private Long couponId;
-
+	private Long couponTransactionId;
+	
 	public GetCouponQRCodeUrlAction() {
   }
 	
@@ -18,5 +19,13 @@ public class GetCouponQRCodeUrlAction implements Action<GetCouponQRCodeUrlResult
 
 	public void setCouponId(Long couponId) {
 	  this.couponId = couponId;
+  }
+
+	public Long getCouponTransactionId() {
+	  return couponTransactionId;
+  }
+
+	public void setCouponTransactionId(Long couponTransactionId) {
+	  this.couponTransactionId = couponTransactionId;
   }
 }

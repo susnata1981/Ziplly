@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import com.google.inject.Inject;
 

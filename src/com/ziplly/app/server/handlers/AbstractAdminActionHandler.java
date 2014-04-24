@@ -9,8 +9,8 @@ import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.AdminBLI;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.AdminBLI;
 
 public abstract class AbstractAdminActionHandler<T extends Action<V>, V extends Result> extends
     AbstractTweetActionHandler<T, V> {

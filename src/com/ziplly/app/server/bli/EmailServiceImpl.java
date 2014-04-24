@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -25,6 +25,7 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.shared.EmailTemplate;
 
 import freemarker.template.Configuration;

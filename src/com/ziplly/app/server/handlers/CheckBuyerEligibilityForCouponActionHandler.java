@@ -21,8 +21,8 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.TransactionStatus;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.PaymentService;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 

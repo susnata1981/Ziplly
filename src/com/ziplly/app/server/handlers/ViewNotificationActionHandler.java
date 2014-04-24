@@ -17,7 +17,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountNotification;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.ReadStatus;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.ViewNotificationAction;
 import com.ziplly.app.shared.ViewNotificationResult;
 

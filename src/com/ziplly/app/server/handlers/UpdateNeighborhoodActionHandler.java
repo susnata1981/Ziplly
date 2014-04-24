@@ -15,7 +15,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.Role;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.UpdateNeighborhoodAction;
 import com.ziplly.app.shared.UpdateNeighborhoodResult;
 

@@ -24,7 +24,7 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 

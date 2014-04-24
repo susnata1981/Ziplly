@@ -55,6 +55,7 @@ import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -127,6 +128,17 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField
 	DivElement locationDiv;
 
+	/*
+	 * Coupon transaction section
+	 */
+	@UiField
+	HTMLPanel couponTransactionPanel;
+	@UiField(provided = true)
+	CouponTransactionView couponTransactionView;
+	
+	@UiField
+	Anchor transactionDetailsAnchor;
+	
 	// Updates section
 	@UiField
 	AlertBlock updateAlertBlock;
@@ -149,24 +161,23 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Inject
 	public AccountView(EventBus eventBus) {
 		super(eventBus);
-
 		tweetBox = new TweetBox();
 		emailWidget = new EmailWidget();
+		couponTransactionView = new CouponTransactionView(eventBus);
+		initWidget(uiBinder.createAndBindUi(this));
+		setupUi();
+	}
+
+	private void setupUi() {
 		tweetBox.setWidth(tweetBoxWidth);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tview.setWidth(tweetWidgetWidth);
 		tview.setHeight(TWEET_VIEW_HEIGHT);
-		initWidget(uiBinder.createAndBindUi(this));
-		tweetSection.add(tview);
 		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
-	}
+		tweetSection.add(tview);
+		displayCouponTransactionPanel(false);
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ziplly.app.client.view.IAccountView#displayProfile(com.ziplly.app
-	 * .model.AccountDTO)
-	 */
 	@Override
 	public void displayProfile(PersonalAccountDTO account) {
 		if (account == null) {
@@ -256,6 +267,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 
 	@Override
 	public void displayTweets(List<TweetDTO> tweets, boolean displayNoTweetsMessage) {
+		displayCouponTransactionPanel(false);
 		if (tweets.size() == 0) {
 			if (displayNoTweetsMessage) {
 				tview.displayNoTweetsMessage();
@@ -473,5 +485,32 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
   public EmailWidget getEmailWidget() {
 		return emailWidget;
+  }
+	
+	@Override
+	public void displayCouponTransaction(List<CouponTransactionDTO> transactions) {
+		displayCouponTransactionPanel(true);
+		couponTransactionView.displayCouponTransactions(transactions);
+	}
+
+	@UiHandler("transactionDetailsAnchor")
+	public void viewCouponTransactions(ClickEvent event) {
+		couponTransactionView.loadCouponTransaction();
+		displayCouponTransactionPanel(true);
+	}
+	
+	private void displayCouponTransactionPanel(boolean display) {
+		StyleHelper.show(couponTransactionPanel.getElement(), display);
+		StyleHelper.show(tweetSection.getElement(), !display);
+	}
+
+	@Override
+  public void setCouponTransactionCount(Long totalTransactions) {
+		couponTransactionView.setRowCount(totalTransactions);
+  }
+	
+	@Override
+  public void displayQrCode(String url) {
+		Window.open(url, "_blank", "");
   }
 }

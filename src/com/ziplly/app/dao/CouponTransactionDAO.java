@@ -9,8 +9,11 @@ import com.ziplly.app.model.TransactionStatus;
 public interface CouponTransactionDAO {
 	void save(CouponTransaction couponTransaction);
 	CouponTransaction update(CouponTransaction couponTransaction);
-	List<CouponTransaction> findCouponTransactionByAccountId(Long accountId);
+	List<CouponTransaction> findCouponTransactionByAccountId(Long accountId, int start, int pageSize);
+	List<CouponTransaction> findCouponTransactionByAccountAndCouponId(Long couponId, Long accountId);
 	Coupon findByCouponId(Long couponId);
-	CouponTransaction findCouponTransactionByIdAndStatus(long transactionId,
+	Long findCouponTransactionCountByAccountId(Long accountId);
+	CouponTransaction findById(Long couponTransactionId);
+	CouponTransaction findCouponTransactionByIdAndStatus(Long transactionId,
 			TransactionStatus status);
 }

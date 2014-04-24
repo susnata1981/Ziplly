@@ -12,7 +12,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.PendingInvitationsDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.PendingInvitations;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.AddInvitationResult;
 

@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
@@ -18,17 +18,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.server.guice.ServiceModule.SellerIdentifier;
-import com.ziplly.app.server.guice.ServiceModule.SellerSecret;
 
 public class PaymentServiceImpl implements PaymentService {
 	private static final String CURRENCY_CODE_LABEL = "currencyCode";
 	private static final String PRICE_LABEL = "price";
 	private static final String DESCRIPTION_LABEL = "description";
 	private static final String NAME_LABEL = "name";
-//	private static final String SELLER_ID = "15732117996604841954";
-//	private static final String SELLER_SECRET = "zYfFCJLbvBgnVsAxa0wMpQ";
 	private static final String ZIPLLY_INC = "Ziplly Inc.";
 	private static final String COUPON_ID_LABEL = "couponId";
 	private static final String BUYER_ID_LABEL = "buyerId";
@@ -38,7 +35,9 @@ public class PaymentServiceImpl implements PaymentService {
 	private final String sellerId;
 
 	@Inject
-	public PaymentServiceImpl(@SellerIdentifier String sellerId, @SellerSecret String sellerSecret) {
+	public PaymentServiceImpl(
+			@Named("seller_id") String sellerId, 
+			@Named("seller_secret") String sellerSecret) {
 		this.sellerId = sellerId;
 		this.sellerSecret = sellerSecret;
   }
@@ -86,6 +85,8 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Override
 	public String getJWTTokenForCoupon(Long transactionId, CouponDTO coupon, Long buyerAccountId) throws InvalidKeyException, SignatureException {
+		
+		System.out.println("Seller Id="+sellerId+" Secret="+sellerSecret);
 		// Configure request object
 		JsonObject request = new JsonObject();
 		request.addProperty(NAME_LABEL, ZIPLLY_INC);

@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +93,8 @@ import com.ziplly.app.model.Session;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
-import com.ziplly.app.server.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
 import com.ziplly.app.shared.BCrypt;
@@ -817,7 +818,9 @@ public class AccountBLIImpl implements AccountBLI {
 		//Check the number of same coupons allowed per user.
 		try {
 			List<CouponTransaction> transactions =
-			    couponTransactionDao.findCouponTransactionByAccountId(account.getAccountId());
+			    couponTransactionDao.findCouponTransactionByAccountAndCouponId(
+			    		coupon.getCouponId(),
+			    		account.getAccountId());
 			
 			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
 				throw new UsageLimitExceededException("You have previously purchased the coupon.");

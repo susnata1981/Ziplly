@@ -13,7 +13,7 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountNotificationDTO;
-import com.ziplly.app.server.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetAccountNotificationAction;
 import com.ziplly.app.shared.GetAccountNotificationResult;
 

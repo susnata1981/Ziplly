@@ -5,7 +5,6 @@ import java.util.Date;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -28,6 +27,8 @@ public class BasicDataFormatter implements Formatter<Object> {
 	private static final String BR_CODE = "<br/>";
 	private static final String NEW_LINE = "\n";
 
+	private static final DateTimeFormat longDateFormat = DateTimeFormat.getFormat("dd MMM, yyyy hh:mm");
+	
 	public static final TimeTemplate timeTemplate = GWT.create(TimeTemplate.class);
 	public static final CouponTimeTemplate couponTimeTemplate = GWT.create(CouponTimeTemplate.class);
 	
@@ -68,7 +69,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case DATE_VALUE_SHORT:
 				return getTimeDiff(new Date(), (Date) value, timeTemplate);
 			case DATE_VALUE:
-				String date = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format((Date) value);
+				String date = longDateFormat.format((Date) value);
 				return date;
 			case UNREAD_MESSAGE_COUNT:
 				return "(" + value.toString() + ")";

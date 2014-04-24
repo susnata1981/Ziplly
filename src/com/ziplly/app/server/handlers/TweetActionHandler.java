@@ -26,9 +26,9 @@ import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.AccountBLIImpl;
-import com.ziplly.app.server.TweetNotificationBLI;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.AccountBLIImpl;
+import com.ziplly.app.server.bli.TweetNotificationBLI;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 

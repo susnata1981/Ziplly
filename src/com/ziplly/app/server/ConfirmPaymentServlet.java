@@ -15,6 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.server.bli.payment.Payload;
 import com.ziplly.app.server.bli.payment.Request;
 

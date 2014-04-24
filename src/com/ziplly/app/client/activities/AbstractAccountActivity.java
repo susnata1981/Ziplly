@@ -40,7 +40,6 @@ import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
 import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
@@ -54,6 +53,10 @@ import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetAccountNotificationAction;
+import com.ziplly.app.shared.GetCouponQRCodeUrlAction;
+import com.ziplly.app.shared.GetCouponQRCodeUrlResult;
+import com.ziplly.app.shared.GetCouponTransactionAction;
+import com.ziplly.app.shared.GetCouponTransactionResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLatLngAction;
@@ -423,6 +426,41 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    });
 	}
 
+	@Override 
+	public void getCouponTransactions(int start, int pageSize) {
+		GetCouponTransactionAction action = new GetCouponTransactionAction();
+		action.setStart(start);
+		action.setPageSize(pageSize);
+		
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>() {
+
+			@Override
+      public void onSuccess(GetCouponTransactionResult result) {
+	      view.displayCouponTransaction(result.getTransactions());
+	      view.setCouponTransactionCount(result.getTotalTransactions());
+      }
+			
+			@Override
+			public void onFailure(Throwable th) {
+				Window.alert(th.getLocalizedMessage());
+			}
+		});
+	}
+	
+	@Override
+	public void getCouponQRCodeUrl(Long couponTransactionId) {
+		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
+		action.setCouponTransactionId(couponTransactionId);
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
+
+			@Override
+      public void onSuccess(GetCouponQRCodeUrlResult result) {
+				Window.alert(result.getUrl());
+				view.displayQrCode(result.getUrl());
+      }
+		});
+	}
+	
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		if (tweet == null) {

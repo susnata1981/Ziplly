@@ -19,6 +19,8 @@ import com.ziplly.app.dao.PostalCodeDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.NotificationType;
+import com.ziplly.app.server.bli.EmailService;
+import com.ziplly.app.server.bli.TweetNotificationBLI;
 import com.ziplly.app.shared.EmailTemplate;
 
 @Singleton

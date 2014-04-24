@@ -13,8 +13,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.server.AccountBLI;
-import com.ziplly.app.server.AdminBLI;
+import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.AdminBLI;
 import com.ziplly.app.shared.SearchAccountAction;
 import com.ziplly.app.shared.SearchAccountResult;
 
