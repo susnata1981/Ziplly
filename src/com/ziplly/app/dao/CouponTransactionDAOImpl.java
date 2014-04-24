@@ -58,4 +58,17 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
 				.setParameter("couponId", couponId);
 		return (Coupon) query.getSingleResult();
   }
+	
+	@Transactional
+	@Override
+  public CouponTransaction findCouponTransactionByIdAndStatus(long transactionId, TransactionStatus status) {
+		Preconditions.checkNotNull(transactionId);
+		Preconditions.checkNotNull(status);
+		EntityManager em = entityManagerProvider.get();
+		Query query = em.createQuery("from CouponTransaction where transactionId = :transactionId and status = :status")
+				.setParameter("transactionId", transactionId)
+				.setParameter("status", status.name());
+		
+		return (CouponTransaction) query.getSingleResult();
+	}
 }

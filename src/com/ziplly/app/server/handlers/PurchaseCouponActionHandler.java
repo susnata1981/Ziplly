@@ -59,32 +59,25 @@ public class PurchaseCouponActionHandler extends
 		checkNotNull(action.getCoupon());
 
 		validateSession();
-		checkIfAccountEligible(action.getBuyer(), action.getCoupon());
+		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), action.getCoupon().getCouponId());
 		
 		// Update quantity 
 		Coupon coupon = couponTransactionDao.findByCouponId(action.getCoupon().getCouponId());
-		if (coupon.getQuantityPurchased() == coupon.getQuanity()) {
-			// Log error
-			throw new SoldOutException(String.format("Coupon: %s sold out", coupon.getDescription()));
-		}
-		
 		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
 		
-		CouponTransaction couponTransaction = new CouponTransaction();
-		couponTransaction.setBuyer(EntityUtil.convert(action.getBuyer()));
-		couponTransaction.setCoupon(coupon);
-		couponTransaction.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
-		couponTransaction.setStatus(TransactionStatus.ACTIVE);
+		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(action.getCouponTransactionId(), TransactionStatus.PENDING);
+		checkNotNull(couponTransaction);
+		couponTransaction.setStatus(TransactionStatus.PENDING_SUCCESS);
 		
-		// Set date
+		// Set update date
 		Date now = new Date();
 		couponTransaction.setTimeUpdated(now);
-		couponTransaction.setTimeCreated(now);
 		
 		// Set QR code
 		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
 		purchasedCoupon.setCouponTransaction(couponTransaction);
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
+		//TODO: QR code should contain the coupon transactionId
 		purchasedCoupon.setQrcode(couponBLI.getQrcode(
 				action.getBuyer().getAccountId(), 
 				coupon.getTweet().getSender().getAccountId(),
