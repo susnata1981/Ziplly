@@ -13,8 +13,10 @@ import javax.persistence.NoResultException;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.SoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.dao.AccountDAO;
@@ -58,15 +60,27 @@ public class PurchaseCouponActionHandler extends
 		checkNotNull(action.getCoupon());
 
 		validateSession();
-		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), action.getCoupon().getCouponId());
+		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(Long.valueOf(""+ action.getCouponTransactionId()), TransactionStatus.PENDING);
+		checkNotNull(couponTransaction);
+		
+		try {
+			accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), action.getCoupon().getCouponId());
+		} catch(DispatchException ex) {
+			//TODO: log the exception
+			couponTransaction.setStatus(TransactionStatus.ELIGIBILITY_FAILED);
+			couponTransactionDao.save(couponTransaction);
+			throw ex;
+		}
 		
 		// Update quantity 
 		Coupon coupon = couponTransactionDao.findByCouponId(action.getCoupon().getCouponId());
 		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
 		
-		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(Long.valueOf(""+ action.getCouponTransactionId()), TransactionStatus.PENDING);
-		checkNotNull(couponTransaction);
 		couponTransaction.setStatus(TransactionStatus.PENDING_COMPLETE);
+		//In dev environment set the transaction to complete
+		if(getEnvironment() == Environment.DEVEL) {
+			couponTransaction.setStatus(TransactionStatus.COMPLETE);
+		}
 		
 		// Set update date
 		Date now = new Date();
@@ -96,5 +110,12 @@ public class PurchaseCouponActionHandler extends
 	@Override
 	public Class<PurchasedCouponAction> getActionType() {
 		return PurchasedCouponAction.class;
+	}
+	
+	public Environment getEnvironment() {
+		Environment env =
+		    (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
+		        ? Environment.PROD : Environment.DEVEL;
+		return env;
 	}
 }

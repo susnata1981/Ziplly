@@ -14,6 +14,7 @@ import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.CouponTransaction;
+import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetCouponTransactionAction;
 import com.ziplly.app.shared.GetCouponTransactionResult;
@@ -43,10 +44,10 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 		
 		validateSession();
 		List<CouponTransaction> transactions = 
-				couponTransactionDao.findCouponTransactionByAccountId(
-						session.getAccount().getAccountId(), action.getStart(), action.getPageSize());
+				couponTransactionDao.findCouponTransactionByAccountIdAndStatus(
+						session.getAccount().getAccountId(), TransactionStatus.COMPLETE, action.getStart(), action.getPageSize());
 		
-		Long count = couponTransactionDao.findCouponTransactionCountByAccountId(session.getAccount().getAccountId());
+		Long count = (long) (transactions == null ? 0 : transactions.size()); 
 
 		GetCouponTransactionResult result = new GetCouponTransactionResult();
 		for(CouponTransaction transaction : transactions) {
