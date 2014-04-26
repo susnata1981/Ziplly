@@ -598,6 +598,8 @@ public class EntityUtil {
 	}
 	
 	public static PurchasedCouponDTO clone(PurchasedCoupon coupon) {
+		if(coupon == null)
+			return null;
 		PurchasedCouponDTO resp = new PurchasedCouponDTO();
 		resp.setPurchasedCouponId(coupon.getPurchasedCouponId());
 		resp.setQrcode(coupon.getQrcode());

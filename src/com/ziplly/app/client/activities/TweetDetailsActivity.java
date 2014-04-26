@@ -27,10 +27,10 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
+import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.RedeemCouponAction;
 import com.ziplly.app.shared.RedeemCouponResult;
 
@@ -243,7 +243,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	}
 
 	@Override
-	public void purchaseCoupon(GoogleWalletSuccessResult result, CouponDTO coupon) {
+  public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon) {
 		placeController.goTo(new LoginPlace());
 	}
 }

@@ -10,7 +10,7 @@ public class CouponDetailsPlace extends Place {
 
 		private static final String REDEEM_TOKEN = "redeem";
 		@Override
-    public CouponDetailsPlace getPlace(String token) {
+		public CouponDetailsPlace getPlace(String token) {
 			try {
 				tokenize(token);
 				String token0 = getTokenAt(0);
@@ -22,12 +22,14 @@ public class CouponDetailsPlace extends Place {
 			} catch(Exception ex) {
 				
 			}
-    }
+			
+			return null;
+		}
 
 		@Override
-    public String getToken(CouponDetailsPlace place) {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
+		public String getToken(CouponDetailsPlace place) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 }

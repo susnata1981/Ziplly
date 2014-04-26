@@ -55,7 +55,6 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
-import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;
@@ -313,11 +312,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	@Override
-	public void purchaseCoupon(final GoogleWalletSuccessResult result, final CouponDTO coupon) {
+	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
+		//TODO: This action is similar to what is implemented in the Abstract class,
+		//this implementation is not needed 
 		PurchasedCouponAction action = new PurchasedCouponAction();
 		action.setCoupon(coupon);
 		action.setBuyer(ctx.getAccount());
-		action.setCouponTransactionId(result.getRequest().getTransactionId());
+		action.setCouponTransactionId(transactionId);
+		action.setResultStatus(resultStatus);
 		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
 
 			@Override

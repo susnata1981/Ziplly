@@ -5,10 +5,16 @@ import net.customware.gwt.dispatch.shared.Action;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CouponDTO;
 
-public class PurchasedCouponAction implements Action<PurchaseCouponResult> { 
+public class PurchasedCouponAction implements Action<PurchaseCouponResult> {
+	public enum ResultStatus {
+		SUCCESS,
+		FAILED;
+	}
+	
 	private AccountDTO buyer;
 	private CouponDTO coupon;
-	private int couponTransactionId;
+	private String couponTransactionId;
+	private ResultStatus resultStatus;
 	
 	public PurchasedCouponAction() {
   }
@@ -29,11 +35,19 @@ public class PurchasedCouponAction implements Action<PurchaseCouponResult> {
 	  this.buyer = buyer;
   }
 
-	public int getCouponTransactionId() {
+	public String getCouponTransactionId() {
 		return couponTransactionId;
 	}
 
-	public void setCouponTransactionId(int couponTransactionId) {
+	public void setCouponTransactionId(String couponTransactionId) {
 		this.couponTransactionId = couponTransactionId;
+	}
+
+	public ResultStatus getResultStatus() {
+		return resultStatus;
+	}
+
+	public void setResultStatus(ResultStatus resultStatus) {
+		this.resultStatus = resultStatus;
 	}
 }
