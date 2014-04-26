@@ -69,7 +69,6 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.overlay.GoogleWalletResponse;
 import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
 import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.FieldVerifier;

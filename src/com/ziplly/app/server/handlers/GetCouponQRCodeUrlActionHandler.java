@@ -2,6 +2,8 @@ package com.ziplly.app.server.handlers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -48,13 +50,19 @@ public class GetCouponQRCodeUrlActionHandler extends AbstractAccountActionHandle
 		GetCouponQRCodeUrlResult result = new GetCouponQRCodeUrlResult();
 		try {
 			CouponTransaction txn = couponTransactionDao.findById(action.getCouponTransactionId());
-			String qrcode = couponBli.getQrcodeUrl(txn.getBuyer().getAccountId(), 
-					txn.getCoupon().getTweet().getSender().getAccountId(), 
-					txn.getCoupon().getCouponId());
-			result.setUrl(qrcode);
+			
+			// Check if the current user is the buyer
+			if (!txn.getBuyer().equals(session.getAccount())) {
+				throw new AccessError(String.format("User doesn't have access to this resource"));
+			}
+			
+			String qrcodeUrl = couponBli.getQrcodeUrl(txn);
+			result.setUrl(qrcodeUrl);
 		} catch(NoResultException nre) {
 			throw new AccessError();
-		}
+		} catch (UnsupportedEncodingException e) {
+			throw new InternalError("Problem encountered in reading coupon");
+    }
 		
 		return result;
   }

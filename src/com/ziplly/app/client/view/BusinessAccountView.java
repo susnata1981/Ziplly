@@ -79,7 +79,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		String smallfont();
 	}
 
-	private static final String TWEET_BOX_WIDTH = "94%";
+	private static final String TWEET_BOX_WIDTH = "97%";
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
@@ -228,6 +228,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		notificationWidget = new NotificationWidget();
 		StyleHelper.show(profileImagePanel.getElement(), false);
 		setupHandlers();
+		displayCouponTransactionPanel(false);
 	}
 
 	private void setupHandlers() {

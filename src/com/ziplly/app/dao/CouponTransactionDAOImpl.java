@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.hibernate.Criteria;
-
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -44,7 +42,8 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
 		Preconditions.checkNotNull(accountId);
 		
 		EntityManager em = entityManagerProvider.get();
-		Query query = em.createQuery("from CouponTransaction where buyer.accountId = :accountId and status != :status")
+		Query query = em.createQuery("from CouponTransaction where buyer.accountId = :accountId and status != :status"
+				+ " order by timeCreated desc")
 				.setParameter("accountId", accountId)
 				.setParameter("status", TransactionStatus.PENDING.name())
 				.setFirstResult(start)
@@ -69,7 +68,8 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
   public Long findCouponTransactionCountByAccountId(Long accountId) {
 		Preconditions.checkNotNull(accountId);
 		EntityManager em = entityManagerProvider.get();
-		Query query = em.createQuery("select count(distinct c.transactionId) from CouponTransaction c where buyer.accountId = :accountId and status != :status")
+		Query query = em.createQuery("select count(distinct c.transactionId) from CouponTransaction c "
+				+ "where buyer.accountId = :accountId and status != :status")
 				.setParameter("accountId", accountId)
 				.setParameter("status", TransactionStatus.PENDING.name());
 		

@@ -2,10 +2,12 @@ package com.ziplly.app.client.view;
 
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.CellTable;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.TooltipCellDecorator;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.NumberCell;
@@ -15,11 +17,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.CouponTransactionDTO;
 
 public class CouponTransactionView extends AbstractView implements View<CouponTransactionView.CouponTransactionPresenter> {
@@ -37,6 +39,8 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	interface CouponTransactionViewUiBinder extends UiBinder<Widget, CouponTransactionView> {
 	}
 
+	@UiField
+	Alert message;
 	@UiField(provided = true)
 	SimplePager pager;
 	@UiField(provided = true)
@@ -54,6 +58,7 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		buildTable();
 		initWidget(uiBinder.createAndBindUi(this));
 		setupEventHandler();
+		StyleHelper.show(message.getElement(), false);
 	}
 
 	private void setupEventHandler() {
@@ -73,6 +78,17 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	}
 	
 	public void displayCouponTransactions(List<CouponTransactionDTO> transactions) {
+		StyleHelper.show(message.getElement(), false);
+		
+		if (transactions == null) {
+			return;
+		}
+		
+		if (transactions.isEmpty()) {
+			displayMessage(StringConstants.NO_COUPON_TRANSACTIONS, AlertType.WARNING);
+			return;
+		}
+		
 		couponTransactionTable.setRowData(start, transactions);
 	}
 	
@@ -136,7 +152,6 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 
 			@Override
       public void update(int index, CouponTransactionDTO object, String value) {
-				Window.alert("txn id="+object.getTransactionId());
 				presenter.getCouponQRCodeUrl(object.getTransactionId());
       }
 			
@@ -157,4 +172,10 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	public void loadCouponTransaction() {
 		presenter.getCouponTransactions(start, pageSize);
   }
+	
+	public void displayMessage(String msg, AlertType type) {
+		message.setText(msg);
+		message.setType(type);
+		StyleHelper.show(message.getElement(), true);
+	}
 }

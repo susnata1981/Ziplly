@@ -26,6 +26,12 @@ public class ServiceModule extends AbstractModule {
 	@Target(value = {ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
 	public @interface CouponRedeemEndpoint {
 	}
+
+	@BindingAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(value = {ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+	public @interface ApplicationLoginUrl {
+	}
 	
 	@Override
   protected void configure() {
@@ -39,6 +45,7 @@ public class ServiceModule extends AbstractModule {
 
     install(new CryptoModule());
     
+    bind(SessionBLI.class).to(SessionBLIImpl.class).in(Singleton.class);
 		bind(TweetBLI.class).to(TweetBLIImpl.class).in(Singleton.class);
 		bind(AccountBLI.class).to(AccountBLIImpl.class).in(Singleton.class);
 		bind(AdminBLI.class).to(AdminBLIImpl.class).in(Singleton.class);
@@ -65,10 +72,19 @@ public class ServiceModule extends AbstractModule {
 	@CouponRedeemEndpoint
 	public String getCouponRedeemEndpoint() {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-			return "http://127.0.0.1:8888/ziplly/redeem?code=";
+			return "http://127.0.0.1:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997#tweet:couponredeem:";
 		} else {
-			return "http://www.ziplly.com/ziplly/redeem?code=";
+			return "http://www.ziplly.com#tweet:couponredeem:";
 		}
 	}
 	
+	@Provides
+	@ApplicationLoginUrl
+	public String getApplicationLoginUrl() {
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
+			return "http://127.0.0.1:8888#login";
+		} else {
+			return "http://www.ziplly.com#login";
+		}
+	}
 }

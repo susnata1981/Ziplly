@@ -11,6 +11,8 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
+import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -29,6 +31,8 @@ import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
+import com.ziplly.app.shared.RedeemCouponAction;
+import com.ziplly.app.shared.RedeemCouponResult;
 
 public class TweetDetailsActivity extends AbstractActivity implements TweetPresenter {
 	private TweetDetailsPlace place;
@@ -83,9 +87,52 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 	@Override
 	protected void doStart() {
-		HomePlace homePlace = new HomePlace();
-		homePlace.setTweetId(place.getTweetId());
-		placeController.goTo(homePlace);
+		if (place.getCouponRedeemCode() != null) {
+			viewProvider.get(new AsyncCallback<TweetDetailsView>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+
+				@Override
+				public void onSuccess(TweetDetailsView result) {
+					TweetDetailsActivity.this.view = result;
+					TweetDetailsActivity.this.view.setPresenter(TweetDetailsActivity.this);
+					go(TweetDetailsActivity.this.panel);
+					displayCoupon();
+				}
+			});
+		} else if (place.getTweetId() > 0){
+			HomePlace homePlace = new HomePlace();
+			homePlace.setTweetId(place.getTweetId());
+			placeController.goTo(homePlace);
+		} else {
+			placeController.goTo(new HomePlace());
+		}
+	}
+
+	private void displayCoupon() {
+		dispatcher.execute(
+		    new RedeemCouponAction(place.getCouponRedeemCode()),
+		    new DispatcherCallbackAsync<RedeemCouponResult>() {
+
+			    @Override
+			    public void onSuccess(RedeemCouponResult result) {
+			    	view.display(result.getTweet());
+				    view.displayMessage(StringConstants.REDEEM_COUPON_SUCCESSFUL, AlertType.SUCCESS);
+			    }
+
+			    @Override
+			    public void onFailure(Throwable th) {
+				    if (th instanceof InvalidCouponException) {
+					    view.displayMessage(StringConstants.INVALID_COUPON, AlertType.ERROR);
+				    } else if (th instanceof CouponAlreadyUsedException) {
+					    view.displayMessage(StringConstants.COUPON_ALREADY_USED, AlertType.ERROR);
+				    } else {
+					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				    }
+			    }
+		    });
 	}
 
 	@Override
@@ -99,6 +146,11 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 			@Override
 			public void onSuccess(TweetDetailsView result) {
+				if (place.getCouponRedeemCode() != null) {
+					placeController.goTo(new LoginPlace());
+					return;
+				}
+
 				TweetDetailsActivity.this.view = result;
 				view.setPresenter(TweetDetailsActivity.this);
 				if (place.getTweetId() != null) {
@@ -118,6 +170,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 	@Override
 	public void go(AcceptsOneWidget container) {
+		container.setWidget(view);
 	}
 
 	@Override
@@ -175,22 +228,22 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	}
 
 	@Override
-  public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {
+	public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {
 		placeController.goTo(new LoginPlace());
-  }
+	}
 
 	@Override
-  public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+	public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
 		placeController.goTo(new LoginPlace());
-  }
+	}
 
 	@Override
-  public void initializeUploadForm(FormUploadWidget formUploadWidget) {
+	public void initializeUploadForm(FormUploadWidget formUploadWidget) {
 		placeController.goTo(new LoginPlace());
-  }
+	}
 
 	@Override
-  public void purchaseCoupon(GoogleWalletSuccessResult result, CouponDTO coupon) {
+	public void purchaseCoupon(GoogleWalletSuccessResult result, CouponDTO coupon) {
 		placeController.goTo(new LoginPlace());
-  }
+	}
 }

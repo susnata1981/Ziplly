@@ -84,16 +84,24 @@ public class PurchaseCouponActionHandler extends
 		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
 		purchasedCoupon.setCouponTransaction(couponTransaction);
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
-		purchasedCoupon.setQrcode(couponBLI.getQrcodeUrl(
-				action.getBuyer().getAccountId(), 
-				coupon.getTweet().getSender().getAccountId(),
-				coupon.getCouponId()));
+//		try {
+//	    purchasedCoupon.setQrcode(couponBLI.getQrcode(couponTransaction));
+//    } catch (Exception e) {
+//    	throw new InternalError(String.format("Failed to generate coupon code"));
+//    }
 		
 		purchasedCoupon.setTimeUpdated(now);
 		purchasedCoupon.setTimeCreated(now);
 		couponTransaction.setPurchasedCoupon(purchasedCoupon);
 		
 		couponTransactionDao.save(couponTransaction);
+		
+		try {
+	    purchasedCoupon.setQrcode(couponBLI.getQrcode(couponTransaction));
+	    couponTransactionDao.update(couponTransaction);
+    } catch (Exception e) {
+    	throw new InternalError(String.format("Failed to generate coupon code"));
+    }
 		
 		PurchaseCouponResult result = new PurchaseCouponResult();
 		result.setCouponTransaction(EntityUtil.clone(couponTransaction));

@@ -24,7 +24,6 @@ public class PlaceUtils {
 				StringConstants.GENDER_TOKEN + StringConstants.PLACE_VALUE_SEPARATOR + gender.name();
 	}
 
-
 	/**
 	 * For Business
 	 * @param accountId
@@ -48,6 +47,7 @@ public class PlaceUtils {
 
 	public static String getPlaceTokenForTweetDetails(TweetDTO tweet) {
 		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN
-		    + StringConstants.PLACE_SEPARATOR + tweet.getTweetId();
+		    + StringConstants.PLACE_SEPARATOR 
+		    + tweet.getTweetId();
 	}
 }
