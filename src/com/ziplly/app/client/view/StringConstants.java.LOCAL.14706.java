@@ -143,5 +143,4 @@ public class StringConstants {
 	public static final String COUPON_ALREADY_USED = "Coupon already used";
 	public static final String ACCESS_ERROR = "User don't have permission to access this resource";
 	public static final String NO_COUPON_TRANSACTIONS = "No coupon transaction to display";
-	public static final String DISPLAY_MESSAGE_VIEW_TIME = "app.feature.displayMessageTime";
 }

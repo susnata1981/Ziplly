@@ -48,6 +48,9 @@
     <property name="app.feature.enableRestrictedRegistration" value="false" />
     
     <property name="backend_instance_name_1" value="nagraj-1" />
+    
+    <!-- Message display time in msec -->
+    <property name="app.feature.displayMessageTime" value="5000" />
   </system-properties>
 
   

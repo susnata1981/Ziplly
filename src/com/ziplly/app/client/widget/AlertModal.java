@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.view.StringConstants;
 
 public class AlertModal extends Composite {
 
@@ -23,8 +24,12 @@ public class AlertModal extends Composite {
 	@UiField
 	Alert alert;
 
+	private int displayTime;
+	
 	public AlertModal() {
 		initWidget(uiBinder.createAndBindUi(this));
+		String property = System.getProperty(StringConstants.DISPLAY_MESSAGE_VIEW_TIME, "5000");
+		displayTime = Integer.parseInt(property);
 	}
 
 	public void showMessage(String msg, AlertType type) {
@@ -38,7 +43,7 @@ public class AlertModal extends Composite {
 				modal.hide();
 			}
 		};
-		timer.schedule(1000);
+		timer.schedule(displayTime);
 	}
 
 }

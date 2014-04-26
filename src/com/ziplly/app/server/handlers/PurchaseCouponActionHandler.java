@@ -13,8 +13,10 @@ import javax.persistence.NoResultException;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.SoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.dao.AccountDAO;
@@ -58,38 +60,36 @@ public class PurchaseCouponActionHandler extends
 		checkNotNull(action.getCoupon());
 
 		validateSession();
-//		checkIfAccountEligible(action.getBuyer(), action.getCoupon());
+		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(Long.valueOf(""+ action.getCouponTransactionId()), TransactionStatus.PENDING);
+		checkNotNull(couponTransaction);
+		
+		try {
+			accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), action.getCoupon().getCouponId());
+		} catch(DispatchException ex) {
+			//TODO: log the exception
+			couponTransaction.setStatus(TransactionStatus.ELIGIBILITY_FAILED);
+			couponTransactionDao.save(couponTransaction);
+			throw ex;
+		}
 		
 		// Update quantity 
 		Coupon coupon = couponTransactionDao.findByCouponId(action.getCoupon().getCouponId());
-		if (coupon.getQuantityPurchased() == coupon.getQuanity()) {
-			// Log error
-			throw new SoldOutException(String.format("Coupon: %s sold out", coupon.getDescription()));
-		}
-		
 		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
 		
-		CouponTransaction couponTransaction = new CouponTransaction();
-		couponTransaction.setBuyer(EntityUtil.convert(action.getBuyer()));
-		couponTransaction.setCoupon(coupon);
-		couponTransaction.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
-		couponTransaction.setStatus(TransactionStatus.ACTIVE);
+		couponTransaction.setStatus(TransactionStatus.PENDING_COMPLETE);
+		//In dev environment set the transaction to complete
+		if(getEnvironment() == Environment.DEVEL) {
+			couponTransaction.setStatus(TransactionStatus.COMPLETE);
+		}
 		
-		// Set date
+		// Set update date
 		Date now = new Date();
 		couponTransaction.setTimeUpdated(now);
-		couponTransaction.setTimeCreated(now);
 		
 		// Set QR code
 		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
 		purchasedCoupon.setCouponTransaction(couponTransaction);
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
-//		try {
-//	    purchasedCoupon.setQrcode(couponBLI.getQrcode(couponTransaction));
-//    } catch (Exception e) {
-//    	throw new InternalError(String.format("Failed to generate coupon code"));
-//    }
-		
 		purchasedCoupon.setTimeUpdated(now);
 		purchasedCoupon.setTimeCreated(now);
 		couponTransaction.setPurchasedCoupon(purchasedCoupon);
@@ -108,29 +108,15 @@ public class PurchaseCouponActionHandler extends
 		return result;
 	}
 
-	private void checkIfAccountEligible(AccountDTO buyer, CouponDTO coupon) throws UsageLimitExceededException {
-		checkArgument(session.getAccount().getAccountId() == buyer.getAccountId());
-		
-		// Should the publisher be allowed to buy??
-		try {
-			// Vipin (TODO): add a check here (call into the bli)
-//			List<CouponTransaction> transactions =
-//			    couponTransactionDao.findCouponTransactionByAccountId(buyer.getAccountId());
-//
-//			if (transactions.size() == 0) {
-//				return;
-//			}
-			
-//			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
-//				throw new UsageLimitExceededException();
-//			}
-		} catch (NoResultException nre) {
-			return;
-		}
-	}
-
 	@Override
 	public Class<PurchasedCouponAction> getActionType() {
 		return PurchasedCouponAction.class;
+	}
+	
+	public Environment getEnvironment() {
+		Environment env =
+		    (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
+		        ? Environment.PROD : Environment.DEVEL;
+		return env;
 	}
 }

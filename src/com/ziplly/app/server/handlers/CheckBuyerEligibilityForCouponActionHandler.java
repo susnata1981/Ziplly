@@ -55,6 +55,7 @@ public class CheckBuyerEligibilityForCouponActionHandler
 		Coupon coupon = couponDao.findById(action.getCoupon().getCouponId());
 		
 		validateSession();
+		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(),action.getCoupon().getCouponId());
 		try {
 			CouponTransaction cTransaction = new CouponTransaction();
 			cTransaction.setBuyer(session.getAccount());

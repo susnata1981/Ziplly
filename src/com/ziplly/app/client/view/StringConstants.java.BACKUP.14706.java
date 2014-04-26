@@ -138,10 +138,13 @@ public class StringConstants {
 	public static final String FAILED_TO_ADD_NEIGHBORHOOD = "Sorry, we couldn't add your neighborhood";
 	public static final String FAILED_TO_BUY_COUPON = "Failed to buy coupon";
 	public static final String PUBLISH_COUPON_CONFIRMATION = "Are you sure you want to publish your coupon?";
+<<<<<<< HEAD
 	public static final String REDEEM_COUPON_SUCCESSFUL = "Successfully redeemed coupon";
 	public static final String INVALID_COUPON = "Invalid coupon code";
 	public static final String COUPON_ALREADY_USED = "Coupon already used";
 	public static final String ACCESS_ERROR = "User don't have permission to access this resource";
 	public static final String NO_COUPON_TRANSACTIONS = "No coupon transaction to display";
+=======
 	public static final String DISPLAY_MESSAGE_VIEW_TIME = "app.feature.displayMessageTime";
+>>>>>>> ca210d61fbd35a947f2ab80db44a5f2da38e929b
 }

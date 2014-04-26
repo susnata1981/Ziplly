@@ -8,6 +8,7 @@ import com.ziplly.app.model.CouponDTO;
 public class PurchasedCouponAction implements Action<PurchaseCouponResult> { 
 	private AccountDTO buyer;
 	private CouponDTO coupon;
+	private int couponTransactionId;
 	
 	public PurchasedCouponAction() {
   }
@@ -27,4 +28,12 @@ public class PurchasedCouponAction implements Action<PurchaseCouponResult> {
 	public void setBuyer(AccountDTO buyer) {
 	  this.buyer = buyer;
   }
+
+	public int getCouponTransactionId() {
+		return couponTransactionId;
+	}
+
+	public void setCouponTransactionId(int couponTransactionId) {
+		this.couponTransactionId = couponTransactionId;
+	}
 }

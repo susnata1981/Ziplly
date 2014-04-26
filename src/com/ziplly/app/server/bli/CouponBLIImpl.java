@@ -109,7 +109,8 @@ public class CouponBLIImpl implements CouponBLI {
 		CouponTransaction transaction = couponTransactionDao.findById(couponCodeDetails.getCouponTransactionId());
 		PurchasedCoupon purchasedCoupon = transaction.getPurchasedCoupon();
 
-		if (transaction.getStatus() != TransactionStatus.ACTIVE || purchasedCoupon == null) {
+		if (transaction.getStatus() != TransactionStatus.COMPLETE || purchasedCoupon == null) {
+			//TODO(vipin) throw a different error?
 			throw new InvalidCouponException(encodedCouponData);
 		}
 
