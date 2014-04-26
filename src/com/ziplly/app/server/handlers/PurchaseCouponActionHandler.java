@@ -19,6 +19,7 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.SoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.EntityUtil;
@@ -77,8 +78,11 @@ public class PurchaseCouponActionHandler extends
 		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
 		
 		couponTransaction.setStatus(TransactionStatus.PENDING_COMPLETE);
-		//In dev environment set the transaction to complete
-		if(getEnvironment() == Environment.DEVEL) {
+		
+		// complete purchase in first callback
+		boolean completePurchase = Boolean.valueOf(System.getProperty(
+				StringConstants.COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG, "true"));
+		if(completePurchase) {
 			couponTransaction.setStatus(TransactionStatus.COMPLETE);
 		}
 		
@@ -110,12 +114,5 @@ public class PurchaseCouponActionHandler extends
 	@Override
 	public Class<PurchasedCouponAction> getActionType() {
 		return PurchasedCouponAction.class;
-	}
-	
-	public Environment getEnvironment() {
-		Environment env =
-		    (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-		        ? Environment.PROD : Environment.DEVEL;
-		return env;
 	}
 }
