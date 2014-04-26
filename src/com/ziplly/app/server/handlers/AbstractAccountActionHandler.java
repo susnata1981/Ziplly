@@ -44,20 +44,18 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>, R extend
 		this.accountBli = accountBli;
 	}
 
-	protected boolean validateSession() throws NeedsLoginException {
+	final void validateSession() throws NeedsLoginException {
 		Long existingUid = (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 		if (existingUid != null) {
 			try {
 				this.session = sessionDao.findSessionByUid(existingUid);
-				if (isValidSession(session)) {
-					return true;
+				if (!isValidSession(session)) {
+					throw new NeedsLoginException();
 				}
-			} catch (NumberFormatException e) {
-				throw e;
 			} catch (NotFoundException e) {
+				throw new NeedsLoginException();
 			}
 		}
-		throw new NeedsLoginException();
 	}
 
 	protected boolean isValidSession(Session session) {

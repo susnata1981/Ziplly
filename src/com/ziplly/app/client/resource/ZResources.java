@@ -3,6 +3,7 @@ package com.ziplly.app.client.resource;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.resources.client.DataResource.DoNotEmbed;
 import com.google.gwt.resources.client.ImageResource;
 
@@ -51,4 +52,7 @@ public interface ZResources extends ClientBundle {
 
 	@Source("zstyle.css")
 	Styles style();
+	
+	@Source("media.css")
+	TextResource mediaQueries();
 }

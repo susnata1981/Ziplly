@@ -16,4 +16,5 @@ public interface CouponTransactionDAO {
 	CouponTransaction findById(Long couponTransactionId);
 	CouponTransaction findCouponTransactionByIdAndStatus(Long transactionId,
 			TransactionStatus status);
+	Long findCouponTransactionCountByAccountId(Long accountId);
 }

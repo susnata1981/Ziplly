@@ -442,7 +442,11 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			
 			@Override
 			public void onFailure(Throwable th) {
-				Window.alert(th.getLocalizedMessage());
+				if (th instanceof AccessError) {
+					view.displayMessage(StringConstants.ACCESS_ERROR, AlertType.ERROR);
+				} else {
+					Window.alert(th.getLocalizedMessage());
+				}
 			}
 		});
 	}
@@ -455,7 +459,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
       public void onSuccess(GetCouponQRCodeUrlResult result) {
-				Window.alert(result.getUrl());
 				view.displayQrCode(result.getUrl());
       }
 		});

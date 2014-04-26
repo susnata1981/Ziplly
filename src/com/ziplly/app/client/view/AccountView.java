@@ -147,7 +147,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
-
+	private GoogleMapWidget mapWidget = new GoogleMapWidget();
+	
 	private String tweetWidgetWidth = "90%";
 	private String tweetBoxWidth = "93%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
@@ -227,8 +228,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		});
 	}
 
-	private GoogleMapWidget mapWidget = new GoogleMapWidget();
-	
 	@Override
 	public void displayMap(String address) {
 		mapWidget.displayMap(locationDiv, address);
@@ -307,6 +306,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void setPresenter(AccountPresenter<PersonalAccountDTO> presenter) {
 		this.presenter = presenter;
+		couponTransactionView.setPresenter(presenter);
 	}
 
 	@Override

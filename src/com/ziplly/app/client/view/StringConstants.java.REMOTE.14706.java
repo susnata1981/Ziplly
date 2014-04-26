@@ -125,7 +125,6 @@ public class StringConstants {
 	public static final String FAILURE_SENDING_VERIFICATION_EMAIL =
 	    "Failed to send verification email";
 	public static final String TWEET_DETAILS_TOKEN = "tweet";
-	public static final String COUPON_REDEEM_TOKEN = "couponredeem";
 	public static final String REPLY_ANCHOR_POPOVER_TEXT = "Reply to the person directly";
 	public static final String CREATE_LINK_ANCHOR_POPOVER_TEXT =
 	    "Get link to the above message for sharing with your friends";
@@ -138,11 +137,5 @@ public class StringConstants {
 	public static final String FAILED_TO_ADD_NEIGHBORHOOD = "Sorry, we couldn't add your neighborhood";
 	public static final String FAILED_TO_BUY_COUPON = "Failed to buy coupon";
 	public static final String PUBLISH_COUPON_CONFIRMATION = "Are you sure you want to publish your coupon?";
-	public static final String REDEEM_COUPON_SUCCESSFUL = "Successfully redeemed coupon";
-	public static final String INVALID_COUPON = "Invalid coupon code";
-	public static final String COUPON_ALREADY_USED = "Coupon already used";
-	public static final String ACCESS_ERROR = "User don't have permission to access this resource";
-	public static final String NO_COUPON_TRANSACTIONS = "No coupon transaction to display";
 	public static final String DISPLAY_MESSAGE_VIEW_TIME = "app.feature.displayMessageTime";
-	public static final String COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG = "app.feature.completeCouponPurchaseOnFirstCallBack";
 }

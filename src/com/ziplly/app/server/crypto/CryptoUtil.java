@@ -36,9 +36,7 @@ public class CryptoUtil {
 	    NoSuchPaddingException,
 	    InvalidKeyException,
 	    UnsupportedEncodingException, EncoderException {
-		// Get a cipher object.
-//		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-		System.out.println("Encryption text="+message);
+
 		cipher.init(Cipher.ENCRYPT_MODE, key);
 
 		// Gets the raw bytes to encrypt, UTF8 is needed for
@@ -48,10 +46,6 @@ public class CryptoUtil {
 		// encrypt using the cypher
 		byte[] raw = cipher.doFinal(stringBytes);
 
-		// converts to base64 for easier display.
-		// BASE64Encoder encoder = new BASE64Encoder();
-		// String base64 = encoder.encode(raw);
-		System.out.println("Encrypted text="+encode(raw));
 		// return base64;
 		return new String(encode(raw));
 	}
@@ -63,13 +57,8 @@ public class CryptoUtil {
 	    BadPaddingException,
 	    IOException {
 
-		// Get a cipher object.
-//		Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		cipher.init(Cipher.DECRYPT_MODE, key);
 
-		// decode the BASE64 coded message
-		// BASE64Decoder decoder = new BASE64Decoder();
-		// byte[] raw = decoder.decodeBuffer(encrypted);
 		byte[] raw = decode(encrypted);
 
 		// decode the message
@@ -79,34 +68,6 @@ public class CryptoUtil {
 		String clear = new String(stringBytes, "UTF8");
 		return clear;
 	}
-
-//	public CryptoUtil(String message) throws EncoderException {
-//		try {
-//			System.out.println("clear message: " + message);
-//
-//
-//			String encrypted = encrypt(message);
-//			System.out.println("encrypted message: " + encrypted);
-//
-//			String decrypted = decrypt(encrypted);
-//			System.out.println("decrypted message: " + decrypted);
-//
-//		} catch (NoSuchAlgorithmException e) {
-//			e.printStackTrace();
-//		} catch (NoSuchPaddingException e) {
-//			e.printStackTrace();
-//		} catch (InvalidKeyException e) {
-//			e.printStackTrace();
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		} catch (IllegalBlockSizeException e) {
-//			e.printStackTrace();
-//		} catch (BadPaddingException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	protected byte[] encode(byte[] data) throws EncoderException {
 		return Base64.encodeBase64(data);

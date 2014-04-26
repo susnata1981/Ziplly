@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.hibernate.Criteria;
-
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -70,6 +68,7 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
     List<CouponTransaction> coupons = query.getResultList();
 		return coupons;
   }
+	
 	@Transactional
 	@Override
   public Coupon findByCouponId(Long couponId) {
@@ -78,6 +77,19 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
 		Query query = em.createQuery("from Coupon where couponId = :couponId")
 				.setParameter("couponId", couponId);
 		return (Coupon) query.getSingleResult();
+  }
+
+	@Override
+  public Long findCouponTransactionCountByAccountId(Long accountId) {
+		Preconditions.checkNotNull(accountId);
+		EntityManager em = entityManagerProvider.get();
+		Query query = em.createQuery("select count(distinct c.transactionId) from CouponTransaction c "
+				+ "where buyer.accountId = :accountId and status = :status")
+				.setParameter("accountId", accountId)
+				.setParameter("status", TransactionStatus.COMPLETE.name());
+		
+		Long count = (Long) query.getSingleResult();
+		return count;
   }
 
 	@Override
@@ -90,9 +102,9 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
 		
 		EntityManager em = entityManagerProvider.get();
 		Query query = em.createQuery("from CouponTransaction where buyer.accountId = :accountId "
-				+ "and coupon.couponId = :couponId and status != :status")
+				+ "and coupon.couponId = :couponId and status = :status")
 				.setParameter("accountId", accountId)
-				.setParameter("status", TransactionStatus.PENDING.name())
+				.setParameter("status", TransactionStatus.COMPLETE.name())
 				.setParameter("couponId", couponId);
 		
 		@SuppressWarnings("unchecked")
