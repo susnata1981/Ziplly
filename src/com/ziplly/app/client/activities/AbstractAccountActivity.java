@@ -308,7 +308,19 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				Window.alert("success");
+				//Window.alert("success");
+				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
+				AlertType alertType = AlertType.SUCCESS;
+				
+				switch(result.getCouponTransaction().getStatus()) {
+					case FAILURE:
+						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
+						alertType = AlertType.ERROR;
+						break;
+				default:
+					break;
+				}
+				view.displayMessage(displayMessage, alertType);
 			}
 		});
 	}

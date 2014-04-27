@@ -741,7 +741,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onFailure(GoogleWalletFailureResult result) {
 				presenter.purchaseCoupon(result.getRequest().getRequest().getTransactionId() + "", 
 						PurchasedCouponAction.ResultStatus.FAILED, tweet.getCoupon());
-				Window.alert("Sorry, your coupon purchase failed.");
 			}
 		});
 		

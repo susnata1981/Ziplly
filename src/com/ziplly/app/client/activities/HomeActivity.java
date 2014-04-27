@@ -313,8 +313,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	@Override
 	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
-		//TODO: This action is similar to what is implemented in the Abstract class,
-		//this implementation is not needed 
 		PurchasedCouponAction action = new PurchasedCouponAction();
 		action.setCoupon(coupon);
 		action.setBuyer(ctx.getAccount());
@@ -329,7 +327,19 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				Window.alert("success");
+				//Window.alert("success");
+				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
+				AlertType alertType = AlertType.SUCCESS;
+				
+				switch(result.getCouponTransaction().getStatus()) {
+					case FAILURE:
+						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
+						alertType = AlertType.ERROR;
+						break;
+				default:
+					break;
+				}
+				view.displayMessage(displayMessage, alertType);
 			}
 		});
 	}

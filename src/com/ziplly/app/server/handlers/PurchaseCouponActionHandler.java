@@ -82,11 +82,11 @@ public class PurchaseCouponActionHandler extends
 			couponTransactionDao.save(couponTransaction);
 			throw ex;
 		}
-		
+
 		// Update quantity 
-		Coupon coupon = couponTransactionDao.findByCouponId(action.getCoupon().getCouponId());
-		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
+		couponTransaction.getCoupon().setQuantityPurchased(couponTransaction.getCoupon().getQuantityPurchased() + 1);
 		
+		//update the status
 		couponTransaction.setStatus(TransactionStatus.PENDING_COMPLETE);
 		
 		// complete purchase in first callback
@@ -108,7 +108,7 @@ public class PurchaseCouponActionHandler extends
 		purchasedCoupon.setTimeCreated(now);
 		couponTransaction.setPurchasedCoupon(purchasedCoupon);
 		
-		couponTransactionDao.save(couponTransaction);
+		//couponTransactionDao.save(couponTransaction);
 		
 		try {
 			purchasedCoupon.setQrcode(couponBLI.getQrcode(couponTransaction));

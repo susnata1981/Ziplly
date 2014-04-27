@@ -145,4 +145,6 @@ public class StringConstants {
 	public static final String NO_COUPON_TRANSACTIONS = "No coupon transaction to display";
 	public static final String DISPLAY_MESSAGE_VIEW_TIME = "app.feature.displayMessageTime";
 	public static final String COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG = "app.feature.completeCouponPurchaseOnFirstCallBack";
+	public static final String COUPON_PURCHASE_FAILED = "Sorry, your coupon purchase failed. You were not charged for this coupon.";
+	public static final String COUPON_PURCHASE_SUCCESS = "Congratulations on your coupon purchase!!!";
 }
