@@ -51,6 +51,9 @@
     
     <!-- Message display time in msec -->
     <property name="app.feature.displayMessageTime" value="5000" />
+    
+    <!-- Complete the coupon purchase on first callback -->
+    <property name="app.feature.completeCouponPurchaseOnFirstCallBack" value="true" />
   </system-properties>
 
   

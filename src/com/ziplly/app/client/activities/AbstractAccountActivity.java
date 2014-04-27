@@ -36,7 +36,6 @@ import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;
@@ -261,15 +260,29 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	@Override
-	public void purchaseCoupon(final GoogleWalletSuccessResult result, final CouponDTO coupon) {
+	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
 		PurchasedCouponAction action = new PurchasedCouponAction();
 		action.setCoupon(coupon);
 		action.setBuyer(ctx.getAccount());
+		action.setCouponTransactionId(transactionId);
+		action.setResultStatus(resultStatus);
 		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				Window.alert("success");
+				//Window.alert("success");
+				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
+				AlertType alertType = AlertType.SUCCESS;
+				
+				switch(result.getCouponTransaction().getStatus()) {
+					case FAILURE:
+						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
+						alertType = AlertType.ERROR;
+						break;
+				default:
+					break;
+				}
+				view.displayMessage(displayMessage, alertType);
 			}
 		});
 	}

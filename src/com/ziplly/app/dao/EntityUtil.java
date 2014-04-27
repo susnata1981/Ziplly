@@ -598,6 +598,8 @@ public class EntityUtil {
 	}
 	
 	public static PurchasedCouponDTO clone(PurchasedCoupon coupon) {
+		if(coupon == null)
+			return null;
 		PurchasedCouponDTO resp = new PurchasedCouponDTO();
 		resp.setPurchasedCouponId(coupon.getPurchasedCouponId());
 		resp.setQrcode(coupon.getQrcode());
@@ -612,6 +614,7 @@ public class EntityUtil {
 	public static CouponTransactionDTO clone(CouponTransaction coupon) {
 		CouponTransactionDTO resp = new CouponTransactionDTO();
 		resp.setTransactionId(coupon.getTransactionId());
+		resp.setStatus(coupon.getStatus());
 		resp.setCoupon(clone(coupon.getCoupon()));
 		resp.setBuyer(convert(coupon.getBuyer()));
 		resp.setPurchasedCoupon(clone(coupon.getPurchasedCoupon()));
