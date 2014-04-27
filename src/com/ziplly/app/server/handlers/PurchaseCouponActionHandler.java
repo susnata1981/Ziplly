@@ -17,7 +17,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.ApplicationContext.Environment;
-import com.ziplly.app.client.exceptions.SoldOutException;
+import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponTransactionDAO;

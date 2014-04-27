@@ -14,7 +14,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.HashtagDAO;

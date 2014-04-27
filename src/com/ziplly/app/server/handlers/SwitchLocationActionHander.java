@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.LocationDAO;
@@ -45,7 +45,7 @@ public class SwitchLocationActionHander extends
 
 		Account loggedInAccount = session.getAccount();
 		if (!loggedInAccount.getLocations().contains(session.getLocation())) {
-			throw new AccessError(String.format("Unauthorized to switch locations"));
+			throw new AccessException(String.format("Unauthorized to switch locations"));
 		}
 
 		Location location = locationDao.findById(action.getLocationId());

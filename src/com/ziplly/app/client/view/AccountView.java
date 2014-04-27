@@ -14,7 +14,6 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -105,7 +104,9 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	SpanElement occupationSpan;
 	@UiField
 	HTMLPanel interestPanel;
-
+	@UiField
+	HTMLPanel accountUpdatePanel;
+	
 	// Account stats
 	@UiField
 	ProfileStatWidget tweetCountWidget;
@@ -152,12 +153,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	private String tweetWidgetWidth = "90%";
 	private String tweetBoxWidth = "93%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
-
-	private BasicDataFormatter basicDataFormatter =
-	    (BasicDataFormatter) AbstractValueFormatterFactory
-	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
-	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
-	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
 
 	@Inject
 	public AccountView(EventBus eventBus) {
@@ -212,10 +207,16 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		populateInterest();
 
 		// display tweets
-		StyleHelper.show(tweetBoxDiv.getElement(), true);
-		StyleHelper.show(profileSectionRow.getElement(), true);
+//		StyleHelper.show(tweetBoxDiv.getElement(), true);
+		displayTweetBox(true);
+//		StyleHelper.show(profileSectionRow.getElement(), true);
+		displayProfileSection(true);
 	}
 
+	private void displayTweetBox(boolean display) {
+		StyleHelper.show(tweetBoxDiv.getElement(), display);
+	}
+	
 	private void adjustProfileImagePanel() {
 		profileImage.addLoadHandler(new LoadHandler() {
 
@@ -289,8 +290,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
-		hideAccontUpdate();
-		tweetBoxDiv.getElement().getStyle().setDisplay(Display.NONE);
+		displayAccontUpdateSection(false);
+		displayTweetBox(false);
 	}
 
 	@Override
@@ -429,8 +430,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	}
 
 	@Override
-	public void hideProfileSection() {
-		StyleHelper.show(profileSectionRow.getElement(), false);
+	public void displayProfileSection(boolean display) {
+		StyleHelper.show(profileSectionRow.getElement(), display);
 	}
 
 	@Override
@@ -446,10 +447,11 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 			String uploadImageHtml = "There are no updates at this moment";
 			updateAlertBlock.setHTML(uploadImageHtml);
 		}
+		displayAccontUpdateSection(true);
 	}
 
-	private void hideAccontUpdate() {
-		StyleHelper.show(updateAlertBlock.getElement(), false);
+	private void displayAccontUpdateSection(boolean display) {
+		StyleHelper.show(accountUpdatePanel, display);
 	}
 
 	private boolean isAccountNotComplete() {

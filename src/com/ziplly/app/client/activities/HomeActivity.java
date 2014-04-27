@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -149,10 +149,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		    eligibilityAction,
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
 
-			    @Override
-			    public void onFailure(Throwable th) {
-				    view.displayMessage(th.getLocalizedMessage(), AlertType.ERROR);
-			    }
+//			    @Override
+//			    public void onFailure(Throwable th) {
+//				    view.displayMessage(th.getLocalizedMessage(), AlertType.ERROR);
+//			    }
 
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
@@ -347,10 +347,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
 		action.setFrom(ctx.getAccount().getEmail());
 		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
-			@Override
-			public void onFailure(Throwable th) {
-				view.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
-			}
+//			@Override
+//			public void onFailure(Throwable th) {
+//				view.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
+//			}
 
 			@Override
 			public void onSuccess(EmailAdminResult result) {
@@ -379,10 +379,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
 		    new DispatcherCallbackAsync<SendMessageResult>() {
-			    @Override
-			    public void onFailure(Throwable th) {
-				    view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
-			    }
+//			    @Override
+//			    public void onFailure(Throwable th) {
+//				    view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
+//			    }
 
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
@@ -438,14 +438,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		dispatcher.execute(
 		    new UpdateCommentAction(comment),
 		    new DispatcherCallbackAsync<UpdateCommentResult>() {
-			    @Override
-			    public void onFailure(Throwable th) {
-				    if (th instanceof AccessError) {
-					    view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				    } else {
-					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				    }
-			    }
+//			    @Override
+//			    public void onFailure(Throwable th) {
+//				    if (th instanceof AccessException) {
+//					    view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
+//				    } else {
+//					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+//				    }
+//			    }
 
 			    @Override
 			    public void onSuccess(UpdateCommentResult result) {
@@ -461,7 +461,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			// do nothing
 			return;
 		}
-		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler());
+		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler(tweet));
 	}
 
 	@Override
@@ -591,10 +591,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
 			    }
 			    
-			    public void onFailure(Throwable th) {
-				    //homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
-			    	Window.alert(th.getLocalizedMessage());
-			    }
+//			    public void onFailure(Throwable th) {
+//				    //homeView.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
+//			    	Window.alert(th.getLocalizedMessage());
+//			    }
 		    });
 	}
 
@@ -715,20 +715,29 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		void updateTweetLike(LoveDTO like);
 
 		void updateTweets(List<TweetDTO> tweets);
+
+		void refreshTweet(TweetDTO tweet);
 	}
 
 	private class CommunityDataHandler extends DispatcherCallbackAsync<GetCommunityWallDataResult> {
-		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof IllegalArgumentException) {
-				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-			} else if (th instanceof NotFoundException) {
+//		@Override
+//		public void onFailure(Throwable th) {
+//			if (th instanceof IllegalArgumentException) {
+//				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+//			} else if (th instanceof NotFoundException) {
+//				getCommunityWallData(TweetType.ALL);
+//				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+//			}
+//			eventBus.fireEvent(new LoadingEventEnd());
+//		}
+
+		public void postHandle(Throwable th) {
+			if (th instanceof NotFoundException) {
 				getCommunityWallData(TweetType.ALL);
-				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
 			}
 			eventBus.fireEvent(new LoadingEventEnd());
 		}
-
+		
 		@Override
 		public void onSuccess(GetCommunityWallDataResult result) {
 			if (result != null) {
@@ -748,15 +757,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		}
 
 		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof AccessError) {
-				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
-		}
-
-		@Override
 		public void onSuccess(DeleteTweetResult result) {
 			view.displayMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
 			view.removeTweet(tweet);
@@ -765,10 +765,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	private class GetNeighborhoodDetailsHandler extends
 	    DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
-		@Override
-		public void onFailure(Throwable th) {
-			Window.alert("Resutl: " + th.getLocalizedMessage());
-		}
 
 		@Override
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
@@ -777,12 +773,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
-
-		@Override
-		public void onFailure(Throwable caught) {
-			view.displayMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.SUCCESS);
-		}
-
 		@Override
 		public void onSuccess(CommentResult result) {
 			view.addComment(result.getComment());
@@ -799,47 +789,32 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
 		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof NeedsSubscriptionException) {
-				view.displayMessage(th.getMessage(), AlertType.ERROR);
-			} else if (th instanceof UsageLimitExceededException) {
-				view.displayMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
-			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
-		}
-
-		@Override
 		public void onSuccess(TweetResult result) {
 			view.insertTweet(result.getTweet());
 		}
 	}
 
 	private class TweetLikeActionHandler extends DispatcherCallbackAsync<LikeResult> {
-		@Override
-		public void onFailure(Throwable caught) {
-			if (caught instanceof DuplicateException) {
-				view.displayMessage(StringConstants.FAILED_TO_SAVE_LIKE, AlertType.ERROR);
-			}
-		}
 
 		@Override
 		public void onSuccess(LikeResult result) {
 			view.updateTweetLike(result.getLike());
-			view.displayMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
+			view.displayMessage(stringDefinitions.likeSaved(), AlertType.SUCCESS);
 		}
 	}
 
 	private class UpdateTweetHandler extends DispatcherCallbackAsync<UpdateTweetResult> {
-		@Override
-		public void onFailure(Throwable caught) {
-			if (caught instanceof AccessError) {
-				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				return;
-			}
-			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+		private TweetDTO tweet;
+
+		public UpdateTweetHandler(TweetDTO tweet) {
+			this.tweet = tweet;
 		}
 
+		@Override
+		public void onAccessError() {
+			HomeActivity.this.view.refreshTweet(tweet);
+		}
+		
 		@Override
 		public void onSuccess(UpdateTweetResult result) {
 			view.updateTweet(result.getTweet());

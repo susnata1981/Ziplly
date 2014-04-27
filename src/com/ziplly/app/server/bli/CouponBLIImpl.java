@@ -17,25 +17,18 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.dao.CouponTransactionDAO;
-import com.ziplly.app.dao.DAOModule;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponStatus;
 import com.ziplly.app.model.TransactionStatus;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.bli.ServiceModule.CouponRedeemEndpoint;
 import com.ziplly.app.server.crypto.CryptoUtil;
-import com.ziplly.app.server.guice.DispatchServletModule;
-import com.ziplly.app.server.handlers.ZipllyActionHandlerModule;
 
 public class CouponBLIImpl implements CouponBLI {
 	private static final String SEPARATOR = ":";
@@ -225,52 +218,5 @@ public class CouponBLIImpl implements CouponBLI {
 		public Long getCouponTransactionId() {
 			return couponTransactionId;
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		// System.out.println(CouponBLIImpl.encode(1L, 2L, 3L));
-		// String value = "This is Shaan, This is Shaan Basak";
-		// byte[] resp = Base64.encodeBase64(value.getBytes("utf-8"));
-		// System.out.println(new String(resp));
-		// byte[] result = Base64.decodeBase64(resp);
-		// System.out.println(new String(result));
-
-		Injector injector =
-		    Guice.createInjector(
-		        new DispatchServletModule(),
-		        new ZipllyActionHandlerModule(),
-		        new DAOModule(),
-		        new ServiceModule());
-
-		CouponBLI couponBli = injector.getInstance(CouponBLI.class);
-		CouponTransaction ct = new CouponTransaction();
-		ct.setTransactionId(48L);
-		Account buyer = new Account();
-		buyer.setAccountId(1L);
-		Account seller = new Account();
-		seller.setAccountId(1L);
-		Tweet t = new Tweet();
-		t.setSender(seller);
-		Coupon c = new Coupon();
-		c.setCouponId(2L);
-		c.setTweet(t);
-		ct.setCoupon(c);
-		ct.setBuyer(buyer);
-		String qrcode = couponBli.getQrcode(ct);
-		System.out.println("QR CODE="+qrcode);
-//		String url = URLDecoder.decode(couponBli.getQrcodeUrl(1L, 2L, 3L), "utf-8");
-//		String qrcodeEndpoint = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=";
-//		String redeemUrl = "http://www.ziplly.com/ziplly/redeem?code=";
-//		System.out.println("Encoded url = " + url);
-//		String encodedCouponData = url.substring(url.indexOf(redeemUrl) + redeemUrl.length());
-//		couponBli.redeemCoupon(encodedCouponData, 1L, 2L);
-	
-		String t1 = "Wj6y+EEyOsOm12P1azFEVA==";
-		String t1e =  "V3SlZzsoKAQE1kMvaa%2Bgyg%3D%3D"; //URLEncoder.encode(t1, "utf-8");
-		System.out.println(t1e);
-		System.out.println(URLDecoder.decode(t1e, "utf-8"));
-		
-		System.out.println(CouponCodeDetails.decode(qrcode));
-//		System.out.println(CouponCodeDetails.decode("zJCmOUUrQPKwy7SJdLBm6w=="));
 	}
 }

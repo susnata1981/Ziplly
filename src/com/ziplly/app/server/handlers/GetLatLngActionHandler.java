@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
@@ -160,7 +160,7 @@ public class GetLatLngActionHandler extends
 		return null;
 	}
 
-	private String callGeoEncodingService(String restUrl) throws InternalError {
+	private String callGeoEncodingService(String restUrl) throws InternalException {
 		URL url;
 		try {
 			url = new URL(restUrl);
@@ -179,7 +179,7 @@ public class GetLatLngActionHandler extends
 			br.close();
 			return response.toString();
 		} catch (IOException e) {
-			throw new InternalError();
+			throw new InternalException();
 		}
 	}
 

@@ -10,8 +10,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessError;
-import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
@@ -31,7 +29,6 @@ import com.ziplly.app.shared.DeleteTweetResult;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.ReportSpamResult;
@@ -112,7 +109,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	}
 
 	/**
-	 * Display people's profile
+	 * Display public personal profile
 	 */
 	@Override
 	public void displayPublicProfile(final Long accountId) {
@@ -121,7 +118,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			startInfiniteScrollThread();
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
-			go(panel);
 		}
 	}
 
@@ -147,14 +143,12 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
-//		getLatLng(ctx.getAccount(), new GetLatLngResultHandler());
 		displayMap(ctx.getCurrentNeighborhood());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		getAccountNotifications();
 		setupImageUpload();
 		// Display account updates
 		view.displayAccontUpdate();
-
 	}
 
 	private void setupImageUpload() {
@@ -206,11 +200,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		reportSpam(spam, new ReportSpamActionHandler());
 	}
 
-	/**
-	 * Called in response to AccountDetailsUpdateEvent event
-	 * 
-	 * @param result
-	 */
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
 		ctx.setAccountDetails(result);
 		if (view != null) {
@@ -237,16 +226,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		view.clear();
 	}
 
-	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
-		@Override
-		public void onSuccess(GetLatLngResult result) {
-			if (result != null) {
-				PersonalAccountActivity.this.view.displayLocationInMap(result);
-				log("FA="+result.getFormattedAddress());
-			}
-		}
-	}
-
 	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
 		@Override
@@ -254,7 +233,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			AccountDTO account = result.getAccount();
 			if (account instanceof PersonalAccountDTO) {
 				view.displayPublicProfile((PersonalAccountDTO) account);
-//				getLatLng(account, new GetLatLngResultHandler());
 				displayMap(result.getAccount().getLocations().get(0).getNeighborhood());
 			} else {
 				// take some action here
@@ -264,12 +242,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		@Override
 		public void onFailure(Throwable th) {
-			if (th instanceof NotFoundException) {
-				view.displayMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
-				view.hideProfileSection();
-			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
+			super.onFailure(th);
+			view.displayProfileSection(false);
 		}
 	}
 
@@ -300,15 +274,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			    public void onSuccess(DeleteTweetResult result) {
 				    view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
 				    view.removeTweet(tweet);
-			    }
-
-			    @Override
-			    public void onFailure(Throwable th) {
-				    if (th instanceof AccessError) {
-					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				    } else {
-					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				    }
 			    }
 		    });
 	}

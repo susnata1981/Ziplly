@@ -27,6 +27,7 @@ import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusines
 import com.ziplly.app.client.activities.HomeActivity.HomeView;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -96,6 +97,8 @@ public class ZClientModule extends AbstractGinModule {
 		bind(SignupPlace.class);
 		bind(BusinessAccountPlace.class);
 
+		bind(GlobalErrorHandler.class).in(Singleton.class);
+		
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
 		bind(ActivityMapper.class)
 		    .annotatedWith(Names.named("nav"))

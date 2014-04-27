@@ -2,6 +2,7 @@ package com.ziplly.app.model;
 
 public enum FeatureFlags {
 	EnableCouponFeature(true),
+	OneCouponPerIndividual(true),
 	EnablePaymentPlan(false);
 	
 	private boolean enable;
@@ -10,7 +11,7 @@ public enum FeatureFlags {
 		this.setEnable(enable);
   }
 
-	public boolean isEnable() {
+	public boolean isEnabled() {
 	  return enable;
   }
 

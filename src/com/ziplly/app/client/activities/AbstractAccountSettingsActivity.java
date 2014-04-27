@@ -25,7 +25,7 @@ import com.ziplly.app.shared.UpdatePasswordResult;
 public abstract class AbstractAccountSettingsActivity<T extends AccountDTO, V extends ISettingsView<T, ? extends AccountSettingsPresenter<T>>>
     extends AbstractActivity {
 	protected V view;
-
+	
 	public AbstractAccountSettingsActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -47,8 +47,9 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO, V ex
 			    @Override
 			    public void onSuccess(UpdateAccountResult result) {
 				    // Fire event.
-				    view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
+//				    view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
 
+			    	view.displayMessage(stringDefinitions.accountUpdated(), AlertType.SUCCESS);
 				    // Update account and fire event.
 				    ctx.setAccount(result.getAccount());
 				    eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));

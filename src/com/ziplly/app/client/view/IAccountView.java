@@ -65,8 +65,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 
 	void displayNotificationWidget(boolean b);
 
-	void hideProfileSection();
-
 	void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList);
 
 	void updatePublicAccountDetails(GetAccountDetailsResult result);
@@ -88,4 +86,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void setCouponTransactionCount(Long totalTransactions);
 
 	void displayQrCode(String url);
+
+	void displayProfileSection(boolean display);
 }

@@ -9,7 +9,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -36,7 +36,7 @@ public class GetImageUploadUrlActionHandler extends
 
 		String imageUploadUrl = accountBli.getImageUploadUrl();
 		if (imageUploadUrl == null) {
-			throw new InternalError("Failed to create image upload url");
+			throw new InternalException("Failed to create image upload url");
 		}
 
 		GetImageUploadUrlResult result = new GetImageUploadUrlResult(imageUploadUrl);

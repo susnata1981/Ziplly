@@ -12,7 +12,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -53,13 +53,13 @@ public class GetCouponQRCodeUrlActionHandler extends AbstractAccountActionHandle
 			
 			// Check if the current user is the buyer
 			if (!txn.getBuyer().equals(session.getAccount())) {
-				throw new AccessError(String.format("User doesn't have access to this resource"));
+				throw new AccessException(String.format("User doesn't have access to this resource"));
 			}
 			
 			String qrcodeUrl = couponBli.getQrcodeUrl(txn);
 			result.setUrl(qrcodeUrl);
 		} catch(NoResultException nre) {
-			throw new AccessError();
+			throw new AccessException();
 		} catch (UnsupportedEncodingException e) {
 			throw new InternalError("Problem encountered in reading coupon");
     }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.activity.shared.Activity;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -16,6 +17,7 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.resource.StringDefinitions;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
@@ -41,7 +43,8 @@ public abstract class AbstractActivity implements Activity {
 	protected LoadingPanelWidget loadingModal;
 	// Maximum number of target neighborhoods visible
 	private int maxNeighborhoodsVisible = 2;
-
+	protected StringDefinitions stringDefinitions = GWT.create(StringDefinitions.class);
+	
 	public AbstractActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,

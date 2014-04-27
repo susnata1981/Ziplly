@@ -10,8 +10,8 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.AccessException;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
@@ -80,16 +80,16 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 
 	/**
 	 * Checks to see if the current business account has permissiont o publish coupons
-	 * @throws AccessError 
+	 * @throws AccessException 
 	 */
-	private void checkAccountPermission() throws AccessError {
+	private void checkAccountPermission() throws AccessException {
 	  if (!(session.getAccount() instanceof BusinessAccount)) {
-	  	throw new AccessError();
+	  	throw new AccessException();
 	  }
   }
 
 	private void checkUsage() throws NeedsSubscriptionException,
-	    InternalError,
+	    InternalException,
 	    UsageLimitExceededException,
 	    NotFoundException {
 		boolean enablePaymentPlan =
@@ -110,7 +110,7 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 			throw nfe;
 		} catch (ParseException e) {
 			// should never reach here
-			throw new InternalError("Internal error");
+			throw new InternalException("Internal error");
 		}
 
 		SubscriptionPlan plan = findActiveSubscriptionPlan(baccount);

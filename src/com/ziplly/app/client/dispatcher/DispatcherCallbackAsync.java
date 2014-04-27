@@ -2,30 +2,69 @@ package com.ziplly.app.client.dispatcher;
 
 import java.util.logging.Logger;
 
+import net.customware.gwt.dispatch.shared.DispatchException;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.ziplly.app.client.ZGinInjector;
+import com.ziplly.app.client.exceptions.ErrorDefinitions;
+import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
+import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.places.LoginPlace;
 
 public abstract class DispatcherCallbackAsync<T extends Result> implements AsyncCallback<T> {
 	private PlaceController placeController;
+	private GlobalErrorHandler errorHandler;
 	ZGinInjector injector = GWT.create(ZGinInjector.class);
 	Logger logger = Logger.getLogger(DispatcherCallbackAsync.class.getName());
 
 	public DispatcherCallbackAsync() {
 		this.placeController = injector.getPlaceController();
+		this.errorHandler = injector.getErrorHandler();
 	}
 
 	@Override
-	public void onFailure(Throwable caught) {
-		if (caught instanceof NeedsLoginException) {
+	public void onFailure(Throwable th) {
+		
+		errorHandler.handlerError(th);
+
+		postHandle(th);
+		if (th instanceof NeedsLoginException) {
 			placeController.goTo(new LoginPlace());
 			return;
 		}
-		logger.severe("Received exception from server: " + caught.getLocalizedMessage());
+	}
+
+	/**
+	 * Post handle hook
+	 * @param th 
+	 */
+	public void postHandle(Throwable th) {
+		
+	}
+	
+//	private void callback(Throwable th) {
+//		ErrorDefinition<?> errorDef = ErrorDefinitions.getErrorDefinition(th.getClass());
+//		if (errorDef == null) {
+//			Window.alert(th.getMessage());
+//			return;
+//		}
+//		
+//		switch(errorDef.getCode()) {
+//			case AccessError:
+//				onAccessError();
+//				break;
+//			default:
+//		}
+//  }
+
+	protected void onAccessError() {
+  }
+	
+	protected void onNotFoundException() {
 	}
 }

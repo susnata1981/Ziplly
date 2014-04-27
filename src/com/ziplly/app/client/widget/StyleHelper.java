@@ -5,6 +5,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class StyleHelper {
 
@@ -26,6 +27,11 @@ public class StyleHelper {
 		contentElem.getStyle().setDisplay(display);
 	}
 
+	public static void show(Widget widget, boolean show) {
+		Display display = show ? Display.BLOCK : Display.NONE;
+		widget.getElement().getStyle().setDisplay(display);
+	}
+	
 	public static void setBackgroundImage(Element element, String imageUrl) {
 		element.getStyle().setProperty(
 		    "background",

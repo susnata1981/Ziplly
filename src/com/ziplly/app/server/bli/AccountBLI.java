@@ -6,12 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.ziplly.app.client.ApplicationContext.Environment;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -23,7 +23,7 @@ import com.ziplly.app.model.TransactionDTO;
 public interface AccountBLI {
 	// AccountDTO register(Account account) throws AccountExistsException;
 	AccountDTO register(Account account, boolean saveImage) throws AccountExistsException,
-	    InternalError,
+	    InternalException,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException;
 
@@ -59,7 +59,7 @@ public interface AccountBLI {
 	    NoSuchAlgorithmException,
 	    DuplicateException;
 
-	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError, NotFoundException;
+	AccountDTO verifyPasswordRecoverLink(String hash) throws AccessException, NotFoundException;
 
 	void resetPassword(Long accountId, String password) throws NotFoundException,
 	    InvalidCredentialsException;
@@ -70,7 +70,7 @@ public interface AccountBLI {
 	// void setCurrentLocation(AccountDTO account, Long neighborhoodId);
 	void resendEmailVerification(String email) throws NotFoundException,
 	    AccountExistsException,
-	    InternalError,
+	    InternalException,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException;
 	

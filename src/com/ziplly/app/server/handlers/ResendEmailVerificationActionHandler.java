@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccountExistsException;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -41,7 +41,7 @@ public class ResendEmailVerificationActionHandler extends
 		} catch (AccountExistsException ex) {
 			throw ex;
 		} catch (Exception e) {
-			throw new InternalError();
+			throw new InternalException();
 		}
 
 		return new ResendEmailVerificationResult();

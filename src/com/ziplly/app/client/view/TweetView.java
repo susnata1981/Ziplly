@@ -224,4 +224,10 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 	public interface TweetWidgetRenderingStatus {
 		void hasFinished(Long tweetId);
 	}
+
+	@Override
+  public void refreshTweet(TweetDTO tweet) {
+		TweetWidget tweetWidget = tweetWidgetMap.get(tweet.getTweetId());
+		tweetWidget.displayTweet(tweet);
+  }
 }

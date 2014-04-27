@@ -175,7 +175,7 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="2" addStyleNames="{style.colSpan}">
-				<g:HTMLPanel>
+				<g:HTMLPanel ui:field="accountUpdatePanel">
 					<b:AlertBlock type="INFO" heading="Updates" close="false"
 						ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
 					</b:AlertBlock>

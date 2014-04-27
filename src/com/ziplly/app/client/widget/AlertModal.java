@@ -45,5 +45,4 @@ public class AlertModal extends Composite {
 		};
 		timer.schedule(displayTime);
 	}
-
 }

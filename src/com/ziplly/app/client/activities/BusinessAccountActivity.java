@@ -6,17 +6,10 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.ziplly.app.client.ApplicationContext;
-import com.ziplly.app.client.ZClientModule.TweetsPerPage;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
-import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -35,7 +28,6 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 import com.ziplly.app.shared.ReportSpamResult;
@@ -139,8 +131,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		});
 	}
 
-	/*
-	 * Display people's profile
+	/**
+	 * Display public profile
 	 */
 	@Override
 	public void displayPublicProfile(final Long accountId) {
@@ -150,7 +142,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 			binder.start();
 			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
-			go(panel);
 		}
 	}
 
@@ -248,21 +239,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		reportSpam(spam, new ReportSpamActionHandler());
 	}
 
-	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
-		@Override
-		public void onSuccess(GetLatLngResult result) {
-			if (result.getFormattedAddress() != null) {
-				view.displayLocationInMap(result);
-				((BusinessAccountView) view).displayFormattedAddress(result.getFormattedAddress());
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			Window.alert(th.getMessage());
-		}
-	}
-
 	void displayMap(String address) {
 		view.displayMap(address);
 		((BusinessAccountView) view).displayFormattedAddress(address);
@@ -274,24 +250,17 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		public void onSuccess(GetAccountByIdResult result) {
 			AccountDTO account = result.getAccount();
 			if (account instanceof BusinessAccountDTO) {
-				BusinessAccountDTO baccount = (BusinessAccountDTO) account;
 				view.displayPublicProfile((BusinessAccountDTO) account);
-//				getLatLng(account, new GetLatLngResultHandler());
 				displayMap(account.getLocations().get(0).getAddress());
 			} else if (account instanceof PersonalAccountDTO) {
-				// take some action here
 				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));
 			}
 		}
 
 		@Override
 		public void onFailure(Throwable th) {
-			if (th instanceof NotFoundException) {
-				view.displayModalMessage(StringConstants.NO_ACCOUNT_FOUND, AlertType.ERROR);
-			} else {
-				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
-			view.hideProfileSection();
+			super.onFailure(th);
+			view.displayProfileSection(false);
 		}
 	}
 
@@ -319,17 +288,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		public void onSuccess(TweetResult result) {
 			placeController.goTo(new HomePlace());
 			view.clearTweet();
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			if (th instanceof NeedsSubscriptionException) {
-				view.displayModalMessage(th.getMessage(), AlertType.ERROR);
-			} else if (th instanceof UsageLimitExceededException) {
-				view.displayModalMessage(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION, AlertType.ERROR);
-			} else {
-				view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			}
 		}
 	}
 

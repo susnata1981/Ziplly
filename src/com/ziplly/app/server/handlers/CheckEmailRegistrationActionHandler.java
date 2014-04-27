@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -47,7 +47,7 @@ public class CheckEmailRegistrationActionHandler extends
 			ar.setStatus(AccountRegistrationStatus.USED);
 			registrationDao.update(ar);
 		} catch (NoResultException nre) {
-			throw new AccessError("You've not been invited yet.");
+			throw new AccessException("You've not been invited yet.");
 		}
 
 		CheckEmailRegistrationResult result = new CheckEmailRegistrationResult();

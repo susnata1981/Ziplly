@@ -16,7 +16,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -83,7 +82,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
-	private static final String TWEET_WIDGET_HEIGHT = "1000px";
+	private static final String TWEET_WIDGET_HEIGHT = "1100px";
 
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 	    .create(BusinessAccountViewUiBinder.class);
@@ -171,6 +170,9 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@UiField(provided = true)
 	TweetBox tweetBox;
 
+	@UiField
+	HTMLPanel accountUpdatePanel;
+	
 	// Account stats
 	@UiField
 	ProfileStatWidget tweetCountWidget;
@@ -262,7 +264,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 				accountFormatter.format(account, ValueType.PROFILE_BACKROUND_URL));
 
 		name.setInnerHTML(account.getDisplayName());
-		// TODO
+
 		businessName.setInnerHTML(account.getDisplayName());
 
 		if (account.getCurrentLocation() != null) {
@@ -322,10 +324,10 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		displayHoursOfOperation();
 
 		// display tweets
-		tweetBoxDiv.getElement().getStyle().setDisplay(Display.BLOCK);
+		displayTweetBox(true);
 		displayTweets(account.getTweets(), false);
 
-		StyleHelper.show(profileSectionRow.getElement(), true);
+		displayProfileSection(true);
 	}
 
 	private NeighborhoodDTO getPrimaryLocation(BusinessAccountDTO account) {
@@ -416,10 +418,14 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void displayPublicProfile(BusinessAccountDTO account) {
 		displayProfile(account);
-		hideAccontUpdate();
-		StyleHelper.show(tweetBoxDiv.getElement(), false);
+		displayAccontUpdatePanel(false);
+		displayTweetBox(false);
 	}
 
+	private void displayTweetBox(boolean display) {
+		StyleHelper.show(tweetBoxDiv.getElement(), display);
+	}
+	
 	@Override
 	public void clear() {
 		clearTweet();
@@ -568,8 +574,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 
 	@Override
-	public void hideProfileSection() {
-		StyleHelper.show(profileSectionRow.getElement(), false);
+	public void displayProfileSection(boolean display) {
+		StyleHelper.show(profileSectionRow, display);
 	}
 
 	@Override
@@ -585,6 +591,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 			String uploadImageHtml = "There are no updates at this moment";
 			updateAlertBlock.setHTML(uploadImageHtml);
 		}
+		
+		displayAccontUpdatePanel(true);
 	}
 
 	private boolean isAccountNotComplete() {
@@ -606,8 +614,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		updateAlertBlock.add(accountSettingsAnchor);
 	}
 
-	private void hideAccontUpdate() {
-		StyleHelper.show(updateAlertBlock.getElement(), false);
+	private void displayAccontUpdatePanel(boolean show) {
+		StyleHelper.show(accountUpdatePanel, show);
 	}
 
 	@Override
@@ -643,8 +651,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 	
 	private void displayCouponTransactionPanel(boolean display) {
-		StyleHelper.show(couponTransactionPanel.getElement(), display);
-		StyleHelper.show(tweetSection.getElement(), !display);
+		StyleHelper.show(couponTransactionPanel, display);
+		StyleHelper.show(tweetSection, !display);
 	}
 
 	@Override

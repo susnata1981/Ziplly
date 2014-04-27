@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
@@ -41,7 +41,7 @@ public class VerifyPasswordRecoveryHashActionHandler
 			AccountDTO account = accountBli.verifyPasswordRecoverLink(action.getHash());
 			return new VerifyPasswordRecoveryHashResult(account);
 		} catch (NoResultException nre) {
-			throw new AccessError("IllegalAccess");
+			throw new AccessException("IllegalAccess");
 		}
 	}
 

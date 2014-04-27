@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -56,7 +56,7 @@ public class DeleteTweetActionHandler extends
 		// TODO
 		// Need to load sender account separately before hasPermission call.
 		if (!hasPermission(tweetDto.getSender())) {
-			throw new AccessError();
+			throw new AccessException();
 		}
 
 		Tweet tweet = new Tweet(tweetDto);

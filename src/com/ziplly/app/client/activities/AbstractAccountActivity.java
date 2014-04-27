@@ -12,10 +12,6 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessError;
-import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.exceptions.NotSharedError;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.IAccountView;
@@ -59,8 +55,6 @@ import com.ziplly.app.shared.GetCouponTransactionAction;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetImageUploadUrlResult;
-import com.ziplly.app.shared.GetLatLngAction;
-import com.ziplly.app.shared.GetLatLngResult;
 import com.ziplly.app.shared.GetPublicAccountDetailsAction;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
@@ -114,11 +108,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
 
 			    @Override
-			    public void onFailure(Throwable th) {
-				    view.displayMessage(StringConstants.FAILED_TO_BUY_COUPON, AlertType.ERROR);
-			    }
-
-			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
 				    Window.alert("Eligible for buy...");
 				    widget.initiatePay(result.getJwtToken());
@@ -144,14 +133,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(
 		    new DeleteTweetAction(tweet.getTweetId()),
 		    new DispatcherCallbackAsync<DeleteTweetResult>() {
-			    @Override
-			    public void onFailure(Throwable th) {
-				    if (th instanceof AccessError) {
-					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				    } else {
-					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				    }
-			    }
 
 			    @Override
 			    public void onSuccess(DeleteTweetResult result) {
@@ -225,6 +206,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
 		action.setEmailList(emails);
 		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>() {
+			
 			@Override
 			public void onSuccess(SendEmailResult result) {
 				view.displayModalMessage(StringConstants.EMAIL_SENT, AlertType.SUCCESS);
@@ -239,13 +221,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(action, new DispatcherCallbackAsync<LikeResult>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				if (caught instanceof DuplicateException) {
-					view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
-				}
-			}
-
-			@Override
 			public void onSuccess(LikeResult result) {
 				view.displayModalMessage(StringConstants.LIKE_SAVED, AlertType.SUCCESS);
 				view.updateTweetLike(result.getLike());
@@ -258,10 +233,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(
 		    new LogoutAction(ctx.getAccount().getUid()),
 		    new DispatcherCallbackAsync<LogoutResult>() {
-			    @Override
-			    public void onFailure(Throwable th) {
-				    System.out.println("Failed to logout" + th);
-			    }
 
 			    @Override
 			    public void onSuccess(LogoutResult result) {
@@ -280,10 +251,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	@Override
 	public void postComment(final CommentDTO comment) {
 		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				view.displayModalMessage(StringConstants.FAILED_TO_UPDATE_COMMENT, AlertType.ERROR);
-			}
 
 			@Override
 			public void onSuccess(CommentResult result) {
@@ -299,11 +266,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		action.setCoupon(coupon);
 		action.setBuyer(ctx.getAccount());
 		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-
-			@Override
-			public void onFailure(Throwable th) {
-				Window.alert(th.getLocalizedMessage());
-			}
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
@@ -325,10 +287,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(
 		    new UpdateAccountAction(account),
 		    new DispatcherCallbackAsync<UpdateAccountResult>() {
-			    @Override
-			    public void onFailure(Throwable error) {
-				    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			    }
 
 			    @Override
 			    public void onSuccess(UpdateAccountResult result) {
@@ -357,10 +315,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
 		    new DispatcherCallbackAsync<SendMessageResult>() {
-			    @Override
-			    public void onFailure(Throwable th) {
-				    view.displayModalMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
-			    }
 
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
@@ -410,15 +364,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    new DispatcherCallbackAsync<UpdateCommentResult>() {
 
 			    @Override
-			    public void onFailure(Throwable th) {
-				    if (th instanceof AccessError) {
-					    view.displayModalMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-				    } else {
-					    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				    }
-			    }
-
-			    @Override
 			    public void onSuccess(UpdateCommentResult result) {
 				    view.displayModalMessage(StringConstants.COMMENT_UPDATED, AlertType.SUCCESS);
 				    view.updateComment(result.getComment());
@@ -439,15 +384,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	      view.displayCouponTransaction(result.getTransactions());
 	      view.setCouponTransactionCount(result.getTotalTransactions());
       }
-			
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof AccessError) {
-					view.displayMessage(StringConstants.ACCESS_ERROR, AlertType.ERROR);
-				} else {
-					Window.alert(th.getLocalizedMessage());
-				}
-			}
 		});
 	}
 	
@@ -473,14 +409,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(
 		    new UpdateTweetAction(tweet),
 		    new DispatcherCallbackAsync<UpdateTweetResult>() {
-			    @Override
-			    public void onFailure(Throwable caught) {
-				    if (caught instanceof AccessError) {
-					    view.displayModalMessage(StringConstants.OPERATION_FAILED, AlertType.ERROR);
-					    return;
-				    }
-				    view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-			    }
 
 			    @Override
 			    public void onSuccess(UpdateTweetResult result) {
@@ -497,23 +425,18 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof NotSharedError) {
-					view.displayTweetViewMessage(StringConstants.TWEET_NOT_SHARED, AlertType.WARNING);
-				} else if (th instanceof NotFoundException) {
-					// view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-				} else {
-					view.displayModalMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-				stopThreads();
-				eventBus.fireEvent(new LoadingEventEnd());
-				eventBus.fireEvent(new TweetNotAvailableEvent());
-			}
-
+			
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets(), displayNoTweetsMessage);
+			}
+
+			@Override
+			public void onFailure(Throwable th) {
+				super.onFailure(th);
+				stopThreads();
+				eventBus.fireEvent(new LoadingEventEnd());
+				eventBus.fireEvent(new TweetNotAvailableEvent());
 			}
 		});
 	}
@@ -545,13 +468,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	void displayMap(NeighborhoodDTO n) {
 		view.displayMap(n.getPostalCodes().get(0).toString());
-	}
-
-	@Deprecated
-	void getLatLng(AccountDTO account, DispatcherCallbackAsync<GetLatLngResult> handler) {
-		GetLatLngAction action = new GetLatLngAction();
-		action.setAccount(account);
-		dispatcher.execute(action, handler);
 	}
 
 	abstract void stopThreads();

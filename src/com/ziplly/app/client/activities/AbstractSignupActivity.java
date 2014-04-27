@@ -8,7 +8,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.StringConstants;
@@ -216,7 +216,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 
 		@Override
 		public void onFailure(Throwable th) {
-			if (th instanceof AccessError) {
+			if (th instanceof AccessException) {
 				view.displayMessage(StringConstants.NEEDS_INVITATION, AlertType.ERROR);
 			}
 		}

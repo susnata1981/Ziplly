@@ -565,6 +565,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		editLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if (commentEditLinkClicked) {
+					return;
+				}
+				
 				commentEditLinkClicked = true;
 				final Element contentElem = commentWidget.getContentElement();
 				final MouseHoverPanel contentPanel = commentWidget.getContentPanel();

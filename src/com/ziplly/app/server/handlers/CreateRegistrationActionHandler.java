@@ -10,7 +10,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -67,7 +67,7 @@ public class CreateRegistrationActionHandler extends
 			// TODO send email
 			return new CreateRegistrationResult(registrationLink);
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError("Couldn't create registration link");
+			throw new InternalException("Couldn't create registration link");
 		}
 	}
 

@@ -39,19 +39,19 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.restfb.types.User;
 import com.ziplly.app.client.ApplicationContext.Environment;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
 import com.ziplly.app.client.exceptions.CouponCampaignNotStartedException;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
-import com.ziplly.app.client.exceptions.SoldOutException;
+import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
@@ -190,7 +190,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 	@Override
 	public AccountDTO register(Account account, boolean saveImage) throws AccountExistsException,
-	    InternalError,
+	    InternalException,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException {
 		
@@ -252,7 +252,7 @@ public class AccountBLIImpl implements AccountBLI {
 		emailService.sendTemplatedEmailFromSender(builder);
 	}
 
-	private void sendEmailVerification(AccountDTO account) throws InternalError,
+	private void sendEmailVerification(AccountDTO account) throws InternalException,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException {
 		Preconditions.checkNotNull(account);
@@ -286,7 +286,7 @@ public class AccountBLIImpl implements AccountBLI {
 			    "Failed to create Hash for account %s, exception %s",
 			    account.getEmail(),
 			    e));
-			throw new InternalError("Failed to send verification email");
+			throw new InternalException("Failed to send verification email");
 		}
 	}
 
@@ -706,7 +706,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO verifyPasswordRecoverLink(String hash) throws AccessError, NotFoundException {
+	public AccountDTO verifyPasswordRecoverLink(String hash) throws AccessException, NotFoundException {
 		if (hash == null) {
 			throw new IllegalArgumentException();
 		}
@@ -719,7 +719,7 @@ public class AccountBLIImpl implements AccountBLI {
 
 		if (pr != null) {
 			if (pr.getStatus() != PasswordRecoveryStatus.PENDING) {
-				throw new AccessError();
+				throw new AccessException();
 			}
 			AccountDTO account = accountDao.findByEmail(pr.getEmail());
 			return account;
@@ -759,7 +759,7 @@ public class AccountBLIImpl implements AccountBLI {
 	@Override
 	public void resendEmailVerification(String email) throws NotFoundException,
 	    AccountExistsException,
-	    InternalError,
+	    InternalException,
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException {
 		try {
@@ -810,7 +810,7 @@ public class AccountBLIImpl implements AccountBLI {
 		//Check coupon quantity availability 
 		if (coupon.getQuantityPurchased() >= coupon.getQuanity()) {
 			// Log error
-			throw new SoldOutException(String.format("Coupon: %s sold out.", coupon.getDescription()));
+			throw new CouponSoldOutException(String.format("Coupon: %s sold out.", coupon.getDescription()));
 		}
 		
 		// Should the publisher be allowed to buy??

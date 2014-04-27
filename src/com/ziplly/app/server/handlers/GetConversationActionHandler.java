@@ -11,7 +11,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.ConversationDAO;
@@ -58,7 +58,7 @@ public class GetConversationActionHandler extends
 				long accountId = session.getAccount().getAccountId();
 				if (conversation.getSender().getAccountId() != accountId
 				    && conversation.getReceiver().getAccountId() != accountId) {
-					throw new AccessError();
+					throw new AccessException();
 				}
 				conversations.add(conversation);
 			} catch (NoResultException nre) {

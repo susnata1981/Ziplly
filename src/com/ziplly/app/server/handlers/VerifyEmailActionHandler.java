@@ -9,7 +9,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -43,7 +43,7 @@ public class VerifyEmailActionHandler extends
 			return new VerifyEmailResult();
 
 		} catch (NoResultException nre) {
-			throw new AccessError();
+			throw new AccessException();
 		}
 	}
 

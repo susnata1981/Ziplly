@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.exceptions.NotSharedError;
+import com.ziplly.app.client.exceptions.NotSharedException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
@@ -50,7 +50,7 @@ public class GetTweetForUserActionHandler extends
 		// apply privacy settings
 		try {
 			applyPrivacySettings(action.getAccountId());
-		} catch (NotSharedError ex) {
+		} catch (NotSharedException ex) {
 			throw ex;
 		}
 
@@ -67,7 +67,7 @@ public class GetTweetForUserActionHandler extends
 		}
 	}
 
-	private void applyPrivacySettings(long accountId) throws NotFoundException, NotSharedError {
+	private void applyPrivacySettings(long accountId) throws NotFoundException, NotSharedException {
 		boolean userLoggedIn = false;
 		try {
 			validateSession();
@@ -85,13 +85,13 @@ public class GetTweetForUserActionHandler extends
 			if (ps.getSection() == AccountDetailsType.TWEETS) {
 				if (!userLoggedIn) {
 					if (ps.getSetting() != ShareSetting.PUBLIC) {
-						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
+						throw new NotSharedException(StringConstants.TWEET_NOT_SHARED);
 					}
 				} else {
 					Account requestingAccount = session.getAccount();
 					Iterator<Location> locationIterator = requestingAccount.getLocations().iterator();
 					if (!locationIterator.hasNext()) {
-						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
+						throw new NotSharedException(StringConstants.TWEET_NOT_SHARED);
 					}
 
 					Location location = locationIterator.next();
@@ -99,7 +99,7 @@ public class GetTweetForUserActionHandler extends
 					    .getNeighborhood()
 					    .getParentNeighborhood()
 					    .getNeighborhoodId()) {
-						throw new NotSharedError(StringConstants.TWEET_NOT_SHARED);
+						throw new NotSharedException(StringConstants.TWEET_NOT_SHARED);
 					}
 				}
 			}

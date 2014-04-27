@@ -59,7 +59,7 @@ public class FormUploadWidget {
 		setupUi();
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
-		StyleHelper.show(uploadField.getElement(), false);
+		StyleHelper.show(uploadField, false);
 		uploadField.setEnabled(false);
 		loadingImage.setVisible(false);
 		setupHandlers();

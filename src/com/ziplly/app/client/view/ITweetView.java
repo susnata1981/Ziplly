@@ -42,4 +42,6 @@ public interface ITweetView<T extends Presenter> extends View<T> {
 	void addTweet(TweetDTO tweet, TweetWidgetRenderingStatus callback);
 
 	void displayNoTweetsMessage();
+
+	void refreshTweet(TweetDTO tweet);
 }

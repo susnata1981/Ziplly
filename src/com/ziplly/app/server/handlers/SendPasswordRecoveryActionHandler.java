@@ -10,7 +10,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -40,10 +40,10 @@ public class SendPasswordRecoveryActionHandler extends
 		try {
 			accountBli.sendPasswordRecoveryEmail(action.getEmail());
 		} catch (UnsupportedEncodingException e) {
-			throw new InternalError("Internal error");
+			throw new InternalException("Internal error");
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
-			throw new InternalError("Internal error");
+			throw new InternalException("Internal error");
 		}
 
 		return new SendPasswordRecoveryEmailResult();

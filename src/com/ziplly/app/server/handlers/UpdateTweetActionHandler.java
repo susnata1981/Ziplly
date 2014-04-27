@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
@@ -45,7 +45,7 @@ public class UpdateTweetActionHandler extends
 		validateSession();
 
 		if (!hasPermission(action.getTweet())) {
-			throw new AccessError();
+			throw new AccessException();
 		}
 
 		Tweet tweet = new Tweet(action.getTweet());

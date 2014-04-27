@@ -9,7 +9,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 
 public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R extends Result> implements ActionHandler<T, R> {
 	@SuppressWarnings("unused")
@@ -27,7 +27,7 @@ public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R e
 		return result;
   }
 
-	protected void postHandler(R result) throws InternalError {
+	protected void postHandler(R result) throws InternalException {
   }
 
 	protected void preHandler() {

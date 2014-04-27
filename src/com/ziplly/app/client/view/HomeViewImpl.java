@@ -511,4 +511,9 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 		communityWallPanel.add(tview);
 		communitySummaryWidget.setHeight("270px");
   }
+
+	@Override
+  public void refreshTweet(TweetDTO tweet) {
+		tview.refreshTweet(tweet);
+  }
 }

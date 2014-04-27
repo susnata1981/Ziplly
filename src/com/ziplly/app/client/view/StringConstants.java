@@ -3,7 +3,7 @@ package com.ziplly.app.client.view;
 public class StringConstants {
 	public static final String ACCOUNT_SAVE_SUCCESSFUL = "Account updated";
 	public static final String FAILED_TO_SAVE_ACCOUNT = "Failed to save account";
-	public static final String CURRENCY_CODE = "USD";
+//	public static final String CURRENCY_CODE = "USD";
 	public static final String TRANSACTION_ACTIVE = "active";
 	public static final String NO_ACCOUNT_FOUND = "Sorry, no account found.";
 	public static final String PASSWORD_MISMATCH_ERROR = "Password & Confirm Password doesn't match";

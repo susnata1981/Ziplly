@@ -11,8 +11,8 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.AccessException;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -53,7 +53,7 @@ public class BusinessTweetActionHandler extends
 		Account account = session.getAccount();
 
 		if (!(account instanceof BusinessAccount)) {
-			throw new AccessError("Illegal Access");
+			throw new AccessException("Illegal Access");
 		}
 
 		BusinessAccount baccount = (BusinessAccount) account;
@@ -70,7 +70,7 @@ public class BusinessTweetActionHandler extends
 				}
 			} catch (ParseException e) {
 				// should never reach here
-				throw new InternalError("Internal error");
+				throw new InternalException("Internal error");
 			}
 		}
 

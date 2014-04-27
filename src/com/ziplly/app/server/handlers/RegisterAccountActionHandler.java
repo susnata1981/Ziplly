@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccountExistsException;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
@@ -55,7 +55,7 @@ public class RegisterAccountActionHandler extends
 		} catch (AccountExistsException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new InternalError();
+			throw new InternalException();
 		}
 	}
 

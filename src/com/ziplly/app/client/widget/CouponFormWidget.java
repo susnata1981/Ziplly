@@ -20,6 +20,7 @@ import com.ziplly.app.client.widget.blocks.DataType;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.client.widget.blocks.TextBoxWidget;
 import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -114,7 +115,16 @@ public class CouponFormWidget extends Composite {
 		textBoxWidgets[count] = totalCouponAllowedWidget;
 		
 		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
+		
+		setupUi();
 	}
+
+	private void setupUi() {
+		if (FeatureFlags.OneCouponPerIndividual.isEnabled()) {
+			totalCouponAllowedTextBox.setValue("1");
+			totalCouponAllowedTextBox.setReadOnly(true);
+		}
+  }
 
 	boolean validate() {
 		boolean valid = couponTextWidget.validate();

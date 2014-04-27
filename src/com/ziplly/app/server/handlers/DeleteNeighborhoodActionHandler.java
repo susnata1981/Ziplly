@@ -8,7 +8,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -41,7 +41,7 @@ public class DeleteNeighborhoodActionHandler extends
 		validateSession();
 
 		if (session.getAccount().getRole() != Role.ADMINISTRATOR) {
-			throw new AccessError();
+			throw new AccessException();
 		}
 
 		neighborhoodDao.delete(action.getNeighborhoodId());

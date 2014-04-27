@@ -13,7 +13,7 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.InternalError;
+import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.CouponTransactionDAO;
@@ -76,7 +76,7 @@ public class CheckBuyerEligibilityForCouponActionHandler
 	    result.setJwtToken(jwtToken);
 	    return result;
     } catch (Exception e) {
-    	throw new InternalError("Couldn't create payment token");
+    	throw new InternalException("Couldn't create payment token");
     }
   }
 

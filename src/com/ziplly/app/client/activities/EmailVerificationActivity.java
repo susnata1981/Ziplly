@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessError;
+import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NotFoundException;
@@ -83,7 +83,7 @@ public class EmailVerificationActivity extends AbstractActivity implements
 
 		@Override
 		public void onFailure(Throwable th) {
-			if (th instanceof AccessError) {
+			if (th instanceof AccessException) {
 				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 				view.displayFailurePanel();
 			} else if (th instanceof DuplicateException) {
