@@ -113,4 +113,5 @@ public interface StringDefinitions extends Constants {
 	String needsLoginError();
 	String authError();
 	String couponSoldOutError();
+	String couponCampaignNotStartedException();
 }

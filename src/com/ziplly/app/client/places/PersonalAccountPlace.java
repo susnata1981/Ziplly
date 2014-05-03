@@ -1,12 +1,11 @@
 package com.ziplly.app.client.places;
 
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class PersonalAccountPlace extends Place {
+public class PersonalAccountPlace extends AccountPlace {
 	private Long accountId;
-
+	
 	public PersonalAccountPlace(Long accountId) {
 		this.setAccountId(accountId);
 	}

@@ -55,4 +55,7 @@ public interface ZResources extends ClientBundle {
 	
 	@Source("media.css")
 	TextResource mediaQueries();
+	
+	@Source("print.css")
+	TextResource printCss();
 }

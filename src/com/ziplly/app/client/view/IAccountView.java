@@ -88,4 +88,6 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 	void displayQrCode(String url);
 
 	void displayProfileSection(boolean display);
+
+	void displayCouponTransactions();
 }

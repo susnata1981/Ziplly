@@ -113,6 +113,8 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	@UiField
 	HTMLPanel tweetTextPreview;
 	@UiField
+	Anchor changeTweetAnchor;
+	@UiField
 	HTMLPanel couponPreviewPanel;
 
 	TweetBoxState state = new TweetBoxState();
@@ -134,15 +136,18 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	public TweetBox() {
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(false);
+		setupUi();
+		setupHandlers();
+	}
+
+	private void setupUi() {
 		initUploadForm();
 		setupActionBar();
-//		StyleHelper.show(tweetCategoryPanel.getElement(), false);
-//		StyleHelper.show(couponFormWidget.getElement(), false);
+		showHorizontalButtonPanel(false);
 		showCouponFormWidget(false);
 		showTweetCategoryPanel(false);
 		setupDefaultDimension();
-		setupHandlers();
-	}
+  }
 
 	private void setupActionBar() {
 		StyleHelper.show(fileUpload.getElement(), false);
@@ -218,12 +223,10 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			@Override
 			public void onClick(ClickEvent event) {
 				StyleHelper.show(tweetHelpInline.getElement(), true);
-//				StyleHelper.show(tweetCategoryPanel.getElement(), Display.INLINE_BLOCK);
 				showTweetCategoryPanel(true);
 				updateUsedCharacterMessage();
 				tweetHelpInline.setVisible(true);
 				tweetTextBox.setHeight("60px");
-//				StyleHelper.show(horizontalButtonPanel.getElement(), true);
 				showHorizontalButtonPanel(true);
 			}
 		});
@@ -250,6 +253,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			@Override
 			public void onClick(ClickEvent event) {
 				collapseTweetBox();
+				showHorizontalButtonPanel(false);
 			}
 
 		});
@@ -267,7 +271,6 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			@Override
 			public void onChange(ChangeEvent event) {
 				String fname = fileUpload.getFilename();
-//				StyleHelper.show(tweetCategoryPanel.getElement(), Display.INLINE_BLOCK);
 				showTweetCategoryPanel(true);
 				if (fname != null && !fname.equals("")) {
 					// already has an image, need to delete it
@@ -285,22 +288,18 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
       public void onChange(ChangeEvent event) {
 				TweetType tweetType = tweetTypes.get(tweetCategoryList.getSelectedIndex());
 				if (tweetType == TweetType.COUPON) {
-					StyleHelper.show(couponFormWidget.getElement(), true);
 					showCouponFormWidget(true);
 					showHorizontalButtonPanel(false);
-//					StyleHelper.show(horizontalButtonPanel.getElement(), false);
 					couponFormWidget.showButtons(true);
+					// Disable image upload for now
 //					presenter.getCouponFormActionUrl(couponFormWidget);
-					presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
+//					presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
 				} else {
 					showCouponFormWidget(false);
 					showHorizontalButtonPanel(true);
-//					StyleHelper.show(couponFormWidget.getElement(), false);
-//					StyleHelper.show(horizontalButtonPanel.getElement(), true);
 					displayPreview(false);
 				}
       }
-			
 		});
 		
 		// CouponFormWidget
@@ -346,6 +345,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		return true;
 	}
 
+	@Override
 	public void clear() {
 		// clear control errors.
 		clearError();
@@ -446,7 +446,8 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	@Override
 	public void setPresenter(TweetPresenter presenter) {
 		this.presenter = presenter;
-		presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
+// 		Disable photo upload for coupon for now.
+//		presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
 	}
 
 	public void previewImage(String imageUrl) {
@@ -480,7 +481,7 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 			couponPreviewPanel.add(buyNowBtn);
 			couponFormWidget.showButtons(false);
 			
-			StyleHelper.show(horizontalButtonPanel.getElement(), true);
+			StyleHelper.show(horizontalButtonPanel.getElement(), display);
 		}
 		
 		StyleHelper.show(previewPanel.getElement(), state.isPreviewPanelVisible());
@@ -500,8 +501,6 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	public void resetImageUploadUrl() {
 		uploadForm.setAction("");
 		fileUpload.getElement().setPropertyString("value", "");
-		// imageUploaded = false;
-		// tweetBoxState.reset();
 	}
 
 	public void initializeTargetNeighborhood(List<NeighborhoodDTO> neighborhoods) {
@@ -517,7 +516,6 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 	}
 	
 	private void collapseTweetBox() {
-//		tweetCategoryPanel.getElement().getStyle().setDisplay(Display.NONE);
 		showTweetCategoryPanel(false);
 		showTweetCategoryPanel(false);
 		tweetCategoryList.setSelectedIndex(0);
@@ -533,6 +531,14 @@ public class TweetBox extends Composite implements View<TweetPresenter> {
 		state.clear();
   }
 
+	@UiHandler("changeTweetAnchor")
+	public void changeTweet(ClickEvent event) {
+		displayPreview(false);
+		showCouponFormWidget(true);
+		showHorizontalButtonPanel(false);
+		couponFormWidget.showButtons(true);
+	}
+	
 //	public void setCouponFormUploadActionUrl(String url) {
 //		if (couponFormWidget != null) {
 //			couponFormWidget.setFormUploadActionUrl(url);

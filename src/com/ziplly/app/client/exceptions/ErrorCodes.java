@@ -7,6 +7,7 @@ public enum ErrorCodes {
 	AccountNotActiveError,
 	CouponAlreadyUsedError,
 	CouponCampaignEndedError,
+	CouponCampaignNotStartedException,
 	DuplicateError,
 	InternalError,
 	InvalidCouponError,
@@ -16,5 +17,5 @@ public enum ErrorCodes {
 	NotSharedError,
 	OAuthError,
 	SoldoutError,
-	UsageLimitExceededError,
+	UsageLimitExceededError, 
 }

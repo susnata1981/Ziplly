@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class BusinessAccountPlace extends Place {
+public class BusinessAccountPlace extends AccountPlace {
 	private Long accountId;
 
 	public BusinessAccountPlace() {

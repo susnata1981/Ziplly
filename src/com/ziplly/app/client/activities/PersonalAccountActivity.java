@@ -101,6 +101,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 				go(PersonalAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());
+				} else if (place.isShowTransactions()) {
+					displayProfile();
+					view.displayCouponTransactions();
 				} else {
 					displayProfile();
 				}

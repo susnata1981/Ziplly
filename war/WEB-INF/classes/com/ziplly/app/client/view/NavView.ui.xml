@@ -71,6 +71,7 @@
 				<b:NavLink ui:field="loginLink" icon="USER" addStyleNames="{style.navlink}">Login</b:NavLink>
 				<b:Dropdown ui:field="accountDropdown" text="Account" icon="USER" addStyleNames="{style.navlink}">
 					<b:NavLink ui:field="accountLink">Profile</b:NavLink>
+					<b:NavLink ui:field="transactionLink">Transactions</b:NavLink>
 					<b:NavLink ui:field="messageLink">Messages</b:NavLink>
 					<b:NavLink ui:field="settingsLink">Settings</b:NavLink>
 					<b:NavLink ui:field="logoutLink">Logout</b:NavLink>

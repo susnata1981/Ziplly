@@ -54,12 +54,14 @@
 		<b:WellForm>
 			<b:ControlGroup ui:field="emailCg">
 				<b:Controls>
+				    <b:Label>Username</b:Label>
 					<b:TextBox ui:field="email" placeholder="email..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="emailError"></b:HelpInline>
 				</b:Controls>
 			</b:ControlGroup>
 			<b:ControlGroup ui:field="passwordCg">
 				<b:Controls>
+				    <b:Label>Password</b:Label>
 					<b:PasswordTextBox ui:field="password" placeholder="password..." addStyleNames="{style.inputTextBox}"/>
 					<b:HelpInline ui:field="passwordError"></b:HelpInline>
 				</b:Controls>

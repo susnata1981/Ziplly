@@ -125,9 +125,10 @@
 						<b:HelpInline ui:field="totalCouponAllowedHelpInline"></b:HelpInline>
 					</b:Controls>
 				</b:ControlGroup>
-				<g:HTMLPanel ui:field="uploadProfileImagePanel"
+<!-- 				<g:HTMLPanel ui:field="uploadProfileImagePanel"
 					addStyleNames="{style.uploadProfileImagePanel}">
-				</g:HTMLPanel>
+					</g:HTMLPanel>
+ -->				
 				<g:HorizontalPanel ui:field="horizontalButtonPanel">
 					<b:Button type="PRIMARY" ui:field="previewBtn"
 						addStyleNames="{style.btn}">Preview</b:Button>

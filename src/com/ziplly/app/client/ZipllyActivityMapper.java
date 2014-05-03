@@ -22,6 +22,7 @@ import com.ziplly.app.client.activities.OAuthActivity;
 import com.ziplly.app.client.activities.PasswordRecoveryActivity;
 import com.ziplly.app.client.activities.PersonalAccountActivity;
 import com.ziplly.app.client.activities.PersonalAccountSettingsActivity;
+import com.ziplly.app.client.activities.PrintCouponActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.activities.TweetDetailsActivity;
@@ -40,6 +41,7 @@ import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.places.PasswordRecoveryPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
@@ -56,6 +58,7 @@ import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
+import com.ziplly.app.client.view.PrintCouponView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.TweetDetailsView;
@@ -81,6 +84,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<EmailVerificationView> emailVerificationView;
 	private AsyncProvider<AdminView> adminView;
 	private AsyncProvider<AboutView> aboutView;
+	private AsyncProvider<PrintCouponView> printCouponView;
 
 	@Inject
 	public ZipllyActivityMapper(AsyncProvider<HomeViewImpl> homeView,
@@ -99,6 +103,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	    AsyncProvider<EmailVerificationView> emailVerificationView,
 	    AsyncProvider<AdminView> adminView,
 	    AsyncProvider<AboutView> aboutView,
+	    AsyncProvider<PrintCouponView> printCouponView,
 	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -120,6 +125,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 		this.emailVerificationView = emailVerificationView;
 		this.adminView = adminView;
 		this.aboutView = aboutView;
+		this.printCouponView = printCouponView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -369,6 +375,20 @@ public class ZipllyActivityMapper implements ActivityMapper {
 					    (AboutPlace) place,
 					    aboutView));
 				}
+			});
+		} else if (place instanceof PrintCouponPlace) {
+			return new ActivityProxy<PrintCouponActivity>(new AsyncProvider<PrintCouponActivity>() {
+
+				@Override
+        public void get(AsyncCallback<? super PrintCouponActivity> callback) {
+					callback.onSuccess(new PrintCouponActivity(dispatcher, 
+							eventBus, 
+							placeController, 
+							ctx,
+							(PrintCouponPlace) place,
+							printCouponView));
+        }
+				
 			});
 		}
 

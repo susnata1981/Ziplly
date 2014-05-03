@@ -1,0 +1,57 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.panel {
+		position: relative;
+		width: 60%;
+		padding: 6px;
+		border: 1px solid #ddd;
+		}
+		.heading {
+		position: absolute;
+		left: 120px;
+		top: 0;
+		}
+		.logo {
+		position: absolute;
+		left: 10px;
+		top: 0;
+		}
+		.inlinedFrame {
+		border: none;
+		clear: both;
+		height: 300px;
+		margin-top: 40px;
+		}
+		.block {
+			margin-top: 50px;
+			padding: 6px;
+			font-size: 16px;
+		}
+		.label {
+			display: inline-block;
+			margin-bottom: 10px;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.panel}">
+		<b:Image ui:field="logo" addStyleNames="{style.logo}" />
+		<b:Heading size="3" ui:field="title" addStyleNames="{style.heading}" />
+		<div class="{style.block}">
+		    Discount: <b:Label ui:field="discount" addStyleNames="{style.label}"/>
+			<br/>
+			Price: <b:Label ui:field="price" addStyleNames="{style.label}"/>
+			<br/>
+			Start Date: <b:Label ui:field="startDate" addStyleNames="{style.label}"/>
+			<br/>
+			End Date: <b:Label ui:field="endDate" addStyleNames="{style.label}"/>
+			<br/>
+		</div>
+
+		<iframe ui:field="frame"
+			style="position: relative; border: 0; height: 300px; margin-top : 10px"></iframe>
+		<p>
+			Terms and conditions:<b:Label ui:field="termsAndConditionLabel"></b:Label>
+		</p>
+	</g:HTMLPanel>
+</ui:UiBinder> 

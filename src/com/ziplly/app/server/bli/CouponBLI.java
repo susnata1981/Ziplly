@@ -26,4 +26,6 @@ public interface CouponBLI {
 	 * Redeems the coupon 
 	 */
 	Coupon redeemCoupon(String encodedCouponData, Long sellerAccountId) throws InvalidCouponException, CouponAlreadyUsedException;
+
+	void completeTransaction(Long transactionId);
 }

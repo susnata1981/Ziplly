@@ -15,6 +15,7 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponTransactionDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -58,6 +59,8 @@ public class GetCouponQRCodeUrlActionHandler extends AbstractAccountActionHandle
 			
 			String qrcodeUrl = couponBli.getQrcodeUrl(txn);
 			result.setUrl(qrcodeUrl);
+			result.setCoupon(EntityUtil.clone(txn.getCoupon()));
+			result.setSeller(EntityUtil.convert(txn.getCoupon().getTweet().getSender()));
 		} catch(NoResultException nre) {
 			throw new AccessException();
 		} catch (UnsupportedEncodingException e) {

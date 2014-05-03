@@ -31,6 +31,8 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		void getCouponTransactions(int start, int pageSize);
 		
 		void getCouponQRCodeUrl(Long couponTransactionId);
+
+		void printCoupon(Long couponId);
 	}
 	
 	private static CouponTransactionViewUiBinder uiBinder = GWT
@@ -157,6 +159,26 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 			
 		});
 		couponTransactionTable.addColumn(buttonCol);
+		
+		ButtonCell printButtonCell = new ButtonCell(IconType.BARCODE);
+		final TooltipCellDecorator<String> printCouponDecorator = new TooltipCellDecorator<String>(printButtonCell);
+		decorator.setText("Print coupon");
+		Column<CouponTransactionDTO, String> printbuttonCol = new Column<CouponTransactionDTO, String>(printCouponDecorator) {
+
+			@Override
+      public String getValue(CouponTransactionDTO object) {
+				return "print";
+      }
+		};
+		printbuttonCol.setFieldUpdater(new FieldUpdater<CouponTransactionDTO, String>() {
+
+			@Override
+      public void update(int index, CouponTransactionDTO object, String value) {
+				presenter.printCoupon(object.getTransactionId());
+      }
+			
+		});
+		couponTransactionTable.addColumn(printbuttonCol);
   }
 	
 	@Override

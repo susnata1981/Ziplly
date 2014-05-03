@@ -52,14 +52,28 @@
 		padding: 4px;
 		background: #fff;
 		}
-		.previewHeading {
-		font-size: 15px;
-		font-weight: bold;
-		color: #666;
-		margin: 0;
-		padding: 2px;
-		border-bottom: 1px solid #ddd;
+		.previewHeadingDiv {
+			border-bottom: 1px solid #ddd;
+			background: cyan;
+			overflow: hidden;
+			padding: 2px;
 		}
+		.previewHeading {
+			display: inline-block;
+			float: left;
+			font-size: 18px;
+			font-weight: bold;
+			text-align: center;
+			color: #666;
+			margin: 0;
+			padding: 2px;
+		}
+		.previewRightAnchor {
+			float: right;
+			font-size: 11px;
+			padding: 2px;
+		}
+
 		.tweetTextPreview
 		{
 		display: block;
@@ -80,6 +94,12 @@
 		.popoverLink {
 		display: inline;
 		font-size: 10px;
+		}
+		.horizontalButtonPanel {
+			margin-top: 6px;
+		}
+		.btn {
+			margin: 6px 6px 0 0;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.tweetBoxPanel}">
@@ -131,11 +151,6 @@
 				</b:ListBox>
 			</b:Controls>
 			<dt:CouponFormWidget ui:field="couponFormWidget" />
-			<g:HorizontalPanel ui:field="horizontalButtonPanel">
-				<b:Button type="PRIMARY" size="SMALL" addStyleNames="btn"
-					ui:field="tweetBtn">Share</b:Button>
-				<b:Button size="SMALL" addStyleNames="btn" ui:field="cancelBtn">Cancel</b:Button>
-			</g:HorizontalPanel>
 		</g:HTMLPanel>
 		<!-- </b:Form> -->
 		<b:Modal ui:field="embedLinkModal" backdrop="STATIC" keyboard="true">
@@ -151,7 +166,10 @@
 			<b:Button ui:field="cancelEmbedLinkButton">Cancel</b:Button>
 		</b:Modal>
 		<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
+		    <div class="{style.previewHeadingDiv}">
 			<b:Heading size="4" addStyleNames="{style.previewHeading}">Preview</b:Heading>
+			<g:Anchor ui:field="changeTweetAnchor" addStyleNames="{style.previewRightAnchor}">change</g:Anchor>
+			</div>
 			<g:HTMLPanel ui:field="previewTweetImagePanel"
 				addStyleNames="{style.tweetImagePreview}">
 				<b:Image ui:field="previewTweetImage" />
@@ -159,5 +177,10 @@
 			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}" ui:field="tweetTextPreview" />
 			<g:HTMLPanel addStyleNames="{style.tweetTextPreview}" ui:field="couponPreviewPanel" />
 		</g:HTMLPanel>
+		<g:HorizontalPanel ui:field="horizontalButtonPanel" addStyleNames="{style.horizontalButtonPanel}">
+				<b:Button type="PRIMARY" addStyleNames="{style.btn}"
+					ui:field="tweetBtn">Share</b:Button>
+				<b:Button addStyleNames="{style.btn}" ui:field="cancelBtn">Cancel</b:Button>
+		</g:HorizontalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

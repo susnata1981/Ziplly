@@ -1,8 +1,12 @@
 package com.ziplly.app.client.places;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.Window;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class PlaceUtils {
@@ -49,5 +53,14 @@ public class PlaceUtils {
 		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN
 		    + StringConstants.PLACE_SEPARATOR 
 		    + tweet.getTweetId();
+	}
+	
+	public static AccountPlace getPlace(AccountDTO account) {
+		if (account == null) {
+			Window.alert("Error encountered.");
+			return null;
+		}
+		
+		return (account instanceof PersonalAccountDTO) ? new PersonalAccountPlace() : new BusinessAccountPlace();
 	}
 }

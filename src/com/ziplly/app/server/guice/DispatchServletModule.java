@@ -15,7 +15,7 @@ public class DispatchServletModule extends ServletModule {
 		 
 		serve("/ziplly/sendmail", "/_ah/start").with(NotificationServlet.class);
 		serve("/ziplly/dispatch").with(GuiceStandardDispatchServlet.class);
-		serve("/ziplly/cofirmpayment").with(ConfirmPaymentServlet.class);
+		serve("/ziplly/confirmpayment").with(ConfirmPaymentServlet.class);
 		
 		// serve("/ziplly/upload").with(UploadServlet.class);
 		// TODO needs to be turned on later.

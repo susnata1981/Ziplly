@@ -105,6 +105,9 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 				go(BusinessAccountActivity.this.panel);
 				if (place.getAccountId() != null) {
 					displayPublicProfile(place.getAccountId());
+				} else if (place.isShowTransactions()) {
+					displayProfile();
+					view.displayCouponTransactions();
 				} else {
 					displayProfile();
 				}

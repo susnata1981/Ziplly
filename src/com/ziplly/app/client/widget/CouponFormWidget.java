@@ -13,7 +13,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.widget.blocks.DataType;
@@ -87,8 +86,8 @@ public class CouponFormWidget extends Composite {
 	HelpInline totalCouponAllowedHelpInline;
 	
 	// Upload image
-	@UiField
-	HTMLPanel uploadProfileImagePanel;
+//	@UiField
+//	HTMLPanel uploadProfileImagePanel;
 	FormUploadWidget uploadWidget;
 	
 	@UiField
@@ -114,7 +113,7 @@ public class CouponFormWidget extends Composite {
 		totalCouponAllowedWidget = new TextBoxWidget(totalCouponAllowedCg, totalCouponAllowedTextBox, totalCouponAllowedHelpInline, DataType.INTEGER);
 		textBoxWidgets[count] = totalCouponAllowedWidget;
 		
-		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
+//		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
 		
 		setupUi();
 	}
@@ -163,6 +162,7 @@ public class CouponFormWidget extends Composite {
 		coupon.setDiscount(discount);
 		BigDecimal itemPrice = BigDecimal.valueOf(Long.parseLong(FieldVerifier.sanitize(priceTextBox.getText())));
 		coupon.setItemPrice(itemPrice);
+		coupon.setNumberAllowerPerIndividual(Integer.parseInt(totalCouponAllowedTextBox.getValue()));
 		coupon.setPrice(itemPrice.subtract(itemPrice.multiply(discount).divide(BigDecimal.valueOf(100L))));
 		coupon.setTimeCreated(new Date());
 		return coupon;
@@ -184,6 +184,11 @@ public class CouponFormWidget extends Composite {
 	
 	public void clear() {
 		for(int i=0; i<textBoxWidgets.length; i++) {
+			if (FeatureFlags.OneCouponPerIndividual.isEnabled()) {
+				if (textBoxWidgets[i] == totalCouponAllowedWidget) {
+					continue;
+				}
+			}
 			textBoxWidgets[i].clear();
 		}
 		

@@ -41,10 +41,6 @@ import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
-import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
-import com.ziplly.app.client.view.factory.AccountFormatter;
-import com.ziplly.app.client.view.factory.BasicDataFormatter;
-import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.EmailWidget;
@@ -497,10 +493,14 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 
 	@UiHandler("transactionDetailsAnchor")
 	public void viewCouponTransactions(ClickEvent event) {
-		couponTransactionView.loadCouponTransaction();
-		displayCouponTransactionPanel(true);
+		internalDisplayCouponTransactions();
 	}
 	
+	private void internalDisplayCouponTransactions() {
+		couponTransactionView.loadCouponTransaction();
+		displayCouponTransactionPanel(true);
+  }
+
 	private void displayCouponTransactionPanel(boolean display) {
 		StyleHelper.show(couponTransactionPanel.getElement(), display);
 		StyleHelper.show(tweetSection.getElement(), !display);
@@ -514,5 +514,10 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
   public void displayQrCode(String url) {
 		Window.open(url, "_blank", "");
+  }
+
+	@Override
+  public void displayCouponTransactions() {
+		internalDisplayCouponTransactions();
   }
 }

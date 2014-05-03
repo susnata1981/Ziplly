@@ -15,6 +15,7 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PasswordRecoveryPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
@@ -26,7 +27,7 @@ import com.ziplly.app.client.places.TweetDetailsPlace;
     PersonalAccountSettingsPlace.Tokenizer.class, ConversationPlace.Tokenizer.class,
     PasswordRecoveryPlace.Tokenizer.class, AdminPlace.Tokenizer.class, AboutPlace.Tokenizer.class,
     ResidentPlace.Tokenizer.class, BusinessPlace.Tokenizer.class,
-    EmailVerificationPlace.Tokenizer.class, })
+    EmailVerificationPlace.Tokenizer.class, PrintCouponPlace.PrintCouponPlaceTokenizer.class,})
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

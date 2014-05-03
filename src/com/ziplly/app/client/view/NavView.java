@@ -51,6 +51,8 @@ public class NavView extends Composite implements INavView {
 		void onNotificationLinkClick(AccountNotificationDTO an);
 
 		void switchLocation(LocationDTO location);
+
+		void showTransactions();
 	}
 
 	interface Style extends CssResource {
@@ -84,6 +86,8 @@ public class NavView extends Composite implements INavView {
 	Dropdown accountDropdown;
 	@UiField
 	NavLink accountLink;
+	@UiField
+	NavLink transactionLink;
 	@UiField
 	NavLink messageLink;
 
@@ -153,6 +157,11 @@ public class NavView extends Composite implements INavView {
 		presenter.goTo(new PersonalAccountPlace());
 	}
 
+	@UiHandler("transactionLink")
+	void displayTransactions(ClickEvent event) {
+		presenter.showTransactions();
+	}
+	
 	@UiHandler("homeLink")
 	void home(ClickEvent event) {
 		presenter.goTo(new HomePlace());

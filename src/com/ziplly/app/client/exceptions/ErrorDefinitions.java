@@ -53,6 +53,12 @@ public class ErrorDefinitions {
 			stringDefinitions.couponCampaignEndedError(),
 			AlertType.ERROR);
 	
+	public static final ErrorDefinition<?> couponCampaignNotStartedException = new ErrorDefinition<CouponCampaignNotStartedException>(
+			CouponCampaignNotStartedException.class,
+			ErrorCodes.CouponCampaignNotStartedException,
+			stringDefinitions.couponCampaignNotStartedException(),
+			AlertType.ERROR);
+	
 	public static final ErrorDefinition<?> internalError = new ErrorDefinition<InternalException>(
 			InternalException.class,
 			ErrorCodes.InternalError,

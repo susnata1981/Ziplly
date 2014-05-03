@@ -5,13 +5,28 @@
 		input[type="text"] {
 		height: 36px;
 		}
+		.buttonPanel {
+		margin-top: 10px;
+		}
+		.btn {
+		margin-right: 4px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:Modal ui:field="modal" title="Please Confirm" backdrop="STATIC"
 			keyboard="false" animation="true">
-			<g:Label>Are you sure you want to publish?</g:Label>
-			<b:Button ui:field="yesBtn">Yes</b:Button>
-			<b:Button ui:field="noBtn">No</b:Button>
+			<g:HTMLPanel>
+				<b:Alert ui:field="alertBox" type="INFO" close="false">
+					Please note that once you publish your coupon, it can't be changed or
+					removed. You will be expected to honor all coupons purchased on Ziplly.
+				</b:Alert>
+				<g:Label ui:field="messageLabel">Are you sure you want to publish your
+					Coupon?</g:Label>
+				<div class="{style.buttonPanel}">
+					<b:Button ui:field="yesBtn" addStyleNames="{style.btn}">Yes</b:Button>
+					<b:Button ui:field="noBtn" addStyleNames="{style.btn}">No</b:Button>
+				</div>
+			</g:HTMLPanel>
 		</b:Modal>
 	</g:HTMLPanel>
 </ui:UiBinder>

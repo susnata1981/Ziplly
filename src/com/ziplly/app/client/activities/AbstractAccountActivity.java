@@ -14,6 +14,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
@@ -79,8 +80,10 @@ import com.ziplly.app.shared.UpdateTweetAction;
 import com.ziplly.app.shared.UpdateTweetResult;
 
 public abstract class AbstractAccountActivity<T extends AccountDTO> extends AbstractActivity implements
-    AccountPresenter<T>, TweetPresenter, EmailPresenter {
-	
+    AccountPresenter<T>,
+    TweetPresenter,
+    EmailPresenter {
+
 	protected AccountNotificationHandler accountNotificationHandler =
 	    new AccountNotificationHandler();
 	protected int TWEETS_PER_PAGE = 5;
@@ -113,6 +116,27 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			    }
 
 		    });
+	}
+
+	public void printCoupon(Long transactionId) {
+//		System.out.println("TXID = " + transactionId);
+//		if (transactionId == null) {
+//			view.displayMessage(
+//			    ErrorDefinitions.invalidCouponError.getErrorMessage(),
+//			    ErrorDefinitions.invalidCouponError.getType());
+//		}
+//
+//		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
+//		action.setCouponTransactionId(transactionId);
+//		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
+//
+//			@Override
+//			public void onSuccess(GetCouponQRCodeUrlResult result) {
+//				
+//			}
+//		});
+		
+		goTo(new PrintCouponPlace(transactionId));
 	}
 
 	@Override
@@ -205,7 +229,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
 		action.setEmailList(emails);
 		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>() {
-			
+
 			@Override
 			public void onSuccess(SendEmailResult result) {
 				view.displayModalMessage(StringConstants.EMAIL_SENT, AlertType.SUCCESS);
@@ -260,7 +284,9 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	@Override
-	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
+	public void purchaseCoupon(String transactionId,
+	    PurchasedCouponAction.ResultStatus resultStatus,
+	    final CouponDTO coupon) {
 		PurchasedCouponAction action = new PurchasedCouponAction();
 		action.setCoupon(coupon);
 		action.setBuyer(ctx.getAccount());
@@ -270,17 +296,17 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				//Window.alert("success");
+				// Window.alert("success");
 				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
 				AlertType alertType = AlertType.SUCCESS;
-				
-				switch(result.getCouponTransaction().getStatus()) {
+
+				switch (result.getCouponTransaction().getStatus()) {
 					case FAILURE:
 						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
 						alertType = AlertType.ERROR;
 						break;
-				default:
-					break;
+					default:
+						break;
 				}
 				view.displayMessage(displayMessage, alertType);
 			}
@@ -357,7 +383,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			    }
 		    });
 	}
-	
+
 	public void setUploadImageHandler() {
 		view.addUploadFormHandler(new FormPanel.SubmitCompleteHandler() {
 			@Override
@@ -384,22 +410,22 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    });
 	}
 
-	@Override 
+	@Override
 	public void getCouponTransactions(int start, int pageSize) {
 		GetCouponTransactionAction action = new GetCouponTransactionAction();
 		action.setStart(start);
 		action.setPageSize(pageSize);
-		
+
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>() {
 
 			@Override
-      public void onSuccess(GetCouponTransactionResult result) {
-	      view.displayCouponTransaction(result.getTransactions());
-	      view.setCouponTransactionCount(result.getTotalTransactions());
-      }
+			public void onSuccess(GetCouponTransactionResult result) {
+				view.displayCouponTransaction(result.getTransactions());
+				view.setCouponTransactionCount(result.getTotalTransactions());
+			}
 		});
 	}
-	
+
 	@Override
 	public void getCouponQRCodeUrl(Long couponTransactionId) {
 		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
@@ -407,12 +433,12 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
 
 			@Override
-      public void onSuccess(GetCouponQRCodeUrlResult result) {
+			public void onSuccess(GetCouponQRCodeUrlResult result) {
 				view.displayQrCode(result.getUrl());
-      }
+			}
 		});
 	}
-	
+
 	@Override
 	public void updateTweet(TweetDTO tweet) {
 		if (tweet == null) {
@@ -438,7 +464,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
-			
+
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {
 				view.displayTweets(result.getTweets(), displayNoTweetsMessage);

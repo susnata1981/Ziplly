@@ -641,8 +641,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	
 	@UiHandler("transactionDetailsAnchor")
 	public void viewCouponTransactions(ClickEvent event) {
-		couponTransactionView.loadCouponTransaction();
-		displayCouponTransactionPanel(true);
+		internalDisplayCouponTransactions();
 	}
 	
 	@Override
@@ -658,5 +657,15 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
   public void displayQrCode(String url) {
 		Window.open(url, "_blank", "");
+  }
+	
+	private void internalDisplayCouponTransactions() {
+		couponTransactionView.loadCouponTransaction();
+		displayCouponTransactionPanel(true);
+  }
+
+	@Override
+  public void displayCouponTransactions() {
+		internalDisplayCouponTransactions();
   }
 }

@@ -219,4 +219,11 @@ public class CouponBLIImpl implements CouponBLI {
 			return couponTransactionId;
 		}
 	}
+
+	@Override
+  public void completeTransaction(Long transactionId) {
+		CouponTransaction transaction = couponTransactionDao.findById(transactionId);
+		transaction.setStatus(TransactionStatus.COMPLETE);
+		couponTransactionDao.update(transaction);
+  }
 }
