@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.apphosting.api.DeadlineExceededException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -63,10 +64,18 @@ public class ConfirmPaymentServlet extends HttpServlet {
                     && req.getBuyerId() != null) {
                 
             		Long transactionId = Long.parseLong(req.getTransactionId());
-            		couponBli.completeTransaction(transactionId);
-            		res.setStatus(200);
-                PrintWriter writer = res.getWriter();
-                writer.write(orderID);
+            		try {
+	                couponBli.waitAndCompleteTransaction(transactionId);
+	            		res.setStatus(200);
+	                PrintWriter writer = res.getWriter();
+	                writer.write(orderID);
+                } catch (DeadlineExceededException ex) {
+                	logger.severe(String.format("Deadline exceeded for %s, exception %s", payload_1, ex));
+                	res.getWriter().close();
+                } catch (InterruptedException e) {
+                	logger.severe(String.format("Interrupted exception for %s, exception %s", payload_1, e));
+                	res.getWriter().close();
+                }
             }
         }
     }

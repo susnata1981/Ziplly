@@ -3,7 +3,6 @@ package com.ziplly.app.client.view;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -801,7 +800,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	public void onSuccess(int subscriptionId) {
 		logger.log(Level.INFO, "Successfully paid");
 		TransactionDTO txn = new TransactionDTO();
-		txn.setCurrencyCode(Currency.getInstance(Locale.US).getCurrencyCode());
+		txn.setCurrencyCode(StringConstants.CURRENCY_USD);
 		txn.setTimeCreated(new Date());
 		SubscriptionPlanDTO plan = subscriptionPlanMap.get(new Long(subscriptionId));
 		txn.setAmount(new BigDecimal(plan.getFee()));
@@ -813,7 +812,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	public void onFailure(int subscriptionId) {
 		logger.log(Level.SEVERE, "Transaction failed.");
 		TransactionDTO txn = new TransactionDTO();
-		txn.setCurrencyCode(Currency.getInstance(Locale.US).getCurrencyCode());
+		txn.setCurrencyCode(StringConstants.CURRENCY_USD);
 		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
 		txn.setStatus(TransactionStatus.FAILURE);
 		txn.setTimeCreated(new Date());

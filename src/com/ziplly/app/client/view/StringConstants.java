@@ -147,4 +147,5 @@ public class StringConstants {
 	public static final String COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG = "app.feature.completeCouponPurchaseOnFirstCallBack";
 	public static final String COUPON_PURCHASE_FAILED = "Sorry, your coupon purchase failed. You were not charged for this coupon.";
 	public static final String COUPON_PURCHASE_SUCCESS = "Congratulations on your coupon purchase!!!";
+	public static final String CURRENCY_USD = "USD";
 }

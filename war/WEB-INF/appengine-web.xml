@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-  <application>zipplyrocks</application>
-  <version>dbimprovements2b</version>
+  <application>zipllydevel</application>
+  <version>coupon-feature2</version>
 
   <!--
     Allows App Engine to send multiple requests to one instance in parallel:
@@ -53,7 +53,7 @@
     <property name="app.feature.displayMessageTime" value="5000" />
     
     <!-- Complete the coupon purchase on first callback -->
-    <property name="app.feature.completeCouponPurchaseOnFirstCallBack" value="true" />
+    <property name="app.feature.completeCouponPurchaseOnFirstCallBack" value="false" />
   </system-properties>
 
   

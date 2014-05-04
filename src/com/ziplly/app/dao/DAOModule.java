@@ -25,23 +25,23 @@ public class DAOModule extends AbstractModule {
 	public static Properties dbConfig = new Properties();
 	
 	static {
-		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
-			dbProperties.put(
-			    "javax.persistence.jdbc.url",
-			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
-			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
-			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
-		}
 //		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-//			// DEVEL SETUP
 //			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
 //			dbProperties.put(
 //			    "javax.persistence.jdbc.url",
-//			    "jdbc:google:mysql://zipllydevel:zipllydb/newzipllydb?user=zipllyadmin");
+//			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
 //			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
 //			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
 //		}
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+			// DEVEL SETUP
+			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
+			dbProperties.put(
+			    "javax.persistence.jdbc.url",
+			    "jdbc:google:mysql://zipllydevel:z1/newzipllydb?user=zipllyadmin");
+			dbProperties.put("javax.persistence.jdbc.user", "zipllyadmin");
+			dbProperties.put("javax.persistence.jdbc.password", "Sherica12");
+		}
 		else {
 			dbProperties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
 			dbProperties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/newzipllydb");

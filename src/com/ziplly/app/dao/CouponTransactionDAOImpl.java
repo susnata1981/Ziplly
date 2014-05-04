@@ -1,6 +1,7 @@
 package com.ziplly.app.dao;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -15,6 +16,8 @@ import com.ziplly.app.model.TransactionStatus;
 
 public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransactionDAO {
 
+	private Logger logger = Logger.getLogger(CouponTransactionDAOImpl.class.getName());
+	
 	@Inject
 	public CouponTransactionDAOImpl(Provider<EntityManager> entityManagerProvider) {
 		super(entityManagerProvider);
@@ -99,6 +102,7 @@ public class CouponTransactionDAOImpl extends BaseDAO implements CouponTransacti
 		
 		Preconditions.checkNotNull(accountId);
 		Preconditions.checkNotNull(couponId);
+		logger.info(String.format("AccountId %d, CouponId %d", accountId, couponId));
 		
 		EntityManager em = entityManagerProvider.get();
 		Query query = em.createQuery("from CouponTransaction where buyer.accountId = :accountId "

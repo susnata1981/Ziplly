@@ -16,7 +16,9 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.persistence.NoResultException;
 
+import com.google.apphosting.api.DeadlineExceededException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
@@ -32,6 +34,7 @@ import com.ziplly.app.server.crypto.CryptoUtil;
 
 public class CouponBLIImpl implements CouponBLI {
 	private static final String SEPARATOR = ":";
+	private static final Long MAX_WAIT_TIME = 4000L;
 	private final String qrcodeEndpoint;
 	private static CryptoUtil cryptoUtil;
 
@@ -44,7 +47,7 @@ public class CouponBLIImpl implements CouponBLI {
 	    @CouponRedeemEndpoint String couponRedeemEndpoint,
 	    CryptoUtil cryptoUtil,
 	    CouponTransactionDAO couponTransactionDao) {
-		
+
 		this.qrcodeEndpoint = qrcodeEndpoint;
 		this.couponRedeemEndpoint = couponRedeemEndpoint;
 		CouponBLIImpl.cryptoUtil = cryptoUtil;
@@ -54,31 +57,34 @@ public class CouponBLIImpl implements CouponBLI {
 	@Override
 	public String getQrcode(CouponTransaction couponTransaction) throws Exception {
 		CouponCodeDetails ccd = new CouponCodeDetails();
-		ccd.setBuyerAccountId(couponTransaction.getBuyer().getAccountId())
+		ccd
+		    .setBuyerAccountId(couponTransaction.getBuyer().getAccountId())
 		    .setSellerAccountId(couponTransaction.getCoupon().getTweet().getSender().getAccountId())
 		    .setCouponId(couponTransaction.getCoupon().getCouponId())
 		    .setCouponTransactionId(couponTransaction.getTransactionId());
-		
+
 		String code = ccd.getEncryptedCouponCode();
 		return code;
 	}
-	
+
 	@Override
-	public String getQrcodeUrl(CouponTransaction couponTransaction) throws UnsupportedEncodingException {
-		String redeemUrl = couponRedeemEndpoint + encode(couponTransaction.getPurchasedCoupon().getQrcode());
+	public String
+	    getQrcodeUrl(CouponTransaction couponTransaction) throws UnsupportedEncodingException {
+		String redeemUrl =
+		    couponRedeemEndpoint + encode(couponTransaction.getPurchasedCoupon().getQrcode());
 		return qrcodeEndpoint + redeemUrl;
 	}
-	
+
 	String encode(String code) throws UnsupportedEncodingException {
 		checkNotNull(code);
 		return URLEncoder.encode(code, "utf-8");
-  }
+	}
 
 	private String decode(String encodedString) throws UnsupportedEncodingException {
 		checkNotNull(encodedString);
 		return URLDecoder.decode(encodedString, "utf-8");
 	}
-	
+
 	@Override
 	public Coupon
 	    redeemCoupon(String encodedCouponData, Long sellerAccountId) throws InvalidCouponException,
@@ -97,13 +103,14 @@ public class CouponBLIImpl implements CouponBLI {
 		checkNotNull(couponCodeDetails);
 
 		System.out.println(couponCodeDetails);
-		
+
 		// Load CouponTransaction
-		CouponTransaction transaction = couponTransactionDao.findById(couponCodeDetails.getCouponTransactionId());
+		CouponTransaction transaction =
+		    couponTransactionDao.findById(couponCodeDetails.getCouponTransactionId());
 		PurchasedCoupon purchasedCoupon = transaction.getPurchasedCoupon();
 
 		if (transaction.getStatus() != TransactionStatus.COMPLETE || purchasedCoupon == null) {
-			//TODO(vipin) throw a different error?
+			// TODO(vipin) throw a different error?
 			throw new InvalidCouponException(encodedCouponData);
 		}
 
@@ -120,7 +127,7 @@ public class CouponBLIImpl implements CouponBLI {
 		return coupon;
 	}
 
-  public static class CouponCodeDetails {
+	public static class CouponCodeDetails {
 		private Long buyerAccountId;
 		private Long sellerAccountId;
 		private Long couponId;
@@ -145,7 +152,7 @@ public class CouponBLIImpl implements CouponBLI {
 			this.couponTransactionId = transactionId;
 			return this;
 		}
-		
+
 		/**
 		 * Encrypts the encoded coupon code
 		 */
@@ -164,7 +171,7 @@ public class CouponBLIImpl implements CouponBLI {
 		    BadPaddingException,
 		    UnsupportedEncodingException,
 		    IOException {
-			
+
 			checkNotNull(encodedCouponData);
 
 			String[] tokens = decryptTokens(encodedCouponData);
@@ -181,49 +188,68 @@ public class CouponBLIImpl implements CouponBLI {
 		}
 
 		public String encode() {
-			return buyerAccountId + SEPARATOR + sellerAccountId + SEPARATOR + couponId + SEPARATOR + couponTransactionId;
+			return buyerAccountId + SEPARATOR + sellerAccountId + SEPARATOR + couponId + SEPARATOR
+			    + couponTransactionId;
 		}
 
-		private static String[]
-		    decryptTokens(String encodedCouponData) throws InvalidKeyException,
-		        NoSuchAlgorithmException,
-		        NoSuchPaddingException,
-		        IllegalBlockSizeException,
-		        BadPaddingException,
-		        UnsupportedEncodingException,
-		        IOException {
-			
+		private static String[] decryptTokens(String encodedCouponData) throws InvalidKeyException,
+		    NoSuchAlgorithmException,
+		    NoSuchPaddingException,
+		    IllegalBlockSizeException,
+		    BadPaddingException,
+		    UnsupportedEncodingException,
+		    IOException {
+
 			String decryptText = cryptoUtil.decrypt(encodedCouponData);
 			System.out.println("Decrypted text=" + decryptText);
 			return decryptText.split(SEPARATOR);
 		}
-		
+
 		@Override
 		public String toString() {
-			return "BuyerAccountId=" + buyerAccountId + " SellerAcountId=" + sellerAccountId + " CouponId=" + couponId + " transactionId = " + couponTransactionId;
+			return "BuyerAccountId=" + buyerAccountId + " SellerAcountId=" + sellerAccountId
+			    + " CouponId=" + couponId + " transactionId = " + couponTransactionId;
 		}
 
 		public Long getBuyerId() {
 			return buyerAccountId;
-    }
-		
+		}
+
 		public Long getSellerId() {
 			return sellerAccountId;
 		}
-		
+
 		public Long getCouponId() {
 			return couponId;
 		}
-		
+
 		public Long getCouponTransactionId() {
 			return couponTransactionId;
 		}
 	}
 
 	@Override
-  public void completeTransaction(Long transactionId) {
-		CouponTransaction transaction = couponTransactionDao.findById(transactionId);
+	public void waitAndCompleteTransaction(Long transactionId) throws InterruptedException {
+//		CouponTransaction transaction = couponTransactionDao.findById(transactionId);
+		boolean found = false;
+		CouponTransaction transaction = null;
+		Long waitingTime = 0L;
+		
+		while (!found) {
+			try {
+				transaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+						transactionId,
+				    TransactionStatus.PENDING_COMPLETE);
+				found = true;
+			} catch (NoResultException nre) {
+				waitingTime += 100;
+				Thread.sleep(100);
+				if (waitingTime > MAX_WAIT_TIME) {
+					throw new DeadlineExceededException();
+				}
+			}
+		}
 		transaction.setStatus(TransactionStatus.COMPLETE);
 		couponTransactionDao.update(transaction);
-  }
+	}
 }

@@ -52,10 +52,11 @@ public class CheckBuyerEligibilityForCouponActionHandler
       doExecute(CheckBuyerEligibilityForCouponAction action, ExecutionContext context) throws DispatchException {
 		
 		checkArgument(action.getCoupon() != null);
+		validateSession();
+		
 		Coupon coupon = couponDao.findById(action.getCoupon().getCouponId());
 		
-		validateSession();
-		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(),action.getCoupon().getCouponId());
+		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), action.getCoupon().getCouponId());
 		try {
 			CouponTransaction cTransaction = new CouponTransaction();
 			cTransaction.setBuyer(session.getAccount());

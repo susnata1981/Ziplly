@@ -3,6 +3,7 @@ package com.ziplly.app.server.handlers;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 
@@ -29,7 +30,8 @@ public class PurchaseCouponActionHandler extends
     AbstractAccountActionHandler<PurchasedCouponAction, PurchaseCouponResult> {
 	private CouponTransactionDAO couponTransactionDao;
 	private CouponBLI couponBLI;
-
+	private Logger logger = Logger.getLogger(PurchaseCouponActionHandler.class.getName());
+	
 	@Inject
 	public PurchaseCouponActionHandler(Provider<EntityManager> entityManagerProvider,
 	    AccountDAO accountDao,
@@ -49,8 +51,14 @@ public class PurchaseCouponActionHandler extends
 		checkNotNull(action.getBuyer());
 		checkNotNull(action.getCoupon());
 
+		logger.info(String.format("PurchaseCouponActionHandler called with buyerId %d, transactionId %s"
+				, action.getBuyer().getAccountId(), action.getCouponTransactionId()));
+		
 		validateSession();
-		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(Long.valueOf(action.getCouponTransactionId()), TransactionStatus.PENDING);
+		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+				Long.valueOf(action.getCouponTransactionId()), 
+				TransactionStatus.PENDING);
+		
 		checkNotNull(couponTransaction);
 		
 		switch(action.getResultStatus()) {
@@ -91,6 +99,9 @@ public class PurchaseCouponActionHandler extends
 		// complete purchase in first callback
 		boolean completePurchase = Boolean.valueOf(System.getProperty(
 				StringConstants.COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG, "true"));
+		
+		logger.info(String.format("CompletePurchase value = %s",Boolean.valueOf(completePurchase).toString()));
+
 		if(completePurchase) {
 			couponTransaction.setStatus(TransactionStatus.COMPLETE);
 		}
