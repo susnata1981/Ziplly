@@ -737,14 +737,16 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			
 			@Override
 			public void onSuccess(GoogleWalletSuccessResult result) {
-				presenter.purchaseCoupon(result.getRequest().getTransactionId() + "", 
-						PurchasedCouponAction.ResultStatus.SUCCESS, tweet.getCoupon());
+//				presenter.purchaseCoupon(result.getRequest().getTransactionId() + "", 
+//						PurchasedCouponAction.ResultStatus.SUCCESS, tweet.getCoupon());
+				Window.alert("Purchase complete");
 			}
 			
 			@Override
 			public void onFailure(GoogleWalletFailureResult result) {
-				presenter.purchaseCoupon(result.getRequest().getRequest().getTransactionId() + "", 
-						PurchasedCouponAction.ResultStatus.FAILED, tweet.getCoupon());
+//				presenter.purchaseCoupon(result.getRequest().getRequest().getTransactionId() + "", 
+//						PurchasedCouponAction.ResultStatus.FAILED, tweet.getCoupon());
+				Window.alert("Purchase failed");
 			}
 		});
 		

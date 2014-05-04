@@ -18,6 +18,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.TransactionDTO;
 
 public interface AccountBLI {
@@ -74,5 +75,5 @@ public interface AccountBLI {
 	    UnsupportedEncodingException,
 	    NoSuchAlgorithmException;
 	
-	public void checkAccountEligibleForCouponPurchase(Account account, Long couponId) throws DispatchException;
+	void checkAccountEligibleForCouponPurchase(Account account, Coupon coupon) throws DispatchException;
 }

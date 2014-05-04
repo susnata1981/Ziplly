@@ -18,11 +18,15 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.persistence.NoResultException;
 
+import net.customware.gwt.dispatch.shared.DispatchException;
+
 import com.google.apphosting.api.DeadlineExceededException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponTransaction;
@@ -41,13 +45,17 @@ public class CouponBLIImpl implements CouponBLI {
 	private Logger logger = Logger.getLogger(CouponBLIImpl.class.getName());
 	private CouponTransactionDAO couponTransactionDao;
 	private String couponRedeemEndpoint;
+	private AccountBLI accountBli;
 
 	@Inject
-	public CouponBLIImpl(@Named("qrcode_endpoint") String qrcodeEndpoint,
+	public CouponBLIImpl(
+			AccountBLI accountBli,
+			@Named("qrcode_endpoint") String qrcodeEndpoint,
 	    @CouponRedeemEndpoint String couponRedeemEndpoint,
 	    CryptoUtil cryptoUtil,
 	    CouponTransactionDAO couponTransactionDao) {
 
+		this.accountBli = accountBli;
 		this.qrcodeEndpoint = qrcodeEndpoint;
 		this.couponRedeemEndpoint = couponRedeemEndpoint;
 		CouponBLIImpl.cryptoUtil = cryptoUtil;
@@ -228,6 +236,60 @@ public class CouponBLIImpl implements CouponBLI {
 		}
 	}
 
+	@Override
+	@Transactional
+	public void completeTransaction(Long couponTransactionId) throws DispatchException {
+		checkNotNull(couponTransactionId);
+		
+		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+				Long.valueOf(couponTransactionId), 
+				TransactionStatus.PENDING);
+		
+		try {
+			accountBli.checkAccountEligibleForCouponPurchase(
+					couponTransaction.getBuyer(), couponTransaction.getCoupon());
+		} catch(DispatchException ex) {
+			couponTransaction.setStatus(TransactionStatus.ELIGIBILITY_FAILED);
+			couponTransactionDao.save(couponTransaction);
+			throw ex;
+		}
+
+		// Update quantity 
+		couponTransaction.getCoupon().setQuantityPurchased(couponTransaction.getCoupon().getQuantityPurchased() + 1);
+		
+		//update the status
+		couponTransaction.setStatus(TransactionStatus.COMPLETE);
+		
+		// complete purchase in first callback
+		boolean completePurchase = Boolean.valueOf(System.getProperty(
+				StringConstants.COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG, "true"));
+		
+		logger.info(String.format("CompletePurchase value = %s",Boolean.valueOf(completePurchase).toString()));
+
+//		if(completePurchase) {
+//			couponTransaction.setStatus(TransactionStatus.COMPLETE);
+//		}
+		
+		// Set update date
+		Date now = new Date();
+		couponTransaction.setTimeUpdated(now);
+		
+		// Set QR code
+		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
+		purchasedCoupon.setCouponTransaction(couponTransaction);
+		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
+		purchasedCoupon.setTimeUpdated(now);
+		purchasedCoupon.setTimeCreated(now);
+		couponTransaction.setPurchasedCoupon(purchasedCoupon);
+		
+		try {
+			purchasedCoupon.setQrcode(getQrcode(couponTransaction));
+			couponTransactionDao.update(couponTransaction);
+		} catch (Exception e) {
+			throw new InternalError(String.format("Failed to generate coupon code"));
+		}
+	}
+	
 	@Override
 	public void waitAndCompleteTransaction(Long transactionId) throws InterruptedException {
 //		CouponTransaction transaction = couponTransactionDao.findById(transactionId);

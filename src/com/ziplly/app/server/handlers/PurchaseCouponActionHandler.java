@@ -102,9 +102,9 @@ public class PurchaseCouponActionHandler extends
 		
 		logger.info(String.format("CompletePurchase value = %s",Boolean.valueOf(completePurchase).toString()));
 
-		if(completePurchase) {
-			couponTransaction.setStatus(TransactionStatus.COMPLETE);
-		}
+//		if(completePurchase) {
+//			couponTransaction.setStatus(TransactionStatus.COMPLETE);
+//		}
 		
 		// Set update date
 		Date now = new Date();

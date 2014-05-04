@@ -804,9 +804,11 @@ public class AccountBLIImpl implements AccountBLI {
 	 * 4. check quantity allowed per user
 	 */
 	@Override
-	public void checkAccountEligibleForCouponPurchase(Account account,
-			Long couponId) throws DispatchException {
-		Coupon coupon = couponTransactionDao.findByCouponId(couponId);
+	public void checkAccountEligibleForCouponPurchase(
+			Account account,
+			Coupon coupon) throws DispatchException {
+		
+//		Coupon coupon = couponTransactionDao.findByCouponId(couponId);
 		//Check coupon quantity availability 
 		if (coupon.getQuantityPurchased() >= coupon.getQuanity()) {
 			// Log error

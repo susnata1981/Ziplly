@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.customware.gwt.dispatch.shared.DispatchException;
+
 import com.google.apphosting.api.DeadlineExceededException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,10 +40,15 @@ public class ConfirmPaymentServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		System.out.println("Received request = " + req.getContentLength());
-		handlePayload(req.getParameter(JWT_TOKEN_KEY), res);
+		try {
+	    handlePayload(req.getParameter(JWT_TOKEN_KEY), res);
+    } catch (DispatchException e) {
+    	logger.severe(String.format("Failed to confirm payment: %s", e));
+	    e.printStackTrace();
+    }
 	}
 
-	private void handlePayload(String jwt, HttpServletResponse res) throws IOException {
+	private void handlePayload(String jwt, HttpServletResponse res) throws IOException, DispatchException {
     String orderID;
     String jwt_response = paymentService.deserialize(jwt);
     logger.info(String.format("Deserialized jwt token %s", jwt_response));
@@ -65,15 +72,13 @@ public class ConfirmPaymentServlet extends HttpServlet {
                 
             		Long transactionId = Long.parseLong(req.getTransactionId());
             		try {
-	                couponBli.waitAndCompleteTransaction(transactionId);
+//	                couponBli.waitAndCompleteTransaction(transactionId);
+            			couponBli.completeTransaction(transactionId);
 	            		res.setStatus(200);
 	                PrintWriter writer = res.getWriter();
 	                writer.write(orderID);
                 } catch (DeadlineExceededException ex) {
                 	logger.severe(String.format("Deadline exceeded for %s, exception %s", payload_1, ex));
-                	res.getWriter().close();
-                } catch (InterruptedException e) {
-                	logger.severe(String.format("Interrupted exception for %s, exception %s", payload_1, e));
                 	res.getWriter().close();
                 }
             }
@@ -86,6 +91,11 @@ public class ConfirmPaymentServlet extends HttpServlet {
 		logger.log(Level.INFO, "ConfirPaumentServlet called.");
 		String token = req.getParameter("jwt");
 		logger.log(Level.INFO, "Jwt token =" + token);
-		handlePayload(token, res);
+		try {
+	    handlePayload(token, res);
+    } catch (DispatchException e) {
+    	logger.severe(String.format("Failed to confirm payment: %s", e));
+	    e.printStackTrace();
+    }
 	}
 }

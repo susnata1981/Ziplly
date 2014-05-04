@@ -2,6 +2,8 @@ package com.ziplly.app.server.bli;
 
 import java.io.UnsupportedEncodingException;
 
+import net.customware.gwt.dispatch.shared.DispatchException;
+
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
@@ -28,4 +30,6 @@ public interface CouponBLI {
 	Coupon redeemCoupon(String encodedCouponData, Long sellerAccountId) throws InvalidCouponException, CouponAlreadyUsedException;
 
 	void waitAndCompleteTransaction(Long transactionId) throws InterruptedException;
+
+	void completeTransaction(Long couponTransactionId) throws DispatchException;
 }
