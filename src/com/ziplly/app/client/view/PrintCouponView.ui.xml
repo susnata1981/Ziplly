@@ -38,6 +38,12 @@
 		<b:Image ui:field="logo" addStyleNames="{style.logo}" />
 		<b:Heading size="3" ui:field="title" addStyleNames="{style.heading}" />
 		<div class="{style.block}">
+			Merchant Name: <b:Label ui:field="businessName" addStyleNames="{style.label}"/>
+			<br/>
+		    Merchant Address: <b:Label ui:field="businessAddress" addStyleNames="{style.label}"/>
+		    <br/>
+		    Phone: <b:Label ui:field="businessPhone" addStyleNames="{style.label}"/>
+		    <br/>
 		    Discount: <b:Label ui:field="discount" addStyleNames="{style.label}"/>
 			<br/>
 			Price: <b:Label ui:field="price" addStyleNames="{style.label}"/>
@@ -45,6 +51,8 @@
 			Start Date: <b:Label ui:field="startDate" addStyleNames="{style.label}"/>
 			<br/>
 			End Date: <b:Label ui:field="endDate" addStyleNames="{style.label}"/>
+			<br/>
+			Number of coupons allowed per person: <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.label}"/>
 			<br/>
 		</div>
 

@@ -61,6 +61,7 @@ public class GetCouponQRCodeUrlActionHandler extends AbstractAccountActionHandle
 			result.setUrl(qrcodeUrl);
 			result.setCoupon(EntityUtil.clone(txn.getCoupon()));
 			result.setSeller(EntityUtil.convert(txn.getCoupon().getTweet().getSender()));
+			result.setBuyer(EntityUtil.convert(txn.getBuyer()));
 		} catch(NoResultException nre) {
 			throw new AccessException();
 		} catch (UnsupportedEncodingException e) {

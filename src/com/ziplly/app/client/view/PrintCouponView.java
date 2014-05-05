@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.shared.GetCouponQRCodeUrlResult;
 
@@ -44,6 +45,12 @@ public class PrintCouponView extends AbstractView {
 	Heading title;
 
 	@UiField
+	Label businessName;
+	@UiField
+	Label businessAddress;
+	@UiField
+	Label businessPhone;
+	@UiField
 	Label discount;
 	@UiField
 	Label startDate;
@@ -51,6 +58,8 @@ public class PrintCouponView extends AbstractView {
 	Label endDate;
 	@UiField
 	Label price;
+	@UiField
+	Label totalCouponsAllowerPerPerson;
 	
 	@UiField
 	Label termsAndConditionLabel;
@@ -63,11 +72,17 @@ public class PrintCouponView extends AbstractView {
 		frame.setSrc(result.getUrl());
 		title.setText(coupon.getDescription());
 		
+		BusinessAccountDTO businessAccount = (BusinessAccountDTO) result.getSeller();
+		businessName.setText(businessAccount.getDisplayName());
+		businessAddress.setText(businessAccount.getLocations().get(0).getAddress());
+		businessPhone.setText(businessAccount.getPhone());
+		
 		discount.setText(basicDataFormatter.format(coupon.getDiscount(), ValueType.PERCENT));
 		price.setText(basicDataFormatter.format(coupon.getPrice(), ValueType.PRICE));
 		startDate.setText(basicDataFormatter.format(coupon.getStartDate(), ValueType.DATE_VALUE));
 		endDate.setText(basicDataFormatter.format(coupon.getEndDate(), ValueType.DATE_VALUE));
 		
+		totalCouponsAllowerPerPerson.setText(Integer.toString(coupon.getNumberAllowerPerIndividual()));
 		termsAndConditionLabel.setText("You're required to honor all valid coupons that were purchased on Ziplly.");
   }
 

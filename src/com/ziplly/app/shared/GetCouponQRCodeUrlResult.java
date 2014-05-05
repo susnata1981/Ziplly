@@ -8,7 +8,8 @@ import com.ziplly.app.model.CouponDTO;
 public class GetCouponQRCodeUrlResult implements Result {
 	private String url;
 	private CouponDTO coupon;
-	private AccountDTO account;
+	private AccountDTO seller;
+	private AccountDTO buyer;
 	
 	public GetCouponQRCodeUrlResult() {
   }
@@ -34,10 +35,18 @@ public class GetCouponQRCodeUrlResult implements Result {
   }
 
 	public void setSeller(AccountDTO account) {
-		this.account = account;
+		this.seller = account;
   }
 
 	public AccountDTO getSeller() {
-		return account;
+		return seller;
   }
+
+	public void setBuyer(AccountDTO buyer) {
+		this.buyer = buyer;
+  }
+	
+	public AccountDTO getBuyer() {
+		return buyer;
+	}
 }
