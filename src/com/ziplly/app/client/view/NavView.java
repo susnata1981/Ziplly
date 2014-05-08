@@ -24,6 +24,7 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
@@ -89,6 +90,8 @@ public class NavView extends Composite implements INavView {
 	@UiField
 	NavLink transactionLink;
 	@UiField
+	NavLink reportingLink;
+	@UiField
 	NavLink messageLink;
 
 	@UiField
@@ -133,7 +136,9 @@ public class NavView extends Composite implements INavView {
 				presenter.goTo(new HomePlace());
 			}
 		});
+		
 		locationDropdown.setVisible(false);
+		reportingLink.setVisible(false);
 	}
 
 	private void showAccountNotificationPanel(boolean b) {
@@ -197,6 +202,11 @@ public class NavView extends Composite implements INavView {
 		presenter.goTo(new LoginPlace());
 	}
 
+	@UiHandler("reportingLink")
+	void report(ClickEvent event) {
+		presenter.goTo(new CouponReportPlace());
+	}
+	
 	@Override
 	public void clear() {
 		showAccountLinks(false);
@@ -322,4 +332,9 @@ public class NavView extends Composite implements INavView {
 	public void displayLocationDropdown(boolean show) {
 		locationDropdown.setVisible(show);
 	}
+
+	@Override
+  public void displayReportingMenu() {
+		reportingLink.setVisible(true);
+  }
 }

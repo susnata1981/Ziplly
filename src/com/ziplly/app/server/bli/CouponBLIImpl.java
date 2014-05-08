@@ -241,7 +241,7 @@ public class CouponBLIImpl implements CouponBLI {
 	public void completeTransaction(Long couponTransactionId) throws DispatchException {
 		checkNotNull(couponTransactionId);
 		
-		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+		CouponTransaction couponTransaction = couponTransactionDao.findByIdAndStatus(
 				Long.valueOf(couponTransactionId), 
 				TransactionStatus.PENDING);
 		
@@ -299,7 +299,7 @@ public class CouponBLIImpl implements CouponBLI {
 		
 		while (!found) {
 			try {
-				transaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+				transaction = couponTransactionDao.findByIdAndStatus(
 						transactionId,
 				    TransactionStatus.PENDING_COMPLETE);
 				found = true;

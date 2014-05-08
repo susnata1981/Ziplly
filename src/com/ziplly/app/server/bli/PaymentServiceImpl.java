@@ -56,6 +56,18 @@ public class PaymentServiceImpl implements PaymentService {
 		return token.serializeAndSign();
 	}
 
+	public String generateSubscriptionToken(Long sellerId, Double amount) throws InvalidKeyException, SignatureException {
+		// Configure request object
+		JsonObject request = new JsonObject();
+		request.addProperty(NAME_LABEL, "ziplly marketing service");
+		request.addProperty(DESCRIPTION_LABEL, "ziplly marketing service fee");
+		request.addProperty(PRICE_LABEL, amount);
+		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
+		request.addProperty("sellerData", "seller_id:" + sellerId);
+		JsonToken token = createToken(request);
+		return token.serializeAndSign();
+	}
+	
 	@Override
 	public String deserialize(String tokenString) {
 		String[] pieces = splitTokenString(tokenString);
@@ -67,20 +79,6 @@ public class PaymentServiceImpl implements PaymentService {
 		    parser.parse(StringUtils.newStringUtf8(Base64.decodeBase64(jwtPayloadSegment.getBytes())));
 
 		return payload.toString();
-	}
-
-	/**
-	 * @param tokenString
-	 *          The original encoded representation of a JWT
-	 * @return Three components of the JWT as an array of strings
-	 */
-	private String[] splitTokenString(String tokenString) {
-		String[] pieces = tokenString.split(Pattern.quote("."));
-		if (pieces.length != 3) {
-			throw new IllegalStateException("Expected JWT to have 3 segments separated by '" + "."
-			    + "', but it has " + pieces.length + " segments");
-		}
-		return pieces;
 	}
 
 	@Override
@@ -122,4 +120,18 @@ public class PaymentServiceImpl implements PaymentService {
   public String getIssuer() {
 		return sellerId;
   }
+	
+	/**
+	 * @param tokenString
+	 *          The original encoded representation of a JWT
+	 * @return Three components of the JWT as an array of strings
+	 */
+	private String[] splitTokenString(String tokenString) {
+		String[] pieces = tokenString.split(Pattern.quote("."));
+		if (pieces.length != 3) {
+			throw new IllegalStateException("Expected JWT to have 3 segments separated by '" + "."
+			    + "', but it has " + pieces.length + " segments");
+		}
+		return pieces;
+	}
 }

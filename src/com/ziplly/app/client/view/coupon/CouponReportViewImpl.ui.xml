@@ -1,0 +1,74 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dv="urn:import:com.ziplly.app.client.view.coupon"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.heading {
+		height: 30px;
+		line-height: 30px;
+		padding: 4px;
+		background: #ddd;
+		color: #666;
+		font-family: Verdata, sans;
+		}
+		ul {
+			margin: 10px 0;
+		}
+		ul > li {
+			list-style: none;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 24px;
+			padding: 2px;
+		}
+	</ui:style>
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column size="2">
+			</b:Column>
+			<b:Column size="9">
+				<g:HTMLPanel>
+					<b:Heading size="4" addStyleNames="{style.heading}">List of coupons
+						published</b:Heading>
+					<hr />
+					<b:Alert ui:field="message" close="false" />
+					<b:SimplePager ui:field="pager" display="{couponReportTable}"
+						fastForwardRows="15" />
+					<b:CellTable ui:field="couponReportTable" bordered="true"
+						striped="true" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="2">
+			</b:Column>
+			<b:Column size="9">
+				<g:HTMLPanel>
+					<g:HTMLPanel ui:field="couponTransactionDetailsPanel">
+						<b:Heading size="4" addStyleNames="{style.heading}"
+							ui:field="couponTransactionDetailsHeading" />
+						<div>
+						    <b:Heading size="4">Summary</b:Heading>
+						    <ul>
+						        <li>
+						            Coupons Sold:<b:Label ui:field="totalCouponsSoldLabel" />
+						        </li>
+						        <li>
+						            Total Sales:<b:Label ui:field="totalSalesLabel" />
+						        </li>
+						        <li>
+						            Total Coupons Redeemed:<b:Label ui:field="totalCouponsRedeemed" />
+						        </li>
+						        <li>
+						            Total Coupons Unused:<b:Label ui:field="totalCouponsUnused" />
+						        </li>
+						    </ul>
+						</div>
+						<dv:CouponTransactionTableWidget
+							ui:field="couponTransactionTableWidget" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
+</ui:UiBinder> 

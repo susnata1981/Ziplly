@@ -624,4 +624,21 @@ public class EntityUtil {
 		resp.setTimeCreated(coupon.getTimeCreated());
 		return resp;
 	}
+
+	public static List<CouponDTO> cloneCouponList(List<Coupon> coupons) {
+		List<CouponDTO> result = new ArrayList<CouponDTO>();
+		for(Coupon c : coupons) {
+			result.add(clone(c));
+		}
+		return result;
+  }
+
+	public static List<CouponTransactionDTO> cloneCouponTransactionList(List<CouponTransaction> transactions) {
+		List<CouponTransactionDTO> result = new ArrayList<CouponTransactionDTO>();
+		for(CouponTransaction transaction : transactions) {
+			result.add(EntityUtil.clone(transaction));
+		}
+		
+		return result;
+  }
 }

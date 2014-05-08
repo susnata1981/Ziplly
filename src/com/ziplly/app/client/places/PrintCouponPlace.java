@@ -23,7 +23,7 @@ public class PrintCouponPlace extends Place {
   }
 
 	@Prefix("printcoupon")
-	public static class PrintCouponPlaceTokenizer extends BaseTokenizer<PrintCouponPlace> {
+	public static class Tokenizer extends BaseTokenizer<PrintCouponPlace> {
 
 		@Override
     public PrintCouponPlace getPlace(String token) {

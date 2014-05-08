@@ -1,6 +1,6 @@
 package com.ziplly.app.client.activities;
 
-import com.ziplly.app.client.view.CouponTransactionView.CouponTransactionPresenter;
+import com.ziplly.app.client.view.coupon.CouponTransactionView.CouponTransactionPresenter;
 import com.ziplly.app.model.AccountDTO;
 
 public interface AccountPresenter<T extends AccountDTO> extends CouponTransactionPresenter {

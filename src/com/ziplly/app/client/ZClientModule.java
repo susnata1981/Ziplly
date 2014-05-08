@@ -24,6 +24,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
+import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.HomeActivity.HomeView;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -50,6 +51,7 @@ import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.TweetDetailsView;
+import com.ziplly.app.client.view.coupon.CouponReportViewImpl;
 import com.ziplly.app.client.widget.SendMessageWidget;
 
 public class ZClientModule extends AbstractGinModule {
@@ -90,7 +92,8 @@ public class ZClientModule extends AbstractGinModule {
 		bind(PasswordRecoveryView.class);
 		bind(EmailVerificationView.class);
 		bind(AboutView.class);
-
+		bind(CouponReportView.class).to(CouponReportViewImpl.class).in(Singleton.class);
+		
 		// places
 		bind(HomePlace.class);
 		bind(LoginPlace.class);

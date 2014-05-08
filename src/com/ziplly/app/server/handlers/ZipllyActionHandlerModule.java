@@ -2,6 +2,7 @@ package com.ziplly.app.server.handlers;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
+import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
@@ -21,6 +22,7 @@ import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetConversationsAction;
 import com.ziplly.app.shared.GetCouponQRCodeUrlAction;
 import com.ziplly.app.shared.GetCouponTransactionAction;
+import com.ziplly.app.shared.GetCouponsAction;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEnvironmentAction;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
@@ -165,6 +167,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetCouponTransactionAction.class, GetCouponTransactionActionHandler.class);
 		bindHandler(GetCouponQRCodeUrlAction.class, GetCouponQRCodeUrlActionHandler.class);
 		bindHandler(RedeemCouponAction.class, RedeemCouponActionHandler.class);
+		bindHandler(GetCouponsAction.class, GetCouponsActionHandler.class);
 		
 		// invitation
 		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);

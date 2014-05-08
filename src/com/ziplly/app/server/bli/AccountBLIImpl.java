@@ -820,7 +820,7 @@ public class AccountBLIImpl implements AccountBLI {
 		//Check the number of same coupons allowed per user.
 		try {
 			List<CouponTransaction> transactions =
-			    couponTransactionDao.findCouponTransactionByAccountAndCouponId(
+			    couponTransactionDao.findByAccountAndCouponId(
 			    		coupon.getCouponId(),
 			    		account.getAccountId());
 			

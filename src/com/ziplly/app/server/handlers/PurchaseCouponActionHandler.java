@@ -55,7 +55,7 @@ public class PurchaseCouponActionHandler extends
 				, action.getBuyer().getAccountId(), action.getCouponTransactionId()));
 		
 		validateSession();
-		CouponTransaction couponTransaction = couponTransactionDao.findCouponTransactionByIdAndStatus(
+		CouponTransaction couponTransaction = couponTransactionDao.findByIdAndStatus(
 				Long.valueOf(action.getCouponTransactionId()), 
 				TransactionStatus.PENDING);
 		

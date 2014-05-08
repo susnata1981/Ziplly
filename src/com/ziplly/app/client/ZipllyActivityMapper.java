@@ -15,6 +15,8 @@ import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
 import com.ziplly.app.client.activities.ConversationActivity;
+import com.ziplly.app.client.activities.CouponReportActivity;
+import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.EmailVerificationActivity;
 import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.LoginActivity;
@@ -34,6 +36,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.EmailVerificationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -85,7 +88,8 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<AdminView> adminView;
 	private AsyncProvider<AboutView> aboutView;
 	private AsyncProvider<PrintCouponView> printCouponView;
-
+	private AsyncProvider<CouponReportView> couponReportView;
+	
 	@Inject
 	public ZipllyActivityMapper(AsyncProvider<HomeViewImpl> homeView,
 	    AsyncProvider<TweetDetailsView> tweetDetailsView,
@@ -104,6 +108,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	    AsyncProvider<AdminView> adminView,
 	    AsyncProvider<AboutView> aboutView,
 	    AsyncProvider<PrintCouponView> printCouponView,
+	    AsyncProvider<CouponReportView> couponReportView,
 	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -126,6 +131,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 		this.adminView = adminView;
 		this.aboutView = aboutView;
 		this.printCouponView = printCouponView;
+		this.couponReportView = couponReportView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -390,8 +396,21 @@ public class ZipllyActivityMapper implements ActivityMapper {
         }
 				
 			});
-		}
+		} else if (place instanceof CouponReportPlace) {
+			return new ActivityProxy<CouponReportActivity>(new AsyncProvider<CouponReportActivity>() {
 
+				@Override
+        public void get(AsyncCallback<? super CouponReportActivity> callback) {
+					callback.onSuccess(new CouponReportActivity(dispatcher, 
+							eventBus, 
+							placeController, 
+							(CouponReportPlace) place,
+							ctx,
+							couponReportView));
+        }
+				
+			});
+		}
 		throw new IllegalArgumentException();
 	}
 }

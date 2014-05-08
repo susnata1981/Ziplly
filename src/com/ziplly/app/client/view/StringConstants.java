@@ -148,4 +148,5 @@ public class StringConstants {
 	public static final String COUPON_PURCHASE_FAILED = "Sorry, your coupon purchase failed. You were not charged for this coupon.";
 	public static final String COUPON_PURCHASE_SUCCESS = "Congratulations on your coupon purchase!!!";
 	public static final String CURRENCY_USD = "USD";
+	public static final String NO_COUPONS = "No coupons published yet";
 }

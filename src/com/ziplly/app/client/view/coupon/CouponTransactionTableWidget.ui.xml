@@ -3,7 +3,7 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel ui:field="transactionPanel">
 		<b:SimplePager ui:field="pager" display="{couponTransactionTable}" fastForwardRows="15" />
 		<b:CellTable ui:field="couponTransactionTable" bordered="true" striped="true" />
 		<b:Alert ui:field="message" close="false" />

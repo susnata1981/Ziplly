@@ -1,0 +1,11 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel ui:field="transactionPanel">
+		<!-- <b:SimplePager ui:field="pager" display="{couponTransactionTable}" fastForwardRows="15" />
+		<b:CellTable ui:field="couponTransactionTable" bordered="true" striped="true" /> -->
+		<b:Alert ui:field="message" close="false" />
+	</g:HTMLPanel>
+</ui:UiBinder> 

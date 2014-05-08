@@ -62,8 +62,8 @@ import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponDTO;
@@ -72,7 +72,6 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
 import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.ValidationResult;
 
 public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {

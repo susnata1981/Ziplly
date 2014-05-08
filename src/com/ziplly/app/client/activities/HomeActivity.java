@@ -728,16 +728,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	private class CommunityDataHandler extends DispatcherCallbackAsync<GetCommunityWallDataResult> {
-//		@Override
-//		public void onFailure(Throwable th) {
-//			if (th instanceof IllegalArgumentException) {
-//				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-//			} else if (th instanceof NotFoundException) {
-//				getCommunityWallData(TweetType.ALL);
-//				view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-//			}
-//			eventBus.fireEvent(new LoadingEventEnd());
-//		}
 
 		public void postHandle(Throwable th) {
 			if (th instanceof NotFoundException) {

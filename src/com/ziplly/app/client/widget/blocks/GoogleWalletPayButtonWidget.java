@@ -8,14 +8,12 @@ import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 
 public class GoogleWalletPayButtonWidget {
 	private GoogleWalletPostPayButtonHandler handler;
-//	private String jwtToken;
 	private Button btn;
 
 	public GoogleWalletPayButtonWidget(final Button btn, 
 			final GoogleWalletPostPayButtonHandler handler) {
 		
 		this.btn = btn;
-//		this.jwtToken = jwt;
 		this.handler = handler;
   }
 	

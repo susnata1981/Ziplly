@@ -6,6 +6,7 @@ import java.security.SignatureException;
 import com.ziplly.app.model.CouponDTO;
 
 public interface PaymentService {
+	
 	/**
 	 * For billing merchants
 	 * @param sellerId
@@ -17,7 +18,7 @@ public interface PaymentService {
 	String getJWT(Long sellerId, Double d) throws InvalidKeyException, SignatureException;
 	
 	/**
-	 * For coupon
+	 * For generating coupon purchase token
 	 * @param transactionId 
 	 * @param coupon
 	 * @param buyer

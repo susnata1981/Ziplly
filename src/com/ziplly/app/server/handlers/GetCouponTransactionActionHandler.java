@@ -1,5 +1,9 @@
 package com.ziplly.app.server.handlers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -43,18 +47,58 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
       ExecutionContext context) throws DispatchException {
 		
 		validateSession();
-		List<CouponTransaction> transactions = 
-				couponTransactionDao.findCouponTransactionByAccountIdAndStatus(
-						session.getAccount().getAccountId(), TransactionStatus.COMPLETE, action.getStart(), action.getPageSize());
-		
-		Long count = (long) (transactions == null ? 0 : transactions.size()); 
-
-		GetCouponTransactionResult result = new GetCouponTransactionResult();
-		for(CouponTransaction transaction : transactions) {
-			result.getTransactions().add(EntityUtil.clone(transaction));
+		TransactionDetails details = null;
+		switch(action.getSearchType()) {
+			case BY_ACCOUNT_ID:
+				details = searchByAccountId(action);
+				break;
+			case BY_COUPON_ID:
+				checkNotNull(action.getCouponId());
+				checkArgument(action.getStart() >= 0);
+				checkArgument(action.getPageSize() > 0);
+				details = searchByCouponId(action);
 		}
-		result.setTotalTransactions(count);
-		
+		 
+		GetCouponTransactionResult result = new GetCouponTransactionResult();
+		result.setTransactions(EntityUtil.cloneCouponTransactionList(details.getTransactions()));
+		result.setTotalTransactions(details.getTotalTransactionCount());
 		return result;
   }
+
+	private TransactionDetails searchByCouponId(GetCouponTransactionAction action) {
+		TransactionDetails details = new TransactionDetails();
+		details.setTransactions(couponTransactionDao.findCouponTransactionByCouponId(action.getCouponId(), action.getStart(), action.getPageSize()));
+		details.setTotalTransactionCount(couponTransactionDao.getTotalCountByByCouponId(action.getCouponId()));
+		return details;
+  }
+
+	private TransactionDetails searchByAccountId(GetCouponTransactionAction action) {
+		TransactionDetails details = new TransactionDetails();
+		details.setTransactions(couponTransactionDao.findByAccountIdAndStatus(
+				session.getAccount().getAccountId(), TransactionStatus.COMPLETE, action.getStart(), action.getPageSize()));
+		details.setTotalTransactionCount(couponTransactionDao.getTotalCountByAccountIdAndStatus(
+				session.getAccount().getAccountId(), TransactionStatus.COMPLETE));
+		
+		return details;
+  }
+	
+	private static class TransactionDetails {
+		private List<CouponTransaction> transactions = new ArrayList<CouponTransaction>();
+		private Long totalTransactionCount = 0L;
+		public List<CouponTransaction> getTransactions() {
+	    return transactions;
+    }
+
+		public void setTransactions(List<CouponTransaction> transactions) {
+	    this.transactions = transactions;
+    }
+
+		public Long getTotalTransactionCount() {
+	    return totalTransactionCount;
+    }
+
+		public void setTotalTransactionCount(Long totalTransactionCount) {
+	    this.totalTransactionCount = totalTransactionCount;
+    }
+	}
 }

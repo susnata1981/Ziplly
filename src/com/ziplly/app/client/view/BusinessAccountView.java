@@ -43,6 +43,7 @@ import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccount
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
+import com.ziplly.app.client.view.coupon.CouponTransactionView;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AlertModal;

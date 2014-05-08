@@ -3,7 +3,6 @@ package com.ziplly.app.client.activities;
 import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,7 +16,6 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
-import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.view.NavView.NavPresenter;
@@ -73,6 +71,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		void displayLocationsDropdown(List<LocationDTO> locations);
 
 		void displayLocationDropdown(boolean show);
+
+		void displayReportingMenu();
 	}
 
 	@Inject
@@ -93,8 +93,12 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 			@Override
 			public void onEvent(LoginEvent event) {
+				if (event.getAccount() instanceof BusinessAccountDTO) {
+					view.displayReportingMenu();
+				}
 				onLogin();
-				view.displayLocationsDropdown(event.getAccount().getLocations());
+				// TODO(susnata): need to enable this.
+//				view.displayLocationsDropdown(event.getAccount().getLocations());
 			}
 		});
 
