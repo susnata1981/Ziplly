@@ -2,10 +2,6 @@ package com.ziplly.app.server.handlers;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Currency;
-import java.util.Date;
-import java.util.Locale;
-
 import javax.persistence.EntityManager;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -16,12 +12,12 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
-import com.ziplly.app.dao.CouponTransactionDAO;
+import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.CouponTransaction;
-import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
@@ -30,20 +26,23 @@ public class CheckBuyerEligibilityForCouponActionHandler
 	extends AbstractAccountActionHandler<CheckBuyerEligibilityForCouponAction, CheckBuyerEligibilityForCouponResult>{
 
 	private PaymentService paymentService;
-	private CouponTransactionDAO couponTransactionDao;
 	private CouponDAO couponDao;
+	private PurchasedCouponDAO purchasedCouponDao;
+	private CouponBLI couponBli;
 
 	@Inject
 	public CheckBuyerEligibilityForCouponActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
+      CouponBLI couponBli,
       CouponDAO couponDao,
-      CouponTransactionDAO couponTransactionDao,
+      PurchasedCouponDAO purchasedCouponDAO,
       PaymentService paymentService) {
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
+	  this.couponBli = couponBli;
 	  this.couponDao = couponDao;
-	  this.couponTransactionDao = couponTransactionDao;
+	  this.purchasedCouponDao = purchasedCouponDAO;
 	  this.paymentService = paymentService;
   }
 
@@ -58,19 +57,11 @@ public class CheckBuyerEligibilityForCouponActionHandler
 		
 		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), coupon);
 		try {
-			CouponTransaction cTransaction = new CouponTransaction();
-			cTransaction.setBuyer(session.getAccount());
-			cTransaction.setCoupon(coupon);
-			cTransaction.setStatus(TransactionStatus.PENDING);
-			cTransaction.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
-			Date now = new Date();
-			cTransaction.setTimeCreated(now);
-			cTransaction.setTimeUpdated(now);
-			couponTransactionDao.save(cTransaction);
+			PurchasedCoupon pc = couponBli.createPendingTransaction(session.getAccount(), coupon);
 			
-	    String jwtToken = paymentService.getJWTTokenForCoupon(
-	    		cTransaction.getTransactionId(), 
-	    		action.getCoupon(), 
+	    String jwtToken = paymentService.generateJWTTokenForCoupon(
+	    		pc.getPurchasedCouponId(), 
+	    		coupon, 
 	    		session.getAccount().getAccountId());
 	    
 	    CheckBuyerEligibilityForCouponResult result = new CheckBuyerEligibilityForCouponResult();

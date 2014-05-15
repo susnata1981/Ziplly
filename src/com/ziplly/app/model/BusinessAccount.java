@@ -7,11 +7,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 
 @Entity
 @DiscriminatorValue("business")
@@ -31,9 +34,10 @@ public class BusinessAccount extends Account {
 	@OneToOne(cascade = CascadeType.ALL)
 	private BusinessProperties properties;
 
-	@OneToMany(mappedBy = "seller")
+	@OneToMany
+	@JoinColumn(name="subscription_id")
 	@Fetch(FetchMode.JOIN)
-	private Set<Transaction> transactions = new HashSet<Transaction>();
+	private Set<Subscription> subscriptions = new HashSet<Subscription>();
 
 	public BusinessAccount() {
 	}
@@ -43,14 +47,14 @@ public class BusinessAccount extends Account {
 		this.name = account.getName();
 		this.phone = account.getPhone();
 		this.website = account.getWebsite();
-		// this.street1 = account.getStreet1();
+//		 this.street1 = account.getStreet1();
 		// this.street2 = account.getStreet2();
 		this.businessType = BusinessType.COMMERCIAL.name();
 		this.category = account.getCategory().name();
 		this.properties = new BusinessProperties(account.getProperties());
-
-		for (TransactionDTO txn : account.getTransactions()) {
-			this.transactions.add(new Transaction(txn));
+		
+		for(SubscriptionDTO subscription : account.getTransactions()) {
+			this.subscriptions.add(new Subscription(subscription));
 		}
 	}
 
@@ -78,12 +82,12 @@ public class BusinessAccount extends Account {
 		this.website = website;
 	}
 
-	public Set<Transaction> getTransactions() {
-		return transactions;
+	public Set<Subscription> getSubscriptions() {
+		return subscriptions;
 	}
 
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
+	public void setSubscriptions(Set<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
 	}
 
 	public BusinessProperties getProperties() {

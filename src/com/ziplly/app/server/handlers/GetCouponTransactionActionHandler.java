@@ -1,7 +1,7 @@
 package com.ziplly.app.server.handlers;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,27 +14,27 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.EntityUtil;
+import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.CouponTransaction;
+import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetCouponTransactionAction;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class GetCouponTransactionActionHandler extends AbstractAccountActionHandler<GetCouponTransactionAction, GetCouponTransactionResult>{
-	private CouponTransactionDAO couponTransactionDao;
+	private PurchasedCouponDAO purchasedCouponDao;
 
 	@Inject
 	public GetCouponTransactionActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
-      CouponTransactionDAO couponTransactionDao) {
+      PurchasedCouponDAO purchasedCouponDao) {
 		
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
-	  this.couponTransactionDao = couponTransactionDao;
+	  this.purchasedCouponDao = purchasedCouponDao;
   }
 
 	@Override
@@ -60,37 +60,38 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 		}
 		 
 		GetCouponTransactionResult result = new GetCouponTransactionResult();
-		result.setTransactions(EntityUtil.cloneCouponTransactionList(details.getTransactions()));
+		result.setPurchasedCoupons(EntityUtil.clonePurchaseCouponList(details.getPurchasedCoupons()));
 		result.setTotalTransactions(details.getTotalTransactionCount());
 		return result;
   }
 
 	private TransactionDetails searchByCouponId(GetCouponTransactionAction action) {
 		TransactionDetails details = new TransactionDetails();
-		details.setTransactions(couponTransactionDao.findCouponTransactionByCouponId(action.getCouponId(), action.getStart(), action.getPageSize()));
-		details.setTotalTransactionCount(couponTransactionDao.getTotalCountByByCouponId(action.getCouponId()));
+		details.setPurchasedCoupons(purchasedCouponDao.findTransactionByCouponId(action.getCouponId(), action.getStart(), action.getPageSize()));
+		details.setTotalTransactionCount(purchasedCouponDao.getTotalCountByByCouponId(action.getCouponId()));
 		return details;
   }
 
 	private TransactionDetails searchByAccountId(GetCouponTransactionAction action) {
 		TransactionDetails details = new TransactionDetails();
-		details.setTransactions(couponTransactionDao.findByAccountIdAndStatus(
+		details.setPurchasedCoupons(purchasedCouponDao.findByAccountIdAndStatus(
 				session.getAccount().getAccountId(), TransactionStatus.COMPLETE, action.getStart(), action.getPageSize()));
-		details.setTotalTransactionCount(couponTransactionDao.getTotalCountByAccountIdAndStatus(
+		details.setTotalTransactionCount(purchasedCouponDao.getTotalByAccountIdAndStatus(
 				session.getAccount().getAccountId(), TransactionStatus.COMPLETE));
 		
 		return details;
   }
 	
 	private static class TransactionDetails {
-		private List<CouponTransaction> transactions = new ArrayList<CouponTransaction>();
+		private List<PurchasedCoupon> purchasedCoupons = new ArrayList<PurchasedCoupon>();
 		private Long totalTransactionCount = 0L;
-		public List<CouponTransaction> getTransactions() {
-	    return transactions;
+		
+		public List<PurchasedCoupon> getPurchasedCoupons() {
+	    return purchasedCoupons;
     }
 
-		public void setTransactions(List<CouponTransaction> transactions) {
-	    this.transactions = transactions;
+		public void setPurchasedCoupons(List<PurchasedCoupon> purchasedCoupons) {
+	    this.purchasedCoupons = purchasedCoupons;
     }
 
 		public Long getTotalTransactionCount() {

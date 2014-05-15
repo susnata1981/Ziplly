@@ -8,8 +8,8 @@ public class PurchasedCouponDTO implements Serializable {
 	private Long purchasedCouponId;
 	private String qrcode;
 	private String status;
-	private CouponTransactionDTO couponTransaction;
 	private CouponDTO coupon;
+	private TransactionDTO couponTransaction;
 	private Date timeUpdated;
 	private Date timeCreated;
 	
@@ -31,10 +31,10 @@ public class PurchasedCouponDTO implements Serializable {
 	public void setStatus(PurchasedCouponStatus status) {
 		this.status = status.name();
 	}
-	public CouponTransactionDTO getCouponTransaction() {
+	public TransactionDTO getTransaction() {
 		return couponTransaction;
 	}
-	public void setCouponTransaction(CouponTransactionDTO couponTransaction) {
+	public void setTransaction(TransactionDTO couponTransaction) {
 		this.couponTransaction = couponTransaction;
 	}
 	public static long getSerialversionuid() {

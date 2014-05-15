@@ -2,19 +2,19 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Result;
 
-import com.ziplly.app.model.TransactionDTO;
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 
 public class PayResult implements Result {
-	private TransactionDTO transaction;
-
+	private SubscriptionDTO subscription;
+	
 	public PayResult() {
 	}
 
-	public void setTransaction(TransactionDTO txn) {
-		this.transaction = txn;
-	}
+	public SubscriptionDTO getSubscription() {
+	  return subscription;
+  }
 
-	public TransactionDTO getTransaction() {
-		return transaction;
-	}
+	public void setSubscription(SubscriptionDTO subscription) {
+	  this.subscription = subscription;
+  }
 }

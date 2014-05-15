@@ -18,6 +18,9 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.exceptions.ErrorDefinitions;
+import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
+import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -30,11 +33,11 @@ import com.ziplly.app.client.view.ITweetView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
-import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.client.widget.TweetWidget;
@@ -136,25 +139,19 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	@Override
 	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
+		
 		CheckBuyerEligibilityForCouponAction eligibilityAction =
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);
-
 		dispatcher.execute(
 		    eligibilityAction,
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
-
-//			    @Override
-//			    public void onFailure(Throwable th) {
-//				    view.displayMessage(th.getLocalizedMessage(), AlertType.ERROR);
-//			    }
 
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
 				    Window.alert("Eligible for buy...");
 				    widget.initiatePay(result.getJwtToken());
 			    }
-
 		    });
 	}
 
@@ -405,6 +402,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		if (account == null) {
 			placeController.goTo(new LoginPlace());
 		}
+		
 		dispatcher.execute(new TweetAction(tweet), new TweetHandler());
 	}
 
@@ -789,6 +787,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		@Override
 		public void onSuccess(TweetResult result) {
 			view.insertTweet(result.getTweet());
+		}
+		
+		@Override
+		public void postHandle(Throwable th) {
+			if (th instanceof NeedsSubscriptionException) {
+				ErrorDefinition<?> error = ErrorDefinitions.needsSubscriptionError;
+				view.displayMessage(error.getErrorMessage(), error.getType());
+			}
 		}
 	}
 

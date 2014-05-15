@@ -15,6 +15,9 @@
 	<!--  Maps -->
 	<inherits name="com.google.maps.gwt.GoogleMaps" />
 	
+	<!-- Charts -->
+	<inherits name="com.googlecode.gwt.charts.Charts"/> 
+	
 	<!-- Activity & Place -->
 	<inherits name='com.google.gwt.activity.Activity'/>
 	<inherits name='com.google.gwt.place.Place'/>

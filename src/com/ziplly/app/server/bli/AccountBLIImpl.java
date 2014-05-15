@@ -40,18 +40,17 @@ import com.google.inject.Inject;
 import com.restfb.types.User;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessException;
-import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
 import com.ziplly.app.client.exceptions.CouponCampaignNotStartedException;
+import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.OAuthException;
-import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.oauth.AccessToken;
 import com.ziplly.app.client.oauth.OAuthConfig;
@@ -62,11 +61,10 @@ import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
-import com.ziplly.app.dao.CouponTransactionDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.PasswordRecoveryDAO;
+import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
 import com.ziplly.app.model.Account;
@@ -76,9 +74,7 @@ import com.ziplly.app.model.AccountRegistration;
 import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
-import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
@@ -89,10 +85,8 @@ import com.ziplly.app.model.PasswordRecoveryStatus;
 import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PrivacySettings;
+import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.Session;
-import com.ziplly.app.model.Transaction;
-import com.ziplly.app.model.TransactionDTO;
-import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
@@ -120,7 +114,6 @@ public class AccountBLIImpl implements AccountBLI {
 	Logger logger = Logger.getLogger(AccountBLIImpl.class.getCanonicalName());
 
 	private AccountRegistrationDAO accountRegistrationDao;
-	private TransactionDAO transactionDao;
 	private EmailService emailService;
 	private PasswordRecoveryDAO passwordRecoveryDao;
 	private final GcsService gcsService = GcsServiceFactory
@@ -129,20 +122,20 @@ public class AccountBLIImpl implements AccountBLI {
 	        .retryMaxAttempts(10)
 	        .totalRetryPeriodMillis(15000)
 	        .build());
-	private CouponTransactionDAO couponTransactionDao;
+	private PurchasedCouponDAO purchasedCouponDao;
 
 	@Inject
 	public AccountBLIImpl(AccountDAO accountDao,
 	    SessionDAO sessionDao,
-	    TransactionDAO transactionDao,
-	    CouponTransactionDAO couponTransactionDao,
+//	    TransactionDAO couponTransactionDao,
+	    PurchasedCouponDAO purchasedCouponDao,
 	    PasswordRecoveryDAO passwordRecoveryDao,
 	    EmailService emailService,
 	    AccountRegistrationDAO accountRegistrationDao) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
-		this.transactionDao = transactionDao;
-		this.couponTransactionDao = couponTransactionDao;
+//		this.couponTransactionDao = couponTransactionDao;
+		this.purchasedCouponDao = purchasedCouponDao;
 		this.passwordRecoveryDao = passwordRecoveryDao;
 		this.blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		this.emailService = emailService;
@@ -181,7 +174,7 @@ public class AccountBLIImpl implements AccountBLI {
 	}
 
 	@Override
-	public AccountDTO getAccountById(Long accountId) throws NotFoundException {
+	public Account getAccountById(Long accountId) throws NotFoundException {
 		if (accountId == null) {
 			throw new IllegalArgumentException();
 		}
@@ -611,36 +604,36 @@ public class AccountBLIImpl implements AccountBLI {
 		return (Long) httpSession.get().getAttribute(ZipllyServerConstants.SESSION_ID);
 	}
 
-	@Override
-	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException,
-	    DuplicateException,
-	    NotFoundException {
-		if (txn == null) {
-			throw new IllegalArgumentException();
-		}
-
-		AccountDTO accountDto = accountDao.findById(txn.getSeller().getAccountId());
-		Transaction transaction = new Transaction(txn);
-		transaction.setSeller(new Account(accountDto));
-
-		if (!(accountDto instanceof BusinessAccountDTO)) {
-			throw new IllegalArgumentException("Invalid account type in PAY()");
-		}
-
-		BusinessAccountDTO account = (BusinessAccountDTO) accountDto;
-		for (TransactionDTO existingTransaction : account.getTransactions()) {
-			if (existingTransaction.getStatus() == TransactionStatus.ACTIVE) {
-				throw new DuplicateException("Already has an active subscription");
-			}
-		}
-
-		try {
-			TransactionDTO result = transactionDao.save(transaction);
-			return result;
-		} catch (DuplicateException e) {
-			throw new AccountAlreadySubscribedException();
-		}
-	}
+//	@Override
+//	public TransactionDTO pay(TransactionDTO txn) throws AccountAlreadySubscribedException,
+//	    DuplicateException,
+//	    NotFoundException {
+//		if (txn == null) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		AccountDTO accountDto = accountDao.findById(txn.getSeller().getAccountId());
+//		Transaction transaction = new Transaction(txn);
+//		transaction.setSeller(new Account(accountDto));
+//
+//		if (!(accountDto instanceof BusinessAccountDTO)) {
+//			throw new IllegalArgumentException("Invalid account type in PAY()");
+//		}
+//
+//		BusinessAccountDTO account = (BusinessAccountDTO) accountDto;
+//		for (TransactionDTO existingTransaction : account.getTransactions()) {
+//			if (existingTransaction.getStatus() == TransactionStatus.ACTIVE) {
+//				throw new DuplicateException("Already has an active subscription");
+//			}
+//		}
+//
+//		try {
+//			TransactionDTO result = transactionDao.save(transaction);
+//			return result;
+//		} catch (DuplicateException e) {
+//			throw new AccountAlreadySubscribedException();
+//		}
+//	}
 
 	@Override
 	public void
@@ -742,16 +735,15 @@ public class AccountBLIImpl implements AccountBLI {
 	@Override
 	public void resetPassword(Long accountId, String password) throws NotFoundException,
 	    InvalidCredentialsException {
-		AccountDTO account = accountDao.findById(accountId);
+		Account account = accountDao.findById(accountId);
 
 		if (account.getStatus() != AccountStatus.ACTIVE) {
 			throw new InvalidCredentialsException();
 		}
 
-		Account acct = EntityUtil.convert(account);
-		acct.setPassword(password);
-		accountDao.updatePassword(acct);
-		PasswordRecovery pr = passwordRecoveryDao.findByEmail(acct.getEmail());
+		account.setPassword(password);
+		accountDao.updatePassword(account);
+		PasswordRecovery pr = passwordRecoveryDao.findByEmail(account.getEmail());
 		pr.setStatus(PasswordRecoveryStatus.DONE);
 		passwordRecoveryDao.update(pr);
 	}
@@ -819,8 +811,8 @@ public class AccountBLIImpl implements AccountBLI {
 		
 		//Check the number of same coupons allowed per user.
 		try {
-			List<CouponTransaction> transactions =
-			    couponTransactionDao.findByAccountAndCouponId(
+			List<PurchasedCoupon> transactions =
+					purchasedCouponDao.findByAccountAndCouponId(
 			    		coupon.getCouponId(),
 			    		account.getAccountId());
 			

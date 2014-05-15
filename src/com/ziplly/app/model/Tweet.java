@@ -25,6 +25,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.ziplly.app.dao.EntityUtil;
+
 @NamedQueries({
     @NamedQuery(
         name = "findTweetsByNeighborhood",
@@ -67,6 +69,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 	@Column(length = 512)
 	private String content;
 
+	@Column(nullable = false)
 	private String type;
 
 	@OneToMany(mappedBy = "tweet")
@@ -107,6 +110,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		if (tweet.getTweetId() != null) {
 			tweetId = tweet.getTweetId();
 		}
+		
 		imageId = tweet.getImageId();
 		type = tweet.getType().name();
 		content = tweet.getContent();
@@ -114,7 +118,7 @@ public class Tweet extends AbstractTimestampAwareEntity {
 		setTimeUpdated(tweet.getTimeUpdated());
 		setTimeCreated(tweet.getTimeCreated());
 		setImage(tweet.getImage());
-
+		
 		for (NeighborhoodDTO n : tweet.getTargetNeighborhoods()) {
 			targetNeighborhoods.add(new Neighborhood(n));
 		}

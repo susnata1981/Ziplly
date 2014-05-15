@@ -8,80 +8,47 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-@NamedQueries({
-    @NamedQuery(name = "findTransactionByAccountAndDate",
-        query = "from Transaction t where to_char(t.timeCreated,'MM-YYYY') = :monthYear"),
-    @NamedQuery(name = "findTransactionByAccount",
-        query = "from Transaction t where t.seller.accountId = :accountId and t.status != :status") })
 @Entity
-@Table(name = "transaction")
+@Table(name="transaction")
 public class Transaction extends AbstractTimestampAwareEntity {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
+  @Column(name="transaction_id")
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "transaction_id")
 	private Long transactionId;
-
-	@ManyToOne
-	@JoinColumn(name = "account_id")
-	private Account seller;
-
+	
 	@OneToOne
-	@JoinColumn(name = "subscription_id")
-	private SubscriptionPlan plan;
+	@JoinColumn(name="buyer_id")
+	private Account buyer;
+	
+	@NotNull
+	@Column(name = "status", nullable = false)
+	private String status;
 
+	@Column(name = "amount", nullable = false)
 	private BigDecimal amount;
-
-	private TransactionStatus status;
-	private String currencyCode;
-
+	
+	@Column(name = "currency", nullable = false)
+	private String currency;
+	
 	public Transaction() {
 	}
-
-	public Transaction(TransactionDTO txn) {
-		if (txn != null) {
-			transactionId = txn.getTransactionId();
-			// seller = new Account(txn.getSeller());
-			plan = new SubscriptionPlan(txn.getPlan());
-			amount = txn.getAmount();
-			currencyCode = txn.getCurrencyCode();
-			status = txn.getStatus();
-			setTimeCreated(txn.getTimeCreated());
-			setTimeUpdated(txn.getTimeUpdated());
-		}
+	
+	public Transaction(TransactionDTO transaction) {
+		this.transactionId = transaction.getTransactionId();
+//		this.buyer = new Account(transaction.getBuyer());
+		this.currency = transaction.getCurrency();
+		this.status = transaction.getStatus().name();
+		this.amount = transaction.getAmount();
+		this.timeUpdated = transaction.getTimeUpdated();
+		this.timeCreated = transaction.getTimeCreated();
 	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
-	public TransactionStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(TransactionStatus status) {
-		this.status = status;
-	}
-
+	
 	public Long getTransactionId() {
 		return transactionId;
 	}
@@ -90,19 +57,35 @@ public class Transaction extends AbstractTimestampAwareEntity {
 		this.transactionId = transactionId;
 	}
 
-	public Account getSeller() {
-		return seller;
+	public String getCurrency() {
+		return currency;
 	}
 
-	public void setSeller(Account seller) {
-		this.seller = seller;
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
-	public SubscriptionPlan getPlan() {
-		return plan;
+	public Account getBuyer() {
+		return buyer;
 	}
 
-	public void setPlan(SubscriptionPlan plan) {
-		this.plan = plan;
+	public void setBuyer(Account buyer) {
+		this.buyer = buyer;
 	}
+
+	public TransactionStatus getStatus() {
+		return TransactionStatus.valueOf(status);
+	}
+
+	public void setStatus(TransactionStatus status) {
+		this.status = status.name();
+	}
+
+	public BigDecimal getAmount() {
+	  return amount;
+  }
+
+	public void setAmount(BigDecimal amount) {
+	  this.amount = amount;
+  }
 }

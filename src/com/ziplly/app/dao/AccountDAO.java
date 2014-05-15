@@ -17,7 +17,7 @@ public interface AccountDAO {
 
 	AccountDTO findByEmailAndPassword(String email, String password) throws NotFoundException;
 
-	AccountDTO findById(Long accountId) throws NotFoundException;
+	Account findById(Long accountId) throws NotFoundException;
 
 	AccountDTO save(Account user);
 

@@ -19,14 +19,14 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
+import com.ziplly.app.dao.DAOModule.BackendAddress;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.dao.DAOModule.BackendAddress;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotification;
-import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -35,11 +35,11 @@ import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.Session;
+import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.EmailAction;
 import com.ziplly.app.server.ZipllyServerConstants;
-import com.ziplly.app.server.bli.EmailServiceImpl.Builder;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {
@@ -165,7 +165,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		    emailTemplate));
 		try {
 			TweetDTO tweet = tweetDao.findTweetById(tweetId);
-			AccountDTO sender = accountDao.findById(senderAccountId);
+			Account sender = accountDao.findById(senderAccountId);
 			List<AccountDTO> unfilteredRecipients = getAllRecipients(neighborhoodId);
 
 			// Email notification
@@ -186,22 +186,22 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		}
 	}
 
-	private void sendAccountNotifications(AccountDTO sender,
+	private void sendAccountNotifications(Account sender,
 	    List<AccountDTO> recipients,
 	    TweetDTO tweet,
 	    NotificationType ntype) {
 
 		for (AccountDTO account : recipients) {
-			AccountNotificationDTO an = new AccountNotificationDTO();
-			an.setRecipient(account);
+			AccountNotification an = new AccountNotification();
+			an.setRecipient(EntityUtil.convert(account));
 			an.setSender(sender);
 			an.setReadStatus(ReadStatus.UNREAD);
 			an.setType(ntype);
 			an.setStatus(RecordStatus.ACTIVE);
 			an.setTimeCreated(new Date());
 			an.setTimeUpdated(new Date());
-			an.setTweet(tweet);
-			accountNotificationDao.save(new AccountNotification(an));
+			an.setTweet(new Tweet(tweet));
+			accountNotificationDao.save(an);
 		}
 	}
 
@@ -269,7 +269,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	 * @param emailTemplate
 	 */
 	private void sendEmails(List<AccountDTO> emailSubscribers,
-	    AccountDTO sender,
+	    Account sender,
 	    EmailTemplate emailTemplate) {
 
 		for (AccountDTO acct : emailSubscribers) {
@@ -277,7 +277,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 			    acct.getEmail(),
 			    acct.getDisplayName(),
 			    sender.getEmail(),
-			    sender.getDisplayName(),
+			    sender.getName(),
 			    emailTemplate);
 		}
 	}

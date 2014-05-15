@@ -83,6 +83,12 @@ public class ErrorDefinitions {
 			stringDefinitions.needsLoginError(),
 			AlertType.ERROR);
 	
+	public static final ErrorDefinition<?> needsSubscriptionError = new ErrorDefinition<NeedsSubscriptionException>(
+			NeedsSubscriptionException.class,
+			ErrorCodes.NeedsLoginError,
+			stringDefinitions.needsSubscriptionError(),
+			AlertType.ERROR);
+	
 	public static final ErrorDefinition<?> notFoundError = new ErrorDefinition<NotFoundException>(
 			NotFoundException.class,
 			ErrorCodes.NotFoundError,
@@ -113,6 +119,7 @@ public class ErrorDefinitions {
 		errorMap.put(accountAlreadyExistsError.getException(), accountAlreadyExistsError);
 		errorMap.put(accountNotActiveError.getException(), accountNotActiveError);
 		errorMap.put(couponAlreadyUsedError.getException(), couponAlreadyUsedError);
+		errorMap.put(couponCampaignNotStartedException.getException(), couponCampaignNotStartedException);
 		errorMap.put(couponCampaignEndedError.getException(), couponCampaignEndedError);
 		errorMap.put(internalError.getException(), internalError);
 		errorMap.put(invalidCouponError.getException(), invalidCouponError);

@@ -6,13 +6,17 @@ import com.github.gwtbootstrap.client.ui.Paragraph;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 
-public class SubscriptionPlanWidget extends Composite {
+public class SubscriptionPlanWidget extends Composite implements HasClickHandlers {
 
 	private static SubscriptionPlanWidgetUiBinder uiBinder = GWT
 	    .create(SubscriptionPlanWidgetUiBinder.class);
@@ -32,8 +36,16 @@ public class SubscriptionPlanWidget extends Composite {
 	@UiField
 	HTMLPanel subscriptionPlanPanel;
 
+	GoogleWalletPayButtonWidget googlePayDecorator;
+	
 	public SubscriptionPlanWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
+		googlePayDecorator = new GoogleWalletPayButtonWidget(buyButton, null);
+	}
+	
+	public SubscriptionPlanWidget(GoogleWalletPostPayButtonHandler handler) {
+		initWidget(uiBinder.createAndBindUi(this));
+		googlePayDecorator = new GoogleWalletPayButtonWidget(buyButton, handler);
 	}
 
 	public void setHeading(String text) {
@@ -44,19 +56,28 @@ public class SubscriptionPlanWidget extends Composite {
 		description.setText(d);
 	}
 
-	public void addPayButtonClickHandler(ClickHandler handler) {
-		buyButton.addClickHandler(handler);
-	}
-
 	public void setButtonType(ButtonType type) {
 		buyButton.setType(type);
 	}
 
-	public void removeBuyButton() {
-		StyleHelper.show(buyButton.getElement(), false);
-	}
+//	public void removeBuyButton() {
+//		StyleHelper.show(buyButton.getElement(), false);
+//	}
+//
+//	public void enableBuyButton(boolean enable) {
+//		buyButton.setEnabled(enable);
+//	}
 
-	public void enableBuyButton(boolean enable) {
-		buyButton.setEnabled(enable);
+	public Button getBuyButton() {
+		return buyButton;
+	}
+	
+	@Override
+  public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return googlePayDecorator.addClickHandler(handler);
+  }
+	
+	public void pay(String jwtToken) {
+		googlePayDecorator.pay(jwtToken);
 	}
 }

@@ -16,6 +16,10 @@ public interface ZResources extends ClientBundle {
 		String fbBtnImage();
 
 		String zipllyLogo();
+		
+		String selectedLink();
+		
+		String deselectLink();
 	}
 
 	@DoNotEmbed

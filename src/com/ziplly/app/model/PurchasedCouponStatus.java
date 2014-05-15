@@ -2,5 +2,5 @@ package com.ziplly.app.model;
 
 public enum PurchasedCouponStatus {
 	UNUSED,
-	USED;
+	USED, PENDING, ELIGIBILITY_FAILED;
 }

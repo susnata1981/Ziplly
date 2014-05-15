@@ -52,6 +52,7 @@ public class ServiceModule extends AbstractModule {
 		bind(PaymentService.class).to(PaymentServiceImpl.class).in(Singleton.class);
 		bind(EmailService.class).to(EmailServiceImpl.class).in(Singleton.class);
 		bind(CouponBLI.class).to(CouponBLIImpl.class).in(Singleton.class);
+		bind(SubscriptionBLI.class).to(SubscriptionBLIImpl.class).in(Singleton.class);
   }
 	
 	private static Properties loadProperties(String name) throws IOException {

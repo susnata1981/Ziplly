@@ -105,7 +105,7 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 	@UiField
 	HTMLPanel communityWallPanel;
 
-	@UiField
+	@UiField(provided = true)
 	TweetBox tweetBox;
 	@UiField
 	NavLink feedbackLink;
@@ -136,6 +136,7 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 	@Inject
 	public HomeViewImpl(EventBus eventBus) {
 		super(eventBus);
+		tweetBox = new TweetBox(eventBus);
 		profileListWidget = new ProfileListWidget(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		setupUi();

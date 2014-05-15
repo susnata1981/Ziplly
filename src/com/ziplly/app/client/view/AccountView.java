@@ -51,11 +51,11 @@ import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
-import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -134,9 +134,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField(provided = true)
 	CouponTransactionView couponTransactionView;
 	
-	@UiField
-	Anchor transactionDetailsAnchor;
-	
 	// Updates section
 	@UiField
 	AlertBlock updateAlertBlock;
@@ -154,7 +151,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Inject
 	public AccountView(EventBus eventBus) {
 		super(eventBus);
-		tweetBox = new TweetBox();
+		tweetBox = new TweetBox(eventBus);
 		emailWidget = new EmailWidget();
 		couponTransactionView = new CouponTransactionView(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -487,16 +484,11 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
   }
 	
 	@Override
-	public void displayCouponTransaction(List<CouponTransactionDTO> transactions) {
+	public void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
 		displayCouponTransactionPanel(true);
-		couponTransactionView.displayCouponTransactions(transactions);
+		couponTransactionView.displayPurchasedCoupons(transactions);
 	}
 
-	@UiHandler("transactionDetailsAnchor")
-	public void viewCouponTransactions(ClickEvent event) {
-		internalDisplayCouponTransactions();
-	}
-	
 	private void internalDisplayCouponTransactions() {
 		couponTransactionView.loadCouponTransaction();
 		displayCouponTransactionPanel(true);

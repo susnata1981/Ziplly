@@ -18,6 +18,7 @@ import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
@@ -26,7 +27,6 @@ import com.ziplly.app.client.view.event.LogoutEvent;
 import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
-import com.ziplly.app.client.widget.CouponFormWidget;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
@@ -105,6 +105,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);
 
+		Window.alert("Checking eligibility");
 		dispatcher.execute(
 		    eligibilityAction,
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
@@ -370,6 +371,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 			placeController.goTo(new LoginPlace());
 			return;
 		}
+		
 		dispatcher.execute(new TweetAction(tweet), getTweetHandler());
 	}
 
@@ -411,7 +413,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	@Override
-	public void getCouponTransactions(int start, int pageSize) {
+	public void getPurchasedCoupons(int start, int pageSize) {
 		GetCouponTransactionAction action = new GetCouponTransactionAction();
 		action.setStart(start);
 		action.setPageSize(pageSize);
@@ -420,7 +422,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(GetCouponTransactionResult result) {
-				view.displayCouponTransaction(result.getTransactions());
+				view.displayPurchasedCoupons(result.getPurchasedCoupons());
 				view.setCouponTransactionCount(result.getTotalTransactions());
 			}
 		});

@@ -19,7 +19,7 @@ public interface StringDefinitions extends Constants {
 	String operationFailed();
 	String messageUpdated();
 	String usageLimitExceededError();
-	String needsSubscription();
+	String needsSubscriptionError();
 	String tweetRemoved();
 	String likeSaveFailed();
 	String noMessages();
@@ -114,4 +114,7 @@ public interface StringDefinitions extends Constants {
 	String authError();
 	String couponSoldOutError();
 	String couponCampaignNotStartedException();
+	String ineglibleForSubscription();
+	String cancelledSubscriptionStillActive();
+	String couponPublishedSuccessfully();
 }

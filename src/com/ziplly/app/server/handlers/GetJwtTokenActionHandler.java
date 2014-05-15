@@ -20,6 +20,7 @@ import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetJwtTokenResult;
 
+@Deprecated
 public class GetJwtTokenActionHandler extends
     AbstractAccountActionHandler<GetJwtTokenAction, GetJwtTokenResult> {
 	PaymentService paymentService;
@@ -52,7 +53,7 @@ public class GetJwtTokenActionHandler extends
 		GetJwtTokenResult result = new GetJwtTokenResult();
 		try {
 			for (SubscriptionPlanDTO plan : subscriptionPlans) {
-				String token = paymentService.getJWT(session.getAccount().getAccountId(), plan.getFee());
+				String token = paymentService.generateSubscriptionToken(session.getAccount().getAccountId(), plan.getFee());
 				result.addToken(plan, token);
 			}
 		} catch (InvalidKeyException e) {

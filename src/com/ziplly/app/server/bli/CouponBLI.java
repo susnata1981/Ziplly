@@ -5,10 +5,11 @@ import java.io.UnsupportedEncodingException;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
-import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.CouponTransaction;
+import com.ziplly.app.model.PurchasedCoupon;
+import com.ziplly.app.model.Transaction;
 
 public interface CouponBLI {
 	
@@ -16,13 +17,13 @@ public interface CouponBLI {
 	 * Returns the QRCode
 	 * @throws Exception 
 	 */
-	String getQrcode(CouponTransaction couponTransaction) throws InternalException, Exception;
+	String getQrcode(PurchasedCoupon pr) throws Exception;
 	
 	/**
 	 * Returns the QRCode url 
 	 * @throws UnsupportedEncodingException 
 	 */
-	String getQrcodeUrl(CouponTransaction couponTransaction) throws UnsupportedEncodingException;
+	String getQrcodeUrl(PurchasedCoupon pr) throws UnsupportedEncodingException;
 	
 	/**
 	 * Redeems the coupon 
@@ -31,5 +32,7 @@ public interface CouponBLI {
 
 	void waitAndCompleteTransaction(Long transactionId) throws InterruptedException;
 
-	void completeTransaction(Long couponTransactionId) throws DispatchException;
+	void completeTransaction(Long purchasedCouponId) throws DispatchException, Exception;
+
+	PurchasedCoupon createPendingTransaction(Account buyer, Coupon coupon);
 }

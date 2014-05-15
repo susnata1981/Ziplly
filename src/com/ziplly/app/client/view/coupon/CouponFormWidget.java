@@ -1,4 +1,4 @@
-package com.ziplly.app.client.widget;
+package com.ziplly.app.client.view.coupon;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -10,11 +10,21 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.datetimepicker.client.ui.DateTimeBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.ziplly.app.client.view.AbstractView;
+import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
+import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.blocks.DataType;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.client.widget.blocks.TextBoxWidget;
@@ -23,7 +33,7 @@ import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class CouponFormWidget extends Composite {
+public class CouponFormWidget extends AbstractView {
 
 	private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
 
@@ -85,21 +95,35 @@ public class CouponFormWidget extends Composite {
 	@UiField
 	HelpInline totalCouponAllowedHelpInline;
 	
-	// Upload image
+//  Upload image
 //	@UiField
 //	HTMLPanel uploadProfileImagePanel;
 	FormUploadWidget uploadWidget;
 	
+	@UiField
+	Button tweetBtn;
 	@UiField
 	HorizontalPanel horizontalButtonPanel;
 	@UiField
 	Button cancelBtn;
 	@UiField
 	Button previewBtn;
+	@UiField
+	Anchor changeTweetAnchor;
+	@UiField
+	HTMLPanel previewPanel;
+	@UiField
+	HTMLPanel contentPanel;
+	@UiField
+	Button previewCancelBtn;
 
+	BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
+//	private ConfirmationModalWidget confirmationWidget;
 	TextBoxWidget [] textBoxWidgets = new TextBoxWidget [5];
 	
-	public CouponFormWidget() {
+	@Inject
+	public CouponFormWidget(EventBus eventBus) {
+		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		int count = 0;
 		couponTextWidget = new TextBoxWidget(descriptionCg, descriptionTextBox, descriptionHelpInline, DataType.STRING);
@@ -116,16 +140,29 @@ public class CouponFormWidget extends Composite {
 //		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
 		
 		setupUi();
+		setupHandlers();
 	}
+
+	private void setupHandlers() {
+		eventBus.addHandler(CouponPublishSuccessfulEvent.TYPE, new CouponPublishSuccessfulEvent.Handler() {
+
+			@Override
+      public void onEvent(CouponPublishSuccessfulEvent event) {
+				clear();
+      }
+			
+		});
+  }
 
 	private void setupUi() {
 		if (FeatureFlags.OneCouponPerIndividual.isEnabled()) {
 			totalCouponAllowedTextBox.setValue("1");
 			totalCouponAllowedTextBox.setReadOnly(true);
 		}
+		showPreview(false);
   }
 
-	boolean validate() {
+	public boolean validate() {
 		boolean valid = couponTextWidget.validate();
 		for(int i=0; i<textBoxWidgets.length; i++) {
 			valid &= textBoxWidgets[i].validate();
@@ -199,13 +236,14 @@ public class CouponFormWidget extends Composite {
 		endDateCg.setType(ControlGroupType.NONE);
 		endDateHelpInline.setText("");
 		endDateHelpInline.setVisible(false);
+		showPreview(false);
 	}
 	
-	Button getCancelButton() {
+	public Button getCancelButton() {
 		return cancelBtn;
 	}
 	
-	Button getPreviewButton() {
+	public Button getPreviewButton() {
 		return previewBtn;
 	}
 	
@@ -232,4 +270,46 @@ public class CouponFormWidget extends Composite {
 	public FormUploadWidget getFormUploadWidget() {
 		return uploadWidget;
 	}
+	
+	public void showPreview(boolean show) {
+		if (show) {
+			displayPreview();
+		}
+		StyleHelper.show(previewPanel, show);
+	}
+
+	@UiHandler("changeTweetAnchor")
+	public void changeTweet(ClickEvent event) {
+		showPreview(false);
+		showHorizontalButtonPanel(true);
+	}
+
+	@UiHandler("previewCancelBtn")
+	public void cancelPreview(ClickEvent event) {
+		showPreview(false);
+		showHorizontalButtonPanel(true);
+	}
+
+	public Button getTweetButton() {
+		return tweetBtn;
+	}
+	
+	private void displayPreview() {
+		contentPanel.clear();
+		contentPanel.add(new HTMLPanel(basicDataFormatter.format(
+		    getCoupon(),
+		    ValueType.COUPON)));
+//		Button buyNowBtn = new Button("Buy Now");
+//		buyNowBtn.setType(ButtonType.PRIMARY);
+//		buyNowBtn.getElement().setAttribute("margin", "6px");
+//		couponPreviewPanel.add(buyNowBtn);
+//		couponFormWidget.showButtons(false);
+
+		showHorizontalButtonPanel(false);
+		StyleHelper.show(horizontalButtonPanel.getElement(), false);
+  }
+
+	private void showHorizontalButtonPanel(boolean show) {
+		StyleHelper.show(horizontalButtonPanel, show);
+  }
 }

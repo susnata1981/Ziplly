@@ -23,8 +23,8 @@
 		<class>com.ziplly.app.model.Message</class>
 		<class>com.ziplly.app.model.Session</class>
 		<class>com.ziplly.app.model.Conversation</class>
-		<class>com.ziplly.app.model.Transaction</class>
 		<class>com.ziplly.app.model.SubscriptionPlan</class>
+		<class>com.ziplly.app.model.Subscription</class>
 		<class>com.ziplly.app.model.PasswordRecovery</class>
 		<class>com.ziplly.app.model.AccountNotificationSettings</class>
 		<class>com.ziplly.app.model.Hashtag</class>
@@ -32,7 +32,7 @@
 		<class>com.ziplly.app.model.PendingInvitations</class>
 		<class>com.ziplly.app.model.Image</class>
 		<class>com.ziplly.app.model.Coupon</class>
-		<class>com.ziplly.app.model.CouponTransaction</class>
+		<class>com.ziplly.app.model.Transaction</class>
 		<class>com.ziplly.app.model.PurchasedCoupon</class>
 		
 		<properties>

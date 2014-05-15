@@ -193,6 +193,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	Button cancelCommentBtn;
 
+	@UiField
+	HTMLPanel commentInputActionSection;
+
 	// Create Link anchor
 	@UiField
 	ZAnchor createLink;
@@ -401,16 +404,12 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	void showTweetUpdateButtons() {
-		// tweetContentSpan.getStyle().setDisplay(Display.NONE);
 		StyleHelper.show(tweetContentPanel.getElement(), false);
 		tweetContentTextArea.setText(tweet.getContent());
 		tweetContentTextArea.setReadOnly(false);
 		tweetContentTextArea.getElement().getStyle().setDisplay(Display.BLOCK);
 		tweetEditButtonPanel.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
-
-	@UiField
-	HTMLPanel commentInputActionSection;
 
 	void hideCommentButtons() {
 		commentInputActionSection.getElement().getStyle().setDisplay(Display.NONE);
@@ -730,21 +729,22 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		panel.setStyleName(style.couponBoxDiv());
 		panel.add(new HTMLPanel(basicDataFormatter.format(tweet.getCoupon(), ValueType.COUPON)));
 		Button buyCouponBtn = new Button("Buy Now");
+		
+		if (!isCouponActive(coupon)) {
+			buyCouponBtn.setEnabled(false);
+		}
+		
 		buyCouponBtn.setType(ButtonType.PRIMARY);
 		
 		paymentButton = new GoogleWalletPayButtonWidget(buyCouponBtn, new GoogleWalletPostPayButtonHandler() {
 			
 			@Override
 			public void onSuccess(GoogleWalletSuccessResult result) {
-//				presenter.purchaseCoupon(result.getRequest().getTransactionId() + "", 
-//						PurchasedCouponAction.ResultStatus.SUCCESS, tweet.getCoupon());
 				Window.alert("Purchase complete");
 			}
 			
 			@Override
 			public void onFailure(GoogleWalletFailureResult result) {
-//				presenter.purchaseCoupon(result.getRequest().getRequest().getTransactionId() + "", 
-//						PurchasedCouponAction.ResultStatus.FAILED, tweet.getCoupon());
 				Window.alert("Purchase failed");
 			}
 		});
@@ -753,12 +753,18 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 			@Override
       public void onClick(ClickEvent event) {
+				Window.alert("Checking eligibility...");
 				presenter.checkCouponPurchaseEligibility(tweet.getCoupon(), TweetWidget.this);
       }
 		});
 		
 		panel.add(buyCouponBtn);
 		tweetContentPanel.add(panel);
+  }
+
+	private boolean isCouponActive(CouponDTO coupon) {
+		Date now = new Date();
+		return coupon.getStartDate().before(now) && coupon.getEndDate().after(now);
   }
 
 	/**

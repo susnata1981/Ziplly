@@ -2,11 +2,11 @@ package com.ziplly.app.server.handlers;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
-import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.shared.AddInvitationAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
+import com.ziplly.app.shared.CheckSubscriptionEligibilityAction;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CreateNeighborhoodAction;
 import com.ziplly.app.shared.CreateRegistrationAction;
@@ -107,7 +107,6 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 
 		// Tweet handlers
 		bindHandler(TweetAction.class, TweetActionHandler.class);
-		// bindHandler(BusinessTweetAction.class, BusinessTweetActionHandler.class);
 		bindHandler(UpdateTweetAction.class, UpdateTweetActionHandler.class);
 		bindHandler(GetCommunityWallDataAction.class, GetCommunityWallDataActionHandler.class);
 		bindHandler(CommentAction.class, CommentActionHandler.class);
@@ -168,6 +167,9 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetCouponQRCodeUrlAction.class, GetCouponQRCodeUrlActionHandler.class);
 		bindHandler(RedeemCouponAction.class, RedeemCouponActionHandler.class);
 		bindHandler(GetCouponsAction.class, GetCouponsActionHandler.class);
+		
+		// Subscription
+		bindHandler(CheckSubscriptionEligibilityAction.class, CheckSubscriptionEligibilityActionHandler.class);
 		
 		// invitation
 		bindHandler(AddInvitationAction.class, AddInvitationActionHandler.class);

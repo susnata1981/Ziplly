@@ -12,7 +12,8 @@ import com.ziplly.app.client.widget.EmailWidget;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
-import com.ziplly.app.model.CouponTransactionDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -81,7 +82,7 @@ public interface IAccountView<T extends AccountDTO> extends View<AccountPresente
 
 	EmailWidget getEmailWidget();
 
-	void displayCouponTransaction(List<CouponTransactionDTO> transactions);
+	void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions);
 
 	void setCouponTransactionCount(Long totalTransactions);
 

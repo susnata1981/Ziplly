@@ -22,8 +22,6 @@ import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.CouponTransaction;
-import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.Image;
@@ -50,12 +48,14 @@ import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.Spam;
 import com.ziplly.app.model.SpamDTO;
+import com.ziplly.app.model.Subscription;
 import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 
 public class EntityUtil {
 
@@ -198,10 +198,8 @@ public class EntityUtil {
 		resp.setProperties(clone(account.getProperties()));
 		resp.setCategory(account.getCategory());
 
-		if (Hibernate.isInitialized(account.getTransactions())) {
-			for (Transaction txn : account.getTransactions()) {
-				resp.getTransactions().add(clone(txn));
-			}
+		for(Subscription subscription : account.getSubscriptions()) {
+			resp.getSubscriptions().add(clone(subscription, true));
 		}
 
 		return resp;
@@ -237,7 +235,7 @@ public class EntityUtil {
 		if (tweet.getCoupon() != null) {
 			resp.setCoupon(clone(tweet.getCoupon()));
 		}
-		
+
 		// Image
 		for (Image image : tweet.getImages()) {
 			resp.addImage(clone(image));
@@ -333,31 +331,33 @@ public class EntityUtil {
 		resp.setDescription(plan.getDescription());
 		resp.setFee(plan.getFee());
 		resp.setStatus(plan.getStatus());
+		resp.setPlanType(plan.getPlanType());
 		resp.setTimeCreated(plan.getTimeCreated());
 		return resp;
 	}
 
+	public static SubscriptionDTO clone(Subscription subscription) {
+		return clone(subscription, true);
+	}
+
+	public static SubscriptionDTO clone(Subscription subscription, boolean topLevelOnly) {
+		SubscriptionDTO resp = new SubscriptionDTO();
+		resp.setSubscriptionId(subscription.getSubscriptionId());
+		resp.setSubscriptionPlan(clone(subscription.getSubscriptionPlan()));
+		// Avoid recursion
+		resp.setTransaction(clone(subscription.getTransaction(), topLevelOnly));
+		resp.setStatus(subscription.getStatus());
+		resp.setTimeUpdated(subscription.getTimeUpdated());
+		resp.setTimeCreated(subscription.getTimeCreated());
+		return resp;
+	}
+	
 	public static List<SubscriptionPlanDTO> cloneSubscriptionPlanList(List<SubscriptionPlan> plans) {
 		List<SubscriptionPlanDTO> resp = Lists.newArrayList();
 		for (SubscriptionPlan plan : plans) {
 			resp.add(EntityUtil.clone(plan));
 		}
 		return resp;
-	}
-
-	public static TransactionDTO clone(Transaction txn) {
-		if (txn != null) {
-			TransactionDTO transaction = new TransactionDTO();
-			transaction.setTransactionId(txn.getTransactionId());
-			// transaction.setSeller(convert(txn.getSeller()));
-			transaction.setPlan(clone(txn.getPlan()));
-			transaction.setAmount(txn.getAmount());
-			transaction.setCurrencyCode(txn.getCurrencyCode());
-			transaction.setStatus(txn.getStatus());
-			transaction.setTimeCreated(txn.getTimeCreated());
-			return transaction;
-		}
-		return null;
 	}
 
 	public static AccountNotificationDTO clone(AccountNotification an) {
@@ -596,49 +596,64 @@ public class EntityUtil {
 		resp.setTimeCreated(coupon.getTimeCreated());
 		return resp;
 	}
-	
-	public static PurchasedCouponDTO clone(PurchasedCoupon coupon) {
-		if(coupon == null)
+
+	public static PurchasedCouponDTO clone(PurchasedCoupon pc) {
+		if (pc == null)
 			return null;
 		PurchasedCouponDTO resp = new PurchasedCouponDTO();
-		resp.setPurchasedCouponId(coupon.getPurchasedCouponId());
-		resp.setQrcode(coupon.getQrcode());
-		resp.setStatus(coupon.getStatus());
-// 	Avoid recursion
-//	resp.setCouponTransaction(clone(coupon.getCouponTransaction()));
-		resp.setTimeUpdated(coupon.getTimeUpdated());
-		resp.setTimeCreated(coupon.getTimeCreated());
+		resp.setPurchasedCouponId(pc.getPurchasedCouponId());
+		resp.setQrcode(pc.getQrcode());
+		resp.setStatus(pc.getStatus());
+		resp.setCoupon(clone(pc.getCoupon()));
+		resp.setTransaction(clone(pc.getTransaction()));
+		resp.setTimeUpdated(pc.getTimeUpdated());
+		resp.setTimeCreated(pc.getTimeCreated());
 		return resp;
 	}
-	
-	public static CouponTransactionDTO clone(CouponTransaction coupon) {
-		CouponTransactionDTO resp = new CouponTransactionDTO();
-		resp.setTransactionId(coupon.getTransactionId());
-		resp.setStatus(coupon.getStatus());
-		resp.setCoupon(clone(coupon.getCoupon()));
-		resp.setBuyer(convert(coupon.getBuyer()));
-		resp.setPurchasedCoupon(clone(coupon.getPurchasedCoupon()));
-		resp.setCurrency(coupon.getCurrency());
-		resp.setType(coupon.getType());
-		resp.setTimeUpdated(coupon.getTimeUpdated());
-		resp.setTimeCreated(coupon.getTimeCreated());
+
+	public static TransactionDTO clone(Transaction transaction) {
+		return clone(transaction, false);
+	}
+
+	public static TransactionDTO clone(Transaction transaction, boolean topLevelOnly) {
+		TransactionDTO resp = new TransactionDTO();
+		resp.setTransactionId(transaction.getTransactionId());
+		resp.setStatus(transaction.getStatus());
+		resp.setCurrency(transaction.getCurrency());
+		resp.setTimeUpdated(transaction.getTimeUpdated());
+		resp.setTimeCreated(transaction.getTimeCreated());
+
+		//	Avoid recursion
+		if (!topLevelOnly) {
+			resp.setBuyer(convert(transaction.getBuyer()));
+		}
+
 		return resp;
 	}
 
 	public static List<CouponDTO> cloneCouponList(List<Coupon> coupons) {
 		List<CouponDTO> result = new ArrayList<CouponDTO>();
-		for(Coupon c : coupons) {
+		for (Coupon c : coupons) {
 			result.add(clone(c));
 		}
 		return result;
-  }
+	}
 
-	public static List<CouponTransactionDTO> cloneCouponTransactionList(List<CouponTransaction> transactions) {
-		List<CouponTransactionDTO> result = new ArrayList<CouponTransactionDTO>();
-		for(CouponTransaction transaction : transactions) {
+	public static List<TransactionDTO> cloneCouponTransactionList(List<Transaction> transactions) {
+		List<TransactionDTO> result = new ArrayList<TransactionDTO>();
+		for (Transaction transaction : transactions) {
 			result.add(EntityUtil.clone(transaction));
 		}
-		
+
+		return result;
+	}
+
+	public static List<PurchasedCouponDTO> clonePurchaseCouponList(List<PurchasedCoupon> purchasedCoupons) {
+		List<PurchasedCouponDTO> result = new ArrayList<PurchasedCouponDTO>();
+		for (PurchasedCoupon pr : purchasedCoupons) {
+			result.add(EntityUtil.clone(pr));
+		}
+
 		return result;
   }
 }

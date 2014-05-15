@@ -1,16 +1,11 @@
 package com.ziplly.app.client.view;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
@@ -88,8 +83,8 @@ import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.SubscriptionPlanStatus;
-import com.ziplly.app.model.TransactionDTO;
-import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.model.SubscriptionPlanType;
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.ValidationResult;
@@ -97,13 +92,11 @@ import com.ziplly.app.shared.ValidationResult;
 public class BusinessAccountSettingsView extends AbstractView implements
     IBusinessAccountSettingView {
 
-	private static final Double MEMBERSHIP_FEE_AMOUNT = 5.0;
 	private static final int MAX_TRANSACTION_TABLE_ROW_COUNT = 100;
 	private static final String GOOGLE_MAPS_LOCATION = "http://maps.google.com?q=";
 	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
 	    .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
 	TableResources tableResources;
-	private Logger logger = Logger.getLogger(BusinessAccountSettingsView.class.getName());
 
 	private static BusinessAccountSettingsViewUiBinder uiBinder = GWT
 	    .create(BusinessAccountSettingsViewUiBinder.class);
@@ -130,7 +123,8 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	public static interface BusinessAccountSettingsPresenter extends
 	    AccountSettingsPresenter<BusinessAccountDTO> {
-		void pay(TransactionDTO txn);
+
+		void checkSubscriptionEligibility(Long subscriptionId);
 
 		void getNeighborhoodData(String zip);
 
@@ -258,7 +252,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	HTMLPanel notificationPanel;
 
 	// transaction details elements
-	CellTable<TransactionDTO> transactionTable;
+	CellTable<SubscriptionDTO> transactionTable;
 	@UiField
 	Tab subscriptionTab;
 	@UiField
@@ -300,12 +294,10 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	private BusinessAccountSettingsPresenter presenter;
 
-	private String jwtToken;
-	private Map<Long, SubscriptionPlanDTO> subscriptionPlanMap =
-	    new HashMap<Long, SubscriptionPlanDTO>();
-	private List<TransactionDTO> transactions;
-	private boolean sellerEligibleForSubscription = true;
-	private Map<SubscriptionPlanDTO, String> plans;
+	private Map<Long, SubscriptionPlanWidget> subscriptionPlanWidgetMap =
+	    new HashMap<Long, SubscriptionPlanWidget>();
+	private List<SubscriptionDTO> transactions = new ArrayList<SubscriptionDTO>();
+	private List<SubscriptionPlanDTO> subscriptionPlans;
 	private Map<AccountNotificationSettingsDTO, ListBox> accountNotificationSettingsMap =
 	    new HashMap<AccountNotificationSettingsDTO, ListBox>();
 
@@ -370,13 +362,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		StyleHelper.clearBackground();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ziplly.app.client.view.ISettingsView#displaySettings(com.ziplly.app
-	 * .model.AccountDTO)
-	 */
 	@Override
 	public void displaySettings(BusinessAccountDTO account) {
 		resetUploadForm();
@@ -781,122 +766,92 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		paymentStatus.setVisible(false);
 	}
 
-	native void doPay(String jwtToken, int subscriptionPlanId) /*-{
-	                                                           var that = this;
-	                                                           $wnd.google.payments.inapp
-	                                                           .buy({
-	                                                           'jwt' : jwtToken,
-	                                                           'success' : function() {
-	                                                           alert('success');
-	                                                           that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onSuccess(I)(subscriptionPlanId);
-	                                                           },
-	                                                           'failure' : function() {
-	                                                           alert('failure');
-	                                                           that.@com.ziplly.app.client.view.BusinessAccountSettingsView::onFailure(I)(subscriptionPlanId);
-	                                                           }
-	                                                           });
-	                                                           }-*/;
+//	native void doPay(String jwtToken) /*-{
+//		var that = this;
+//		$wnd.google.payments.inapp
+//				.buy({
+//					'jwt' : jwtToken,
+//					'success' : function() {
+//						alert('success');
+//					},
+//					'failure' : function() {
+//						alert('failure');
+//					}
+//				});
+//	}-*/;
+//
+//	public void onSuccess(int subscriptionId) {
+//		Window.alert("Success");
+//	};
+//
+//	public void onFailure(int subscriptionId) {
+//		logger.log(Level.SEVERE, "Transaction failed.");
+//		Window.alert("Failure");
+//	};
 
-	public void onSuccess(int subscriptionId) {
-		logger.log(Level.INFO, "Successfully paid");
-		TransactionDTO txn = new TransactionDTO();
-		txn.setCurrencyCode(StringConstants.CURRENCY_USD);
-		txn.setTimeCreated(new Date());
-		SubscriptionPlanDTO plan = subscriptionPlanMap.get(new Long(subscriptionId));
-		txn.setAmount(new BigDecimal(plan.getFee()));
-		txn.setStatus(TransactionStatus.ACTIVE);
-		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
-		presenter.pay(txn);
-	};
-
-	public void onFailure(int subscriptionId) {
-		logger.log(Level.SEVERE, "Transaction failed.");
-		TransactionDTO txn = new TransactionDTO();
-		txn.setCurrencyCode(StringConstants.CURRENCY_USD);
-		txn.setPlan(subscriptionPlanMap.get(new Long(subscriptionId)));
-		txn.setStatus(TransactionStatus.FAILURE);
-		txn.setTimeCreated(new Date());
-		presenter.pay(txn);
-	};
-
+	public void initiatePay(Long subscriptionPlanId, String token) {
+		SubscriptionPlanWidget subscriptionPlanWidget = subscriptionPlanWidgetMap.get(subscriptionPlanId);
+		subscriptionPlanWidget.pay(token);
+	}
+	
 	@Override
 	public void setPresenter(BusinessAccountSettingsPresenter presenter) {
 		this.presenter = presenter;
 	}
 
 	@Override
-	public void setJwtString(String jwt) {
-		this.jwtToken = jwt;
-	}
-
-	@Override
-	public void displaySubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
-		subscriptionPlanMap.clear();
+	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
+		subscriptionPlanWidgetMap.clear();
 		subscriptionPlanTablePanel.clear();
-		this.plans = plans;
+		this.subscriptionPlans = plans;
 
-		int count = 0;
-
-		for (SubscriptionPlanDTO plan : plans.keySet()) {
-			subscriptionPlanMap.put(plan.getSubscriptionId(), plan);
-			SubscriptionPlanWidget widget = getSubscriptionPlanWidget(plan, plans.get(plan));
+		for (SubscriptionPlanDTO plan : plans) {
+			System.out.println("Plans = "+plan.getPlanType());
+			SubscriptionPlanWidget widget = createSubscriptionPlanWidget(plan);
 
 			if (plan.getStatus() == SubscriptionPlanStatus.DISABLED) {
-				widget.enableBuyButton(false);
+				continue;
 			}
 
-			// Just to highlight
-			if (count == 1) {
-				widget.setButtonType(ButtonType.INFO);
+			if (plan.getPlanType() == SubscriptionPlanType.BASIC) {
+				widget.getBuyButton().setEnabled(false);
+				widget.getBuyButton().setText("FREE");
+			} else if (plan.getPlanType() == SubscriptionPlanType.PREMIUM) {
+//				widget.setButtonType(ButtonType.INFO);
+				widget.getBuyButton().setType(ButtonType.INFO);
 			}
-			count++;
+			
 			subscriptionPlanTablePanel.add(widget);
+			subscriptionPlanWidgetMap.put(plan.getSubscriptionId(), widget);
 		}
 	}
 
-	private Map<SubscriptionPlanDTO, String>
-	    sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
-		TreeMap<SubscriptionPlanDTO, String> sortedPlans =
-		    new TreeMap<SubscriptionPlanDTO, String>(new Comparator<SubscriptionPlanDTO>() {
-			    @Override
-			    public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
-				    return (int) (o1.getFee() - o2.getFee());
-			    }
-		    });
-		sortedPlans.putAll(plans);
-		return sortedPlans;
-	}
-
-	private SubscriptionPlanWidget getSubscriptionPlanWidget(final SubscriptionPlanDTO plan,
-	    final String token) {
+	private SubscriptionPlanWidget createSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
 		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
 		widget.setStyleName(style.subscriptionPlanWidget());
 		widget.setHeading(plan.getName());
 		widget.setDescription(plan.getDescription());
-		widget.addPayButtonClickHandler(new ClickHandler() {
+		widget.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				clearPaymentStatus();
-				if (isEligibleForSubscription()) {
-					doPay(token, plan.getSubscriptionId().intValue());
-				} else {
-					displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT, AlertType.WARNING);
-				}
+				Window.alert("Clicked");
+				presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
 			}
 		});
 		return widget;
 	}
 
-	private CellTable<TransactionDTO> buildTransactionTable() {
+	private CellTable<SubscriptionDTO> buildTransactionTable() {
 		tableResources = GWT.create(TableResources.class);
 		tableResources.cellTableStyle().ensureInjected();
 
-		CellTable<TransactionDTO> table =
-		    new CellTable<TransactionDTO>(MAX_TRANSACTION_TABLE_ROW_COUNT, tableResources);
-		TextColumn<TransactionDTO> planName = new TextColumn<TransactionDTO>() {
+		CellTable<SubscriptionDTO> table =
+		    new CellTable<SubscriptionDTO>(MAX_TRANSACTION_TABLE_ROW_COUNT, tableResources);
+		TextColumn<SubscriptionDTO> planName = new TextColumn<SubscriptionDTO>() {
 			@Override
-			public String getValue(TransactionDTO txn) {
-				return txn.getPlan().getName();
+			public String getValue(SubscriptionDTO subscription) {
+				return subscription.getSubscriptionPlan().getName();
 			}
 		};
 		Header<String> plaenNameHeader = new Header<String>(new TextCell()) {
@@ -907,10 +862,10 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		};
 		table.addColumn(planName, plaenNameHeader);
 
-		TextColumn<TransactionDTO> planDescription = new TextColumn<TransactionDTO>() {
+		TextColumn<SubscriptionDTO> planDescription = new TextColumn<SubscriptionDTO>() {
 			@Override
-			public String getValue(TransactionDTO txn) {
-				return txn.getPlan().getDescription();
+			public String getValue(SubscriptionDTO subscription) {
+				return subscription.getSubscriptionPlan().getDescription();
 			}
 		};
 		Header<String> planDescriptionHeader = new Header<String>(new TextCell()) {
@@ -921,10 +876,10 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		};
 		table.addColumn(planDescription, planDescriptionHeader);
 
-		TextColumn<TransactionDTO> status = new TextColumn<TransactionDTO>() {
+		TextColumn<SubscriptionDTO> status = new TextColumn<SubscriptionDTO>() {
 			@Override
-			public String getValue(TransactionDTO txn) {
-				return txn.getStatus().name();
+			public String getValue(SubscriptionDTO subscription) {
+				return subscription.getStatus().name();
 			}
 		};
 		Header<String> statusHeader = new Header<String>(new TextCell()) {
@@ -935,10 +890,10 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		};
 		table.addColumn(status, statusHeader);
 
-		TextColumn<TransactionDTO> recurringAmount = new TextColumn<TransactionDTO>() {
+		TextColumn<SubscriptionDTO> recurringAmount = new TextColumn<SubscriptionDTO>() {
 			@Override
-			public String getValue(TransactionDTO txn) {
-				return txn.getPlan().getFee().toString();
+			public String getValue(SubscriptionDTO subscription) {
+				return subscription.getSubscriptionPlan().getFee().toString();
 			}
 		};
 		Header<String> recurringAmountHeader = new Header<String>(new TextCell()) {
@@ -949,10 +904,10 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		};
 		table.addColumn(recurringAmount, recurringAmountHeader);
 
-		TextColumn<TransactionDTO> timeCreated = new TextColumn<TransactionDTO>() {
+		TextColumn<SubscriptionDTO> timeCreated = new TextColumn<SubscriptionDTO>() {
 			@Override
-			public String getValue(TransactionDTO txn) {
-				return basicDataFormatter.format(txn.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+			public String getValue(SubscriptionDTO subscription) {
+				return basicDataFormatter.format(subscription.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
 			}
 		};
 		Header<String> timeCreatedHeader = new Header<String>(new TextCell()) {
@@ -967,7 +922,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	}
 
 	@Override
-	public void displayTransactionHistory(List<TransactionDTO> transactions) {
+	public void displayTransactionHistory(List<SubscriptionDTO> transactions) {
 		transactionDetailsPanel.clear();
 		transactionTable = buildTransactionTable();
 		this.transactions = transactions;
@@ -980,15 +935,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 			panel.setStyleName(style.subscriptionPlanTablePanelMessage());
 			transactionDetailsPanel.add(panel);
 		}
-	}
-
-	@Override
-	public void disableSubscription() {
-		sellerEligibleForSubscription = false;
-	}
-
-	private boolean isEligibleForSubscription() {
-		return sellerEligibleForSubscription == true;
 	}
 
 	@Override

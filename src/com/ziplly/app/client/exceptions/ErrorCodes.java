@@ -13,6 +13,7 @@ public enum ErrorCodes {
 	InvalidCouponError,
 	InvalidCredentialsError,
 	NeedsLoginError,
+	NeedsSubscriptionError,
 	NotFoundError,
 	NotSharedError,
 	OAuthError,

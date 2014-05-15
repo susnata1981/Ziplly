@@ -1,9 +1,6 @@
 package com.ziplly.app.client.activities;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -14,7 +11,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.ConversationPlace;
@@ -27,45 +23,41 @@ import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
+import com.ziplly.app.client.widget.ConfirmationModalWidget;
+import com.ziplly.app.client.widget.ConfirmationModalWidget.ConfirmationModalCallback;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
-import com.ziplly.app.model.SubscriptionPlanStatus;
-import com.ziplly.app.model.TransactionDTO;
-import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.model.overlay.SubscriptionDTO;
+import com.ziplly.app.shared.CheckSubscriptionEligibilityAction;
+import com.ziplly.app.shared.CheckSubscriptionEligibilityResult;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanResult;
 import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodResult;
 import com.ziplly.app.shared.NeighborhoodSearchActionType;
-import com.ziplly.app.shared.PayAction;
-import com.ziplly.app.shared.PayResult;
+import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 import com.ziplly.app.shared.UpdateAccountAction;
 import com.ziplly.app.shared.UpdateAccountResult;
 import com.ziplly.app.shared.UpdatePasswordAction;
 import com.ziplly.app.shared.UpdatePasswordResult;
 
-public class BusinessAccountSettingsActivity
-    extends
+public class BusinessAccountSettingsActivity extends
     AbstractAccountSettingsActivity<BusinessAccountDTO, BusinessAccountSettingsActivity.IBusinessAccountSettingView> implements
     BusinessAccountSettingsPresenter {
 
 	public static interface IBusinessAccountSettingView extends
 	    ISettingsView<BusinessAccountDTO, BusinessAccountSettingsPresenter> {
-		void displayTransactionHistory(List<TransactionDTO> list);
+		void displayTransactionHistory(List<SubscriptionDTO> subscriptions);
 
-		void displaySubscriptionPlans(Map<SubscriptionPlanDTO, String> plans);
-
-		void setJwtString(String jwt);
+		void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans);
 
 		void displayPaymentStatus(String msg, AlertType type);
 
 		void clearPaymentStatus();
 
 		void hideTransactionHistory();
-
-		void disableSubscription();
 
 		void displayNeighborhoodListLoading(boolean b);
 
@@ -74,6 +66,8 @@ public class BusinessAccountSettingsActivity
 		void displayMessageInAddLocationWidget(String accountSaveSuccessful, AlertType success);
 
 		void displayLocationModal(boolean b);
+
+		void initiatePay(Long subscriptionId, String token);
 	}
 
 	private AcceptsOneWidget panel;
@@ -145,61 +139,25 @@ public class BusinessAccountSettingsActivity
 
 	private void displayTransactionHistory() {
 		BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
-		for (TransactionDTO txn : account.getTransactions()) {
-			if (txn.getStatus() == TransactionStatus.ACTIVE) {
-				// disable payment buttons
-				view.disableSubscription();
-			}
-		}
 		view.displayTransactionHistory(account.getTransactions());
 	}
 
 	private void displaySubscriptionPlans() {
-		// getJwtString();
-		getSubscriptionPlans();
-	}
-
-	@Override
-	public void bind() {
-		view.setPresenter(this);
-	}
-
-	private void getSubscriptionPlans() {
 		dispatcher.execute(
 		    new GetAllSubscriptionPlanAction(),
 		    new DispatcherCallbackAsync<GetAllSubscriptionPlanResult>() {
 			    @Override
 			    public void onSuccess(GetAllSubscriptionPlanResult result) {
 				    if (result != null) {
-					    boolean introductoryPeriod = true;
-					    Map<SubscriptionPlanDTO, String> plans = sortSubscriptionPlans(result.getPlans());
-					    view.displaySubscriptionPlans(result.getPlans());
-					    for (SubscriptionPlanDTO plan : plans.keySet()) {
-						    if (plan.getStatus() != SubscriptionPlanStatus.DISABLED) {
-							    introductoryPeriod = false;
-						    }
-					    }
-
-					    // If none of the plans are active
-					    if (introductoryPeriod) {
-						    view.displayPaymentStatus(StringConstants.FREE_INTRODUCTORY_PLAN, AlertType.INFO);
-					    }
+					    view.displaySubscriptionPlans(result.getSubscriptionPlans());
 				    }
 			    }
 		    });
 	}
 
-	private Map<SubscriptionPlanDTO, String>
-	    sortSubscriptionPlans(Map<SubscriptionPlanDTO, String> plans) {
-		TreeMap<SubscriptionPlanDTO, String> sortedPlans =
-		    new TreeMap<SubscriptionPlanDTO, String>(new Comparator<SubscriptionPlanDTO>() {
-			    @Override
-			    public int compare(SubscriptionPlanDTO o1, SubscriptionPlanDTO o2) {
-				    return (int) (o1.getFee() - o2.getFee());
-			    }
-		    });
-		sortedPlans.putAll(plans);
-		return sortedPlans;
+	@Override
+	public void bind() {
+		view.setPresenter(this);
 	}
 
 	@Override
@@ -219,44 +177,44 @@ public class BusinessAccountSettingsActivity
 	// });
 	// }
 
-	@Override
-	public void pay(final TransactionDTO txn) {
-		if (txn == null) {
-			throw new IllegalArgumentException();
-		}
-
-		if (txn.getStatus() != TransactionStatus.ACTIVE) {
-			return;
-		}
-
-		dispatcher.execute(new PayAction(txn), new DispatcherCallbackAsync<PayResult>() {
-			@Override
-			public void onSuccess(PayResult result) {
-				if (txn.getStatus() == TransactionStatus.ACTIVE) {
-					view.displayPaymentStatus(StringConstants.PAYMENT_SUCCESSFULL, AlertType.SUCCESS);
-				} else {
-					// some day, the sun will shine upon us.
-					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
-				}
-
-				if (result.getTransaction() != null) {
-					BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
-					account.getTransactions().add(result.getTransaction());
-					displayTransactionHistory();
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof DuplicateException) {
-					view
-					    .displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT, AlertType.ERROR);
-				} else {
-					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
-				}
-			}
-		});
-	}
+//	@Override
+//	public void pay(final TransactionDTO txn) {
+//		if (txn == null) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		if (txn.getStatus() != TransactionStatus.ACTIVE) {
+//			return;
+//		}
+//
+//		dispatcher.execute(new PayAction(txn), new DispatcherCallbackAsync<PayResult>() {
+//			@Override
+//			public void onSuccess(PayResult result) {
+//				if (txn.getStatus() == TransactionStatus.ACTIVE) {
+//					view.displayPaymentStatus(StringConstants.PAYMENT_SUCCESSFULL, AlertType.SUCCESS);
+//				} else {
+//					// some day, the sun will shine upon us.
+//					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
+//				}
+//
+//				if (result.getTransaction() != null) {
+//					BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
+//					account.getTransactions().add(result.getTransaction());
+//					displayTransactionHistory();
+//				}
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable th) {
+//				if (th instanceof DuplicateException) {
+//					view
+//					    .displayPaymentStatus(StringConstants.DUPLICATE_SUBSCRIPTION_ATTEMPT, AlertType.ERROR);
+//				} else {
+//					view.displayPaymentStatus(StringConstants.PAYMENT_UNSUCCESSFULL, AlertType.ERROR);
+//				}
+//			}
+//		});
+//	}
 
 	@Override
 	public void updatePassword(UpdatePasswordAction action) {
@@ -318,6 +276,7 @@ public class BusinessAccountSettingsActivity
 		if (account == null) {
 			throw new IllegalArgumentException();
 		}
+		
 		dispatcher.execute(
 		    new UpdateAccountAction(account),
 		    new DispatcherCallbackAsync<UpdateAccountResult>() {
@@ -342,4 +301,38 @@ public class BusinessAccountSettingsActivity
 			    }
 		    });
 	}
+	
+	@Override
+  public void checkSubscriptionEligibility(final Long subscriptionId) {
+		CheckSubscriptionEligibilityAction action =  new CheckSubscriptionEligibilityAction();
+		action.setSubscriptionId(subscriptionId);
+		
+		dispatcher.execute(action, new DispatcherCallbackAsync<CheckSubscriptionEligibilityResult>() {
+
+			@Override
+      public void onSuccess(final CheckSubscriptionEligibilityResult result) {
+				if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ELIGIBLE) {
+					view.initiatePay(subscriptionId, result.getToken());
+				} 
+				else if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ACTIVE_SUBSCRIPTION) {
+					String msg = stringDefinitions.cancelledSubscriptionStillActive();
+					
+					@SuppressWarnings("unused")
+          final ConfirmationModalWidget modal = new ConfirmationModalWidget(msg, new ConfirmationModalCallback() {
+						
+						@Override
+						public void confirm() {
+							view.initiatePay(subscriptionId, result.getToken());
+						}
+						
+						@Override
+						public void cancel() {
+						}
+					});
+				} else {
+					view.displayMessage(stringDefinitions.ineglibleForSubscription(), AlertType.WARNING);
+				}
+      }
+		});
+  }
 }

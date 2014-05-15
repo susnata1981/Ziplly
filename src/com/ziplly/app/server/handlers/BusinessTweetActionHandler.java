@@ -19,6 +19,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.BusinessAccount;
+import com.ziplly.app.model.Subscription;
 import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -57,9 +58,9 @@ public class BusinessTweetActionHandler extends
 		}
 
 		BusinessAccount baccount = (BusinessAccount) account;
-		Set<Transaction> transaction = baccount.getTransactions();
+		Set<Subscription> subscriptions = baccount.getSubscriptions();
 
-		if (transaction == null) {
+		if (subscriptions == null) {
 			// haven't paid yet, check quota
 			try {
 				long count =

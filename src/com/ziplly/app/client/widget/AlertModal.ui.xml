@@ -6,21 +6,33 @@
 		@external .alert-modal, .modal-body;
 		.alert-modal  {
 			width: 250px;
-			padding: 0;
+			height: 80px;
+			padding: 4px;
+			border: 1px solid #ddd;
+			box-shadow: 1px 1px 1px #555;
+		}
+		.outerPanel {
+			display: table;
+		}
+		.panel {
+			display: table-cell;
+			vertical-align: middle;
 		}
 		.alert-modal .modal-body {
 			padding: 0;
 		}
 		.alert-modal .alert {
-			padding: 16px;
-			font-size: 16px !important;
+			padding: 4px;
+			font-size: 14px !important;
 			margin: 0;
 			text-align: center;
 		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel addStyleNames="{style.outerPanel}">
 	    <b:Modal ui:field="modal" addStyleNames="{style.alert-modal}">
-	        <b:Alert ui:field="alert" close="false" addStyleNames="{style.alert}" />
+	        <g:HTMLPanel addStyleNames="{style.panel}">
+	        	<b:Alert ui:field="alert" close="false" addStyleNames="{style.alert}" />
+	       	</g:HTMLPanel>
 	    </b:Modal>
 	</g:HTMLPanel>
 </ui:UiBinder> 

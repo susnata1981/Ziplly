@@ -3,6 +3,7 @@ package com.ziplly.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 import com.ziplly.app.shared.StringUtil;
 
 public class BusinessAccountDTO extends AccountDTO {
@@ -12,7 +13,7 @@ public class BusinessAccountDTO extends AccountDTO {
 	private String website;
 	private String street1;
 	private String street2;
-	private List<TransactionDTO> transactions = new ArrayList<TransactionDTO>();
+	private List<SubscriptionDTO> subscriptions = new ArrayList<SubscriptionDTO>();
 	private String businessType;
 	private String category;
 	private BusinessPropertiesDTO properties;
@@ -65,12 +66,12 @@ public class BusinessAccountDTO extends AccountDTO {
 		this.website = website;
 	}
 
-	public List<TransactionDTO> getTransactions() {
-		return transactions;
+	public List<SubscriptionDTO> getTransactions() {
+		return getSubscriptions();
 	}
 
-	public void setTransactions(List<TransactionDTO> transactions) {
-		this.transactions = transactions;
+	public void setTransactions(List<SubscriptionDTO> transactions) {
+		this.setSubscriptions(transactions);
 	}
 
 	public BusinessType getBusinessType() {
@@ -96,4 +97,12 @@ public class BusinessAccountDTO extends AccountDTO {
 	public BusinessPropertiesDTO getProperties() {
 		return properties;
 	}
+
+	public List<SubscriptionDTO> getSubscriptions() {
+	  return subscriptions;
+  }
+
+	public void setSubscriptions(List<SubscriptionDTO> subscriptions) {
+	  this.subscriptions = subscriptions;
+  }
 }

@@ -13,6 +13,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.model.Tweet;
@@ -51,7 +52,7 @@ public class DeleteTweetActionHandler extends
 			throw new NotFoundException();
 		}
 
-		AccountDTO sender = accountDao.findById(tweetDto.getSender().getAccountId());
+		Account sender = accountDao.findById(tweetDto.getSender().getAccountId());
 
 		// TODO
 		// Need to load sender account separately before hasPermission call.

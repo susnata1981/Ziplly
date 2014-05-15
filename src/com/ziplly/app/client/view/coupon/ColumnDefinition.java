@@ -10,10 +10,10 @@ import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.model.CouponTransactionDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
 
 public class ColumnDefinition implements Comparable<ColumnDefinition> {
-	private Column<CouponTransactionDTO, ?> column;
+	private Column<PurchasedCouponDTO, ?> column;
 	private String title;
 	private final static BasicDataFormatter basicDataFormatter =
 	    (BasicDataFormatter) AbstractValueFormatterFactory
@@ -32,76 +32,76 @@ public class ColumnDefinition implements Comparable<ColumnDefinition> {
 	
 	public static final ColumnDefinition DESCRIPTION = new ColumnDefinition(
 	    "Description",
-	    new TextColumn<CouponTransactionDTO>() {
+	    new TextColumn<PurchasedCouponDTO>() {
 
 		    @Override
-		    public String getValue(CouponTransactionDTO c) {
-			    return c.getCoupon().getDescription();
+		    public String getValue(PurchasedCouponDTO pr) {
+			    return pr.getCoupon().getDescription();
 		    }
 	    });
 
 	public static final ColumnDefinition PRICE = new ColumnDefinition(
 	    "Price",
-	    new Column<CouponTransactionDTO, Number>(new NumberCell()) {
+	    new Column<PurchasedCouponDTO, Number>(new NumberCell()) {
 		    ;
 
 		    @Override
-		    public Number getValue(CouponTransactionDTO c) {
+		    public Number getValue(PurchasedCouponDTO c) {
 			    return c.getCoupon().getPrice().doubleValue();
 		    }
 	    });
 
 	public static final ColumnDefinition DISCOUNT = new ColumnDefinition(
 	    "Discount",
-	    new Column<CouponTransactionDTO, Number>(new NumberCell()) {
+	    new Column<PurchasedCouponDTO, Number>(new NumberCell()) {
 
 		    @Override
-		    public Number getValue(CouponTransactionDTO c) {
+		    public Number getValue(PurchasedCouponDTO c) {
 			    return c.getCoupon().getDiscount().doubleValue();
 		    }
 	    });
 	public static final ColumnDefinition STATUS = new ColumnDefinition(
 	    "Status",
-	    new TextColumn<CouponTransactionDTO>() {
+	    new TextColumn<PurchasedCouponDTO>() {
 
 		    @Override
-		    public String getValue(CouponTransactionDTO c) {
+		    public String getValue(PurchasedCouponDTO c) {
 			    return c.getStatus().name();
 		    }
 	    });
 	public static final ColumnDefinition TIME_PURCHASED = new ColumnDefinition(
 	    "Time purchased",
-	    new TextColumn<CouponTransactionDTO>() {
+	    new TextColumn<PurchasedCouponDTO>() {
 		    @Override
-		    public String getValue(CouponTransactionDTO c) {
+		    public String getValue(PurchasedCouponDTO c) {
 			    return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE);
 		    }
 	    });
 	public static final ColumnDefinition VIEW_COUPON = new ColumnDefinition(
 	    "View",
-	    new Column<CouponTransactionDTO, String>(viewButtonDecorator) {
+	    new Column<PurchasedCouponDTO, String>(viewButtonDecorator) {
 
 		    @Override
-		    public String getValue(CouponTransactionDTO object) {
+		    public String getValue(PurchasedCouponDTO object) {
 			    return "View";
 		    }
 	    });
 	public static final ColumnDefinition PRINT_COUPON = new ColumnDefinition(
 	    "Print",
-	    new Column<CouponTransactionDTO, String>(printButtonDecorator) {
+	    new Column<PurchasedCouponDTO, String>(printButtonDecorator) {
 
 		    @Override
-		    public String getValue(CouponTransactionDTO object) {
+		    public String getValue(PurchasedCouponDTO object) {
 			    return "Print";
 		    }
 	    });
 	
-	private ColumnDefinition(String title, Column<CouponTransactionDTO, ?> column) {
+	private ColumnDefinition(String title, Column<PurchasedCouponDTO, ?> column) {
 		this.title = title;
 		this.column = column;
 	}
 
-	public Column<CouponTransactionDTO, ?> getColumn() {
+	public Column<PurchasedCouponDTO, ?> getColumn() {
 		return column;
 	}
 

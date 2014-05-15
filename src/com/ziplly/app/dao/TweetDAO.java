@@ -1,6 +1,5 @@
 package com.ziplly.app.dao;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,6 @@ public interface TweetDAO {
 	 */
 	List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException;
 
-	// List<TweetDTO> findTweetsByZip(Integer zip, int page, int pageSize);
-
-	// List<TweetDTO> findTweetsByTypeAndZip(TweetType type, Integer zip,
-	// int page, int pageSize);
-
 	TweetDTO update(Tweet tweet) throws NotFoundException;
 
 	void delete(Tweet tweet) throws NotFoundException;
@@ -33,11 +27,12 @@ public interface TweetDAO {
 	List<TweetDTO>
 	    findTweetsByAccountId(Long accountId, int page, int pageSize) throws NotFoundException;
 
-	Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException,
-	    NotFoundException;
+	Long findTweetsByAccountIdAndMonth(Long accountId, Date date);
 
 	Long findTweetsCountByAccountId(Long accountId) throws NotFoundException;
 
+	Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date);
+	
 	TweetDTO findTweetById(Long tweetId) throws NotFoundException;
 
 	List<TweetDTO> findAll();
@@ -61,4 +56,8 @@ public interface TweetDAO {
 	    Long neighborhoodId,
 	    int page,
 	    int pageSize) throws NotFoundException;
+
+	Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now);
+
+	Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now);
 }

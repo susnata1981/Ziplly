@@ -3,28 +3,14 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dv="urn:import:com.ziplly.app.client.view.coupon"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		.heading {
-		height: 30px;
-		line-height: 30px;
-		padding: 4px;
-		background: #ddd;
-		color: #666;
-		font-family: Verdata, sans;
-		}
-		ul {
-			margin: 10px 0;
-		}
-		ul > li {
-			list-style: none;
-			font-size: 14px;
-			font-weight: 500;
-			line-height: 24px;
-			padding: 2px;
-		}
 	</ui:style>
-	<b:FluidContainer>
+<!-- <b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="2">
+				<b:NavPills>
+					<b:NavLink>Publish Coupon</b:NavLink>
+					<b:NavLink>Report</b:NavLink>
+				</b:NavPills>
 			</b:Column>
 			<b:Column size="9">
 				<g:HTMLPanel>
@@ -48,21 +34,25 @@
 						<b:Heading size="4" addStyleNames="{style.heading}"
 							ui:field="couponTransactionDetailsHeading" />
 						<div>
-						    <b:Heading size="4">Summary</b:Heading>
-						    <ul>
-						        <li>
-						            Coupons Sold:<b:Label ui:field="totalCouponsSoldLabel" />
-						        </li>
-						        <li>
-						            Total Sales:<b:Label ui:field="totalSalesLabel" />
-						        </li>
-						        <li>
-						            Total Coupons Redeemed:<b:Label ui:field="totalCouponsRedeemed" />
-						        </li>
-						        <li>
-						            Total Coupons Unused:<b:Label ui:field="totalCouponsUnused" />
-						        </li>
-						    </ul>
+							<b:Heading size="4">Summary</b:Heading>
+							<ul>
+								<li>
+									Coupons Sold:
+									<b:Label ui:field="totalCouponsSoldLabel" />
+								</li>
+								<li>
+									Total Sales:
+									<b:Label ui:field="totalSalesLabel" />
+								</li>
+								<li>
+									Total Coupons Redeemed:
+									<b:Label ui:field="totalCouponsRedeemed" />
+								</li>
+								<li>
+									Total Coupons Unused:
+									<b:Label ui:field="totalCouponsUnused" />
+								</li>
+							</ul>
 						</div>
 						<dv:CouponTransactionTableWidget
 							ui:field="couponTransactionTableWidget" />
@@ -70,5 +60,23 @@
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>
-	</b:FluidContainer>
+	</b:FluidContainer> -->
+	
+	<b:FluidContainer>
+		<b:FluidRow>
+			<b:Column size="2">
+				<b:NavPills>
+					<b:NavLink ui:field="couponFormLink">Publish Coupon</b:NavLink>
+					<b:NavLink ui:field="couponSalesLink">Report</b:NavLink>
+				</b:NavPills>
+			</b:Column>
+			<b:Column size="9">
+				<g:HTMLPanel>
+				    <b:Alert ui:field="message" close="false" />
+					<dv:CouponReportSalesView ui:field="couponSalesView" />
+					<dv:CouponFormWidget ui:field="couponFormWidget" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer> 
 </ui:UiBinder> 

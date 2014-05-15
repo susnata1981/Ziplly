@@ -67,6 +67,7 @@ public class DAOModule extends AbstractModule {
 		bind(TweetNotificationBLI.class).to(TweetNotificationBLIImpl.class).in(Singleton.class);
 		bind(ConversationDAO.class).to(ConversationDAOImpl.class).in(Singleton.class);
 		bind(TransactionDAO.class).to(TransactionDAOImpl.class).in(Singleton.class);
+		bind(SubscriptionDAO.class).to(SubscriptionDAOImpl.class).in(Singleton.class);
 		bind(SubscriptionPlanDAO.class).to(SubscriptionPlanDAOImpl.class).in(Singleton.class);
 		bind(PasswordRecoveryDAO.class).to(PasswordRecoveryDAOImpl.class).in(Singleton.class);
 		bind(AccountRegistrationDAO.class).to(AccountRegistrationDAOImpl.class).in(Singleton.class);
@@ -79,7 +80,8 @@ public class DAOModule extends AbstractModule {
 		bind(LocationDAO.class).to(LocationDAOImpl.class).in(Singleton.class);
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
 		bind(CouponDAO.class).to(CouponDAOImpl.class).in(Singleton.class);
-		bind(CouponTransactionDAO.class).to(CouponTransactionDAOImpl.class).in(Singleton.class);
+		bind(TransactionDAO.class).to(TransactionDAOImpl.class).in(Singleton.class);
+		bind(PurchasedCouponDAO.class).to(PurchasedCouponDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);

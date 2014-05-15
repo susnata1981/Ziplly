@@ -1,6 +1,7 @@
 package com.ziplly.app.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class SubscriptionPlanDTO implements Serializable {
@@ -9,7 +10,8 @@ public class SubscriptionPlanDTO implements Serializable {
 	private Long subscriptionId;
 	private String name;
 	private String description;
-	private Double fee;
+	private BigDecimal fee;
+	private String planType;
 	private String status;
 	private Date timeCreated;
 
@@ -40,11 +42,11 @@ public class SubscriptionPlanDTO implements Serializable {
 		this.description = description;
 	}
 
-	public Double getFee() {
+	public BigDecimal getFee() {
 		return fee;
 	}
 
-	public void setFee(Double fee) {
+	public void setFee(BigDecimal fee) {
 		this.fee = fee;
 	}
 
@@ -82,4 +84,12 @@ public class SubscriptionPlanDTO implements Serializable {
 	public void setStatus(SubscriptionPlanStatus status) {
 		this.status = status.name();
 	}
+	
+	public SubscriptionPlanType getPlanType() {
+	  return SubscriptionPlanType.valueOf(planType);
+  }
+
+	public void setPlanType(SubscriptionPlanType planType) {
+	  this.planType = planType.name();
+  }
 }

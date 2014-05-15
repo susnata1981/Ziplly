@@ -16,7 +16,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
-import com.ziplly.app.model.CouponTransactionDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
 
 public class CouponTransactionTableWidget extends Composite {
 
@@ -28,7 +28,7 @@ public class CouponTransactionTableWidget extends Composite {
 	@UiField(provided = true)
 	SimplePager pager;
 	@UiField(provided = true)
-	CellTable<CouponTransactionDTO> couponTransactionTable;
+	CellTable<PurchasedCouponDTO> couponTransactionTable;
 	@UiField
 	Alert message;
 	
@@ -54,7 +54,7 @@ public class CouponTransactionTableWidget extends Composite {
 
 	private void setupUi() {
 		pager = new SimplePager();
-		couponTransactionTable = new CellTable<CouponTransactionDTO>();
+		couponTransactionTable = new CellTable<PurchasedCouponDTO>();
 		couponTransactionTable.setHover(true);
 		buildTable();
 		pager.setDisplay(couponTransactionTable);
@@ -79,14 +79,14 @@ public class CouponTransactionTableWidget extends Composite {
 		couponTransactionTable.setRowCount(couponCount, true);
 	}
 	
-	public void displayCouponTransactions(List<CouponTransactionDTO> transactions) {
+	public void displayPurchasedCoupons(List<PurchasedCouponDTO> purchasedCoupons) {
 		message.setVisible(false);
-		if (transactions == null || transactions.size() == 0) {
+		if (purchasedCoupons == null || purchasedCoupons.size() == 0) {
 			displayMessage(StringConstants.NO_COUPON_TRANSACTIONS, AlertType.INFO);
 			return;
 		}
 		
-		couponTransactionTable.setRowData(transactionStart, transactions);
+		couponTransactionTable.setRowData(transactionStart, purchasedCoupons);
 	}
 	
 	private void buildTable() {
@@ -95,7 +95,7 @@ public class CouponTransactionTableWidget extends Composite {
 		}
   }
 	
-	public CellTable<CouponTransactionDTO> getCouponTransactionTable() {
+	public CellTable<PurchasedCouponDTO> getTable() {
 		return couponTransactionTable;
 	}
 	

@@ -314,17 +314,6 @@
 							<b:Alert ui:field="paymentStatus" close="false" />
 							<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
 								addStyleNames="{style.subscriptionPlanTablePanel}">
-								<p class="heading4">
-									Take full advantage of the promotional
-									period by
-									reaching out to
-									your customers.
-								</p>
-								<p class="heading4">
-									Communicate with them as well as
-									listen to their
-									feedback.
-								</p>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>

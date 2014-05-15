@@ -15,7 +15,9 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
+import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.shared.GetAccountByIdAction;
@@ -43,9 +45,9 @@ public class GetAccountByIdActionHandler extends
 
 		GetAccountByIdResult result = new GetAccountByIdResult();
 		try {
-			AccountDTO account = accountBli.getAccountById(action.getAccountId());
-			if (account instanceof PersonalAccountDTO) {
-				applyPrivacySettings((PersonalAccountDTO) account);
+			Account account = accountBli.getAccountById(action.getAccountId());
+			if (account instanceof PersonalAccount) {
+				applyPrivacySettings((PersonalAccount) account);
 			}
 			result.setAccount(account);
 			return result;
@@ -58,12 +60,12 @@ public class GetAccountByIdActionHandler extends
 	/*
 	 * Hides AccountDetailsType based on privacy settings;
 	 */
-	private void applyPrivacySettings(PersonalAccountDTO account) {
+	private void applyPrivacySettings(PersonalAccount account) {
 		if (account == null) {
 			return;
 		}
 
-		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
+		for (PrivacySettings ps : account.getPrivacySettings()) {
 			switch (ps.getSection()) {
 				case EMAIL:
 					if (!isAttributeVisible(account, ps)) {
@@ -80,7 +82,7 @@ public class GetAccountByIdActionHandler extends
 		}
 	}
 
-	private boolean isAttributeVisible(AccountDTO account, PrivacySettingsDTO ps) {
+	private boolean isAttributeVisible(Account account, PrivacySettingsDTO ps) {
 
 		try {
 			validateSession();
@@ -105,8 +107,8 @@ public class GetAccountByIdActionHandler extends
 		return false;
 	}
 
-	private boolean belongToSameCommunity(AccountDTO account, Account loggedInAccount) {
-		return account.getLocations().get(0).getNeighborhood().getNeighborhoodId() == loggedInAccount
+	private boolean belongToSameCommunity(Account account, Account loggedInAccount) {
+		return account.getLocations().iterator().next().getNeighborhood().getNeighborhoodId() == loggedInAccount
 		    .getLocations()
 		    .iterator()
 		    .next()

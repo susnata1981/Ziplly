@@ -1,24 +1,24 @@
 package com.ziplly.app.shared;
 
-import com.ziplly.app.model.CouponTransactionDTO;
+import com.ziplly.app.model.TransactionDTO;
 
 import net.customware.gwt.dispatch.shared.Result;
 
 public class PurchaseCouponResult implements Result {
-	private CouponTransactionDTO couponTransaction;
+	private TransactionDTO couponTransaction;
 	
 	public PurchaseCouponResult() {
   }
 	
-	public PurchaseCouponResult(CouponTransactionDTO coupon) {
+	public PurchaseCouponResult(TransactionDTO coupon) {
 		this.setCouponTransaction(coupon);
   }
 
-	public CouponTransactionDTO getCouponTransaction() {
+	public TransactionDTO getCouponTransaction() {
 	  return couponTransaction;
   }
 
-	public void setCouponTransaction(CouponTransactionDTO couponTransaction) {
+	public void setCouponTransaction(TransactionDTO couponTransaction) {
 	  this.couponTransaction = couponTransaction;
   }
 }

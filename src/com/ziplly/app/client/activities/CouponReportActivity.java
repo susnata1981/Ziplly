@@ -1,8 +1,10 @@
 package com.ziplly.app.client.activities;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
@@ -15,15 +17,22 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl.CouponReportPresenter;
+import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
+import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.CouponTransactionDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.PurchasedCouponStatus;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.TweetStatus;
+import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.GetCouponTransactionAction;
 import com.ziplly.app.shared.GetCouponTransactionAction.SearchType;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 import com.ziplly.app.shared.GetCouponsAction;
 import com.ziplly.app.shared.GetCouponsResult;
+import com.ziplly.app.shared.TweetAction;
+import com.ziplly.app.shared.TweetResult;
 
 public class CouponReportActivity extends AbstractActivity implements CouponReportPresenter {
 
@@ -47,14 +56,15 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
 		int getCouponDataPageSize();
 
-		void displayCoupons(List<CouponDTO> coupons);
-
+		void displayCoupons(int start, List<CouponDTO> coupons);
+		
 		void setTotalCouponCount(Long totalCouponCount);
 
 		void displayCouponDetails(GetCouponTransactionResult result);
 
 		void displaySummary(TransactionSummary summary);
 
+		void displayMessage(String couponPublishedSuccessfully, AlertType success);
 	}
 
 	@Override
@@ -88,7 +98,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 		loadCouponData(start, pageSize);
 	}
 
-	public void loadCouponData(int start, int pageSize) {
+	public void loadCouponData(final int start, int pageSize) {
 		GetCouponsAction action = new GetCouponsAction();
 		action.setStart(start);
 		action.setPageSize(pageSize);
@@ -98,7 +108,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
 			@Override
 			public void onSuccess(GetCouponsResult result) {
-				view.displayCoupons(result.getCoupons());
+				view.displayCoupons(start, result.getCoupons());
 				view.setTotalCouponCount(result.getTotalCouponCount());
 			}
 		});
@@ -143,25 +153,25 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 		if (result.getTotalTransactions() > 0) {
 			totalSales =
 			    result
-			        .getTransactions()
+			        .getPurchasedCoupons()
 			        .get(0)
 			        .getCoupon()
 			        .getPrice()
 			        .multiply(BigDecimal.valueOf(result.getTotalTransactions()));
 		}
 		summary.setTotalSales(totalSales);
-		Long totalRedeemedCouponCount = getRedeemCouponCount(result.getTransactions());
+		Long totalRedeemedCouponCount = getRedeemCouponCount(result.getPurchasedCoupons());
 		Long totalUnusedCouponCount = result.getTotalTransactions() - totalRedeemedCouponCount;
 		summary.setTotalCouponsRedeemed(totalRedeemedCouponCount);
 		summary.setTotalCouponsUnused(totalUnusedCouponCount);
 		view.displaySummary(summary);
 	}
 	
-	private Long getRedeemCouponCount(List<CouponTransactionDTO> transactions) {
+	private Long getRedeemCouponCount(List<PurchasedCouponDTO> purchasedCoupons) {
 		long count = 0;
-		for(CouponTransactionDTO txn : transactions) {
-			if (txn.getStatus() == TransactionStatus.COMPLETE && 
-					txn.getPurchasedCoupon().getStatus() == PurchasedCouponStatus.UNUSED) {
+		for(PurchasedCouponDTO pc : purchasedCoupons) {
+			if (pc.getTransaction().getStatus() == TransactionStatus.COMPLETE && 
+					pc.getStatus() == PurchasedCouponStatus.UNUSED) {
 				count++;
 			}
 		}
@@ -207,4 +217,35 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 	    this.totalCouponsUnused = totalCouponsUnused;
     }
 	}
+
+	@Override
+  public void sendTweet(CouponDTO coupon) {
+		Date now = new Date();
+		TweetDTO tweet = new TweetDTO();
+		tweet.setCoupon(coupon);
+		tweet.setType(TweetType.COUPON);
+		tweet.setStatus(TweetStatus.ACTIVE);
+		tweet.setTimeUpdated(now);
+		tweet.setTimeCreated(now);
+		tweet.setSender(ctx.getAccount());
+		tweet.getTargetNeighborhoods().add(ctx.getCurrentNeighborhood());
+		Window.alert("sending tweet");
+		
+		TweetAction action = new TweetAction(tweet);
+		dispatcher.execute(action, new DispatcherCallbackAsync<TweetResult>() {
+
+			@Override
+      public void onSuccess(TweetResult result) {
+				view.displayMessage(stringDefinitions.couponPublishedSuccessfully(), AlertType.SUCCESS);
+				eventBus.fireEvent(new LoadingEventEnd());
+				eventBus.fireEvent(new CouponPublishSuccessfulEvent());
+      }
+			
+			@Override
+			public void postHandle(Throwable th) {
+				eventBus.fireEvent(new LoadingEventEnd());
+			}
+			
+		});
+  }
 }

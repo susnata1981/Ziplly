@@ -2,23 +2,21 @@ package com.ziplly.app.shared;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-import com.ziplly.app.model.TransactionDTO;
-
 public class PayAction implements Action<PayResult> {
-	private TransactionDTO transaction;
-
+	private Long subscriptionId;
+	
 	public PayAction() {
 	}
 
-	public PayAction(TransactionDTO txn) {
-		this.setTransaction(txn);
+	public PayAction(Long subscriptionId) {
+		this.subscriptionId = subscriptionId;
 	}
 
-	public TransactionDTO getTransaction() {
-		return transaction;
-	}
+	public Long getSubscriptionId() {
+	  return subscriptionId;
+  }
 
-	public void setTransaction(TransactionDTO transaction) {
-		this.transaction = transaction;
-	}
+	public void setSubscriptionId(Long subscriptionId) {
+	  this.subscriptionId = subscriptionId;
+  }
 }

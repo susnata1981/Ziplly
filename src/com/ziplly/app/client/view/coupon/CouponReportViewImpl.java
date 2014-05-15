@@ -1,55 +1,48 @@
 package com.ziplly.app.client.view.coupon;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.CellTable;
-import com.github.gwtbootstrap.client.ui.Heading;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.SimplePager;
+import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.CouponReportActivity.TransactionSummary;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.view.event.LoadingEventStart;
+import com.ziplly.app.client.widget.ConfirmationModalWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class CouponReportViewImpl extends AbstractView implements CouponReportView {
-	private static ColumnDefinition [] columnDefinitions = new ColumnDefinition [] {
-		ColumnDefinition.DESCRIPTION,
-		ColumnDefinition.PRICE,
-		ColumnDefinition.DISCOUNT,
-		ColumnDefinition.STATUS,
-		ColumnDefinition.TIME_PURCHASED,
-	};
-	
+
 	public static interface CouponReportPresenter extends Presenter {
 		void loadCouponData(int couponDataStart, int coupondatapagesize);
 
 		void loadCouponDetails(CouponDTO coupon, int start, int pageSize);
+
+		void sendTweet(CouponDTO coupon);
 	}
-	
+
 	private static CouponReportViewUiBinder uiBinder = GWT.create(CouponReportViewUiBinder.class);
 
 	interface CouponReportViewUiBinder extends UiBinder<Widget, CouponReportViewImpl> {
@@ -57,167 +50,143 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@UiField
 	Alert message;
+
 	@UiField(provided = true)
-	SimplePager pager;
+	CouponReportSalesView couponSalesView;
 	@UiField(provided = true)
-	CellTable<CouponDTO> couponReportTable;
-	final NoSelectionModel<CouponDTO> couponTableSelectionModel = new NoSelectionModel<CouponDTO>();
-	
+	CouponFormWidget couponFormWidget;
+
 	@UiField
-	Label totalSalesLabel;
-	
+	NavLink couponFormLink;
 	@UiField
-	Heading couponTransactionDetailsHeading;
-	@UiField
-	HTMLPanel couponTransactionDetailsPanel;
-	@UiField(provided = true)
-	CouponTransactionTableWidget couponTransactionTableWidget;
-	
+	NavLink couponSalesLink;
+
+	Map<NavLink, Composite> linkToViewMap;
 	private static final int couponDataPageSize = 10;
 	private int couponDataStart;
 	private CouponReportPresenter presenter;
-	
+	private ConfirmationModalWidget confirmationWidget;
+
 	@Inject
 	public CouponReportViewImpl(EventBus eventBus) {
 		super(eventBus);
-		pager = new SimplePager();
-		couponReportTable = new CellTable<CouponDTO>();
-		couponReportTable.setHover(true);
-		pager.setDisplay(couponReportTable);
-		pager.setPageSize(couponDataPageSize);
-		buildTable();
-		createCouponTransactionTable();
+		linkToViewMap = new HashMap<NavLink, Composite>();
+		couponSalesView = new CouponReportSalesView(eventBus);
+		couponFormWidget = new CouponFormWidget(eventBus);
+		ZResources.IMPL.style().ensureInjected();
 		initWidget(uiBinder.createAndBindUi(this));
-		
 		setupEventHandler();
 		StyleHelper.show(message.getElement(), false);
-		displayCouponTransactionDetailsPanel(false);
+		buildNavLinkMap();
+		showView(couponFormLink);
+	}
+
+	private void buildNavLinkMap() {
+		linkToViewMap.put(couponFormLink, couponFormWidget);
+		linkToViewMap.put(couponSalesLink, couponSalesView);
 	}
 
 	private void setupEventHandler() {
-		couponReportTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+		couponSalesView.getCouponReportTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
 
 			@Override
-      public void onRangeChange(RangeChangeEvent event) {
+			public void onRangeChange(RangeChangeEvent event) {
 				couponDataStart = event.getNewRange().getStart();
 				loadCouponData();
+			}
+		});
+
+		couponSalesView.getCouponTableSelectionStrategy().addSelectionChangeHandler(new Handler() {
+
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				internalDisplayCouponDetails(couponSalesView
+				    .getCouponTableSelectionStrategy()
+				    .getLastSelectedObject());
+			}
+		});
+
+		couponSalesView.getRefreshButton().addClickHandler(new ClickHandler() {
+
+			@Override
+      public void onClick(ClickEvent event) {
+				couponSalesView.clear();
+				presenter.loadCouponData(0, couponDataPageSize);
       }
+			
+		});
+		
+		couponFormWidget.getCancelButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+			}
 
 		});
-  }
+
+		couponFormWidget.getPreviewButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (!couponFormWidget.validate()) {
+					return;
+				}
+
+				couponFormWidget.showPreview(true);
+			}
+		});
+
+		couponFormWidget.getTweetButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (confirmationWidget == null) {
+					confirmationWidget =
+					    new ConfirmationModalWidget(
+					        StringConstants.PUBLISH_COUPON_CONFIRMATION,
+					        new ConfirmationModalWidget.ConfirmationModalCallback() {
+
+						        @Override
+						        public void confirm() {
+							        confirmationWidget.show(false);
+							        doPublishCoupon();
+							        eventBus.fireEvent(new LoadingEventStart());
+						        }
+
+						        @Override
+						        public void cancel() {
+							        confirmationWidget.show(false);
+						        }
+					        });
+				}
+				confirmationWidget.show(true);
+			}
+		});
+	}
+
+	private void doPublishCoupon() {
+		presenter.sendTweet(couponFormWidget.getCoupon());
+	}
 
 	public void setRowCount(Long couponCount) {
-		couponReportTable.setRowCount(couponCount.intValue(), true);
+		couponSalesView.setRowCount(couponCount);
 	}
-	
-	@Override
-	public void displayCoupons(List<CouponDTO> coupons) {
-		StyleHelper.show(message.getElement(), false);
-		
-		if (coupons == null) {
-			return;
-		}
-		
-		if (coupons.isEmpty()) {
-			displayMessage(StringConstants.NO_COUPONS, AlertType.WARNING);
-			return;
-		}
-		
-		couponReportTable.setRowData(couponDataStart, coupons);
-	}
-	
-	private void buildTable() {
-		Column<CouponDTO, String> couponDescription = new TextColumn<CouponDTO>() {
-
-			@Override
-      public String getValue(CouponDTO c) {
-				return c.getDescription();
-      }
-		};
-		couponReportTable.addColumn(couponDescription, "Description");
-		
-		Column<CouponDTO, Number> couponPrice = new Column<CouponDTO, Number>(new NumberCell()) {
-
-			@Override
-      public Number getValue(CouponDTO c) {
-				return c.getPrice().doubleValue();
-      }
-		};
-		couponReportTable.addColumn(couponPrice, "Price");
-		
-		Column<CouponDTO, Number> discount = new Column<CouponDTO, Number>(new NumberCell()) {
-
-			@Override
-      public Number getValue(CouponDTO c) {
-				return c.getDiscount().doubleValue();
-      }
-		};
-		couponReportTable.addColumn(discount, "Discount");
-		
-		Column<CouponDTO, String> status = new TextColumn<CouponDTO>() {
-
-			@Override
-      public String getValue(CouponDTO c) {
-				return "Active";
-      }
-		};
-		couponReportTable.addColumn(status, "Status");
-		
-		Column<CouponDTO, String> startTime = new TextColumn<CouponDTO>() {
-
-			@Override
-      public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getStartDate(), ValueType.DATE_VALUE);
-      }
-		};
-		couponReportTable.addColumn(startTime, "Start time");
-		
-		Column<CouponDTO, String> endTime = new TextColumn<CouponDTO>() {
-
-			@Override
-      public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getEndDate(), ValueType.DATE_VALUE);
-      }
-		};
-		couponReportTable.addColumn(endTime, "Expiration time");
-		
-		Column<CouponDTO, String> creationTime = new TextColumn<CouponDTO>() {
-
-			@Override
-      public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE);
-      }
-		};
-		couponReportTable.addColumn(creationTime, "Creation time");
-		
-		setupSelectionHandler();
-  }
-
-	private void setupSelectionHandler() {
-		couponTableSelectionModel.addSelectionChangeHandler(new Handler() {
-
-			@Override
-      public void onSelectionChange(SelectionChangeEvent event) {
-				internalDisplayCouponDetails(couponTableSelectionModel.getLastSelectedObject());
-      }
-		});
-		couponReportTable.setSelectionModel(couponTableSelectionModel);
-	}
-
-	private void internalDisplayCouponDetails(CouponDTO coupon) {
-		couponTransactionDetailsHeading.setText("Displaying details for coupon: \""+coupon.getDescription()+"\"");
-		presenter.loadCouponDetails(coupon, 0, couponDataPageSize);
-  }
 
 	@Override
-  public void clear() {
-		couponReportTable.setRowCount(0);
-  }
-	
+	public void displayCoupons(int start, List<CouponDTO> coupons) {
+		couponSalesView.displayCoupons(start, coupons);
+	}
+
+	@Override
+	public void clear() {
+		couponSalesView.getCouponReportTable().setRowCount(0);
+	}
+
 	public void loadCouponData() {
 		presenter.loadCouponData(couponDataStart, couponDataPageSize);
-  }
-	
+	}
+
+	@Override
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
@@ -225,69 +194,59 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	}
 
 	@Override
-  public int getCouponDataStartIndex() {
+	public int getCouponDataStartIndex() {
 		return couponDataStart;
-  }
+	}
 
 	@Override
-  public int getCouponDataPageSize() {
+	public int getCouponDataPageSize() {
 		return couponDataPageSize;
-  }
+	}
 
 	@Override
-  public void setPresenter(CouponReportPresenter presenter) {
+	public void setPresenter(CouponReportPresenter presenter) {
 		this.presenter = presenter;
-  }
+	}
 
 	@Override
-  public void setTotalCouponCount(Long totalCouponCount) {
-		couponReportTable.setRowCount(totalCouponCount.intValue(), true);
-  }
+	public void setTotalCouponCount(Long totalCouponCount) {
+		couponSalesView.setRowCount(totalCouponCount);
+	}
 
 	@Override
-  public void displayCouponDetails(GetCouponTransactionResult result) {
-		couponTransactionTableWidget.displayCouponTransactions(result.getTransactions());
-		couponTransactionTableWidget.setRowCount(result.getTotalTransactions().intValue());
-		displayCouponTransactionDetailsPanel(true);
-  }
+	public void displayCouponDetails(GetCouponTransactionResult result) {
+		couponSalesView.displayCouponDetails(result);
+	}
 
-	@UiField
-	Label totalCouponsSoldLabel;
-	@UiField
-	Label totalCouponsRedeemed;
-	@UiField
-	Label totalCouponsUnused;
-	
 	@Override
-  public void displaySummary(TransactionSummary summary) {
-		totalCouponsSoldLabel.setText(summary.getTotalCouponsSold().toString());
-		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSales(), ValueType.PRICE));
-		totalCouponsRedeemed.setText(summary.getTotalCouponsRedeemed().toString());
-		totalCouponsUnused.setText(summary.getTotalCouponsUnused().toString());
-  }
-	
-	private void createCouponTransactionTable() {
-		couponTransactionTableWidget = new CouponTransactionTableWidget(
-				Arrays.asList(columnDefinitions), 
-				couponDataPageSize, 
-				basicDataFormatter);
-		
-		SelectionModel<CouponTransactionDTO> noSelectionModel = new NoSelectionModel<CouponTransactionDTO>();
-		final CellTable<CouponTransactionDTO> table = couponTransactionTableWidget.getCouponTransactionTable();
-		table.setSelectionModel(noSelectionModel);
-		couponTransactionTableWidget.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				presenter.loadCouponDetails(couponTableSelectionModel.getLastSelectedObject(), 
-						event.getNewRange().getStart(),
-						couponDataPageSize);
+	public void displaySummary(TransactionSummary summary) {
+		couponSalesView.displaySummary(summary);
+	}
+
+	@UiHandler("couponFormLink")
+	public void showCouponForm(ClickEvent event) {
+		showView(couponFormLink);
+	}
+
+	@UiHandler("couponSalesLink")
+	public void showSalesForm(ClickEvent event) {
+		showView(couponSalesLink);
+	}
+
+	private void showView(NavLink selectedLink) {
+		for (NavLink link : linkToViewMap.keySet()) {
+			if (link == selectedLink) {
+				StyleHelper.show(linkToViewMap.get(link), true);
+				link.addStyleName(ZResources.IMPL.style().selectedLink());
+			} else {
+				StyleHelper.show(linkToViewMap.get(link), false);
+				link.addStyleName(ZResources.IMPL.style().deselectLink());
 			}
-			
-		});
-  }
+		}
+	}
 	
-	private void displayCouponTransactionDetailsPanel(boolean b) {
-		StyleHelper.show(couponTransactionDetailsPanel.getElement(), b);
-  }
+	private void internalDisplayCouponDetails(CouponDTO coupon) {
+		couponSalesView.setCouponDetailsTableHeading(coupon);
+		presenter.loadCouponDetails(coupon, 0, couponDataPageSize);
+	}
 }

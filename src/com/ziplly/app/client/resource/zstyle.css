@@ -15,3 +15,17 @@
 	gwt-image: 'zipllyLogo';
 	background-repeat: no-repeat;
 }
+
+.selectedLink {
+	background: #ddd;
+	padding: 2px;
+}
+
+.selectedLink:visited {
+	background: #ddd;	
+}
+
+.deselectLink {
+	background: none;
+	padding: 2px;
+}

@@ -8,7 +8,7 @@ import com.ziplly.app.model.SubscriptionPlanDTO;
 public interface SubscriptionPlanDAO {
 	SubscriptionPlan get(Long planId);
 
-	List<SubscriptionPlanDTO> getAll();
+	List<SubscriptionPlan> getAll();
 
 	void save(SubscriptionPlan plan);
 }

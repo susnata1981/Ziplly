@@ -3,6 +3,7 @@ package com.ziplly.app.client.widget.blocks;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
 import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 
@@ -12,13 +13,20 @@ public class GoogleWalletPayButtonWidget {
 
 	public GoogleWalletPayButtonWidget(final Button btn, 
 			final GoogleWalletPostPayButtonHandler handler) {
-		
 		this.btn = btn;
 		this.handler = handler;
   }
 	
 	public void pay(String jwtToken) {
 		doPay(jwtToken);
+	}
+	
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return btn.addClickHandler(handler);
+	}
+	
+	public void addHandler(GoogleWalletPostPayButtonHandler handler) {
+		this.handler = handler;
 	}
 	
 	private native void doPay(final String jwtToken) /*-{
@@ -38,17 +46,15 @@ public class GoogleWalletPayButtonWidget {
 				});
 	}-*/;
 
-	public void onSuccess(GoogleWalletSuccessResult result) {
-		System.out.println(result.print());
-		handler.onSuccess(result);
+	private void onSuccess(GoogleWalletSuccessResult result) {
+		if (handler != null) {
+			handler.onSuccess(result);
+		}
 	};
 
-	public void onFailure(GoogleWalletFailureResult result) {
-		System.out.println(result.print());
-		handler.onFailure(result);
+	private void onFailure(GoogleWalletFailureResult result) {
+		if (handler != null) {
+			handler.onFailure(result);
+		}
 	};
-
-	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		return btn.addClickHandler(handler);
-	}
 }

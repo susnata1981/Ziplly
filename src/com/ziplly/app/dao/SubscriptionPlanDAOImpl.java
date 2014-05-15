@@ -31,12 +31,12 @@ public class SubscriptionPlanDAOImpl extends BaseDAO implements SubscriptionPlan
 	}
 
 	@Override
-	public List<SubscriptionPlanDTO> getAll() {
+	public List<SubscriptionPlan> getAll() {
 		@SuppressWarnings("unchecked")
 		List<SubscriptionPlan> plans =
 		    (List<SubscriptionPlan>) getEntityManager()
 		        .createQuery("from SubscriptionPlan")
 		        .getResultList();
-		return EntityUtil.cloneSubscriptionPlanList(plans);
+		return plans;
 	}
 }

@@ -1,6 +1,7 @@
 package com.ziplly.app.server.bli;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
@@ -10,7 +11,10 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.crypto.BadPaddingException;
@@ -26,12 +30,13 @@ import com.google.inject.name.Named;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
-import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.dao.CouponTransactionDAO;
+import com.ziplly.app.dao.PurchasedCouponDAO;
+import com.ziplly.app.dao.TransactionDAO;
+import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.CouponTransaction;
 import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponStatus;
+import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.ServiceModule.CouponRedeemEndpoint;
 import com.ziplly.app.server.crypto.CryptoUtil;
@@ -43,9 +48,10 @@ public class CouponBLIImpl implements CouponBLI {
 	private static CryptoUtil cryptoUtil;
 
 	private Logger logger = Logger.getLogger(CouponBLIImpl.class.getName());
-	private CouponTransactionDAO couponTransactionDao;
+	private TransactionDAO couponTransactionDao;
 	private String couponRedeemEndpoint;
 	private AccountBLI accountBli;
+	private PurchasedCouponDAO purchasedCouponDao;
 
 	@Inject
 	public CouponBLIImpl(
@@ -53,23 +59,25 @@ public class CouponBLIImpl implements CouponBLI {
 			@Named("qrcode_endpoint") String qrcodeEndpoint,
 	    @CouponRedeemEndpoint String couponRedeemEndpoint,
 	    CryptoUtil cryptoUtil,
-	    CouponTransactionDAO couponTransactionDao) {
+	    PurchasedCouponDAO purchasedCouponDao,
+	    TransactionDAO couponTransactionDao) {
 
 		this.accountBli = accountBli;
 		this.qrcodeEndpoint = qrcodeEndpoint;
 		this.couponRedeemEndpoint = couponRedeemEndpoint;
 		CouponBLIImpl.cryptoUtil = cryptoUtil;
+		this.purchasedCouponDao = purchasedCouponDao;
 		this.couponTransactionDao = couponTransactionDao;
 	}
 
 	@Override
-	public String getQrcode(CouponTransaction couponTransaction) throws Exception {
+	public String getQrcode(PurchasedCoupon pr) throws Exception {
 		CouponCodeDetails ccd = new CouponCodeDetails();
 		ccd
-		    .setBuyerAccountId(couponTransaction.getBuyer().getAccountId())
-		    .setSellerAccountId(couponTransaction.getCoupon().getTweet().getSender().getAccountId())
-		    .setCouponId(couponTransaction.getCoupon().getCouponId())
-		    .setCouponTransactionId(couponTransaction.getTransactionId());
+		    .setBuyerAccountId(pr.getTransaction().getBuyer().getAccountId())
+		    .setSellerAccountId(pr.getCoupon().getTweet().getSender().getAccountId())
+		    .setCouponId(pr.getCoupon().getCouponId())
+		    .setCouponTransactionId(pr.getTransaction().getTransactionId());
 
 		String code = ccd.getEncryptedCouponCode();
 		return code;
@@ -77,20 +85,15 @@ public class CouponBLIImpl implements CouponBLI {
 
 	@Override
 	public String
-	    getQrcodeUrl(CouponTransaction couponTransaction) throws UnsupportedEncodingException {
+	    getQrcodeUrl(PurchasedCoupon pr) throws UnsupportedEncodingException {
 		String redeemUrl =
-		    couponRedeemEndpoint + encode(couponTransaction.getPurchasedCoupon().getQrcode());
+		    couponRedeemEndpoint + encode(pr.getQrcode());
 		return qrcodeEndpoint + redeemUrl;
 	}
 
 	String encode(String code) throws UnsupportedEncodingException {
 		checkNotNull(code);
 		return URLEncoder.encode(code, "utf-8");
-	}
-
-	private String decode(String encodedString) throws UnsupportedEncodingException {
-		checkNotNull(encodedString);
-		return URLDecoder.decode(encodedString, "utf-8");
 	}
 
 	@Override
@@ -113,11 +116,9 @@ public class CouponBLIImpl implements CouponBLI {
 		System.out.println(couponCodeDetails);
 
 		// Load CouponTransaction
-		CouponTransaction transaction =
-		    couponTransactionDao.findById(couponCodeDetails.getCouponTransactionId());
-		PurchasedCoupon purchasedCoupon = transaction.getPurchasedCoupon();
-
-		if (transaction.getStatus() != TransactionStatus.COMPLETE || purchasedCoupon == null) {
+		List<PurchasedCoupon> purchasedCoupons = purchasedCouponDao.findByTransactionId(couponCodeDetails.getCouponTransactionId());
+		PurchasedCoupon purchasedCoupon = purchasedCoupons.get(0);
+		if (purchasedCoupon.getTransaction().getStatus() != TransactionStatus.COMPLETE || purchasedCoupon == null) {
 			// TODO(vipin) throw a different error?
 			throw new InvalidCouponException(encodedCouponData);
 		}
@@ -129,9 +130,9 @@ public class CouponBLIImpl implements CouponBLI {
 		// Otherwise mark the coupon as used
 		purchasedCoupon.setStatus(PurchasedCouponStatus.USED);
 		purchasedCoupon.setTimeUpdated(new Date());
-		Coupon coupon = transaction.getCoupon();
+		Coupon coupon = purchasedCoupon.getCoupon();
 		coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
-		couponTransactionDao.update(transaction);
+		purchasedCouponDao.update(purchasedCoupon);
 		return coupon;
 	}
 
@@ -238,63 +239,72 @@ public class CouponBLIImpl implements CouponBLI {
 
 	@Override
 	@Transactional
-	public void completeTransaction(Long couponTransactionId) throws DispatchException {
-		checkNotNull(couponTransactionId);
-		
-		CouponTransaction couponTransaction = couponTransactionDao.findByIdAndStatus(
-				Long.valueOf(couponTransactionId), 
-				TransactionStatus.PENDING);
+	public PurchasedCoupon createPendingTransaction(Account buyer, Coupon coupon) {
+		Date now = new Date();
+		PurchasedCoupon pc = new PurchasedCoupon();
+		pc.setCoupon(coupon);
+		pc.setStatus(PurchasedCouponStatus.PENDING);
+		Transaction transaction = new Transaction();
+		transaction.setBuyer(buyer);
+		transaction.setStatus(TransactionStatus.PENDING);
+		transaction.setAmount(coupon.getPrice());
+		transaction.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
+		transaction.setTimeCreated(now);
+		transaction.setTimeUpdated(now);
+		pc.setTransaction(transaction);
+		pc.setTimeCreated(now);
+		pc.setTimeUpdated(now);
+		purchasedCouponDao.save(pc);
+		return pc;
+	}
+	
+	@Override
+	@Transactional
+	public void completeTransaction(Long purchaseCouponId) throws Exception {
+		PurchasedCoupon purchasedCoupon = purchasedCouponDao.findById(purchaseCouponId);
+		checkState(purchasedCoupon.getStatus() == PurchasedCouponStatus.PENDING);
 		
 		try {
 			accountBli.checkAccountEligibleForCouponPurchase(
-					couponTransaction.getBuyer(), couponTransaction.getCoupon());
+					purchasedCoupon.getTransaction().getBuyer(), purchasedCoupon.getCoupon());
 		} catch(DispatchException ex) {
-			couponTransaction.setStatus(TransactionStatus.ELIGIBILITY_FAILED);
-			couponTransactionDao.save(couponTransaction);
+			purchasedCoupon.setStatus(PurchasedCouponStatus.ELIGIBILITY_FAILED);
+			purchasedCoupon.getTransaction().setStatus(TransactionStatus.ELIGIBILITY_FAILED);
+			purchasedCouponDao.save(purchasedCoupon);
 			throw ex;
 		}
 
 		// Update quantity 
-		couponTransaction.getCoupon().setQuantityPurchased(couponTransaction.getCoupon().getQuantityPurchased() + 1);
+		purchasedCoupon.getCoupon().setQuantityPurchased(purchasedCoupon.getCoupon().getQuantityPurchased() + 1);
 		
-		//update the status
-		couponTransaction.setStatus(TransactionStatus.COMPLETE);
-		
-		// complete purchase in first callback
-		boolean completePurchase = Boolean.valueOf(System.getProperty(
-				StringConstants.COMPLETE_COUPON_PURCHASE_ON_FIRST_CALLBACK_FLAG, "true"));
-		
-		logger.info(String.format("CompletePurchase value = %s",Boolean.valueOf(completePurchase).toString()));
-
-//		if(completePurchase) {
-//			couponTransaction.setStatus(TransactionStatus.COMPLETE);
-//		}
+		// Update the status
+		Transaction txn = purchasedCoupon.getTransaction();
+		txn.setStatus(TransactionStatus.COMPLETE);
 		
 		// Set update date
 		Date now = new Date();
-		couponTransaction.setTimeUpdated(now);
+		txn.setTimeUpdated(now);
 		
 		// Set QR code
-		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
-		purchasedCoupon.setCouponTransaction(couponTransaction);
+		purchasedCoupon.setQrcode(getQrcode(purchasedCoupon));
 		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
 		purchasedCoupon.setTimeUpdated(now);
 		purchasedCoupon.setTimeCreated(now);
-		couponTransaction.setPurchasedCoupon(purchasedCoupon);
 		
 		try {
-			purchasedCoupon.setQrcode(getQrcode(couponTransaction));
-			couponTransactionDao.update(couponTransaction);
+			purchasedCoupon.setQrcode(getQrcode(purchasedCoupon));
+			purchasedCouponDao.update(purchasedCoupon);
 		} catch (Exception e) {
 			throw new InternalError(String.format("Failed to generate coupon code"));
 		}
 	}
 	
+	@Deprecated
 	@Override
 	public void waitAndCompleteTransaction(Long transactionId) throws InterruptedException {
 //		CouponTransaction transaction = couponTransactionDao.findById(transactionId);
 		boolean found = false;
-		CouponTransaction transaction = null;
+		Transaction transaction = null;
 		Long waitingTime = 0L;
 		
 		while (!found) {
@@ -313,5 +323,10 @@ public class CouponBLIImpl implements CouponBLI {
 		}
 		transaction.setStatus(TransactionStatus.COMPLETE);
 		couponTransactionDao.update(transaction);
+	}
+	
+	private String decode(String encodedString) throws UnsupportedEncodingException {
+		checkNotNull(encodedString);
+		return URLDecoder.decode(encodedString, "utf-8");
 	}
 }

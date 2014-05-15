@@ -1,9 +1,10 @@
 package com.ziplly.app.server.bli;
 
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
-import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.Coupon;
 
 public interface PaymentService {
 	
@@ -15,7 +16,8 @@ public interface PaymentService {
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
 	 */
-	String getJWT(Long sellerId, Double d) throws InvalidKeyException, SignatureException;
+	String generateSubscriptionToken(Long sellerId, Long subscriptionId, BigDecimal amount) throws InvalidKeyException, SignatureException;
+//	String getJWT(Long sellerId, BigDecimal d) throws InvalidKeyException, SignatureException;
 	
 	/**
 	 * For generating coupon purchase token
@@ -26,9 +28,9 @@ public interface PaymentService {
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
 	 */
-	String getJWTTokenForCoupon(
+	String generateJWTTokenForCoupon(
 			Long transactionId, 
-			CouponDTO coupon, 
+			Coupon coupon, 
 			Long buyerAccountId) throws InvalidKeyException, SignatureException;
 
 	String deserialize(String tokenString);

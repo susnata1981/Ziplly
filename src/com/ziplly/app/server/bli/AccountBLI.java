@@ -7,7 +7,6 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.exceptions.AccessException;
-import com.ziplly.app.client.exceptions.AccountAlreadySubscribedException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.DuplicateException;
@@ -19,7 +18,6 @@ import com.ziplly.app.client.exceptions.OAuthException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.TransactionDTO;
 
 public interface AccountBLI {
 	// AccountDTO register(Account account) throws AccountExistsException;
@@ -41,15 +39,15 @@ public interface AccountBLI {
 
 	String getImageUploadUrl();
 
-	AccountDTO getAccountById(Long accountId) throws NotFoundException;
+	Account getAccountById(Long accountId) throws NotFoundException;
 
 	// List<PersonalAccountDTO> getAccountByZip(AccountDTO account);
 	Long doLogin(AccountDTO account);
 
 	// Long doLogin(Account account);
-	TransactionDTO pay(TransactionDTO transaction) throws AccountAlreadySubscribedException,
-	    DuplicateException,
-	    NotFoundException;
+//	TransactionDTO pay(TransactionDTO transaction) throws AccountAlreadySubscribedException,
+//	    DuplicateException,
+//	    NotFoundException;
 
 	void
 	    updatePassword(Account account, String oldPassword, String newPassword) throws InvalidCredentialsException,

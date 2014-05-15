@@ -59,11 +59,11 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
-import com.ziplly.app.model.CouponTransactionDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -203,9 +203,6 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@UiField(provided = true)
 	CouponTransactionView couponTransactionView;
 	
-	@UiField
-	Anchor transactionDetailsAnchor;
-	
 	// Update section
 	@UiField
 	AlertBlock updateAlertBlock;
@@ -220,19 +217,23 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Inject
 	public BusinessAccountView(EventBus eventBus) {
 		super(eventBus);
+		tweetBox = new TweetBox(eventBus);
+		couponTransactionView = new CouponTransactionView(eventBus);
+		notificationWidget = new NotificationWidget();
+		initWidget(uiBinder.createAndBindUi(this));
+		setupUi();
+		setupHandlers();
+	}
+
+	private void setupUi() {
 		tview.setWidth(TWEET_WIDGET_WIDTH);
 		tview.setHeight(TWEET_WIDGET_HEIGHT);
-		tweetBox = new TweetBox();
 		tweetBox.setWidth(TWEET_BOX_WIDTH);
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByBusiness());
-		couponTransactionView = new CouponTransactionView(eventBus);
-		initWidget(uiBinder.createAndBindUi(this));
-		tweetSection.add(tview);
-		notificationWidget = new NotificationWidget();
 		StyleHelper.show(profileImagePanel.getElement(), false);
-		setupHandlers();
+		tweetSection.add(tview);
 		displayCouponTransactionPanel(false);
-	}
+  }
 
 	private void setupHandlers() {
 		notificationWidget.getAccountSettingButton().addClickHandler(new ClickHandler() {
@@ -635,15 +636,10 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
   }
 
 	@Override
-  public void displayCouponTransaction(List<CouponTransactionDTO> transactions) {
+  public void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
 		displayCouponTransactionPanel(true);
-		couponTransactionView.displayCouponTransactions(transactions);
+		couponTransactionView.displayPurchasedCoupons(transactions);
   }
-	
-	@UiHandler("transactionDetailsAnchor")
-	public void viewCouponTransactions(ClickEvent event) {
-		internalDisplayCouponTransactions();
-	}
 	
 	@Override
 	public void setCouponTransactionCount(Long couponTransactionCount) {

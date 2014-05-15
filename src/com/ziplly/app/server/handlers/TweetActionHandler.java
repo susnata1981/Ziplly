@@ -1,7 +1,8 @@
 package com.ziplly.app.server.handlers;
 
-import java.text.ParseException;
-import java.util.Date;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 
@@ -10,129 +11,44 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.client.exceptions.AccessException;
-import com.ziplly.app.client.exceptions.InternalException;
-import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
-import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.client.exceptions.UsageLimitExceededException;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.BusinessAccount;
-import com.ziplly.app.model.SubscriptionPlan;
-import com.ziplly.app.model.Transaction;
-import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.model.Tweet;
-import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.bli.AccountBLI;
-import com.ziplly.app.server.bli.AccountBLIImpl;
-import com.ziplly.app.server.bli.TweetNotificationBLI;
+import com.ziplly.app.server.bli.TweetBLI;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 
 public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, TweetResult> {
-
-	private TweetNotificationBLI tweetNotificationBli;
+	private TweetBLI tweetBli;
+	private Logger logger = Logger.getLogger(TweetActionHandler.class.getName());
 
 	@Inject
-	public TweetActionHandler(
-			Provider<EntityManager> entityManagerProvider,
-			AccountDAO accountDao,
+	public TweetActionHandler(Provider<EntityManager> entityManagerProvider,
+	    AccountDAO accountDao,
 	    SessionDAO sessionDao,
 	    TweetDAO tweetDao,
 	    AccountBLI accountBli,
-	    TweetNotificationBLI tweetNotificationBli) {
+	    TweetBLI tweetBli) {
 		super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
-		this.tweetNotificationBli = tweetNotificationBli;
+		this.tweetBli = tweetBli;
 	}
 
 	@Override
 	public TweetResult doExecute(TweetAction action, ExecutionContext arg1) throws DispatchException {
-		if (action == null || action.getTweet() == null) {
-			throw new IllegalArgumentException();
-		}
+
+		checkNotNull(action.getTweet());
 		validateSession();
 
-		Account account = session.getAccount();
 		Tweet tweet = new Tweet(action.getTweet());
-
-		// Only business accounts can publish this
-		if (tweet.getCoupon() != null) {
-			checkAccountPermission();
-		}
-		
-		// check usage limits for business tweets
-		if (account instanceof BusinessAccount) {
-			checkUsage();
-		}
-
 		tweet.setSender(session.getAccount());
-		TweetDTO savedTweet = tweetDao.save(tweet);
-
-		tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
-
+		
+		Tweet savedTweet = tweetBli.sendTweet(tweet, session.getAccount());
 		TweetResult result = new TweetResult();
-		result.setTweet(savedTweet);
+		result.setTweet(EntityUtil.clone(savedTweet));
 		return result;
-	}
-
-	/**
-	 * Checks to see if the current business account has permissiont o publish coupons
-	 * @throws AccessException 
-	 */
-	private void checkAccountPermission() throws AccessException {
-	  if (!(session.getAccount() instanceof BusinessAccount)) {
-	  	throw new AccessException();
-	  }
-  }
-
-	private void checkUsage() throws NeedsSubscriptionException,
-	    InternalException,
-	    UsageLimitExceededException,
-	    NotFoundException {
-		boolean enablePaymentPlan =
-		    Boolean.valueOf(System.getProperty(StringConstants.ENABLE_PAYMENT_PLAN, "false"));
-
-		// Wire on Wire off
-		if (!enablePaymentPlan) {
-			return;
-		}
-
-		BusinessAccount baccount = (BusinessAccount) session.getAccount();
-		long count = 0;
-
-		try {
-			count =
-			    tweetDao.findTweetsByAccountIdAndMonth(session.getAccount().getAccountId(), new Date());
-		} catch (NotFoundException nfe) {
-			throw nfe;
-		} catch (ParseException e) {
-			// should never reach here
-			throw new InternalException("Internal error");
-		}
-
-		SubscriptionPlan plan = findActiveSubscriptionPlan(baccount);
-		if (plan == null) {
-			// haven't paid yet, check quota
-			if (count >= AccountBLIImpl.FREE_TWEET_PER_MONTH_THRESHOLD) {
-				throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
-			}
-		} else {
-			if (count >= (plan.getTweetsAllowed() + AccountBLIImpl.FREE_TWEET_PER_MONTH_THRESHOLD)) {
-				throw new UsageLimitExceededException(StringConstants.USAGE_LIMIT_EXCEEDED_EXCEPTION);
-			}
-		}
-	}
-
-	private SubscriptionPlan findActiveSubscriptionPlan(BusinessAccount account) {
-		for (Transaction txn : account.getTransactions()) {
-			if (txn.getStatus() == TransactionStatus.ACTIVE) {
-				return txn.getPlan();
-			}
-		}
-		return null;
 	}
 
 	@Override

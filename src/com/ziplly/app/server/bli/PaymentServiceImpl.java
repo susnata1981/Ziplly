@@ -1,5 +1,6 @@
 package com.ziplly.app.server.bli;
 
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.Calendar;
@@ -19,7 +20,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.Coupon;
+import com.ziplly.app.server.bli.payment.PaymentType;
 
 public class PaymentServiceImpl implements PaymentService {
 	private static final String CURRENCY_CODE_LABEL = "currencyCode";
@@ -29,7 +31,10 @@ public class PaymentServiceImpl implements PaymentService {
 	private static final String ZIPLLY_INC = "Ziplly Inc.";
 	private static final String COUPON_ID_LABEL = "couponId";
 	private static final String BUYER_ID_LABEL = "buyerId";
-	private static final String TRANSACTION_ID_LABEL = "transactionId";
+	private static final String PURCHASE_COUPON_ID_LABEL = "purchaseCouponId";
+	private static final String PAYMENT_TYPE = "paymentType";
+	private static final String MERCHANT_ID_LABEL = "sellerId";
+	private static final String SUBSCRIPTION_ID_LABEL = "subscriptionId";
 	
 	private final String sellerSecret;
 	private final String sellerId;
@@ -41,29 +46,18 @@ public class PaymentServiceImpl implements PaymentService {
 		this.sellerId = sellerId;
 		this.sellerSecret = sellerSecret;
   }
-	
-	@Deprecated
-	@Override
-	public String getJWT(Long sellerId, Double amount) throws InvalidKeyException, SignatureException {
-		// Configure request object
-		JsonObject request = new JsonObject();
-		request.addProperty(NAME_LABEL, "ziplly marketing service");
-		request.addProperty(DESCRIPTION_LABEL, "ziplly marketing service fee");
-		request.addProperty(PRICE_LABEL, amount);
-		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
-		request.addProperty("sellerData", "seller_id:" + sellerId);
-		JsonToken token = createToken(request);
-		return token.serializeAndSign();
-	}
 
-	public String generateSubscriptionToken(Long sellerId, Double amount) throws InvalidKeyException, SignatureException {
+	@Override
+	public String generateSubscriptionToken(Long sellerId, Long subscriptionId, BigDecimal amount) throws InvalidKeyException, SignatureException {
 		// Configure request object
 		JsonObject request = new JsonObject();
-		request.addProperty(NAME_LABEL, "ziplly marketing service");
-		request.addProperty(DESCRIPTION_LABEL, "ziplly marketing service fee");
+		request.addProperty(NAME_LABEL, ZIPLLY_INC);
+		request.addProperty(DESCRIPTION_LABEL, "Subscription service fee");
 		request.addProperty(PRICE_LABEL, amount);
 		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
-		request.addProperty("sellerData", "seller_id:" + sellerId);
+		request.addProperty(MERCHANT_ID_LABEL, sellerId);
+		request.addProperty(PAYMENT_TYPE, PaymentType.SUBCRIPTION.name());
+		request.addProperty(SUBSCRIPTION_ID_LABEL, subscriptionId);
 		JsonToken token = createToken(request);
 		return token.serializeAndSign();
 	}
@@ -82,9 +76,9 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public String getJWTTokenForCoupon(Long transactionId, CouponDTO coupon, Long buyerAccountId) throws InvalidKeyException, SignatureException {
+	public String generateJWTTokenForCoupon(
+			Long purchasedCouponId, Coupon coupon, Long buyerAccountId) throws InvalidKeyException, SignatureException {
 		
-		System.out.println("Seller Id="+sellerId+" Secret="+sellerSecret);
 		// Configure request object
 		JsonObject request = new JsonObject();
 		request.addProperty(NAME_LABEL, ZIPLLY_INC);
@@ -93,8 +87,8 @@ public class PaymentServiceImpl implements PaymentService {
 		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
 		request.addProperty(COUPON_ID_LABEL, coupon.getCouponId());
 		request.addProperty(BUYER_ID_LABEL, buyerAccountId);
-		request.addProperty(TRANSACTION_ID_LABEL, transactionId);
-//		request.addProperty("buyer", "buyer_id:" + buyer.getAccountId());
+		request.addProperty(PURCHASE_COUPON_ID_LABEL, purchasedCouponId);
+		request.addProperty(PAYMENT_TYPE, PaymentType.COUPON.name());
 		JsonToken token = createToken(request);
 		return token.serializeAndSign();
 	}
@@ -122,8 +116,7 @@ public class PaymentServiceImpl implements PaymentService {
   }
 	
 	/**
-	 * @param tokenString
-	 *          The original encoded representation of a JWT
+	 * @param tokenString original encoded representation of a JWT
 	 * @return Three components of the JWT as an array of strings
 	 */
 	private String[] splitTokenString(String tokenString) {

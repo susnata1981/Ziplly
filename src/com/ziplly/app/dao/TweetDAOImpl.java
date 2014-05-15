@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -263,27 +265,22 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 		}
 	}
 
+	/**
+	 * Returns total number of active tweets for the given month.
+	 */
 	@Override
-	public Long findTweetsByAccountIdAndMonth(Long accountId, Date date) throws ParseException,
-	    NotFoundException {
+	public Long findTweetsByAccountIdAndMonth(Long accountId, Date date) {
 
-		if (accountId == null || date == null) {
-			throw new IllegalArgumentException("Invalid accountId");
-		}
-
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-
+		DateTime inputDate = new DateTime(date);
 		EntityManager em = getEntityManager();
 		try {
-			Query query =
-			    em
-			        .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId and month(t.timeCreated) = :month and year(timeCreated) = :year and status = :status");
+			Query query = em
+			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId and month(t.timeCreated) = :month "
+			    		+ "and year(timeCreated) = :year and status = :status");
 			query.setParameter("accountId", accountId);
 			query.setParameter("status", TweetStatus.ACTIVE.name());
-			// +1 to account for mysql format indexed at 1
-			query.setParameter("month", cal.get(Calendar.MONTH) + 1);
-			query.setParameter("year", cal.get(Calendar.YEAR));
+			query.setParameter("month", inputDate.getMonthOfYear());
+			query.setParameter("year", inputDate.getYear());
 			Long count = (Long) query.getSingleResult();
 			return count;
 		} catch (NoResultException nre) {
@@ -291,10 +288,77 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 			    "Failed to retrieve tweets for accountId %d exception %s",
 			    accountId,
 			    nre));
-			throw new NotFoundException();
+			return 0L;
 		}
 	}
 
+	@Override
+	public Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date) {
+		DateTime dateTime = new DateTime(date);
+		EntityManager em = getEntityManager();
+		try {
+			Query query = em
+			    .createQuery("select count(*) from Tweet where sender.accountId = :accountId and month(timeCreated) = :month "
+			    		+ "and year(timeCreated) = :year and status = :status and coupon.couponId is not null");
+			query.setParameter("accountId", accountId);
+			query.setParameter("status", TweetStatus.ACTIVE.name());
+			query.setParameter("month", dateTime.getMonthOfYear());
+			query.setParameter("year", dateTime.getYear());
+			Long count = (Long) query.getSingleResult();
+			return count;
+		} catch (NoResultException nre) {
+			logger.warning(String.format(
+			    "Failed to retrieve tweets for accountId %d exception %s",
+			    accountId,
+			    nre));
+			return 0L;
+		}
+	}
+	
+	@Override
+	public Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now) {
+		EntityManager em = getEntityManager();
+		try {
+			Query query = em
+			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+			    		+ "and t.timeCreated between :before and :now and status = :status and not null t.coupon.couponId");
+			query.setParameter("accountId", accountId);
+			query.setParameter("status", TweetStatus.ACTIVE.name());
+			query.setParameter("before", before);
+			query.setParameter("now", now);
+			Long count = (Long) query.getSingleResult();
+			return count;
+		} catch (NoResultException nre) {
+			logger.warning(String.format(
+			    "Failed to retrieve tweets for accountId %d exception %s",
+			    accountId,
+			    nre));
+			return 0L;
+		}
+	}
+	
+	@Override
+	public Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now) {
+		EntityManager em = getEntityManager();
+		try {
+			Query query = em
+			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+			    		+ "and t.timeCreated between :before and :now and status = :status and t.coupon.couponId is null");
+			query.setParameter("accountId", accountId);
+			query.setParameter("status", TweetStatus.ACTIVE.name());
+			query.setParameter("before", before);
+			query.setParameter("now", now);
+			Long count = (Long) query.getSingleResult();
+			return count;
+		} catch (NoResultException nre) {
+			logger.warning(String.format(
+			    "Failed to retrieve tweets for accountId %d exception %s",
+			    accountId,
+			    nre));
+			return 0L;
+		}
+	}
+	
 	@Override
 	public Long findTweetsCountByAccountId(Long accountId) throws NotFoundException {
 		if (accountId == null) {

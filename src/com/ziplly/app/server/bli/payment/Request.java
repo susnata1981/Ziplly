@@ -1,14 +1,16 @@
 package com.ziplly.app.server.bli.payment;
 
-
 public class Request {
 	private String name;
 	private String description;
 	private String price;
 	private String currencyCode;
+	private String paymentType;
 	private String couponId;
 	private String buyerId;
-	private String transactionId;
+	private String purchaseCouponId;
+	private String sellerId;
+	private String subscriptionId;
 	
 	public String getName() {
 		return name;
@@ -28,12 +30,30 @@ public class Request {
 	public String getBuyerId() {
 		return buyerId;
 	}
-	public String getTransactionId() {
-		return transactionId;
+	public String getPurchasedCouponId() {
+		return purchaseCouponId;
 	}
 	
 	@Override
 	public String toString() {
 		return name + " " + description;
 	}
+	public PaymentType getPaymentType() {
+	  return PaymentType.valueOf(paymentType);
+  }
+	public void setType(PaymentType type) {
+	  this.paymentType = type.name();
+  }
+	public String getSubscriptionId() {
+	  return subscriptionId;
+  }
+	public void setSubscriptionId(String subscriptionId) {
+	  this.subscriptionId = subscriptionId;
+  }
+	public String getSellerId() {
+	  return sellerId;
+  }
+	public void setSellerId(String sellerId) {
+	  this.sellerId = sellerId;
+  }
 }

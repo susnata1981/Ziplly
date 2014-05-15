@@ -1,5 +1,7 @@
 package com.ziplly.app.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,13 +18,20 @@ public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "subscription_id")
 	private Long subscriptionId;
+	@Column(nullable = false)
 	private String name;
+	@Column(nullable = false)
 	private String description;
 	@Column(name = "tweets_allowed")
 	private int tweetsAllowed;
-	@Column(name = "status")
+	@Column(name = "coupons_allowed")
+	private int couponsAllowed;
+	@Column(name="plan_type", nullable = false)
+	private String planType;
+	@Column(name = "status", nullable = false)
 	private String status;
-	private Double fee;
+	@Column(nullable = false)
+	private BigDecimal fee;
 
 	public SubscriptionPlan() {
 	}
@@ -61,11 +70,11 @@ public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 		this.description = description;
 	}
 
-	public Double getFee() {
+	public BigDecimal getFee() {
 		return fee;
 	}
 
-	public void setFee(Double fee) {
+	public void setFee(BigDecimal fee) {
 		this.fee = fee;
 	}
 
@@ -84,4 +93,20 @@ public class SubscriptionPlan extends AbstractTimestampAwareEntity {
 	public void setStatus(SubscriptionPlanStatus subscriptionPlanStatus) {
 		this.status = subscriptionPlanStatus.name();
 	}
+
+	public int getCouponsAllowed() {
+	  return couponsAllowed;
+  }
+
+	public void setCouponsAllowed(int couponsAllowed) {
+	  this.couponsAllowed = couponsAllowed;
+  }
+
+	public SubscriptionPlanType getPlanType() {
+	  return SubscriptionPlanType.valueOf(planType);
+  }
+
+	public void setPlanType(SubscriptionPlanType planType) {
+	  this.planType = planType.name();
+  }
 }

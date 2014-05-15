@@ -9,19 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.customware.gwt.dispatch.shared.DispatchException;
-
-import com.google.apphosting.api.DeadlineExceededException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
-import com.ziplly.app.server.bli.payment.Payload;
-import com.ziplly.app.server.bli.payment.Request;
+import com.ziplly.app.server.bli.payment.BaseRequest;
+import com.ziplly.app.server.bli.payment.PayloadParser;
 
 @Singleton
 public class ConfirmPaymentServlet extends HttpServlet {
@@ -30,72 +23,48 @@ public class ConfirmPaymentServlet extends HttpServlet {
 	private Logger logger = Logger.getLogger(ConfirmPaymentServlet.class.getCanonicalName());
 	PaymentService paymentService;
 	CouponBLI couponBli;
-	
+	private PayloadParser parser;
+
 	@Inject
-	public ConfirmPaymentServlet(PaymentService paymentService, CouponBLI couponBli) {
+	public ConfirmPaymentServlet(PayloadParser parser, PaymentService paymentService, CouponBLI couponBli) {
+		this.parser = parser;
 		this.couponBli = couponBli;
 		this.paymentService = paymentService;
 	}
 
-	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		System.out.println("Received request = " + req.getContentLength());
-		try {
-	    handlePayload(req.getParameter(JWT_TOKEN_KEY), res);
-    } catch (DispatchException e) {
-    	logger.severe(String.format("Failed to confirm payment: %s", e));
-	    e.printStackTrace();
-    }
-	}
+//	@Override
+//	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+//		logger.info("Received request = " + req.getContentLength());
+//		try {
+//			handlePayload(req.getParameter(JWT_TOKEN_KEY), res);
+//		} catch (Exception e) {
+//			logger.severe(String.format("Failed to confirm payment: %s", e));
+//			e.printStackTrace();
+//		}
+//	}
 
-	private void handlePayload(String jwt, HttpServletResponse res) throws IOException, DispatchException {
-    String orderID;
-    String jwt_response = paymentService.deserialize(jwt);
-    logger.info(String.format("Deserialized jwt token %s", jwt_response));
-    JsonParser parser = new JsonParser();
-    Gson gson = new GsonBuilder().create();
-    JsonArray payload = parser.parse("[" + jwt_response + "]").getAsJsonArray();
-    Payload payload_1 = gson.fromJson(payload.get(0), Payload.class);
-    
-    // validate the payment request and respond back to Google
-    if (payload_1.getIss().equals("Google")
-            && payload_1.getAud().equals(paymentService.getIssuer())) {
-        if (payload_1.getResponse() != null
-                && payload_1.getResponse().getOrderId() != null) {
-            orderID = payload_1.getResponse().getOrderId();
-            logger.info(String.format("OrderID %s", orderID));
-            Request req = payload_1.getRequest();
-            if (req.getCurrencyCode() != null
-                    && req.getPrice() != null
-                    && req.getTransactionId() != null
-                    && req.getBuyerId() != null) {
-                
-            		Long transactionId = Long.parseLong(req.getTransactionId());
-            		try {
-//	                couponBli.waitAndCompleteTransaction(transactionId);
-            			couponBli.completeTransaction(transactionId);
-	            		res.setStatus(200);
-	                PrintWriter writer = res.getWriter();
-	                writer.write(orderID);
-                } catch (DeadlineExceededException ex) {
-                	logger.severe(String.format("Deadline exceeded for %s, exception %s", payload_1, ex));
-                	res.getWriter().close();
-                }
-            }
-        }
+	private void handlePayload(String parameter, HttpServletResponse res) {
+		BaseRequest request = parser.parse(parameter);
+		try {
+	    request.completeTransaction();
+	    res.setStatus(200);
+	    PrintWriter writer = res.getWriter();
+			writer.write(request.getOrderId());
+    } catch (Exception ex) {
+    	logger.severe(String.format("Failed to complete transaction for request %s, with exception %s", request, ex));
     }
   }
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		logger.log(Level.INFO, "ConfirPaumentServlet called.");
+		logger.log(Level.INFO, "ConfirPaumentServlet called");
 		String token = req.getParameter("jwt");
 		logger.log(Level.INFO, "Jwt token =" + token);
 		try {
-	    handlePayload(token, res);
-    } catch (DispatchException e) {
-    	logger.severe(String.format("Failed to confirm payment: %s", e));
-	    e.printStackTrace();
-    }
+			handlePayload(token, res);
+		} catch (Exception e) {
+			logger.severe(String.format("Failed to confirm payment: %s", e));
+			e.printStackTrace();
+		}
 	}
 }

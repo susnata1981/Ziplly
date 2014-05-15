@@ -22,6 +22,7 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Location;
+import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -80,8 +81,8 @@ public class GetTweetForUserActionHandler extends
 		}
 
 		// ONLY APPLICABLE FOR PERSONAL ACCOUNTS.
-		AccountDTO account = accountDao.findById(accountId);
-		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
+		Account account = accountDao.findById(accountId);
+		for (PrivacySettings ps : account.getPrivacySettings()) {
 			if (ps.getSection() == AccountDetailsType.TWEETS) {
 				if (!userLoggedIn) {
 					if (ps.getSetting() != ShareSetting.PUBLIC) {

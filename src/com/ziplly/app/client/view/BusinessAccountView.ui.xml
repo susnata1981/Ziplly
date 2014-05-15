@@ -179,9 +179,6 @@
 					<b:AlertBlock type="INFO" heading="Updates" close="false"
 						ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
 					</b:AlertBlock>
-					<div>
-						<g:Anchor ui:field="transactionDetailsAnchor">See transactions</g:Anchor>
-					</div>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

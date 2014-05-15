@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4;
 import com.ziplly.app.base.AbstractBase;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.CouponTransaction;
+import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.CouponBLIImpl.CouponCodeDetails;
@@ -30,7 +30,7 @@ public class CouponBLIImplTest extends AbstractBase {
 			for(Long sellerId : sellerIds) {
 				for(Long couponId : couponIds) {
 					for(Long transactionId : transactionIds) {
-						CouponTransaction txn = createCouponTransaction(buyerId, sellerId, couponId, transactionId);
+						Transaction txn = createCouponTransaction(buyerId, sellerId, couponId, transactionId);
 						
 						String qrcode = couponBli.getQrcode(txn);
 						
@@ -46,8 +46,8 @@ public class CouponBLIImplTest extends AbstractBase {
 		}
 	}
 	
-	private CouponTransaction createCouponTransaction(Long buyerId, Long sellerId, Long couponId, Long transactionId) {
-		CouponTransaction ct = new CouponTransaction();
+	private Transaction createCouponTransaction(Long buyerId, Long sellerId, Long couponId, Long transactionId) {
+		Transaction ct = new Transaction();
 		ct.setTransactionId(transactionId);
 		Account buyer = new Account();
 		buyer.setAccountId(buyerId);

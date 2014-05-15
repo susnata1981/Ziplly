@@ -88,19 +88,16 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	@Override
-	public AccountDTO findById(Long accountId) throws NotFoundException {
+	public Account findById(Long accountId) throws NotFoundException {
 
 		Query query = getEntityManager().createNamedQuery("findAccountById");
 		query.setParameter("accountId", accountId);
-		AccountDTO result;
 		try {
-			Account account = (Account) query.getSingleResult();
+			return (Account) query.getSingleResult();
 			// account.getTweets();
-			result = EntityUtil.convert(account);
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
 		}
-		return result;
 	}
 
 	@Transactional
