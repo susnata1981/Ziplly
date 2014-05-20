@@ -4,6 +4,7 @@ public enum ValueType {
 	// General
 	STRING_VALUE,
 	TEXT_VALUE,
+	DATE_VALUE_MONTH_DAY,
 	DATE_VALUE,
 	DATE_VALUE_SHORT,
 	INTEGER_VALUE,
@@ -60,5 +61,5 @@ public enum ValueType {
 	// Coupon
 	COUPON, 
 	PRICE, 
-	PERCENT,
+	PERCENT, 
 }

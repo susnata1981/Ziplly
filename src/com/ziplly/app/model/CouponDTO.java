@@ -2,12 +2,15 @@ package com.ziplly.app.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CouponDTO implements Serializable {
   private static final long serialVersionUID = 1L;
   
 	private Long couponId;
+	private String title;
 	private String description;
 	private Date startDate;
 	private Date endDate;
@@ -17,7 +20,10 @@ public class CouponDTO implements Serializable {
 	private BigDecimal discount;
 	private Long quantity;
 	private int numberAllowerPerIndividual;
-	private TweetDTO tweet;
+	// Transient
+	private List<ImageDTO> images = new ArrayList<ImageDTO>();
+
+	private TweetDTO tweet = new TweetDTO();
 	
 	private Long quantityPurchased;
 	private Date timeCreated;
@@ -107,5 +113,17 @@ public class CouponDTO implements Serializable {
   }
 	public void setNumberAllowerPerIndividual(int numberAllowerPerIndividual) {
 	  this.numberAllowerPerIndividual = numberAllowerPerIndividual;
+  }
+  public String getTitle() {
+    return title;
+  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+  public List<ImageDTO> getImages() {
+    return images;
+  }
+  public void setImages(List<ImageDTO> images) {
+    this.images = images;
   }
 }

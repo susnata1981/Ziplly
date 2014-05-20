@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "account_registration")
-public class AccountRegistration extends AbstractTimestampAwareEntity {
+public class AccountRegistration extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

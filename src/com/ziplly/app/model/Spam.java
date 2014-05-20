@@ -12,7 +12,7 @@ import com.ziplly.app.shared.SpamStatus;
 
 @Entity
 @Table(name = "spam")
-public class Spam extends AbstractTimestampAwareEntity {
+public class Spam extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

@@ -1,6 +1,9 @@
 package com.ziplly.app.client;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.gwt.place.shared.Place;
 import com.ziplly.app.model.AccountDTO;
@@ -23,6 +26,7 @@ public class ApplicationContext implements Serializable {
 	
 	private Place lastPlace;
 	private Place newPlace;
+	private int maxNeighborhoodsVisible = 3;
 
 	public ApplicationContext() {
 	}
@@ -108,4 +112,18 @@ public class ApplicationContext implements Serializable {
 		public int totalComments;
 		public int totalLikes;
 	}
+
+	public List<NeighborhoodDTO> getTargetNeighborhoodList() {
+		List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+		NeighborhoodDTO neighborhood = getCurrentNeighborhood();
+		neighborhoods.add(neighborhood);
+		NeighborhoodDTO parentNeighborhood = neighborhood.getParentNeighborhood();
+		int count = 0;
+		while (parentNeighborhood != null && count < maxNeighborhoodsVisible ) {
+			neighborhoods.add(parentNeighborhood);
+			parentNeighborhood = parentNeighborhood.getParentNeighborhood();
+			count++;
+		}
+		return neighborhoods;
+  }
 }

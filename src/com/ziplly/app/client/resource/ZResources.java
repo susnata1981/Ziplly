@@ -45,6 +45,10 @@ public interface ZResources extends ClientBundle {
 	@Source("no-photo.jpg")
 	ImageResource noPhoto();
 
+	@DoNotEmbed
+	@Source("no_picture.gif")
+	ImageResource noGeneralImage();
+	
 	@Source("magnolia.jpeg")
 	ImageResource magnolia();
 

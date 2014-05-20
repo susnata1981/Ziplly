@@ -6,54 +6,60 @@
 		.couponForm {
 		}
 		.couponForm input[type="text"] {
-			height: 36px !important;
-			font-size: 14px;
+		height: 36px
+		!important;
+		font-size: 14px;
 		}
 		.couponForm label{
-			font-size: 15px;
-			font-weight: 600;
-			color: #555;
+		font-size: 15px;
+		font-weight: 600;
+		color: #555;
 		}
 		.largeTextBox {
 		width: 350px;
+		}
+		.largeTextArea {
+		width: 420px;
+		height: 180px;
 		}
 		.btn {
 		margin-right: 10px;
 		}
 		.uploadProfileImagePanel {
+			height: 360px;
+			width: 400px;
 		}
 		.profileImagePanel {
 		}
 		.profileImage {
 		}
 		.inlineLabel {
-		margin: 4px 0 0
-		2px;
-		font-size: 12px;
-		display:
-		inline-block;
+			margin: 4px 0 0 2px;
+			font-size: 12px;
+			display: inline-block;
 		}
 		.popoverLink {
-		display:
-		inline;
-		font-size: 10px;
+			display: inline;
+			font-size: 10px;
 		}
 		.previewPanel {
 		width: 80%;
-		border: 1px dotted #555444;
+		border: 1px dotted
+		#555444;
 		padding: 4px;
 		background: #fff;
 		}
 		.previewHeadingDiv {
-			border-bottom: 1px solid #ddd;
-			background: cyan;
-			overflow: hidden;
-			padding: 2px;
+		border-bottom: 1px solid #ddd;
+		background: cyan;
+		overflow: hidden;
+		padding: 2px;
 		}
 		.previewHeading {
 		display: inline-block;
 		float: left;
-		font-size: 18px;
+		font-size:
+		18px;
 		font-weight: bold;
 		text-align: center;
 		color: #666;
@@ -62,155 +68,178 @@
 		}
 		.previewRightAnchor {
 		float: right;
-		font-size: 11px;
+		font-size:
+		11px;
 		padding: 2px;
 		}
 		.tweetTextPreview
 		{
 		display: block;
-		padding:
-		10px 0 2px 4px;
-		color:
-		#666;
-		font-family:
-		Georgia, serif;
+		padding: 10px 0 2px 4px;
+		color: #666;
+		font-family: Georgia, serif;
+		border: 1px solid #ddd;
 		}
 		.inlineLabel {
-		margin: 4px 0 0 2px;
+		margin: 4px 0
+		0
+		2px;
 		font-size: 12px;
 		display: inline-block;
 		}
 		.horizontalButtonPanel {
-			margin-top: 6px;
+			margin-top: 10px;
 		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="11">
-				<b:Form ui:field="couponForm" addStyleNames="{style.couponForm}">
-					<b:Fieldset>
-						<g:VerticalPanel>
-							<b:ControlGroup ui:field="descriptionCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">Coupon description</b:ControlLabel>
-								<b:Popover
-									text="This description will appear on your coupon. Pick a informative name 
+				<g:HTMLPanel>
+					<h3>Publish coupon instantly</h3>
+					<hr />
+					<b:Form ui:field="couponForm" addStyleNames="{style.couponForm}">
+						<b:Fieldset>
+							<g:VerticalPanel>
+								<b:ControlGroup ui:field="titleCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Coupon title</b:ControlLabel>
+									<b:Popover
+										text="This description will appear on your coupon. Pick a informative name 
 					to promote your offering e.g. 20% on any entree between 6pm and 10pm on 14th May"
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b:TextBox alternateSize="LARGE" ui:field="descriptionTextBox"
-										addStyleNames="{style.largeTextBox}"></b:TextBox>
-									<b:HelpInline ui:field="descriptionHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="startDateCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">Start date</b:ControlLabel>
-								<b:Popover
-									text="The date/time when your coupon will be available for purchase. Before this date/time the coupon won't 
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextBox alternateSize="LARGE" ui:field="titleTextBox"
+											addStyleNames="{style.largeTextBox}"></b:TextBox>
+										<b:HelpInline ui:field="titleHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="descriptionCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Coupon description</b:ControlLabel>
+									<b:Popover
+										text="This description will appear on your coupon. Pick a informative name 
+					to promote your offering e.g. 20% on any entree between 6pm and 10pm on 14th May"
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextArea alternateSize="LARGE" ui:field="descriptionTextArea"
+											addStyleNames="{style.largeTextArea}"></b:TextArea>
+										<b:HelpInline ui:field="descriptionHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="startDateCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Start date</b:ControlLabel>
+									<b:Popover
+										text="The date/time when your coupon will be available for purchase. Before this date/time the coupon won't 
 						 be buyable"
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
-										autoClose="true" ui:field="startDate" />
-									<b:HelpInline ui:field="startDateHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="endDateCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">End date</b:ControlLabel>
-								<b:Popover
-									text="The date/time when your coupon will expire. Before this date/time the coupon won't 
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
+											autoClose="true" ui:field="startDate" />
+										<b:HelpInline ui:field="startDateHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="endDateCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">End date</b:ControlLabel>
+									<b:Popover
+										text="The date/time when your coupon will expire. Before this date/time the coupon won't 
 						 be buyable"
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
-										autoClose="true" ui:field="endDate" />
-									<b:HelpInline ui:field="endDateHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="priceCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">List price ($)</b:ControlLabel>
-								<b:Popover text="List price of the item in $" heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b:TextBox alternateSize="MEDIUM" placeholder="Price..."
-										ui:field="priceTextBox" />
-									<b:HelpInline ui:field="priceHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="discountCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">Discount (%)</b:ControlLabel>
-								<b:Popover
-									text="Discount in percent on the original listing price. e.g. 20 would stand for 20% off the
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b2:DateTimeBox format="dd/mm/yyyy hh:ii"
+											autoClose="true" ui:field="endDate" />
+										<b:HelpInline ui:field="endDateHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="priceCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">List price ($)</b:ControlLabel>
+									<b:Popover text="List price of the item in $"
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextBox alternateSize="MEDIUM" placeholder="Price..."
+											ui:field="priceTextBox" />
+										<b:HelpInline ui:field="priceHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="discountCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Discount (%)</b:ControlLabel>
+									<b:Popover
+										text="Discount in percent on the original listing price. e.g. 20 would stand for 20% off the
 						listing price. It must be a whole number."
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b:TextBox alternateSize="MEDIUM" placeholder="Discount(%)..."
-										ui:field="discountTextBox" />
-									<b:HelpInline ui:field="discountHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="quantityCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">Total coupons to be
-									issued</b:ControlLabel>
-								<b:Popover
-									text="Total number of coupons you want to issue e.g. a value of 100 would mean there would
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextBox alternateSize="MEDIUM" placeholder="Discount(%)..."
+											ui:field="discountTextBox" />
+										<b:HelpInline ui:field="discountHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="quantityCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Total coupons to
+										be
+										issued</b:ControlLabel>
+									<b:Popover
+										text="Total number of coupons you want to issue e.g. a value of 100 would mean there would
 						be only 100 coupons in circulation. It must be a whole number."
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b:TextBox alternateSize="MEDIUM" placeholder="Quantity..."
-										ui:field="quantityTextBox" />
-									<b:HelpInline ui:field="quantityHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<b:ControlGroup ui:field="totalCouponAllowedCg">
-								<b:ControlLabel addStyleNames="{style.inlineLabel}">Maximum individual
-									count</b:ControlLabel>
-								<b:Popover
-									text="Total number of coupons an individual can purchase. Currently we're only supporting 1 coupon
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextBox alternateSize="MEDIUM" placeholder="Quantity..."
+											ui:field="quantityTextBox" />
+										<b:HelpInline ui:field="quantityHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<b:ControlGroup ui:field="totalCouponAllowedCg">
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Maximum individual
+										count</b:ControlLabel>
+									<b:Popover
+										text="Total number of coupons an individual can purchase. Currently we're only supporting 1 coupon
 						per individual."
-									heading="Learn more">
-									<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
-								</b:Popover>
-								<b:Controls>
-									<b:TextBox alternateSize="MEDIUM"
-										placeholder="Number allowed per person..." ui:field="totalCouponAllowedTextBox" />
-									<b:HelpInline ui:field="totalCouponAllowedHelpInline"></b:HelpInline>
-								</b:Controls>
-							</b:ControlGroup>
-							<!-- <g:HTMLPanel ui:field="uploadProfileImagePanel" addStyleNames="{style.uploadProfileImagePanel}"> 
-								</g:HTMLPanel> -->
-							<g:HorizontalPanel ui:field="horizontalButtonPanel">
-								<b:Button type="PRIMARY" ui:field="previewBtn"
-									addStyleNames="{style.btn}">Preview</b:Button>
-								<b:Button ui:field="cancelBtn" addStyleNames="{style.btn}">Cancel</b:Button>
-							</g:HorizontalPanel>
-						</g:VerticalPanel>
-					</b:Fieldset>
-				</b:Form>
-				<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
-					<div class="{style.previewHeadingDiv}">
-						<b:Heading size="4" addStyleNames="{style.previewHeading}">Preview</b:Heading>
-						<g:Anchor ui:field="changeTweetAnchor" addStyleNames="{style.previewRightAnchor}">change</g:Anchor>
-					</div>
-					<g:HTMLPanel addStyleNames="{style.tweetTextPreview}"
-						ui:field="tweetTextPreview" />
-					<g:HTMLPanel addStyleNames="{style.tweetTextPreview}"
-						ui:field="contentPanel" />
-					<g:HorizontalPanel addStyleNames="{style.horizontalButtonPanel}">
-						<b:Button type="PRIMARY" addStyleNames="{style.btn}"
-							ui:field="tweetBtn">Share</b:Button>
-						<b:Button addStyleNames="{style.btn}" ui:field="previewCancelBtn">Cancel</b:Button>
-					</g:HorizontalPanel>
+										heading="Learn more">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+									<b:Controls>
+										<b:TextBox alternateSize="MEDIUM"
+											placeholder="Number allowed per person..." ui:field="totalCouponAllowedTextBox" />
+										<b:HelpInline ui:field="totalCouponAllowedHelpInline"></b:HelpInline>
+									</b:Controls>
+								</b:ControlGroup>
+								<g:HTMLPanel ui:field="uploadProfileImagePanel"
+									addStyleNames="{style.uploadProfileImagePanel}">
+								</g:HTMLPanel>
+								<g:HorizontalPanel ui:field="horizontalButtonPanel" addStyleNames="{style.horizontalButtonPanel}">
+									<b:Button type="PRIMARY" ui:field="previewBtn"
+										addStyleNames="{style.btn}">Preview</b:Button>
+									<b:Button ui:field="cancelBtn" addStyleNames="{style.btn}">Cancel</b:Button>
+								</g:HorizontalPanel>
+							</g:VerticalPanel>
+						</b:Fieldset>
+					</b:Form>
+					<g:HTMLPanel ui:field="previewPanel" addStyleNames="{style.previewPanel}">
+						<div class="{style.previewHeadingDiv}">
+							<b:Heading size="4" addStyleNames="{style.previewHeading}">Preview</b:Heading>
+							<g:Anchor ui:field="changeTweetAnchor" addStyleNames="{style.previewRightAnchor}">change</g:Anchor>
+						</div>
+<!-- 						<g:HTMLPanel addStyleNames="{style.tweetTextPreview}"
+							ui:field="tweetTextPreview" />
+ -->						
+ 						<g:HTMLPanel addStyleNames="{style.tweetTextPreview}" ui:field="contentPanel" />
+ 						
+						<g:HorizontalPanel addStyleNames="{style.horizontalButtonPanel}">
+							<b:Button type="PRIMARY" addStyleNames="{style.btn}"
+								ui:field="tweetBtn">Share</b:Button>
+							<b:Button addStyleNames="{style.btn}" ui:field="previewCancelBtn">Cancel</b:Button>
+						</g:HorizontalPanel>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

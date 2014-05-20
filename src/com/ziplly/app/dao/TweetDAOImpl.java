@@ -16,8 +16,11 @@ import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -33,450 +36,540 @@ import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
 
 public class TweetDAOImpl extends BaseDAO implements TweetDAO {
-	private Logger logger = Logger.getLogger(TweetDAOImpl.class.getCanonicalName());
+  private Logger logger = Logger.getLogger(TweetDAOImpl.class.getCanonicalName());
+  private NeighborhoodDAO neighborhoodDao;
 
-	@Inject
-	public TweetDAOImpl(Provider<EntityManager> entityManagerFactory) {
-		super(entityManagerFactory);
-	}
+  @Inject
+  public TweetDAOImpl(Provider<EntityManager> entityManagerFactory, NeighborhoodDAO neighborhoodDao) {
+    super(entityManagerFactory);
+    this.neighborhoodDao = neighborhoodDao;
+  }
 
-	@Transactional
-	@Override
-	public TweetDTO save(Tweet tweet) {
-		if (tweet == null) {
-			throw new IllegalArgumentException();
-		}
+  @Transactional
+  @Override
+  public TweetDTO save(Tweet tweet) {
+    if (tweet == null) {
+      throw new IllegalArgumentException();
+    }
 
-		logger.info(String.format("About to save tweet %s", tweet.getContent()));
-		EntityManager em = getEntityManager();
+    logger.info(String.format("About to save tweet %s", tweet.getContent()));
+    EntityManager em = getEntityManager();
 
-		// save hashtags
-		Set<String> hashtags = extractHashtags(tweet.getContent());
-		Set<Hashtag> existingTags = new HashSet<Hashtag>();
-		for (String hashtag : hashtags) {
-			try {
-				Query query =
-				    em.createQuery("from Hashtag where tag = :name").setParameter("name", hashtag);
-				Hashtag result = (Hashtag) query.getSingleResult();
-				existingTags.add(result);
-			} catch (NoResultException nre) {
-				Hashtag h = new Hashtag();
-				h.setTag(hashtag);
-				h.addTweet(tweet);
-				h.setTimeCreated(new Date());
-				em.persist(h);
-				existingTags.add(h);
-			}
-		}
+    // save hashtags
+    Set<String> hashtags = extractHashtags(tweet.getContent());
+    Set<Hashtag> existingTags = new HashSet<Hashtag>();
+    for (String hashtag : hashtags) {
+      try {
+        Query query =
+            em.createQuery("from Hashtag where tag = :name").setParameter("name", hashtag);
+        Hashtag result = (Hashtag) query.getSingleResult();
+        existingTags.add(result);
+      } catch (NoResultException nre) {
+        Hashtag h = new Hashtag();
+        h.setTag(hashtag);
+        h.addTweet(tweet);
+        h.setTimeCreated(new Date());
+        em.persist(h);
+        existingTags.add(h);
+      }
+    }
 
-		if (existingTags.size() > 0) {
-			tweet.setHashtags(existingTags);
-		}
+    if (existingTags.size() > 0) {
+      tweet.setHashtags(existingTags);
+    }
 
-		// load images
-		Set<Image> images = new HashSet<Image>();
-		for (Image image : tweet.getImages()) {
-			try {
-				Query query = em.createQuery("from Image where id = :id").setParameter("id", image.getId());
-				Image existingImage = (Image) query.getSingleResult();
-				images.add(existingImage);
-			} catch (NoResultException ex) {
-				// do nothing.
-				logger.severe(String.format("Failed to load image with id %d", image.getId()));
-			}
-		}
+    // load images
+    Set<Image> images = new HashSet<Image>();
+    for (Image image : tweet.getImages()) {
+      try {
+        Query query = em.createQuery("from Image where id = :id").setParameter("id", image.getId());
+        Image existingImage = (Image) query.getSingleResult();
+        images.add(existingImage);
+      } catch (NoResultException ex) {
+        // do nothing.
+        logger.severe(String.format("Failed to load image with id %d", image.getId()));
+      }
+    }
 
-		if (images.size() > 0) {
-			tweet.setImages(images);
-		}
+    if (images.size() > 0) {
+      tweet.setImages(images);
+    }
 
-		em.persist(tweet);
-		TweetDTO result = EntityUtil.clone(tweet);
-		return result;
-	}
+    em.persist(tweet);
+    TweetDTO result = EntityUtil.clone(tweet);
+    return result;
+  }
 
-	private Set<String> extractHashtags(String content) {
-		if (content != null) {
-			Set<String> result = Sets.newHashSet();
-			for (String word : content.split("\\s+")) {
-				if (word.startsWith(StringConstants.HASHTAG_PREFIX)) {
-					result.add(word);
-				}
-			}
-			return result;
-		}
-		return ImmutableSet.of();
-	}
+  // @Override
+  // public List<TweetDTO>
+  // findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize)
+  // throws NotFoundException {
+  //
+  // if (neighborhoodId == null) {
+  // throw new IllegalArgumentException();
+  // }
+  //
+  // try {
+  // Query query = (Query)
+  // getEntityManager().createNamedQuery("findTweetsByNeighborhood");
+  // query.setParameter("neighborhoodId", neighborhoodId);
+  // query.setParameter("status", TweetStatus.ACTIVE.name());
+  // query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+  //
+  // @SuppressWarnings("unchecked")
+  // List<Tweet> tweets = (List<Tweet>) query.getResultList();
+  // return EntityUtil.cloneList(tweets);
+  // } catch (NoResultException nre) {
+  // logger.warning(String.format(
+  // "Failed to retrieve tweets for neighborhoodId %d, exception %s",
+  // neighborhoodId,
+  // nre));
+  // throw new NotFoundException();
+  // }
+  // }
 
-	@Override
-	public List<TweetDTO>
-	    findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException {
+  @Override
+  public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId,
+      int page,
+      int pageSize) {
 
-		if (neighborhoodId == null) {
-			throw new IllegalArgumentException();
-		}
+    return findTweetsByNeighborhood(neighborhoodId, TweetType.getPromotionTypes(), page, pageSize);
+  }
 
-		try {
-			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByNeighborhood");
-			query.setParameter("neighborhoodId", neighborhoodId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+  private List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId,
+      List<TweetType> promotionTypes,
+      int page,
+      int pageSize) {
 
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			return EntityUtil.cloneList(tweets);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for neighborhoodId %d, exception %s",
-			    neighborhoodId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+    if (neighborhoodId == null) {
+      throw new IllegalArgumentException();
+    }
 
-	@Override
-	public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type,
-	    Long neighborhoodId,
-	    int page,
-	    int pageSize) throws NotFoundException {
+    try {
+      List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
+      List<String> promotionTypeNames = getPromotionType(promotionTypes);
+      
+      Query query =
+          (Query) getEntityManager()
+              .createQuery(
+                  "select t from Tweet t join t.targetNeighborhoods tn "
+                      + "where ((tn.neighborhoodId = :neighborhoodId) or (tn.neighborhoodId in (:neigborhoodIds) and t.type in (:tweetTypes)))"
+                      + " and t.status = :status order by t.timeCreated desc");
 
-		Preconditions.checkArgument(neighborhoodId != null);
+      query
+          .setParameter("neighborhoodId", neighborhoodId)
+          .setParameter("neigborhoodIds", neighborhoodIds)
+          .setParameter("tweetTypes", promotionTypeNames)
+          .setParameter("status", TweetStatus.ACTIVE.name())
+          .setFirstResult(page * pageSize)
+          .setMaxResults(pageSize);
 
-		try {
-			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByTypeAndNeighborhood");
-			query.setParameter("neighborhoodId", neighborhoodId);
-			query.setParameter("type", type.name());
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
+      @SuppressWarnings("unchecked")
+      List<Tweet> tweets = (List<Tweet>) query.getResultList();
+      return EntityUtil.cloneList(tweets);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for neighborhoodId %d, exception %s",
+          neighborhoodId,
+          nre));
+      return ImmutableList.of();
+    }
+  }
 
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			logger.info(String.format(
-			    "Retrieved %d tweets for type %s, neighborhoodId %d ",
-			    tweets.size(),
-			    type.name(),
-			    neighborhoodId));
-			return EntityUtil.cloneList(tweets);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for type %s, neighborhoodId %d, exception %s",
-			    type.name(),
-			    neighborhoodId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+  @Override
+  public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type,
+      Long neighborhoodId,
+      int page,
+      int pageSize) throws NotFoundException {
 
-	@Override
-	public List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException {
+    Preconditions.checkArgument(neighborhoodId != null);
 
-		if (accountId == null) {
-			throw new IllegalArgumentException();
-		}
-		try {
-			Query query = (Query) getEntityManager().createNamedQuery("findTweetsByAccountId");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			return EntityUtil.cloneList(tweets);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+    try {
+      Query query = (Query) getEntityManager().createNamedQuery("findTweetsByTypeAndNeighborhood");
+      query.setParameter("neighborhoodId", neighborhoodId);
+      query.setParameter("type", type.name());
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      query.setFirstResult(page * pageSize).setMaxResults(pageSize);
 
-	@Transactional
-	@Override
-	public TweetDTO update(Tweet tweet) throws NotFoundException {
-		if (tweet == null) {
-			throw new IllegalArgumentException();
-		}
-		EntityManager em = getEntityManager();
+      @SuppressWarnings("unchecked")
+      List<Tweet> tweets = (List<Tweet>) query.getResultList();
+      logger.info(String.format(
+          "Retrieved %d tweets for type %s, neighborhoodId %d ",
+          tweets.size(),
+          type.name(),
+          neighborhoodId));
+      return EntityUtil.cloneList(tweets);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for type %s, neighborhoodId %d, exception %s",
+          type.name(),
+          neighborhoodId,
+          nre));
+      return ImmutableList.of();
+    }
+  }
 
-		Query query = (Query) em.createNamedQuery("findTweetsById");
-		query.setParameter("tweetId", tweet.getTweetId());
-		try {
-			Tweet result = (Tweet) query.getSingleResult();
-			result.setContent(tweet.getContent());
-			result.setType(tweet.getType());
-			result.setStatus(tweet.getStatus());
-			em.merge(result);
-			return EntityUtil.clone(result);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to update tweet id=[%d], exception %s",
-			    tweet.getTweetId(),
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+  @Override
+  public List<TweetDTO>
+      findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize) {
+ 
+    if (neighborhoodId == null) {
+      throw new IllegalArgumentException();
+    }
 
-	@Transactional
-	@Override
-	public void delete(Tweet tweet) throws NotFoundException {
-		if (tweet == null) {
-			throw new IllegalArgumentException();
-		}
+    try {
+      List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
+      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      
+      Query query =
+          (Query) getEntityManager()
+              .createQuery(
+                  "select t from Tweet t join t.targetNeighborhoods tn "
+                      + "where tn.neighborhoodId in (:neigborhoodIds) and t.type in (:tweetTypes)"
+                      + " and t.status = :status order by t.timeCreated desc");
 
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
-			query.setParameter("tweetId", tweet.getTweetId());
-			Tweet result = (Tweet) query.getSingleResult();
-			result.setStatus(TweetStatus.DELETED);
-			em.merge(result);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets with id [%d] exception %s",
-			    tweet.getTweetId(),
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+      query
+          .setParameter("neigborhoodIds", neighborhoodIds)
+          .setParameter("tweetTypes", promotionTypeNames)
+          .setParameter("status", TweetStatus.ACTIVE.name())
+          .setFirstResult(page * pageSize)
+          .setMaxResults(pageSize);
 
-	@Override
-	public List<TweetDTO>
-	    findTweetsByAccountId(Long accountId, int page, int pageSize) throws NotFoundException {
-		if (accountId == null || pageSize == 0) {
-			throw new IllegalArgumentException();
-		}
+      @SuppressWarnings("unchecked")
+      List<Tweet> tweets = (List<Tweet>) query.getResultList();
+      return EntityUtil.cloneList(tweets);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for neighborhoodId %d, exception %s",
+          neighborhoodId,
+          nre));
+      return ImmutableList.of();
+    }
+  }
 
-		try {
-			Query query =
-			    (Query) getEntityManager()
-			        .createQuery(
-			            "from Tweet t where t.sender.accountId = :accountId and status = :status order by t.timeCreated desc");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-			@SuppressWarnings("unchecked")
-			List<Tweet> tweets = (List<Tweet>) query.getResultList();
-			return EntityUtil.cloneList(tweets);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+  @Transactional
+  @Override
+  public TweetDTO update(Tweet tweet) throws NotFoundException {
+    if (tweet == null) {
+      throw new IllegalArgumentException();
+    }
+    EntityManager em = getEntityManager();
 
-	/**
-	 * Returns total number of active tweets for the given month.
-	 */
-	@Override
-	public Long findTweetsByAccountIdAndMonth(Long accountId, Date date) {
+    Query query = (Query) em.createNamedQuery("findTweetsById");
+    query.setParameter("tweetId", tweet.getTweetId());
+    try {
+      Tweet result = (Tweet) query.getSingleResult();
+      result.setContent(tweet.getContent());
+      result.setType(tweet.getType());
+      result.setStatus(tweet.getStatus());
+      em.merge(result);
+      return EntityUtil.clone(result);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to update tweet id=[%d], exception %s",
+          tweet.getTweetId(),
+          nre));
+      throw new NotFoundException();
+    }
+  }
 
-		DateTime inputDate = new DateTime(date);
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em
-			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId and month(t.timeCreated) = :month "
-			    		+ "and year(timeCreated) = :year and status = :status");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setParameter("month", inputDate.getMonthOfYear());
-			query.setParameter("year", inputDate.getYear());
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			return 0L;
-		}
-	}
+  @Transactional
+  @Override
+  public void delete(Tweet tweet) throws NotFoundException {
+    if (tweet == null) {
+      throw new IllegalArgumentException();
+    }
 
-	@Override
-	public Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date) {
-		DateTime dateTime = new DateTime(date);
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em
-			    .createQuery("select count(*) from Tweet where sender.accountId = :accountId and month(timeCreated) = :month "
-			    		+ "and year(timeCreated) = :year and status = :status and coupon.couponId is not null");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setParameter("month", dateTime.getMonthOfYear());
-			query.setParameter("year", dateTime.getYear());
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			return 0L;
-		}
-	}
-	
-	@Override
-	public Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now) {
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em
-			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
-			    		+ "and t.timeCreated between :before and :now and status = :status and not null t.coupon.couponId");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setParameter("before", before);
-			query.setParameter("now", now);
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			return 0L;
-		}
-	}
-	
-	@Override
-	public Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now) {
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em
-			    .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
-			    		+ "and t.timeCreated between :before and :now and status = :status and t.coupon.couponId is null");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			query.setParameter("before", before);
-			query.setParameter("now", now);
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			return 0L;
-		}
-	}
-	
-	@Override
-	public Long findTweetsCountByAccountId(Long accountId) throws NotFoundException {
-		if (accountId == null) {
-			throw new IllegalArgumentException();
-		}
+    EntityManager em = getEntityManager();
+    try {
+      Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
+      query.setParameter("tweetId", tweet.getTweetId());
+      Tweet result = (Tweet) query.getSingleResult();
+      result.setStatus(TweetStatus.DELETED);
+      em.merge(result);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets with id [%d] exception %s",
+          tweet.getTweetId(),
+          nre));
+      throw new NotFoundException();
+    }
+  }
 
-		try {
-			Query query =
-			    getEntityManager()
-			        .createQuery(
-			            "select count(*) from Tweet t where t.sender.accountId = :accountId and status = :status");
-			query.setParameter("accountId", accountId);
-			query.setParameter("status", TweetStatus.ACTIVE.name());
-			Long count = (Long) query.getSingleResult();
-			return count;
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweets for accountId %d exception %s",
-			    accountId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+  @Override
+  public List<TweetDTO>
+      findTweetsByAccountId(Long accountId, int page, int pageSize) throws NotFoundException {
+    if (accountId == null || pageSize == 0) {
+      throw new IllegalArgumentException();
+    }
 
-	@Override
-	public TweetDTO findTweetById(Long tweetId) throws NotFoundException {
-		if (tweetId == null) {
-			throw new IllegalArgumentException();
-		}
+    try {
+      Query query =
+          (Query) getEntityManager()
+              .createQuery(
+                  "from Tweet t where t.sender.accountId = :accountId and status = :status order by t.timeCreated desc");
+      
+      query.setParameter("accountId", accountId)
+        .setParameter("status", TweetStatus.ACTIVE.name())
+        .setFirstResult(page * pageSize)
+        .setMaxResults(pageSize);
+      
+      @SuppressWarnings("unchecked")
+      List<Tweet> tweets = (List<Tweet>) query.getResultList();
+      return EntityUtil.cloneList(tweets);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      throw new NotFoundException();
+    }
+  }
 
-		EntityManager em = getEntityManager();
-		try {
-			Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
-			query.setParameter("tweetId", tweetId);
-			Tweet result = (Tweet) query.getSingleResult();
-			return EntityUtil.clone(result);
-		} catch (NoResultException nre) {
-			logger.warning(String.format(
-			    "Failed to retrieve tweet with id[%d] exception %s",
-			    tweetId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+  /**
+   * Returns total number of active tweets for the given month.
+   */
+  @Override
+  public Long findTweetsByAccountIdAndMonth(Long accountId, Date date) {
 
-	@Override
-	public List<TweetDTO> findAll() {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery("from Tweet order by timeCreated desc");
-		@SuppressWarnings("unchecked")
-		List<Tweet> result = query.getResultList();
-		return EntityUtil.cloneList(result);
-	}
+    DateTime inputDate = new DateTime(date);
+    EntityManager em = getEntityManager();
+    try {
+      Query query =
+          em
+              .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId and month(t.timeCreated) = :month "
+                  + "and year(timeCreated) = :year and status = :status");
+      query.setParameter("accountId", accountId);
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      query.setParameter("month", inputDate.getMonthOfYear());
+      query.setParameter("year", inputDate.getYear());
+      Long count = (Long) query.getSingleResult();
+      return count;
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      return 0L;
+    }
+  }
 
-	@Deprecated
-	@Override
-	public List<TweetDTO> findTweets(String queryStr, int start, int end) {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery(queryStr);
-		query.setFirstResult(start);
-		query.setMaxResults(end - start);
-		@SuppressWarnings("unchecked")
-		List<Tweet> result = query.getResultList();
-		List<TweetDTO> resp = EntityUtil.cloneList(result);
-		return resp;
-	}
+  @Override
+  public Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date) {
+    DateTime dateTime = new DateTime(date);
+    EntityManager em = getEntityManager();
+    try {
+      Query query =
+          em
+              .createQuery("select count(*) from Tweet where sender.accountId = :accountId and month(timeCreated) = :month "
+                  + "and year(timeCreated) = :year and status = :status and coupon.couponId is not null");
+      query.setParameter("accountId", accountId);
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      query.setParameter("month", dateTime.getMonthOfYear());
+      query.setParameter("year", dateTime.getYear());
+      Long count = (Long) query.getSingleResult();
+      return count;
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      return 0L;
+    }
+  }
 
-	@Override
-	public Long findTotalTweetCount(String queryStr) {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery(queryStr);
-		Long count = (Long) query.getSingleResult();
-		return count;
-	}
+  @Override
+  public Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now) {
+    EntityManager em = getEntityManager();
+    try {
+      Query query =
+          em
+              .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+                  + "and t.timeCreated between :before and :now and status = :status and not null t.coupon.couponId");
+      query.setParameter("accountId", accountId);
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      query.setParameter("before", before);
+      query.setParameter("now", now);
+      Long count = (Long) query.getSingleResult();
+      return count;
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      return 0L;
+    }
+  }
 
-	/*
-	 * Finds counts for different tweet types
-	 */
-	@Override
-	public Map<TweetType, Integer>
-	    findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException {
+  @Override
+  public Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now) {
+    EntityManager em = getEntityManager();
+    try {
+      Query query =
+          em
+              .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+                  + "and t.timeCreated between :before and :now and status = :status and t.coupon.couponId is null");
+      query.setParameter("accountId", accountId);
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      query.setParameter("before", before);
+      query.setParameter("now", now);
+      Long count = (Long) query.getSingleResult();
+      return count;
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      return 0L;
+    }
+  }
 
-		if (neighborhoodId == null) {
-			throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
-		}
+  @Override
+  public Long findTweetCountByAccountId(Long accountId) throws NotFoundException {
+    if (accountId == null) {
+      throw new IllegalArgumentException();
+    }
 
-		Map<TweetType, Integer> result = Maps.newHashMap();
-		EntityManager em = getEntityManager();
+    try {
+      Query query =
+          getEntityManager()
+              .createQuery(
+                  "select count(*) from Tweet t where t.sender.accountId = :accountId and status = :status");
+      query.setParameter("accountId", accountId);
+      query.setParameter("status", TweetStatus.ACTIVE.name());
+      Long count = (Long) query.getSingleResult();
+      return count;
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets for accountId %d exception %s",
+          accountId,
+          nre));
+      throw new NotFoundException();
+    }
+  }
 
-		try {
-			Query query =
-			    em
-			        .createNativeQuery(
-			            "select t.type, count(*) from tweet t, tweet_neighborhood tn "
-			                + "where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhood_id group by t.type")
-			        .setParameter("neighborhood_id", neighborhoodId);
+  @Override
+  public TweetDTO findTweetById(Long tweetId) throws NotFoundException {
+    if (tweetId == null) {
+      throw new IllegalArgumentException();
+    }
 
-			@SuppressWarnings("rawtypes")
-			List resultList = query.getResultList();
-			for (Object r : resultList) {
-				Object[] temp = (Object[]) r;
-				result.put(TweetType.valueOf((String) temp[0]), ((BigInteger) temp[1]).intValue());
-			}
-			return result;
-		} catch (NoResultException nre) {
-			logger.info(String.format(
-			    "Failed to retrieve tweets for neighborhoodId [%d] exception %s",
-			    neighborhoodId,
-			    nre));
-			throw new NotFoundException();
-		}
-	}
+    EntityManager em = getEntityManager();
+    try {
+      Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
+      query.setParameter("tweetId", tweetId);
+      Tweet result = (Tweet) query.getSingleResult();
+      return EntityUtil.clone(result);
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweet with id[%d] exception %s",
+          tweetId,
+          nre));
+      throw new NotFoundException();
+    }
+  }
 
-	public static void main(String[] args) throws ParseException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
+  @Override
+  public List<TweetDTO> findAll() {
+    EntityManager em = getEntityManager();
+    Query query = em.createQuery("from Tweet order by timeCreated desc");
+    @SuppressWarnings("unchecked")
+    List<Tweet> result = query.getResultList();
+    return EntityUtil.cloneList(result);
+  }
 
-		System.out.println("M=" + (cal.get(Calendar.MONTH) + 1));
-		System.out.println("Y=" + cal.get(Calendar.YEAR));
-	}
+  /**
+   * Finds counts for different tweet types
+   */
+  @Override
+  public Map<TweetType, Integer>
+      findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException {
+
+    if (neighborhoodId == null) {
+      throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
+    }
+
+    Map<TweetType, Integer> result = Maps.newHashMap();
+    EntityManager em = getEntityManager();
+    Query query;
+    try {
+       query =
+          em.createNativeQuery(
+                  "select t.type, count(*) from tweet t, tweet_neighborhood tn "
+                      + "where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhood_id group by t.type")
+              .setParameter("neighborhood_id", neighborhoodId);
+
+      @SuppressWarnings("rawtypes")
+      List resultList = query.getResultList();
+      for (Object r : resultList) {
+        Object[] temp = (Object[]) r;
+        result.put(TweetType.valueOf((String) temp[0]), ((BigInteger) temp[1]).intValue());
+      }
+      
+      // Overwrite it for COUPONS
+      result.put(TweetType.COUPON, getTotalCouponCountByNeighborhood(neighborhoodId).intValue());
+      return result;
+    } catch (NoResultException nre) {
+      logger.info(String.format(
+          "Failed to retrieve tweets for neighborhoodId [%d] exception %s",
+          neighborhoodId,
+          nre));
+      throw new NotFoundException();
+    }
+  }
+
+  public Long getTotalCouponCountByNeighborhood(Long neighborhoodId) {
+    try {
+      List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
+      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      
+      Query query =
+          (Query) getEntityManager()
+              .createQuery(
+                  "select count(distinct t) from Tweet t join t.targetNeighborhoods tn "
+                      + "where tn.neighborhoodId in (:neigborhoodIds) and t.type in (:tweetTypes)"
+                      + " and t.status = :status order by t.timeCreated desc");
+
+      query
+          .setParameter("neigborhoodIds", neighborhoodIds)
+          .setParameter("tweetTypes", promotionTypeNames)
+          .setParameter("status", TweetStatus.ACTIVE.name());
+
+      return (Long) query.getSingleResult();
+    } catch(NoResultException ex) {
+      return 0L;
+    }
+  }
+  
+  private List<String> getPromotionType(List<TweetType> promotionTypes) {
+    return Lists.transform(promotionTypes, new Function<TweetType, String>() {
+
+      @Override
+      public String apply(TweetType type) {
+        return type.name();
+      }
+
+    });
+  }
+  
+  private Set<String> extractHashtags(String content) {
+    if (content != null) {
+      Set<String> result = Sets.newHashSet();
+      for (String word : content.split("\\s+")) {
+        if (word.startsWith(StringConstants.HASHTAG_PREFIX)) {
+          result.add(word);
+        }
+      }
+      return result;
+    }
+    return ImmutableSet.of();
+  }
+
+  public static void main(String[] args) throws ParseException {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date());
+
+    System.out.println("M=" + (cal.get(Calendar.MONTH) + 1));
+    System.out.println("Y=" + cal.get(Calendar.YEAR));
+  }
 }

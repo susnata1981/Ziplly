@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="transaction")
-public class Transaction extends AbstractTimestampAwareEntity {
+public class Transaction extends AbstractEntity {
   private static final long serialVersionUID = 1L;
 
   @Column(name="transaction_id")

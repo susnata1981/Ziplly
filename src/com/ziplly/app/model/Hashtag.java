@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "hashtag")
-public class Hashtag extends AbstractTimestampAwareEntity {
+public class Hashtag extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

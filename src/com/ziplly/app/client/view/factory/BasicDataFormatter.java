@@ -28,6 +28,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 	private static final String NEW_LINE = "\n";
 
 	private static final DateTimeFormat longDateFormat = DateTimeFormat.getFormat("dd MMM, yyyy hh:mm");
+	private static final DateTimeFormat shortDateFormat = DateTimeFormat.getFormat("dd MMM");
 	
 	public static final TimeTemplate timeTemplate = GWT.create(TimeTemplate.class);
 	public static final CouponTimeTemplate couponTimeTemplate = GWT.create(CouponTimeTemplate.class);
@@ -51,8 +52,23 @@ public class BasicDataFormatter implements Formatter<Object> {
 				+ "<li><span class='heading'>Discount</span> {3}</li>"
 				+ "<li><span class='heading'>Quantity remaining</span> {4}</li>"
 				+ "<li><span class='heading'>Start date</span> {5}</li>"
-				+ "<li><span class='heading'>End date</span> {6}</li></ul></div>")
+				+ "<li><span class='heading'>End date</span> {6}</li>"
+				+ "</ul>"
+				+ "</div>")
 		SafeHtml getCouponDetailsTemplate(String title, String description, BigDecimal price, String discount, Long quantity, String start, String end);
+		
+		@Template("<div class='couponDiv'><h4>{0}</h4>"
+		    + "<div class='coupon_image'><image src='{7}' /></div>"
+        + "<ul>"
+        + "<li><span class='heading'>Description</span> {1}$</li>"
+        + "<li><span class='heading'>Regular Price</span> {2}$</li>"
+        + "<li><span class='heading'>Discount</span> {3}</li>"
+        + "<li><span class='heading'>Quantity remaining</span> {4}</li>"
+        + "<li><span class='heading'>Start date</span> {5}</li>"
+        + "<li><span class='heading'>End date</span> {6}</li>"
+        + "</ul>"
+        + "</div>")
+    SafeHtml getCouponDetailsTemplate(String title, String description, BigDecimal price, String discount, Long quantity, String start, String end, String image);
 	}
 	
 	public static final CouponTemplate couponTemplate = GWT.create(CouponTemplate.class);
@@ -68,8 +84,11 @@ public class BasicDataFormatter implements Formatter<Object> {
 			case DATE_VALUE_MEDIUM:
 			case DATE_VALUE_SHORT:
 				return getTimeDiff(new Date(), (Date) value, timeTemplate);
+			case DATE_VALUE_MONTH_DAY:
+				String date = shortDateFormat.format((Date) value);
+				return date;
 			case DATE_VALUE:
-				String date = longDateFormat.format((Date) value);
+				date = longDateFormat.format((Date) value);
 				return date;
 			case UNREAD_MESSAGE_COUNT:
 				return "(" + value.toString() + ")";
@@ -111,9 +130,15 @@ public class BasicDataFormatter implements Formatter<Object> {
 				String discount = format(c.getDiscount(), ValueType.PERCENT) +" off";
 				long quantityRemaining = c.getQuanity() - c.getQuantityPurchased();
 		    DateTimeFormat fmt = DateTimeFormat.getFormat("EEEE, MMMM dd, yyyy hh:mm a");
-				return couponTemplate.getCouponDetailsTemplate(
+		    if (c.getTweet().getImages().size() > 0) {
+	        return couponTemplate.getCouponDetailsTemplate(
+	            title, c.getDescription(), c.getPrice(), discount, quantityRemaining, fmt.format(c.getStartDate()), 
+	            fmt.format(c.getEndDate()), c.getTweet().getImages().get(0).getUrl()).asString();
+		    } else {
+		      return couponTemplate.getCouponDetailsTemplate(
 						title, c.getDescription(), c.getPrice(), discount, quantityRemaining, fmt.format(c.getStartDate()), 
 						fmt.format(c.getEndDate())).asString();
+		    }
 			default:
 				throw new IllegalArgumentException("Invalid value type to render");
 		}

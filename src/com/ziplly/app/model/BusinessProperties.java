@@ -14,7 +14,7 @@ import javax.persistence.Table;
     query = "from BusinessProperties b where b.id = :id") })
 @Entity
 @Table(name = "business_properties")
-public class BusinessProperties extends AbstractTimestampAwareEntity {
+public class BusinessProperties extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

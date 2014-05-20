@@ -696,6 +696,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		tweetContentPanel.getElement().setInnerHTML(basicDataFormatter.format(tweet.getContent(), ValueType.TEXT_VALUE));
 		
 		if (tweet.getCoupon() != null) {
+		  tweet.getCoupon().setTweet(tweet);
 			displayCoupon(tweet.getCoupon());
 		}
 
@@ -778,7 +779,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 	
 	private void displayTweetImageIfPresent() {
-		if (tweet.getImages().size() > 0) {
+		if (tweet.getImages().size() > 0 && tweet.getCoupon() == null) {
 			tweetImage.setUrl(tweet.getImages().get(0).getUrl());
 
 			tweetImage.addLoadHandler(new LoadHandler() {

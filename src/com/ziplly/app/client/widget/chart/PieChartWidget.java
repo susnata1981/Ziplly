@@ -3,45 +3,43 @@ package com.ziplly.app.client.widget.chart;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.googlecode.gwt.charts.client.ChartLoader;
-import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import com.googlecode.gwt.charts.client.options.Options;
 
-public class PieChartWidget {
+public class PieChartWidget extends AbstractChartWidget<Integer> {
 	private PieChart chart;
-	private final Panel panel;
-	private final DataTableAdapter<String, Integer> adapter;
-	private String title;
+//	private final Panel panel;
+//	private final DataTableAdapter<String, Integer> adapter;
+//	private String title;
 
 	public PieChartWidget(Panel panel, DataTableAdapter<String, Integer> adapter, String title) {
-		this.panel = panel;
-		this.adapter = adapter;
-		this.title = title;
-		initialize();
+		super(panel, adapter, title);
 	}
 
-	private void initialize() {
-		ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
-		chartLoader.loadApi(new Runnable() {
+//	private void initialize() {
+//		ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
+//		chartLoader.loadApi(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				// Create and attach the chart
+//				chart = new PieChart();
+//				panel.add(chart);
+//				buildTable();
+//				draw();
+//			}
+//		});
+//	}
 
-			@Override
-			public void run() {
-				// Create and attach the chart
-				chart = new PieChart();
-				panel.add(chart);
-				buildTable();
-				draw();
-			}
-		});
-	}
-
-	private DataTable buildTable() {
+	@Override
+	public DataTable buildTable() {
 		DataTable dataTable = DataTable.create();
-		Map<ChartColumn, Value<Integer>> valueMap = adapter.getValueMap();
+		Map<ChartColumn, Value<Integer>> valueMap = getAdapter().getValueMap();
 		
-		for(ChartColumn col : adapter.getColumns()) {
+		for(ChartColumn col : getAdapter().getColumns()) {
 			dataTable.addColumn(col.getColumnType(), col.getName());
 		}
 		
@@ -57,6 +55,7 @@ public class PieChartWidget {
 		return dataTable;
   }
 
+	@Override
 	public PieChartOptions createOptions(String title) {
 		PieChartOptions options = PieChartOptions.create();
 		options.setBackgroundColor("#f0f0f0");
@@ -71,11 +70,18 @@ public class PieChartWidget {
 		return options;
 	}
 	
-	private void draw() {
+	@Override
+	public void draw() {
 		DataTable table = buildTable();
-		PieChartOptions options = createOptions(title);
+		PieChartOptions options = createOptions(getTitle());
 		chart.draw(table, options);
 	}
+
+	@Override
+  public CoreChartWidget<? extends Options> getChart() {
+		chart = new PieChart();
+		return chart;
+  }
 	
 //	private void draw() {
 //		// Prepare the data

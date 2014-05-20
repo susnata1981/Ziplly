@@ -1,6 +1,7 @@
 package com.ziplly.app.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.ziplly.app.server.bli.TweetNotificationBLIImpl;
@@ -78,5 +79,9 @@ public enum TweetType {
 
 	public void setCanBusinessPublish(boolean canBusinessPublish) {
 		this.canBusinessPublish = canBusinessPublish;
+	}
+	
+	public static List<TweetType> getPromotionTypes() {
+	  return Arrays.asList(TweetType.COUPON);
 	}
 }

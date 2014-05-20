@@ -15,7 +15,7 @@ import com.ziplly.app.client.widget.ShareSetting;
 
 @Entity
 @Table(name = "privacy_settings")
-public class PrivacySettings extends AbstractTimestampAwareEntity {
+public class PrivacySettings extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

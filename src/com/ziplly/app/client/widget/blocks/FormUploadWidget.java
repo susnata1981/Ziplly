@@ -1,43 +1,54 @@
 package com.ziplly.app.client.widget.blocks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.widget.StyleHelper;
-import com.ziplly.app.client.widget.VPanel;
+import com.ziplly.app.model.ImageDTO;
 
-public class FormUploadWidget {
+public class FormUploadWidget extends Composite {
 
-	@UiField
+  @UiTemplate(value = "FormUploadWidgetUiBinder.ui.xml")
+  public interface FormUploadWidgetUiBinder extends UiBinder<Widget, FormUploadWidget> {
+  }
+  
+  private FormUploadWidgetUiBinder uiBinder = GWT.create(FormUploadWidgetUiBinder.class);
+	
+  @UiField
 	FormPanel uploadForm;
 	@UiField
-	FileUpload uploadField;
+	FileUpload fileUpload;
 	@UiField
-	Image uploadAnchorIcon;
-	@UiField
-	HTMLPanel profileImagePanel;
+	HTMLPanel imagePanel;
 	@UiField
 	Image imagePreview;
 	@UiField
 	Image loadingImage;
-	private boolean imageUploaded;
+	//@UiField
+	Image uploadAnchorIcon;
 	
 	private Panel container;
-
+	private List<ImageDTO> uploadedImages = new ArrayList<ImageDTO>();
+	
 	/*
 	 * <g:HTMLPanel addStyleNames="{style.uploadProfileImagePanel}">
 									<g:HTMLPanel addStyleNames="{style.profileImagePanel}" ui:field="profileImagePanel">
@@ -56,17 +67,21 @@ public class FormUploadWidget {
 	
 	public FormUploadWidget(final Panel container) {
 		this.container = container;
+		initWidget(uiBinder.createAndBindUi(this));
 		setupUi();
-		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-		uploadForm.setMethod(FormPanel.METHOD_POST);
-		StyleHelper.show(uploadField, false);
-		uploadField.setEnabled(false);
-		loadingImage.setVisible(false);
-		setupHandlers();
+    setupHandlers();
 	}
 
-	public void enableUploadButton() {
-		uploadField.setEnabled(true);
+	private void setupUi() {
+    uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+    uploadForm.setMethod(FormPanel.METHOD_POST);
+    fileUpload.setEnabled(false);
+    displayImage(ZResources.IMPL.noGeneralImage().getSafeUri().asString());
+    container.add(this);
+  }
+
+  public void enableUploadButton() {
+	  fileUpload.setEnabled(true);
   }	
 
 	public void resetUploadForm() {
@@ -88,53 +103,31 @@ public class FormUploadWidget {
 		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
 	}
 	
-	private void onUpload() {
-		uploadForm.submit();
-		StyleHelper.show(loadingImage.getElement(), true);
-		loadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri().asString());
-		imageUploaded = true;
-	}
-
-	public void displayImagePreview(String imageUrl) {
-		if (imageUrl != null) {
-			resetProfileImagePanel();
-			imagePreview.setUrl(imageUrl);
-			adjustProfileImagePanel();
-			StyleHelper.show(loadingImage.getElement(), false);
+	// Currently supporting only 1 image
+	public void displayImagePreview(String encodedUrl) {
+		if (encodedUrl != null) {
+      ImageDTO imageDto = ImageUtil.parseImageUrl(encodedUrl);
+      showLoadingImage(false);
+		  displayImage(imageDto.getUrl());
+			uploadedImages.clear();
+		  uploadedImages.add(imageDto);
 		}
 	}
 	
-	private void resetProfileImagePanel() {
-		profileImagePanel.setHeight("200px");
-	}
-	
-	/**
-	 * Adjusts the height of profile image panel.
-	 */
-	private void adjustProfileImagePanel() {
-		imagePreview.addLoadHandler(new LoadHandler() {
-
-			@Override
-			public void onLoad(LoadEvent event) {
-				StyleHelper.setHeight(profileImagePanel, imagePreview.getHeight());
-			}
-		});
-	}
-
-	public boolean isImageUploaded() {
-	  return imageUploaded;
+	private void showLoadingImage(boolean show) {
+	  StyleHelper.show(loadingImage.getElement(), show);
   }
 
 	private void setupHandlers() {
-		uploadAnchorIcon.addClickHandler(new ClickHandler() {
+//		uploadAnchorIcon.addClickHandler(new ClickHandler() {
+//
+//			@Override
+//			public void onClick(ClickEvent event) {
+//			  fileUpload.getElement().<InputElement> cast().click();
+//			}
+//		});
 
-			@Override
-			public void onClick(ClickEvent event) {
-				uploadField.getElement().<InputElement> cast().click();
-			}
-		});
-
-		uploadField.addChangeHandler(new ChangeHandler() {
+		fileUpload.addChangeHandler(new ChangeHandler() {
 
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -143,23 +136,38 @@ public class FormUploadWidget {
 		});
   }
 
-	private void setupUi() {
-		Image previewImage = new Image();
-		FlowPanel imagePanel = new FlowPanel();
-		imagePanel.add(previewImage);
-		container.add(imagePanel);
-		
-		uploadForm = new FormPanel();
-		VPanel vpanel = new VPanel();
-		uploadField = new FileUpload();
-		vpanel.add(uploadField);
-		Label uploadImageLabel = new Label("Upload image");
-		vpanel.add(uploadImageLabel);
-		uploadAnchorIcon = new Image(ZResources.IMPL.uploadIcon());
-		vpanel.add(uploadAnchorIcon);
-		loadingImage = new Image(ZResources.IMPL.loadingImageSmall());
-		vpanel.add(loadingImage);
-		uploadForm.add(vpanel);
-		container.add(uploadForm);
+  public boolean hasImage() {
+    return uploadedImages.size() > 0;
+  }
+  
+  public List<ImageDTO> getImage() {
+    if (hasImage()) {
+      return uploadedImages;
+    }
+    
+    return Collections.emptyList();
+  }
+
+  public void reset() {
+    uploadedImages.clear();
+    displayImage(ZResources.IMPL.noGeneralImage().getSafeUri().asString());
+  }
+
+  private void displayImage(String image) {
+    imagePreview.setUrl(image);
+    imagePreview.setHeight("300px");
+    imagePreview.addLoadHandler(new LoadHandler() {
+
+      @Override
+      public void onLoad(LoadEvent event) {
+        imagePanel.setHeight(imagePreview.getHeight()+"px");
+      }
+    });
+  }
+  
+  private void onUpload() {
+    uploadForm.submit();
+    loadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri().asString());
+    showLoadingImage(true);
   }
 }

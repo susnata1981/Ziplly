@@ -10,26 +10,22 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 
 public interface TweetDAO {
-	TweetDTO save(Tweet tweet);
 
-	/*
-	 * Should be removed eventually, as we call the paginated version of this api.
-	 */
-	List<TweetDTO> findAllTweetsByAccountId(Long accountId) throws NotFoundException;
+  /**
+   * Saves tweet.
+   */
+  TweetDTO save(Tweet tweet);
 
 	TweetDTO update(Tweet tweet) throws NotFoundException;
 
 	void delete(Tweet tweet) throws NotFoundException;
 
-	/*
-	 * Paginated version of findTweetsByAccountId
-	 */
 	List<TweetDTO>
 	    findTweetsByAccountId(Long accountId, int page, int pageSize) throws NotFoundException;
 
 	Long findTweetsByAccountIdAndMonth(Long accountId, Date date);
 
-	Long findTweetsCountByAccountId(Long accountId) throws NotFoundException;
+	Long findTweetCountByAccountId(Long accountId) throws NotFoundException;
 
 	Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date);
 	
@@ -37,26 +33,30 @@ public interface TweetDAO {
 
 	List<TweetDTO> findAll();
 
-	List<TweetDTO> findTweets(String query, int start, int end);
-
-	Long findTotalTweetCount(String queryStr);
-
 	Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException;
 
-	/*
+	/**
 	 * Retrieves all tweets based on Neighborhood
 	 */
 	List<TweetDTO>
-	    findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize) throws NotFoundException;
+	    findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize);
 
-	/*
-	 * Retrieves specific tweet type based on Neighborhood
+	/**
+	 * Retrieves specific tweet type (except coupons) based 
+	 * on Neighborhood
 	 */
 	List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type,
 	    Long neighborhoodId,
 	    int page,
 	    int pageSize) throws NotFoundException;
 
+	/**
+   * Special case for type/neighborhood as for coupons we're going to pull any
+   * coupons that are published one level up. This could change once we've more
+   * traffic and there's no need to pull that data.
+   */
+  List<TweetDTO> findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize);
+  
 	Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now);
 
 	Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now);

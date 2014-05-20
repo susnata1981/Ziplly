@@ -124,6 +124,7 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		StyleHelper.show(message.getElement(), true);
 	}
 	
+  @SuppressWarnings("unchecked")
   private <T> Column<PurchasedCouponDTO, T> getColumnIndex(ColumnDefinition colDefinition) {
   	int index = 0;
   	for(ColumnDefinition colDef : transactionTableColumnDefinitions) {

@@ -11,21 +11,21 @@
 		background: #ddd;
 		color: #666;
 		font-family: Verdata, sans;
-		}
-		ul {
+	}
+	ul {
 		margin: 10px 0;
-		}
-		ul > li {
+	}
+	ul > li {
 		list-style: none;
 		font-size: 14px;
 		font-weight: 500;
 		line-height: 24px;
 		padding: 2px;
-		}
-		.refreshBtn {
-			float: right;
-			margin: 4px;
-		}
+	}
+	.refreshBtn {
+		float: right;
+		margin: 4px;
+	}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
@@ -69,9 +69,14 @@
 								</li>
 							</ul>
 						</div>
-						<dv:CouponTransactionTableWidget
-							ui:field="couponTransactionTableWidget" />
-						<g:HTMLPanel ui:field="chartsPanel" />
+						<!-- <dv:CouponTransactionTableWidget
+							ui:field="couponTransactionTableWidget" /> -->
+						<g:HTMLPanel>
+						    <b:ListBox ui:field="chartTypeListBox" />
+						    <g:HTMLPanel ui:field="chartsPanel">
+						        
+						    </g:HTMLPanel>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Column>

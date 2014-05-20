@@ -114,9 +114,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 
 	private ITweetView<TweetPresenter> tview = new TweetView();
 
-	/*
-	 * Tweet section
-	 */
+	// Tweet section
 	@UiField
 	HTMLPanel tweetSection;
 	@UiField(provided = true)
@@ -126,9 +124,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField
 	DivElement locationDiv;
 
-	/*
-	 * Coupon transaction section
-	 */
+	// Coupon transaction section
 	@UiField
 	HTMLPanel couponTransactionPanel;
 	@UiField(provided = true)
@@ -144,8 +140,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	private SendMessageWidget smw;
 	private GoogleMapWidget mapWidget = new GoogleMapWidget();
 	
-	private String tweetWidgetWidth = "90%";
-	private String tweetBoxWidth = "93%";
+	private String tweetWidgetWidth = "94%";
+	private String tweetBoxWidth = "97%";
 	private static final String TWEET_VIEW_HEIGHT = "1115px";
 
 	@Inject
@@ -177,7 +173,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		message.setVisible(false);
 		this.account = account;
 
-		// image section
+		// Image section
 		profileImage.setUrl(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
 		profileImage.setAltText(account.getDisplayName());
 		adjustProfileImagePanel();
@@ -194,16 +190,14 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		    account.getLastLoginTime(),
 		    ValueType.DATE_VALUE_SHORT));
 
-		// occupation panel
+		// Occupation panel
 		occupationSpan.setInnerHTML(account.getOccupation());
 
-		// interest section
+		// Interest section
 		populateInterest();
 
-		// display tweets
-//		StyleHelper.show(tweetBoxDiv.getElement(), true);
+		// Display tweets
 		displayTweetBox(true);
-//		StyleHelper.show(profileSectionRow.getElement(), true);
 		displayProfileSection(true);
 	}
 

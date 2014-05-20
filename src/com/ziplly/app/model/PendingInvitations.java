@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "pending_invitations")
-public class PendingInvitations extends AbstractTimestampAwareEntity {
+public class PendingInvitations extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

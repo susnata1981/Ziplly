@@ -2,72 +2,25 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dv="urn:import:com.ziplly.app.client.view.coupon"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	<ui:style type="com.ziplly.app.client.view.coupon.CouponReportViewImpl.Style">
+		.link > a {
+			display: block;
+			font-size: 15px !important;
+		}
+		.link > a:hover {
+			background: #ddd !important;
+			text-decoration: underline !important;
+		}
+		.selectedLink {
+			text-decoration: underline !important;
+		}
 	</ui:style>
-<!-- <b:FluidContainer>
-		<b:FluidRow>
-			<b:Column size="2">
-				<b:NavPills>
-					<b:NavLink>Publish Coupon</b:NavLink>
-					<b:NavLink>Report</b:NavLink>
-				</b:NavPills>
-			</b:Column>
-			<b:Column size="9">
-				<g:HTMLPanel>
-					<b:Heading size="4" addStyleNames="{style.heading}">List of coupons
-						published</b:Heading>
-					<hr />
-					<b:Alert ui:field="message" close="false" />
-					<b:SimplePager ui:field="pager" display="{couponReportTable}"
-						fastForwardRows="15" />
-					<b:CellTable ui:field="couponReportTable" bordered="true"
-						striped="true" />
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-		<b:FluidRow>
-			<b:Column size="2">
-			</b:Column>
-			<b:Column size="9">
-				<g:HTMLPanel>
-					<g:HTMLPanel ui:field="couponTransactionDetailsPanel">
-						<b:Heading size="4" addStyleNames="{style.heading}"
-							ui:field="couponTransactionDetailsHeading" />
-						<div>
-							<b:Heading size="4">Summary</b:Heading>
-							<ul>
-								<li>
-									Coupons Sold:
-									<b:Label ui:field="totalCouponsSoldLabel" />
-								</li>
-								<li>
-									Total Sales:
-									<b:Label ui:field="totalSalesLabel" />
-								</li>
-								<li>
-									Total Coupons Redeemed:
-									<b:Label ui:field="totalCouponsRedeemed" />
-								</li>
-								<li>
-									Total Coupons Unused:
-									<b:Label ui:field="totalCouponsUnused" />
-								</li>
-							</ul>
-						</div>
-						<dv:CouponTransactionTableWidget
-							ui:field="couponTransactionTableWidget" />
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</b:Column>
-		</b:FluidRow>
-	</b:FluidContainer> -->
-	
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="2">
 				<b:NavPills>
-					<b:NavLink ui:field="couponFormLink">Publish Coupon</b:NavLink>
-					<b:NavLink ui:field="couponSalesLink">Report</b:NavLink>
+					<b:NavLink ui:field="couponFormLink" addStyleNames="{style.link}">Publish Coupon</b:NavLink>
+					<b:NavLink ui:field="couponSalesLink" addStyleNames="{style.link}">Report</b:NavLink>
 				</b:NavPills>
 			</b:Column>
 			<b:Column size="9">

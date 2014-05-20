@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "image_metadata")
-public class Image extends AbstractTimestampAwareEntity {
+public class Image extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

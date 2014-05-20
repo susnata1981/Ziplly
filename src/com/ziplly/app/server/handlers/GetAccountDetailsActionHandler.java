@@ -57,7 +57,7 @@ public class GetAccountDetailsActionHandler extends
 		Long accountId = session.getAccount().getAccountId();
 
 		Long unreadMessageCount = conversationDao.getUnreadConversationCountForAccount(accountId);
-		Long totalTweets = tweetDao.findTweetsCountByAccountId(accountId);
+		Long totalTweets = tweetDao.findTweetCountByAccountId(accountId);
 		Long totalComments = commentDao.findCommentCountByAccountId(accountId);
 		Long totalLikes = likeDao.findLikeCountByAccoutId(accountId);
 

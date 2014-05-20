@@ -25,7 +25,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "findConversationById", query = "from Conversation where id = :id") })
 @Entity
 @Table(name = "conversation")
-public class Conversation extends AbstractTimestampAwareEntity {
+public class Conversation extends AbstractEntity {
 	private static final long serialVersionUID = -2238086892572614374L;
 
 	@Id

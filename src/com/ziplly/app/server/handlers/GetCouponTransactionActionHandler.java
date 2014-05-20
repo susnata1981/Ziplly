@@ -14,9 +14,11 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
+import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -25,15 +27,18 @@ import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class GetCouponTransactionActionHandler extends AbstractAccountActionHandler<GetCouponTransactionAction, GetCouponTransactionResult>{
 	private PurchasedCouponDAO purchasedCouponDao;
+ private CouponDAO couponDao;
 
 	@Inject
 	public GetCouponTransactionActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
+      CouponDAO couponDao,
       PurchasedCouponDAO purchasedCouponDao) {
 		
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
+	  this.couponDao = couponDao;
 	  this.purchasedCouponDao = purchasedCouponDao;
   }
 
@@ -45,7 +50,10 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 	@Override
   public GetCouponTransactionResult doExecute(GetCouponTransactionAction action,
       ExecutionContext context) throws DispatchException {
-		
+
+    checkArgument(action.getStart() >= 0);
+    checkArgument(action.getPageSize() > 0);
+
 		validateSession();
 		TransactionDetails details = null;
 		switch(action.getSearchType()) {
@@ -54,14 +62,16 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 				break;
 			case BY_COUPON_ID:
 				checkNotNull(action.getCouponId());
-				checkArgument(action.getStart() >= 0);
-				checkArgument(action.getPageSize() > 0);
 				details = searchByCouponId(action);
 		}
 		 
 		GetCouponTransactionResult result = new GetCouponTransactionResult();
 		result.setPurchasedCoupons(EntityUtil.clonePurchaseCouponList(details.getPurchasedCoupons()));
 		result.setTotalTransactions(details.getTotalTransactionCount());
+		
+		if (action.getCouponId() != null) {
+		  result.setCoupon(EntityUtil.clone(details.getCoupon()));
+		}
 		return result;
   }
 
@@ -69,22 +79,27 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 		TransactionDetails details = new TransactionDetails();
 		details.setPurchasedCoupons(purchasedCouponDao.findTransactionByCouponId(action.getCouponId(), action.getStart(), action.getPageSize()));
 		details.setTotalTransactionCount(purchasedCouponDao.getTotalCountByByCouponId(action.getCouponId()));
+		details.setCoupon(couponDao.findById(action.getCouponId()));
 		return details;
   }
 
 	private TransactionDetails searchByAccountId(GetCouponTransactionAction action) {
 		TransactionDetails details = new TransactionDetails();
 		details.setPurchasedCoupons(purchasedCouponDao.findByAccountIdAndStatus(
-				session.getAccount().getAccountId(), TransactionStatus.COMPLETE, action.getStart(), action.getPageSize()));
+				session.getAccount().getAccountId(), 
+				TransactionStatus.COMPLETE, 
+				action.getStart(), 
+				action.getPageSize()));
+		
 		details.setTotalTransactionCount(purchasedCouponDao.getTotalByAccountIdAndStatus(
 				session.getAccount().getAccountId(), TransactionStatus.COMPLETE));
-		
 		return details;
   }
 	
 	private static class TransactionDetails {
 		private List<PurchasedCoupon> purchasedCoupons = new ArrayList<PurchasedCoupon>();
 		private Long totalTransactionCount = 0L;
+		private Coupon coupon;
 		
 		public List<PurchasedCoupon> getPurchasedCoupons() {
 	    return purchasedCoupons;
@@ -100,6 +115,14 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 
 		public void setTotalTransactionCount(Long totalTransactionCount) {
 	    this.totalTransactionCount = totalTransactionCount;
+    }
+
+    public Coupon getCoupon() {
+     return coupon;
+    }
+
+    public void setCoupon(Coupon coupon) {
+     this.coupon = coupon;
     }
 	}
 }

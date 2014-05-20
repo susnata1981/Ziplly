@@ -583,6 +583,7 @@ public class EntityUtil {
 	public static CouponDTO clone(Coupon coupon) {
 		CouponDTO resp = new CouponDTO();
 		resp.setCouponId(coupon.getCouponId());
+		resp.setTitle(coupon.getTitle());
 		resp.setDescription(coupon.getDescription());
 		resp.setStartDate(coupon.getStartDate());
 		resp.setEndDate(coupon.getEndDate());

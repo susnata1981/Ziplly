@@ -10,7 +10,6 @@ public interface AccountPresenter<T extends AccountDTO> extends CouponTransactio
 
 	void logout();
 
-	// void sendMessage(ConversationDTO conversation);
 	void settingsLinkClicked();
 
 	void messagesLinkClicked();

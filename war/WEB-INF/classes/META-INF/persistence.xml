@@ -5,7 +5,7 @@
         http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0">
 	<persistence-unit name="zipllydb">
-	    <class>com.ziplly.app.model.AbstractTimestampAwareEntity</class>
+	    <class>com.ziplly.app.model.AbstractEntity</class>
 		<class>com.ziplly.app.model.Account</class>
 		<class>com.ziplly.app.model.PersonalAccount</class>
 		<class>com.ziplly.app.model.BusinessAccount</class>

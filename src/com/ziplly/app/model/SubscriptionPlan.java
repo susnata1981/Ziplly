@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "subscription_plan")
-public class SubscriptionPlan extends AbstractTimestampAwareEntity {
+public class SubscriptionPlan extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

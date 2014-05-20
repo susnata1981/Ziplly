@@ -117,4 +117,7 @@ public interface StringDefinitions extends Constants {
 	String ineglibleForSubscription();
 	String cancelledSubscriptionStillActive();
 	String couponPublishedSuccessfully();
+	String couponSalesTitle();
+	String couponSalesXTitle();
+	String couponSalesYTitle();
 }

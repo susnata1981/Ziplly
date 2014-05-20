@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "location")
-public class Location extends AbstractTimestampAwareEntity {
+public class Location extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	@Column(name = "location_id")
 	@Id

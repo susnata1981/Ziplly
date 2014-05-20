@@ -42,7 +42,7 @@ import com.ziplly.app.shared.BCrypt;
 @Table(name = "account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-public class Account extends AbstractTimestampAwareEntity {
+public class Account extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@NotNull

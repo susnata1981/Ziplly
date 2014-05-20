@@ -17,6 +17,7 @@ public class ImageUtil {
 	public static ImageDTO parseImageUrl(String imageUrl) {
 		ImageDTO image = new ImageDTO();
 		String[] data = imageUrl.split(StringConstants.VALUE_SEPARATOR);
+		System.out.println(data);
 		if (data.length == 2) {
 			image.setUrl(data[0].trim());
 			image.setId(Long.parseLong(data[1].trim()));

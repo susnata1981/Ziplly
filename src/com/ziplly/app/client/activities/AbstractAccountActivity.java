@@ -8,7 +8,6 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -16,7 +15,6 @@ import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.view.IAccountView;
-import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
@@ -28,12 +26,10 @@ import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
 import com.ziplly.app.client.view.handler.AccountUpdateEventHandler;
 import com.ziplly.app.client.widget.TweetWidget;
-import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
@@ -120,23 +116,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	}
 
 	public void printCoupon(Long transactionId) {
-//		System.out.println("TXID = " + transactionId);
-//		if (transactionId == null) {
-//			view.displayMessage(
-//			    ErrorDefinitions.invalidCouponError.getErrorMessage(),
-//			    ErrorDefinitions.invalidCouponError.getType());
-//		}
-//
-//		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
-//		action.setCouponTransactionId(transactionId);
-//		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
-//
-//			@Override
-//			public void onSuccess(GetCouponQRCodeUrlResult result) {
-//				
-//			}
-//		});
-		
 		goTo(new PrintCouponPlace(transactionId));
 	}
 
@@ -201,28 +180,28 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();
 
-	@Override
-	public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
-		setFormUploadActionUrl(formUploadWidget);
-
-		formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
-
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				try {
-					if (event.getResults() != null) {
-						ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
-						formUploadWidget.displayImagePreview(imageDto.getUrl());
-						setFormUploadActionUrl(formUploadWidget);
-					}
-				} catch (Error error) {
-					view.displayMessage(StringConstants.INVALID_IMAGE, AlertType.ERROR);
-					setFormUploadActionUrl(formUploadWidget);
-				}
-			}
-
-		});
-	}
+//	@Override
+//	public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
+//		setFormUploadActionUrl(formUploadWidget);
+//
+//		formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
+//
+//			@Override
+//			public void onSubmitComplete(SubmitCompleteEvent event) {
+//				try {
+//					if (event.getResults() != null) {
+//						ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
+//						formUploadWidget.displayImagePreview(imageDto.getUrl());
+//						setFormUploadActionUrl(formUploadWidget);
+//					}
+//				} catch (Error error) {
+//					view.displayMessage(StringConstants.INVALID_IMAGE, AlertType.ERROR);
+//					setFormUploadActionUrl(formUploadWidget);
+//				}
+//			}
+//
+//		});
+//	}
 
 	@Override
 	public void invitePeople(List<String> emails) {
@@ -511,20 +490,20 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		view.displayMap(n.getPostalCodes().get(0).toString());
 	}
 
+//	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
+//		dispatcher.execute(
+//		    new GetImageUploadUrlAction(),
+//		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+//
+//			    @Override
+//			    public void onSuccess(GetImageUploadUrlResult result) {
+//				    if (result.getImageUrl() != null) {
+//					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
+//					    formUploadWidget.enableUploadButton();
+//				    }
+//			    }
+//		    });
+//	}
+	
 	abstract void stopThreads();
-
-	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
-		dispatcher.execute(
-		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-
-			    @Override
-			    public void onSuccess(GetImageUploadUrlResult result) {
-				    if (result.getImageUrl() != null) {
-					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
-					    formUploadWidget.enableUploadButton();
-				    }
-			    }
-		    });
-	}
 }

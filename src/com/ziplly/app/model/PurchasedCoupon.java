@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="purchased_coupon")
-public class PurchasedCoupon extends AbstractTimestampAwareEntity {
+public class PurchasedCoupon extends AbstractEntity {
   private static final long serialVersionUID = 1L;
 
 	@Id

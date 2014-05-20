@@ -25,25 +25,24 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import com.ziplly.app.dao.EntityUtil;
-
 @NamedQueries({
     @NamedQuery(
         name = "findTweetsByNeighborhood",
         query = "select t from Tweet t join t.targetNeighborhoods tn "
-            + "where tn.neighborhoodId = :neighborhoodId and status = :status order by t.timeCreated desc"),
-
-    @NamedQuery(name = "findTweetsById",
-        query = "from Tweet t where t.tweetId = :tweetId order by timeCreated desc"),
+            + "where tn.neighborhoodId = :neighborhoodId and t.status = :status order by t.timeCreated desc"),
+    @NamedQuery(
+        name = "findTweetsById",
+        query = "select t from Tweet t where t.tweetId = :tweetId order by t.timeCreated desc"),
     @NamedQuery(
         name = "findTweetsByAccountId",
-        query = "from Tweet t where t.sender.accountId = :accountId and status = :status order by timeCreated desc"),
+        query = "select t from Tweet t where t.sender.accountId = :accountId and t.status = :status order by t.timeCreated desc"),
     @NamedQuery(
         name = "findTweetsByTypeAndNeighborhood",
-        query = "select t from Tweet t join t.targetNeighborhoods tn where tn.neighborhoodId = :neighborhoodId and status = :status and t.type = :type order by t.timeCreated desc"), })
+        query = "select t from Tweet t join t.targetNeighborhoods tn where tn.neighborhoodId = :neighborhoodId and t.status = :status and t.type = :type order by t.timeCreated desc"), 
+})
 @Entity
 @Table(name = "tweet")
-public class Tweet extends AbstractTimestampAwareEntity {
+public class Tweet extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Id

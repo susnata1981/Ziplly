@@ -16,6 +16,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl.CouponReportPresenter;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
@@ -65,6 +66,8 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 		void displaySummary(TransactionSummary summary);
 
 		void displayMessage(String couponPublishedSuccessfully, AlertType success);
+		
+		CouponFormWidget getCouponFormWidget();
 	}
 
 	@Override
@@ -86,16 +89,11 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 			public void onSuccess(CouponReportView result) {
 				CouponReportActivity.this.view = result;
 				bind();
+				setupView();
 				CouponReportActivity.this.panel.setWidget(result);
 				loadInitialCouponData();
 			}
 		});
-	}
-
-	private void loadInitialCouponData() {
-		int start = view.getCouponDataStartIndex();
-		int pageSize = view.getCouponDataPageSize();
-		loadCouponData(start, pageSize);
 	}
 
 	public void loadCouponData(final int start, int pageSize) {
@@ -116,7 +114,6 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
 	@Override
 	public void go(AcceptsOneWidget container) {
-
 	}
 
 	@Override
@@ -131,11 +128,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 		action.setPageSize(pageSize);
 		action.setSearchType(SearchType.BY_COUPON_ID);
 		action.setCouponId(coupon.getCouponId());
-		dispatcher.execute(action, new AsyncCallback<GetCouponTransactionResult>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-			}
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>() {
 
 			@Override
 			public void onSuccess(GetCouponTransactionResult result) {
@@ -229,7 +222,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 		tweet.setTimeCreated(now);
 		tweet.setSender(ctx.getAccount());
 		tweet.getTargetNeighborhoods().add(ctx.getCurrentNeighborhood());
-		Window.alert("sending tweet");
+		tweet.getImages().addAll(coupon.getTweet().getImages());
 		
 		TweetAction action = new TweetAction(tweet);
 		dispatcher.execute(action, new DispatcherCallbackAsync<TweetResult>() {
@@ -245,7 +238,21 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 			public void postHandle(Throwable th) {
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
-			
 		});
   }
+	
+	 @Override
+	  public void onStop() {
+	    view.clear();
+	  }
+	 
+	 private void setupView() {
+	   initializeUploadForm(view.getCouponFormWidget().getFormUploadWidget());
+	 }
+	  
+	 private void loadInitialCouponData() {
+	   int start = view.getCouponDataStartIndex();
+     int pageSize = view.getCouponDataPageSize();
+	   loadCouponData(start, pageSize);
+	 }
 }

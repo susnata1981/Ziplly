@@ -11,10 +11,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
@@ -27,7 +27,6 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.widget.ConfirmationModalWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.CouponDTO;
@@ -43,6 +42,10 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		void sendTweet(CouponDTO coupon);
 	}
 
+	public interface Style extends CssResource {
+	  String selectedLink();
+	}
+	
 	private static CouponReportViewUiBinder uiBinder = GWT.create(CouponReportViewUiBinder.class);
 
 	interface CouponReportViewUiBinder extends UiBinder<Widget, CouponReportViewImpl> {
@@ -61,6 +64,9 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	@UiField
 	NavLink couponSalesLink;
 
+	@UiField
+	Style style;
+	
 	Map<NavLink, Composite> linkToViewMap;
 	private static final int couponDataPageSize = 10;
 	private int couponDataStart;
@@ -150,7 +156,7 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 						        public void confirm() {
 							        confirmationWidget.show(false);
 							        doPublishCoupon();
-							        eventBus.fireEvent(new LoadingEventStart());
+//							        eventBus.fireEvent(new LoadingEventStart());
 						        }
 
 						        @Override
@@ -179,6 +185,9 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@Override
 	public void clear() {
+	  message.setText("");
+	  message.setVisible(false);
+	  couponFormWidget.clear();
 		couponSalesView.getCouponReportTable().setRowCount(0);
 	}
 
@@ -237,10 +246,10 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		for (NavLink link : linkToViewMap.keySet()) {
 			if (link == selectedLink) {
 				StyleHelper.show(linkToViewMap.get(link), true);
-				link.addStyleName(ZResources.IMPL.style().selectedLink());
+				link.addStyleName(style.selectedLink());
 			} else {
 				StyleHelper.show(linkToViewMap.get(link), false);
-				link.addStyleName(ZResources.IMPL.style().deselectLink());
+				link.removeStyleName(style.selectedLink());
 			}
 		}
 	}
@@ -249,4 +258,9 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		couponSalesView.setCouponDetailsTableHeading(coupon);
 		presenter.loadCouponDetails(coupon, 0, couponDataPageSize);
 	}
+
+  @Override
+  public CouponFormWidget getCouponFormWidget() {
+    return couponFormWidget;
+  }
 }

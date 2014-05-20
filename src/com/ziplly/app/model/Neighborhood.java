@@ -29,7 +29,7 @@ import org.hibernate.annotations.FetchMode;
     @NamedQuery(name = "findAllNeighborhoods", query = "from Neighborhood") })
 @Entity
 @Table(name = "neighborhood")
-public class Neighborhood extends AbstractTimestampAwareEntity {
+public class Neighborhood extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	
 	@Id

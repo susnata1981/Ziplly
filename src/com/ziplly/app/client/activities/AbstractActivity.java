@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
@@ -18,6 +21,8 @@ import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.StringDefinitions;
+import com.ziplly.app.client.view.ImageUtil;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
@@ -25,13 +30,17 @@ import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoadingEventEndHandler;
 import com.ziplly.app.client.view.handler.LoadingEventStartHandler;
 import com.ziplly.app.client.widget.LoadingPanelWidget;
+import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.GetEnvironmentAction;
 import com.ziplly.app.shared.GetEnvironmentResult;
+import com.ziplly.app.shared.GetImageUploadUrlAction;
+import com.ziplly.app.shared.GetImageUploadUrlResult;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 
@@ -212,4 +221,43 @@ public abstract class AbstractActivity implements Activity {
 		$wnd.console.log(msg);
 	}-*/;
 
+  public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
+    setFormUploadActionUrl(formUploadWidget);
+    setupFormCompleteHandler(formUploadWidget);
+  }
+  
+  private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
+    dispatcher.execute(
+        new GetImageUploadUrlAction(),
+        new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+
+          @Override
+          public void onSuccess(GetImageUploadUrlResult result) {
+            if (result.getImageUrl() != null) {
+              formUploadWidget.resetUploadForm();
+              formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
+              formUploadWidget.enableUploadButton();
+            }
+          }
+        });
+  }
+  
+  private void setupFormCompleteHandler(final FormUploadWidget formUploadWidget) {
+    formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
+
+      @Override
+      public void onSubmitComplete(SubmitCompleteEvent event) {
+        try {
+          if (event.getResults() != null) {
+//            ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
+            formUploadWidget.displayImagePreview(event.getResults());
+          }
+        } catch (Error error) {
+          Window.alert("Error");
+        }
+        setFormUploadActionUrl(formUploadWidget);
+      }
+
+    });
+  }
 }

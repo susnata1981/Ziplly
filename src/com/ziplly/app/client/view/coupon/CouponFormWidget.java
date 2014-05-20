@@ -6,6 +6,7 @@ import java.util.Date;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.datetimepicker.client.ui.DateTimeBox;
@@ -15,6 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -25,11 +27,14 @@ import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.StyleHelper;
-import com.ziplly.app.client.widget.blocks.DataType;
+import com.ziplly.app.client.widget.blocks.AbstractBaseTextWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
-import com.ziplly.app.client.widget.blocks.TextBoxWidget;
+import com.ziplly.app.client.widget.blocks.NumberTextWidget;
+import com.ziplly.app.client.widget.blocks.TextAreaWidget;
+import com.ziplly.app.client.widget.blocks.TextFieldWidget;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.FeatureFlags;
+import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -40,18 +45,26 @@ public class CouponFormWidget extends AbstractView {
 	interface CouponFormWidgetUiBinder extends UiBinder<Widget, CouponFormWidget> {
 	}
 
-	private TextBoxWidget couponTextWidget;
-	private TextBoxWidget discountWidget;
-	private TextBoxWidget priceWidget;
-	private TextBoxWidget quantityWidget;
-	private TextBoxWidget totalCouponAllowedWidget;
+	private AbstractBaseTextWidget titleWidget;
+	private AbstractBaseTextWidget descriptionWidget;
+	private AbstractBaseTextWidget discountWidget;
+	private AbstractBaseTextWidget priceWidget;
+	private AbstractBaseTextWidget quantityWidget;
+	private AbstractBaseTextWidget totalCouponAllowedWidget;
 
+	@UiField
+	ControlGroup titleCg;
+	@UiField
+	HelpInline titleHelpInline;
+	@UiField
+	TextBox titleTextBox;
+	  
 	@UiField
 	ControlGroup descriptionCg;
 	@UiField
 	HelpInline descriptionHelpInline;
 	@UiField
-	TextBox descriptionTextBox;
+	TextArea descriptionTextArea;
 	
 	@UiField
 	ControlGroup startDateCg;
@@ -96,8 +109,8 @@ public class CouponFormWidget extends AbstractView {
 	HelpInline totalCouponAllowedHelpInline;
 	
 //  Upload image
-//	@UiField
-//	HTMLPanel uploadProfileImagePanel;
+	@UiField
+	HTMLPanel uploadProfileImagePanel;
 	FormUploadWidget uploadWidget;
 	
 	@UiField
@@ -119,25 +132,32 @@ public class CouponFormWidget extends AbstractView {
 
 	BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
 //	private ConfirmationModalWidget confirmationWidget;
-	TextBoxWidget [] textBoxWidgets = new TextBoxWidget [5];
+	AbstractBaseTextWidget [] textBoxWidgets = new AbstractBaseTextWidget [6];
 	
 	@Inject
 	public CouponFormWidget(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		int count = 0;
-		couponTextWidget = new TextBoxWidget(descriptionCg, descriptionTextBox, descriptionHelpInline, DataType.STRING);
-		textBoxWidgets[count++] = couponTextWidget;
-		priceWidget = new TextBoxWidget(priceCg, priceTextBox, priceHelpInline, DataType.INTEGER);
+		titleWidget = new TextFieldWidget(titleCg, titleTextBox, titleHelpInline);
+		textBoxWidgets[count++] = titleWidget;
+		
+		descriptionWidget = new TextAreaWidget(descriptionCg, descriptionTextArea, descriptionHelpInline);
+		textBoxWidgets[count++] = descriptionWidget;
+		
+		priceWidget = new NumberTextWidget(priceCg, priceTextBox, priceHelpInline);
 		textBoxWidgets[count++] = priceWidget;
-		discountWidget = new TextBoxWidget(discountCg, discountTextBox, discountHelpInline, DataType.INTEGER);
+		
+		discountWidget = new NumberTextWidget(discountCg, discountTextBox, discountHelpInline);
 		textBoxWidgets[count++] = discountWidget;
-		quantityWidget = new TextBoxWidget(quantityCg, quantityTextBox, quantityHelpInline, DataType.INTEGER);
+		
+		quantityWidget = new NumberTextWidget(quantityCg, quantityTextBox, quantityHelpInline);
 		textBoxWidgets[count++] = quantityWidget;
-		totalCouponAllowedWidget = new TextBoxWidget(totalCouponAllowedCg, totalCouponAllowedTextBox, totalCouponAllowedHelpInline, DataType.INTEGER);
+		
+		totalCouponAllowedWidget = new NumberTextWidget(totalCouponAllowedCg, totalCouponAllowedTextBox, totalCouponAllowedHelpInline);
 		textBoxWidgets[count] = totalCouponAllowedWidget;
 		
-//		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
+		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
 		
 		setupUi();
 		setupHandlers();
@@ -159,11 +179,13 @@ public class CouponFormWidget extends AbstractView {
 			totalCouponAllowedTextBox.setValue("1");
 			totalCouponAllowedTextBox.setReadOnly(true);
 		}
+
 		showPreview(false);
   }
 
 	public boolean validate() {
-		boolean valid = couponTextWidget.validate();
+		boolean valid = true;
+		
 		for(int i=0; i<textBoxWidgets.length; i++) {
 			valid &= textBoxWidgets[i].validate();
 		}
@@ -190,18 +212,23 @@ public class CouponFormWidget extends AbstractView {
 		}
 		
 		CouponDTO coupon = new CouponDTO();
-		coupon.setDescription(FieldVerifier.sanitize(descriptionTextBox.getText()));
+		coupon.setTitle(titleWidget.getValue());
+		coupon.setDescription(descriptionWidget.getValue());
 		coupon.setStartDate(startDate.getValue());
 		coupon.setEndDate(endDate.getValue());
-		coupon.setQuanity(Long.parseLong(FieldVerifier.sanitize(quantityTextBox.getText())));
+		coupon.setQuanity(Long.parseLong(quantityWidget.getValue()));
 		coupon.setQuantityPurchased(0L);
-		BigDecimal discount = BigDecimal.valueOf(Long.parseLong(FieldVerifier.sanitize(discountTextBox.getText())));
+		BigDecimal discount = BigDecimal.valueOf(Long.parseLong(discountWidget.getValue()));
 		coupon.setDiscount(discount);
-		BigDecimal itemPrice = BigDecimal.valueOf(Long.parseLong(FieldVerifier.sanitize(priceTextBox.getText())));
+		BigDecimal itemPrice = BigDecimal.valueOf(Long.parseLong(priceWidget.getValue()));
 		coupon.setItemPrice(itemPrice);
 		coupon.setNumberAllowerPerIndividual(Integer.parseInt(totalCouponAllowedTextBox.getValue()));
 		coupon.setPrice(itemPrice.subtract(itemPrice.multiply(discount).divide(BigDecimal.valueOf(100L))));
 		coupon.setTimeCreated(new Date());
+		
+		if (uploadWidget.hasImage()) {
+		  coupon.getTweet().getImages().addAll(uploadWidget.getImage());
+		}
 		return coupon;
 	}
 	
@@ -236,6 +263,8 @@ public class CouponFormWidget extends AbstractView {
 		endDateCg.setType(ControlGroupType.NONE);
 		endDateHelpInline.setText("");
 		endDateHelpInline.setVisible(false);
+		
+		uploadWidget.reset();
 		showPreview(false);
 	}
 	
@@ -260,12 +289,6 @@ public class CouponFormWidget extends AbstractView {
 	public void setFormUploadActionUrl(String url) {
 		uploadWidget.setUploadFormActionUrl(url);
   }
-	
-//
-//	@Deprecated
-//	public void displayCouponImagePreview(String imageUrl) {
-//		uploadWidget.displayImagePreview(imageUrl);
-//  }
 	
 	public FormUploadWidget getFormUploadWidget() {
 		return uploadWidget;
@@ -294,10 +317,15 @@ public class CouponFormWidget extends AbstractView {
 		return tweetBtn;
 	}
 	
+	public FormUploadWidget getCouponFormWidget() {
+	  return uploadWidget;
+	}
+	
 	private void displayPreview() {
 		contentPanel.clear();
+		CouponDTO coupon = getCoupon();
 		contentPanel.add(new HTMLPanel(basicDataFormatter.format(
-		    getCoupon(),
+		    coupon,
 		    ValueType.COUPON)));
 //		Button buyNowBtn = new Button("Buy Now");
 //		buyNowBtn.setType(ButtonType.PRIMARY);
@@ -305,6 +333,10 @@ public class CouponFormWidget extends AbstractView {
 //		couponPreviewPanel.add(buyNowBtn);
 //		couponFormWidget.showButtons(false);
 
+		if (uploadWidget.hasImage()) {
+		  ImageDTO image = coupon.getTweet().getImages().get(0);
+		  StyleHelper.setBackgroundImage(contentPanel.getElement(), image.getUrl());
+		}
 		showHorizontalButtonPanel(false);
 		StyleHelper.show(horizontalButtonPanel.getElement(), false);
   }

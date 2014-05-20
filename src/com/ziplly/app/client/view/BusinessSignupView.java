@@ -11,7 +11,6 @@ import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
-import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -156,7 +155,6 @@ public class BusinessSignupView extends AbstractView implements
 	Anchor clearAddressAnchor;
 	
 	SignupActivityPresenter presenter;
-	private List<NeighborhoodDTO> neighborhoods;
 	private GooglePlacesWidget placesWidget;
 	
 	@Inject
@@ -220,6 +218,23 @@ public class BusinessSignupView extends AbstractView implements
 			}
 		});
 
+		phone.addBlurHandler(new BlurHandler() {
+
+      @Override
+      public void onBlur(BlurEvent event) {
+        if (!doValidation) {
+          return;
+        }
+        
+        boolean valid = validatePhone();
+        if (valid) {
+          phoneCg.setType(ControlGroupType.SUCCESS);
+          phoneError.setVisible(false);
+        }
+      }
+		  
+		});
+		
 		password.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {

@@ -15,7 +15,7 @@ import com.ziplly.app.model.overlay.SubscriptionDTO;
 
 @Entity
 @Table(name = "subscription")
-public class Subscription extends AbstractTimestampAwareEntity {
+public class Subscription extends AbstractEntity {
   private static final long serialVersionUID = 1L;
 
 	@Id

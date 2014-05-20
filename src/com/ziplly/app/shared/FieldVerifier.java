@@ -142,14 +142,14 @@ public class FieldVerifier {
 		return result;
   }
 	
-	public static ValidationResult validateEndDate(Date input, Date start) {
+	public static ValidationResult validateEndDate(Date end, Date start) {
 		ValidationResult result = new ValidationResult();
-		if (input == null || input.equals("")) {
+		if (end == null || end.equals("")) {
 			result.addError(CANT_BE_EMPTY);
 		}
-
+		
 		try {
-			if (start.after(input)) {
+			if (start.equals(end) || start.after(end)) {
 				result.addError(END_DATE_BEFORE_START);
 			}
 		} catch(NumberFormatException nfe) {
@@ -159,7 +159,7 @@ public class FieldVerifier {
 		return result;
   }
 	
-	/*
+	/**
 	 * Special purpose: to be used in TweetBox only
 	 */
 	public static ValidationResult validateTweetLength(String tweet) {

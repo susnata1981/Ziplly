@@ -43,4 +43,13 @@ public interface NeighborhoodDAO {
 	NeighborhoodDTO findOrCreateNeighborhood(NeighborhoodDTO neighborhood);
 
 	List<NeighborhoodDTO> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood);
+
+  List<Neighborhood> findDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
+
+  /**
+   * Given a neighborhood, it returns all neighborhoods within one level up from that.
+   * @param neighborhoodId
+   * @return
+   */
+  List<Long> getNeigborhoodIdsForCity(Long neighborhoodId);
 }

@@ -14,13 +14,16 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="coupon")
-public class Coupon extends AbstractTimestampAwareEntity {
+public class Coupon extends AbstractEntity {
   private static final long serialVersionUID = 1L;
   
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="coupon_id")
 	private Long couponId;
+	
+	@Column(nullable = false)
+	private String title;
 	
 	private String description;
 	
@@ -55,6 +58,7 @@ public class Coupon extends AbstractTimestampAwareEntity {
 	
 	public Coupon(CouponDTO coupon) {
 		this.couponId = coupon.getCouponId();
+		this.setTitle(coupon.getTitle());
 		this.description = coupon.getDescription();
 		this.startDate = coupon.getStartDate();
 		this.endDate = coupon.getEndDate();
@@ -143,5 +147,13 @@ public class Coupon extends AbstractTimestampAwareEntity {
 
 	public void setTweet(Tweet tweet) {
 	  this.tweet = tweet;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 }
