@@ -25,7 +25,7 @@
 						<b:Button block="true" ui:field="inviteBtn">Invite people</b:Button>
 					</div>
 					<div class="{style.profileInfoBox}">
-						<h2 class="heading">About me</h2>
+						<span class="{style.profileInfoHeader}">About Me</span>
 						<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 						<div addStyleNames="{style.description}">
 							Email:
@@ -51,11 +51,11 @@
 						</div>
 					</div>
 					<div class="{style.profileInfoBox}">
-						<h2 class="heading">Occupation</h2>
+						<span class="{style.profileInfoHeader}">Occupation</span>
 						<span ui:field="occupationSpan" />
 					</div>
 					<div class="{style.profileInfoBox}">
-						<h2 class="heading">Interests</h2>
+						<span class="{style.profileInfoHeader}">Interests</span>
 						<g:HTMLPanel ui:field="interestPanel"></g:HTMLPanel>
 					</div>
 					<div class="{style.profileInfoBox}">
@@ -63,7 +63,7 @@
 						</div>
 					</div>
 					<div class="{style.profileInfoBox}">
-						<h2 class="heading">Activity</h2>
+						<span class="{style.profileInfoHeader}">Activity</span>
 						<dt:ProfileStatWidget title="Messages"
 							ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
 						<dt:ProfileStatWidget title="Comments"

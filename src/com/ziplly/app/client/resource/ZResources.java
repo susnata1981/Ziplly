@@ -20,6 +20,10 @@ public interface ZResources extends ClientBundle {
 		String selectedLink();
 		
 		String deselectLink();
+		
+		String promotionCycleImage();
+		
+		String googleBuyButtonImage();
 	}
 
 	@DoNotEmbed
@@ -57,13 +61,34 @@ public interface ZResources extends ClientBundle {
 
 	@Source("uploadicon.png")
 	ImageResource uploadIcon();
+	
+	@Source("promotionCycle5.png")
+	@DoNotEmbed
+	ImageResource promotionCycle();
 
+	@Source("leftarrow.png")
+	@DoNotEmbed
+	ImageResource leftArrow();
+	
+	@Source("rightarrow.png")
+  @DoNotEmbed
+  ImageResource rightArrow();
+	
+	@Source("google-buy-button-resized.png")
+	ImageResource googleBuyButton();
+	
 	@Source("zstyle.css")
 	Styles style();
 	
+	/**
+	 * @return
+	 */
 	@Source("media.css")
 	TextResource mediaQueries();
 	
 	@Source("print.css")
 	TextResource printCss();
+	
+	@Source("fineprint.txt")
+	TextResource finePrint();
 }

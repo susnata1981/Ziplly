@@ -237,14 +237,6 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 			}
 		});
 
-//		tweetTextBox.addChangeHandler(new ChangeHandler() {
-//
-//			@Override
-//			public void onChange(ChangeEvent event) {
-//				refreshPreview();
-//			}
-//		});
-
 		if (showKeystrokeCounter) {
 			tweetTextBox.addKeyUpHandler(new KeyUpHandler() {
 				@Override
@@ -512,6 +504,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 
 	@UiHandler("previewLinkAnchor")
 	void togglePreview(ClickEvent event) {
+	  refreshPreview();
 		togglePreview();
 	}
 

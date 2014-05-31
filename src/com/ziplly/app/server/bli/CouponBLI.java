@@ -9,7 +9,6 @@ import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.PurchasedCoupon;
-import com.ziplly.app.model.Transaction;
 
 public interface CouponBLI {
 	

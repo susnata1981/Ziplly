@@ -23,17 +23,24 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.googlecode.gwt.charts.client.event.OnMouseOverEvent;
+import com.googlecode.gwt.charts.client.event.OnMouseOverHandler;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
 import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
@@ -78,6 +85,11 @@ public class BusinessSignupView extends AbstractView implements
 	interface BusinessSignupViewUiBinder extends UiBinder<Widget, BusinessSignupView> {
 	}
 
+//	@UiField
+//	HTMLPanel createHelpPanel;
+//	@UiField
+//	Element createDetailsUl;
+	
 	@UiField
 	TextBox businessName;
 	@UiField
@@ -172,10 +184,31 @@ public class BusinessSignupView extends AbstractView implements
 		
 		populateBusinessCategory();
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
+		setupUi();
 		setupHandlers();
 	}
 
-	private void populateBusinessCategory() {
+	private void setupUi() {
+//	  StyleHelper.show(createDetailsUl, false);
+//	  createHelpPanel.addDomHandler(new MouseOverHandler() {
+//
+//      @Override
+//      public void onMouseOver(MouseOverEvent event) {
+//        StyleHelper.show(createDetailsUl, true);
+//      }
+//      
+//    }, MouseOverEvent.getType());
+//	  
+//	  createHelpPanel.addDomHandler(new MouseOutHandler() {
+//
+//      @Override
+//      public void onMouseOut(MouseOutEvent event) {
+//        StyleHelper.show(createDetailsUl, false);
+//      }
+//    }, MouseOutEvent.getType());
+  }
+
+  private void populateBusinessCategory() {
 		for (BusinessCategory category : BusinessCategory.values()) {
 			businessCategory.addItem(category.getName());
 		}
@@ -259,6 +292,7 @@ public class BusinessSignupView extends AbstractView implements
 				}
 			}
 		}, KeyDownEvent.getType());
+		
 	}
 
 	void validateAddressField() {
@@ -359,17 +393,6 @@ public class BusinessSignupView extends AbstractView implements
 		return true;
 	}
 
-//	private boolean validateNeighborhood() {
-//		selectedNeighborhood = getNeighborhoodSelection();
-//		if (selectedNeighborhood == null) {
-//			neighborhoodCg.setType(ControlGroupType.ERROR);
-//			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
-//			neighborhoodError.setVisible(false);
-//			return false;
-//		}
-//		return true;
-//	}
-
 	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
 		if (streetName == null || city == null || state == null || zipCode == null) {
 			cg.setType(ControlGroupType.ERROR);
@@ -430,7 +453,6 @@ public class BusinessSignupView extends AbstractView implements
 		String emailInput = email.getText().trim();
 		BusinessAccountDTO account = new BusinessAccountDTO();
 		account.setName(name);
-		account.setStreet1(streetOne);
 		account.setPhone(FieldVerifier.getEscapedText(phone.getText()));
 
 		LocationDTO location = new LocationDTO();
@@ -655,4 +677,13 @@ public class BusinessSignupView extends AbstractView implements
 		
 		placesWidget.displayErrorDuringNeighborhoodSelection(failedToAddNeighborhood, error);
   }
+	
+	@UiField
+	Anchor pricingAnchor;
+	
+	@UiHandler("pricingAnchor")
+	public void click(ClickEvent event) {
+	  Element elem = DOM.getElementById("pricingPlans");
+	  navigateToElement(elem);
+	}
 }

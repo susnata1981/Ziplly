@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+
 public class SubscriptionPlanDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -12,6 +14,8 @@ public class SubscriptionPlanDTO implements Serializable {
 	private String description;
 	private BigDecimal fee;
 	private String planType;
+	private int tweetsAllowed;
+	private int couponsAllowed;
 	private String status;
 	private Date timeCreated;
 
@@ -91,5 +95,21 @@ public class SubscriptionPlanDTO implements Serializable {
 
 	public void setPlanType(SubscriptionPlanType planType) {
 	  this.planType = planType.name();
+  }
+
+  public int getTweetsAllowed() {
+    return tweetsAllowed;
+  }
+
+  public void setTweetsAllowed(int tweetsAllowed) {
+    this.tweetsAllowed = tweetsAllowed;
+  }
+
+  public int getCouponsAllowed() {
+    return couponsAllowed;
+  }
+
+  public void setCouponsAllowed(int couponsAllowed) {
+    this.couponsAllowed = couponsAllowed;
   }
 }

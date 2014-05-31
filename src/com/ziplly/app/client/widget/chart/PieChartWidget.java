@@ -16,7 +16,7 @@ public class PieChartWidget extends AbstractChartWidget<Integer> {
 //	private String title;
 
 	public PieChartWidget(Panel panel, DataTableAdapter<String, Integer> adapter, String title) {
-		super(panel, adapter, title);
+		super(panel, adapter, title, title, title);
 	}
 
 //	private void initialize() {

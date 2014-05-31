@@ -18,12 +18,12 @@
 
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="12">
+			<b:Column size="10">
 				<b:Alert ui:field="message" close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
-			<b:Column size="12">
+			<b:Column size="10">
 				<g:HTMLPanel ui:field="communityWallPanel">
 				</g:HTMLPanel>
 			</b:Column>

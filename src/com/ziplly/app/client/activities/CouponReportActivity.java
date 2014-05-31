@@ -14,12 +14,15 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
+import com.ziplly.app.client.exceptions.ErrorDefinitions;
+import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl.CouponReportPresenter;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.PurchasedCouponStatus;
@@ -65,7 +68,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
 		void displaySummary(TransactionSummary summary);
 
-		void displayMessage(String couponPublishedSuccessfully, AlertType success);
+		void displayMessage(String message, AlertType success);
 		
 		CouponFormWidget getCouponFormWidget();
 	}
@@ -235,6 +238,14 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
       }
 			
 			@Override
+			public void onFailure(Throwable th) {
+			  if (th instanceof NeedsSubscriptionException) {
+			    view.displayMessage(ErrorDefinitions.needsSubscriptionError.getErrorMessage(),
+			        ErrorDefinitions.needsSubscriptionError.getType());
+			  }
+			}
+			
+			@Override
 			public void postHandle(Throwable th) {
 				eventBus.fireEvent(new LoadingEventEnd());
 			}
@@ -255,4 +266,9 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
      int pageSize = view.getCouponDataPageSize();
 	   loadCouponData(start, pageSize);
 	 }
+
+  @Override
+  public BusinessAccountDTO getAccount() {
+    return (BusinessAccountDTO) ctx.getAccount();
+  }
 }

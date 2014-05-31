@@ -36,6 +36,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
+import com.ziplly.app.client.places.CouponExplorerPlace;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.EmailVerificationPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -65,6 +66,8 @@ import com.ziplly.app.client.view.PrintCouponView;
 import com.ziplly.app.client.view.ResidentsView;
 import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.TweetDetailsView;
+import com.ziplly.app.client.view.coupon.CouponExplorerActivity;
+import com.ziplly.app.client.view.coupon.CouponExplorerView;
 
 public class ZipllyActivityMapper implements ActivityMapper {
 	private PlaceController placeController;
@@ -89,6 +92,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<AboutView> aboutView;
 	private AsyncProvider<PrintCouponView> printCouponView;
 	private AsyncProvider<CouponReportView> couponReportView;
+	private AsyncProvider<CouponExplorerView> couponExplorerView;
 	
 	@Inject
 	public ZipllyActivityMapper(AsyncProvider<HomeViewImpl> homeView,
@@ -109,6 +113,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	    AsyncProvider<AboutView> aboutView,
 	    AsyncProvider<PrintCouponView> printCouponView,
 	    AsyncProvider<CouponReportView> couponReportView,
+	    AsyncProvider<CouponExplorerView> couponExplorerView,
 	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -132,6 +137,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 		this.aboutView = aboutView;
 		this.printCouponView = printCouponView;
 		this.couponReportView = couponReportView;
+		this.couponExplorerView = couponExplorerView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -410,7 +416,21 @@ public class ZipllyActivityMapper implements ActivityMapper {
         }
 				
 			});
-		}
+		} else if (place instanceof CouponExplorerPlace) {
+      return new ActivityProxy<CouponExplorerActivity>(new AsyncProvider<CouponExplorerActivity>() {
+
+        @Override
+        public void get(AsyncCallback<? super CouponExplorerActivity> callback) {
+          callback.onSuccess(new CouponExplorerActivity(dispatcher, 
+              eventBus, 
+              placeController, 
+              (CouponExplorerPlace) place,
+              ctx,
+              couponExplorerView));
+        }
+        
+      });
+    }
 		throw new IllegalArgumentException();
 	}
 }

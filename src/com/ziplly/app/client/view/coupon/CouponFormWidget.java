@@ -16,25 +16,24 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
-import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.blocks.AbstractBaseTextWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.client.widget.blocks.NumberTextWidget;
 import com.ziplly.app.client.widget.blocks.TextAreaWidget;
 import com.ziplly.app.client.widget.blocks.TextFieldWidget;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.ImageDTO;
+import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -116,7 +115,7 @@ public class CouponFormWidget extends AbstractView {
 	@UiField
 	Button tweetBtn;
 	@UiField
-	HorizontalPanel horizontalButtonPanel;
+	Panel horizontalButtonPanel;
 	@UiField
 	Button cancelBtn;
 	@UiField
@@ -133,8 +132,8 @@ public class CouponFormWidget extends AbstractView {
 	BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
 //	private ConfirmationModalWidget confirmationWidget;
 	AbstractBaseTextWidget [] textBoxWidgets = new AbstractBaseTextWidget [6];
+  private BusinessAccountDTO account;
 	
-	@Inject
 	public CouponFormWidget(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -180,10 +179,11 @@ public class CouponFormWidget extends AbstractView {
 			totalCouponAllowedTextBox.setReadOnly(true);
 		}
 
-		showPreview(false);
+		displayPreview(false);
   }
 
 	public boolean validate() {
+	  resetForm();
 		boolean valid = true;
 		
 		for(int i=0; i<textBoxWidgets.length; i++) {
@@ -206,7 +206,6 @@ public class CouponFormWidget extends AbstractView {
 	}
 	
 	public CouponDTO getCoupon() {
-		resetForm();
 		if (!validate()) {
 			return null;
 		}
@@ -223,7 +222,8 @@ public class CouponFormWidget extends AbstractView {
 		BigDecimal itemPrice = BigDecimal.valueOf(Long.parseLong(priceWidget.getValue()));
 		coupon.setItemPrice(itemPrice);
 		coupon.setNumberAllowerPerIndividual(Integer.parseInt(totalCouponAllowedTextBox.getValue()));
-		coupon.setPrice(itemPrice.subtract(itemPrice.multiply(discount).divide(BigDecimal.valueOf(100L))));
+//		coupon.setPrice(itemPrice.subtract(itemPrice.multiply(discount).divide(BigDecimal.valueOf(100L))));
+		coupon.setPrice(itemPrice.subtract(discount));
 		coupon.setTimeCreated(new Date());
 		
 		if (uploadWidget.hasImage()) {
@@ -265,7 +265,7 @@ public class CouponFormWidget extends AbstractView {
 		endDateHelpInline.setVisible(false);
 		
 		uploadWidget.reset();
-		showPreview(false);
+		displayPreview(false);
 	}
 	
 	public Button getCancelButton() {
@@ -283,7 +283,7 @@ public class CouponFormWidget extends AbstractView {
 	}
 
 	public void showButtons(boolean display) {
-		StyleHelper.show(horizontalButtonPanel.getElement(), display);
+		StyleHelper.show(horizontalButtonPanel, display);
   }
 
 	public void setFormUploadActionUrl(String url) {
@@ -294,22 +294,19 @@ public class CouponFormWidget extends AbstractView {
 		return uploadWidget;
 	}
 	
-	public void showPreview(boolean show) {
-		if (show) {
-			displayPreview();
-		}
+	private void displayPreview(boolean show) {
 		StyleHelper.show(previewPanel, show);
 	}
 
 	@UiHandler("changeTweetAnchor")
 	public void changeTweet(ClickEvent event) {
-		showPreview(false);
+		displayPreview(false);
 		showHorizontalButtonPanel(true);
 	}
 
 	@UiHandler("previewCancelBtn")
 	public void cancelPreview(ClickEvent event) {
-		showPreview(false);
+		displayPreview(false);
 		showHorizontalButtonPanel(true);
 	}
 
@@ -321,12 +318,18 @@ public class CouponFormWidget extends AbstractView {
 	  return uploadWidget;
 	}
 	
-	private void displayPreview() {
+	public void showPreview() {
 		contentPanel.clear();
 		CouponDTO coupon = getCoupon();
-		contentPanel.add(new HTMLPanel(basicDataFormatter.format(
-		    coupon,
-		    ValueType.COUPON)));
+		TweetDTO tweet = new TweetDTO();
+		tweet.setSender(account);
+		coupon.setTweet(tweet);
+		CouponWidget couponWidget = new CouponWidget();
+		couponWidget.displayCoupon(coupon);
+		contentPanel.add(couponWidget);
+//		contentPanel.add(new HTMLPanel(basicDataFormatter.format(
+//		    coupon,
+//		    ValueType.COUPON)));
 //		Button buyNowBtn = new Button("Buy Now");
 //		buyNowBtn.setType(ButtonType.PRIMARY);
 //		buyNowBtn.getElement().setAttribute("margin", "6px");
@@ -338,10 +341,19 @@ public class CouponFormWidget extends AbstractView {
 		  StyleHelper.setBackgroundImage(contentPanel.getElement(), image.getUrl());
 		}
 		showHorizontalButtonPanel(false);
-		StyleHelper.show(horizontalButtonPanel.getElement(), false);
+//		StyleHelper.show(horizontalButtonPanel.getElement(), false);
+		displayPreview(true);
   }
 
 	private void showHorizontalButtonPanel(boolean show) {
 		StyleHelper.show(horizontalButtonPanel, show);
+  }
+
+  public BusinessAccountDTO getAccount() {
+    return account;
+  }
+
+  public void setAccount(BusinessAccountDTO account) {
+    this.account = account;
   }
 }

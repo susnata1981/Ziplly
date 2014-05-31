@@ -23,7 +23,7 @@ public class EntityManagerService {
 		} 
 		else {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
-			properties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/newzipllydb");
+			properties.put("javax.persistence.jdbc.url", "jdbc:mysql://127.0.0.1:3306/zipllydb");
 			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
 			properties.put("javax.persistence.jdbc.password", "Sherica12");
 		}

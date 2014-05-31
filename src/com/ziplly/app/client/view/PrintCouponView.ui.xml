@@ -4,19 +4,29 @@
 	<ui:style>
 		.panel {
 		position: relative;
-		width: 60%;
+		float:left;
+		margin: auto;
+		width: 50%;
+		left: 25%;
 		padding: 6px;
 		border: 1px solid #ddd;
+			background: linear-gradient(#ED1C25, #F2555C);
 		}
-		.heading {
-		position: absolute;
-		left: 120px;
-		top: 0;
+		.panel .heading {
+			margin-top: 140;
+			text-align: center;
+			background: #fff;
+			border-bottom: 1px solid #555;
+			color: #555;
 		}
 		.logo {
-		position: absolute;
-		left: 10px;
-		top: 0;
+			position: absolute;
+			left: 10px;
+			top: 0;
+		}
+		.subheader {
+			margin-top: 26px;
+			color: #fff !important;
 		}
 		.inlinedFrame {
 		border: none;
@@ -25,17 +35,28 @@
 		margin-top: 40px;
 		}
 		.block {
-			margin-top: 50px;
+			float: left;
+			margin-top: 20px;
 			padding: 6px;
 			font-size: 16px;
 		}
-		.label {
+		.panel .label {
 			display: inline-block;
 			margin-bottom: 10px;
+			color: #fff !important;
+		}
+		.panel .panel h6 {
+			margin: 30px 2px;
+			color: #555 !important;
+		}
+		.finePrint {
+			font-size: 12px !important;
+			padding: 2px;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.panel}">
 		<b:Image ui:field="logo" addStyleNames="{style.logo}" />
+		<h6 class="{style.subheader}">connecting residents with businesses</h6>
 		<b:Heading size="3" ui:field="title" addStyleNames="{style.heading}" />
 		<div class="{style.block}">
 			Merchant Name: <b:Label ui:field="businessName" addStyleNames="{style.label}"/>
@@ -55,11 +76,13 @@
 			Number of coupons allowed per person: <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.label}"/>
 			<br/>
 		</div>
-
+		
 		<iframe ui:field="frame"
-			style="position: relative; border: 0; height: 300px; margin-top : 10px"></iframe>
-		<p>
-			Terms and conditions:<b:Label ui:field="termsAndConditionLabel"></b:Label>
-		</p>
+			style="position: relative; display:block; border: 0; height: 300px; margin:auto; margin-top : 10px"></iframe>
+		
+		<div class="{style.block}">
+		    <h5>Terms and conditions</h5><hr/>
+			<span ui:field="termsAndConditionLabel" addStyleNames="{style.finePrint}"></span>
+		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

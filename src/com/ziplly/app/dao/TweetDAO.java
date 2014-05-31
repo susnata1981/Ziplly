@@ -60,4 +60,6 @@ public interface TweetDAO {
 	Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now);
 
 	Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now);
+
+  List<Tweet> findAllCoupons(int page, int pageSize);
 }

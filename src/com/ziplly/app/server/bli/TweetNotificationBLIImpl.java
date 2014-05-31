@@ -35,6 +35,7 @@ import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.Session;
+import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
@@ -327,4 +328,25 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		        .header("Host", backendAddress);
 		queue.add(options);
 	}
+
+  @Override
+  public void sendCouponPurchaseNotification(Transaction txn, EmailTemplate couponPurchase) {
+    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+    String backendAddress =
+        BackendServiceFactory.getBackendService().getBackendAddress(
+            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+
+    TaskOptions options =
+        TaskOptions.Builder
+            .withUrl(mailEndpoint)
+            .method(Method.POST)
+            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.COUPON_TRANSACTION_SUCCESSFUL.name())
+            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, txn.getBuyer().getEmail())
+            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, txn.getBuyer().getName())
+            .header("Host", backendAddress);
+    queue.add(options);
+    
+    // TODO (add AccountNotification) here.
+  }
 }

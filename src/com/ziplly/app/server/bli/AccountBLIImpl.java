@@ -800,7 +800,6 @@ public class AccountBLIImpl implements AccountBLI {
 			Account account,
 			Coupon coupon) throws DispatchException {
 		
-//		Coupon coupon = couponTransactionDao.findByCouponId(couponId);
 		//Check coupon quantity availability 
 		if (coupon.getQuantityPurchased() >= coupon.getQuanity()) {
 			// Log error
@@ -816,7 +815,8 @@ public class AccountBLIImpl implements AccountBLI {
 			    		coupon.getCouponId(),
 			    		account.getAccountId());
 			
-			if (transactions.size() >= coupon.getNumberAllowerPerIndividual()) {
+			// There will be a pending transaction, so it would at least be equal. We need to check more >.
+			if (transactions.size() > coupon.getNumberAllowerPerIndividual()) {
 				throw new UsageLimitExceededException("You have previously purchased the coupon.");
 			}
 		} catch (NoResultException nre) {
@@ -826,9 +826,11 @@ public class AccountBLIImpl implements AccountBLI {
 		// check date validity
 		// The Buy button should be disabled in the view for these date validity fail. 
 		Date now = new Date();
-		if(now.before(coupon.getStartDate())) {
-			throw new CouponCampaignNotStartedException(String.format("Coupon:%s discount not yet started.", coupon.getDescription()));
-		}
+
+//		Should this be there?
+//		if(now.before(coupon.getStartDate())) {
+//			throw new CouponCampaignNotStartedException(String.format("Coupon:%s discount not yet started.", coupon.getDescription()));
+//		}
 		
 		if(now.after(coupon.getEndDate())) {
 			throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));

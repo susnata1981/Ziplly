@@ -3,6 +3,7 @@ package com.ziplly.app.server.bli;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.NotificationType;
+import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -22,4 +23,6 @@ public interface TweetNotificationBLI {
 	    EmailTemplate emailTemplate);
 
 	void sendEmail(Account sender, Account receiver, EmailTemplate template);
+
+  void sendCouponPurchaseNotification(Transaction txn, EmailTemplate couponPurchase);
 }

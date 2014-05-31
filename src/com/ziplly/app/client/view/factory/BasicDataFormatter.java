@@ -120,7 +120,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 				return getNeighborhoodImageUrl(neighborhood);
 			case PRICE:
 				BigDecimal price = (BigDecimal)value;
-				return price.toPlainString() +"$";
+				return "$"+price.doubleValue();
 			case PERCENT:
 				BigDecimal percent = (BigDecimal)value;
 				return percent.toPlainString() +"%";
@@ -221,7 +221,7 @@ public class BasicDataFormatter implements Formatter<Object> {
 		}
 	}
 	
-	public String getTimeDiff(Date futureDate, Date date, TimeTemplate timeTemplate) {
+	public static String getTimeDiff(Date futureDate, Date date, TimeTemplate timeTemplate) {
 		Long seconds = (futureDate.getTime() - date.getTime())/1000;
 		
 		if (seconds > 60 * 60 * 24) {

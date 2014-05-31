@@ -292,6 +292,8 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		if (account.getWebsite() != null) {
 			websiteSpan.setInnerHTML(account.getWebsite());
 			websiteLink.setHref(account.getWebsite());
+		} else {
+		  websiteSpan.setInnerHTML(StringConstants.NOT_AVAILABLE);
 		}
 
 		// price range test

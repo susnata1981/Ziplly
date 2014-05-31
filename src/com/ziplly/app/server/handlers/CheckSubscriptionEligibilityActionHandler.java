@@ -38,6 +38,7 @@ public class CheckSubscriptionEligibilityActionHandler extends AbstractAccountAc
 		
 		SubscriptionEligibilityStatus status = subscriptionBli.checkSellerEligibility(session.getAccount());
 		CheckSubscriptionEligibilityResult result = new CheckSubscriptionEligibilityResult();
+		// Create a pending transaction
 		String jwtToken = subscriptionBli.getJwtToken(session.getAccount().getAccountId(), action.getSubscriptionId());
 		result.setEligibilityStatus(status);
 		result.setToken(jwtToken);

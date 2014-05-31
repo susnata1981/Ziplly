@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import java.util.Properties;
 
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.gwt.core.client.GWT;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
@@ -73,9 +74,11 @@ public class ServiceModule extends AbstractModule {
 	@CouponRedeemEndpoint
 	public String getCouponRedeemEndpoint() {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-			return "http://127.0.0.1:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997#tweet:couponredeem:";
+//			return "http://127.0.0.1:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997#tweet:couponredeem:";
+		  return "http://cf.zipllydevel.appspot.com/#tweet:couponredeem:";
 		} else {
-			return "http://www.ziplly.com#tweet:couponredeem:";
+//			return "http://www.ziplly.com#tweet:couponredeem:";
+		  return "http://cf.zipllydevel.appspot.com/#tweet:couponredeem:";
 		}
 	}
 	

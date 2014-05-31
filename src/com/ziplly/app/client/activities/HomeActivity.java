@@ -149,7 +149,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
-				    Window.alert("Eligible for buy...");
 				    widget.initiatePay(result.getJwtToken());
 			    }
 		    });
@@ -320,7 +319,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				//Window.alert("success");
 				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
 				AlertType alertType = AlertType.SUCCESS;
 				
@@ -444,14 +442,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		dispatcher.execute(
 		    new UpdateCommentAction(comment),
 		    new DispatcherCallbackAsync<UpdateCommentResult>() {
-//			    @Override
-//			    public void onFailure(Throwable th) {
-//				    if (th instanceof AccessException) {
-//					    view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-//				    } else {
-//					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-//				    }
-//			    }
 
 			    @Override
 			    public void onSuccess(UpdateCommentResult result) {

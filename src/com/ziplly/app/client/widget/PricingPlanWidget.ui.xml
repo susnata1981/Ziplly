@@ -1,0 +1,96 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type="com.ziplly.app.client.widget.PricingPlanWidget.Style">
+		.panel {
+		background: #fff;
+		border: 1px solid #ccc;
+		-webskit-box-shadow: 3px 3px 5px 5px #ccc;
+		border-radius: 5px;
+		}
+		.panel h2 {
+			height: 80px;
+		}
+		.panel:hover {
+			background: #FFC266;
+		}
+		.blueHue {
+			background: -webkit-linear-gradient(top, #A3D1FF 0%,#EBF5FF 100%);
+			padding: 25px;
+		}
+		.greenHue {
+			background: -webkit-linear-gradient(top, #F0FFD1 0%,#CCFF66 100%);
+			padding: 25px;
+		}
+		.planHeader {
+			height: 110px;
+			border-bottom: 1px solid #ddd;
+		}
+		.planFeatures{
+			padding: 15px;
+			border-bottom: 1px solid #aaa;
+			background: #fbfbfb;
+		}
+		.planDetails {
+			padding: 25px;
+		}
+		h2,h3,h4,h5 {
+			color: #555 !important;
+			text-align: center;
+		}
+		.planFeatures li {
+			list-style: none;	
+			display: block;
+			margin-bottom: 10px;
+			font-size: 20px;
+			line-height: 26px;
+			font-family: 'ProximaNova-Regular', Arial, Helvetica, sans-serif;
+		}
+		.planDetails li {
+			list-style: none;	
+			display: block;
+			margin-bottom: 10px;
+			font-size: 15px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		.middle {
+			text-align: center;
+			font-size: 16px;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.panel}">
+		<div class="{style.planHeader}" ui:field="planHeader">
+			<h2><span ui:field="titleSpan"/></h2>
+			<h4>
+				<span ui:field="priceSpan" />
+				<strong>/month</strong> 
+			</h4>
+			<div class="{style.middle}"> + </div>
+			<h5>
+				<strong>2.9% (or 30 cents)/transaction +</strong>
+				<strong>3% commission</strong>
+			</h5>
+		</div>
+		<div class="{style.planFeatures}">
+			<ul>
+				<li>
+					Publish <strong><span ui:field="numTweets" /></strong> messages
+				</li>
+				<li>
+					Publish <strong><span ui:field="numCoupons" /></strong> coupons
+				</li>
+			</ul>
+		</div>
+		<div class="{style.planDetails}">
+			<h4>
+				<em>Also Includes Unlimited...</em>
+			</h4>
+			<ul>
+				<li>Customer feedback</li>
+				<li>Personal messaging</li>
+			</ul>
+			<b:Button type="INVERSE" ui:field="choosePlanBtn">Choose</b:Button>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

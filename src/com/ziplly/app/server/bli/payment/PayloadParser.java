@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
+import com.ziplly.app.server.bli.PaymentServiceImpl;
 import com.ziplly.app.server.bli.SubscriptionBLI;
 
 public class PayloadParser {
@@ -47,7 +48,7 @@ public class PayloadParser {
 				Request req = payload_1.getRequest();
 				if (req.getPaymentType() == PaymentType.COUPON) {
 					response = parseCouponFields(req);
-				} else if (req.getPaymentType() == PaymentType.SUBCRIPTION) {
+				} else if (req.getPaymentType() == PaymentType.SUBSCRIPTION) {
 					response = parseSubscriptionField(req);
 				}
 				
@@ -60,16 +61,32 @@ public class PayloadParser {
 	}
 
 	private SubscriptionRequest parseSubscriptionField(Request req) {
-		checkNotNull(req.getSellerId());
-		checkNotNull(req.getSubscriptionId());
+//		checkNotNull(req.getSellerId());
+//		checkNotNull(req.getSubscriptionId());
 
 		SubscriptionRequest sr = new SubscriptionRequest(subscriptionBli);
-		sr.setSellerId(Long.parseLong(req.getSellerId()));
-		sr.setSubscriptionId(Long.parseLong(req.getSubscriptionId()));
+		parseSubscriptionSellerData(req.getSellerData(), sr);
+//		sr.setSellerId(Long.parseLong(req.getSellerId()));
+//		sr.setSubscriptionId(Long.parseLong(req.getSubscriptionId()));
 		return sr;
   }
 
-	private CouponRequest parseCouponFields(Request req) {
+	private void parseSubscriptionSellerData(String sellerData, SubscriptionRequest sr) {
+	  String[] split = sellerData.split(PaymentServiceImpl.VALUE_SEPARATOR);
+	  if (split.length != 2) {
+	    throw new RuntimeException("Error parsing subscription postback");
+	  }
+	  
+	  sr.setSellerId(Long.parseLong(getValue(split[0])));
+	  sr.setSubscriptionId(Long.parseLong(getValue(split[1])));
+  }
+
+	// accountId:1
+	private String getValue(String pair) {
+	  return pair.split(PaymentServiceImpl.KEY_SEPARATOR)[1];
+	}
+	
+  private CouponRequest parseCouponFields(Request req) {
 		CouponRequest cr = new CouponRequest(couponBli);
 		parseCommonFields(req, cr);
 		checkNotNull(req.getPurchasedCouponId());

@@ -33,6 +33,7 @@ import com.ziplly.app.client.view.handler.LogoutEventHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
@@ -93,7 +94,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 			@Override
 			public void onEvent(LoginEvent event) {
-				if (event.getAccount() instanceof BusinessAccountDTO) {
+				if (FeatureFlags.EnableCouponFeature.isEnabled() 
+				    && event.getAccount() instanceof BusinessAccountDTO) {
 					view.displayReportingMenu();
 				}
 				onLogin();

@@ -20,7 +20,7 @@
 
 	<g:HTMLPanel ui:field="tweetPanel" addStyleNames="{style.tweetPanel}">
 		<div class='{style.tweet_block}'>
-			<div class='{style.tweet_image}'>
+			<div class='{style.tweet_image}' ui:field="authorImageDiv">
 				<b:Image ui:field="authorImage" />
 			</div>
 			<div>
@@ -39,7 +39,7 @@
 				</div>
 			</div>
 			<div class='{style.tweet_content_section}'>
-				<div class="{style.tweetActionDropdown}">
+				<div class="{style.tweetActionDropdown}" ui:field="tweetActionDropdown">
 					<b:Dropdown addStyleNames="{style.dropdown-menu2}" icon="ASTERISK">
 						<b:NavLink ui:field="editTweetLink" icon="EDIT">
 							Edit</b:NavLink>

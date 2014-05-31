@@ -1,7 +1,5 @@
 package com.ziplly.app.server.handlers;
 
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
 import java.util.List;
 
 import javax.persistence.EntityManager;

@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<b:FluidContainer>
+		<b:FluidRow ui:field="row">
+		</b:FluidRow>	
+	</b:FluidContainer>		    
+	<!-- <g:HTMLPanel ui:field="panel">
+		<dt:PricingPlanWidget price="FREE" tweetCount="3"
+			couponCount="0" title="BASIC" />
+		<dt:PricingPlanWidget price="25$" tweetCount="6"
+			couponCount="6" title="PREMIUM" titleHue="GREEN" />
+		<dt:PricingPlanWidget price="50$" tweetCount="unlimited"
+			couponCount="unlimited" title="PRO" />
+	</g:HTMLPanel> -->
+</ui:UiBinder> 

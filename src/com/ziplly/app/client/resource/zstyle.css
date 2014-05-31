@@ -16,6 +16,16 @@
 	background-repeat: no-repeat;
 }
 
+@sprite .promotionCycleImage {
+    gwt-image:'promotionCycle';
+    background-repeat:no-repeat;
+}
+
+@sprite .googleBuyButtonImage {
+	gwt-image: 'googleBuyButton';
+	background-repeat: no-repeat;	
+}
+
 .selectedLink {
 	background: #ddd;
 	padding: 2px;

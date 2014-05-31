@@ -20,6 +20,7 @@ import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.server.bli.EmailService;
+import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.bli.TweetNotificationBLI;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -36,30 +37,7 @@ public class NotificationServlet extends HttpServlet {
 	private NeighborhoodDAO neighborhoodDao;
 	private TweetNotificationBLI tweetNotificationBli;
 	private PostalCodeDAO postalCodeDao;
-
-	// TODO: need to figure out how to use guice to inject dependency
-	// TODO: guice injection blocker
-//	@Inject
-//	public NotificationServlet(
-//			NeighborhoodDAO neighborhoodDao,
-//			PostalCodeDAO postalCodeDao) {
-//		this.emailService = new EmailServiceImpl();
-//		this.postalCodeDao = postalCodeDao;
-//		this.neighborhoodDao = this.neighborhoodDao;
-//		this.accountDao = new AccountDAOImpl(null, neighborhoodDao);
-//		this.sessionDao = new SessionDAOImpl(null);
-//		this.tweetDao = new TweetDAOImpl(null, null);
-//		this.accountNotificationDao = new AccountNotificationDAOImpl();
-//		this.tweetNotificationBli =
-//		    new TweetNotificationBLIImpl(
-//		        accountDao,
-//		        sessionDao,
-//		        neighborhoodDao,
-//		        tweetDao,
-//		        accountNotificationDao,
-//		        emailService);
-//	}
-
+	private static String APP_ADMING_EMAIL_PROP = "app.admin.email";
 	
 	@Inject
 	public NotificationServlet(
@@ -83,12 +61,13 @@ public class NotificationServlet extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		String actionString = req.getParameter(ZipllyServerConstants.ACTION_KEY);
+		
+	  String actionString = req.getParameter(ZipllyServerConstants.ACTION_KEY);
 		EmailAction action = EmailAction.valueOf(actionString);
 		String senderAccountId = req.getParameter(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY);
 		String emailTemplateName = req.getParameter(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY);
 		EmailTemplate emailTemplate = EmailTemplate.valueOf(emailTemplateName);
-
+		
 		logger.log(Level.INFO, String.format(
 		    "Received notification request with action %s, sender %s, email template %s",
 		    action,
@@ -121,6 +100,17 @@ public class NotificationServlet extends HttpServlet {
 				    senderEmail,
 				    senderName,
 				    emailTemplate);
+			case COUPON_TRANSACTION_SUCCESSFUL:
+			  recipientEmail = req.getParameter(ZipllyServerConstants.RECIPIENT_EMAIL_KEY);
+        recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);
+        String emailFrom = System.getProperty(APP_ADMING_EMAIL_PROP, "admin@ziplly.com");
+        
+        EmailEntity from = new EmailEntity();
+        from.email = emailFrom;
+        EmailEntity to = new EmailEntity();
+        to.email = recipientEmail;
+        to.name  = recipientName;
+        emailService.sendTemplatedEmail(from, to, EmailTemplate.COUPON_PURCHASE, null);
 				break;
 		}
 		res.setStatus(HttpStatus.SC_OK);

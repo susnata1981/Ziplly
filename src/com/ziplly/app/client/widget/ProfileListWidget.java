@@ -2,6 +2,8 @@ package com.ziplly.app.client.widget;
 
 import java.util.List;
 
+import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,20 +33,24 @@ public class ProfileListWidget extends AbstractView {
 		String name();
 	}
 	
+	@UiField
+  Style style;
+  
+  @UiField
+  Alert message;
+  
+  @UiField
+  FlowPanel profileListPanel;
+
+  private Presenter presenter;
+  
 	@Inject
 	public ProfileListWidget(com.google.web.bindery.event.shared.EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
+		message.setVisible(false);
 	}
 
-	@UiField
-	Style style;
-
-	@UiField
-	FlowPanel profileListPanel;
-
-	private Presenter presenter;
-	
 	private void addProfile(final AccountDTO account) {
 		HPanel hpanel = new HPanel();
 		hpanel.addStyleName(style.row());
@@ -85,5 +91,11 @@ public class ProfileListWidget extends AbstractView {
 	
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
+	}
+	
+	public void displayMessage(String msg, AlertType type) {
+	  message.setText(msg);
+	  message.setType(type);
+	  message.setVisible(true);
 	}
 }

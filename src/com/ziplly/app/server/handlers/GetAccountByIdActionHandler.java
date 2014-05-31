@@ -12,6 +12,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
@@ -49,7 +50,7 @@ public class GetAccountByIdActionHandler extends
 			if (account instanceof PersonalAccount) {
 				applyPrivacySettings((PersonalAccount) account);
 			}
-			result.setAccount(account);
+			result.setAccount(EntityUtil.convert(account));
 			return result;
 
 		} catch (NotFoundException nfe) {
@@ -82,7 +83,7 @@ public class GetAccountByIdActionHandler extends
 		}
 	}
 
-	private boolean isAttributeVisible(Account account, PrivacySettingsDTO ps) {
+	private boolean isAttributeVisible(Account account, PrivacySettings ps) {
 
 		try {
 			validateSession();

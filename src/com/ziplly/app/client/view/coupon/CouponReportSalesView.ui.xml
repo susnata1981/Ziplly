@@ -7,9 +7,10 @@
 	.heading {
 		height: 30px;
 		line-height: 30px;
+		font-weight: 400;
 		padding: 4px;
 		background: #ddd;
-		color: #666;
+		color: #bbb;
 		font-family: Verdata, sans;
 	}
 	ul {
@@ -25,6 +26,13 @@
 	.refreshBtn {
 		float: right;
 		margin: 4px;
+	}
+	.metricLabel {
+		display: block;
+		width: 200px;
+		padding: 10px;
+		margin: 10px 0;
+		background: #ddd;
 	}
 	</ui:style>
 	<b:FluidContainer>
@@ -49,23 +57,27 @@
 						<b:Heading size="4" addStyleNames="{style.heading}"
 							ui:field="couponTransactionDetailsHeading" />
 						<div>
-							<b:Heading size="4">Summary</b:Heading>
+							<!-- <b:Heading size="4">Summary</b:Heading><hr/> -->
 							<ul>
 								<li>
-									Coupons Sold:
+									<span class="{style.metricLabel}">Coupons Sold</span>
 									<b:Label ui:field="totalCouponsSoldLabel" />
 								</li>
 								<li>
-									Total Sales:
+									<span class="{style.metricLabel}">Total Sales</span>
 									<b:Label ui:field="totalSalesLabel" />
 								</li>
 								<li>
-									Total Coupons Redeemed:
+									<span class="{style.metricLabel}">Total Coupons Redeemed</span>
 									<b:Label ui:field="totalCouponsRedeemed" />
 								</li>
 								<li>
-									Total Coupons Unused:
+									<span class="{style.metricLabel}">Total Coupons Unused</span>
 									<b:Label ui:field="totalCouponsUnused" />
+								</li>
+								<li>
+									<span class="{style.metricLabel}">Total fee</span>
+									<b:Label ui:field="totalFee" />
 								</li>
 							</ul>
 						</div>

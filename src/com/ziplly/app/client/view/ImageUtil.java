@@ -21,6 +21,7 @@ public class ImageUtil {
 		if (data.length == 2) {
 			image.setUrl(data[0].trim());
 			image.setId(Long.parseLong(data[1].trim()));
+			image.setBlobKey(data[0].trim());
 			image.setStatus(RecordStatus.ACTIVE);
 		} else {
 			throw new RuntimeException("Invalid image url format: " + imageUrl);

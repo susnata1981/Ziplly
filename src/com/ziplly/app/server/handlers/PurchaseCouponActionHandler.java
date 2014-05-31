@@ -132,7 +132,7 @@ public class PurchaseCouponActionHandler extends
 		purchasedCouponDao.save(purchasedCoupon);
 		
 		try {
-			purchasedCoupon.setQrcode(couponBLI.getQrcode(transaction));
+			purchasedCoupon.setQrcode(couponBLI.getQrcode(purchasedCoupon));
 			couponTransactionDao.update(transaction);
 		} catch (Exception e) {
 			throw new InternalError(String.format("Failed to generate coupon code"));

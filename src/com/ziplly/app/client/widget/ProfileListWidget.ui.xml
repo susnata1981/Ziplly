@@ -1,5 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.ziplly.app.client.widget.ProfileListWidget.Style">
 		.row {
@@ -13,11 +14,14 @@
 			margin-top: 10px !important;
 			color: #555;
 		}
+		.panel .message {
+			margin-bottom: 0 !important;
+		}
 	</ui:style>
 	
 	<g:HTMLPanel ui:field="panel">
 	    <g:FlowPanel ui:field="profileListPanel">
-	        
+	        <b:Alert ui:field="message" close="false" addStyleNames="{style.message}"/>
 	    </g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

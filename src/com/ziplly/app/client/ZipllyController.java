@@ -2,6 +2,7 @@ package com.ziplly.app.client;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -87,7 +88,6 @@ public class ZipllyController {
 
 	public void go() {
 		String code = Window.Location.getParameter("code");
-
 		if (code != null) {
 			consolelog("going to OauthPlace");
 			placeController.goTo(new OAuthPlace(code));

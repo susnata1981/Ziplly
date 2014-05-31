@@ -81,7 +81,8 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
   public String getJwtToken(Long accountId, Long subscriptionId) throws InternalException {
 		SubscriptionPlan plan = subscriptionPlanDao.get(subscriptionId);
 		try {
-	    return paymentService.generateSubscriptionToken(accountId, subscriptionId, plan.getFee());
+//	    return paymentService.generateSubscriptionToken(accountId, subscriptionId, plan.getFee());
+	    return paymentService.generateJWTTokenForSubscription(plan, accountId);
     } catch (InvalidKeyException e) {
     	logger.severe(String.format("Failed to generate token %s", e));
     	throw new InternalException(String.format("Failed to initiate pay"));

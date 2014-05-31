@@ -32,9 +32,9 @@ insert into interest (name) values ("Biking");
 insert into interest (name) values ("Electronics");
 insert into interest (name) values ("Movies");
 
-insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Send upto 3 messages a month for free', 3, 'Basic plan', now(), "BASIC","ENABLED", 3, 3);
-insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Send upto 5 messages a month', 5, 'Pro plan', now(),"PREMIUM", "ENABLED", 5, 5);
-insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ("Send upto 15 messages a month", 15, "Premium plan", now(), "PRO", "ENABLED", 15, 15);
+insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Connect with your customers', 3, 'Basic plan', now(), "BASIC Plan","ENABLED", 3, 0);
+insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Publish upto 6 coupons/month', 25, 'Pro plan', now(),"PREMIUM Plan", "ENABLED", 6, 6);
+insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ("Publish upto 100 coupons/month", 50, "Premium plan", now(), "PRO Plan", "ENABLED", 100, 100);
 
 
 drop table if exists account

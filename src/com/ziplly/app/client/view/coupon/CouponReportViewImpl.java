@@ -27,8 +27,10 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.ConfirmationModalWidget;
 import com.ziplly.app.client.widget.StyleHelper;
+import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
@@ -40,6 +42,8 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		void loadCouponDetails(CouponDTO coupon, int start, int pageSize);
 
 		void sendTweet(CouponDTO coupon);
+		
+		BusinessAccountDTO getAccount();
 	}
 
 	public interface Style extends CssResource {
@@ -77,8 +81,8 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	public CouponReportViewImpl(EventBus eventBus) {
 		super(eventBus);
 		linkToViewMap = new HashMap<NavLink, Composite>();
-		couponSalesView = new CouponReportSalesView(eventBus);
 		couponFormWidget = new CouponFormWidget(eventBus);
+		couponSalesView = new CouponReportSalesView(eventBus);
 		ZResources.IMPL.style().ensureInjected();
 		initWidget(uiBinder.createAndBindUi(this));
 		setupEventHandler();
@@ -138,7 +142,7 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 					return;
 				}
 
-				couponFormWidget.showPreview(true);
+				couponFormWidget.showPreview();
 			}
 		});
 
@@ -171,7 +175,11 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	}
 
 	private void doPublishCoupon() {
-		presenter.sendTweet(couponFormWidget.getCoupon());
+	  CouponDTO coupon = couponFormWidget.getCoupon();
+	  if (coupon == null) {
+	    return;
+	  }
+		presenter.sendTweet(coupon);
 	}
 
 	public void setRowCount(Long couponCount) {
@@ -197,9 +205,11 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-		message.setText(msg);
-		message.setType(type);
-		StyleHelper.show(message.getElement(), true);
+//		message.setText(msg);
+//		message.setType(type);
+//		StyleHelper.show(message.getElement(), true);
+	  AlertModal modal = new AlertModal();
+    modal.showMessage(msg, type);
 	}
 
 	@Override
@@ -215,6 +225,8 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	@Override
 	public void setPresenter(CouponReportPresenter presenter) {
 		this.presenter = presenter;
+		// Need to find a better solution, hacky.
+    couponFormWidget.setAccount(presenter.getAccount());
 	}
 
 	@Override

@@ -100,34 +100,6 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     return result;
   }
 
-  // @Override
-  // public List<TweetDTO>
-  // findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize)
-  // throws NotFoundException {
-  //
-  // if (neighborhoodId == null) {
-  // throw new IllegalArgumentException();
-  // }
-  //
-  // try {
-  // Query query = (Query)
-  // getEntityManager().createNamedQuery("findTweetsByNeighborhood");
-  // query.setParameter("neighborhoodId", neighborhoodId);
-  // query.setParameter("status", TweetStatus.ACTIVE.name());
-  // query.setFirstResult(page * pageSize).setMaxResults(pageSize);
-  //
-  // @SuppressWarnings("unchecked")
-  // List<Tweet> tweets = (List<Tweet>) query.getResultList();
-  // return EntityUtil.cloneList(tweets);
-  // } catch (NoResultException nre) {
-  // logger.warning(String.format(
-  // "Failed to retrieve tweets for neighborhoodId %d, exception %s",
-  // neighborhoodId,
-  // nre));
-  // throw new NotFoundException();
-  // }
-  // }
-
   @Override
   public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId,
       int page,
@@ -247,6 +219,30 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<Tweet> findAllCoupons(int page, int pageSize) {
+    try {
+      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      Query query =
+          (Query) getEntityManager()
+              .createQuery(
+                  "select t from Tweet t where t.type in (:tweetTypes)"
+                      + " and t.status = :status order by t.timeCreated desc");
+      query
+          .setParameter("tweetTypes", promotionTypeNames)
+          .setParameter("status", TweetStatus.ACTIVE.name())
+          .setFirstResult(page * pageSize)
+          .setMaxResults(pageSize);
+
+      return query.getResultList();
+    } catch (NoResultException nre) {
+      logger.warning(String.format(
+          "Failed to retrieve tweets with exception %s", nre));
+      return ImmutableList.of();
+    }
+  }
+  
   @Transactional
   @Override
   public TweetDTO update(Tweet tweet) throws NotFoundException {

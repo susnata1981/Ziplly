@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ziplly.app.server.bli.TweetNotificationBLIImpl;
-
 /**
  * Changes here need to be also made in {@link TweetNotificationBLIImpl}. TODO
  * to abstract that.
@@ -19,7 +17,7 @@ public enum TweetType {
 	CLASSIFIEDS("Classifieds", NotificationType.NONE, true, false),
 	OFFERS("Offers", NotificationType.OFFERS, true, true),
 	HOT_DEALS("Hot Deals", NotificationType.OFFERS, true, true),
-	COUPON("Coupon", NotificationType.OFFERS, false, true);
+	COUPON("Coupon", NotificationType.OFFERS, false, false);
 
 	private String tweetName;
 	private NotificationType notificationType;

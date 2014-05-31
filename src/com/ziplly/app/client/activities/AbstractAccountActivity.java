@@ -101,14 +101,12 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);
 
-		Window.alert("Checking eligibility");
 		dispatcher.execute(
 		    eligibilityAction,
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
 
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
-				    Window.alert("Eligible for buy...");
 				    widget.initiatePay(result.getJwtToken());
 			    }
 
@@ -276,7 +274,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
-				// Window.alert("success");
 				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
 				AlertType alertType = AlertType.SUCCESS;
 

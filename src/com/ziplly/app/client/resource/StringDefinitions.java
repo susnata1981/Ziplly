@@ -120,4 +120,5 @@ public interface StringDefinitions extends Constants {
 	String couponSalesTitle();
 	String couponSalesXTitle();
 	String couponSalesYTitle();
+  String noNewMemberJoined();
 }

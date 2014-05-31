@@ -40,6 +40,7 @@ import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.ServiceModule.CouponRedeemEndpoint;
 import com.ziplly.app.server.crypto.CryptoUtil;
+import com.ziplly.app.shared.EmailTemplate;
 
 public class CouponBLIImpl implements CouponBLI {
 	private static final String SEPARATOR = ":";
@@ -51,11 +52,13 @@ public class CouponBLIImpl implements CouponBLI {
 	private TransactionDAO couponTransactionDao;
 	private String couponRedeemEndpoint;
 	private AccountBLI accountBli;
+	private TweetNotificationBLI tweetNotificationBli;
 	private PurchasedCouponDAO purchasedCouponDao;
 
 	@Inject
 	public CouponBLIImpl(
 			AccountBLI accountBli,
+			TweetNotificationBLI tweetNotificationBli,
 			@Named("qrcode_endpoint") String qrcodeEndpoint,
 	    @CouponRedeemEndpoint String couponRedeemEndpoint,
 	    CryptoUtil cryptoUtil,
@@ -63,6 +66,7 @@ public class CouponBLIImpl implements CouponBLI {
 	    TransactionDAO couponTransactionDao) {
 
 		this.accountBli = accountBli;
+		this.tweetNotificationBli = tweetNotificationBli;
 		this.qrcodeEndpoint = qrcodeEndpoint;
 		this.couponRedeemEndpoint = couponRedeemEndpoint;
 		CouponBLIImpl.cryptoUtil = cryptoUtil;
@@ -262,6 +266,7 @@ public class CouponBLIImpl implements CouponBLI {
 	@Transactional
 	public void completeTransaction(Long purchaseCouponId) throws Exception {
 		PurchasedCoupon purchasedCoupon = purchasedCouponDao.findById(purchaseCouponId);
+		checkNotNull(purchasedCoupon);
 		checkState(purchasedCoupon.getStatus() == PurchasedCouponStatus.PENDING);
 		
 		try {
@@ -294,6 +299,7 @@ public class CouponBLIImpl implements CouponBLI {
 		try {
 			purchasedCoupon.setQrcode(getQrcode(purchasedCoupon));
 			purchasedCouponDao.update(purchasedCoupon);
+			tweetNotificationBli.sendCouponPurchaseNotification(txn, EmailTemplate.COUPON_PURCHASE);
 		} catch (Exception e) {
 			throw new InternalError(String.format("Failed to generate coupon code"));
 		}

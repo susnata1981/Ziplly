@@ -83,6 +83,8 @@ public class CouponReportSalesView extends AbstractView {
 	@UiField
 	Label totalCouponsUnused;
 	@UiField
+	Label totalFee;
+	@UiField
 	HTMLPanel chartsPanel;
 	@UiField
 	ListBox chartTypeListBox;
@@ -240,6 +242,7 @@ public class CouponReportSalesView extends AbstractView {
 	public void displayCouponDetails(GetCouponTransactionResult result) {
 	  this.couponTransactions = result;
 		displayCouponTransactionDetailsPanel(true);
+		chartTypeListBox.setSelectedIndex(0);
 		displayChart(ChartType.values()[0]);
 	}
 
@@ -248,6 +251,7 @@ public class CouponReportSalesView extends AbstractView {
 		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSales(), ValueType.PRICE));
 		totalCouponsRedeemed.setText(summary.getTotalCouponsRedeemed().toString());
 		totalCouponsUnused.setText(summary.getTotalCouponsUnused().toString());
+		totalFee.setText(basicDataFormatter.format(summary.getTotalSales(), ValueType.PRICE));
 	}
 
 	public CellTable<CouponDTO> getCouponReportTable() {

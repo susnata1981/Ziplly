@@ -117,9 +117,9 @@ h2.heading {
 }
 
 .profileCaption {
-	font-family: Georgia, serif;
+	font-family: Monaco, Consolas, "Lucida Console", monospace;
 	font-size: 18px;
-	color: #555444;
+	color: #555;
 	text-align: center !important;
 	text-transform: capitalize;
 }
@@ -134,7 +134,7 @@ h2.heading {
 	clear: both;
 	display: block;
 	padding: 3px;
-	margin: 4px 3px;
+	margin: 10px 0;
 	color: #555;
 }
 
@@ -145,7 +145,7 @@ h2.heading {
 .tweetSection {
 	margin-top: 6px;
 	padding: 8px;
-	background: #ddd;
+	background: #f1f1f1;
 }
 
 .rootTweetSection {
@@ -189,16 +189,16 @@ h2.heading {
 }
 
 .passwordTextBox {
-	height: 38px !important;
+	height: 34px !important;
 	font-size: 16px !important;
 }
 
 .introductionTextBox {
 	float: left;
-	width: 110%;
+	width: 96%;
 	height: 120px;
 	padding: 6px;
-	margin-bottom: 30px;
+	margin: 10px 0;
 	font-size: 14px !important;
 }
 
@@ -209,7 +209,14 @@ h2.heading {
 }
 
 .non_editable {
-	margin: 6px 2px 12px 2px;
+	display: block;
+	float: left;
+	width: 100%;
+	margin: 10px 0;
+}
+
+.non_editable select {
+	margin: 10px 0;	
 }
 
 .clear {
@@ -247,8 +254,7 @@ h2.heading {
 
 .buttonsPanel {
 	clear: both;
-	margin-top: 10px;
-	margin-left: 160px;
+	margin-left: 140px;
 }
 
 .buttonsPanel .btn {
@@ -308,10 +314,6 @@ h2.heading {
 	float: left;
 }
 
-.addressPanel {
-	padding: 4px;
-}
-
 .basicInfoTab {
 	min-height: 320px;
 	padding: 10px;
@@ -328,6 +330,8 @@ h2.heading {
 	width: 180px;
 	height: 200px;
 	margin-bottom: 2px;
+	border: 1px solid #bbb;
+	padding: 6px;
 }
 
 .profileImage {
@@ -376,12 +380,12 @@ h2.heading {
 }
 
 .passwordField {
-	height: 38px;
+	height: 34px;
 	font-size: 16px;
 }
 
 input[type="text"], input[type="password"] {
-	height: 38px;
+	height: 34px;
 	font-size: 18px;
 }
 
@@ -393,8 +397,10 @@ input[type="text"], input[type="password"] {
 }
 
 .updateAlertBlock h4 {
-	color: #666;
-	border-bottom: 1px solid #666;	
+	color: #555;
+	background: #ddd;
+	border-bottom: 1px solid #666;
+	padding: 6px;	
 	margin-bottom: 12px;
 }
 
@@ -406,4 +412,72 @@ input[type="text"], input[type="password"] {
 
 .colSpan {
 	max-width: 90%;
+}
+
+.profileInfoHeader {
+	display: block;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+	font-size: 16px;
+	width: 100%;
+	color: #555;
+	padding: 8px;
+	background: #ddd;
+	box-sizing: border-box;
+}
+
+.profileInfoHeaderNoBackground {
+	display: block;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+	font-size: 16px;
+	width: 50%;
+	margin: 2px 0;
+	color: #555;
+}
+
+.profileInfoValue {
+	display: block;
+	font-family: Cambria, Georgia, serif;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 2px;
+	color: #555;
+}
+
+.profileInfoInlineValue {
+	display: inline-block;
+	float: left;
+	font-family: Cambria, Georgia, serif;
+	font-size: 18px;
+	font-weight: 600;
+	padding: 2px;
+	color: #555;
+	text-transform: capitalize;	
+}
+
+.profileInfoInlineValueNoTransform {
+	display: inline-block;
+	float: left;
+	font-family: Cambria, Georgia, serif;
+	font-size: 18px;
+	font-weight: 600;
+	padding: 2px;
+	color: #555;
+}
+
+.profileAddressValue {
+	display: block;
+	font-family: Cambria, Georgia, serif;
+	font-size: 14px !important;
+	font-weight: 600;
+	padding: 2px;
+	color: #555;
+}
+
+.profileInfoNumberValue {
+	display: block;
+	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 2px;
+	color: #555;
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class SalesAmountLineChartBuilder extends AbstractLineChartBuilder {
@@ -20,6 +21,10 @@ public class SalesAmountLineChartBuilder extends AbstractLineChartBuilder {
     }
     
     for(PurchasedCouponDTO pr : result.getPurchasedCoupons()) {
+      if (pr.getTransaction().getStatus() != TransactionStatus.ACTIVE) {
+        continue;
+      }
+      
       Date timeCreated = pr.getTransaction().getTimeCreated();
       if (salesPerDate.get(timeCreated) == null) {
         salesPerDate.put(timeCreated, new Double(0));

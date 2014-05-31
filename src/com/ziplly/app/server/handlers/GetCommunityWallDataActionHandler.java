@@ -14,9 +14,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.HashtagDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
+import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.bli.AccountBLI;
@@ -62,8 +64,19 @@ public class GetCommunityWallDataActionHandler extends
     } else if (action.getSearchType() == SearchType.NEIGHBORHOOD) {
       Preconditions.checkNotNull(action.getNeighborhood());
       return getTweetsByNeighborhood(action);
+    } else if (action.getSearchType() == SearchType.COUPONS) {
+      return getCoupons(action);
     }
     throw new IllegalArgumentException();
+  }
+
+  private GetCommunityWallDataResult getCoupons(GetCommunityWallDataAction action) {
+      List<Tweet> tweets = tweetDao.findAllCoupons(
+          action.getPage(), 
+          action.getPageSize());
+      GetCommunityWallDataResult result = new GetCommunityWallDataResult();
+      result.setTweets(EntityUtil.cloneList(tweets));
+      return result;
   }
 
   private GetCommunityWallDataResult

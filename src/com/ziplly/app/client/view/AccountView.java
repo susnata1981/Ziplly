@@ -191,7 +191,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		    ValueType.DATE_VALUE_SHORT));
 
 		// Occupation panel
-		occupationSpan.setInnerHTML(account.getOccupation());
+		setValue(occupationSpan, account.getOccupation());
+//		occupationSpan.setInnerHTML(account.getOccupation());
 
 		// Interest section
 		populateInterest();
@@ -201,6 +202,14 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		displayProfileSection(true);
 	}
 
+	private void setValue(SpanElement elem, String val) {
+	  if (val == null) {
+	    elem.setInnerHTML(StringConstants.NOT_AVAILABLE);
+	  } else {
+	    elem.setInnerHTML(val);
+	  }
+	}
+	
 	private void displayTweetBox(boolean display) {
 		StyleHelper.show(tweetBoxDiv.getElement(), display);
 	}
@@ -250,6 +259,8 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 				sb.append(interest.getName() + "<br>");
 			}
 			interestPanel.add(new HTMLPanel("<span>" + sb.toString() + "</span>"));
+		} else {
+		  interestPanel.add(new HTMLPanel("<span>" + StringConstants.NOT_AVAILABLE + "</span>"));
 		}
 	}
 

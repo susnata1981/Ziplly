@@ -330,6 +330,8 @@ public class EntityUtil {
 		resp.setName(plan.getName());
 		resp.setDescription(plan.getDescription());
 		resp.setFee(plan.getFee());
+		resp.setCouponsAllowed(plan.getCouponsAllowed());
+		resp.setTweetsAllowed(resp.getTweetsAllowed());
 		resp.setStatus(plan.getStatus());
 		resp.setPlanType(plan.getPlanType());
 		resp.setTimeCreated(plan.getTimeCreated());

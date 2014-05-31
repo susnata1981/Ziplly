@@ -4,8 +4,12 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel ui:field="transactionPanel">
-		<!-- <b:SimplePager ui:field="pager" display="{couponTransactionTable}" fastForwardRows="15" />
-		<b:CellTable ui:field="couponTransactionTable" bordered="true" striped="true" /> -->
-		<b:Alert ui:field="message" close="false" />
+		<!-- <b:SimplePager ui:field="pager" display="{couponTransactionTable}" 
+			fastForwardRows="15" /> <b:CellTable ui:field="couponTransactionTable" bordered="true" 
+			striped="true" /> -->
+
+		<!-- <b:SimplePager display="{couponTransactionTable}" fastForwardRows="15" location="RIGHT" /> -->
+		<!-- <b:CellTable ui:field="couponTransactionTable" bordered="true" condensed="true" striped="true" /> -->
+		<b:Alert ui:field="message" close="false" /> 
 	</g:HTMLPanel>
 </ui:UiBinder> 

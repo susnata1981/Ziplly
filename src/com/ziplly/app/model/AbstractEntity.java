@@ -15,9 +15,6 @@ public class AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "entity_status")
-	protected EntityStatus entityStatus;
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "time_created", updatable = false)
 	protected Date timeCreated;
@@ -52,12 +49,4 @@ public class AbstractEntity implements Serializable {
 		this.timeUpdated = timeUpdated;
 		return timeUpdated;
 	}
-
-  public EntityStatus getEntityStatus() {
-    return entityStatus;
-  }
-
-  public void setEntityStatus(EntityStatus entityStatus) {
-    this.entityStatus = entityStatus;
-  }
 }

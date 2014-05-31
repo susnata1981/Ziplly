@@ -13,36 +13,30 @@
 			height: 40px !important;
 			font-size: 18px !important;
 		}
-		.button
-		{
-		display: block;
-		height: 30px;
-		line-height: 30px;
-		font-size: 1.12em;
+		.button {
+			display: block;
+			line-height: 30px;
+			font-size: 1.12em;
 		}
 		.residentSignupDiv {
-		margin-top:8px;
-		height: 55px;
-		padding: 2px;
-		font-size: 12px;
-		font-style: helvetica;
+			margin-top:8px;
+			height: 55px;
+			padding: 2px;
+			font-size: 12px;
+			font-style: helvetica;
 		}
 		.residentSignupLink {
-		font-size: 12px;
-		font-style:
-		helvetica;
-		height: 20px
-		!important;
-		background: none !important;
+			font-size: 12px;
+			font-style: helvetica;
+			height: 20px !important;
+			background: none !important;
 		}
 		.passwordRecoveryLink {
-		margin-top: 10px;
-		font-size: 12px;
-		font-style:
-		helvetica;
-		height: 20px
-		!important;
-		background: none !important;
+			margin-top: 10px;
+			font-size: 12px;
+			font-style: helvetica;
+			height: 20px !important;
+			background: none !important;
 		}
 		.hr {
 			margin: 10px 0;

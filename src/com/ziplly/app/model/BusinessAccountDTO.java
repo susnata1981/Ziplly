@@ -11,8 +11,6 @@ public class BusinessAccountDTO extends AccountDTO {
 	private String name;
 	private String phone;
 	private String website;
-	private String street1;
-	private String street2;
 	private List<SubscriptionDTO> subscriptions = new ArrayList<SubscriptionDTO>();
 	private String businessType;
 	private String category;
@@ -35,22 +33,6 @@ public class BusinessAccountDTO extends AccountDTO {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getStreet1() {
-		return street1;
-	}
-
-	public void setStreet1(String street1) {
-		this.street1 = street1;
-	}
-
-	public String getStreet2() {
-		return street2;
-	}
-
-	public void setStreet2(String street2) {
-		this.street2 = street2;
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.ziplly.app.model.TweetType;
 
 public class GetCommunityWallDataAction implements Action<GetCommunityWallDataResult> {
 	public static enum SearchType {
-		CATEGORY, HASHTAG, TWEET_BY_ID, NEIGHBORHOOD;
+		CATEGORY, HASHTAG, TWEET_BY_ID, NEIGHBORHOOD, COUPONS;
 	}
 
 	private GetCommunityWallDataAction.SearchType searchType;

@@ -5,6 +5,7 @@ import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
 import com.ziplly.app.model.Coupon;
+import com.ziplly.app.model.SubscriptionPlan;
 
 public interface PaymentService {
 	
@@ -16,9 +17,20 @@ public interface PaymentService {
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
 	 */
-	String generateSubscriptionToken(Long sellerId, Long subscriptionId, BigDecimal amount) throws InvalidKeyException, SignatureException;
-//	String getJWT(Long sellerId, BigDecimal d) throws InvalidKeyException, SignatureException;
-	
+	String generateSubscriptionToken(Long sellerId, Long subscriptionId, BigDecimal amount) 
+	    throws InvalidKeyException, SignatureException;
+
+	/**
+	 * For subscription
+	 * @param plan
+	 * @param buyerAccountId
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws SignatureException
+	 */
+  String generateJWTTokenForSubscription(SubscriptionPlan plan, Long buyerAccountId) 
+      throws InvalidKeyException, SignatureException;
+
 	/**
 	 * For generating coupon purchase token
 	 * @param transactionId 

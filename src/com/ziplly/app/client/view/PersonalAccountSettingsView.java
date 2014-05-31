@@ -35,9 +35,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
@@ -78,10 +80,19 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	private static PersonalAccountSettingsViewUiBinder uiBinder = GWT
 	    .create(PersonalAccountSettingsViewUiBinder.class);
 
+	interface Style extends CssResource {
+	  String profileInfoHeaderNoBackground();
+	  
+	  String profileInfoInlineValue();
+	}
+	
 	interface PersonalAccountSettingsViewUiBinder extends
 	    UiBinder<Widget, PersonalAccountSettingsView> {
 	}
 
+	@UiField
+	Style style;
+	
 	@UiField
 	TabPanel accountDetailsTab;
 
@@ -238,6 +249,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		// Setup upload anchor
 		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
 		StyleHelper.show(uploadField.getElement(), false);
+		StyleHelper.show(introductionError.getElement(), false);
 		setupHandlers();
 	}
 
@@ -296,7 +308,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 		// basic info
 		setProfileImage(accountFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
-		adjustProfileImagePanel();
+//		adjustProfileImagePanel();
 
 		firstname.setInnerText(account.getFirstName());
 		lastname.setInnerText(account.getLastName());
@@ -337,9 +349,9 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			HPanel panel = new HPanel();
 			HTMLPanel span =
-			    new HTMLPanel(privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
-			ShareSettingsWidget shareSettingWidget =
-			    new ShareSettingsWidget(ps.getAllowedShareSettings());
+			    new HTMLPanel(ps.getSection().getName());//privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
+			span.setStyleName(style.profileInfoHeaderNoBackground());
+			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(ps.getAllowedShareSettings());
 			shareSettingWidget.setSelection(ps.getSetting());
 			span.setWidth("120px");
 			panel.add(span);
@@ -411,7 +423,8 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		message.setVisible(false);
 		message.clear();
 		introductionCg.setType(ControlGroupType.NONE);
-		introductionError.setVisible(false);
+//		introductionError.setVisible(false);
+		StyleHelper.show(introductionError.getElement(), false);
 		occupationCg.setType(ControlGroupType.NONE);
 		occupationError.setVisible(false);
 	}
@@ -441,7 +454,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 		ValidationResult result = FieldVerifier.validateString(elem.getText(), maxLength);
 		if (!result.isValid()) {
 			cg.setType(ControlGroupType.ERROR);
-			error.setVisible(true);
+			StyleHelper.show(introductionError.getElement(), true);
 			error.setText(result.getErrors().get(0).getErrorMessage());
 			message.setText(result.getErrors().get(0).getErrorMessage());
 			message.setVisible(true);
@@ -546,9 +559,9 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	 */
 	private void setProfileImage(final String imageUrl) {
 		if (imageUrl != null) {
-			resetProfileImagePanel();
+//			resetProfileImagePanel();
 			profileImagePreview.setUrl(imageUrl);
-			adjustProfileImagePanel();
+//			adjustProfileImagePanel();
 		}
 	}
 
@@ -560,6 +573,7 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 			@Override
 			public void onLoad(LoadEvent event) {
+			  Window.alert("IMG HEIGHT="+profileImagePreview.getHeight());
 				StyleHelper.setHeight(profileImagePanel, profileImagePreview.getHeight());
 			}
 		});

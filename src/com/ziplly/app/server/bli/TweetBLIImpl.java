@@ -25,173 +25,205 @@ import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 
 public class TweetBLIImpl implements TweetBLI {
-	private TweetDAO tweetDao;
-	private TweetNotificationBLI tweetNotificationBli;
-	private SubscriptionPlanDAO subscriptionPlanDao;
+  private TweetDAO tweetDao;
+  private TweetNotificationBLI tweetNotificationBli;
+  private SubscriptionPlanDAO subscriptionPlanDao;
 
-	@Inject
-	public TweetBLIImpl(TweetDAO tweetDao,
-	    TweetNotificationBLI tweetNotificationBLI,
-	    SubscriptionPlanDAO subscriptionPlanDao) {
-		this.tweetDao = tweetDao;
-		this.tweetNotificationBli = tweetNotificationBLI;
-		this.subscriptionPlanDao = subscriptionPlanDao;
-	}
+  @Inject
+  public TweetBLIImpl(TweetDAO tweetDao,
+      TweetNotificationBLI tweetNotificationBLI,
+      SubscriptionPlanDAO subscriptionPlanDao) {
+    this.tweetDao = tweetDao;
+    this.tweetNotificationBli = tweetNotificationBLI;
+    this.subscriptionPlanDao = subscriptionPlanDao;
+  }
 
-	@Override
-	public Tweet sendTweet(final Tweet tweet, final Account loggedInAccount) throws AccessException,
-	    NeedsSubscriptionException,
-	    InternalException,
-	    UsageLimitExceededException,
-	    NotFoundException {
+  @Override
+  public Tweet sendTweet(final Tweet tweet, final Account loggedInAccount) throws AccessException,
+      NeedsSubscriptionException,
+      InternalException,
+      UsageLimitExceededException,
+      NotFoundException {
 
-		// check usage limits for business tweets
-		if (loggedInAccount instanceof BusinessAccount) {
-			checkUsage((BusinessAccount) loggedInAccount, tweet);
-		}
+    // check usage limits for business tweets
+    if (loggedInAccount instanceof BusinessAccount) {
+      checkUsage((BusinessAccount) loggedInAccount, tweet);
+    }
 
-		// Only business accounts can publish this
-		if (isCouponPromotion(tweet)) {
-			checkAccountType(loggedInAccount);
-		}
+    // Only business accounts can publish this
+    if (isCouponPromotion(tweet)) {
+      checkAccountType(loggedInAccount);
+    }
 
-		TweetDTO savedTweet = tweetDao.save(tweet);
-		tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
-		
-		return tweet;
-	}
+    TweetDTO savedTweet = tweetDao.save(tweet);
+    tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
 
-	private boolean isCouponPromotion(Tweet tweet) {
-		return tweet.getCoupon() != null;
-	}
+    return tweet;
+  }
 
-	/**
-	 * Checks to see if the current business account has permission to publish
-	 * coupons
-	 * 
-	 * @throws AccessException
-	 */
-	private void checkAccountType(Account account) throws AccessException {
-		if (!(account instanceof BusinessAccount)) {
-			throw new AccessException();
-		}
-	}
+  private boolean isCouponPromotion(Tweet tweet) {
+    return tweet.getCoupon() != null;
+  }
 
-	private void
-	    checkUsage(final BusinessAccount account, final Tweet tweet) throws NeedsSubscriptionException,
-	        InternalException,
-	        UsageLimitExceededException,
-	        NotFoundException {
+  /**
+   * Checks to see if the current business account has permission to publish
+   * coupons
+   * 
+   * @throws AccessException
+   */
+  private void checkAccountType(Account account) throws AccessException {
+    if (!(account instanceof BusinessAccount)) {
+      throw new AccessException();
+    }
+  }
 
-		boolean enablePaymentPlan = FeatureFlags.EnablePaymentPlan.isEnabled();
+  private void
+      checkUsage(final BusinessAccount account, final Tweet tweet) throws NeedsSubscriptionException,
+          InternalException,
+          UsageLimitExceededException,
+          NotFoundException {
 
-		// Wire on Wire off
-		if (!enablePaymentPlan) {
-			return;
-		}
+    boolean enablePaymentPlan = FeatureFlags.EnablePaymentPlan.isEnabled();
 
-		Subscription subscription = getActiveSubscription(account);
-		List<SubscriptionPlan> subscriptionPlans = subscriptionPlanDao.getAll();
-		SubscriptionPlan activePlan = getActiveSubscriptionPlan(subscriptionPlans, subscription);
+    // Wire on Wire off
+    if (!enablePaymentPlan) {
+      return;
+    }
 
-		if (isCouponPromotion(tweet)) {
-			if (!isCouponPromotionWithinLimit(subscription, activePlan, tweet)) {
-				throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
-			}
-			// otherwise it's fine
-			return;
-		}
+    Subscription subscription = getActiveSubscription(account);
+    SubscriptionPlan activePlan =  subscription != null ? subscription.getSubscriptionPlan()
+        : null;
+    
+//    List<SubscriptionPlan> subscriptionPlans = subscriptionPlanDao.getAll();
+//    SubscriptionPlan activePlan = getActiveSubscriptionPlan(subscriptionPlans, subscription);
 
-		if (!isTweetPromotionWithinLimit(subscription, activePlan, tweet)) {
-			throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
-		}
-	}
+    // Must be subscribed to publish coupons
+    if (activePlan == null && isCouponPromotion(tweet)) {
+      throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
+    }
 
-	private SubscriptionPlan
-	    getActiveSubscriptionPlan(final List<SubscriptionPlan> subscriptionPlans,
-	        final Subscription activeSubscription) {
+    if (isCouponPromotion(tweet)) {
+      if (!isCouponPromotionWithinLimit(subscription, activePlan, tweet)) {
+        throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
+      }
+      // otherwise it's fine
+      return;
+    }
 
-		if (activeSubscription == null) {
-			return getSubscriptionPlan(subscriptionPlans, SubscriptionPlanType.BASIC);
-		} else {
-			return activeSubscription.getSubscriptionPlan();
-		}
-	}
+    if (!isTweetPromotionWithinLimit(subscription, activePlan, tweet)) {
+      throw new NeedsSubscriptionException(StringConstants.NEEDS_SUBSCRIPTION_EXCEPTION);
+    }
+  }
 
-	// Unit test this function.
-	Date getLastSubscriptionCycle(Date subscriptionCreatedOn) {
-		DateTime now = new DateTime();
-		DateTime subscriptionCreationTime = new DateTime(subscriptionCreatedOn);
-		int subCycleDayOfMonth = subscriptionCreationTime.getDayOfMonth();
-		int currDayOfMonth = now.getDayOfMonth();
+//  private SubscriptionPlan
+//      getActiveSubscriptionPlan(final List<SubscriptionPlan> subscriptionPlans,
+//          final Subscription activeSubscription) {
+//
+//    if (activeSubscription == null) {
+//      return getSubscriptionPlan(subscriptionPlans, SubscriptionPlanType.BASIC);
+//    } else {
+//      return activeSubscription.getSubscriptionPlan();
+//    }
+//  }
 
-		if (subCycleDayOfMonth > currDayOfMonth) {
-			return now.minusMonths(1).plusDays(subCycleDayOfMonth - currDayOfMonth).toDate();
-		} else if (subCycleDayOfMonth < currDayOfMonth) {
-			DateTime lastBillingTime =
-			    now.minusMonths(1).minusDays(currDayOfMonth).plusDays(subCycleDayOfMonth);
-			return lastBillingTime.toDate();
-		} else {
-			return now.toDate();
-		}
-	}
+  // Unit test this function.
+  Date getLastSubscriptionCycle(Date subscriptionCreatedOn) {
+    DateTime now = new DateTime();
+    DateTime subscriptionCreationTime = new DateTime(subscriptionCreatedOn);
+    int subCycleDayOfMonth = subscriptionCreationTime.getDayOfMonth();
+    int currDayOfMonth = now.getDayOfMonth();
 
-	private boolean isTweetPromotionWithinLimit(Subscription subscription, 
-			SubscriptionPlan plan, 
-			Tweet tweet) {
-		
-		long totalTweetCount = 0;
-		Date now = new Date();
-		
-		if (subscription == null) {
-			totalTweetCount = tweetDao.findTweetsByAccountIdAndMonth(tweet.getSender().getAccountId(), new Date());
-		} else {
-			Date subscriptionCreatedOn = subscription.getTimeCreated();
-			Date lastSubscriptionCycle = getLastSubscriptionCycle(subscriptionCreatedOn);
-			totalTweetCount = tweetDao.findTotalTweetsPublishedBetween(tweet.getSender().getAccountId(), lastSubscriptionCycle, now);
-		}
-		
-		return plan.getTweetsAllowed() >= totalTweetCount;
-	}
+    if (subCycleDayOfMonth > currDayOfMonth) {
+      return now.minusMonths(1).plusDays(subCycleDayOfMonth - currDayOfMonth).toDate();
+    } else if (subCycleDayOfMonth < currDayOfMonth) {
+      DateTime lastBillingTime =
+          now.minusMonths(1).minusDays(currDayOfMonth).plusDays(subCycleDayOfMonth);
+      return lastBillingTime.toDate();
+    } else {
+      return now.toDate();
+    }
+  }
 
-	private boolean isCouponPromotionWithinLimit(Subscription subscription,
-	    SubscriptionPlan plan,
-	    Tweet tweet) {
+  private boolean isTweetPromotionWithinLimit(Subscription subscription,
+      SubscriptionPlan plan,
+      Tweet tweet) {
 
-		Date now = new Date();
-		Long totalCouponCount = 0L;
-		
-		if (subscription == null) {
-			totalCouponCount =
-			    tweetDao.findTotalCouponsByAccountIdAndMonth(tweet.getSender().getAccountId(), now);
-		} else {
-			Date subscriptionCreatedOn = subscription.getTimeCreated();
-			Date lastSubscriptionCycle = getLastSubscriptionCycle(subscriptionCreatedOn);
-			totalCouponCount = tweetDao.findTotalCouponsPublishedBetween(
-					tweet.getSender().getAccountId(),
-			    lastSubscriptionCycle,
-			    now);
-		}
-		
-		return plan.getCouponsAllowed() >= totalCouponCount;
-	}
+    long totalTweetCount = 0;
+    Date now = new Date();
 
-	private SubscriptionPlan getSubscriptionPlan(List<SubscriptionPlan> subscriptionPlans,
-	    SubscriptionPlanType type) {
-		for (SubscriptionPlan plan : subscriptionPlans) {
-			if (plan.getPlanType() == type) {
-				return plan;
-			}
-		}
-		return null;
-	}
+    Date subscriptionCreatedOn = subscription.getTimeCreated();
+    Date lastSubscriptionCycle = getLastSubscriptionCycle(subscriptionCreatedOn);
+    totalTweetCount =
+        tweetDao.findTotalTweetsPublishedBetween(
+            tweet.getSender().getAccountId(),
+            lastSubscriptionCycle,
+            now);
+    return plan.getTweetsAllowed() > totalTweetCount;
+  }
 
-	private Subscription getActiveSubscription(BusinessAccount account) {
-		for (Subscription subscription : account.getSubscriptions()) {
-			if (subscription.getStatus() == SubscriptionStatus.ACTIVE) {
-				return subscription;
-			}
-		}
-		return null;
-	}
+  // private boolean isTweetPromotionWithinLimit(Subscription subscription,
+  // SubscriptionPlan plan,
+  // Tweet tweet) {
+  //
+  // long totalTweetCount = 0;
+  // Date now = new Date();
+  //
+  // if (subscription == null) {
+  // totalTweetCount =
+  // tweetDao.findTweetsByAccountIdAndMonth(tweet.getSender().getAccountId(),
+  // new Date());
+  // } else {
+  // Date subscriptionCreatedOn = subscription.getTimeCreated();
+  // Date lastSubscriptionCycle =
+  // getLastSubscriptionCycle(subscriptionCreatedOn);
+  // totalTweetCount =
+  // tweetDao.findTotalTweetsPublishedBetween(tweet.getSender().getAccountId(),
+  // lastSubscriptionCycle, now);
+  // }
+  //
+  // return plan.getTweetsAllowed() >= totalTweetCount;
+  // }
+
+  private boolean isCouponPromotionWithinLimit(
+      Subscription subscription,
+      SubscriptionPlan plan,
+      Tweet tweet) {
+
+    Date now = new Date();
+    Long totalCouponCount = 0L;
+
+    if (subscription == null) {
+      totalCouponCount =
+          tweetDao.findTotalCouponsByAccountIdAndMonth(tweet.getSender().getAccountId(), now);
+    } else {
+      Date subscriptionCreatedOn = subscription.getTimeCreated();
+      Date lastSubscriptionCycle = getLastSubscriptionCycle(subscriptionCreatedOn);
+      totalCouponCount =
+          tweetDao.findTotalCouponsPublishedBetween(
+              tweet.getSender().getAccountId(),
+              lastSubscriptionCycle,
+              now);
+    }
+
+    return plan.getCouponsAllowed() > totalCouponCount;
+  }
+
+  private SubscriptionPlan getSubscriptionPlan(List<SubscriptionPlan> subscriptionPlans,
+      SubscriptionPlanType type) {
+    for (SubscriptionPlan plan : subscriptionPlans) {
+      if (plan.getPlanType() == type) {
+        return plan;
+      }
+    }
+    return null;
+  }
+
+  private Subscription getActiveSubscription(BusinessAccount account) {
+    for (Subscription subscription : account.getSubscriptions()) {
+      if (subscription.getStatus() == SubscriptionStatus.ACTIVE) {
+        return subscription;
+      }
+    }
+    return null;
+  }
 }

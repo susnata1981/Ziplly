@@ -30,7 +30,6 @@ import com.ziplly.app.shared.GetFacebookRedirectUriAction;
 import com.ziplly.app.shared.GetHashtagAction;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
 import com.ziplly.app.shared.GetInterestAction;
-import com.ziplly.app.shared.GetJwtTokenAction;
 import com.ziplly.app.shared.GetLatLngAction;
 import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetNeighborhoodAction;
@@ -43,7 +42,6 @@ import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.MyAction;
-import com.ziplly.app.shared.PayAction;
 import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.RedeemCouponAction;
 import com.ziplly.app.shared.RegisterAccountAction;
@@ -135,8 +133,6 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		bindHandler(GetNewMemberAction.class, GetNewMembersActionHandler.class);
 		
 		// Payment service
-		bindHandler(GetJwtTokenAction.class, GetJwtTokenActionHandler.class);
-		bindHandler(PayAction.class, PayActionHandler.class);
 		bindHandler(GetAllSubscriptionPlanAction.class, GetAllSubscriptionPlanActionHandler.class);
 
 		bindHandler(GetLatLngAction.class, GetLatLngActionHandler.class);

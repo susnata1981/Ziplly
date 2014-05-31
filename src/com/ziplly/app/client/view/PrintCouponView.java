@@ -6,6 +6,7 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -62,12 +63,14 @@ public class PrintCouponView extends AbstractView {
 	Label totalCouponsAllowerPerPerson;
 	
 	@UiField
-	Label termsAndConditionLabel;
+	SpanElement termsAndConditionLabel;
+	
+	private String finePrint = "One coupon per customer per day. Coupon must be surrendered at the time of purchase. "
+	    + "May not be used for prior "
+	    + "purchases or sale price items or combined with any other coupon, offer , sale or discount.";
 	
 	public void displayCoupon(GetCouponQRCodeUrlResult result) {
-		System.out.println("Seller = "+result.getSeller());
 		CouponDTO coupon = result.getCoupon();
-		System.out.println("C="+coupon.getTweet());
 		logo.setUrl(ZResources.IMPL.zipllyLogo().getSafeUri().asString());
 		frame.setSrc(result.getUrl());
 		title.setText(coupon.getDescription());
@@ -83,7 +86,7 @@ public class PrintCouponView extends AbstractView {
 		endDate.setText(basicDataFormatter.format(coupon.getEndDate(), ValueType.DATE_VALUE));
 		
 		totalCouponsAllowerPerPerson.setText(Integer.toString(coupon.getNumberAllowerPerIndividual()));
-		termsAndConditionLabel.setText("You're required to honor all valid coupons that were purchased on Ziplly.");
+		termsAndConditionLabel.setInnerText(finePrint);
   }
 
 	public void reset() {

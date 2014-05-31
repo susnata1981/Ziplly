@@ -5,6 +5,14 @@
 	<!-- <ui:style field="astyle" src="accountview.css" /> -->
 	<ui:style
 		type="com.ziplly.app.client.view.BusinessAccountSettingsView.Style">
+		.settingsPanel {
+		}
+		.settingsPanel span.label {
+			display: block;
+			font-weight: 600;
+			text-shadow: none !important;
+			font-color: #525252;
+		}
 		.tabPanel {
 		background: #f1f1f1;
 		opacity: .92;
@@ -27,18 +35,21 @@
 			width: 200px;
 			height: 200px;
 			overflow: hidden;
+			border: 1px solid #bbb;
 		}
 		.businessProfileImage {
 			max-height: 100%;
 			max-width: 100%;
 		}
 		.paymentDetailsSection {
-		width: 96%;
-		border: 2px solid
-		#ddd;
-		padding:
-		10px;
-		overflow: auto;
+			width: 96%;
+			border: 2px solid #ddd;
+			padding: 10px;
+			overflow: auto;
+		}
+		.selectList {
+			width: 240px !important;
+			font-size: 14px !important;
 		}
 		.subscriptionPlanTablePanel {
 		margin-bottom: 90px;
@@ -81,30 +92,23 @@
 		margin: 6px 0;
 		padding: 6px 0;
 		}
-
 		.inputTextField {
 		height:
 		36px !important;
 		font-size: 18px !important;
 		}
 		.wideTextBox {
-		width:
-		240px;
-		}
-		select {
-		width: 240px;
-		font-size:
-		18px !important;
+			width: 90%;
 		}
 		.passwordLabel
 		{
-		display: inline-block;
-		width: 180px;
+			display: block;
+			width: 180px;
 		}
 		.passwordField {
-		height: 38px
-		!important;
-		font-size: 16px !important;
+			display: block;
+			height: 38px !important;
+			font-size: 16px !important;
 		}
 		.popoverText {
 		display: inline;
@@ -143,8 +147,16 @@
 			margin-top: 10px;
 			font-size: 12px;
 		}
+		.newLine {
+			clear: left;
+			display: block;
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-size: 16px;
+			padding: 2px 4px;
+			margin-bottom: 12px;
+		}
 	</ui:style>
-	<b:FluidContainer ui:field="settingsPanel">
+	<b:FluidContainer ui:field="settingsPanel" addStyleNames="{style.settingsPanel}">
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
 				<b:Alert ui:field="message" animation="true" close="false" />
@@ -171,7 +183,8 @@
 									</b:ControlGroup>
 									<div>
 										<b:Label>Neighborhood</b:Label>
-										<span ui:field="neighborhoodSpan" />
+										<b:TextBox ui:field="neighborhoodTextBox" placeholder="Neighborhood..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
 									</div>
 									<b:ControlGroup ui:field="street1Cg">
 										<b:Controls>
@@ -213,9 +226,9 @@
 									<b:Controls>
 										<b:Label>Business Category</b:Label>
 										<br />
-										<b:ListBox ui:field="businessCategory"></b:ListBox>
+										<b:ListBox ui:field="businessCategory" addStyleNames="{style.selectList}"></b:ListBox>
 									</b:Controls>
-									<b:Controls ui:field="cuisineControls">
+									<b:Controls ui:field="cuisineControls" addStyleNames="{style.selectList}">
 										<b:Label>Cuisine </b:Label>
 										<br />
 										<b:ListBox ui:field="cuisineListBox"></b:ListBox>
@@ -232,7 +245,7 @@
 									</div>
 
 									<!-- Hours of operation -->
-									<div class="heading">Hours of operation</div>
+									<h4>Hours of operation</h4>
 									<div class="{style.horizontalDiv}">
 										<b:Label addStyleNames="{style.timeOpenLabel}">Monday</b:Label>
 										<b:TextBox ui:field="mondayStart" addStyleNames="{style.timeOpenTextBox}"
@@ -312,14 +325,22 @@
 					<b:Tab heading="Subscription Plans" ui:field="subscriptionTab">
 						<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
 							<b:Alert ui:field="paymentStatus" close="false" />
+							<div class="profile_section_heading">
+								<span>Subscription plans</span>
+							</div>
 							<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
 								addStyleNames="{style.subscriptionPlanTablePanel}">
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
 					<b:Tab heading="Transaction Details" ui:field="transactionDetailsTab">
-						<g:HTMLPanel ui:field="transactionDetailsPanel">
-						</g:HTMLPanel>
+					    <g:HTMLPanel>
+					        <div class="profile_section_heading">
+								<span>Subscription history</span>
+							</div>
+							<g:HTMLPanel ui:field="transactionDetailsPanel">
+							</g:HTMLPanel>
+					    </g:HTMLPanel>
 					</b:Tab>
 					<b:Tab ui:field="notification" heading="Notification">
 						<g:HTMLPanel>
@@ -339,8 +360,10 @@
 					</b:Tab>
 					<b:Tab ui:field="location" heading="Locations">
 						<g:HTMLPanel>
-							<b:Label>Locations</b:Label> <g:Anchor ui:field="addLocationAnchor">add</g:Anchor>
-							<hr />
+							<div class="profile_section_heading">
+								<span>Location settings</span> 
+								<g:Anchor ui:field="addLocationAnchor">add</g:Anchor> 
+							</div>
 							<g:HTMLPanel ui:field="locationPanel">
 
 							</g:HTMLPanel>

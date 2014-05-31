@@ -19,10 +19,9 @@ import com.ziplly.app.server.bli.payment.PayloadParser;
 @Singleton
 public class ConfirmPaymentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String JWT_TOKEN_KEY = "jwt";
 	private Logger logger = Logger.getLogger(ConfirmPaymentServlet.class.getCanonicalName());
-	PaymentService paymentService;
-	CouponBLI couponBli;
+	private PaymentService paymentService;
+	private CouponBLI couponBli;
 	private PayloadParser parser;
 
 	@Inject
@@ -31,17 +30,6 @@ public class ConfirmPaymentServlet extends HttpServlet {
 		this.couponBli = couponBli;
 		this.paymentService = paymentService;
 	}
-
-//	@Override
-//	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-//		logger.info("Received request = " + req.getContentLength());
-//		try {
-//			handlePayload(req.getParameter(JWT_TOKEN_KEY), res);
-//		} catch (Exception e) {
-//			logger.severe(String.format("Failed to confirm payment: %s", e));
-//			e.printStackTrace();
-//		}
-//	}
 
 	private void handlePayload(String parameter, HttpServletResponse res) {
 		BaseRequest request = parser.parse(parameter);

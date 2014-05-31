@@ -11,6 +11,7 @@ public class Request {
 	private String purchaseCouponId;
 	private String sellerId;
 	private String subscriptionId;
+	private String sellerData;
 	
 	public String getName() {
 		return name;
@@ -55,5 +56,11 @@ public class Request {
   }
 	public void setSellerId(String sellerId) {
 	  this.sellerId = sellerId;
+  }
+  public String getSellerData() {
+    return sellerData;
+  }
+  public void setSellerData(String sellerData) {
+    this.sellerData = sellerData;
   }
 }

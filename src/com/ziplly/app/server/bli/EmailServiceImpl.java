@@ -103,7 +103,8 @@ public class EmailServiceImpl implements EmailService {
 	 * Main method to send emails. Take in 1. Recipient name 2. Recipient email 3.
 	 * Subject 4. Content
 	 */
-	private void sendEmailToFrom(String recipientName,
+	private void sendEmailToFrom(
+	    String recipientName,
 	    String recipientEmail,
 	    String fromName,
 	    String fromEmail,

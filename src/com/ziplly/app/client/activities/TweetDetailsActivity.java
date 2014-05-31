@@ -13,7 +13,6 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
-import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.SignupPlace;
@@ -73,15 +72,15 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 					view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 				}
 			}
-
-			@Override
-			public void onFailure(Throwable th) {
-				if (th instanceof NotFoundException) {
-					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-				} else {
-					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-				}
-			}
+//
+//			@Override
+//			public void onFailure(Throwable th) {
+//				if (th instanceof NotFoundException) {
+//					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+//				} else {
+//					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+//				}
+//			}
 		});
 	}
 

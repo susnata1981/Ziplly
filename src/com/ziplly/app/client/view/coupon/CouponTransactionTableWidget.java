@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.CellTable;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.shared.GWT;
@@ -16,6 +17,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.PurchasedCouponDTO;
 
 public class CouponTransactionTableWidget extends Composite {
@@ -49,12 +51,14 @@ public class CouponTransactionTableWidget extends Composite {
 		this.basicDataFormatter = basicDataFormatter;
 		setupUi();
 		initWidget(uiBinder.createAndBindUi(this));
-		message.setVisible(false);
+		StyleHelper.show(message.getElement(), false);
 	}
 
 	private void setupUi() {
 		pager = new SimplePager();
 		couponTransactionTable = new CellTable<PurchasedCouponDTO>();
+		couponTransactionTable.setEmptyTableWidget(new Label("No transaction"));
+		couponTransactionTable.setRowData(0, new ArrayList<PurchasedCouponDTO>());
 		couponTransactionTable.setHover(true);
 		buildTable();
 		pager.setDisplay(couponTransactionTable);
@@ -80,7 +84,7 @@ public class CouponTransactionTableWidget extends Composite {
 	}
 	
 	public void displayPurchasedCoupons(List<PurchasedCouponDTO> purchasedCoupons) {
-		message.setVisible(false);
+	  StyleHelper.show(message.getElement(), false);
 		if (purchasedCoupons == null || purchasedCoupons.size() == 0) {
 			displayMessage(StringConstants.NO_COUPON_TRANSACTIONS, AlertType.INFO);
 			return;
@@ -114,7 +118,7 @@ public class CouponTransactionTableWidget extends Composite {
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
-		message.setVisible(true);
+		StyleHelper.show(message.getElement(), false);
 	}
 
 	public void addRangeChangeHandler(com.google.gwt.view.client.RangeChangeEvent.Handler handler) {

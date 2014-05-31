@@ -3,6 +3,7 @@ package com.ziplly.app.client.exceptions;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
+import com.ziplly.app.client.view.event.NeedsLoginEvent;
 import com.ziplly.app.client.widget.AlertModal;
 
 public class GlobalErrorHandler {
@@ -21,6 +22,10 @@ public class GlobalErrorHandler {
 		}
 		
 		modal.showMessage(errorDef.getErrorMessage(), errorDef.getType());
+		if (errorDef.getCode() == ErrorCodes.NeedsLoginError) {
+		  eventBus.fireEvent(new NeedsLoginEvent());
+		}
+		
 		postHandle();
 	}
 

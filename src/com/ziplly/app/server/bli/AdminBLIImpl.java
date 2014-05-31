@@ -59,7 +59,8 @@ public class AdminBLIImpl implements AdminBLI {
 
 		String query = buildQuery(tsc);
 		System.out.println("Query = " + query);
-		return tweetDao.findTweets(query, start, end);
+		return tweetDao.findAll();
+//		return tweetDao.findTweets(query, start, end);
 	}
 
 	@Override
@@ -70,7 +71,8 @@ public class AdminBLIImpl implements AdminBLI {
 
 		String query = buildQuery(tsc);
 		String countQuery = "select count(*) " + query;
-		return tweetDao.findTotalTweetCount(countQuery);
+//		return tweetDao.findTotalTweetCount(countQuery);
+		return (long) tweetDao.findAll().size();
 	}
 
 	// Builds the where clause for Tweet search

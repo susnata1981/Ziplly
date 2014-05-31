@@ -49,69 +49,64 @@
 								<h3 ui:field="businessName" class="{bstyle.profileInfoBoxHeading}" />
 								<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 								<div class="{style.businessInfoItem}">
-									<b:Label>Neigborhood</b:Label>
-									<span class="{bstyle.businessAttribtue}" ui:field="neighborhoodName" />
+									<span class="{style.profileInfoHeader}">Neigborhood</span>
+									<span class="{style.profileInfoValue}" ui:field="neighborhoodName" />
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label>Business Type</b:Label>
+									<span class="{style.profileInfoHeader}">Business Type</span>
 									<span ui:field="businessCategory"
-										class="{style.description} {bstyle.businessAttribtue}" />
+										class="{style.profileInfoValue}" />
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label>Email</b:Label>
+									<span class="{style.profileInfoHeader}">Email</span>
 									<g:Anchor ui:field="emailLink">
-										<span ui:field="email" addStyleNames="{style.description}" />
+										<span ui:field="email" class="{style.profileInfoValue}"/>
 									</g:Anchor>
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label>Phone</b:Label>
-									<span ui:field="phoneSpan"
-										class="{style.description} {bstyle.businessAttribtue}" />
+									<span class="{style.profileInfoHeader}">Phone</span>
+									<span ui:field="phoneSpan" class="{style.profileInfoNumberValue}" />
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label>Website</b:Label>
+									<span class="{style.profileInfoHeader}">Website</span>
 									<g:Anchor ui:field="websiteLink">
-										<span ui:field="websiteSpan"
-											class="{style.description} {bstyle.businessAttribtue}" />
+										<span ui:field="websiteSpan" class="{style.profileInfoValue}" />
 									</g:Anchor>
 								</div>
 								<div class="{style.businessInfoItem}">
-									<span>
-										<b:Label>Price range</b:Label>
-										<dt:PriceRangeWidget ui:field="priceRangeWidget" />
-									</span>
+									<span class="{style.profileInfoHeader}">Price</span>
+									<dt:PriceRangeWidget ui:field="priceRangeWidget" addStyleNames="{style.profileInfoValue}"/>
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label addStyleNames="{style.leftAlignedLabel}">Parking</b:Label>
+									<span class="{style.profileInfoHeader}">Parking</span>
 									<g:HTMLPanel ui:field="parkingAvailableSpan"
-										addStyleNames="{style.leftAlignedPanel}" />
+										addStyleNames="{style.profileInfoValue}" />
 								</div>
 								<div class="{style.businessInfoItem}">
-									<b:Label addStyleNames="{style.leftAlignedLabel}">Wifi</b:Label>
+									<span class="{style.profileInfoHeader}">Wifi</span>
 									<g:HTMLPanel ui:field="wifiAvailableSpan"
-										addStyleNames="{style.leftAlignedPanel}" />
+										addStyleNames="{style.profileInfoValue}" />
 								</div>
 								<div class="{style.businessInfoItem}">
-									<span>
-										<b:Label>Last login</b:Label>
-										<span ui:field="lastLoginTime" />
-									</span>
+									<span class="{style.profileInfoHeader}">Last Login</span>
+									<span ui:field="lastLoginTime" addStyleNames="{style.profileInfoValue}" />
 								</div>
 								<div>
-									<b:Button block="true" ui:field="sendMsgBtn">Send Message</b:Button>
+									<b:Button block="true" ui:field="sendMsgBtn" type="INFO"> Send Message</b:Button>
 								</div>
 							</div>
 							<div class="{style.profileInfoBox}">
-								<h2 class="heading">Address</h2>
-								<g:HTMLPanel ui:field="addressPanel" addStyleNames="{style.addressPanel}">
-									<span ui:field="formattedAddress" />
+								<!-- <h2 class="heading">Address</h2> -->
+								<span class="{style.profileInfoHeader}">Address</span>
+								<g:HTMLPanel ui:field="addressPanel">
+									<span ui:field="formattedAddress" addStyleNames="{style.profileAddressValue}" />
 								</g:HTMLPanel>
 							</div>
 							<div class="{style.profileInfoBox}">
 								<div ui:field="locationDiv" class="{bstyle.locationDiv}"></div>
 							</div>
 							<g:HTMLPanel addStyleNames="{style.profileInfoBox} {style.smallfont}">
-								<h2 class="heading">Hours of operation</h2>
+								<span class="{style.profileInfoHeader}">Hours of operation</span>
 								<span>
 									Monday&nbsp;
 									<span ui:field="mondayStart" />
@@ -151,7 +146,7 @@
 								</span>
 							</g:HTMLPanel>
 							<div class="{style.profileInfoBox}">
-								<h2 class="heading">Activity</h2>
+								<span class="{style.profileInfoHeader}">Activity</span>
 								<dt:ProfileStatWidget title="Messages"
 									ui:field="tweetCountWidget" addStyleNames="{style.accountStatDiv}" />
 								<dt:ProfileStatWidget title="Comments"

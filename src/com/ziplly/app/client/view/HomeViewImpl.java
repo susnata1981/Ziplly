@@ -240,11 +240,10 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 	@Override
 	public void displayNewMembers(List<AccountDTO> accounts) {
 		if (accounts.size() == 0) {
-			StyleHelper.show(newMembersListContainer.getElement(), false);
+			profileListWidget.displayMessage(stringDefinitions.noNewMemberJoined(), AlertType.INFO);
 			return;
 		}
 		
-		StyleHelper.show(newMembersListContainer.getElement(), true);
 		profileListWidget.displayProfiles(accounts);
 	}
 

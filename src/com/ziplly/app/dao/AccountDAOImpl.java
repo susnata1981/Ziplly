@@ -104,16 +104,6 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	@Override
 	public AccountDTO save(Account account) {
 		EntityManager em = getEntityManager();
-
-//		for (AccountNotificationSettings as : account.getNotificationSettings()) {
-//			em.persist(as);
-//		}
-//
-//		// Privacy Settings.
-//		for (PrivacySettings ps : account.getPrivacySettings()) {
-//			em.persist(ps);
-//		}
-
 		em.persist(account);
 		return EntityUtil.convert(account);
 	}

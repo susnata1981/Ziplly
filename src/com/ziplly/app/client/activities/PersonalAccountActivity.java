@@ -247,6 +247,9 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		public void onFailure(Throwable th) {
 			super.onFailure(th);
 			view.displayProfileSection(false);
+			view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
+			// TODO(susnata) : invalid url error
+//			view.displayMessage(ErrorDefinitions., type);
 		}
 	}
 

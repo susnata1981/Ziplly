@@ -6,6 +6,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -314,22 +315,23 @@ public class BusinessAccountSettingsActivity extends
 				if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ELIGIBLE) {
 					view.initiatePay(subscriptionId, result.getToken());
 				} 
-				else if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ACTIVE_SUBSCRIPTION) {
-					String msg = stringDefinitions.cancelledSubscriptionStillActive();
-					
-					@SuppressWarnings("unused")
-          final ConfirmationModalWidget modal = new ConfirmationModalWidget(msg, new ConfirmationModalCallback() {
-						
-						@Override
-						public void confirm() {
-							view.initiatePay(subscriptionId, result.getToken());
-						}
-						
-						@Override
-						public void cancel() {
-						}
-					});
-				} else {
+//				else if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ACTIVE_SUBSCRIPTION) {
+//					String msg = stringDefinitions.cancelledSubscriptionStillActive();
+//					
+//					@SuppressWarnings("unused")
+//          final ConfirmationModalWidget modal = new ConfirmationModalWidget(msg, new ConfirmationModalCallback() {
+//						
+//						@Override
+//						public void confirm() {
+//							view.initiatePay(subscriptionId, result.getToken());
+//						}
+//						
+//						@Override
+//						public void cancel() {
+//						}
+//					});
+//				} 
+				else {
 					view.displayMessage(stringDefinitions.ineglibleForSubscription(), AlertType.WARNING);
 				}
       }

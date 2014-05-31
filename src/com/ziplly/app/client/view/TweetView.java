@@ -70,12 +70,6 @@ public class TweetView extends Composite implements ITweetView<TweetPresenter> {
 		tweetsSection.clear();
 	}
 
-	// @Override
-	// public void displayTweets(List<TweetDTO> tweets, boolean
-	// displayNoTweetsMessage) {
-	// displayTweets(tweets, null, displayNoTweetsMessage);
-	// }
-
 	@Override
 	public void displayTweets(List<TweetDTO> tweets, final TweetViewDisplayStatusCallback callback) {
 

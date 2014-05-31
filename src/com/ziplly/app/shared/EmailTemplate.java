@@ -8,7 +8,8 @@ public enum EmailTemplate {
 	SECURITY_ALERT("security_alert.ftl", "Security alert"),
 	ANNOUNCEMENT("announcement.ftl", "Announcement"),
 	OFFER("offer.ftl", "Offer"),
-	EMAIL_VERIFICATION("email_verification.ftl", "Verify your email");
+	EMAIL_VERIFICATION("email_verification.ftl", "Verify your email"), 
+	COUPON_PURCHASE("coupon_purchase.ftl", "Your coupon is here");
 
 	private String subject;
 

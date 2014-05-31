@@ -23,13 +23,11 @@ import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -56,8 +54,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
+import com.ziplly.app.client.activities.util.PaymentFlow;
 import com.ziplly.app.client.resource.TableResources;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.business.SubscriptionPlansView;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -82,8 +82,6 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
-import com.ziplly.app.model.SubscriptionPlanStatus;
-import com.ziplly.app.model.SubscriptionPlanType;
 import com.ziplly.app.model.overlay.SubscriptionDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -149,7 +147,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	HelpInline businessNameError;
 
 	@UiField
-	SpanElement neighborhoodSpan;
+	TextBox neighborhoodTextBox;
 
 	@UiField
 	TextBox street1;
@@ -261,6 +259,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	// Location tab
 	@UiField
 	HTMLPanel locationPanel;
+	@UiField
 	Anchor addLocationAnchor;
 	private AddLocationModal addLocationModal;
 
@@ -312,6 +311,9 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		StyleHelper.show(cuisineControls.getElement(), false);
 		StyleHelper.show(uploadField.getElement(), false);
 		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
+		// Disable add location for now
+		addLocationAnchor.setEnabled(false);
+		neighborhoodTextBox.setReadOnly(true);
 		setupHandlers();
 	}
 
@@ -373,9 +375,9 @@ public class BusinessAccountSettingsView extends AbstractView implements
 			website.setText(account.getWebsite());
 			email.setText(account.getEmail());
 			phone.setText(account.getPhone());
-			neighborhoodSpan.setInnerHTML(basicDataFormatter.format(account
-			    .getCurrentLocation()
-			    .getNeighborhood(), ValueType.NEIGHBORHOOD));
+			neighborhoodTextBox.setText(basicDataFormatter.format(account
+          .getCurrentLocation()
+          .getNeighborhood(), ValueType.NEIGHBORHOOD));
 
 			businessCategory.clear();
 			for (BusinessCategory category : BusinessCategory.values()) {
@@ -396,8 +398,8 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 			displayBusinessProperties();
 
-			setProfileImage(accountFormatter.format(account, ValueType.PROFILE_BACKROUND_URL));
-
+			setProfileImage(basicDataFormatter.format(account, ValueType.PROFILE_IMAGE_URL));
+			
 			// Don't show subscription tab for non-profits
 			if (account.getBusinessType() == BusinessType.NON_PROFIT) {
 				hideSubscriptionTab();
@@ -675,7 +677,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		props.setSundayEndTime(FieldVerifier.sanitize(sundayEnd.getText()));
 
 		acct.setProperties(props);
-
+		
 		presenter.save(acct);
 		saveBtn.setEnabled(false);
 		showSaveButton(false);
@@ -721,24 +723,21 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	@UiField
 	FluidContainer settingsPanel;
-
 	private ImageDTO currentUploadedImage;
 
 	@Override
 	public void displayImagePreview(String imageUrl) {
 		if (imageUrl != null) {
 			currentUploadedImage = ImageUtil.parseImageUrl(imageUrl);
-			profileImagePreview.setUrl(currentUploadedImage.getUrl() + "=s200");
+			profileImagePreview.setUrl(currentUploadedImage.getUrl() + "=s1600");
 			StyleHelper.setBackgroundImage(RootPanel.get().getElement(), currentUploadedImage.getUrl());
 			eventBus.fireEvent(new LoadingEventEnd());
 		}
 	}
 
 	private void setProfileImage(String imageUrl) {
-		if (imageUrl != null) {
-			profileImagePreview.setUrl(imageUrl);
-			StyleHelper.setBackgroundImage(RootPanel.get().getElement(), imageUrl);
-		}
+		profileImagePreview.setUrl(imageUrl);
+//		StyleHelper.setBackgroundImage(RootPanel.get().getElement(), imageUrl);
 	}
 
 	@Override
@@ -766,32 +765,9 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		paymentStatus.setVisible(false);
 	}
 
-//	native void doPay(String jwtToken) /*-{
-//		var that = this;
-//		$wnd.google.payments.inapp
-//				.buy({
-//					'jwt' : jwtToken,
-//					'success' : function() {
-//						alert('success');
-//					},
-//					'failure' : function() {
-//						alert('failure');
-//					}
-//				});
-//	}-*/;
-//
-//	public void onSuccess(int subscriptionId) {
-//		Window.alert("Success");
-//	};
-//
-//	public void onFailure(int subscriptionId) {
-//		logger.log(Level.SEVERE, "Transaction failed.");
-//		Window.alert("Failure");
-//	};
-
 	public void initiatePay(Long subscriptionPlanId, String token) {
-		SubscriptionPlanWidget subscriptionPlanWidget = subscriptionPlanWidgetMap.get(subscriptionPlanId);
-		subscriptionPlanWidget.pay(token);
+	  PaymentFlow flow = new PaymentFlow(null);
+	  flow.doPay(token);
 	}
 	
 	@Override
@@ -801,46 +777,34 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	@Override
 	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
-		subscriptionPlanWidgetMap.clear();
-		subscriptionPlanTablePanel.clear();
-		this.subscriptionPlans = plans;
-
-		for (SubscriptionPlanDTO plan : plans) {
-			System.out.println("Plans = "+plan.getPlanType());
-			SubscriptionPlanWidget widget = createSubscriptionPlanWidget(plan);
-
-			if (plan.getStatus() == SubscriptionPlanStatus.DISABLED) {
-				continue;
-			}
-
-			if (plan.getPlanType() == SubscriptionPlanType.BASIC) {
-				widget.getBuyButton().setEnabled(false);
-				widget.getBuyButton().setText("FREE");
-			} else if (plan.getPlanType() == SubscriptionPlanType.PREMIUM) {
-//				widget.setButtonType(ButtonType.INFO);
-				widget.getBuyButton().setType(ButtonType.INFO);
-			}
-			
-			subscriptionPlanTablePanel.add(widget);
-			subscriptionPlanWidgetMap.put(plan.getSubscriptionId(), widget);
-		}
+	  subscriptionPlanTablePanel.clear();
+	  SubscriptionPlansView view = new SubscriptionPlansView();
+	  view.displaySubscriptionPlans(plans);
+	  view.setSubscriptionPlanHandler(new SubscriptionPlansView.Handler() {
+      
+      @Override
+      public void onSubcriptionSelection(SubscriptionPlanDTO plan) {
+        presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
+      }
+    });
+	  subscriptionPlanTablePanel.add(view);
 	}
 
-	private SubscriptionPlanWidget createSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
-		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
-		widget.setStyleName(style.subscriptionPlanWidget());
-		widget.setHeading(plan.getName());
-		widget.setDescription(plan.getDescription());
-		widget.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				clearPaymentStatus();
-				Window.alert("Clicked");
-				presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
-			}
-		});
-		return widget;
-	}
+//	private SubscriptionPlanWidget createSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
+//		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
+//		widget.setStyleName(style.subscriptionPlanWidget());
+//		widget.setHeading(plan.getName());
+//		widget.setDescription(plan.getDescription());
+//		widget.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				clearPaymentStatus();
+//				Window.alert("Clicked");
+//				presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
+//			}
+//		});
+//		return widget;
+//	}
 
 	private CellTable<SubscriptionDTO> buildTransactionTable() {
 		tableResources = GWT.create(TableResources.class);
@@ -1007,7 +971,8 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		presenter.updatePassword(action);
 	}
 
-	@UiHandler("addLocationAnchor")
+	// TODO: NEED TO ADD ABILITY TO ADD LOCATION
+	// @UiHandler("addLocationAnchor")
 	public void addLocation(ClickEvent event) {
 		if (addLocationModal == null) {
 			addLocationModal = new AddLocationModal();
