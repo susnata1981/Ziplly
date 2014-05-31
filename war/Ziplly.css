@@ -226,6 +226,7 @@ footer {
 	float: left;
 	width: 250px;
 	margin-left: 10px;
+	font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
 }
 
 .pcell-row {
@@ -235,7 +236,7 @@ footer {
 
 .pcell-row-heading {
 	display: block;
-	font-family: sans-serif;
+	font-family: Georgia, Times, "Times New Roman", serif;
 	font-size: 1.5em;
 	font-weight: bold;
 	color: #666;
@@ -245,7 +246,7 @@ footer {
 
 .pcell-row-info-heading {
 	display: inline-block;
-	font-family: serif;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
 	font-size: 1.1em;
 	font-weight: bold;
 	padding: 0;

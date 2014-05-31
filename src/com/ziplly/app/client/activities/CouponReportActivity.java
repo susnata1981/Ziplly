@@ -20,13 +20,11 @@ import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl.CouponReportPresenter;
+import com.ziplly.app.client.view.coupon.CouponTransactionSummaryCalculator;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
-import com.ziplly.app.model.PurchasedCouponStatus;
-import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
@@ -142,51 +140,53 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 	}
 
 	private void displayCouponCampaignSummary(GetCouponTransactionResult result) {
-		BigDecimal totalSales = BigDecimal.valueOf(0);
-		TransactionSummary summary = new TransactionSummary();
-		summary.setTotalCouponsSold(result.getTotalTransactions());
-		
-		if (result.getTotalTransactions() > 0) {
-			totalSales =
-			    result
-			        .getPurchasedCoupons()
-			        .get(0)
-			        .getCoupon()
-			        .getPrice()
-			        .multiply(BigDecimal.valueOf(result.getTotalTransactions()));
-		}
-		summary.setTotalSales(totalSales);
-		Long totalRedeemedCouponCount = getRedeemCouponCount(result.getPurchasedCoupons());
-		Long totalUnusedCouponCount = result.getTotalTransactions() - totalRedeemedCouponCount;
-		summary.setTotalCouponsRedeemed(totalRedeemedCouponCount);
-		summary.setTotalCouponsUnused(totalUnusedCouponCount);
-		view.displaySummary(summary);
+//		BigDecimal totalSales = BigDecimal.valueOf(0);
+//		TransactionSummary summary = new TransactionSummary();
+//		summary.setTotalCouponsSold(result.getTotalTransactions());
+//		
+//		if (result.getTotalTransactions() > 0) {
+//			totalSales =
+//			    result
+//			        .getPurchasedCoupons()
+//			        .get(0)
+//			        .getCoupon()
+//			        .getPrice()
+//			        .multiply(BigDecimal.valueOf(result.getTotalTransactions()));
+//		}
+//		summary.setTotalSalesAmount(totalSales);
+//		Long totalRedeemedCouponCount = getRedeemCouponCount(result.getPurchasedCoupons());
+//		Long totalUnusedCouponCount = result.getTotalTransactions() - totalRedeemedCouponCount;
+//		summary.setTotalCouponsRedeemed(totalRedeemedCouponCount);
+//		summary.setTotalCouponsUnused(totalUnusedCouponCount);
+	  CouponTransactionSummaryCalculator calculator = new CouponTransactionSummaryCalculator();
+		view.displaySummary(calculator.calculate(result));
 	}
 	
-	private Long getRedeemCouponCount(List<PurchasedCouponDTO> purchasedCoupons) {
-		long count = 0;
-		for(PurchasedCouponDTO pc : purchasedCoupons) {
-			if (pc.getTransaction().getStatus() == TransactionStatus.COMPLETE && 
-					pc.getStatus() == PurchasedCouponStatus.UNUSED) {
-				count++;
-			}
-		}
-		
-		return count;
-  }
+//	private Long getRedeemCouponCount(List<PurchasedCouponDTO> purchasedCoupons) {
+//		long count = 0;
+//		for(PurchasedCouponDTO pc : purchasedCoupons) {
+//			if (pc.getTransaction().getStatus() == TransactionStatus.COMPLETE && 
+//					pc.getStatus() == PurchasedCouponStatus.UNUSED) {
+//				count++;
+//			}
+//		}
+//		
+//		return count;
+//  }
 
 	public static class TransactionSummary {
-		private BigDecimal totalSales;
+		private BigDecimal totalSalesAmount;
+		private BigDecimal totalFees;
 		private Long totalCouponsSold;
 		private Long totalCouponsRedeemed;
 		private Long totalCouponsUnused;
 		
-		public BigDecimal getTotalSales() {
-	    return totalSales;
+		public BigDecimal getTotalSalesAmount() {
+	    return totalSalesAmount;
     }
 
-		public void setTotalSales(BigDecimal totalSales) {
-	    this.totalSales = totalSales;
+		public void setTotalSalesAmount(BigDecimal totalSales) {
+	    this.totalSalesAmount = totalSales;
     }
 
 		public Long getTotalCouponsRedeemed() {
@@ -211,6 +211,14 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
 		public void setTotalCouponsUnused(Long totalCouponsUnused) {
 	    this.totalCouponsUnused = totalCouponsUnused;
+    }
+
+    public BigDecimal getTotalFees() {
+      return totalFees;
+    }
+
+    public void setTotalFees(BigDecimal totalFees) {
+      this.totalFees = totalFees;
     }
 	}
 

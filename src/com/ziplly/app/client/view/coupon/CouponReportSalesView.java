@@ -1,7 +1,5 @@
 package com.ziplly.app.client.view.coupon;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -12,7 +10,6 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -34,9 +31,6 @@ import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.chart.ChartType;
 import com.ziplly.app.client.widget.chart.LineChartWidget;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
-import com.ziplly.app.model.TransactionDTO;
-import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class CouponReportSalesView extends AbstractView {
@@ -46,10 +40,6 @@ public class CouponReportSalesView extends AbstractView {
 
 	interface CouponReportSalesViewUiBinder extends UiBinder<Widget, CouponReportSalesView> {
 	}
-
-	private static ColumnDefinition[] columnDefinitions = new ColumnDefinition[] {
-	    ColumnDefinition.DESCRIPTION, ColumnDefinition.PRICE, ColumnDefinition.DISCOUNT,
-	    ColumnDefinition.STATUS, ColumnDefinition.TIME_PURCHASED, };
 
 	public static interface CouponReportPresenter extends Presenter {
 		void loadCouponData(int couponDataStart, int coupondatapagesize);
@@ -72,8 +62,6 @@ public class CouponReportSalesView extends AbstractView {
 	Heading couponTransactionDetailsHeading;
 	@UiField
 	HTMLPanel couponTransactionDetailsPanel;
-//	@UiField(provided = true)
-//	CouponTransactionTableWidget couponTransactionTableWidget;
 	@UiField
 	Button refreshBtn;
 	@UiField
@@ -108,7 +96,7 @@ public class CouponReportSalesView extends AbstractView {
 
 	private void setupUi() {
 	  populateChartTypeListBox();
-	  StyleHelper.show(message.getElement(), false);
+	  message.setVisible(false);
     displayCouponTransactionDetailsPanel(false);
   }
 
@@ -128,7 +116,7 @@ public class CouponReportSalesView extends AbstractView {
 	}
 
 	public void displayCoupons(int start, List<CouponDTO> coupons) {
-		StyleHelper.show(message.getElement(), false);
+		message.setVisible(false);
 
 		if (coupons == null) {
 			return;
@@ -152,20 +140,21 @@ public class CouponReportSalesView extends AbstractView {
 		};
 		couponReportTable.addColumn(couponDescription, "Description");
 
-		Column<CouponDTO, Number> couponPrice = new Column<CouponDTO, Number>(new NumberCell()) {
+		Column<CouponDTO, String> couponPrice = new TextColumn<CouponDTO>() {
 
 			@Override
-			public Number getValue(CouponDTO c) {
-				return c.getPrice().doubleValue();
+			public String getValue(CouponDTO c) {
+				return  basicDataFormatter.format(c.getPrice(), ValueType.PRICE);
 			}
 		};
+		
 		couponReportTable.addColumn(couponPrice, "Price");
 
-		Column<CouponDTO, Number> discount = new Column<CouponDTO, Number>(new NumberCell()) {
+		Column<CouponDTO, String> discount = new TextColumn<CouponDTO>() {
 
 			@Override
-			public Number getValue(CouponDTO c) {
-				return c.getDiscount().doubleValue();
+			public String getValue(CouponDTO c) {
+				return basicDataFormatter.format(c.getDiscount(), ValueType.PRICE);
 			}
 		};
 		couponReportTable.addColumn(discount, "Discount");
@@ -232,7 +221,7 @@ public class CouponReportSalesView extends AbstractView {
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
-		StyleHelper.show(message.getElement(), true);
+		message.setVisible(true);
 	}
 
 	public void setTotalCouponCount(Long totalCouponCount) {
@@ -248,10 +237,10 @@ public class CouponReportSalesView extends AbstractView {
 
 	public void displaySummary(TransactionSummary summary) {
 		totalCouponsSoldLabel.setText(summary.getTotalCouponsSold().toString());
-		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSales(), ValueType.PRICE));
+		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSalesAmount(), ValueType.PRICE));
 		totalCouponsRedeemed.setText(summary.getTotalCouponsRedeemed().toString());
 		totalCouponsUnused.setText(summary.getTotalCouponsUnused().toString());
-		totalFee.setText(basicDataFormatter.format(summary.getTotalSales(), ValueType.PRICE));
+		totalFee.setText(basicDataFormatter.format(summary.getTotalSalesAmount(), ValueType.PRICE));
 	}
 
 	public CellTable<CouponDTO> getCouponReportTable() {
@@ -265,23 +254,23 @@ public class CouponReportSalesView extends AbstractView {
   private void displayChart(ChartType chartType) {
     chartsPanel.clear();
     
-    for (int i = 0; i < 20; i++) {
-      Date now = new Date(5, i, 2014);
-      PurchasedCouponDTO pr1 = new PurchasedCouponDTO();
-      TransactionDTO tr1 = new TransactionDTO();
-      tr1.setStatus(TransactionStatus.ACTIVE);
-      tr1.setAmount(new BigDecimal(100*Math.random()));
-      tr1.setTimeCreated(now);
-      pr1.setTransaction(tr1);
-      couponTransactions.getPurchasedCoupons().add(pr1);
-    }
+//    for (int i = 0; i < 20; i++) {
+//      Date now = new Date(5, i, 2014);
+//      PurchasedCouponDTO pr1 = new PurchasedCouponDTO();
+//      TransactionDTO tr1 = new TransactionDTO();
+//      tr1.setStatus(TransactionStatus.ACTIVE);
+//      tr1.setAmount(new BigDecimal(100*Math.random()));
+//      tr1.setTimeCreated(now);
+//      pr1.setTransaction(tr1);
+//      couponTransactions.getPurchasedCoupons().add(pr1);
+//    }
       
     LineChartWidget lineChartWidget = new LineChartWidget(
-      chartsPanel, 
       chartType.getAbstractLineChartBuilder().getAdapter(couponTransactions),
       chartType.getTitle(),
       chartType.getXAxisTitle(),
       chartType.getYAxisTitle());
+    chartsPanel.add(lineChartWidget);
   }
   
 	private void populateChartTypeListBox() {
@@ -290,19 +279,6 @@ public class CouponReportSalesView extends AbstractView {
 	  }
 	}
 	
-//	private void createCouponTransactionTable() {
-//		couponTransactionTableWidget =
-//		    new CouponTransactionTableWidget(
-//		        Arrays.asList(columnDefinitions),
-//		        couponDataPageSize,
-//		        basicDataFormatter);
-//
-//		SelectionModel<PurchasedCouponDTO> noSelectionModel =
-//		    new NoSelectionModel<PurchasedCouponDTO>();
-//		final CellTable<PurchasedCouponDTO> table = couponTransactionTableWidget.getTable();
-//		table.setSelectionModel(noSelectionModel);
-//	}
-
 	private void displayCouponTransactionDetailsPanel(boolean b) {
 		StyleHelper.show(couponTransactionDetailsPanel.getElement(), b);
 	}

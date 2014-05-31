@@ -16,11 +16,13 @@
 		color: #555;
 		}
 		.largeTextBox {
-		width: 350px;
+			width: 350px;
+			padding: 3px;
 		}
 		.largeTextArea {
-		width: 420px;
-		height: 180px;
+			width: 420px;
+			height: 180px;
+			padding: 6px;
 		}
 		.btn {
 		margin-right: 10px;
@@ -90,7 +92,7 @@
 		}
 		.horizontalButtonPanel {
 			display: block;
-			margin: 50px 0 0 4px;
+			margin: 50px 0 0 2px;
 		}
 	</ui:style>
 	<b:FluidContainer>
@@ -104,8 +106,9 @@
 								<b:ControlGroup ui:field="titleCg">
 									<b:ControlLabel addStyleNames="{style.inlineLabel}">Coupon title</b:ControlLabel>
 									<b:Popover
-										text="This description will appear on your coupon. Pick a informative name 
-					to promote your offering e.g. Save 3$ on a purchase of 10$ only between 6pm and 10pm on 14th May"
+										text="This description will not appear on your coupon. Pick a informative name though
+										for your reporting needs e.g. Save $3 on a purchase of $10 only 
+										between 6pm and 10pm on 14th May"
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>
@@ -158,8 +161,8 @@
 									</b:Controls>
 								</b:ControlGroup>
 								<b:ControlGroup ui:field="priceCg">
-									<b:ControlLabel addStyleNames="{style.inlineLabel}">List price ($)</b:ControlLabel>
-									<b:Popover text="List price of the item in $"
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Cash voucher denomination ($)</b:ControlLabel>
+									<b:Popover text="This is the cash voucher redeemable amount"
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>
@@ -170,10 +173,9 @@
 									</b:Controls>
 								</b:ControlGroup>
 								<b:ControlGroup ui:field="discountCg">
-									<b:ControlLabel addStyleNames="{style.inlineLabel}">Discounted price ($)</b:ControlLabel>
+									<b:ControlLabel addStyleNames="{style.inlineLabel}">Discounted cash voucher price ($)</b:ControlLabel>
 									<b:Popover
-										text="Discount in percent on the original listing price. e.g. 20 would stand for 20% off the
-						listing price. It must be a whole number."
+										text="Discounted price of the cash voucher that consumers will pay"
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>

@@ -2,7 +2,8 @@ package com.ziplly.app.client.widget.chart;
 
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.google.gwt.user.client.Window;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
@@ -11,17 +12,17 @@ import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.Options;
 import com.googlecode.gwt.charts.client.options.VAxis;
+import com.ziplly.app.client.view.StringConstants;
 
 public class LineChartWidget extends AbstractChartWidget<Double> {
 
 	public LineChartWidget(
-	  Panel panel, 
 	  DataTableAdapter<String, Double> adapter, 
 	  String title, 
 	  String xAsixTitle, 
 	  String yAxisTitle) {
 	 
-	  super(panel, adapter, title, xAsixTitle, yAxisTitle);
+	  super(adapter, title, xAsixTitle, yAxisTitle);
   }
 
 	@Override
@@ -68,7 +69,7 @@ public class LineChartWidget extends AbstractChartWidget<Double> {
   }
 
 	@Override
-  public void draw() {
+  public void internalDraw() {
 		((LineChart)chart).draw(buildTable(), createOptions(getTitle()));
   }
 }

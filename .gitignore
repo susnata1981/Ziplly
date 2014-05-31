@@ -18,7 +18,7 @@ extras
 
 addressbook.db
 war/.DS_Store
-war/WEB-INF/*
+#war/WEB-INF/*
 war/ziplly
 */WEB-INF/deploy/*
 */WEB-INF/classes/*

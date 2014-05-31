@@ -8,7 +8,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class NumberTextWidget extends AbstractBaseTextWidget {
 
-  private int maxIntegerLength = 3;
+  private int maxIntegerLength = 5;
 
   public NumberTextWidget(ControlGroup cg, HasText field, HelpInline helpInline) {
     super(cg, field, helpInline);

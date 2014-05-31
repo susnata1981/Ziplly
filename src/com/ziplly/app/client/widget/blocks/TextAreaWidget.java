@@ -7,14 +7,21 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
 public class TextAreaWidget extends AbstractBaseTextWidget {
-  private static final int MAX_LENGTH = FieldVerifier.MAX_TWEET_LENGTH;
+  private int maxLength;
+  private int minLength;
 
   public TextAreaWidget(ControlGroup cg, HasText field, HelpInline helpInline) {
-    super(cg, field, helpInline);
+    this(cg, field, helpInline, FieldVerifier.MAX_TWEET_LENGTH, 0);
   }
 
+  public TextAreaWidget(ControlGroup cg, HasText field, HelpInline helpInline, int minLength, int maxLength) {
+    super(cg, field, helpInline);
+    this.minLength = minLength;
+    this.maxLength = maxLength;
+  }
+  
   @Override
   public ValidationResult internalValidate() {
-    return FieldVerifier.validateString(field.getText(), MAX_LENGTH);
+    return FieldVerifier.validateString(field.getText(), minLength, maxLength);
   }
 }

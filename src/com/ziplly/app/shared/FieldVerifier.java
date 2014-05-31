@@ -285,7 +285,27 @@ public class FieldVerifier {
 		return result;
 	}
 
+	public static ValidationResult validateString(String message, int minLength, int maxLength) {
+    ValidationResult result = new ValidationResult();
+    if (message == null || message.equals("")) {
+      result.addError(CANT_BE_EMPTY);
+    }
+
+    message = SafeHtmlUtils.htmlEscape(message);
+    if (message.length() < minLength) {
+      result.addError(getMessageTooShortError(minLength));
+    }
+    else if (message.length() > maxLength) {
+      result.addError(getMessageTooLongError(maxLength));
+    }
+    return result;
+  }
+	
 	public static String getMessageTooLongError(int maxLength) {
 		return "Message can't be more than " + maxLength + " characters.";
 	}
+	
+	public static String getMessageTooShortError(int minLength) {
+    return "Message can't be shorter than " + minLength + " characters.";
+  }
 }

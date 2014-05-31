@@ -20,9 +20,13 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.exceptions.UsageLimitExceededException;
+import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
+import com.ziplly.app.client.widget.ConfirmationModalWidget;
+import com.ziplly.app.client.widget.ConfirmationModalWidget.ConfirmationModalCallback;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.blocks.AbstractBaseTextWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
@@ -39,7 +43,9 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class CouponFormWidget extends AbstractView {
 
-	private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
+	private static final int DESCRIPTION_MAX_LENGTH = 100;
+  private static final int DESCRIPTION_MIN_LENGTH = 30;
+  private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
 
 	interface CouponFormWidgetUiBinder extends UiBinder<Widget, CouponFormWidget> {
 	}
@@ -141,7 +147,9 @@ public class CouponFormWidget extends AbstractView {
 		titleWidget = new TextFieldWidget(titleCg, titleTextBox, titleHelpInline);
 		textBoxWidgets[count++] = titleWidget;
 		
-		descriptionWidget = new TextAreaWidget(descriptionCg, descriptionTextArea, descriptionHelpInline);
+		descriptionWidget = new TextAreaWidget(descriptionCg, 
+		    descriptionTextArea, descriptionHelpInline, DESCRIPTION_MIN_LENGTH, DESCRIPTION_MAX_LENGTH);
+		
 		textBoxWidgets[count++] = descriptionWidget;
 		
 		priceWidget = new NumberTextWidget(priceCg, priceTextBox, priceHelpInline);
@@ -201,11 +209,35 @@ public class CouponFormWidget extends AbstractView {
 			setError(endDateCg, endDateHelpInline, result.getErrors().get(0).getErrorMessage());
 		}
 		
-		valid &= result.isValid();		
+		valid &= result.isValid();
+		
+		if (valid) {
+		  validateDiscount();
+		}
+		
 		return valid;
 	}
 	
-	public CouponDTO getCoupon() {
+	private ValidationResult validateDiscount() {
+	  Double price = Double.parseDouble(FieldVerifier.sanitize(priceWidget.getValue()));
+	  Double discountedPrice = Double.parseDouble(FieldVerifier.sanitize(discountWidget.getValue()));
+	  
+	  double discount = 100 * (discountedPrice/price);
+	  if (discount > 50) {
+	    String msg = "Are you sure you want to offer the voucher for "+discount+"% off";
+	    ConfirmModal confirmModal = new ConfirmModal();
+	    ConfirmationModalWidget widget = new ConfirmationModalWidget(msg, confirmModal);
+	    if ( !confirmModal.isConfirmed() ) {
+	      ValidationResult result = new ValidationResult();
+	      result.addError("Discount too high");
+	      return result;
+	    }
+	  }
+	  
+	  return new ValidationResult();
+  }
+
+  public CouponDTO getCoupon() {
 		if (!validate()) {
 			return null;
 		}
@@ -355,5 +387,25 @@ public class CouponFormWidget extends AbstractView {
 
   public void setAccount(BusinessAccountDTO account) {
     this.account = account;
+  }
+  
+  private class ConfirmModal implements ConfirmationModalCallback {
+    
+    boolean confirmed = false;
+    
+    @Override
+    public void confirm() {
+      confirmed = true;
+      return;
+    }
+    
+    @Override
+    public void cancel() {
+      return;
+    }
+    
+    public boolean isConfirmed() {
+      return confirmed;
+    }
   }
 }

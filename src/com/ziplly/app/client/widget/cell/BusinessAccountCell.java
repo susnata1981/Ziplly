@@ -16,6 +16,7 @@ import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.shared.FieldVerifier;
 
 public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 
@@ -94,14 +95,14 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		String category =
 		    value.getCategory() != null ? value.getCategory().getName() : StringConstants.UNKNOWN;
-		String website = value.getWebsite() != null ? value.getWebsite() : StringConstants.UNKNOWN;
-		StringBuilder locations = new StringBuilder("<ol>");
+		String website = !FieldVerifier.isEmpty(value.getWebsite()) ? value.getWebsite() : StringConstants.UNKNOWN;
+		StringBuilder locations = new StringBuilder("<ul>");
 		for (LocationDTO loc : value.getLocations()) {
 			locations.append("<li>");
 			locations.append(loc.getNeighborhood().getName() + "," + loc.getNeighborhood().getCity());
 			locations.append("</li>");
 		}
-		locations.append("</ol>");
+		locations.append("</ul>");
 
 		if (value != null) {
 			sb

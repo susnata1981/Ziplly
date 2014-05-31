@@ -18,7 +18,7 @@
 	}
 	ul > li {
 		list-style: none;
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 500;
 		line-height: 24px;
 		padding: 2px;
@@ -30,7 +30,7 @@
 	.metricLabel {
 		display: block;
 		width: 200px;
-		padding: 10px;
+		padding: 6px;
 		margin: 10px 0;
 		background: #ddd;
 	}
@@ -64,8 +64,12 @@
 									<b:Label ui:field="totalCouponsSoldLabel" />
 								</li>
 								<li>
-									<span class="{style.metricLabel}">Total Sales</span>
+									<span class="{style.metricLabel}">Total Sales Amount</span>
 									<b:Label ui:field="totalSalesLabel" />
+								</li>
+								<li>
+									<span class="{style.metricLabel}">Total fees</span>
+									<b:Label ui:field="totalFee" />
 								</li>
 								<li>
 									<span class="{style.metricLabel}">Total Coupons Redeemed</span>
@@ -74,10 +78,6 @@
 								<li>
 									<span class="{style.metricLabel}">Total Coupons Unused</span>
 									<b:Label ui:field="totalCouponsUnused" />
-								</li>
-								<li>
-									<span class="{style.metricLabel}">Total fee</span>
-									<b:Label ui:field="totalFee" />
 								</li>
 							</ul>
 						</div>
