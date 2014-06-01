@@ -1,10 +1,10 @@
 package com.ziplly.app.server.bli;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.NotificationType;
-import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface TweetNotificationBLI {

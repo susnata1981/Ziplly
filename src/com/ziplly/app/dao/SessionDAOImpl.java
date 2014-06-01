@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Session;
+import com.ziplly.app.server.model.jpa.Session;
 
 public class SessionDAOImpl extends BaseDAO implements SessionDAO {
 	private Logger logger = Logger.getLogger(SessionDAOImpl.class.getCanonicalName());

@@ -30,11 +30,11 @@ public class PostalCodeDTO implements Serializable {
 			return true;
 		}
 
-		if (!(o instanceof PostalCode)) {
+		if (!(o instanceof PostalCodeDTO)) {
 			return false;
 		}
 
-		PostalCode p = (PostalCode) o;
+		PostalCodeDTO p = (PostalCodeDTO) o;
 		return p.getPostalCode() == this.getPostalCode();
 	}
 

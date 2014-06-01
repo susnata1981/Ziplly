@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Message;
+import com.ziplly.app.server.model.jpa.Message;
 
 public class MessageDAOImpl extends BaseDAO implements MessageDAO {
 

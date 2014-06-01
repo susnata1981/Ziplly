@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.SubscriptionPlan;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 
 public interface PaymentService {
 	

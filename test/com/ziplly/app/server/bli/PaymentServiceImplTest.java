@@ -3,11 +3,9 @@ package com.ziplly.app.server.bli;
 import static org.junit.Assert.assertEquals;
 
 import org.joda.time.DateTime;
-import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.appengine.repackaged.org.joda.time.Days;
 import com.ziplly.app.base.AbstractBase;
 
 public class PaymentServiceImplTest extends AbstractBase {

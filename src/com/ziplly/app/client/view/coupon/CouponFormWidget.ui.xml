@@ -76,19 +76,18 @@
 		}
 		.tweetTextPreview
 		{
-		float: left;
-		width: 98%;
-		display: block;
-		padding: 10px 0 2px 4px;
-		color: #666;
-		font-family: Georgia, serif;
+			float: left;
+			width: 98%;
+			display: block;
+			padding: 10px 0 2px 4px;
+			color: #666;
+			font-family: Georgia, serif;
+			box-sizing: border-box;
 		}
 		.inlineLabel {
-		margin: 4px 0
-		0
-		2px;
-		font-size: 12px;
-		display: inline-block;
+			margin: 4px 0 0 2px;
+			font-size: 12px;
+			display: inline-block;
 		}
 		.horizontalButtonPanel {
 			display: block;
@@ -99,6 +98,7 @@
 		<b:FluidRow>
 			<b:Column size="11">
 				<g:HTMLPanel>
+				    <b:Alert ui:field="message" close="false" />
 					<h3>Publish coupon (voucher) instantly</h3>
 					<hr />
 					<b:Form ui:field="couponForm" addStyleNames="{style.couponForm}">
@@ -122,7 +122,8 @@
 									<b:ControlLabel addStyleNames="{style.inlineLabel}">Coupon description</b:ControlLabel>
 									<b:Popover
 										text="This description will appear on your coupon. Pick a informative name 
-					to promote your offering e.g. Save 5$ on a purchase of 20$ between 6pm and 10pm on 14th May"
+										to promote your offering e.g. Save 5$ on a purchase of 20$ between 
+										6pm and 10pm on 14th May"
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>
@@ -135,8 +136,8 @@
 								<b:ControlGroup ui:field="startDateCg">
 									<b:ControlLabel addStyleNames="{style.inlineLabel}">Start date</b:ControlLabel>
 									<b:Popover
-										text="The date/time when your coupon will be available for purchase. Before this date/time the coupon won't 
-						 be buyable"
+										text="The date/time when your coupon will be available for purchase. 
+										PST timezone would be used."
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>
@@ -149,8 +150,8 @@
 								<b:ControlGroup ui:field="endDateCg">
 									<b:ControlLabel addStyleNames="{style.inlineLabel}">End date</b:ControlLabel>
 									<b:Popover
-										text="The date/time when your coupon will expire. Before this date/time the coupon won't 
-						 be buyable"
+										text="The date/time when your coupon will expire. 
+										PST timezone would be used."
 										heading="Learn more">
 										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
 									</b:Popover>

@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Location;
+import com.ziplly.app.server.model.jpa.Location;
 
 public class LocationDAOImpl extends BaseDAO implements LocationDAO {
 	private Logger logger = Logger.getLogger(LocationDAOImpl.class.getCanonicalName());

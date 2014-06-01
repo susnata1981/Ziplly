@@ -22,7 +22,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
-import com.ziplly.app.client.activities.CouponReportActivity.TransactionSummary;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
@@ -86,7 +85,7 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		ZResources.IMPL.style().ensureInjected();
 		initWidget(uiBinder.createAndBindUi(this));
 		setupEventHandler();
-		StyleHelper.show(message.getElement(), false);
+		message.setVisible(false);
 		buildNavLinkMap();
 		showView(couponFormLink);
 	}
@@ -205,9 +204,6 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-//		message.setText(msg);
-//		message.setType(type);
-//		StyleHelper.show(message.getElement(), true);
 	  AlertModal modal = new AlertModal();
     modal.showMessage(msg, type);
 	}

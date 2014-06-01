@@ -19,11 +19,11 @@ import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Location;
-import com.ziplly.app.model.PrivacySettings;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Location;
+import com.ziplly.app.server.model.jpa.PrivacySettings;
 import com.ziplly.app.shared.GetTweetForUserAction;
 import com.ziplly.app.shared.GetTweetForUserResult;
 

@@ -2,8 +2,8 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.model.jpa.Transaction;
 
 public interface TransactionDAO {
 	void save(Transaction transaction);
@@ -17,8 +17,5 @@ public interface TransactionDAO {
 	Long findCountByAccountId(Long accountId);
 	Long getTotalCountByAccountIdAndStatus(Long accountId, TransactionStatus complete);
 	List<Transaction> findAllTransactionByAccountId(Long accountId, int start, int pageSize);
-	
-//List<Transaction> findCouponTransactionByCouponId(Long couponId, int start, int pageSize);
-//Long getTotalCountByByCouponId(Long couponId);
-//Coupon findByCouponId(Long couponId);
+  Transaction findByOrderId(String orderId);
 }

@@ -2,7 +2,7 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.Coupon;
+import com.ziplly.app.server.model.jpa.Coupon;
 
 public interface CouponDAO {
 	Coupon findById(Long couponId);

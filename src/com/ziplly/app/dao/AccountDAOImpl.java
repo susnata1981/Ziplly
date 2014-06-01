@@ -22,18 +22,18 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
-import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
-import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.BusinessAccount;
+import com.ziplly.app.server.model.jpa.Location;
+import com.ziplly.app.server.model.jpa.Neighborhood;
+import com.ziplly.app.server.model.jpa.PersonalAccount;
 
 public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	private Logger logger = Logger.getLogger(AccountDAOImpl.class.getCanonicalName());

@@ -3,7 +3,6 @@ package com.ziplly.app.client.view.coupon;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.ziplly.app.client.activities.CouponReportActivity.TransactionSummary;
 import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.PurchasedCouponStatus;
 import com.ziplly.app.model.TransactionStatus;

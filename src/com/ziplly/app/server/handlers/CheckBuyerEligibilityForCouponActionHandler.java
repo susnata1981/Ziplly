@@ -12,13 +12,12 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
-import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 
@@ -27,7 +26,6 @@ public class CheckBuyerEligibilityForCouponActionHandler
 
 	private PaymentService paymentService;
 	private CouponDAO couponDao;
-	private PurchasedCouponDAO purchasedCouponDao;
 	private CouponBLI couponBli;
 
 	@Inject
@@ -37,12 +35,10 @@ public class CheckBuyerEligibilityForCouponActionHandler
       AccountBLI accountBli,
       CouponBLI couponBli,
       CouponDAO couponDao,
-      PurchasedCouponDAO purchasedCouponDAO,
       PaymentService paymentService) {
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	  this.couponBli = couponBli;
 	  this.couponDao = couponDao;
-	  this.purchasedCouponDao = purchasedCouponDAO;
 	  this.paymentService = paymentService;
   }
 

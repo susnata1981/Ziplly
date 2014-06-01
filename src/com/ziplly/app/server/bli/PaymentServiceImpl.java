@@ -21,9 +21,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.server.bli.payment.PaymentType;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 
 public class PaymentServiceImpl implements PaymentService {
 	private static final String CURRENCY_CODE_LABEL = "currencyCode";
@@ -83,8 +83,6 @@ public class PaymentServiceImpl implements PaymentService {
 		String[] pieces = splitTokenString(tokenString);
 		String jwtPayloadSegment = pieces[1];
 		JsonParser parser = new JsonParser();
-		// JsonElement payload = parser.parse(StringUtils.newStringUtf8(Base64
-		// .decodeBase64(jwtPayloadSegment)));
 		JsonElement payload =
 		    parser.parse(StringUtils.newStringUtf8(Base64.decodeBase64(jwtPayloadSegment.getBytes())));
 

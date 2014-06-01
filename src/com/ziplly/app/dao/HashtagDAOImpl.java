@@ -13,10 +13,10 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.server.model.jpa.Hashtag;
 
 public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 

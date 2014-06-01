@@ -12,9 +12,9 @@ import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.AccountRegistration;
-import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.AccountRegistration;
+import com.ziplly.app.server.model.jpa.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckEmailRegistrationResult;
 

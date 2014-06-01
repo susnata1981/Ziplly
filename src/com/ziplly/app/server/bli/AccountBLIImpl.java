@@ -43,7 +43,6 @@ import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
-import com.ziplly.app.client.exceptions.CouponCampaignNotStartedException;
 import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InternalException;
@@ -67,30 +66,33 @@ import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.facebook.dao.FUserDAOFactory;
 import com.ziplly.app.facebook.dao.IFUserDAO;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountNotificationSettings;
-import com.ziplly.app.model.AccountRegistration;
-import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
-import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.Location;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
-import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.model.PasswordRecoveryStatus;
-import com.ziplly.app.model.PersonalAccount;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.PrivacySettings;
-import com.ziplly.app.model.PurchasedCoupon;
-import com.ziplly.app.model.Session;
+import com.ziplly.app.model.PurchasedCouponStatus;
+import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.AccountNotificationSettings;
+import com.ziplly.app.server.model.jpa.AccountRegistration;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.Location;
+import com.ziplly.app.server.model.jpa.PasswordRecovery;
+import com.ziplly.app.server.model.jpa.PersonalAccount;
+import com.ziplly.app.server.model.jpa.PrivacySettings;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.Session;
+import com.ziplly.app.server.model.jpa.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
+import com.ziplly.app.server.util.TimeUtil;
 import com.ziplly.app.shared.BCrypt;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -810,13 +812,14 @@ public class AccountBLIImpl implements AccountBLI {
 		
 		//Check the number of same coupons allowed per user.
 		try {
-			List<PurchasedCoupon> transactions =
+			List<PurchasedCoupon> purchasedCoupons =
 					purchasedCouponDao.findByAccountAndCouponId(
 			    		coupon.getCouponId(),
 			    		account.getAccountId());
 			
+			int purchasedCouponCount = getTotalCouponsPurchased(purchasedCoupons);
 			// There will be a pending transaction, so it would at least be equal. We need to check more >.
-			if (transactions.size() > coupon.getNumberAllowerPerIndividual()) {
+			if (purchasedCouponCount > coupon.getNumberAllowerPerIndividual()) {
 				throw new UsageLimitExceededException("You have previously purchased the coupon.");
 			}
 		} catch (NoResultException nre) {
@@ -826,14 +829,25 @@ public class AccountBLIImpl implements AccountBLI {
 		// check date validity
 		// The Buy button should be disabled in the view for these date validity fail. 
 		Date now = new Date();
-
-//		Should this be there?
-//		if(now.before(coupon.getStartDate())) {
-//			throw new CouponCampaignNotStartedException(String.format("Coupon:%s discount not yet started.", coupon.getDescription()));
-//		}
+		long currentTime = TimeUtil.toTimestamp(now, TimeUtil.LOS_ANGELES_TIMEZONE);
 		
-		if(now.after(coupon.getEndDate())) {
-			throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
+		if (currentTime > coupon.getEndTime()) {
+      throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
 		}
+
+//		if(now.after(coupon.getEndDate())) {
+//			throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
+//		}
 	}
+
+  private int getTotalCouponsPurchased(List<PurchasedCoupon> purchasedCoupons) {
+    int count = 0;
+    for(PurchasedCoupon pc : purchasedCoupons) {
+      if (pc.getTransaction() != null && pc.getTransaction().getStatus() == TransactionStatus.ACTIVE) {
+        count++;
+      }
+    }
+    
+    return count;
+  }
 }

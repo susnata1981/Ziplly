@@ -13,12 +13,12 @@ import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.LikeDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Love;
+import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 

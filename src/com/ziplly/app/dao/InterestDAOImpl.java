@@ -1,13 +1,15 @@
 package com.ziplly.app.dao;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.model.Interest;
 import com.ziplly.app.model.InterestDTO;
+import com.ziplly.app.server.model.jpa.Interest;
 
 public class InterestDAOImpl extends BaseDAO implements InterestDAO {
 

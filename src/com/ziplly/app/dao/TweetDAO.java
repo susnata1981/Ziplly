@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 public interface TweetDAO {
 

@@ -14,11 +14,11 @@ import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountRegistrationDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountRegistration;
-import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.AccountRegistration;
+import com.ziplly.app.server.model.jpa.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.shared.CreateRegistrationAction;
 import com.ziplly.app.shared.CreateRegistrationResult;
 

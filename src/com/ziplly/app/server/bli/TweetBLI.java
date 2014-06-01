@@ -1,14 +1,12 @@
 package com.ziplly.app.server.bli;
 
-import java.text.ParseException;
-
 import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.exceptions.UsageLimitExceededException;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Tweet;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 public interface TweetBLI {
 

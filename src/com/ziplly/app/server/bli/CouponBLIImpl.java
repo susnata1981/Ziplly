@@ -1,8 +1,8 @@
 package com.ziplly.app.server.bli;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,14 +32,14 @@ import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.TransactionDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponStatus;
-import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.ServiceModule.CouponRedeemEndpoint;
 import com.ziplly.app.server.crypto.CryptoUtil;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.shared.EmailTemplate;
 
 public class CouponBLIImpl implements CouponBLI {

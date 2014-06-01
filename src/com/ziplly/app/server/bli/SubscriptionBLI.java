@@ -4,9 +4,8 @@ import java.util.List;
 
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.SubscriptionPlan;
-import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 
 public interface SubscriptionBLI {
@@ -14,7 +13,9 @@ public interface SubscriptionBLI {
 
 	String getJwtToken(Long accountId, Long subscriptionId) throws InternalException;
 
-	void completeTransaction(Long accountId, Long subscriptionId) throws NotFoundException;
-
 	List<SubscriptionPlan> getAllSubscriptionPlans();
+
+  void completeTransaction(Long accountId, Long subscriptionId, String orderId) throws NotFoundException;
+
+  void cancelOrder(String orderId);
 }

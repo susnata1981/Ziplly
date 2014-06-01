@@ -1,21 +1,26 @@
 package com.ziplly.app.model;
 
 public enum FeatureFlags {
-	EnableCouponFeature(true),
-	OneCouponPerIndividual(true),
-	EnablePaymentPlan(false);
-	
-	private boolean enable;
+  EnableCouponFeature(true),
+  OneCouponPerIndividual(true),
+  EnablePaymentPlan(false),
+  EnableCityCheck(true);
 
-	private FeatureFlags(boolean enable) {
-		this.setEnable(enable);
+  private boolean enable;
+
+  private FeatureFlags(boolean enable) {
+    this.setEnable(enable);
   }
 
-	public boolean isEnabled() {
-	  return enable;
+  public boolean isEnabled() {
+    return enable;
   }
 
-	public void setEnable(boolean enable) {
-	  this.enable = enable;
+  public void setEnable(boolean enable) {
+    this.enable = enable;
+  }
+
+  public static boolean hasPermissionToPublishCoupon(NeighborhoodDTO currentNeighborhood) {
+    return currentNeighborhood.getCity().equalsIgnoreCase("SEATTLE");
   }
 }

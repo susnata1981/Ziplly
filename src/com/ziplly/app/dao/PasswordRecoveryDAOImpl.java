@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.PasswordRecovery;
 import com.ziplly.app.model.PasswordRecoveryStatus;
+import com.ziplly.app.server.model.jpa.PasswordRecovery;
 
 public class PasswordRecoveryDAOImpl extends BaseDAO implements PasswordRecoveryDAO {
 

@@ -16,17 +16,19 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SubscriptionDAO;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Subscription;
-import com.ziplly.app.model.SubscriptionPlan;
+import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.model.SubscriptionStatus;
-import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Subscription;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
+import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 
 public class SubscriptionBLIImpl implements SubscriptionBLI {
 	private SubscriptionPlanDAO subscriptionPlanDao;
 	private SubscriptionDAO subscriptionDao;
+	private TransactionDAO transactionDao;
 	private PaymentService paymentService;
 	private Logger logger = Logger.getLogger(SubscriptionBLIImpl.class.getName());
 	private AccountDAO accountDao;
@@ -35,11 +37,13 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
 	public SubscriptionBLIImpl(
 			AccountDAO accountDao,
 			SubscriptionPlanDAO subscriptionPlanDao,
+			TransactionDAO transactionDao,
 	    SubscriptionDAO subscriptionDao,
 	    PaymentService paymentService) {
 		this.accountDao = accountDao;
 		this.subscriptionPlanDao = subscriptionPlanDao;
 		this.subscriptionDao = subscriptionDao;
+		this.transactionDao = transactionDao;
 		this.paymentService = paymentService;
 	}
 
@@ -81,7 +85,6 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
   public String getJwtToken(Long accountId, Long subscriptionId) throws InternalException {
 		SubscriptionPlan plan = subscriptionPlanDao.get(subscriptionId);
 		try {
-//	    return paymentService.generateSubscriptionToken(accountId, subscriptionId, plan.getFee());
 	    return paymentService.generateJWTTokenForSubscription(plan, accountId);
     } catch (InvalidKeyException e) {
     	logger.severe(String.format("Failed to generate token %s", e));
@@ -93,7 +96,7 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
   }
 
 	@Override
-	public void completeTransaction(Long accountId, Long subscriptionId) throws NotFoundException {
+	public void completeTransaction(Long accountId, Long subscriptionId, String orderId) throws NotFoundException {
 		// Load the plan
 		SubscriptionPlan plan = subscriptionPlanDao.get(subscriptionId);
 		
@@ -105,6 +108,7 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
 		transaction.setBuyer(account);
 		transaction.setStatus(TransactionStatus.COMPLETE);
 		transaction.setCurrency(Locale.US.getCountry());
+		transaction.setOrderId(orderId);
 		transaction.setTimeCreated(now);
 		transaction.setTimeUpdated(now);
 		
@@ -121,5 +125,11 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
   public List<SubscriptionPlan> getAllSubscriptionPlans() {
 		List<SubscriptionPlan> subscriptions = subscriptionPlanDao.getAll();
 		return subscriptions;
+  }
+
+  @Override
+  public void cancelOrder(String orderId) {
+//    logger.info(String.format("About to cancel transaction for order %s", orderId));
+//    Transaction transaction = transactionDao.findByOrderId(orderId);
   }
 }

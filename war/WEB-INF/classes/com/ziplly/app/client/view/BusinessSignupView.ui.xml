@@ -387,7 +387,8 @@
 		<b:FluidRow>
 			<b:Column size="12">
 				<g:HTMLPanel addStyleNames="{style.planSectionTitle}">
-					<h2>60 Day Free Trial</h2>
+					<h2>60 Day Free Trial<sub><p class="tinyfont">currently only in Seattle. Coming soon in other regions.</p></sub></h2>
+					<br/>
 					<p>We don't require you to pick a plan to start off. Just sign up,
 						see the benefit first.</p>
 				</g:HTMLPanel>

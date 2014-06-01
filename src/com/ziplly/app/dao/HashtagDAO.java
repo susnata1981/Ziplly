@@ -3,9 +3,9 @@ package com.ziplly.app.dao;
 import java.util.List;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Hashtag;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.server.model.jpa.Hashtag;
 
 public interface HashtagDAO {
 	void create(Hashtag hashtag);

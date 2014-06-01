@@ -6,24 +6,24 @@
 		type="com.ziplly.app.client.view.BusinessAccountView.Style" />
 	<ui:style field="bstyle">
 		.locationDiv {
-		width:300px;
-		height:270px;
-		padding: 4px;
+			width:300px;
+			height:270px;
+			padding: 4px;
 		}
 		.profileInfoBoxHeading {
-		font-size: 24px;
-		border-bottom: 2px solid #ddd;
-		text-align: center;
+			font-size: 24px;
+			border-bottom: 2px solid #ddd;
+			text-align: center;
 		}
 		.transparentColumn {
-		opacity: .95;
+			opacity: .95;
 		}
 		.center {
-		text-align: center;
+			text-align: center;
 		}
 		.businessAttribtue {
-		color: #555;
-		font-weight: 600;
+			color: #555;
+			font-weight: 600;
 		}
 	</ui:style>
 	<b:FluidContainer addStyleNames="{style.rootPanel}"

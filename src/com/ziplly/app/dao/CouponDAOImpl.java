@@ -7,7 +7,7 @@ import javax.persistence.Query;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.ziplly.app.model.Coupon;
+import com.ziplly.app.server.model.jpa.Coupon;
 
 public class CouponDAOImpl implements CouponDAO {
 

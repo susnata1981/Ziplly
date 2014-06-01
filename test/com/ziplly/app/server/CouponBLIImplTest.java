@@ -8,12 +8,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.ziplly.app.base.AbstractBase;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.Transaction;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.CouponBLIImpl.CouponCodeDetails;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.Transaction;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 @RunWith(JUnit4.class)
 public class CouponBLIImplTest extends AbstractBase {

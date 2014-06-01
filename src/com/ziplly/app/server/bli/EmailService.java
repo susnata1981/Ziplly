@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.bli.EmailServiceImpl.Builder;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
+import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface EmailService {

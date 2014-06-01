@@ -28,12 +28,12 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.model.Hashtag;
-import com.ziplly.app.model.Image;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.server.model.jpa.Hashtag;
+import com.ziplly.app.server.model.jpa.Image;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   private Logger logger = Logger.getLogger(TweetDAOImpl.class.getCanonicalName());

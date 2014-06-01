@@ -5,35 +5,35 @@
         http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0">
 	<persistence-unit name="zipllydb">
-	    <class>com.ziplly.app.model.AbstractEntity</class>
-		<class>com.ziplly.app.model.Account</class>
-		<class>com.ziplly.app.model.PersonalAccount</class>
-		<class>com.ziplly.app.model.BusinessAccount</class>
-		<class>com.ziplly.app.model.Neighborhood</class>
-		<class>com.ziplly.app.model.Location</class>
-		<class>com.ziplly.app.model.PostalCode</class>
-		<class>com.ziplly.app.model.BusinessProperties</class>
-		<class>com.ziplly.app.model.PrivacySettings</class>
-		<class>com.ziplly.app.model.AccountNotification</class>
-		<class>com.ziplly.app.model.AccountRegistration</class>
-		<class>com.ziplly.app.model.Interest</class>
-		<class>com.ziplly.app.model.Tweet</class>
-		<class>com.ziplly.app.model.Comment</class>
-		<class>com.ziplly.app.model.Love</class>
-		<class>com.ziplly.app.model.Message</class>
-		<class>com.ziplly.app.model.Session</class>
-		<class>com.ziplly.app.model.Conversation</class>
-		<class>com.ziplly.app.model.SubscriptionPlan</class>
-		<class>com.ziplly.app.model.Subscription</class>
-		<class>com.ziplly.app.model.PasswordRecovery</class>
-		<class>com.ziplly.app.model.AccountNotificationSettings</class>
-		<class>com.ziplly.app.model.Hashtag</class>
-		<class>com.ziplly.app.model.Spam</class>
-		<class>com.ziplly.app.model.PendingInvitations</class>
-		<class>com.ziplly.app.model.Image</class>
-		<class>com.ziplly.app.model.Coupon</class>
-		<class>com.ziplly.app.model.Transaction</class>
-		<class>com.ziplly.app.model.PurchasedCoupon</class>
+	    <class>com.ziplly.app.server.model.jpa.AbstractEntity</class>
+		<class>com.ziplly.app.server.model.jpa.Account</class>
+		<class>com.ziplly.app.server.model.jpa.PersonalAccount</class>
+		<class>com.ziplly.app.server.model.jpa.BusinessAccount</class>
+		<class>com.ziplly.app.server.model.jpa.Neighborhood</class>
+		<class>com.ziplly.app.server.model.jpa.Location</class>
+		<class>com.ziplly.app.server.model.jpa.PostalCode</class>
+		<class>com.ziplly.app.server.model.jpa.BusinessProperties</class>
+		<class>com.ziplly.app.server.model.jpa.PrivacySettings</class>
+		<class>com.ziplly.app.server.model.jpa.AccountNotification</class>
+		<class>com.ziplly.app.server.model.jpa.AccountRegistration</class>
+		<class>com.ziplly.app.server.model.jpa.Interest</class>
+		<class>com.ziplly.app.server.model.jpa.Tweet</class>
+		<class>com.ziplly.app.server.model.jpa.Comment</class>
+		<class>com.ziplly.app.server.model.jpa.Love</class>
+		<class>com.ziplly.app.server.model.jpa.Message</class>
+		<class>com.ziplly.app.server.model.jpa.Session</class>
+		<class>com.ziplly.app.server.model.jpa.Conversation</class>
+		<class>com.ziplly.app.server.model.jpa.SubscriptionPlan</class>
+		<class>com.ziplly.app.server.model.jpa.Subscription</class>
+		<class>com.ziplly.app.server.model.jpa.PasswordRecovery</class>
+		<class>com.ziplly.app.server.model.jpa.AccountNotificationSettings</class>
+		<class>com.ziplly.app.server.model.jpa.Hashtag</class>
+		<class>com.ziplly.app.server.model.jpa.Spam</class>
+		<class>com.ziplly.app.server.model.jpa.PendingInvitations</class>
+		<class>com.ziplly.app.server.model.jpa.Image</class>
+		<class>com.ziplly.app.server.model.jpa.Coupon</class>
+		<class>com.ziplly.app.server.model.jpa.Transaction</class>
+		<class>com.ziplly.app.server.model.jpa.PurchasedCoupon</class>
 		
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />

@@ -1,10 +1,11 @@
 package com.ziplly.app.server.handlers;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
@@ -14,9 +15,9 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Coupon;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Coupon;
 import com.ziplly.app.shared.GetCouponsAction;
 import com.ziplly.app.shared.GetCouponsResult;
 

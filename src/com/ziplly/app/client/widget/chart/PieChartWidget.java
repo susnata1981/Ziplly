@@ -15,8 +15,8 @@ public class PieChartWidget extends AbstractChartWidget<Integer> {
 //	private final DataTableAdapter<String, Integer> adapter;
 //	private String title;
 
-	public PieChartWidget(Panel panel, DataTableAdapter<String, Integer> adapter, String title) {
-		super(panel, adapter, title, title, title);
+	public PieChartWidget(DataTableAdapter<String, Integer> adapter, String title) {
+		super(adapter, title, title, title);
 	}
 
 //	private void initialize() {
@@ -70,17 +70,23 @@ public class PieChartWidget extends AbstractChartWidget<Integer> {
 		return options;
 	}
 	
-	@Override
-	public void draw() {
-		DataTable table = buildTable();
-		PieChartOptions options = createOptions(getTitle());
-		chart.draw(table, options);
-	}
+//	@Override
+//	public void draw() {
+//		DataTable table = buildTable();
+//		PieChartOptions options = createOptions(getTitle());
+//		chart.draw(table, options);
+//	}
 
 	@Override
   public CoreChartWidget<? extends Options> getChart() {
 		chart = new PieChart();
 		return chart;
+  }
+
+  @Override
+  public void internalDraw() {
+    // TODO Auto-generated method stub
+    
   }
 	
 //	private void draw() {

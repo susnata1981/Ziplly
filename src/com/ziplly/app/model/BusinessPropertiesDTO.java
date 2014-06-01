@@ -236,11 +236,11 @@ public class BusinessPropertiesDTO implements Serializable {
 			return true;
 		}
 
-		if (!(o instanceof BusinessProperties)) {
+		if (!(o instanceof BusinessPropertiesDTO)) {
 			return false;
 		}
 
-		BusinessProperties n = (BusinessProperties) o;
+		BusinessPropertiesDTO n = (BusinessPropertiesDTO) o;
 		return n.getId() == this.getId();
 	}
 

@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Comment;
+import com.ziplly.app.server.model.jpa.Comment;
 
 public class CommentDAOImpl extends BaseDAO implements CommentDAO {
 

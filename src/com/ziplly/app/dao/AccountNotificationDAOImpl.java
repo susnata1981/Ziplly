@@ -10,9 +10,9 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.AccountNotification;
 import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.ReadStatus;
+import com.ziplly.app.server.model.jpa.AccountNotification;
 
 public class AccountNotificationDAOImpl extends BaseDAO implements AccountNotificationDAO {
 

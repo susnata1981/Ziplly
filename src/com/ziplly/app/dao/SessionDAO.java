@@ -1,7 +1,7 @@
 package com.ziplly.app.dao;
 
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Session;
+import com.ziplly.app.server.model.jpa.Session;
 
 public interface SessionDAO {
 	Session findSessionByUid(Long uid) throws NotFoundException;

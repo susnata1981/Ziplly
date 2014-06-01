@@ -23,10 +23,11 @@
 		margin-bottom: 60px;
 		}
 		.heading2 {
-		display: block; clear: both;
-		font-size: 30px;
-		font-weight: bold;
-		color: #fff; text-align: center;
+			display: block; clear: both;
+			font-size: 30px;
+			font-weight: bold;
+			color: #fff; 
+			text-align: center;
 		}
 		.heading3 {
 		display: block;
@@ -84,11 +85,16 @@
 		96%; } .nameField { float: left; width: 45%;
 		margin-right:
 		10px; }
-		.textBox { width: 94%; } .button { height: 40px; line-height: 30px;
-		font-size: 1.2em; font-weight: bold; color: #fff !important; }
+		.textBox { width: 94%; } 
+		.button { 
+			height: 40px; 
+			line-height: 30px;
+			font-size: 1.2em; 
+			font-weight: bold;
+		} 
 		.businessSignupBtn {
-		display: block;
-		border-top: 10px;
+			display: block;
+			border-top: 10px;
 		}
 		.row {
 		display:
@@ -119,6 +125,7 @@
 			height: 170px;
 		}
 		.signup-hero-unit h4 {
+			color: #444;
 			border-bottom: 1px solid #bbb;
 			padding-bottom: 4px;
 		}
@@ -391,7 +398,7 @@
 						<b:Heading size="4">Find local deals</b:Heading>
 						<g:HTMLPanel addStyleNames="{style.signup-hero-unit-description}">
 							<ol>
-								<li>Find coupons from local businesses.</li>
+								<li>Purchase coupons from local businesses.</li>
 								<li>Broadcast within your community.</li>
 								<li>Send personal messages to your neighbors.</li>
 							</ol>

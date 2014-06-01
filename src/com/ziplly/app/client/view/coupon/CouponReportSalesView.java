@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.inject.Inject;
-import com.ziplly.app.client.activities.CouponReportActivity.TransactionSummary;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;

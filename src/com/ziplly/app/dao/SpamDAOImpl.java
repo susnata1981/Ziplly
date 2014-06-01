@@ -9,8 +9,8 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Spam;
 import com.ziplly.app.model.SpamDTO;
+import com.ziplly.app.server.model.jpa.Spam;
 
 public class SpamDAOImpl extends BaseDAO implements SpamDAO {
 

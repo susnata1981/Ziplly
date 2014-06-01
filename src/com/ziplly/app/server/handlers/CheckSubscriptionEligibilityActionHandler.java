@@ -1,8 +1,9 @@
 package com.ziplly.app.server.handlers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.persistence.EntityManager;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 

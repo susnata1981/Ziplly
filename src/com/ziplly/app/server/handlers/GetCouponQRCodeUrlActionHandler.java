@@ -17,9 +17,9 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.PurchasedCouponDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.CouponBLI;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
 import com.ziplly.app.shared.GetCouponQRCodeUrlAction;
 import com.ziplly.app.shared.GetCouponQRCodeUrlResult;
 

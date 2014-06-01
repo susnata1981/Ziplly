@@ -23,9 +23,9 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.shared.EmailTemplate;
 
 import freemarker.template.Configuration;

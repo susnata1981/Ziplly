@@ -6,13 +6,14 @@ import java.util.List;
 
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
+import com.ziplly.app.server.model.jpa.Account;
 
 public class PrivacySettingsDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String section;
 	private String setting;
-	private Account account;
+	private AccountDTO account;
 
 	public Long getId() {
 		return id;
@@ -38,11 +39,11 @@ public class PrivacySettingsDTO implements Serializable {
 		this.setting = setting.name();
 	}
 
-	public Account getAccount() {
+	public AccountDTO getAccount() {
 		return account;
 	}
 
-	public void setAccount(Account account) {
+	public void setAccount(AccountDTO account) {
 		this.account = account;
 	}
 

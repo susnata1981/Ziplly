@@ -10,8 +10,8 @@ import javax.persistence.Query;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.PostalCode;
 import com.ziplly.app.model.PostalCodeDTO;
+import com.ziplly.app.server.model.jpa.PostalCode;
 
 public class PostalCodeDAOImpl extends BaseDAO implements PostalCodeDAO {
 	private Logger logger = Logger.getLogger(PostalCodeDAOImpl.class.getCanonicalName());

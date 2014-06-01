@@ -7,8 +7,8 @@ import javax.persistence.EntityManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 
 public class SubscriptionPlanDAOImpl extends BaseDAO implements SubscriptionPlanDAO {
 

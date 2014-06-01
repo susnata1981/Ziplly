@@ -9,6 +9,7 @@ public enum EmailTemplate {
 	ANNOUNCEMENT("announcement.ftl", "Announcement"),
 	OFFER("offer.ftl", "Offer"),
 	EMAIL_VERIFICATION("email_verification.ftl", "Verify your email"), 
+	COUPON_PUBLISHED("coupon_published.ftl", "A new coupon is available"),
 	COUPON_PURCHASE("coupon_purchase.ftl", "Your coupon is here");
 
 	private String subject;

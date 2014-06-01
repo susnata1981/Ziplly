@@ -12,9 +12,9 @@ import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.SubscriptionBLI;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.shared.GetAllSubscriptionPlanAction;
 import com.ziplly.app.shared.GetAllSubscriptionPlanResult;
 

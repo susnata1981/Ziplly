@@ -35,6 +35,7 @@ import com.ziplly.app.model.AccountNotificationDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.LocationDTO;
+import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.shared.GetAccountDetailsAction;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -94,8 +95,10 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 			@Override
 			public void onEvent(LoginEvent event) {
+			  NeighborhoodDTO currentNeighborhood = event.getAccount().getLocations().get(0).getNeighborhood();
 				if (FeatureFlags.EnableCouponFeature.isEnabled() 
-				    && event.getAccount() instanceof BusinessAccountDTO) {
+				    && (event.getAccount() instanceof BusinessAccountDTO)
+				    && FeatureFlags.hasPermissionToPublishCoupon(currentNeighborhood)) {
 					view.displayReportingMenu();
 				}
 				onLogin();

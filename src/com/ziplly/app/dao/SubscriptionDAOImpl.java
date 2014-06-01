@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Subscription;
+import com.ziplly.app.server.model.jpa.Subscription;
 
 public class SubscriptionDAOImpl implements SubscriptionDAO {
 	private Provider<EntityManager> entityManagerProvider;

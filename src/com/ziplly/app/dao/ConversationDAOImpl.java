@@ -12,11 +12,11 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.ConversationType;
-import com.ziplly.app.model.Message;
+import com.ziplly.app.server.model.jpa.Conversation;
+import com.ziplly.app.server.model.jpa.Message;
 
 public class ConversationDAOImpl extends BaseDAO implements ConversationDAO {
 

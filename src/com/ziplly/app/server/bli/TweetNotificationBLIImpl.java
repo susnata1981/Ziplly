@@ -24,9 +24,7 @@ import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Account;
 import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.AccountNotification;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.NeighborhoodDTO;
@@ -34,15 +32,19 @@ import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.ReadStatus;
 import com.ziplly.app.model.RecordStatus;
-import com.ziplly.app.model.Session;
-import com.ziplly.app.model.Transaction;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.EmailAction;
 import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.AccountNotification;
+import com.ziplly.app.server.model.jpa.Session;
+import com.ziplly.app.server.model.jpa.Transaction;
+import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
 
+// TODO(susnata): rewrite this class
+// Refactor this - do all of this from NotificationServlet.
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	Logger logger = Logger.getLogger(TweetNotificationBLIImpl.class.getCanonicalName());
 
@@ -50,7 +52,8 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	    TweetType.ANNOUNCEMENT,
 	    TweetType.SECURITY_ALERTS,
 	    TweetType.OFFERS,
-	    TweetType.HOT_DEALS);
+	    TweetType.HOT_DEALS,
+	    TweetType.COUPON);
 
 	private final AccountDAO accountDao;
 	private final NeighborhoodDAO neighborhoodDao;
@@ -94,19 +97,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 			return;
 		}
 
-		EmailTemplate template;
-		switch (tweet.getType()) {
-			case ANNOUNCEMENT:
-				template = EmailTemplate.ANNOUNCEMENT;
-				break;
-			case HOT_DEALS:
-			case OFFERS:
-				template = EmailTemplate.OFFER;
-			case SECURITY_ALERTS:
-			default:
-				template = EmailTemplate.SECURITY_ALERT;
-		}
-
+		EmailTemplate template = getEmailTemplate(tweet.getType());
 		AccountDTO sender = tweet.getSender();
 		Session session = sessionDao.findSessionByAccountId(sender.getAccountId());
 		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
@@ -137,6 +128,21 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		queue.add(options);
 	}
 
+	private EmailTemplate getEmailTemplate(TweetType type) {
+	  switch (type) {
+      case ANNOUNCEMENT:
+        return EmailTemplate.ANNOUNCEMENT;
+      case HOT_DEALS:
+      case OFFERS:
+        return EmailTemplate.OFFER;
+      case COUPON:
+        return EmailTemplate.COUPON_PUBLISHED;
+      case SECURITY_ALERTS:
+      default:
+        return EmailTemplate.SECURITY_ALERT;
+    }
+	}
+	
 	/**
 	 * Sends notification to subscribers in a given neighborhood. If neighborhood
 	 * is parent neighborhood, then it notifies residents in all child

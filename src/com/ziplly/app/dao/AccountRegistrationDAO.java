@@ -2,7 +2,7 @@ package com.ziplly.app.dao;
 
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.AccountRegistration;
+import com.ziplly.app.server.model.jpa.AccountRegistration;
 
 public interface AccountRegistrationDAO {
 	void save(AccountRegistration ar);

@@ -2,9 +2,9 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.Conversation;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationType;
+import com.ziplly.app.server.model.jpa.Conversation;
 
 public interface ConversationDAO {
 	Conversation save(Conversation conversation);

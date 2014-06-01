@@ -10,9 +10,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.PurchasedCouponStatus;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
 
 public class PurchasedCouponDAOImpl extends BaseDAO implements PurchasedCouponDAO {
 	private Logger logger = Logger.getLogger(TransactionDAOImpl.class.getName());

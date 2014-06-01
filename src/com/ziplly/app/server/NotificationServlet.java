@@ -87,19 +87,20 @@ public class NotificationServlet extends HttpServlet {
 				    Long.parseLong(tweetId),
 				    ntype,
 				    emailTemplate);
-
 				break;
 			case INDIVIDUAL:
 				String recipientEmail = req.getParameter(ZipllyServerConstants.RECIPIENT_EMAIL_KEY);
 				String recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);
 				String senderName = req.getParameter(ZipllyServerConstants.SENDER_NAME_KEY);
 				String senderEmail = req.getParameter(ZipllyServerConstants.SENDER_EMAIL_KEY);
+				
 				tweetNotificationBli.sendEmail(
 				    recipientEmail,
 				    recipientName,
 				    senderEmail,
 				    senderName,
 				    emailTemplate);
+				break;
 			case COUPON_TRANSACTION_SUCCESSFUL:
 			  recipientEmail = req.getParameter(ZipllyServerConstants.RECIPIENT_EMAIL_KEY);
         recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);

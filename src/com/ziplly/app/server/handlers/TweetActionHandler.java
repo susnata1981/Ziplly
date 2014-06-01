@@ -15,9 +15,9 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.TweetBLI;
+import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 

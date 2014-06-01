@@ -9,8 +9,8 @@ import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Session;
 import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.model.jpa.Session;
 
 public class SessionBLIImpl implements SessionBLI {
 

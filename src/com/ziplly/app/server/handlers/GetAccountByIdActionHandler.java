@@ -14,13 +14,10 @@ import com.ziplly.app.client.widget.ShareSetting;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.PersonalAccount;
-import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.PrivacySettings;
-import com.ziplly.app.model.PrivacySettingsDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.PersonalAccount;
+import com.ziplly.app.server.model.jpa.PrivacySettings;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 

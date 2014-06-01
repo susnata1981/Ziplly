@@ -1,6 +1,6 @@
 package com.ziplly.app.dao;
 
-import com.ziplly.app.model.Image;
+import com.ziplly.app.server.model.jpa.Image;
 
 public interface ImageDAO {
 	public Image save(Image image);

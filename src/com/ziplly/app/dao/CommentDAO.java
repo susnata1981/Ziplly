@@ -1,6 +1,6 @@
 package com.ziplly.app.dao;
 
-import com.ziplly.app.model.Comment;
+import com.ziplly.app.server.model.jpa.Comment;
 
 public interface CommentDAO {
 	void save(Comment comment);

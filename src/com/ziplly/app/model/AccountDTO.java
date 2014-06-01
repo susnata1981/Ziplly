@@ -2,7 +2,6 @@ package com.ziplly.app.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,11 +73,11 @@ public class AccountDTO implements Serializable {
 			return true;
 		}
 
-		if (!(o instanceof Account)) {
+		if (!(o instanceof AccountDTO)) {
 			return false;
 		}
 
-		Account a = (Account) o;
+		AccountDTO a = (AccountDTO) o;
 		return a.getAccountId() == this.getAccountId();
 	}
 

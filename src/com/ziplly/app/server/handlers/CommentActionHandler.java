@@ -11,8 +11,8 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Comment;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Comment;
 import com.ziplly.app.shared.CommentAction;
 import com.ziplly.app.shared.CommentResult;
 

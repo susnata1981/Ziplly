@@ -3,20 +3,13 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ziplly.app.server.model.jpa.Interest;
+
 public class InterestDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long interestId;
 	private String name;
 	private Date timeCreated;
-
-	public InterestDTO() {
-	}
-
-	public InterestDTO(Interest i) {
-		this.interestId = i.getInterestId();
-		this.name = i.getName();
-		this.timeCreated = i.getTimeCreated();
-	}
 
 	public Long getInterestId() {
 		return interestId;

@@ -5,6 +5,7 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,5 +52,14 @@ public class TweetBLIImplTest extends AbstractBase {
 	public void testMonthOfYear() {
 		DateTime time = new DateTime();
 		assertEquals("Month doesn't match", 5, time.getMonthOfYear());
+	}
+	
+	@Test
+	public void testDate() {
+	  Date now = new Date();
+    DateTime d = new DateTime(now);
+    DateTime newDate = d.toDateTime(DateTimeZone.forID("America/Los_Angeles"));
+    System.out.println("Before =" + d);
+    System.out.println("After = "+newDate);
 	}
 }

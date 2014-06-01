@@ -26,8 +26,8 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.ImageDAO;
 import com.ziplly.app.dao.ImageDAOImpl;
-import com.ziplly.app.model.Image;
 import com.ziplly.app.model.RecordStatus;
+import com.ziplly.app.server.model.jpa.Image;
 
 @Singleton
 public class UploadServlet extends HttpServlet {

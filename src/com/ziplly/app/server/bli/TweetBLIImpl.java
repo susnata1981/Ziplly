@@ -14,15 +14,15 @@ import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.SubscriptionPlanDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.BusinessAccount;
 import com.ziplly.app.model.FeatureFlags;
-import com.ziplly.app.model.Subscription;
-import com.ziplly.app.model.SubscriptionPlan;
 import com.ziplly.app.model.SubscriptionPlanType;
 import com.ziplly.app.model.SubscriptionStatus;
-import com.ziplly.app.model.Tweet;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.BusinessAccount;
+import com.ziplly.app.server.model.jpa.Subscription;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 public class TweetBLIImpl implements TweetBLI {
   private TweetDAO tweetDao;
@@ -38,6 +38,9 @@ public class TweetBLIImpl implements TweetBLI {
     this.subscriptionPlanDao = subscriptionPlanDao;
   }
 
+  /**
+   * Main method for sending tweets.
+   */
   @Override
   public Tweet sendTweet(final Tweet tweet, final Account loggedInAccount) throws AccessException,
       NeedsSubscriptionException,
@@ -45,7 +48,7 @@ public class TweetBLIImpl implements TweetBLI {
       UsageLimitExceededException,
       NotFoundException {
 
-    // check usage limits for business tweets
+    // Check usage limits for business tweets
     if (loggedInAccount instanceof BusinessAccount) {
       checkUsage((BusinessAccount) loggedInAccount, tweet);
     }

@@ -3,11 +3,13 @@ package com.ziplly.app.client.view.coupon;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.datetimepicker.client.ui.DateTimeBox;
 import com.google.gwt.core.client.GWT;
@@ -16,17 +18,15 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.exceptions.UsageLimitExceededException;
-import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
-import com.ziplly.app.client.widget.ConfirmationModalWidget;
-import com.ziplly.app.client.widget.ConfirmationModalWidget.ConfirmationModalCallback;
+import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.blocks.AbstractBaseTextWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
@@ -43,7 +43,7 @@ import com.ziplly.app.shared.ValidationResult;
 
 public class CouponFormWidget extends AbstractView {
 
-	private static final int DESCRIPTION_MAX_LENGTH = 100;
+	private static final int DESCRIPTION_MAX_LENGTH = 500;
   private static final int DESCRIPTION_MIN_LENGTH = 30;
   private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
 
@@ -57,6 +57,9 @@ public class CouponFormWidget extends AbstractView {
 	private AbstractBaseTextWidget quantityWidget;
 	private AbstractBaseTextWidget totalCouponAllowedWidget;
 
+	@UiField
+	Alert message;
+	
 	@UiField
 	ControlGroup titleCg;
 	@UiField
@@ -187,6 +190,7 @@ public class CouponFormWidget extends AbstractView {
 			totalCouponAllowedTextBox.setReadOnly(true);
 		}
 
+		message.setVisible(false);
 		displayPreview(false);
   }
 
@@ -212,29 +216,24 @@ public class CouponFormWidget extends AbstractView {
 		valid &= result.isValid();
 		
 		if (valid) {
-		  validateDiscount();
+		  valid = validateDiscount();
 		}
 		
 		return valid;
 	}
 	
-	private ValidationResult validateDiscount() {
+	private boolean validateDiscount() {
 	  Double price = Double.parseDouble(FieldVerifier.sanitize(priceWidget.getValue()));
 	  Double discountedPrice = Double.parseDouble(FieldVerifier.sanitize(discountWidget.getValue()));
 	  
 	  double discount = 100 * (discountedPrice/price);
-	  if (discount > 50) {
-	    String msg = "Are you sure you want to offer the voucher for "+discount+"% off";
-	    ConfirmModal confirmModal = new ConfirmModal();
-	    ConfirmationModalWidget widget = new ConfirmationModalWidget(msg, confirmModal);
-	    if ( !confirmModal.isConfirmed() ) {
-	      ValidationResult result = new ValidationResult();
-	      result.addError("Discount too high");
-	      return result;
-	    }
+	  if (discount < 50) {
+	    String msg = "Are you sure you want to offer the voucher for "+(100-discount)+"% off";
+	    boolean confirm = Window.confirm(msg);
+	    return confirm;
 	  }
 	  
-	  return new ValidationResult();
+	  return true;
   }
 
   public CouponDTO getCoupon() {
@@ -249,13 +248,12 @@ public class CouponFormWidget extends AbstractView {
 		coupon.setEndDate(endDate.getValue());
 		coupon.setQuanity(Long.parseLong(quantityWidget.getValue()));
 		coupon.setQuantityPurchased(0L);
-		BigDecimal discount = BigDecimal.valueOf(Long.parseLong(discountWidget.getValue()));
-		coupon.setDiscount(discount);
-		BigDecimal itemPrice = BigDecimal.valueOf(Long.parseLong(priceWidget.getValue()));
+		BigDecimal discount = BigDecimal.valueOf(Double.parseDouble(discountWidget.getValue()));
+		BigDecimal itemPrice = BigDecimal.valueOf(Double.parseDouble(priceWidget.getValue()));
 		coupon.setItemPrice(itemPrice);
+		coupon.setDiscount(discount);
 		coupon.setNumberAllowerPerIndividual(Integer.parseInt(totalCouponAllowedTextBox.getValue()));
-//		coupon.setPrice(itemPrice.subtract(itemPrice.multiply(discount).divide(BigDecimal.valueOf(100L))));
-		coupon.setPrice(itemPrice.subtract(discount));
+		coupon.setPrice(discount);
 		coupon.setTimeCreated(new Date());
 		
 		if (uploadWidget.hasImage()) {
@@ -351,29 +349,26 @@ public class CouponFormWidget extends AbstractView {
 	}
 	
 	public void showPreview() {
+	  message.setVisible(false);
 		contentPanel.clear();
 		CouponDTO coupon = getCoupon();
+		if (coupon == null) {
+		  AlertModal modal = new AlertModal();
+		  modal.setTitle(stringDefinitions.failedValidation());
+		  return;
+		}
+		
 		TweetDTO tweet = new TweetDTO();
 		tweet.setSender(account);
 		coupon.setTweet(tweet);
 		CouponWidget couponWidget = new CouponWidget();
 		couponWidget.displayCoupon(coupon);
 		contentPanel.add(couponWidget);
-//		contentPanel.add(new HTMLPanel(basicDataFormatter.format(
-//		    coupon,
-//		    ValueType.COUPON)));
-//		Button buyNowBtn = new Button("Buy Now");
-//		buyNowBtn.setType(ButtonType.PRIMARY);
-//		buyNowBtn.getElement().setAttribute("margin", "6px");
-//		couponPreviewPanel.add(buyNowBtn);
-//		couponFormWidget.showButtons(false);
-
 		if (uploadWidget.hasImage()) {
 		  ImageDTO image = coupon.getTweet().getImages().get(0);
 		  StyleHelper.setBackgroundImage(contentPanel.getElement(), image.getUrl());
 		}
 		showHorizontalButtonPanel(false);
-//		StyleHelper.show(horizontalButtonPanel.getElement(), false);
 		displayPreview(true);
   }
 
@@ -389,23 +384,9 @@ public class CouponFormWidget extends AbstractView {
     this.account = account;
   }
   
-  private class ConfirmModal implements ConfirmationModalCallback {
-    
-    boolean confirmed = false;
-    
-    @Override
-    public void confirm() {
-      confirmed = true;
-      return;
-    }
-    
-    @Override
-    public void cancel() {
-      return;
-    }
-    
-    public boolean isConfirmed() {
-      return confirmed;
-    }
+  public void displayInlineMessage(String msg, AlertType type) {
+    message.setText(msg);
+    message.setType(type);
+    message.setVisible(true);
   }
 }

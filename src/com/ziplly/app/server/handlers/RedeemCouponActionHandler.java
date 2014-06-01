@@ -13,9 +13,9 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Coupon;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.CouponBLI;
+import com.ziplly.app.server.model.jpa.Coupon;
 import com.ziplly.app.shared.RedeemCouponAction;
 import com.ziplly.app.shared.RedeemCouponResult;
 

@@ -312,7 +312,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		StyleHelper.show(uploadField.getElement(), false);
 		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
 		// Disable add location for now
-		addLocationAnchor.setEnabled(false);
+		addLocationAnchor.setVisible(false);
 		neighborhoodTextBox.setReadOnly(true);
 		setupHandlers();
 	}

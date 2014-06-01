@@ -12,10 +12,10 @@ import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.AccountRegistration;
-import com.ziplly.app.model.AccountRegistration.AccountRegistrationStatus;
 import com.ziplly.app.model.AccountStatus;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.AccountRegistration;
+import com.ziplly.app.server.model.jpa.AccountRegistration.AccountRegistrationStatus;
 
 public class AccountRegistrationDAOImpl extends BaseDAO implements AccountRegistrationDAO {
 	private Logger logger = Logger.getLogger(AccountRegistrationDAOImpl.class.getCanonicalName());

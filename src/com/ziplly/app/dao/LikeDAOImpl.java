@@ -8,8 +8,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.DuplicateException;
-import com.ziplly.app.model.Love;
 import com.ziplly.app.model.LoveDTO;
+import com.ziplly.app.server.model.jpa.Love;
 
 public class LikeDAOImpl extends BaseDAO implements LikeDAO {
 

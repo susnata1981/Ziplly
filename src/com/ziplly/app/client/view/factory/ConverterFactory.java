@@ -3,7 +3,7 @@ package com.ziplly.app.client.view.factory;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ziplly.app.model.Neighborhood;
+import com.ziplly.app.server.model.jpa.Neighborhood;
 
 public class ConverterFactory {
 	private static Map<Key, Converter<?,?>> converters = new HashMap<Key, Converter<?,?>>();

@@ -6,9 +6,9 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
-import com.ziplly.app.model.Account;
-import com.ziplly.app.model.Coupon;
-import com.ziplly.app.model.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
 
 public interface CouponBLI {
 	

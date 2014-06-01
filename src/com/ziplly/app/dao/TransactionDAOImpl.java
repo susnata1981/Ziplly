@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import com.ziplly.app.model.Transaction;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.model.jpa.Transaction;
 
 public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 
@@ -148,6 +148,15 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
       int pageSize) {
 	  // TODO Auto-generated method stub
 	  return null;
+  }
+
+  @Override
+  public Transaction findByOrderId(String orderId) {
+    EntityManager em = entityManagerProvider.get();
+    Query query = em.createQuery("from Transaction where orderId = :orderId")
+        .setParameter("orderId", orderId);
+    
+    return (Transaction) query.getSingleResult();
   }
 
 //	@Override

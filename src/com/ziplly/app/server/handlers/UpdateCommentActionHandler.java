@@ -12,9 +12,9 @@ import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CommentDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.Comment;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Comment;
 import com.ziplly.app.shared.UpdateCommentAction;
 import com.ziplly.app.shared.UpdateCommentResult;
 

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.ziplly.app.server.model.jpa.Neighborhood;
+
 public class NeighborhoodDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long neighborhoodId;
@@ -36,11 +38,11 @@ public class NeighborhoodDTO implements Serializable {
 			return true;
 		}
 
-		if (!(o instanceof Neighborhood)) {
+		if (!(o instanceof NeighborhoodDTO)) {
 			return false;
 		}
 
-		Neighborhood n = (Neighborhood) o;
+		NeighborhoodDTO n = (NeighborhoodDTO) o;
 		return n.getNeighborhoodId() == this.getNeighborhoodId();
 	}
 

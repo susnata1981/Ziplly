@@ -17,10 +17,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.Neighborhood;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NeighborhoodType;
-import com.ziplly.app.model.PostalCode;
+import com.ziplly.app.server.model.jpa.Neighborhood;
+import com.ziplly.app.server.model.jpa.PostalCode;
 
 public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
   private Logger logger = Logger.getLogger(NeighborhoodDAOImpl.class.getCanonicalName());

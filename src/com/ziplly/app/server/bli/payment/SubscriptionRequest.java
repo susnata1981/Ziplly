@@ -35,6 +35,6 @@ public class SubscriptionRequest extends BaseRequest {
 
 	@Override
   public void completeTransaction() throws NumberFormatException, DispatchException, Exception {
-		subscriptionBli.completeTransaction(sellerId, subscriptionId);
+		subscriptionBli.completeTransaction(sellerId, subscriptionId, getOrderId());
   }
 }

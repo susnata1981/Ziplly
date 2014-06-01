@@ -14,10 +14,10 @@ import com.google.inject.Singleton;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
-import com.ziplly.app.model.Session;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.SessionBLI;
 import com.ziplly.app.server.bli.ServiceModule.ApplicationLoginUrl;
+import com.ziplly.app.server.model.jpa.Session;
 
 @Singleton
 public class RedeemCouponServlet extends HttpServlet {

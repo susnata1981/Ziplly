@@ -1,0 +1,118 @@
+package com.ziplly.app.server.model.jpa;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.ziplly.app.model.CommentDTO;
+
+@Entity
+@Table(name = "comment")
+public class Comment implements Serializable {
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "comment_id")
+	private Long commentId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tweet_id")
+	private Tweet tweet;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "account_id")
+	private Account author;
+
+	@OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+	private Set<Love> likes = new HashSet<Love>();
+
+	private String content;
+
+	@Column(name = "time_updated")
+	private Date timeUpdated;
+
+	@Column(name = "time_created")
+	private Date timeCreated;
+
+	public Comment() {
+	}
+
+	public Comment(CommentDTO comment) {
+		this.commentId = comment.getCommentId();
+		if (comment.getTweet() != null) {
+			this.setTweet(new Tweet(comment.getTweet()));
+		}
+		this.author = new Account(comment.getAuthor());
+		this.content = comment.getContent();
+		this.timeUpdated = comment.getTimeUpdated();
+		this.timeCreated = comment.getTimeCreated();
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getTimeCreated() {
+		return timeCreated;
+	}
+
+	public void setTimeCreated(Date timeCreated) {
+		this.timeCreated = timeCreated;
+	}
+
+	public Account getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(Account author) {
+		this.author = author;
+	}
+
+	public Long getCommentId() {
+		return commentId;
+	}
+
+	public void setCommentId(Long commentId) {
+		this.commentId = commentId;
+	}
+
+	public Tweet getTweet() {
+		return tweet;
+	}
+
+	public void setTweet(Tweet tweet) {
+		this.tweet = tweet;
+	}
+
+	public Set<Love> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(Set<Love> likes) {
+		this.likes = likes;
+	}
+
+	public Date getTimeUpdated() {
+		return timeUpdated;
+	}
+
+	public void setTimeUpdated(Date timeUpdated) {
+		this.timeUpdated = timeUpdated;
+	}
+}

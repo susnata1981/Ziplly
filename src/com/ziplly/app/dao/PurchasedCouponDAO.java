@@ -2,8 +2,8 @@ package com.ziplly.app.dao;
 
 import java.util.List;
 
-import com.ziplly.app.model.PurchasedCoupon;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.model.jpa.PurchasedCoupon;
 
 public interface PurchasedCouponDAO {
 	PurchasedCoupon findById(Long purchaseCouponId);
