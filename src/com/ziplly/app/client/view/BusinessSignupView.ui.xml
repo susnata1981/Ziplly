@@ -5,10 +5,10 @@
 	<ui:with field='res' type='com.ziplly.app.client.resource.ZResources' />
 	<ui:style>
 		.rootPanel ol li {
-			font-family: "Calisto MT", "Bookman Old Style", Bookman, "Goudy Old Style",
-			Garamond, "Hoefler Text", "Bitstream Charter", Georgia, serif;
-			font-size: 15px;
-		
+		font-family: "Calisto MT", "Bookman Old Style", Bookman, "Goudy Old Style",
+		Garamond, "Hoefler Text", "Bitstream Charter", Georgia, serif;
+		font-size: 15px;
+
 		}
 		input[type="text"],input[type="password"] {
 		height: 36px
@@ -16,10 +16,10 @@
 		font-size: 15px;
 		}
 		.loginForm {
-			position: absolute;
-			top: 40%;
-			right: 10%;
-			width: 300px;
+		position: absolute;
+		top: 40%;
+		right: 10%;
+		width: 300px;
 		}
 		.promotionCycle {
 		position: relative;
@@ -62,7 +62,8 @@
 		.signup-hero-unit-small:hover,
 		.promotionPanel:hover,
 		.signupPanel:hover {
-		-webkit-transform: scale(1.05) !important;
+		-webkit-transform:
+		scale(1.05) !important;
 		background-color: #F0FFFF;
 		}
 		.listitem {
@@ -71,14 +72,16 @@
 		.button {
 		height: 40px;
 		line-height: 30px;
-		font-size: 16px;
+		font-size:
+		16px;
 		font-weight: bold;
 		}
 		.row {
 		clear:
 		left;
 		display: block;
-		margin-top: 8px;
+		margin-top:
+		8px;
 		margin-bottom: 20px;
 		}
 		.addressRow {
@@ -111,20 +114,20 @@
 		20px 4px;
 		}
 		.signup-hero-unit {
-			position: relative;
-			padding: 30px !important;
-			padding-bottom: 60px !important;
-			opacity: .9;
+		position: relative;
+		padding: 30px !important;
+		padding-bottom: 60px !important;
+		opacity: .9;
 		}
 		.signup-hero-unit h4 {
-			border-bottom: 1px solid #bbb;
-			padding-bottom: 4px;
-			color: #555;
-			height: 60px;	
+		border-bottom: 1px solid #bbb;
+		padding-bottom: 4px;
+		color: #555;
+		height: 60px;
 		}
 		.hero-unit-btn {
-			position: relative;
-			float: right;
+		position: relative;
+		float: right;
 		}
 		.signup-hero-unit-small {
 		position:
@@ -142,7 +145,8 @@
 		font-size: 12px !important;
 		}
 		.lightgray {
-		color: #666;
+		color:
+		#666;
 		}
 		.popoverText {
 		display: inline;
@@ -159,16 +163,17 @@
 		border-bottom: 2px solid #ccc;
 		}
 		.pricingLearnMoreLink {
-			clear: left;
-			color: #f1f1f1;
-			display: block;
-			margin-top: 6px;
-			font-size: 14px;
+		clear: left;
+		color: #f1f1f1;
+		display: block;
+		margin-top: 6px;
+		font-size: 14px;
 		}
 		.planSectionTitle {
 		margin: 15px 0;
 		padding: 20px;
-		border-top: 1px solid #ccc;
+		border-top: 1px
+		solid #ccc;
 		text-align: center;
 		background: #f5f5f5;
 		border-radius: 5px;
@@ -176,12 +181,36 @@
 		.planSectionTitle h1 {
 		color: #525252 !important;
 		}
-		.planSectionTitle p {
+		.planSectionTitle p
+		{
 		color: #525252 !important;
 		font-size: 16px;
 		}
 		.signup-hero-unit-description ol {
-			height: 140px;
+		height: 140px;
+		}
+		.faqPanel {
+			margin: 20px 0;
+			background: #f1f1f1;
+			border-radius: 5px;
+			padding: 10px;
+		}
+		.faqTextH2 {
+			font-family: "Arial Rounded MT Bold", "Helvetica Rounded", Arial, sans-serif;
+			font-size: 20px !important;
+			padding: 10px;
+			border-bottom: 2px solid #ccc;
+			text-align: left;
+		}
+		.faqTextH4 {
+			font-size: 18px;
+			font-family: "Arial Narrow", Arial, sans-serif;
+			text-align: left;
+		}
+		.faqTextH6 {
+			font-size: 16px;
+			font-family: Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+			text-align: left;
 		}
 	</ui:style>
 	<ui:with type="com.ziplly.app.client.resource.ZResources"
@@ -197,8 +226,8 @@
 				<g:HTMLPanel>
 					<dt:VirtuousCycleWidget />
 					<div>
-					<g:Anchor ui:field="pricingAnchor" addStyleNames="{style.pricingLearnMoreLink}">See
-	pricing</g:Anchor>
+						<g:Anchor ui:field="pricingAnchor" addStyleNames="{style.pricingLearnMoreLink}">See
+							pricing</g:Anchor>
 					</div>
 				</g:HTMLPanel>
 			</b:Column>
@@ -303,16 +332,11 @@
 			<b:Column size="4" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
-						<b:Heading size="4" ui:field="heading">Connect with local customers</b:Heading>
-						<!-- <b:Paragraph addStyleNames="{style.lightgray}">
-							Complete your profile and
-							upload a photo.
-						</b:Paragraph>
-						<b:Paragraph addStyleNames="{style.lightgray}">
-							Say a bit about your
-							business.
-						</b:Paragraph>
-						<b:Button type="INFO" ui:field="createProfileBtn"
+						<b:Heading size="4" ui:field="heading">Connect with local
+							customers</b:Heading>
+						<!-- <b:Paragraph addStyleNames="{style.lightgray}"> Complete your 
+							profile and upload a photo. </b:Paragraph> <b:Paragraph addStyleNames="{style.lightgray}"> 
+							Say a bit about your business. </b:Paragraph> <b:Button type="INFO" ui:field="createProfileBtn" 
 							addStyleNames="{style.hero-unit-btn}">Signup</b:Button> -->
 						<g:HTMLPanel addStyleNames="{style.signup-hero-unit-description}">
 							<ol>
@@ -331,16 +355,10 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Instantly publish coupons</b:Heading>
-						<!-- <b:Paragraph addStyleNames="{style.lightgray}">
-							Basic, Pro and Premium
-							plans, pricing based on usage.
-						</b:Paragraph>
-						<b:Paragraph addStyleNames="{style.lightgray}">
-							Publish 4 coupons/month
-							with Pro plan.
-						</b:Paragraph>
-						<b:Button type="INFO" ui:field="exploreBtn"
-							addStyleNames="{style.hero-unit-btn}">Explore</b:Button> -->
+						<!-- <b:Paragraph addStyleNames="{style.lightgray}"> Basic, Pro and 
+							Premium plans, pricing based on usage. </b:Paragraph> <b:Paragraph addStyleNames="{style.lightgray}"> 
+							Publish 4 coupons/month with Pro plan. </b:Paragraph> <b:Button type="INFO" 
+							ui:field="exploreBtn" addStyleNames="{style.hero-unit-btn}">Explore</b:Button> -->
 						<g:HTMLPanel addStyleNames="{style.signup-hero-unit-description}">
 							<ol>
 								<li>Boost sales by creating your own coupon</li>
@@ -359,15 +377,9 @@
 				<g:HTMLPanel>
 					<b:Hero addStyleNames="{style.signup-hero-unit}">
 						<b:Heading size="4">Build relationship with local customers</b:Heading>
-						<!-- <b:Paragraph addStyleNames="{style.lightgray}">
-							Post messages to inform
-							local customers about
-							specials.
-						</b:Paragraph>
-						<b:Paragraph addStyleNames="{style.lightgray}">
-							Get instant results.
-						</b:Paragraph>
-						<b:Button type="INFO" ui:field="postMessageBtn"
+						<!-- <b:Paragraph addStyleNames="{style.lightgray}"> Post messages 
+							to inform local customers about specials. </b:Paragraph> <b:Paragraph addStyleNames="{style.lightgray}"> 
+							Get instant results. </b:Paragraph> <b:Button type="INFO" ui:field="postMessageBtn" 
 							addStyleNames="{style.hero-unit-btn}">Post message</b:Button> -->
 						<g:HTMLPanel addStyleNames="{style.signup-hero-unit-description}">
 							<ol>
@@ -387,8 +399,14 @@
 		<b:FluidRow>
 			<b:Column size="12">
 				<g:HTMLPanel addStyleNames="{style.planSectionTitle}">
-					<h2>60 Day Free Trial<sub><p class="tinyfont">currently only in Seattle. Coming soon in other regions.</p></sub></h2>
-					<br/>
+					<h2>
+						60 Day Free Trial
+						<sub>
+							<p class="tinyfont">Currently only in Seattle. Coming soon in other
+								regions.</p>
+						</sub>
+					</h2>
+					<br />
 					<p>We don't require you to pick a plan to start off. Just sign up,
 						see the benefit first.</p>
 				</g:HTMLPanel>
@@ -397,17 +415,35 @@
 		<b:FluidRow>
 			<b:Column size="4">
 				<dt:PricingPlanWidget price="FREE" tweetCount="3"
-					couponCount="0" title="BASIC" showChoosePlanButton="false"/>
+					couponCount="0" title="BASIC" showChoosePlanButton="false" />
 			</b:Column>
 			<b:Column size="4">
 				<dt:PricingPlanWidget price="$25" tweetCount="6"
-					couponCount="6" title="PREMIUM" titleHue="GREEN" showChoosePlanButton="false"/>
+					couponCount="6" title="PREMIUM" titleHue="GREEN"
+					showChoosePlanButton="false" />
 			</b:Column>
 			<b:Column size="4">
-			    <g:HTMLPanel>
-				<dt:PricingPlanWidget price="$50" tweetCount="unlimited"
-					couponCount="unlimited" title="PRO" showChoosePlanButton="false"/>
-				<a id="pricingPlans" />
+				<g:HTMLPanel>
+					<dt:PricingPlanWidget price="$50" tweetCount="unlimited"
+						couponCount="unlimited" title="PRO" showChoosePlanButton="false" />
+					<a id="pricingPlans" />
+				</g:HTMLPanel>
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column size="12">
+				<g:HTMLPanel addStyleNames="{style.faqPanel}">
+					<p class="{style.faqTextH2}">Frequently asked question</p>
+						<ol>
+							<li>
+								<p class="{style.faqTextH4}">Do I need to choose a plan during signup</p>
+								<p class="{style.faqTextH6}">
+								    We don't require you to choose a plan during sign up. 
+								    When you try to publish your first coupon is when we require you subscribe. 
+								    We don't bill you for the duration of the promotional period.
+								</p>
+							</li>
+						</ol>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

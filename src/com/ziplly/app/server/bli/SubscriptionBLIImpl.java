@@ -20,6 +20,7 @@ import com.ziplly.app.dao.TransactionDAO;
 import com.ziplly.app.model.SubscriptionStatus;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.BusinessAccount;
 import com.ziplly.app.server.model.jpa.Subscription;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Transaction;
@@ -129,7 +130,11 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
 
   @Override
   public void cancelOrder(String orderId) {
-//    logger.info(String.format("About to cancel transaction for order %s", orderId));
-//    Transaction transaction = transactionDao.findByOrderId(orderId);
+    logger.info(String.format("About to cancel transaction for order %s", orderId));
+    Transaction transaction = transactionDao.findByOrderId(orderId);
+    BusinessAccount account = BusinessAccount.class.cast(transaction.getBuyer());
+    Subscription subscription = account.getLatestSubscription();
+    subscription.setStatus(SubscriptionStatus.CANCELLED);
+    subscriptionDao.save(subscription);
   }
 }
