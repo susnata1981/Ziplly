@@ -350,8 +350,9 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     }
   }
 
+  @Deprecated
   @Override
-  public Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date) {
+  public Long findTotalCouponsByAccountIdAndMonth(Long accountId, long date) {
     DateTime dateTime = new DateTime(date);
     EntityManager em = getEntityManager();
     try {
@@ -375,13 +376,12 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now) {
+  public Long findTotalCouponsPublishedBetween(Long accountId, long before, long now) {
     EntityManager em = getEntityManager();
     try {
       Query query =
-          em
-              .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
-                  + "and t.timeCreated between :before and :now and status = :status and not null t.coupon.couponId");
+          em.createQuery("select count(*) from Tweet where sender.accountId = :accountId "
+                  + "and creationTime between :before and :now and status = :status and coupon.couponId is not null");
       query.setParameter("accountId", accountId);
       query.setParameter("status", TweetStatus.ACTIVE.name());
       query.setParameter("before", before);
@@ -398,13 +398,12 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now) {
+  public Long findTotalTweetsPublishedBetween(Long accountId, long before, long now) {
     EntityManager em = getEntityManager();
     try {
       Query query =
-          em
-              .createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
-                  + "and t.timeCreated between :before and :now and status = :status and t.coupon.couponId is null");
+          em.createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+                  + "and t.creationTime between :before and :now and status = :status and t.coupon.couponId is null");
       query.setParameter("accountId", accountId);
       query.setParameter("status", TweetStatus.ACTIVE.name());
       query.setParameter("before", before);

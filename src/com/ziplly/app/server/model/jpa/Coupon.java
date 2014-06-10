@@ -1,7 +1,6 @@
 package com.ziplly.app.server.model.jpa;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,8 +69,8 @@ public class Coupon extends AbstractEntity {
 		this.description = coupon.getDescription();
 //		this.startDate = coupon.getStartDate();
 //		this.endDate = coupon.getEndDate();
-		this.startTime = TimeUtil.toTimestamp(coupon.getStartDate(), TimeUtil.LOS_ANGELES_TIMEZONE);
-		this.endTime = TimeUtil.toTimestamp(coupon.getEndDate(), TimeUtil.LOS_ANGELES_TIMEZONE);
+		this.startTime = TimeUtil.toTimestamp(coupon.getStartDate());
+		this.endTime = TimeUtil.toTimestamp(coupon.getEndDate());
 		this.couponPrice = coupon.getCouponPrice();
 		this.price = coupon.getPrice();
 		this.itemPrice = coupon.getItemPrice();

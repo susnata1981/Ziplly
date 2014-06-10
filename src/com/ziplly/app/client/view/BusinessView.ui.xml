@@ -44,13 +44,13 @@
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column offset="3" size="7" addStyleNames="{style.colSpan}">
-				<b:Alert ui:field="message" close="false" />
+				<b:Alert ui:field="message" close="false" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column size="3" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.filterPanel}">
-					<b:Heading size="4" addStyleNames="{style.heading}">Find Businesses</b:Heading>
+					<h4>Find Businesses</h4>
 					<b:ControlGroup ui:field="zipCg" addStyleNames="{style.inputControlGroup}">
 						<b:Controls>
 							<b:TextBox ui:field="zipTextBox" placeholder="zip..."

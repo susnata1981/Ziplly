@@ -42,6 +42,9 @@ public class CheckBuyerEligibilityForCouponActionHandler
 	  this.paymentService = paymentService;
   }
 
+	/* (non-Javadoc)
+	 * @see com.ziplly.app.server.handlers.AbstractSessionAwareActionHandler#doExecute(net.customware.gwt.dispatch.shared.Action, net.customware.gwt.dispatch.server.ExecutionContext)
+	 */
 	@Override
   public CheckBuyerEligibilityForCouponResult
       doExecute(CheckBuyerEligibilityForCouponAction action, ExecutionContext context) throws DispatchException {

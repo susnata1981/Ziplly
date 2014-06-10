@@ -393,7 +393,7 @@ input[type="text"], input[type="password"] {
 	color: #888;
 	padding: 10px;
 	margin: 6px;
-	background: #fff !important;
+	background: #f1f1f1;
 }
 
 .updateAlertBlock h4 {

@@ -38,7 +38,7 @@ public class SubscriptionDAOImpl implements SubscriptionDAO {
 			Query query =
 			    em
 			        .createQuery(
-			            "from Subscription s where s.transaction.buyer.accountId = :accountId order by timeCreated")
+			            "from Subscription s where s.transaction.buyer.accountId = :accountId order by timeCreated desc")
 			        .setParameter("accountId", accountId);
 			return query.getResultList();
 		} catch (NoResultException nre) {

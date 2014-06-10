@@ -70,6 +70,7 @@ public class EmailServiceImpl implements EmailService {
 	    EmailEntity to,
 	    EmailTemplate template,
 	    Map<String, String> data) {
+	  
 		String emailMessage = prepareEmail(data, template);
 		sendEmailToFrom(
 		    data.get(ZipllyServerConstants.RECIPIENT_NAME_KEY),
@@ -100,8 +101,11 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	/**
-	 * Main method to send emails. Take in 1. Recipient name 2. Recipient email 3.
-	 * Subject 4. Content
+	 * Main method to send emails. Take in 
+	 * 1. Recipient name 
+	 * 2. Recipient email 
+	 * 3. Subject 
+	 * 4. Content
 	 */
 	private void sendEmailToFrom(
 	    String recipientName,

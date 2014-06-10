@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.ziplly.app.client.ZipllyController;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.activities.util.PaymentFlow;
 import com.ziplly.app.client.places.HomePlace;
@@ -65,11 +66,14 @@ import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
+import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.model.overlay.GoogleWalletFailureResult;
+import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
@@ -258,10 +262,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				tweet.setContent(tweetContentTextArea.getText());
 				presenter.updateTweet(tweet);
 				tweetContentPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-				// tweetContentTextArea.getElement().getStyle()
-				// .setVisibility(Visibility.HIDDEN);
-				// saveBtn.setVisible(false);
-				// cancelBtn.setVisible(false);
 			}
 		});
 
@@ -789,10 +789,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	 * @param jwtToken 
 	 */
 	public void initiatePay(String jwtToken) {
-//		if (paymentButton != null) {
-//			paymentButton.pay(jwtToken);
-//		}
-	  PaymentFlow flow = new PaymentFlow(null);
+	  PaymentFlow flow = new PaymentFlow(new GoogleWalletPostPayButtonHandler() {
+      
+      @Override
+      public void onSuccess(GoogleWalletSuccessResult result) {
+      }
+      
+      @Override
+      public void onFailure(GoogleWalletFailureResult result) {
+        presenter.cancelTransaction(result.getRequest().getRequest().getPurchaseCouponId());
+      }
+    });
 	  flow.doPay(jwtToken);
 	}
 	

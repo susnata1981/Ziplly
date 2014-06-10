@@ -350,8 +350,8 @@ public class EntityUtil {
 		// Avoid recursion
 		resp.setTransaction(clone(subscription.getTransaction(), topLevelOnly));
 		resp.setStatus(subscription.getStatus());
-		resp.setTimeUpdated(subscription.getTimeUpdated());
-		resp.setTimeCreated(subscription.getTimeCreated());
+		resp.setTimeUpdated(TimeUtil.toDate(subscription.getTimeUpdated()));
+		resp.setTimeCreated(TimeUtil.toDate(subscription.getTimeCreated()));
 		return resp;
 	}
 	
@@ -610,8 +610,8 @@ public class EntityUtil {
 		resp.setStatus(pc.getStatus());
 		resp.setCoupon(clone(pc.getCoupon()));
 		resp.setTransaction(clone(pc.getTransaction()));
-		resp.setTimeUpdated(pc.getTimeUpdated());
-		resp.setTimeCreated(pc.getTimeCreated());
+		resp.setTimeUpdated(TimeUtil.toDate(pc.getTimeUpdated()));
+		resp.setTimeCreated(TimeUtil.toDate(pc.getTimeCreated()));
 		return resp;
 	}
 
@@ -624,8 +624,8 @@ public class EntityUtil {
 		resp.setTransactionId(transaction.getTransactionId());
 		resp.setStatus(transaction.getStatus());
 		resp.setCurrency(transaction.getCurrency());
-		resp.setTimeUpdated(transaction.getTimeUpdated());
-		resp.setTimeCreated(transaction.getTimeCreated());
+		resp.setTimeUpdated(TimeUtil.toDate(transaction.getTimeUpdated()));
+		resp.setTimeCreated(TimeUtil.toDate(transaction.getTimeCreated()));
 
 		//	Avoid recursion
 		if (!topLevelOnly) {

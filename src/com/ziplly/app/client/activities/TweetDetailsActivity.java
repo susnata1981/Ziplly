@@ -245,4 +245,10 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
   public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon) {
 		placeController.goTo(new LoginPlace());
 	}
+
+  @Override
+  public void cancelTransaction(long transactionId) {
+    // TODO Auto-generated method stub
+    
+  }
 }

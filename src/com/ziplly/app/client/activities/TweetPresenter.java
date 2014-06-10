@@ -38,6 +38,8 @@ public interface TweetPresenter extends SendMessagePresenter {
 	void getCouponFormActionUrl(CouponFormWidget couponFormWidget);
 
 	void initializeUploadForm(FormUploadWidget formUploadWidget);
+
+  void cancelTransaction(long transactionId);
 	
 //	TweetWidget getTweetWidget();
 }

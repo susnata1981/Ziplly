@@ -1,6 +1,8 @@
 package com.ziplly.app.client.view.business;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidRow;
@@ -35,6 +37,8 @@ public class SubscriptionPlansView extends Composite {
   
   private BasicDataFormatter formatter = new BasicDataFormatter();
   
+  private Map<Long, PricingPlanWidget> planIdToPlanMap = new HashMap<Long, PricingPlanWidget>();
+  
   private Handler handler;
   
   public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
@@ -65,6 +69,7 @@ public class SubscriptionPlansView extends Composite {
       });
       
       col.add(widget);
+      planIdToPlanMap.put(plan.getSubscriptionId(), widget);
       row.add(col);
     }
   }
@@ -75,5 +80,9 @@ public class SubscriptionPlansView extends Composite {
   
   public static interface Handler {
     void onSubcriptionSelection(SubscriptionPlanDTO plan);
+  }
+  
+  public PricingPlanWidget getWidget(long subscriptionPlanId) {
+    return planIdToPlanMap.get(subscriptionPlanId);
   }
 }

@@ -38,7 +38,6 @@ public class TweetActionHandler extends AbstractTweetActionHandler<TweetAction, 
 
 	@Override
 	public TweetResult doExecute(TweetAction action, ExecutionContext arg1) throws DispatchException {
-
 		checkNotNull(action.getTweet());
 		validateSession();
 

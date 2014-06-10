@@ -30,7 +30,7 @@
 		ui:field="container">
 		<b:FluidRow>
 			<b:Column size="10" ui:field="messageSection" addStyleNames="{style.colSpan}">
-				<b:Alert ui:field="message" close="false" />
+				<b:Alert ui:field="message" close="false" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">

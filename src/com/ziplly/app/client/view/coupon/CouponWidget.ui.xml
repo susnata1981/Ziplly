@@ -23,6 +23,9 @@
 			line-height: 26px;
 			font-weight: 300;
 		}
+		.punchLine {
+			color: #fff;
+		}
 		.description {
 			float: left;
 			width: 100%;
@@ -97,7 +100,7 @@
 			<g:Image ui:field="image" addStyleNames="{style.image}" />
 		</figure>
 		<div class="{style.description}">
-			<b:Heading size="2" ui:field="punchLine"></b:Heading>
+			<b:Heading size="2" ui:field="punchLine" addStyleNames="{style.punchLine}"></b:Heading>
 			<p>
 			    <b:Label>Description</b:Label>
 				<span ui:field="couponDescription"></span>

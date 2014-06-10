@@ -10,10 +10,10 @@ public enum EmailTemplate {
 	OFFER("offer.ftl", "Offer"),
 	EMAIL_VERIFICATION("email_verification.ftl", "Verify your email"), 
 	COUPON_PUBLISHED("coupon_published.ftl", "A new coupon is available"),
-	COUPON_PURCHASE("coupon_purchase.ftl", "Your coupon is here");
+	COUPON_PURCHASE("coupon_purchase.ftl", "Your coupon is here"),
+	SUBSCRIPTION_NOTIFICATION("subscription_notification.ftl", "Subscription successful");
 
 	private String subject;
-
 	EmailTemplate(String filename, String subject) {
 		this.setFilename(filename);
 		this.setSubject(subject);

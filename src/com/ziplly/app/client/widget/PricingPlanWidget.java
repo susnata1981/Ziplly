@@ -3,7 +3,9 @@ package com.ziplly.app.client.widget;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -53,6 +55,9 @@ public class PricingPlanWidget extends Composite {
   @UiField
   Button choosePlanBtn;
   
+  @UiField
+  Element couponCommission;
+  
   public void setTitle(String title) {
     titleSpan.setInnerText(title);
   }
@@ -88,5 +93,10 @@ public class PricingPlanWidget extends Composite {
   public enum TITLE_HUE {
     GREEN,
     BLUE;
+  }
+
+  public void hideFees() {
+//    StyleHelper.show(couponCommission, false);
+    couponCommission.getStyle().setVisibility(Visibility.HIDDEN);
   }
 }

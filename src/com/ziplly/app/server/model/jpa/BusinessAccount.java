@@ -1,5 +1,7 @@
 package com.ziplly.app.server.model.jpa;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -10,7 +12,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -22,7 +23,6 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessCategory;
 import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.overlay.SubscriptionDTO;
-import com.ziplly.app.server.util.TimeUtil;
 
 @Entity
 @DiscriminatorValue("business")
@@ -40,8 +40,7 @@ public class BusinessAccount extends Account {
 	@OneToOne(cascade = CascadeType.ALL)
 	private BusinessProperties properties;
 
-	@OneToMany
-	@JoinColumn(name="subscription_id")
+	@OneToMany(mappedBy = "account")
 	@Fetch(FetchMode.JOIN)
 	private Set<Subscription> subscriptions = new HashSet<Subscription>();
 
@@ -86,8 +85,17 @@ public class BusinessAccount extends Account {
 		this.website = website;
 	}
 
-	public Set<Subscription> getSubscriptions() {
-		return subscriptions;
+	public Collection<Subscription> getSubscriptions() {
+	  ArrayList<Subscription> sortedSubscription = Lists.newArrayList(subscriptions);
+	  Collections.sort(sortedSubscription, new Comparator<Subscription>() {
+
+      @Override
+      public int compare(Subscription o1, Subscription o2) {
+        return (int) (o2.getTimeCreated() - o1.getTimeCreated());
+      }
+	    
+	  });
+		return sortedSubscription;
 	}
 
 	public void setSubscriptions(Set<Subscription> subscriptions) {
@@ -124,8 +132,7 @@ public class BusinessAccount extends Account {
 
       @Override
       public int compare(Subscription o1, Subscription o2) {
-        return (int) (TimeUtil.toTimestamp(o1.getTimeCreated(), TimeUtil.LOS_ANGELES_TIMEZONE) - 
-            TimeUtil.toTimestamp(o2.getTimeCreated(), TimeUtil.LOS_ANGELES_TIMEZONE));
+        return (int) (o2.getTimeCreated() - o1.getTimeCreated());
       }
     });
     

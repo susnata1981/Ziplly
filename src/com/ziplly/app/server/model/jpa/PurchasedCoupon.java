@@ -1,5 +1,7 @@
 package com.ziplly.app.server.model.jpa;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +14,11 @@ import javax.persistence.Table;
 
 import com.ziplly.app.model.PurchasedCouponDTO;
 import com.ziplly.app.model.PurchasedCouponStatus;
+import com.ziplly.app.server.util.TimeUtil;
 
 @Entity
 @Table(name="purchased_coupon")
-public class PurchasedCoupon extends AbstractEntity {
+public class PurchasedCoupon {
   private static final long serialVersionUID = 1L;
 
 	@Id
@@ -37,6 +40,11 @@ public class PurchasedCoupon extends AbstractEntity {
 	@Column(name="status", nullable = false)
 	private String status;
 	
+	@Column(name = "time_updated")
+	private long timeUpdated;
+	@Column(name = "time_created", nullable = false)
+	private long timeCreated;
+	
 	public PurchasedCoupon() {
   }
 
@@ -46,8 +54,8 @@ public class PurchasedCoupon extends AbstractEntity {
 		this.setCoupon(new Coupon(prCoupon.getCoupon()));
 		this.status = prCoupon.getStatus().name();
 		this.setTransaction(new Transaction(prCoupon.getTransaction()));
-		this.timeCreated = prCoupon.getTimeCreated();
-		this.timeUpdated = prCoupon.getTimeUpdated();
+		this.setTimeCreated(prCoupon.getTimeCreated());
+		this.setTimeUpdated(prCoupon.getTimeUpdated());
   }
 
 	public Long getPurchasedCouponId() {
@@ -96,5 +104,29 @@ public class PurchasedCoupon extends AbstractEntity {
 
 	public void setTransaction(Transaction transaction) {
 	  this.transaction = transaction;
+  }
+
+  public long getTimeUpdated() {
+    return timeUpdated;
+  }
+
+  public void setTimeUpdated(long timeUpdated) {
+    this.timeUpdated = timeUpdated;
+  }
+
+  public void setTimeUpdated(Date timeUpdated) {
+    this.timeUpdated = TimeUtil.toTimestamp(timeUpdated);
+  }
+  
+  public long getTimeCreated() {
+    return timeCreated;
+  }
+
+  public void setTimeCreated(long timeCreated) {
+    this.timeCreated = timeCreated;
+  }
+  
+  public void setTimeCreated(Date timeCreated) {
+    this.timeCreated = TimeUtil.toTimestamp(timeCreated);
   }
 }

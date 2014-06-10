@@ -198,8 +198,8 @@
 	<g:FlowPanel>
 		<b:FluidContainer addStyleNames="{style.rootPanel}">
 			<b:FluidRow>
-				<b:Column offset="1" size="10">
-					<b:Alert ui:field="infoField" animation="true" close="false" />
+				<b:Column offset="1" size="9">
+					<b:Alert ui:field="infoField" animation="true" close="false" addStyleNames="messageBlock"/>
 				</b:Column>
 			</b:FluidRow>
 			<b:FluidRow addStyleNames="{style.row}">
@@ -390,6 +390,7 @@
 								<b:Button type="INFO" ui:field="createProfileBtn"
 									addStyleNames="{style.hero-unit-btn}">Sign up</b:Button>
 							</div>
+							<a id="howItWorksLink" />
 						</g:HTMLPanel>
 					</b:Hero>
 				</b:Column>
@@ -427,7 +428,7 @@
 					</b:Hero>
 				</b:Column>
 			</b:FluidRow>
-			<b:FluidRow addStyleNames="{style.fluid-row}">
+			<!-- <b:FluidRow addStyleNames="{style.fluid-row}">
 				<b:Column offset="2" size="8" addStyleNames="{style.colSpan}">
 					<g:HTMLPanel>
 						<b:Hero addStyleNames="{style.signup-hero-unit-small}">
@@ -460,9 +461,6 @@
 										account</li>
 									<li>Log in and start promoting your business within your
 										locality</li>
-									<li>It's completely free to use till August 2014, when you'll
-										be charged
-										based on the number of messages you share</li>
 								</ol>
 								<a id="howItWorksLink" />
 							</g:HTMLPanel>
@@ -470,7 +468,7 @@
 						<a id="howItWorksInDetailLink" />
 					</g:HTMLPanel>
 				</b:Column>
-			</b:FluidRow>
+			</b:FluidRow> -->
 		</b:FluidContainer>
 	</g:FlowPanel>
 </ui:UiBinder> 

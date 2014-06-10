@@ -1,6 +1,8 @@
 package com.ziplly.app.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.ziplly.app.model.overlay.SubscriptionDTO;
@@ -86,5 +88,27 @@ public class BusinessAccountDTO extends AccountDTO {
 
 	public void setSubscriptions(List<SubscriptionDTO> subscriptions) {
 	  this.subscriptions = subscriptions;
+  }
+	
+	public SubscriptionDTO getLatestSubscription() {
+	  if (subscriptions.size() == 0) {
+	    return null;
+	  }
+	  
+    List<SubscriptionDTO> subscriptionList = new ArrayList<SubscriptionDTO>(subscriptions);
+    Collections.sort(subscriptionList, new Comparator<SubscriptionDTO>() {
+
+      @Override
+      public int compare(SubscriptionDTO o1, SubscriptionDTO o2) {
+        return (int) (o2.getTimeCreated().getTime() - o1.getTimeCreated().getTime());
+      }
+    });
+    
+    SubscriptionDTO latestSubscription = subscriptionList.get(0);
+    if (latestSubscription.getStatus() == SubscriptionStatus.ACTIVE) {
+      return latestSubscription;
+    }
+    
+    return null;
   }
 }

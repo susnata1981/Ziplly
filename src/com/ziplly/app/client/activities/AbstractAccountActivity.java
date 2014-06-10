@@ -483,24 +483,14 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 
-	void displayMap(NeighborhoodDTO n) {
-		view.displayMap(n.getPostalCodes().get(0).toString());
-	}
-
-//	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
-//		dispatcher.execute(
-//		    new GetImageUploadUrlAction(),
-//		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
-//
-//			    @Override
-//			    public void onSuccess(GetImageUploadUrlResult result) {
-//				    if (result.getImageUrl() != null) {
-//					    formUploadWidget.setUploadFormActionUrl(result.getImageUrl());
-//					    formUploadWidget.enableUploadButton();
-//				    }
-//			    }
-//		    });
-//	}
+  @Override
+  public void cancelTransaction(long transactionId) {
+    Window.alert("Txn ID = "+transactionId);
+  }
 	
+  public void displayMap(NeighborhoodDTO n) {
+    view.displayMap(n.getPostalCodes().get(0).toString());
+  }
+
 	abstract void stopThreads();
 }

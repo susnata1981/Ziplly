@@ -1,6 +1,7 @@
 package com.ziplly.app.server.model.jpa;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,10 +15,11 @@ import javax.validation.constraints.NotNull;
 
 import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.TransactionStatus;
+import com.ziplly.app.server.util.TimeUtil;
 
 @Entity
 @Table(name="transaction")
-public class Transaction extends AbstractEntity {
+public class Transaction {
   private static final long serialVersionUID = 1L;
 
   @Column(name="transaction_id")
@@ -42,6 +44,12 @@ public class Transaction extends AbstractEntity {
 	@Column(name = "currency", nullable = false)
 	private String currency;
 	
+	@Column(name = "time_created")
+	private long timeCreated;
+	
+	@Column(name = "time_updated")
+	private long timeUpdated;
+	
 	public Transaction() {
 	}
 	
@@ -51,8 +59,8 @@ public class Transaction extends AbstractEntity {
 		this.currency = transaction.getCurrency();
 		this.status = transaction.getStatus().name();
 		this.amount = transaction.getAmount();
-		this.timeUpdated = transaction.getTimeUpdated();
-		this.timeCreated = transaction.getTimeCreated();
+		this.setTimeUpdated(TimeUtil.toTimestamp(transaction.getTimeUpdated()));
+		this.setTimeCreated(TimeUtil.toTimestamp(transaction.getTimeCreated()));
 	}
 	
 	public Long getTransactionId() {
@@ -101,5 +109,29 @@ public class Transaction extends AbstractEntity {
 
   public void setOrderId(String orderId) {
     this.orderId = orderId;
+  }
+
+  public long getTimeUpdated() {
+    return timeUpdated;
+  }
+
+  public void setTimeUpdated(long timeUpdated) {
+    this.timeUpdated = timeUpdated;
+  }
+
+  public long getTimeCreated() {
+    return timeCreated;
+  }
+
+  public void setTimeCreated(long timeCreated) {
+    this.timeCreated = timeCreated;
+  }
+
+  public void setTimeCreated(Date now) {
+    this.timeCreated = TimeUtil.toTimestamp(now);
+  }
+  
+  public void setTimeUpdated(Date now) {
+    this.timeUpdated = TimeUtil.toTimestamp(now);
   }
 }

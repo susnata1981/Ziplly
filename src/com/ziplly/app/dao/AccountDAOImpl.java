@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -157,22 +158,6 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		return response;
 	}
 
-	@Deprecated
-	@Override
-	public List<AccountDTO> findAllAccountsByZip(int zip) {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery("from Account where zip = :zip");
-		query.setParameter("zip", zip);
-
-		@SuppressWarnings("unchecked")
-		List<Account> accounts = (List<Account>) query.getResultList();
-		List<AccountDTO> response = Lists.newArrayList();
-		for (Account pa : accounts) {
-			response.add(EntityUtil.convert(pa));
-		}
-		return response;
-	}
-
 	@Override
 	public List<AccountDTO> findAccountsByNeighborhood(
 			EntityType entityType,
@@ -183,8 +168,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		int start = pageStart;// * pageSize;
 		EntityManager em = getEntityManager();
 		Query query =
-		    em.createQuery("select a from Account a join a.locations l where a.class = :type and l.neighborhood.neighborhoodId = :neighborhoodId"
-		            + " order by a.timeCreated desc");
+		    em.createQuery("select a from Account a join a.locations l where a.class = :type and"
+		        + " l.neighborhood.neighborhoodId = :neighborhoodId order by a.timeCreated desc");
 		query
 		    .setParameter("type", entityType.getType())
 		    .setParameter("neighborhoodId", neighborhoodId)
@@ -195,6 +180,10 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		try {
 			@SuppressWarnings("unchecked")
 			List<Account> accounts = (List<Account>) query.getResultList();
+			
+			// Filter accounts
+			accounts = filterBlacklistedAccounts(accounts);
+			
 			for (Account pa : accounts) {
 				response.add(EntityUtil.convert(pa));
 			}
@@ -233,6 +222,9 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 			@SuppressWarnings("unchecked")
 			List<? extends Account> accounts = (List<? extends Account>) query.getResultList();
 
+			// Filter accounts
+      accounts = filterBlacklistedAccounts(accounts);
+      
 			for (Account pa : accounts) {
 				response.add(EntityUtil.convert(pa));
 			}
@@ -250,46 +242,16 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 
 		EntityManager em = getEntityManager();
 		Query query =
-		    em
-		        .createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
+		    em.createNativeQuery("select count(distinct a.account_id) from account a, account_location al, location l, neighborhood n "
 		            + " where a.account_id = al.account_id and al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-		            + " and a.type = :type and n.neighborhood_id in (:neighborhoodIds)");
+		            + " and a.type = :type and n.neighborhood_id in (:neighborhoodIds) and a.account_id not in (:blackList)");
 
-		query.setParameter("type", entityType.getType());
-		query.setParameter("neighborhoodIds", neighborhoodIds);
-
+		query.setParameter("type", entityType.getType())
+		  .setParameter("neighborhoodIds", neighborhoodIds)
+		  .setParameter("blackList", getBlackListedAccounts());
+		
 		BigInteger count = (BigInteger) query.getSingleResult();
 		return count.longValue();
-	}
-
-	// TODO - deal with Account's in this layer
-	@Override
-	public List<AccountDTO> findAll() {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery("from Account");
-		@SuppressWarnings("unchecked")
-		List<Account> result = query.getResultList();
-		return EntityUtil.cloneAccountList(result);
-	}
-
-	@Override
-	public List<AccountDTO> findAccounts(String queryStr, int start, int end) {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery(queryStr);
-		query.setFirstResult(start);
-		query.setMaxResults(end - start);
-		@SuppressWarnings("unchecked")
-		List<Account> result = query.getResultList();
-		List<AccountDTO> resp = EntityUtil.cloneAccountList(result);
-		return resp;
-	}
-
-	@Override
-	public Long findTotalAccounts(String countQuery) {
-		EntityManager em = getEntityManager();
-		Query query = em.createQuery(countQuery);
-		Long count = (Long) query.getSingleResult();
-		return count;
 	}
 
 	@Override
@@ -314,12 +276,15 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 
 			Query query =
 			    em
-			        .createNativeQuery("select distinct count(a.account_id) from account a, account_location al, location l, neighborhood n "
-			            + " where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
-			            + " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id in (:neighborhood_ids)");
+			        .createNativeQuery("select distinct count(a.account_id) from account a, account_location al, location l, "
+			            + " neighborhood n where al.location_id = l.location_id and l.neighborhood_id = n.neighborhood_id"
+			            + " and al.account_id = a.account_id and a.type = :type and n.neighborhood_id in (:neighborhood_ids)"
+			            + " and a.account_id not in (:blackList)");
 
-			query.setParameter("type", type.getType());
-			query.setParameter("neighborhood_ids", allNeighborhoodIds);
+			query.setParameter("type", type.getType())
+			  .setParameter("neighborhood_ids", allNeighborhoodIds)
+			  .setParameter("blackList", getBlackListedAccounts());
+			  
 			BigInteger count = (BigInteger) query.getSingleResult();
 			return count.longValue();
 		} catch (NoResultException nre) {
@@ -328,9 +293,7 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	/**
-	 * Finds personal account by gender.
-	 * 
-	 * @throws NotFoundException
+	 * Finds personal accounts by gender.
 	 */
 	@Override
 	public List<PersonalAccountDTO> findPersonalAccounts(
@@ -351,7 +314,8 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		if (gender == Gender.ALL) {
 			query =
 			    em.createQuery("select a from Account a join a.locations l "
-			            + " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
+			            + " where a.class = PersonalAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)"
+			            + " order by a.timeCreated desc");
 		} else {
 			query =
 			    em.createQuery("select a from Account a join a.locations l "
@@ -371,38 +335,6 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 			List<PersonalAccount> paList = query.getResultList();
 			for (PersonalAccount pa : paList) {
 				result.add(EntityUtil.clone(pa, false));
-			}
-			return result;
-		} catch (NoResultException nre) {
-			return result;
-		}
-	}
-
-	@Override
-	public List<BusinessAccountDTO>
-	    findBusinessAccounts(long neighborhoodId, int start, int pageSize) throws NotFoundException {
-
-		Query query;
-
-		List<NeighborhoodDTO> neighborhoods =
-		    neighborhoodDao.findAllDescendentNeighborhoods(neighborhoodId);
-		List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
-		List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
-		allNeighborhoodIds.addAll(neighborhoodIdList);
-
-		query = getEntityManager().createQuery("select a from Account a join a.locations l "
-		            + " where a.class = BusinessAccount and l.neighborhood.neighborhoodId in (:neighborhoodId) order by a.timeCreated desc");
-		query
-		    .setParameter("neighborhoodId", allNeighborhoodIds)
-		    .setFirstResult(start)
-		    .setMaxResults(pageSize);
-
-		List<BusinessAccountDTO> result = Lists.newArrayList();
-		try {
-			@SuppressWarnings("unchecked")
-			List<BusinessAccount> baList = query.getResultList();
-			for (BusinessAccount ba : baList) {
-				result.add(EntityUtil.clone(ba, false));
 			}
 			return result;
 		} catch (NoResultException nre) {
@@ -504,6 +436,91 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		    .setParameter("class", type.getType());
 
 		List<Account> accounts = query.getResultList();
+		
+		// Filter accounts
+    accounts = filterBlacklistedAccounts(accounts);
+    
 		return EntityUtil.cloneAccountList(accounts);
 	}
+	
+	@Override
+  public List<AccountDTO> findAll() {
+    EntityManager em = getEntityManager();
+    Query query = em.createQuery("from Account");
+    @SuppressWarnings("unchecked")
+    List<Account> result = query.getResultList();
+    return EntityUtil.cloneAccountList(result);
+  }
+
+  @Deprecated
+  @Override
+  public List<AccountDTO> findAccounts(String queryStr, int start, int end) {
+    EntityManager em = getEntityManager();
+    Query query = em.createQuery(queryStr);
+    query.setFirstResult(start);
+    query.setMaxResults(end - start);
+    @SuppressWarnings("unchecked")
+    List<Account> result = query.getResultList();
+    List<AccountDTO> resp = EntityUtil.cloneAccountList(result);
+    return resp;
+  }
+
+  @Deprecated
+  @Override
+  public Long findTotalAccounts(String countQuery) {
+    EntityManager em = getEntityManager();
+    Query query = em.createQuery(countQuery);
+    Long count = (Long) query.getSingleResult();
+    return count;
+  }
+  
+  @Deprecated
+  @Override
+  public List<AccountDTO> findAllAccountsByZip(int zip) {
+    EntityManager em = getEntityManager();
+    Query query = em.createQuery("from Account where zip = :zip");
+    query.setParameter("zip", zip);
+
+    @SuppressWarnings("unchecked")
+    List<Account> accounts = (List<Account>) query.getResultList();
+    List<AccountDTO> response = Lists.newArrayList();
+    for (Account pa : accounts) {
+      response.add(EntityUtil.convert(pa));
+    }
+    return response;
+  }
+  
+  @Deprecated
+  @Override
+  public List<BusinessAccountDTO>
+      findBusinessAccounts(long neighborhoodId, int start, int pageSize) throws NotFoundException {
+
+    Query query;
+
+    List<NeighborhoodDTO> neighborhoods =
+        neighborhoodDao.findAllDescendentNeighborhoods(neighborhoodId);
+    List<Long> allNeighborhoodIds = Lists.newArrayList(neighborhoodId);
+    List<Long> neighborhoodIdList = getNeighborhoodIds(neighborhoods);
+    allNeighborhoodIds.addAll(neighborhoodIdList);
+
+    query = getEntityManager().createQuery("select a from Account a join a.locations l "
+                + " where a.class = BusinessAccount and l.neighborhood.neighborhoodId in (:neighborhoodId)"
+                + " order by a.timeCreated desc");
+    query
+        .setParameter("neighborhoodId", allNeighborhoodIds)
+        .setFirstResult(start)
+        .setMaxResults(pageSize);
+
+    List<BusinessAccountDTO> result = Lists.newArrayList();
+    try {
+      @SuppressWarnings("unchecked")
+      List<BusinessAccount> baList = query.getResultList();
+      for (BusinessAccount ba : baList) {
+        result.add(EntityUtil.clone(ba, false));
+      }
+      return result;
+    } catch (NoResultException nre) {
+      return result;
+    }
+  }
 }

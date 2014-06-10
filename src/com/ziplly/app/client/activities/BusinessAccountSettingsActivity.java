@@ -307,7 +307,6 @@ public class BusinessAccountSettingsActivity extends
   public void checkSubscriptionEligibility(final Long subscriptionId) {
 		CheckSubscriptionEligibilityAction action =  new CheckSubscriptionEligibilityAction();
 		action.setSubscriptionId(subscriptionId);
-		
 		dispatcher.execute(action, new DispatcherCallbackAsync<CheckSubscriptionEligibilityResult>() {
 
 			@Override
@@ -315,22 +314,21 @@ public class BusinessAccountSettingsActivity extends
 				if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ELIGIBLE) {
 					view.initiatePay(subscriptionId, result.getToken());
 				} 
-//				else if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ACTIVE_SUBSCRIPTION) {
-//					String msg = stringDefinitions.cancelledSubscriptionStillActive();
-//					
-//					@SuppressWarnings("unused")
-//          final ConfirmationModalWidget modal = new ConfirmationModalWidget(msg, new ConfirmationModalCallback() {
-//						
-//						@Override
-//						public void confirm() {
-//							view.initiatePay(subscriptionId, result.getToken());
-//						}
-//						
-//						@Override
-//						public void cancel() {
-//						}
-//					});
-//				} 
+				else if (result.getEligibilityStatus() == SubscriptionEligibilityStatus.ACTIVE_SUBSCRIPTION) {
+					@SuppressWarnings("unused")
+          final ConfirmationModalWidget modal = new ConfirmationModalWidget(stringDefinitions.cancelledSubscriptionStillActive(),
+              new ConfirmationModalCallback() {
+						
+						@Override
+						public void confirm() {
+							view.initiatePay(subscriptionId, result.getToken());
+						}
+						
+						@Override
+						public void cancel() {
+						}
+					});
+				} 
 				else {
 					view.displayMessage(stringDefinitions.ineglibleForSubscription(), AlertType.WARNING);
 				}

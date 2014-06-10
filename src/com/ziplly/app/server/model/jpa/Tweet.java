@@ -30,6 +30,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.server.util.TimeUtil;
 
 @NamedQueries({
     @NamedQuery(
@@ -108,6 +109,9 @@ public class Tweet extends AbstractEntity {
 	@JoinColumn(name="coupon_id")
 	private Coupon coupon;
 	
+	@Column(name = "creation_time")
+	private long creationTime;
+
 	public Tweet() {
 	}
 
@@ -122,6 +126,7 @@ public class Tweet extends AbstractEntity {
 		status = tweet.getStatus().name();
 		setTimeUpdated(tweet.getTimeUpdated());
 		setTimeCreated(tweet.getTimeCreated());
+		this.creationTime = TimeUtil.toTimestamp(tweet.getTimeCreated());
 		setImage(tweet.getImage());
 		
 		for (NeighborhoodDTO n : tweet.getTargetNeighborhoods()) {
@@ -257,5 +262,13 @@ public class Tweet extends AbstractEntity {
 
 	public void setCoupon(Coupon coupon) {
 	  this.coupon = coupon;
+  }
+
+  public long getCreationTime() {
+    return creationTime;
+  }
+
+  public void setCreationTime(long creationTime) {
+    this.creationTime = creationTime;
   }
 }

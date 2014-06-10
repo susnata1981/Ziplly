@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
 
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -827,16 +828,11 @@ public class AccountBLIImpl implements AccountBLI {
 		
 		// check date validity
 		// The Buy button should be disabled in the view for these date validity fail. 
-		Date now = new Date();
-		long currentTime = TimeUtil.toTimestamp(now, TimeUtil.LOS_ANGELES_TIMEZONE);
+		DateTime currentTime = TimeUtil.getCurrentTime();
 		
-		if (currentTime > coupon.getEndTime()) {
+		if (currentTime.getMillis() > coupon.getEndTime()) {
       throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
 		}
-
-//		if(now.after(coupon.getEndDate())) {
-//			throw new CouponCampaignEndedException(String.format("Coupon: %s discount is no longer available.", coupon.getDescription()));
-//		}
 	}
 
   private int getTotalCouponsPurchased(List<PurchasedCoupon> purchasedCoupons) {

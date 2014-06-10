@@ -34,7 +34,7 @@
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column offset="3" size="7">
-				<b:Alert ui:field="status" />
+				<b:Alert ui:field="status" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>

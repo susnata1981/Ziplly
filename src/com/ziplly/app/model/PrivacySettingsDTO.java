@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.ziplly.app.client.widget.AccountDetailsType;
 import com.ziplly.app.client.widget.ShareSetting;
-import com.ziplly.app.server.model.jpa.Account;
 
 public class PrivacySettingsDTO implements Serializable {
 	private static final long serialVersionUID = 1L;

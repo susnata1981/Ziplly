@@ -27,7 +27,7 @@ public interface TweetDAO {
 
 	Long findTweetCountByAccountId(Long accountId) throws NotFoundException;
 
-	Long findTotalCouponsByAccountIdAndMonth(Long accountId, Date date);
+	Long findTotalCouponsByAccountIdAndMonth(Long accountId, long date);
 	
 	TweetDTO findTweetById(Long tweetId) throws NotFoundException;
 
@@ -57,9 +57,10 @@ public interface TweetDAO {
    */
   List<TweetDTO> findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize);
   
-	Long findTotalCouponsPublishedBetween(Long accountId, Date before, Date now);
+	Long findTotalCouponsPublishedBetween(Long accountId, long before, long now);
 
-	Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now);
+	Long findTotalTweetsPublishedBetween(Long accountId, long before, long now);
+//	Long findTotalTweetsPublishedBetween(Long accountId, Date before, Date now);
 
   List<Tweet> findAllCoupons(int page, int pageSize);
 }

@@ -54,6 +54,8 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
+import com.ziplly.app.shared.CancelCouponPurchaseAction;
+import com.ziplly.app.shared.CancelCouponPurchaseResult;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 import com.ziplly.app.shared.CommentAction;
@@ -147,6 +149,9 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		    eligibilityAction,
 		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
 
+			    /* (non-Javadoc)
+			     * @see com.google.gwt.user.client.rpc.AsyncCallback#onSuccess(java.lang.Object)
+			     */
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
 				    widget.initiatePay(result.getJwtToken());
@@ -311,12 +316,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		action.setCouponTransactionId(transactionId);
 		action.setResultStatus(resultStatus);
 		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-
-			@Override
-			public void onFailure(Throwable th) {
-				Window.alert(th.getLocalizedMessage());
-			}
-
+		  
 			@Override
 			public void onSuccess(PurchaseCouponResult result) {
 				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
@@ -350,10 +350,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
 		action.setFrom(ctx.getAccount().getEmail());
 		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
-//			@Override
-//			public void onFailure(Throwable th) {
-//				view.displayMessage(StringConstants.FEEDBACK_SENT_FAILURE, AlertType.ERROR);
-//			}
 
 			@Override
 			public void onSuccess(EmailAdminResult result) {
@@ -382,10 +378,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
 		    new DispatcherCallbackAsync<SendMessageResult>() {
-//			    @Override
-//			    public void onFailure(Throwable th) {
-//				    view.displayMessage(StringConstants.MESSAGE_NOT_DELIVERED, AlertType.ERROR);
-//			    }
 
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
@@ -815,4 +807,17 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			view.displayMessage(StringConstants.TWEET_UPDATED, AlertType.SUCCESS);
 		}
 	}
+
+  @Override
+  public void cancelTransaction(long purchaseCouponId) {
+    CancelCouponPurchaseAction action = new CancelCouponPurchaseAction();
+    action.setPurchaseCouponId(purchaseCouponId);
+    dispatcher.execute(action, new DispatcherCallbackAsync<CancelCouponPurchaseResult>() {
+
+      @Override
+      public void onSuccess(CancelCouponPurchaseResult result) {
+        view.displayMessage(stringDefinitions.paymentCanclled(), AlertType.WARNING);
+      }
+    });
+  }
 }

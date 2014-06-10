@@ -123,4 +123,5 @@ public interface StringDefinitions extends Constants {
   String noNewMemberJoined();
   String couponPublishingDisabled();
   String failedValidation();
+  String paymentCanclled();
 }

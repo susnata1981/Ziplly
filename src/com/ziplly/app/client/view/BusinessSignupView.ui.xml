@@ -218,7 +218,7 @@
 	<b:FluidContainer addStyleNames="{style.rootPanel}">
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
-				<b:Alert ui:field="infoField" close="false" animation="true" />
+				<b:Alert ui:field="infoField" close="false" animation="true" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>
@@ -439,8 +439,47 @@
 								<p class="{style.faqTextH4}">Do I need to choose a plan during signup</p>
 								<p class="{style.faqTextH6}">
 								    We don't require you to choose a plan during sign up. 
-								    When you try to publish your first coupon is when we require you subscribe. 
-								    We don't bill you for the duration of the promotional period.
+								    Instead we require you choose a plan when you first try to publish a coupon. 
+								    We don't bill you for the entire duration of the promotional period.
+								</p>
+							</li>
+							<li>
+								<p class="{style.faqTextH4}">What does the coupon stand for</p>
+								<p class="{style.faqTextH6}">
+								    Although we're calling it a coupon, it really is a cash voucher. We provide
+								    a tool for you to publish cash vouchers at discounted face value.
+								</p>
+							</li>
+							<li>
+								<p class="{style.faqTextH4}">Can I set the terms of the coupon</p>
+								<p class="{style.faqTextH6}">
+									You can control the following parameters of the coupon 
+									1. Start/End time i.e. when would the promotion start and when would it end. 
+									Customers would be able to buy the coupon once it's published and before it expires. And they would be able to use
+									it after promotion goes into effect and before it expires. 
+									2. Discount amount e.g. you can sell a 10$ coupon (cash voucher) for 8$(discounted price) 
+									3. You can specify how many such coupons you want to publish to better tune your promotion. 
+								</p>
+							</li>
+							<li>
+								<p class="{style.faqTextH4}">How do I get paid</p>
+								<p class="{style.faqTextH6}">
+								    When you publish a coupon, it's becomes instantaenously available for purchase 
+								    to everyone in your city. From there onwards, anytime someone purchases your
+								    coupon, you get paid. We would require you to share your Google Wallet/PayPal
+								    account and we would transfer the money to your account at a agreed upon interval
+								    (e.g. every 2 weeks)  
+								</p>
+							</li>
+							<li>
+								<p class="{style.faqTextH4}">How would I verify the coupon</p>
+								<p class="{style.faqTextH6}">
+								    It's very simple - the coupon (either digital or paper print) would have a QR Code.
+								    You would need to scan that using any standard phone/tablet. You would see a link 
+								    would appear and once clicked would take you to our site and mark the coupon as used. 
+								    It'd display a message stating the coupon has been redeemed. In case it's an used coupon or the 
+								    coupon has expired or something else is wrong with it, it'd show you a clear message
+								    stating the reason.
 								</p>
 							</li>
 						</ol>

@@ -44,7 +44,7 @@
 	</ui:style>
 
 	<g:HTMLPanel ui:field="loginWidgetPanel" addStyleNames="{style.loginSection}">
-		<b:Alert ui:field="message"  close="false"/>
+		<b:Alert ui:field="message"  close="false" addStyleNames="messageBlock" />
 		<b:WellForm>
 			<b:ControlGroup ui:field="emailCg">
 				<b:Controls>

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.ziplly.app.server.model.jpa.Neighborhood;
-
 public class NeighborhoodDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long neighborhoodId;

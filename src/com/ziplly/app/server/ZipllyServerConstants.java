@@ -25,4 +25,5 @@ public class ZipllyServerConstants {
 	public static final String APP_ADMIN_EMAIL_NAME = "admin Zipll.y.com";
 	public static final String PASSWORD_RESET_URL_KEY = "passwordResetUrl";
 	public static final String CONFIRM_EMAIL_URL_KEY = "confirmEmailUrl";
+  public static final String SUBSCRIPTION_PLAN_ID_KEY = "subscriptionPlanId";
 }

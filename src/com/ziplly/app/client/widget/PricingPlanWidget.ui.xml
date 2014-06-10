@@ -8,6 +8,7 @@
 		border: 1px solid #ccc;
 		-webskit-box-shadow: 3px 3px 5px 5px #ccc;
 		border-radius: 5px;
+		width: 210px;
 		}
 		.panel h2 {
 			height: 80px;
@@ -39,6 +40,9 @@
 			color: #555 !important;
 			text-align: center;
 		}
+		.planFeatures {
+			height: 200px;
+		}
 		.planFeatures li {
 			list-style: none;	
 			display: block;
@@ -52,6 +56,7 @@
 			display: block;
 			margin-bottom: 10px;
 			font-size: 15px;
+			color: #555;
 			font-family: Arial, Helvetica, sans-serif;
 		}
 		.middle {
@@ -66,8 +71,8 @@
 				<span ui:field="priceSpan" />
 				<strong>/month</strong> 
 			</h4>
-			<div class="{style.middle}"> + </div>
-			<h5>
+			<h5 ui:field="couponCommission">
+			    <div class="{style.middle}"> + </div>
 				<strong>2.9% (or 30 cents)/transaction +</strong>
 				<strong>3% commission</strong>
 			</h5>

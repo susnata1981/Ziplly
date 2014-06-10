@@ -4,6 +4,7 @@ import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
 import com.ziplly.app.server.MyActionHandler;
 import com.ziplly.app.shared.AddInvitationAction;
+import com.ziplly.app.shared.CancelCouponPurchaseAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckEmailRegistrationAction;
 import com.ziplly.app.shared.CheckSubscriptionEligibilityAction;
@@ -159,6 +160,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 		// Coupon transaction
 		bindHandler(CheckBuyerEligibilityForCouponAction.class, CheckBuyerEligibilityForCouponActionHandler.class);
 		bindHandler(PurchasedCouponAction.class, PurchaseCouponActionHandler.class);
+		bindHandler(CancelCouponPurchaseAction.class, CancelCouponPurchaseActionHandler.class);
 		bindHandler(GetCouponTransactionAction.class, GetCouponTransactionActionHandler.class);
 		bindHandler(GetCouponQRCodeUrlAction.class, GetCouponQRCodeUrlActionHandler.class);
 		bindHandler(RedeemCouponAction.class, RedeemCouponActionHandler.class);

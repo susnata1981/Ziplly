@@ -132,8 +132,7 @@
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="8">
-				<b:Alert ui:field="message" addStyleNames="{style.message}"
-					close="false" />
+				<b:Alert ui:field="message" addStyleNames="messageBlock" close="false" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>

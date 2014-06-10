@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,8 +67,11 @@ import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.AddLocationModal;
 import com.ziplly.app.client.widget.HPanel;
+import com.ziplly.app.client.widget.MessageModal;
+import com.ziplly.app.client.widget.PricingPlanWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.SubscriptionPlanWidget;
+import com.ziplly.app.client.widget.PricingPlanWidget.TITLE_HUE;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -82,6 +86,7 @@ import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
+import com.ziplly.app.model.SubscriptionPlanType;
 import com.ziplly.app.model.overlay.SubscriptionDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.UpdatePasswordAction;
@@ -527,8 +532,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	/**
 	 * Populates account notification settings
-	 * 
-	 * @param account
 	 */
 	private void popoulateNotificationSettings(AccountDTO account) {
 		accountNotificationSettingsMap.clear();
@@ -701,9 +704,12 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-		message.setType(type);
-		message.setText(msg);
-		message.setVisible(true);
+//		message.setType(type);
+//		message.setText(msg);
+//		message.setVisible(true);
+		MessageModal modal = new MessageModal();
+		modal.setContent(msg);
+		modal.show();
 	}
 
 	@UiHandler("saveBtn")
@@ -778,34 +784,53 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	@Override
 	public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
 	  subscriptionPlanTablePanel.clear();
-	  SubscriptionPlansView view = new SubscriptionPlansView();
-	  view.displaySubscriptionPlans(plans);
-	  view.setSubscriptionPlanHandler(new SubscriptionPlansView.Handler() {
-      
+	  HorizontalPanel panel = new HorizontalPanel();
+	  SubscriptionDTO activePlan = account.getLatestSubscription();
+	  
+	  for(SubscriptionPlanDTO plan : plans) {
+	    PricingPlanWidget widget = createPricingPlanWidget(plan);
+	    if (plan.getPlanType() == SubscriptionPlanType.BASIC) {
+	      widget.hideFees();
+	    }
+	    
+	    if (activePlan != null) {
+	      if (activePlan.getSubscriptionPlan().getPlanType() == SubscriptionPlanType.BASIC) {
+	        if (plan.getPlanType() != SubscriptionPlanType.BASIC) {
+	          widget.getChoosePlanButton().setText("Upgrade");
+	        } 
+	      }
+	      
+	      if (plan.getPlanType() == activePlan.getSubscriptionPlan().getPlanType()) {
+          widget.getChoosePlanButton().setEnabled(false);
+        }
+	    }
+	    panel.add(widget);
+	  }
+	  subscriptionPlanTablePanel.add(panel);
+	}
+
+	private PricingPlanWidget createPricingPlanWidget(final SubscriptionPlanDTO plan) {
+	  PricingPlanWidget widget = new PricingPlanWidget();
+    widget.setTitle(plan.getName());
+    widget.setTweetCount(Integer.toString(plan.getTweetsAllowed()));
+    widget.setCouponCount(Integer.toString(plan.getCouponsAllowed()));
+    widget.setPrice(basicDataFormatter.format(plan.getFee(), ValueType.PRICE));
+    
+    if (plan.getPlanType() == SubscriptionPlanType.PREMIUM) {
+      widget.setTitleHue(TITLE_HUE.GREEN);
+    }
+    
+    widget.getChoosePlanButton().addClickHandler(new ClickHandler() {
+
       @Override
-      public void onSubcriptionSelection(SubscriptionPlanDTO plan) {
+      public void onClick(ClickEvent event) {
         presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
       }
     });
-	  subscriptionPlanTablePanel.add(view);
+    
+    return widget;
 	}
-
-//	private SubscriptionPlanWidget createSubscriptionPlanWidget(final SubscriptionPlanDTO plan) {
-//		SubscriptionPlanWidget widget = new SubscriptionPlanWidget();
-//		widget.setStyleName(style.subscriptionPlanWidget());
-//		widget.setHeading(plan.getName());
-//		widget.setDescription(plan.getDescription());
-//		widget.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				clearPaymentStatus();
-//				Window.alert("Clicked");
-//				presenter.checkSubscriptionEligibility(plan.getSubscriptionId());
-//			}
-//		});
-//		return widget;
-//	}
-
+	
 	private CellTable<SubscriptionDTO> buildTransactionTable() {
 		tableResources = GWT.create(TableResources.class);
 		tableResources.cellTableStyle().ensureInjected();
@@ -871,7 +896,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		TextColumn<SubscriptionDTO> timeCreated = new TextColumn<SubscriptionDTO>() {
 			@Override
 			public String getValue(SubscriptionDTO subscription) {
-				return basicDataFormatter.format(subscription.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+				return subscription.getTimeCreated().toString();
 			}
 		};
 		Header<String> timeCreatedHeader = new Header<String>(new TextCell()) {

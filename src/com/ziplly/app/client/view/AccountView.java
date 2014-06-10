@@ -159,7 +159,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tview.setWidth(tweetWidgetWidth);
 		tview.setHeight(TWEET_VIEW_HEIGHT);
-		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
+//		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
 		tweetSection.add(tview);
 		displayCouponTransactionPanel(false);
   }

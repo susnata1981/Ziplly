@@ -13,41 +13,50 @@ import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.SubscriptionBLI;
+import com.ziplly.app.server.model.jpa.BusinessAccount;
 import com.ziplly.app.shared.CheckSubscriptionEligibilityAction;
 import com.ziplly.app.shared.CheckSubscriptionEligibilityResult;
 import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 
-public class CheckSubscriptionEligibilityActionHandler extends AbstractAccountActionHandler<CheckSubscriptionEligibilityAction, CheckSubscriptionEligibilityResult>{
-	private SubscriptionBLI subscriptionBli;
-	
-	@Inject
-	public CheckSubscriptionEligibilityActionHandler(Provider<EntityManager> entityManagerProvider,
+public class CheckSubscriptionEligibilityActionHandler
+    extends
+    AbstractAccountActionHandler<CheckSubscriptionEligibilityAction, CheckSubscriptionEligibilityResult> {
+  private SubscriptionBLI subscriptionBli;
+
+  @Inject
+  public CheckSubscriptionEligibilityActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
       SubscriptionBLI subscriptionBli) {
-	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
-	  this.subscriptionBli = subscriptionBli;
+    super(entityManagerProvider, accountDao, sessionDao, accountBli);
+    this.subscriptionBli = subscriptionBli;
   }
 
-	@Override
+  @Override
   public CheckSubscriptionEligibilityResult doExecute(CheckSubscriptionEligibilityAction action,
       ExecutionContext context) throws DispatchException {
-		
-		checkNotNull(action.getSubscriptionId());
-		validateSession();
-		
-		SubscriptionEligibilityStatus status = subscriptionBli.checkSellerEligibility(session.getAccount());
-		CheckSubscriptionEligibilityResult result = new CheckSubscriptionEligibilityResult();
-		// Create a pending transaction
-		String jwtToken = subscriptionBli.getJwtToken(session.getAccount().getAccountId(), action.getSubscriptionId());
-		result.setEligibilityStatus(status);
-		result.setToken(jwtToken);
-		return result;
+
+    checkNotNull(action.getSubscriptionId());
+    validateSession();
+
+    BusinessAccount baccount = BusinessAccount.class.cast(session.getAccount());
+    SubscriptionEligibilityStatus status = subscriptionBli.checkSellerEligibility(baccount);
+    CheckSubscriptionEligibilityResult result = new CheckSubscriptionEligibilityResult();
+    result.setEligibilityStatus(status);
+    
+    if (status == SubscriptionEligibilityStatus.ELIGIBLE) {
+      String jwtToken =
+          subscriptionBli.getJwtToken(
+              session.getAccount().getAccountId(),
+              action.getSubscriptionId());
+      result.setToken(jwtToken);
+    }
+    return result;
   }
 
-	@Override
+  @Override
   public Class<CheckSubscriptionEligibilityAction> getActionType() {
-		return CheckSubscriptionEligibilityAction.class;
+    return CheckSubscriptionEligibilityAction.class;
   }
 }

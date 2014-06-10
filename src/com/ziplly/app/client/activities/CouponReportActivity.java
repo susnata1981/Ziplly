@@ -173,15 +173,6 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
       }
 
       @Override
-      public void onFailure(Throwable th) {
-        if (th instanceof NeedsSubscriptionException) {
-          view.displayMessage(
-              ErrorDefinitions.needsSubscriptionError.getErrorMessage(),
-              ErrorDefinitions.needsSubscriptionError.getType());
-        }
-      }
-
-      @Override
       public void postHandle(Throwable th) {
         eventBus.fireEvent(new LoadingEventEnd());
       }

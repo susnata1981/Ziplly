@@ -102,6 +102,7 @@ public abstract class AbstractActivity implements Activity {
       
       @Override
       public void onEvent(NeedsLoginEvent event) {
+        Window.alert("Caught needs login event");
         placeController.goTo(new LoginPlace());
       }
     });

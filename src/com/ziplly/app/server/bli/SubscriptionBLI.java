@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.ziplly.app.client.exceptions.InternalException;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.server.model.jpa.Account;
+import com.ziplly.app.server.model.jpa.BusinessAccount;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 
 public interface SubscriptionBLI {
-	SubscriptionEligibilityStatus checkSellerEligibility(Account account);
+	SubscriptionEligibilityStatus checkSellerEligibility(BusinessAccount account);
 
 	String getJwtToken(Long accountId, Long subscriptionId) throws InternalException;
 

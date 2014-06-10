@@ -28,6 +28,7 @@ import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.ConfirmationModalWidget;
+import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
@@ -204,8 +205,9 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-	  AlertModal modal = new AlertModal();
-    modal.showMessage(msg, type);
+    MessageModal modal = new MessageModal();
+    modal.setContent(msg);
+    modal.show();
 	}
 
 	@Override

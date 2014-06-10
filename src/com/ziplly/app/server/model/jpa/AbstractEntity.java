@@ -10,6 +10,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.ziplly.app.server.util.TimeUtil;
+
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
 
@@ -38,7 +40,7 @@ public class AbstractEntity implements Serializable {
 	}
 
 	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
+		this.timeCreated = TimeUtil.toDate(timeCreated, TimeUtil.UTC);
 	}
 
 	public Date getTimeUpdated() {
@@ -46,7 +48,7 @@ public class AbstractEntity implements Serializable {
 	}
 
 	public Date setTimeUpdated(Date timeUpdated) {
-		this.timeUpdated = timeUpdated;
+	  this.timeUpdated = TimeUtil.toDate(timeUpdated, TimeUtil.UTC);
 		return timeUpdated;
 	}
 }

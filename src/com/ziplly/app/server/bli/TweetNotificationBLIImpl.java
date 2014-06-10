@@ -39,6 +39,8 @@ import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.AccountNotification;
 import com.ziplly.app.server.model.jpa.Session;
+import com.ziplly.app.server.model.jpa.Subscription;
+import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
@@ -352,7 +354,26 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
             .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, txn.getBuyer().getName())
             .header("Host", backendAddress);
     queue.add(options);
-    
-    // TODO (add AccountNotification) here.
   }
+  
+  @Override
+  public void sendSubscriptionCompletionNotification(Subscription subscription, EmailTemplate couponPurchase) {
+    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+    String backendAddress =
+        BackendServiceFactory.getBackendService().getBackendAddress(
+            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+
+    TaskOptions options =
+        TaskOptions.Builder
+            .withUrl(mailEndpoint)
+            .method(Method.POST)
+            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.SUBSCRIPTION_NOTFICATION.name())
+            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, subscription.getAccount().getEmail())
+            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, subscription.getAccount().getName())
+            .param(ZipllyServerConstants.SUBSCRIPTION_PLAN_ID_KEY, subscription.getSubscriptionPlan().getSubscriptionId().toString())
+            .header("Host", backendAddress);
+    queue.add(options);
+  }
+  
 }

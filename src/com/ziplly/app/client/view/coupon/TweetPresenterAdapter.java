@@ -105,4 +105,10 @@ public class TweetPresenterAdapter implements TweetPresenter {
   private void doLogin() {
     placeController.goTo(new LoginPlace());
   }
+
+  @Override
+  public void cancelTransaction(long transactionId) {
+    // TODO Auto-generated method stub
+    
+  }
 }

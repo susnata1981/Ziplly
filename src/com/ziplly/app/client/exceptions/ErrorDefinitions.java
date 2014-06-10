@@ -85,7 +85,7 @@ public class ErrorDefinitions {
 	
 	public static final ErrorDefinition<?> needsSubscriptionError = new ErrorDefinition<NeedsSubscriptionException>(
 			NeedsSubscriptionException.class,
-			ErrorCodes.NeedsLoginError,
+			ErrorCodes.NeedsSubscriptionError,
 			stringDefinitions.needsSubscriptionError(),
 			AlertType.ERROR);
 	
@@ -129,6 +129,7 @@ public class ErrorDefinitions {
 		errorMap.put(notFoundError.getException(), notFoundError);
 		errorMap.put(oauthError.getException(), oauthError);
 		errorMap.put(soldoutError.getException(), soldoutError);
+		errorMap.put(needsSubscriptionError.getException(), needsSubscriptionError);
 		errorMap.put(usageLimitExceededError.getException(), usageLimitExceededError);
 	}
 	

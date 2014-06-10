@@ -3,8 +3,6 @@ package com.ziplly.app.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.ziplly.app.server.model.jpa.Interest;
-
 public class InterestDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long interestId;

@@ -21,8 +21,6 @@ public class PaymentFlow {
 						that.@com.ziplly.app.client.activities.util.PaymentFlow::onSuccess(Lcom/ziplly/app/model/overlay/GoogleWalletSuccessResult;)(result);
 					},
 					'failure' : function(result) {
-						console.log(result);
-						alert(result.response.errorType);
 						that.@com.ziplly.app.client.activities.util.PaymentFlow::onFailure(Lcom/ziplly/app/model/overlay/GoogleWalletFailureResult;)(result);
 					}
 				});

@@ -43,16 +43,16 @@
 		}
 		.paymentDetailsSection {
 			width: 96%;
-			border: 2px solid #ddd;
 			padding: 10px;
-			overflow: auto;
+			overflow: hidden;
 		}
 		.selectList {
 			width: 240px !important;
 			font-size: 14px !important;
 		}
 		.subscriptionPlanTablePanel {
-		margin-bottom: 90px;
+			margin-bottom: 90px;
+			overflow: none;
 		}
 		.subscriptionPlanTable {
 		width: 96%;

@@ -2,8 +2,6 @@ package com.ziplly.app.client;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
@@ -17,7 +15,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.places.SignupPlace;
-import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.NavView;
 
 public class ZipllyController {
@@ -83,8 +80,8 @@ public class ZipllyController {
 	}
 
 	public static native void consolelog(String msg) /*-{
-	                                                 $wnd.console.log(msg);
-	                                                 }-*/;
+	                                                $wnd.console.log(msg);
+	                          }-*/;
 
 	public void go() {
 		String code = Window.Location.getParameter("code");
