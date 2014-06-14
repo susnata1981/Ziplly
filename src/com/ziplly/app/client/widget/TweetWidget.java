@@ -49,9 +49,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.ZipllyController;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.activities.util.PaymentFlow;
+import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PlaceUtils;
@@ -738,10 +738,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
     authorName.setInnerHTML(tweet.getSender().getDisplayName());
   }
 
-  /**
-   * @param coupon
-   */
-  private void displayCoupon(CouponDTO coupon) {
+	/**
+	 * Displays coupon in place of tweet.
+	 */
+  private void displayCoupon(final CouponDTO coupon) {
     CouponWidget couponWidget = new CouponWidget();
     couponWidget.displayCoupon(coupon);
     com.google.gwt.user.client.ui.Button buyButton = couponWidget.getBuyButton();
@@ -749,19 +749,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		if (!isCouponActive(coupon)) {
 		  buyButton.setEnabled(false);
 		}
-		
-//		paymentButton = new GoogleWalletPayButtonWidget(buyButton, new GoogleWalletPostPayButtonHandler() {
-//			
-//			@Override
-//			public void onSuccess(GoogleWalletSuccessResult result) {
-////				Window.alert("Purchase complete");
-//			}
-//			
-//			@Override
-//			public void onFailure(GoogleWalletFailureResult result) {
-////				Window.alert("Purchase failed");
-//			}
-//		});
 		
 		buyButton.addClickHandler(new ClickHandler() {
 
@@ -771,8 +758,14 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
       }
 		});
 		
-//		panel.add(buyCouponBtn);
-		
+		couponWidget.getBusinessPageAnchor().addClickHandler(new ClickHandler() {
+
+      @Override
+      public void onClick(ClickEvent event) {
+        presenter.goTo(new BusinessAccountPlace(coupon.getTweet().getSender().getAccountId()));
+      }
+		  
+		});
 		tweetContentPanel.add(couponWidget);
   }
 

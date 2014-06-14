@@ -218,7 +218,7 @@
 	<b:FluidContainer addStyleNames="{style.rootPanel}">
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
-				<b:Alert ui:field="infoField" close="false" animation="true" />
+				<b:Alert ui:field="infoField" close="false" animation="true" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>

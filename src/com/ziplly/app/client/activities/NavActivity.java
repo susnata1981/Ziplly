@@ -13,6 +13,7 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.AccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace.SettingsTab;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -209,7 +210,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		if (account instanceof PersonalAccountDTO) {
 			placeController.goTo(new PersonalAccountSettingsPlace());
 		} else if (account instanceof BusinessAccountDTO) {
-			placeController.goTo(new BusinessAccountSettingsPlace());
+			placeController.goTo(new BusinessAccountSettingsPlace(SettingsTab.BUSINESS_DETAILS));
 		} else {
 			throw new IllegalArgumentException();
 		}

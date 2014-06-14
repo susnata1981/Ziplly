@@ -14,6 +14,8 @@ import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.datetimepicker.client.ui.DateTimeBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,7 +32,7 @@ import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.blocks.AbstractBaseTextWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
-import com.ziplly.app.client.widget.blocks.NumberTextWidget;
+import com.ziplly.app.client.widget.blocks.PositiveNumberTextWidget;
 import com.ziplly.app.client.widget.blocks.TextAreaWidget;
 import com.ziplly.app.client.widget.blocks.TextFieldWidget;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -139,7 +141,6 @@ public class CouponFormWidget extends AbstractView {
 	Button previewCancelBtn;
 
 	BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
-//	private ConfirmationModalWidget confirmationWidget;
 	AbstractBaseTextWidget [] textBoxWidgets = new AbstractBaseTextWidget [6];
   private BusinessAccountDTO account;
 	
@@ -155,16 +156,16 @@ public class CouponFormWidget extends AbstractView {
 		
 		textBoxWidgets[count++] = descriptionWidget;
 		
-		priceWidget = new NumberTextWidget(priceCg, priceTextBox, priceHelpInline);
+		priceWidget = new PositiveNumberTextWidget(priceCg, priceTextBox, priceHelpInline);
 		textBoxWidgets[count++] = priceWidget;
 		
-		discountWidget = new NumberTextWidget(discountCg, discountTextBox, discountHelpInline);
+		discountWidget = new PositiveNumberTextWidget(discountCg, discountTextBox, discountHelpInline);
 		textBoxWidgets[count++] = discountWidget;
 		
-		quantityWidget = new NumberTextWidget(quantityCg, quantityTextBox, quantityHelpInline);
+		quantityWidget = new PositiveNumberTextWidget(quantityCg, quantityTextBox, quantityHelpInline);
 		textBoxWidgets[count++] = quantityWidget;
 		
-		totalCouponAllowedWidget = new NumberTextWidget(totalCouponAllowedCg, totalCouponAllowedTextBox, totalCouponAllowedHelpInline);
+		totalCouponAllowedWidget = new PositiveNumberTextWidget(totalCouponAllowedCg, totalCouponAllowedTextBox, totalCouponAllowedHelpInline);
 		textBoxWidgets[count] = totalCouponAllowedWidget;
 		
 		uploadWidget = new FormUploadWidget(uploadProfileImagePanel);
@@ -182,7 +183,35 @@ public class CouponFormWidget extends AbstractView {
       }
 			
 		});
-  }
+		
+		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+
+      @Override
+      public void onValueChange(ValueChangeEvent<Date> event) {
+        ValidationResult result = FieldVerifier.validateStartDate(startDate.getValue());
+        if (!result.isValid()) {
+          setError(startDateCg, startDateHelpInline, result.getErrors().get(0).getErrorMessage());
+        } else {
+          setStatus(ControlGroupType.SUCCESS, startDateCg, startDateHelpInline, "");
+        }
+      }
+		  
+		});
+		
+		endDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+
+      @Override
+      public void onValueChange(ValueChangeEvent<Date> event) {
+        ValidationResult result = FieldVerifier.validateEndDate(endDate.getValue(), startDate.getValue());
+        if (!result.isValid()) {
+          setError(endDateCg, endDateHelpInline, result.getErrors().get(0).getErrorMessage());
+        } else {
+          setStatus(ControlGroupType.SUCCESS, endDateCg, endDateHelpInline, "");
+        }
+      }
+		  
+		});
+	}
 
 	private void setupUi() {
 		if (FeatureFlags.OneCouponPerIndividual.isEnabled()) {
@@ -226,9 +255,15 @@ public class CouponFormWidget extends AbstractView {
 	  Double price = Double.parseDouble(FieldVerifier.sanitize(priceWidget.getValue()));
 	  Double discountedPrice = Double.parseDouble(FieldVerifier.sanitize(discountWidget.getValue()));
 	  
-	  double discount = 100 * (discountedPrice/price);
-	  if (discount < 50) {
-	    String msg = "Are you sure you want to offer the voucher for "+(100-discount)+"% off";
+	  if (discountedPrice >= price) {
+	    String msg = "Discount can't be more than original price ["+price+"]";
+	    setStatus(ControlGroupType.ERROR, discountCg, discountHelpInline, msg);
+	    return false;
+	  }
+	  
+	  double discount = (100 - 100 * (discountedPrice/price));
+	  if (discount > 50) {
+	    String msg = "Are you sure you want to offer the voucher for "+discount+"% off";
 	    boolean confirm = Window.confirm(msg);
 	    return confirm;
 	  }
@@ -388,5 +423,11 @@ public class CouponFormWidget extends AbstractView {
     message.setText(msg);
     message.setType(type);
     message.setVisible(true);
+  }
+  
+  private void setStatus(ControlGroupType type, ControlGroup cg, HelpInline helpInline, String msg) {
+    cg.setType(type);
+    helpInline.setText(msg);
+    helpInline.setVisible(false);
   }
 }

@@ -14,7 +14,6 @@ import com.ziplly.app.client.activities.BusinessAccountActivity;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
 import com.ziplly.app.client.activities.BusinessActivity;
 import com.ziplly.app.client.activities.BusinessSignupActivity;
-import com.ziplly.app.client.activities.ConversationActivity;
 import com.ziplly.app.client.activities.CouponReportActivity;
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.EmailVerificationActivity;
@@ -28,6 +27,8 @@ import com.ziplly.app.client.activities.PrintCouponActivity;
 import com.ziplly.app.client.activities.ResidentActivity;
 import com.ziplly.app.client.activities.SignupActivity;
 import com.ziplly.app.client.activities.TweetDetailsActivity;
+import com.ziplly.app.client.conversation.ConversationActivity;
+import com.ziplly.app.client.conversation.ConversationView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.AboutPlace;
 import com.ziplly.app.client.places.AdminPlace;
@@ -56,7 +57,6 @@ import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.BusinessView;
-import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.LoginAccountView;
@@ -285,7 +285,8 @@ public class ZipllyActivityMapper implements ActivityMapper {
 					        eventBus,
 					        placeController,
 					        ctx,
-					        businessAccountSettingsView));
+					        businessAccountSettingsView,
+					        (BusinessAccountSettingsPlace) place));
 				    }
 			    });
 		} else if (place instanceof ConversationPlace) {

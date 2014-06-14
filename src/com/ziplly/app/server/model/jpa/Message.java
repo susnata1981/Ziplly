@@ -9,15 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.ziplly.app.model.MessageDTO;
+import com.ziplly.app.server.util.TimeUtil;
 
 @Embeddable
 public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public Message() {
-	}
-
-	@Column(length = 1024)
+	@Column(nullable = false, length = 1024)
 	private String message;
 
 	@OneToOne
@@ -30,11 +28,14 @@ public class Message implements Serializable {
 
 	private Date timeCreated;
 
+	public Message() {
+	}
+
 	public Message(MessageDTO m) {
 		this.message = m.getMessage();
 		this.sender = new Account(m.getSender());
 		this.receiver = new Account(m.getReceiver());
-		this.timeCreated = m.getTimeCreated();
+		this.timeCreated = TimeUtil.toDate(m.getTimeCreated(), TimeUtil.PDT);
 	}
 
 	public String getMessage() {

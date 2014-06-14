@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+		.container {
+			margin: 10px 0;
+			position: relative;
+			padding: 4px 0px;
+		}
+		.container:hover {
+			background: #f1f1f1;
+		}
+		.text {
+			clear:left;
+			display: block;
+			float: left;
+			font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+		}
+		.name {
+			clear: left;
+		}
+		.image {
+			max-width: 40px;
+			max-height: 40px;
+		}
+		.time {
+			position: absolute;
+			bottom: 0;
+			right: 40px;
+			display: block;
+			clear: right;
+			float: right;
+			margin-top: 10px;
+			font-family: Copperplate, "Copperplate Gothic Light", fantasy;
+		}
+	</ui:style>
+	<b:FluidContainer addStyleNames="{style.container}">
+		<b:FluidRow>
+			<b:Column size="2">
+				<g:HTMLPanel>
+					<g:Image ui:field="senderImage" addStyleNames="{style.image}"/>
+					<span ui:field="senderName" class="{style.text} {style.name}"/>
+				</g:HTMLPanel>
+			</b:Column>
+		    <b:Column size="7">
+		        <g:HTMLPanel>
+		            <span ui:field="messageSpan" class="{style.text}"/>
+		            <span ui:field="timeSent" class="{style.time}" />
+		        </g:HTMLPanel>
+		    </b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
+</ui:UiBinder> 

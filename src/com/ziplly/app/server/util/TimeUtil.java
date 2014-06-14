@@ -7,7 +7,7 @@ import org.joda.time.DateTimeZone;
 
 public class TimeUtil {
 //  public static final String LOS_ANGELES_TIMEZONE = "America/Los_Angeles";
-  private static final String PDT = "PST8PDT";
+  public static final String PDT = "PST8PDT";
   public static final String UTC = "UTC";
   
   /**

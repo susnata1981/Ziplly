@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
+import com.ziplly.app.server.util.TimeUtil;
 
 @NamedQueries({
     @NamedQuery(
@@ -62,8 +63,8 @@ public class Conversation extends AbstractEntity {
 		}
 		this.subject = conversationDto.getSubject();
 		this.setStatus(conversationDto.getStatus());
-		this.setTimeCreated(conversationDto.getTimeCreated());
-		this.setTimeUpdated(conversationDto.getTimeUpdated());
+		this.setTimeCreated(TimeUtil.toDate(conversationDto.getTimeCreated(), TimeUtil.PDT));
+		this.setTimeUpdated(TimeUtil.toDate(conversationDto.getTimeUpdated(), TimeUtil.PDT));
 	}
 
 	public void add(Message msg) {

@@ -24,13 +24,13 @@ import com.ziplly.app.client.places.TweetDetailsPlace;
 
 @WithTokenizers({ SignupPlace.Tokenizer.class, HomePlace.Tokenizer.class,
     TweetDetailsPlace.Tokenizer.class, LoginPlace.Tokenizer.class,
-    BusinessSignupPlace.Tokenizer.class, BusinessAccountSettingsPlace.Tokenizer.class,
+    BusinessSignupPlace.Tokenizer.class, 
     PersonalAccountPlace.Tokenizer.class, BusinessAccountPlace.Tokenizer.class,
     PersonalAccountSettingsPlace.Tokenizer.class, ConversationPlace.Tokenizer.class,
     PasswordRecoveryPlace.Tokenizer.class, AdminPlace.Tokenizer.class, AboutPlace.Tokenizer.class,
     ResidentPlace.Tokenizer.class, BusinessPlace.Tokenizer.class,
     EmailVerificationPlace.Tokenizer.class, PrintCouponPlace.Tokenizer.class,
-    CouponReportPlace.Tokenizer.class, CouponExplorerPlace.Tokenizer.class, })
+    CouponReportPlace.Tokenizer.class, CouponExplorerPlace.Tokenizer.class,BusinessAccountSettingsPlace.Tokenizer.class, })
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

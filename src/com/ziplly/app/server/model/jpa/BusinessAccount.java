@@ -127,6 +127,10 @@ public class BusinessAccount extends Account {
 	}
 	
 	public Subscription getLatestSubscription() {
+	  if (subscriptions.size() == 0) {
+	    return null;
+	  }
+	  
 	  List<Subscription> subscriptionList = Lists.newArrayList(subscriptions);
     Collections.sort(subscriptionList, new Comparator<Subscription>() {
 

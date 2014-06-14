@@ -355,9 +355,33 @@ textarea {
 	font-weight: bold;
 }
 
+/************************ Common Styles ****************************/
+.heading_background {
+	padding: 8px;
+	background: #eee;
+	color: #555;
+	text-align: left;
+}
+
 .messageBlock {
 	display: block;
 	padding: 16px 8px !important;
+	font-size: 15px;
+}
+
+.text {
+	font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+}
+
+.box-margin-10 {
+	margin: 10px;
+}
+
+.right {
+	float: right;
+}
+
+.help-inline {
 	font-size: 15px;
 }
 /* This is used for notification drop down */

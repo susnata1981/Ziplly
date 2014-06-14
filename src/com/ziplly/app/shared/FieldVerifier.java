@@ -64,6 +64,7 @@ public class FieldVerifier {
 	private static final String INVALID_NUMBER = "Invalid number";
 	private static final String START_DATE_IN_PAST = "Start date can't be in the past";
 	private static final String END_DATE_BEFORE_START = "End date must be after start";
+  private static final String POSTIVE_NUMBER_EXPECTED = "Positive number expected";
 
 	public static ValidationResult validateEmail(String email) {
 		ValidationResult result = new ValidationResult();
@@ -122,6 +123,29 @@ public class FieldVerifier {
 		}
 		
 		return result;
+  }
+	
+	public static ValidationResult validatePositiveNumber(String input, int maxLength) {
+	  ValidationResult result = new ValidationResult();
+    if (input == null || input.equals("")) {
+      result.addError(CANT_BE_EMPTY);
+    }
+
+    input = SafeHtmlUtils.htmlEscape(input);
+    if (input.length() > maxLength) {
+      result.addError(INVALID_NUMBER);
+    }
+    
+    try {
+         double number = Double.parseDouble(input);
+         if (number <= 0) {
+           result.addError(POSTIVE_NUMBER_EXPECTED);
+         }
+    } catch(NumberFormatException nfe) {
+      result.addError(INVALID_NUMBER);
+    }
+    
+	  return result;
   }
 	
 	public static ValidationResult validateStartDate(Date input) {
@@ -262,6 +286,7 @@ public class FieldVerifier {
 		if (message.length() > MAX_MESSAGE_LENGTH) {
 			result.addError(MESSAGE_TOO_LONG_ERROR);
 		}
+		
 		return result;
 	}
 

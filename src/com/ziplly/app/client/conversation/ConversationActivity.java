@@ -1,4 +1,4 @@
-package com.ziplly.app.client.activities;
+package com.ziplly.app.client.conversation;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -8,12 +8,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.activities.AbstractActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
@@ -234,21 +234,8 @@ public class ConversationActivity extends AbstractActivity implements
 	private class SingleConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
 		@Override
 		public void onSuccess(GetConversationsResult result) {
-			view.clear();
 			if (result.getConversations().size() == 1) {
 				view.displayConversation(result.getConversations().get(0));
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			view.clear();
-			if (th instanceof AccessException) {
-				view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
-			} else if (th instanceof NotFoundException) {
-				view.displayMessage(StringConstants.NO_RESULT_FOUND, AlertType.ERROR);
-			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
 			}
 		}
 	}

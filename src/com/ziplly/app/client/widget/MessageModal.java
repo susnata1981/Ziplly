@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MessageModal extends Composite {
@@ -22,18 +23,29 @@ public class MessageModal extends Composite {
   }
 
   @UiField
+  Element title;
+  @UiField
   Modal modal;
+  @UiField
+  HTMLPanel modalContainer;
   @UiField
   Element content;
   @UiField
   Button okBtn;
 
+  public void setWidget(Widget widget) {
+    modalContainer.add(widget);
+    StyleHelper.show(content, false);
+  }
+  
   public void setContent(String msg) {
     content.setInnerHTML(msg);
   }
   
-  public void setTitle(String title) {
-    modal.setTitle(title);
+  public void setTitle(String msg) {
+//    modal.setTitle(title);
+    title.setInnerText(msg);
+    
   }
   
   @UiHandler("okBtn")
@@ -44,6 +56,12 @@ public class MessageModal extends Composite {
   public void show() {
     if (!modal.isVisible()) {
       modal.show();
+    }
+  }
+  
+  public void hide() {
+    if (modal.isVisible()) {
+      modal.hide();
     }
   }
 }

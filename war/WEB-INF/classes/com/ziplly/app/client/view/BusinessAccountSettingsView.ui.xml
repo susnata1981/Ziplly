@@ -156,7 +156,7 @@
 			margin-bottom: 12px;
 		}
 	</ui:style>
-	<b:FluidContainer ui:field="settingsPanel" addStyleNames="{style.settingsPanel}">
+	<b:FluidContainer addStyleNames="{style.settingsPanel}">
 		<b:FluidRow>
 			<b:Column offset="1" size="9">
 				<b:Alert ui:field="message" animation="true" close="false" />
@@ -164,7 +164,7 @@
 		</b:FluidRow>
 		<b:FluidRow>
 			<b:Column offset="1" size="9" addStyleNames="{style.tabPanel}">
-				<b:TabPanel tabPosition="left" ui:field="settingPanel">
+				<b:TabPanel tabPosition="left" ui:field="settingsTabPanel">
 					<b:Tab heading="Business details" active="true">
 						<b:Row>
 							<b:Column offset="1" size="7">
@@ -358,7 +358,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</b:Tab>
-					<b:Tab ui:field="location" heading="Locations">
+					<!-- <b:Tab ui:field="location" heading="Locations">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
 								<span>Location settings</span> 
@@ -368,7 +368,7 @@
 
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</b:Tab>
+					</b:Tab> -->
 					<b:Tab heading="Password Reset">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">

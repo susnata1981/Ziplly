@@ -5,19 +5,31 @@
 		.message {
 		display: block;
 		padding: 4px;
-		font-family: Verdana, Geneva, sans-serif;
+		font-family: Verdana,
+		Geneva, sans-serif;
 		font-size: 14px;
 		}
 		.right {
 		float: right;
 		}
+		.modalPanel {
+		}
+		.error {
+			background: #FF1919;
+			padding: 0 6px;
+		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel addStyleNames="{style.modalPanel}">
 		<b:Modal ui:field="modal" title="" backdrop="STATIC" keyboard="true"
 			animation="true">
 			<g:HTMLPanel>
-				<p ui:field="content" class="{style.message}"></p>
-				<b:Button type="PRIMARY" size="SMALL" ui:field="okBtn" addStyleNames="{style.right}">Ok</b:Button>
+			    <g:HTMLPanel ui:field="modalHeader" addStyleNames="{style.error}">
+			        <h3 ui:field="title"/>
+			    </g:HTMLPanel>
+				<g:HTMLPanel ui:field="modalContainer">
+					<p ui:field="content" class="{style.message}"></p>
+				</g:HTMLPanel>
+				<b:Button type="PRIMARY" ui:field="okBtn" addStyleNames="{style.right}">Ok</b:Button>
 			</g:HTMLPanel>
 		</b:Modal>
 	</g:HTMLPanel>

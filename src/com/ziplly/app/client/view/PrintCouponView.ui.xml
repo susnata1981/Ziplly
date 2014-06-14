@@ -39,7 +39,7 @@
 			padding: 6px;
 			font-size: 16px;
 		}
-		.panel .label {
+		.panel .whitelabel {
 			display: inline-block;
 			margin-bottom: 10px;
 			color: #fff !important;
@@ -58,21 +58,21 @@
 		<h6 class="{style.subheader}">connecting residents with businesses</h6>
 		<b:Heading size="3" ui:field="title" addStyleNames="{style.heading}" />
 		<div class="{style.block}">
-			Merchant Name: <b:Label ui:field="businessName" addStyleNames="{style.label}"/>
+			Merchant Name: <b:Label ui:field="businessName" addStyleNames="{style.whitelabel}"/>
 			<br/>
-		    Merchant Address: <b:Label ui:field="businessAddress" addStyleNames="{style.label}"/>
+		    Merchant Address: <b:Label ui:field="businessAddress" addStyleNames="{style.whitelabel}"/>
 		    <br/>
-		    Phone: <b:Label ui:field="businessPhone" addStyleNames="{style.label}"/>
+		    Phone: <b:Label ui:field="businessPhone" addStyleNames="{style.whitelabel}"/>
 		    <br/>
-		    Discount: <b:Label ui:field="discount" addStyleNames="{style.label}"/>
+		    Discount: <b:Label ui:field="discount" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Price: <b:Label ui:field="price" addStyleNames="{style.label}"/>
+			Price: <b:Label ui:field="price" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Start Date: <b:Label ui:field="startDate" addStyleNames="{style.label}"/>
+			Start Date: <b:Label ui:field="startDate" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			End Date: <b:Label ui:field="endDate" addStyleNames="{style.label}"/>
+			End Date: <b:Label ui:field="endDate" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Number of coupons allowed per person: <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.label}"/>
+			Number of coupons allowed per person: <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.whitelabel}"/>
 			<br/>
 		</div>
 		

@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
-	<ui:style type="com.ziplly.app.client.view.ConversationView.Style">
+	<ui:style type="com.ziplly.app.client.conversation.ConversationView.Style">
 		@external tiny-image-div, tiny-image;
 		.messageFiltersPanel {
 			margin-top: 30px;
@@ -12,16 +12,14 @@
 		margin: 0;
 		padding: 2px;
 		font-size: 1em;
-		color:
-		#555444;
+		color: #555444;
 		background: #ddd;
 		border-bottom: 1px solid #555;
 		}
-		.conversation
-		{
+		.conversation {
 		width: 98%;
 		padding: 8px;
-		margin: 6px;
+		margin: 6px 0;
 		border-bottom: 1px solid #ddd;
 		overflow: auto;
 		}
@@ -106,12 +104,10 @@
 		margin: 12px 2px;
 		}
 		.conversationPanel {
-		float: left;
-		width: 98%;
-		margin-top: 20px;
-		overflow: hidden;
-		border:
-		1px solid #ddd;
+			float: left;
+			width: 98%;
+			margin-left: 20px;
+			overflow: hidden;
 		}
 		.link {
 		display: inline-block;
@@ -135,8 +131,8 @@
 			margin-left: 20px !important;	
 		}
 		.innerDl {
-		position: relative;
-		left: 16px;
+			position: relative;
+			left: 16px;
 		}
 		.tiny-image-div {
 		width: 40px;
@@ -151,20 +147,13 @@
 			width: 80%;
 			margin: 10px auto;
 		}
-		.transparentColumn {
-			background: #f1f1f1;
-			opacity: .92;
-			min-height: 400px;
-			height: auto;
-			padding: 20px;	
-		}
 		.colSpan {
 		max-width: 90%;
 		}
 	</ui:style>
 	<b:FluidContainer>
 		<b:FluidRow>
-			<b:Column size="3" addStyleNames="{style.transparentColumn} {style.messageFiltersPanel} {style.colSpan}">
+			<b:Column size="2" addStyleNames="{style.messageFiltersPanel} {style.colSpan}">
 				<g:HTMLPanel>
 					<dl>
 						<dt>
@@ -207,16 +196,15 @@
 					</dl>
 				</g:HTMLPanel>
 			</b:Column>
-			<b:Column size="9" addStyleNames="{style.colSpan}">
+			<b:Column size="9">
 			    <b:Row>
 					<b:Column offset="1" size="8">
 					    <b:Alert ui:field="message" close="false" addStyleNames="{style.message}"/>
 					</b:Column>
 				</b:Row>	    
 				<b:Row ui:field="conversationRow">
-					<b:Column size="9" addStyleNames="{style.transparentColumn} {style.conversationColumn} {style.colSpan}">
-						<g:HTMLPanel ui:field="conversationPanel"
-							addStyleNames="{style.conversationPanel}">
+					<b:Column size="10">
+						<g:HTMLPanel ui:field="conversationPanel" addStyleNames="{style.conversationPanel}">
 						</g:HTMLPanel>
 					</b:Column>
 				</b:Row>

@@ -90,7 +90,7 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
   public void
       completeTransaction(Long accountId, Long subscriptionId, String orderId) throws NotFoundException {
     
-    logger.info(String.format("Completing subscription request account %d, subscription %d, order %d", 
+    logger.info(String.format("Completing subscription request account %d, subscription %d, order %s", 
         accountId, subscriptionId, orderId));
     
     // Load the plan
@@ -119,6 +119,10 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
 
     // Cancel the latest subscription
     Subscription latestSubscription = account.getLatestSubscription();
+    if (latestSubscription == null) {
+      return;
+    }
+    
     logger.info(String.format("Subscription id %d to be cancelled", latestSubscription.getSubscriptionId()));
     if (latestSubscription.getStatus() != SubscriptionStatus.CANCELLED) {
       latestSubscription.setStatus(SubscriptionStatus.CANCELLED);

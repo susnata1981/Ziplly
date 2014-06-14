@@ -1,15 +1,17 @@
 @CHARSET "US-ASCII";
 
 @def selectionBorderWidth 2px;
-.cellTableWidget {}
+.cellTableWidget {
+	margin: 6px 0;
+}
 
 .cellTableHeader {
-padding: 4px;
+padding: 6px 4px;
 color: #545454;
 text-align: left;
 font-size: 14px;
 background-image: none;
-background-color: #cfcfcf;
+background-color: #f9f9f9;
 height: 25px;
 vertical-align: middle;
 font-weight: bold;

@@ -27,6 +27,7 @@ import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusines
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.HomeActivity.HomeView;
 import com.ziplly.app.client.activities.NavActivity.INavView;
+import com.ziplly.app.client.conversation.ConversationView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.places.BusinessAccountPlace;
@@ -38,7 +39,6 @@ import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessSignupView;
-import com.ziplly.app.client.view.ConversationView;
 import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.IAccountView;

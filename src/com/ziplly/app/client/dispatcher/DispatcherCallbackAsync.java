@@ -7,6 +7,7 @@ import net.customware.gwt.dispatch.shared.Result;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.ZGinInjector;
 import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
@@ -23,6 +24,11 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 		this.errorHandler = injector.getErrorHandler();
 	}
 
+	public DispatcherCallbackAsync(EventBus eventBus) {
+    this.placeController = new PlaceController(eventBus);
+    this.errorHandler = new GlobalErrorHandler(eventBus);
+  }
+	
 	@Override
 	public void onFailure(Throwable th) {
 		errorHandler.handlerError(th);
@@ -30,7 +36,6 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 		postHandle(th);
 		if (th instanceof NeedsLoginException) {
 			placeController.goTo(new LoginPlace());
-			return;
 		}
 	}
 
@@ -42,21 +47,6 @@ public abstract class DispatcherCallbackAsync<T extends Result> implements Async
 		
 	}
 	
-//	private void callback(Throwable th) {
-//		ErrorDefinition<?> errorDef = ErrorDefinitions.getErrorDefinition(th.getClass());
-//		if (errorDef == null) {
-//			Window.alert(th.getMessage());
-//			return;
-//		}
-//		
-//		switch(errorDef.getCode()) {
-//			case AccessError:
-//				onAccessError();
-//				break;
-//			default:
-//		}
-//  }
-
 	protected void onAccessError() {
   }
 	

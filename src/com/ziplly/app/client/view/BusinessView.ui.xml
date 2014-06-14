@@ -50,7 +50,7 @@
 		<b:FluidRow>
 			<b:Column size="3" addStyleNames="{style.colSpan}">
 				<g:HTMLPanel addStyleNames="{style.filterPanel}">
-					<h4>Find Businesses</h4>
+					<h4 class="{style.heading}">Find Businesses</h4>
 					<b:ControlGroup ui:field="zipCg" addStyleNames="{style.inputControlGroup}">
 						<b:Controls>
 							<b:TextBox ui:field="zipTextBox" placeholder="zip..."

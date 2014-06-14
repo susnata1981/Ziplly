@@ -83,7 +83,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 	private static final String TWEET_WIDGET_WIDTH = "94%";
 
-	private static final String TWEET_WIDGET_HEIGHT = "1100px";
+	private static final String TWEET_WIDGET_HEIGHT = "1400px";
 
 	private static BusinessAccountViewUiBinder uiBinder = GWT
 	    .create(BusinessAccountViewUiBinder.class);

@@ -39,6 +39,12 @@ public class PlaceUtils {
 				StringConstants.NEIGHBORHOOD_TOKEN + StringConstants.PLACE_VALUE_SEPARATOR + neighborhoodId; 
 	}
 	
+	public static String toString(BusinessAccountSettingsPlace place) {
+	  return GWT.getHostPageBaseURL() + "#" + "businesssettings" + 
+        StringConstants.PLACE_SEPARATOR  +
+        place.getTab().name();
+	}
+	
 	public static String getHomePlaceTokenForMessaging(Long tweetId) {
 		return StringConstants.HOME_TWEET_TOKEN + StringConstants.PLACE_SEPARATOR + tweetId.toString();
 	}

@@ -8,6 +8,7 @@ import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -24,7 +25,6 @@ import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
-import com.ziplly.app.client.view.event.NeedsLoginEvent;
 import com.ziplly.app.client.view.handler.LoadingEventEndHandler;
 import com.ziplly.app.client.view.handler.LoadingEventStartHandler;
 import com.ziplly.app.client.widget.LoadingPanelWidget;
@@ -98,14 +98,14 @@ public abstract class AbstractActivity implements Activity {
 			}
 		});
 		
-		eventBus.addHandler(NeedsLoginEvent.TYPE, new NeedsLoginEvent.Handler() {
+		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
       
       @Override
-      public void onEvent(NeedsLoginEvent event) {
-        Window.alert("Caught needs login event");
-        placeController.goTo(new LoginPlace());
+      public void onPlaceChange(PlaceChangeEvent event) {
+        goTo(event.getNewPlace());
       }
     });
+		
 	}
 
 	void showLodingIcon() {

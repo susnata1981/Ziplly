@@ -18,9 +18,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.ErrorDefinitions;
-import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
-import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -371,7 +368,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			return;
 		}
 
-		// TODO check size
 		int size = conversation.getMessages().size();
 		conversation.getMessages().get(size - 1).setSender(ctx.getAccount());
 		conversation.setSender(ctx.getAccount());
@@ -766,17 +762,13 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
+	  public TweetHandler() {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(TweetResult result) {
 			view.insertTweet(result.getTweet());
-		}
-		
-		@Override
-		public void postHandle(Throwable th) {
-			if (th instanceof NeedsSubscriptionException) {
-				ErrorDefinition<?> error = ErrorDefinitions.needsSubscriptionError;
-				view.displayMessage(error.getErrorMessage(), error.getType());
-			}
 		}
 	}
 

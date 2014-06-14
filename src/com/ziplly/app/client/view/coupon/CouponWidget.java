@@ -16,6 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,8 +47,6 @@ public class CouponWidget extends Composite {
     StyleHelper.show(couponDetails, false);
     StyleHelper.show(hideDetailsButton, false);
     setupHandlers();
-//    buyButton.getElement().getStyle().setBackgroundImage(ZResources.IMPL.googleBuyButton().getSafeUri().asString());
-//    buyButton.getElement().setAttribute("backgroundImage", ZResources.IMPL.googleBuyButton().getSafeUri().asString());
     ZResources.IMPL.style().ensureInjected();
   }
   
@@ -91,6 +90,8 @@ public class CouponWidget extends Composite {
   SpanElement quantityRemaining;
   @UiField
   SpanElement expirationShortTime;
+  @UiField
+  Anchor businessNameAnchor;
   @UiField
   SpanElement businessName;
   @UiField
@@ -142,6 +143,10 @@ public class CouponWidget extends Composite {
     setExpirationTime(coupon);
   }
 
+  public Anchor getBusinessPageAnchor() {
+    return businessNameAnchor;
+  }
+
   private void displayWebsiteIfPresent(BusinessAccountDTO ba) {
     if (!FieldVerifier.isEmpty(ba.getWebsite())) {
       website.setInnerHTML(ba.getWebsite());
@@ -164,10 +169,10 @@ public class CouponWidget extends Composite {
     return buyButton;
   }
   
-  private String getTitle(CouponDTO coupon) {
-    String businessName = coupon.getTweet().getSender().getDisplayName();
-    return coupon.getTitle() + " @ " + businessName;
-  }
+//  private String getTitle(CouponDTO coupon) {
+//    String businessName = coupon.getTweet().getSender().getDisplayName();
+//    return coupon.getTitle() + " @ " + businessName;
+//  }
   
   private void setPunchLine(CouponDTO coupon) {
     SafeHtml text = titleTemplate.couponTitle(coupon.getItemPrice().toString(), coupon.getDiscount().toString());
@@ -183,4 +188,5 @@ public class CouponWidget extends Composite {
     
     return null;
   }
+  
 }

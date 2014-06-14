@@ -1,0 +1,62 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.timeSpan {
+		float: right;
+		}
+		.width100 {
+		width: 100%;
+		}
+		.messageBox {
+		height: 80px;
+		margin: 10px 0;
+		padding: 6px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<b:FluidContainer>
+			<b:Row>
+				<b:Column offset="1" size="10">
+					<g:HTMLPanel>
+						<h4 class="heading_background">Sender</h4>
+						<span ui:field="timeLabel" class="text {style.timeSpan}" />
+						<span ui:field="senderLabel" class="text" />
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<h4 class="heading_background">Receiver</h4>
+						<span ui:field="receiverLabel" class="text" />
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<h4 class="heading_background">Subject</h4>
+						<span ui:field="subjectLabel" class="text" />
+					</g:HTMLPanel>
+				</b:Column>
+			</b:Row>
+			<b:Row>
+				<b:Column offset="1" size="10">
+					<g:HTMLPanel ui:field="messageListPanel">
+
+					</g:HTMLPanel>
+				</b:Column>
+			</b:Row>
+			<b:Row>
+				<b:Column offset="1" size="10">
+					<g:HTMLPanel ui:field="replyPanel">
+						<b:ControlGroup ui:field="replyCg">
+							<b:Controls>
+								<b:TextArea ui:field="replyTextArea"
+									addStyleNames="{style.width100} {style.messageBox}" />
+								<b:HelpInline ui:field="replyHelpInline"></b:HelpInline>
+							</b:Controls>
+						</b:ControlGroup>
+						<div class="box-margin-10 right">
+							<b:Button ui:field="replyBtn">Reply</b:Button>
+							<b:Button ui:field="backBtn">Back</b:Button>
+						</div>
+					</g:HTMLPanel>
+				</b:Column>
+			</b:Row>
+		</b:FluidContainer>
+	</g:HTMLPanel>
+</ui:UiBinder> 

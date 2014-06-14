@@ -3,7 +3,6 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="com.ziplly.app.client.resource.ZResources" field="res"/>
 	<ui:style>
-		@external .label;
 		.panel {
 			width: 100%;
 			-webkit-border-sizing: border-box;
@@ -40,9 +39,6 @@
 		.buttonDiv {
 			clear: both;
 		}
-		.heading {
-			color: #fff;
-		}
 		.description span {
 			display: inline-block;
 			font-size: 20px;
@@ -65,16 +61,6 @@
 		}
 		.description .fineprint {
 			font-size: 12px !important;
-		}
-		.panel .label {
-			margin: 0 !important;
-			font-size: 18px;
-			font-weight: 100;
-			display: block !important;
-			color: #fff !important;
-			margin: 6px 0;
-			border-bottom: 2px solid #fff;	
-			padding-bottom: 6px;
 		}
 		.borderBottom {
 			padding-bottom: 2px !important;
@@ -113,6 +99,7 @@
 				    <li>
 					    <b:Label>Business name</b:Label>
 						<span ui:field="businessName" />
+						<g:Anchor ui:field="businessNameAnchor" addStyleNames="smalltext">website</g:Anchor>
 					</li>
 					<li>
 					    <b:Label>Address</b:Label>

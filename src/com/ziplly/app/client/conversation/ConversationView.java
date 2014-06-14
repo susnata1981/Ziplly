@@ -1,4 +1,4 @@
-package com.ziplly.app.client.view;
+package com.ziplly.app.client.conversation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,18 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ControlGroup;
-import com.github.gwtbootstrap.client.ui.FluidContainer;
-import com.github.gwtbootstrap.client.ui.FluidRow;
-import com.github.gwtbootstrap.client.ui.Heading;
-import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.CellTable;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Row;
 import com.github.gwtbootstrap.client.ui.SimplePager;
-import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -33,13 +26,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.CellPreviewEvent.Handler;
@@ -49,17 +40,16 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.TableResources;
-import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.AbstractView;
+import com.ziplly.app.client.view.ConversationViewState;
+import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.ConversationStatus;
 import com.ziplly.app.model.MessageDTO;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetConversationsAction;
-import com.ziplly.app.shared.ValidationResult;
 
 public class ConversationView extends AbstractView implements IConversationView {
 
@@ -169,7 +159,12 @@ public class ConversationView extends AbstractView implements IConversationView 
 		tableResources = GWT.create(TableResources.class);
 		tableResources.cellTableStyle().ensureInjected();
 		conversationTable = new CellTable<ConversationDTO>(PAGE_SIZE, tableResources);
-		conversationTable.setPageSize(PAGE_SIZE);
+//		conversationTable = new CellTable<ConversationDTO>(PAGE_SIZE);
+//		conversationTable.setTitle("Conversation history");
+		conversationTable.setBordered(true);
+		conversationTable.setHover(true);
+		conversationTable.setStriped(true);
+		conversationTable.setEmptyTableWidget(new Label("No conversations"));
 		conversationTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
@@ -194,7 +189,6 @@ public class ConversationView extends AbstractView implements IConversationView 
 		conversationPanel.add(conversationTable);
 		state = new ConversationViewState(PAGE_SIZE);
 		StyleHelper.show(message.getElement(), false);
-		setBackgroundImage(ZResources.IMPL.profileBackground().getSafeUri().asString());
 	}
 
 	private void clearConversationTable() {
@@ -212,20 +206,12 @@ public class ConversationView extends AbstractView implements IConversationView 
 			StyleHelper.show(conversationRow.getElement(), true);
 			StyleHelper.show(pager.getElement(), true);
 			if (conversations.size() == 0) {
-				displayNoConversationMessage();
 				return;
 			}
+			
 			conversationTable.setRowData(state.getStart(), conversations);
 			highlightUnreadConversation();
 		}
-	}
-
-	private void displayNoConversationMessage() {
-		conversationPanel.add(message);
-		StyleHelper.show(pager.getElement(), false);
-		message.setText(StringConstants.NO_MESSAGES);
-		message.setType(AlertType.INFO);
-		StyleHelper.show(message.getElement(), true);
 	}
 
 	private void highlightUnreadConversation() {
@@ -241,7 +227,6 @@ public class ConversationView extends AbstractView implements IConversationView 
 				return;
 			}
 			ConversationDTO c = conversations.get(i);
-			System.out.println("S=" + c.isSender() + " S=" + c.getStatus());
 			if (/* !c.isSender() && */c.getStatus() == ConversationStatus.UNREAD) {
 				TableRowElement row = conversationTable.getRowElement(i - start);
 				row.getStyle().setBackgroundColor("#e5e5e5");
@@ -292,7 +277,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 			    public void render(Context context, String value, SafeHtmlBuilder sb) {
 				    ConversationDTO c;
 				    c = conversations.get(context.getIndex() - state.getStart());
-				    sb.appendHtmlConstant(getImageLink(c.getSender()));
+				    sb.appendHtmlConstant(c.getSender().getDisplayName());//getImageLink(c.getSender()));
 			    }
 		    }) {
 			    @Override
@@ -308,7 +293,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 			    public void render(Context context, String value, SafeHtmlBuilder sb) {
 				    ConversationDTO c;
 				    c = conversations.get(context.getIndex() - state.getStart());
-				    sb.appendHtmlConstant(getImageLink(c.getReceiver()));
+				    sb.appendHtmlConstant(c.getReceiver().getDisplayName());//getImageLink(c.getReceiver()));
 			    }
 		    }) {
 			    @Override
@@ -362,249 +347,56 @@ public class ConversationView extends AbstractView implements IConversationView 
 		});
 	}
 
-	private String getImageLink(AccountDTO acct) {
-		return accountFormatter.format(acct, ValueType.TINY_IMAGE_VALUE);
-	}
-
-	private Panel getImagePanel(final AccountDTO acct, ValueType imageValueType) {
-		HPanel panel = new HPanel();
-		Anchor anchor = new Anchor();
-		anchor.setHTML(accountFormatter.format(acct, ValueType.TINY_IMAGE_VALUE));
-		anchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.goTo(new PersonalAccountPlace(acct.getAccountId()));
-			}
-		});
-		panel.add(anchor);
-		panel.add(new HTMLPanel("<span>" + accountFormatter.format(acct, ValueType.NAME_VALUE)
-		    + "</span>"));
-		return panel;
-	}
-
 	@Override
 	public void setPresenter(ConversationViewPresenter presenter) {
 		this.presenter = presenter;
 	}
 
 	@Override
-	public void updateConversation(ConversationDTO c) {
-		int size = c.getMessages().size();
-		MessageDTO latestMessage = c.getMessages().get(size - 1);
-		if (conversationPanel != null) {
-			messagesPanel.add(displayMessage(latestMessage));
-		}
+	public void updateConversation(ConversationDTO conversation) {
+	  cdv.displayConversation(conversation);
 	}
 
-	private Heading getHeading(int size, String text) {
-		Heading heading = new Heading(size);
-		heading.setText(text);
-		return heading;
-	}
-
-	/**
-	 * Displays the entire conversation
-	 * 
-	 * @param conversation
-	 */
-	@Override
+	final ConversationDetailsView cdv = new ConversationDetailsView();
 	public void displayConversation(final ConversationDTO conversation) {
-		if (conversation != null) {
-			presenter.onView(conversation);
-			StyleHelper.show(conversationRow.getElement(), true);
-			conversationPanel.clear();
-			messagesPanel = new HTMLPanel("");
+	  conversationPanel.clear();
+	  cdv.displayConversation(conversation);
+	  conversationPanel.add(cdv);
+	  presenter.onView(conversation);
+	  cdv.getReplyButton().addClickHandler(new ClickHandler() {
 
-			FluidRow row = new FluidRow();
-			row.addStyleName(style.conversationRow());
-			com.github.gwtbootstrap.client.ui.Column col1 =
-			    new com.github.gwtbootstrap.client.ui.Column(1);
-			col1.add(getHeading(4, SENDER_KEY));
-			row.add(col1);
+      @Override
+      public void onClick(ClickEvent event) {
+        if (!cdv.validateReplyContent()) {
+          return;
+        }
+        
+        MessageDTO m = new MessageDTO();
+        m.setMessage(cdv.getReplyContent());
+        m.setTimeCreated(new Date());
+        if (conversation.isSender()) {
+          m.setReceiver(conversation.getReceiver());
+          m.setSender(conversation.getSender());
+        } else {
+          m.setReceiver(conversation.getSender());
+          m.setSender(conversation.getReceiver());
+        }
+        conversation.add(m);
+        conversation.setTimeUpdated(new Date());
+        presenter.sendMessage(conversation);
+        cdv.clear();
+      }
+	  });
+	  
+	  cdv.getBackButton().addClickHandler(new ClickHandler(){
 
-			com.github.gwtbootstrap.client.ui.Column col2 =
-			    new com.github.gwtbootstrap.client.ui.Column(5);
-			col2.setOffset(1);
-			col2.add(getImagePanel(conversation.getSender(), ValueType.SMALL_IMAGE_VALUE));
-			row.add(col2);
-			conversationPanel.add(row);
-
-			row = new FluidRow();
-			row.addStyleName(style.conversationRow());
-			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
-			col1.add(getHeading(4, RECEIVER_KEY));
-			row.add(col1);
-
-			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
-			col2.setOffset(1);
-			col2.add(getImagePanel(conversation.getReceiver(), ValueType.SMALL_IMAGE_VALUE));
-			row.add(col2);
-			conversationPanel.add(row);
-
-			row = new FluidRow();
-			row.addStyleName(style.conversationRow());
-			col1 = new com.github.gwtbootstrap.client.ui.Column(1);
-			col1.add(getHeading(4, SUBJECT_KEY));
-			row.add(col1);
-
-			col2 = new com.github.gwtbootstrap.client.ui.Column(5);
-			col2.setOffset(1);
-			col2.add(new HTMLPanel(basicDataFormatter.format(
-			    conversation.getSubject(),
-			    ValueType.TEXT_VALUE)));
-			row.add(col2);
-			conversationPanel.add(row);
-			conversationPanel.add(new HTMLPanel("<hr/>"));
-
-			for (MessageDTO msg : conversation.getMessages()) {
-				messagesPanel.add(displayMessage(msg));
-				messagesPanel.add(new HTMLPanel("<hr/>"));
-			}
-			conversationPanel.add(messagesPanel);
-			addReplyPanel(conversationPanel, conversation);
-		}
-	}
-
-	/**
-	 * Displays individual messages of a conversation
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	private Panel displayMessage(final MessageDTO msg) {
-		FluidContainer container = new FluidContainer();
-		Row row = new Row();
-		com.github.gwtbootstrap.client.ui.Column imageCol =
-		    new com.github.gwtbootstrap.client.ui.Column(3);
-		imageCol.add(getImagePanel(msg.getSender(), ValueType.MEDIUM_IMAGE_VALUE));
-		row.add(imageCol);
-
-		com.github.gwtbootstrap.client.ui.Column messageCol =
-		    new com.github.gwtbootstrap.client.ui.Column(9);
-		HTMLPanel messagePanel =
-		    new HTMLPanel("<span class='medium_text'>" + basicDataFormatter.format(msg.getMessage(), ValueType.TEXT_VALUE) + "</span>");
-		messageCol.add(messagePanel);
-		row.add(messageCol);
-		container.add(row);
-
-		Row timeRow = new Row();
-		com.github.gwtbootstrap.client.ui.Column timeCol =
-		    new com.github.gwtbootstrap.client.ui.Column(4);
-		timeCol.setOffset(8);
-		HTMLPanel timePanel =
-		    new HTMLPanel("<span class='tiny_text'>sent on "
-		        + basicDataFormatter.format(msg.getTimeCreated(), ValueType.DATE_VALUE_SHORT)
-		        + "</span>");
-		timeCol.add(timePanel);
-		timeRow.add(timeCol);
-		container.add(timeRow);
-		return container;
-	}
-
-	/**
-	 * Adds a reply panel
-	 * 
-	 * @param root
-	 * @param c
-	 */
-	private void addReplyPanel(final HTMLPanel root, final ConversationDTO c) {
-		FluidContainer container = new FluidContainer();
-
-		// alert row
-		Row row = new FluidRow();
-		com.github.gwtbootstrap.client.ui.Column col = new com.github.gwtbootstrap.client.ui.Column(10);
-		final Alert info = new Alert();
-		info.setVisible(false);
-		col.add(info);
-		row.add(col);
-		container.add(row);
-
-		// TextArea row
-		row = new Row();
-		com.github.gwtbootstrap.client.ui.Column replyTextCol =
-		    new com.github.gwtbootstrap.client.ui.Column(10);
-
-		replyTextCol.setOffset(1);
-		HTMLPanel replyPanel = new HTMLPanel("");
-
-		final ControlGroup replyTextAreaCg = new ControlGroup();
-		final TextArea replyTextArea = new TextArea();
-		replyTextArea.addStyleName(style.replyTextArea());
-		final HelpInline replyTextAreaHelpInline = new HelpInline();
-		replyTextAreaHelpInline.setStyleName(style.helpinline());
-		replyTextAreaCg.add(replyTextArea);
-
-		replyTextAreaCg.add(replyTextAreaHelpInline);
-		replyPanel.add(replyTextAreaCg);
-		replyTextCol.add(replyPanel);
-		row.add(replyTextCol);
-		container.add(row);
-
-		// buttons
-		Row buttonRow = new Row();
-		com.github.gwtbootstrap.client.ui.Column replyBtnCol =
-		    new com.github.gwtbootstrap.client.ui.Column(1);
-		replyBtnCol.setOffset(1);
-		buttonRow.add(replyBtnCol);
-
-		Button replyBtn = new Button("Reply");
-		replyBtn.setType(ButtonType.PRIMARY);
-		replyBtnCol.add(replyBtn);
-		replyBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				info.setVisible(false);
-				ValidationResult result = FieldVerifier.validateTweet(replyTextArea.getText());
-				if (!result.isValid()) {
-					replyTextAreaCg.setType(ControlGroupType.ERROR);
-					replyTextAreaHelpInline.setText(result.getErrors().get(0).getErrorMessage());
-					replyTextAreaHelpInline.setVisible(true);
-					return;
-				}
-
-				replyTextAreaCg.setType(ControlGroupType.NONE);
-				replyTextAreaHelpInline.setVisible(false);
-
-				ConversationDTO conversation = new ConversationDTO();
-				conversation.setId(c.getId());
-				conversation.setSender(c.getSender());
-				conversation.setReceiver(c.getReceiver());
-				conversation.setSubject(c.getSubject());
-				conversation.setStatus(ConversationStatus.READ);
-				conversation.setTimeUpdated(new Date());
-				conversation.getMessages().addAll(c.getMessages());
-				MessageDTO m = new MessageDTO();
-				m.setMessage(replyTextArea.getText());
-				m.setTimeCreated(new Date());
-				if (c.isSender()) {
-					m.setReceiver(c.getReceiver());
-					m.setSender(c.getSender());
-				} else {
-					m.setReceiver(c.getSender());
-					m.setSender(c.getReceiver());
-				}
-				conversation.add(m);
-				presenter.sendMessage(conversation);
-				replyTextArea.setText("");
-			}
-		});
-
-		com.github.gwtbootstrap.client.ui.Column backBtnCol =
-		    new com.github.gwtbootstrap.client.ui.Column(2);
-		buttonRow.add(backBtnCol);
-
-		Button backBtn = new Button("Back");
-		backBtn.addStyleName(style.button());
-		backBtnCol.add(backBtn);
-		backBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				getConversations();
-				clearConversationTable();
-			}
-		});
-		container.add(buttonRow);
-		root.add(container);
+      @Override
+      public void onClick(ClickEvent event) {
+        getConversations();
+        clearConversationTable();
+      }
+	    
+	  });
 	}
 
 	@UiHandler("profileLink")

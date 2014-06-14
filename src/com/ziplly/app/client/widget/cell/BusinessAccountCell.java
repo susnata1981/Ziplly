@@ -52,9 +52,6 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		EventTarget target = event.getEventTarget();
 
 		if (button.isOrHasChild(Element.as(target))) {
-//			redirectUrl =
-//			    redirectUrl + "#business:" + StringConstants.SEND_MESSAGE_TOKEN
-//			        + StringConstants.PLACE_SEPARATOR + accountId;
 			redirectUrl += "#business:" + PlaceUtils.getPlaceTokenForMessaging(Long.parseLong(accountId), state.getNeighborhoodId());
 			Window.Location.replace(redirectUrl);
 		} 

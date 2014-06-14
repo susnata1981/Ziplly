@@ -16,11 +16,10 @@ import com.github.gwtbootstrap.client.ui.FileUpload;
 import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
-import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.Tab;
+import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
@@ -28,8 +27,6 @@ import com.github.gwtbootstrap.client.ui.constants.Device;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,36 +39,29 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity.IBusinessAccountSettingView;
 import com.ziplly.app.client.activities.util.PaymentFlow;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace.SettingsTab;
 import com.ziplly.app.client.resource.TableResources;
 import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.view.business.SubscriptionPlansView;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
-import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
-import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.AddLocationModal;
 import com.ziplly.app.client.widget.HPanel;
 import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.PricingPlanWidget;
+import com.ziplly.app.client.widget.PricingPlanWidget.TITLE_HUE;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.SubscriptionPlanWidget;
-import com.ziplly.app.client.widget.PricingPlanWidget.TITLE_HUE;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountNotificationSettingsDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -80,9 +70,6 @@ import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.BusinessType;
 import com.ziplly.app.model.Cuisine;
 import com.ziplly.app.model.ImageDTO;
-import com.ziplly.app.model.LocationDTO;
-import com.ziplly.app.model.LocationType;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.SubscriptionPlanDTO;
@@ -96,9 +83,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
     IBusinessAccountSettingView {
 
 	private static final int MAX_TRANSACTION_TABLE_ROW_COUNT = 100;
-	private static final String GOOGLE_MAPS_LOCATION = "http://maps.google.com?q=";
-	BasicDataFormatter basicDataFormatter = (BasicDataFormatter) AbstractValueFormatterFactory
-	    .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
 	TableResources tableResources;
 
 	private static BusinessAccountSettingsViewUiBinder uiBinder = GWT
@@ -128,10 +113,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	    AccountSettingsPresenter<BusinessAccountDTO> {
 
 		void checkSubscriptionEligibility(Long subscriptionId);
-
-		void getNeighborhoodData(String zip);
-
-		void updateLocation(BusinessAccountDTO account);
 	}
 
 	interface BusinessAccountSettingsViewUiBinder extends
@@ -144,6 +125,9 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	@UiField
 	Alert message;
 
+	@UiField
+	TabPanel settingsTabPanel;
+	
 	@UiField
 	TextBox businessName;
 	@UiField
@@ -208,7 +192,8 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	@UiField
 	Image profileImagePreview;
 	private boolean imageUploaded;
-
+  private ImageDTO currentUploadedImage;
+  
 	// Hours of operation
 	@UiField
 	TextBox mondayStart;
@@ -261,13 +246,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	@UiField
 	HTMLPanel transactionDetailsPanel;
 
-	// Location tab
-	@UiField
-	HTMLPanel locationPanel;
-	@UiField
-	Anchor addLocationAnchor;
-	private AddLocationModal addLocationModal;
-
 	// Reset Password tab
 	@UiField
 	PasswordTextBox password;
@@ -317,7 +295,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		StyleHelper.show(uploadField.getElement(), false);
 		uploadAnchorIcon.setUrl(ZResources.IMPL.uploadIcon().getSafeUri());
 		// Disable add location for now
-		addLocationAnchor.setVisible(false);
 		neighborhoodTextBox.setReadOnly(true);
 		setupHandlers();
 	}
@@ -410,84 +387,9 @@ public class BusinessAccountSettingsView extends AbstractView implements
 				hideSubscriptionTab();
 			}
 
-			populateLocationPanel();
+//			populateLocationPanel();
 			popoulateNotificationSettings(account);
 		}
-	}
-
-	private void populateLocationPanel() {
-		locationPanel.clear();
-		for (LocationDTO location : account.getLocations()) {
-			Panel panel = addLocationToPanel(location);
-			locationPanel.add(panel);
-		}
-	}
-
-	private Panel addLocationToPanel(final LocationDTO location) {
-		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(style.locationItemPanel());
-		HPanel hpanel = new HPanel();
-		hpanel.setStyleName(style.hpanelNoMargin());
-		Label locationName =
-		    new Label(basicDataFormatter.format(location.getNeighborhood(), ValueType.NEIGHBORHOOD));
-		locationName.addStyleName(style.row());
-		locationName.addStyleName(style.heading());
-		hpanel.add(locationName);
-
-		if (location.getType() == LocationType.PRIMARY) {
-			Popover primaryLocationPopover = new Popover();
-			Anchor learnMoreAnchor = new Anchor(StringConstants.PRIMARY_LOCATION_KEY);
-			learnMoreAnchor.addStyleName(style.tinyText());
-			primaryLocationPopover.add(learnMoreAnchor);
-			primaryLocationPopover.setHeading(StringConstants.LEARN_MORE_TEXT);
-			primaryLocationPopover.setText(StringConstants.PRIMARY_LOCATION);
-			hpanel.add(primaryLocationPopover);
-		}
-
-		Anchor mapAnchor = new Anchor("map");
-		mapAnchor.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				event.preventDefault();
-				Window.open(getAddressUrl(location.getAddress()), "_blank", "");
-			}
-
-		});
-
-		mapAnchor.setHref(getAddressUrl(location.getAddress()));
-		hpanel.add(mapAnchor);
-
-		Anchor removeAnchor = new Anchor("remove");
-		removeAnchor.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if (location.getType() == LocationType.PRIMARY) {
-					displayMessage(StringConstants.CANT_REMOVE_PRIMARY_LOCATION, AlertType.ERROR);
-					return;
-				}
-				account.getLocations().remove(location);
-				presenter.save(account);
-			}
-		});
-		hpanel.add(removeAnchor);
-		panel.add(hpanel);
-
-		hpanel = new HPanel();
-		hpanel.setStyleName(style.hpanelNoMargin());
-		Label locationAddress =
-		    new Label(basicDataFormatter.format(location.getAddress(), ValueType.ADDRESS));
-		hpanel.add(locationAddress);
-		hpanel.addStyleName(style.row());
-		panel.add(hpanel);
-		panel.addStyleName(style.locationBlock());
-		return panel;
-	}
-
-	// HARD CODED - NEEDS TO CHANGE
-	private String getAddressUrl(String address) {
-		return GOOGLE_MAPS_LOCATION + address;
 	}
 
 	private void displayBusinessProperties() {
@@ -726,10 +628,6 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	public void onCancel() {
 		presenter.cancel();
 	}
-
-	@UiField
-	FluidContainer settingsPanel;
-	private ImageDTO currentUploadedImage;
 
 	@Override
 	public void displayImagePreview(String imageUrl) {
@@ -996,70 +894,13 @@ public class BusinessAccountSettingsView extends AbstractView implements
 		presenter.updatePassword(action);
 	}
 
-	// TODO: NEED TO ADD ABILITY TO ADD LOCATION
-	// @UiHandler("addLocationAnchor")
-	public void addLocation(ClickEvent event) {
-		if (addLocationModal == null) {
-			addLocationModal = new AddLocationModal();
-
-			// Add blur handler on zip textbox
-			addLocationModal.getZipTextBox().addBlurHandler(new BlurHandler() {
-				@Override
-				public void onBlur(BlurEvent event) {
-					if (!addLocationModal.validateZip()) {
-						return;
-					}
-					presenter.getNeighborhoodData(FieldVerifier.sanitize(addLocationModal
-					    .getZipTextBox()
-					    .getText()));
-				}
-			});
-
-			// Add Location Handler
-			addLocationModal.getAddLocationButton().addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					addLocationModal.clearError();
-					if (!addLocationModal.validate()) {
-						return;
-					}
-
-					LocationDTO location = addLocationModal.getLocation();
-					account.getLocations().add(location);
-					presenter.updateLocation(account);
-				}
-			});
-		}
-		addLocationModal.show(true);
-	}
-
-	@Override
-	public void displayNeighborhoodListLoading(boolean b) {
-		addLocationModal.displayNeighborhoodListLoading(b);
-	}
-
-	@Override
-	public void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods) {
-		addLocationModal.displayNeighborhoods(neighbordhoods);
-	}
-
-	@Override
-	public void displayMessageInAddLocationWidget(String msg, AlertType type) {
-		if (addLocationModal != null) {
-			addLocationModal.displayMessage(msg, type);
-		}
-	}
-
-	@Override
-	public void displayLocationModal(boolean display) {
-		if (addLocationModal != null) {
-			addLocationModal.show(display);
-		}
-	}
-
 	@Override
 	public void showSaveButton(boolean show) {
 		saveBtn.setEnabled(show);
+	}
+	
+	@Override
+	public void setTab(SettingsTab tab) {
+	  settingsTabPanel.selectTab(tab.getPosition());
 	}
 }

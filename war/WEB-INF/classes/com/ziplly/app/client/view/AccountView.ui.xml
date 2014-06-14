@@ -8,7 +8,7 @@
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="9" addStyleNames="{style.colSpan}">
-				<b:Alert ui:field="message" close="false" addStyleNames="{style.alertMsg}" />
+				<b:Alert ui:field="message" close="false" addStyleNames="messageBlock" />
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">

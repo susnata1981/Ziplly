@@ -13,9 +13,6 @@ public class PersonalAccountSettingsPlace extends Place {
 	public static class Tokenizer implements PlaceTokenizer<PersonalAccountSettingsPlace> {
 		@Override
 		public PersonalAccountSettingsPlace getPlace(String token) {
-			if (token != null && !"".equals(token)) {
-				return new PersonalAccountSettingsPlace();
-			}
 			return new PersonalAccountSettingsPlace();
 		}
 
