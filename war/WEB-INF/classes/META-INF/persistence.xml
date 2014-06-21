@@ -32,15 +32,17 @@
 		<class>com.ziplly.app.server.model.jpa.PendingInvitations</class>
 		<class>com.ziplly.app.server.model.jpa.Image</class>
 		<class>com.ziplly.app.server.model.jpa.Coupon</class>
+		<class>com.ziplly.app.server.model.jpa.Order</class>
+		<class>com.ziplly.app.server.model.jpa.OrderDetails</class>
+		<class>com.ziplly.app.server.model.jpa.CouponItem</class>
 		<class>com.ziplly.app.server.model.jpa.Transaction</class>
-		<class>com.ziplly.app.server.model.jpa.PurchasedCoupon</class>
-		
+				
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="javax.persistence.jdbc.user" value="zipllyadmin" />
  			<property name="javax.persistence.jdbc.password" value="Sherica12" />
  			<property name="hibernate.show_sql" value="false" />
-			<property name="hibernate.hbm2ddl.auto" value="create-update" />
+			<property name="hibernate.hbm2ddl.auto" value="none" />
  	        <property name="hibernate.connection.CharSet" value="utf8" />
     	    <property name="hibernate.connection.characterEncoding" value="utf8" />
 	        <property name="hibernate.connection.useUnicode" value="true" />

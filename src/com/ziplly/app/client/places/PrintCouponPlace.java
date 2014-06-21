@@ -4,35 +4,54 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
 
 public class PrintCouponPlace extends Place {
-	private Long couponTransactionId;
-	
-	public PrintCouponPlace(Long transactionId) {
-		try {
-			setCouponTransactionId(transactionId);
-		} catch(NumberFormatException nfe) {
-			setCouponTransactionId(-1L);
-		}
+  private long orderId;
+  private long couponId;
+
+  public PrintCouponPlace(long orderId, long couponId) {
+    try {
+      setOrderId(orderId);
+      this.setCouponId(couponId);
+    } catch (NumberFormatException nfe) {
+      setOrderId(-1L);
+    }
   }
 
-	public Long getCouponTransactionId() {
-	  return couponTransactionId;
+  public long getOrderId() {
+    return orderId;
   }
 
-	public void setCouponTransactionId(Long couponTransactionId) {
-	  this.couponTransactionId = couponTransactionId;
+  public void setOrderId(long orderId) {
+    this.orderId = orderId;
   }
 
-	@Prefix("printcoupon")
-	public static class Tokenizer extends BaseTokenizer<PrintCouponPlace> {
+  public long getCouponId() {
+    return couponId;
+  }
 
-		@Override
+  public void setCouponId(long couponId) {
+    this.couponId = couponId;
+  }
+
+  @Prefix("printcoupon")
+  public static class Tokenizer extends BaseTokenizer<PrintCouponPlace> {
+
+    @Override
     public PrintCouponPlace getPlace(String token) {
-			return new PrintCouponPlace(Long.parseLong(token));
+      tokenize(token);
+      try {
+        long orderId = Long.parseLong(getTokenAt(0));
+        long couponId = Long.parseLong(getTokenAt(1));
+        PrintCouponPlace place = new PrintCouponPlace(orderId, couponId);
+        return place;
+      } catch (NumberFormatException ex) {
+        PrintCouponPlace place = new PrintCouponPlace(-1, 0);
+        return place;
+      }
     }
 
-		@Override
+    @Override
     public String getToken(PrintCouponPlace place) {
-			return place.getCouponTransactionId().toString();
+      return PlaceUtils.getPlaceToken(place);
     }
-	}
+  }
 }

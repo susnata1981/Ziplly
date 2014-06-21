@@ -329,7 +329,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 			public String getValue(ConversationDTO c) {
 				return basicDataFormatter.format(
 				    c.getMessages().get(0).getTimeCreated(),
-				    ValueType.DATE_VALUE_MEDIUM);
+				    ValueType.DATE_DIFF);
 			}
 		};
 		conversationTable.addColumn(timeSentCol, buildHeader(TIME_RECEIVED_KEY));

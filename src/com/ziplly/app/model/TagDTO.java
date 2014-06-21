@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import com.ziplly.app.server.model.jpa.Tweet;
-
 public class TagDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -24,7 +22,7 @@ public class TagDTO implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "tag_tweet", joinColumns = { @JoinColumn(name = "tweet_id") },
 	    inverseJoinColumns = { @JoinColumn(name = "tag_id") })
-	private List<Tweet> tweets;
+	private List<TweetDTO> tweets;
 
 	public String getKeyword() {
 		return keyword;

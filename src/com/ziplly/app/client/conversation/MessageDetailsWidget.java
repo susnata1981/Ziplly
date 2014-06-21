@@ -42,7 +42,7 @@ public class MessageDetailsWidget extends Composite {
     senderImage.setUrl(formatter.format(message.getSender(), ValueType.PROFILE_IMAGE_URL));
     senderName.setInnerText(message.getSender().getDisplayName());
     messageSpan.setInnerText(message.getMessage());
-    timeSent.setInnerText(formatter.format(message.getTimeCreated(), ValueType.DATE_VALUE_SHORT));
+    timeSent.setInnerText(formatter.format(message.getTimeCreated(), ValueType.DATE_DIFF));
   }
 
 }

@@ -4,11 +4,11 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 
 import com.ziplly.app.server.bli.SubscriptionBLI;
 
-public class SubscriptionCancellationRequest extends BaseRequest {
+public class SubscriptionCancellationRequestHandler extends AbstractRequestHandler {
   private SubscriptionBLI subscriptionBli;
   private String orderId;
   
-  public SubscriptionCancellationRequest(SubscriptionBLI subscriptionBli) {
+  public SubscriptionCancellationRequestHandler(SubscriptionBLI subscriptionBli) {
     this.subscriptionBli = subscriptionBli;
   }
 

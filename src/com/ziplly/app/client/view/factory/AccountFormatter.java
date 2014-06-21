@@ -13,7 +13,7 @@ public class AccountFormatter extends AbstractValueFormatter<AccountDTO> {
 			case EMAIL_VALUE:
 				return basicValueFormatter.format(value.getEmail(), ValueType.STRING_VALUE);
 			case TIME_CREATED_VALUE:
-				return basicValueFormatter.format(value.getTimeCreated(), ValueType.DATE_VALUE_SHORT);
+				return basicValueFormatter.format(value.getTimeCreated(), ValueType.DATE_DIFF);
 			case NAME_VALUE:
 				return basicValueFormatter.format(value.getDisplayName(), ValueType.STRING_VALUE);
 			case PROFILE_IMAGE_URL:

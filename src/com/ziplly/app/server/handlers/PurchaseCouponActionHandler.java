@@ -17,26 +17,27 @@ import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.EntityUtil;
-import com.ziplly.app.dao.PurchasedCouponDAO;
+import com.ziplly.app.dao.OrderDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TransactionDAO;
-import com.ziplly.app.model.PurchasedCouponStatus;
+import com.ziplly.app.model.CouponItemStatus;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.model.jpa.Coupon;
-import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.shared.PurchaseCouponResult;
 import com.ziplly.app.shared.PurchasedCouponAction;
 
+@Deprecated
 public class PurchaseCouponActionHandler extends
     AbstractAccountActionHandler<PurchasedCouponAction, PurchaseCouponResult> {
 	private TransactionDAO couponTransactionDao;
 	private CouponBLI couponBLI;
 	private Logger logger = Logger.getLogger(PurchaseCouponActionHandler.class.getName());
 	private CouponDAO couponDao;
-	private PurchasedCouponDAO purchasedCouponDao;
+	private OrderDAO purchasedCouponDao;
 	
 	@Inject
 	public PurchaseCouponActionHandler(Provider<EntityManager> entityManagerProvider,
@@ -45,7 +46,7 @@ public class PurchaseCouponActionHandler extends
 	    AccountBLI accountBli,
 	    CouponBLI couponBLI,
 	    CouponDAO couponDao,
-	    PurchasedCouponDAO purchasedCouponDao,
+	    OrderDAO purchasedCouponDao,
 	    TransactionDAO couponTransactionDao) {
 		super(entityManagerProvider, accountDao, sessionDao, accountBli);
 		this.couponBLI = couponBLI;
@@ -123,16 +124,16 @@ public class PurchaseCouponActionHandler extends
 		transaction.setTimeUpdated(now);
 		
 		// Set QR code
-		PurchasedCoupon purchasedCoupon = new PurchasedCoupon();
-		purchasedCoupon.setCouponTransaction(transaction);
-		purchasedCoupon.setStatus(PurchasedCouponStatus.UNUSED);
+		CouponItem purchasedCoupon = new CouponItem();
+//		purchasedCoupon.setCouponTransaction(transaction);
+		purchasedCoupon.setStatus(CouponItemStatus.UNUSED);
 		purchasedCoupon.setTimeUpdated(now);
 		purchasedCoupon.setTimeCreated(now);
 		purchasedCoupon.setCoupon(coupon);
-		purchasedCouponDao.save(purchasedCoupon);
+//		purchasedCouponDao.save(purchasedCoupon);
 		
 		try {
-			purchasedCoupon.setQrcode(couponBLI.getQrcode(purchasedCoupon));
+//			purchasedCoupon.setQrcode(couponBLI.getQrcode(purchasedCoupon));
 			couponTransactionDao.update(transaction);
 		} catch (Exception e) {
 			throw new InternalError(String.format("Failed to generate coupon code"));

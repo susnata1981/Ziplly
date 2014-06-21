@@ -14,10 +14,8 @@ public class CouponDTO implements Serializable {
 	private String description;
 	private Date startDate;
 	private Date endDate;
-	private BigDecimal couponPrice;
-	private BigDecimal price;
+	private BigDecimal discountedPrice;
 	private BigDecimal itemPrice;
-	private BigDecimal discount;
 	private Long quantity;
 	private int numberAllowerPerIndividual;
 	// Transient
@@ -60,12 +58,6 @@ public class CouponDTO implements Serializable {
 	public void setItemPrice(BigDecimal price) {
 		this.itemPrice = price;
 	}
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
 	public Long getQuanity() {
 	  return quantity;
   }
@@ -77,18 +69,6 @@ public class CouponDTO implements Serializable {
   }
 	public void setQuantityPurchased(Long quantityPurchased) {
 	  this.quantityPurchased = quantityPurchased;
-  }
-	public BigDecimal getCouponPrice() {
-	  return couponPrice;
-  }
-	public void setCouponPrice(BigDecimal couponPrice) {
-	  this.couponPrice = couponPrice;
-  }
-	public BigDecimal getPrice() {
-	  return price;
-  }
-	public void setPrice(BigDecimal price) {
-	  this.price = price;
   }
 	public Date getTimeCreated() {
 	  return timeCreated;
@@ -125,5 +105,11 @@ public class CouponDTO implements Serializable {
   }
   public void setImages(List<ImageDTO> images) {
     this.images = images;
+  }
+  public BigDecimal getDiscountedPrice() {
+    return discountedPrice;
+  }
+  public void setDiscountedPrice(BigDecimal discountedPrice) {
+    this.discountedPrice = discountedPrice;
   }
 }

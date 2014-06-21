@@ -21,14 +21,12 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.resource.ZResources;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.ImageDTO;
-import com.ziplly.app.shared.FieldVerifier;
 
 public class CouponWidget extends Composite {
 
@@ -96,10 +94,10 @@ public class CouponWidget extends Composite {
   SpanElement businessName;
   @UiField
   SpanElement address;
-  @UiField
-  SpanElement businessType;
-  @UiField
-  SpanElement website;
+//  @UiField
+//  SpanElement businessType;
+//  @UiField
+//  SpanElement website;
   @UiField
   SpanElement expirationTime;
   @UiField
@@ -132,13 +130,14 @@ public class CouponWidget extends Composite {
     BusinessAccountDTO ba = (BusinessAccountDTO) coupon.getTweet().getSender();
     businessName.setInnerText(ba.getDisplayName());
     address.setInnerText(ba.getLocations().get(0).getAddress());
-    businessType.setInnerText(ba.getCategory().getName());
-    displayWebsiteIfPresent(ba);
+//    businessType.setInnerText(ba.getCategory().getName());
+//    displayWebsiteIfPresent(ba);
     long remaining = coupon.getQuanity() - coupon.getQuantityPurchased();
     quantityRemaining.setInnerText(Long.toString(remaining));
     quantitySold.setInnerText(Long.toString(coupon.getQuantityPurchased()));
     
-    expirationTime.setInnerHTML(formatter.format(coupon.getEndDate(), ValueType.DATE_VALUE));
+    expirationTime.setInnerHTML(formatter.format(coupon.getEndDate(), ValueType.DATE_VALUE_FULL));
+//    expirationTime.setInnerHTML(formatter.format(new Date(), ValueType.DATE_VALUE_FULL));
     finePrint.setInnerHTML(ZResources.IMPL.finePrint().getText());
     setExpirationTime(coupon);
   }
@@ -147,14 +146,6 @@ public class CouponWidget extends Composite {
     return businessNameAnchor;
   }
 
-  private void displayWebsiteIfPresent(BusinessAccountDTO ba) {
-    if (!FieldVerifier.isEmpty(ba.getWebsite())) {
-      website.setInnerHTML(ba.getWebsite());
-    } else {
-      website.setInnerHTML(StringConstants.NOT_AVAILABLE);
-    }
-  }
-  
   private void setExpirationTime(CouponDTO coupon) {
     Date now = new Date();
     if (coupon.getEndDate().before(now)) {
@@ -169,13 +160,8 @@ public class CouponWidget extends Composite {
     return buyButton;
   }
   
-//  private String getTitle(CouponDTO coupon) {
-//    String businessName = coupon.getTweet().getSender().getDisplayName();
-//    return coupon.getTitle() + " @ " + businessName;
-//  }
-  
   private void setPunchLine(CouponDTO coupon) {
-    SafeHtml text = titleTemplate.couponTitle(coupon.getItemPrice().toString(), coupon.getDiscount().toString());
+    SafeHtml text = titleTemplate.couponTitle(coupon.getItemPrice().toString(), coupon.getDiscountedPrice().toString());
     punchLine.setText(text.asString());
     
   }

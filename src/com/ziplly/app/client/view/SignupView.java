@@ -290,14 +290,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			return false;
 		}
 
-		// if (isRegistrationRescricted) {
-		// String code = Window.Location.getParameter("code");
-		// presenter.verifyInvitationForEmail(FieldVerifier.sanitize(email.getText()),
-		// code);
-		// while (!checkEmailInvitationStatus) {
-		//
-		// }
-		// }
 		return true;
 	}
 
@@ -536,8 +528,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 
 	/**
 	 * Signup/Login using facebook
-	 * 
-	 * @param event
 	 */
 	@UiHandler("facebookSignupAnchor")
 	void signupUsingFacebook(ClickEvent event) {

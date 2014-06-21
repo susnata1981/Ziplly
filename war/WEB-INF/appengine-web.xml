@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>zipllydevel</application>
-  <version>cf1</version>
+  <version>cf3</version>
 
   <!--
     Allows App Engine to send multiple requests to one instance in parallel:
@@ -58,7 +58,7 @@
     <!-- Subscription trial period duration -->
     <property name="app.feature.subscriptionTrailPeriod" value="30" />
     
-    <property name="app.blackListAccounts" value="7777,2" />
+    <property name="app.blackListAccounts" value="7777,7778" />
   </system-properties>
 
   

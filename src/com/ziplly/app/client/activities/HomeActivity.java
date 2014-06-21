@@ -305,32 +305,32 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
 	}
 
-	@Override
-	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
-		PurchasedCouponAction action = new PurchasedCouponAction();
-		action.setCoupon(coupon);
-		action.setBuyer(ctx.getAccount());
-		action.setCouponTransactionId(transactionId);
-		action.setResultStatus(resultStatus);
-		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-		  
-			@Override
-			public void onSuccess(PurchaseCouponResult result) {
-				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
-				AlertType alertType = AlertType.SUCCESS;
-				
-				switch(result.getCouponTransaction().getStatus()) {
-					case FAILURE:
-						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
-						alertType = AlertType.ERROR;
-						break;
-				default:
-					break;
-				}
-				view.displayMessage(displayMessage, alertType);
-			}
-		});
-	}
+//	@Override
+//	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
+//		PurchasedCouponAction action = new PurchasedCouponAction();
+//		action.setCoupon(coupon);
+//		action.setBuyer(ctx.getAccount());
+//		action.setCouponTransactionId(transactionId);
+//		action.setResultStatus(resultStatus);
+//		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
+//		  
+//			@Override
+//			public void onSuccess(PurchaseCouponResult result) {
+//				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
+//				AlertType alertType = AlertType.SUCCESS;
+//				
+//				switch(result.getCouponTransaction().getStatus()) {
+//					case FAILURE:
+//						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
+//						alertType = AlertType.ERROR;
+//						break;
+//				default:
+//					break;
+//				}
+//				view.displayMessage(displayMessage, alertType);
+//			}
+//		});
+//	}
 
 	@Override
 	public void reportTweetAsSpam(TweetDTO tweet) {

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class SalesVolumeLineChartBuilder extends AbstractLineChartBuilder {
@@ -18,8 +18,8 @@ public class SalesVolumeLineChartBuilder extends AbstractLineChartBuilder {
 		  return createNoDataSet(startDate, endDate);
 		}
 		
-		for(PurchasedCouponDTO pr : result.getPurchasedCoupons()) {
-			Date timeCreated = pr.getTransaction().getTimeCreated();
+		for(CouponItemDTO pr : result.getPurchasedCoupons()) {
+			Date timeCreated = pr.getTimeCreated();
 			if (salesPerDate.get(timeCreated) == null) {
 				salesPerDate.put(timeCreated, new Double(0));
 			}

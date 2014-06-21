@@ -15,13 +15,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.DateTimeZone;
+
+import com.ziplly.app.server.util.TimeUtil;
+
 @NamedQueries({
     @NamedQuery(name = "fetchSessionByUid", query = "from Session s where s.uid = :uid"),
     @NamedQuery(name = "fetchSessionByAccountId",
         query = "from Session s where s.account.accountId = :account_id") })
 @Entity
 @Table(name = "session")
-public class Session {
+public class Session extends AbstractEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -36,9 +40,6 @@ public class Session {
 	@OneToOne
 	@JoinColumn(name = "location_id")
 	private Location location;
-
-	@Column(name = "time_created")
-	private Date timeCreated;
 
 	@Column(name = "expired_at")
 	private Date expireAt;
@@ -72,15 +73,7 @@ public class Session {
 	}
 
 	public void setExpireAt(Date expireAt) {
-		this.expireAt = expireAt;
-	}
-
-	public Date getTimeCreated() {
-		return timeCreated;
-	}
-
-	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = timeCreated;
+		this.expireAt = expireAt;//TimeUtil.toDate(expireAt, DateTimeZone.UTC);
 	}
 
 	public Location getLocation() {

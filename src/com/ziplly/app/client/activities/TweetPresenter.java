@@ -7,7 +7,6 @@ import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.PurchasedCouponAction;
 
 public interface TweetPresenter extends SendMessagePresenter {
 	
@@ -31,7 +30,7 @@ public interface TweetPresenter extends SendMessagePresenter {
 
 	void updateComment(CommentDTO comment);
 
-	void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon);
+//	void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon);
 
 	void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget);
 

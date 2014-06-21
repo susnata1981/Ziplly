@@ -43,7 +43,7 @@ public class PrintCouponView extends AbstractView {
 	@UiField
 	IFrameElement frame;
 	@UiField
-	Heading title;
+	SpanElement title;
 
 	@UiField
 	Label businessName;
@@ -58,7 +58,7 @@ public class PrintCouponView extends AbstractView {
 	@UiField
 	Label endDate;
 	@UiField
-	Label price;
+	SpanElement price;
 	@UiField
 	Label totalCouponsAllowerPerPerson;
 	
@@ -67,23 +67,25 @@ public class PrintCouponView extends AbstractView {
 	
 	private String finePrint = "One coupon per customer per day. Coupon must be surrendered at the time of purchase. "
 	    + "May not be used for prior "
-	    + "purchases or sale price items or combined with any other coupon, offer , sale or discount.";
+	    + "purchases or sale price items or combined with any other coupon, offer , sale or discount. The coupon"
+	    + "can only be used during the promotion start and end date. After the expiration date, coupon can't be"
+	    + "used for redemption.";
 	
 	public void displayCoupon(GetCouponQRCodeUrlResult result) {
 		CouponDTO coupon = result.getCoupon();
 		logo.setUrl(ZResources.IMPL.zipllyLogo().getSafeUri().asString());
 		frame.setSrc(result.getUrl());
-		title.setText(coupon.getDescription());
+		title.setInnerText(coupon.getDescription());
 		
 		BusinessAccountDTO businessAccount = (BusinessAccountDTO) result.getSeller();
 		businessName.setText(businessAccount.getDisplayName());
 		businessAddress.setText(businessAccount.getLocations().get(0).getAddress());
 		businessPhone.setText(businessAccount.getPhone());
 		
-		discount.setText(basicDataFormatter.format(coupon.getDiscount(), ValueType.PERCENT));
-		price.setText(basicDataFormatter.format(coupon.getPrice(), ValueType.PRICE));
-		startDate.setText(basicDataFormatter.format(coupon.getStartDate(), ValueType.DATE_VALUE));
-		endDate.setText(basicDataFormatter.format(coupon.getEndDate(), ValueType.DATE_VALUE));
+		discount.setText(basicDataFormatter.format(coupon.getDiscountedPrice(), ValueType.PERCENT));
+		price.setInnerText(basicDataFormatter.format(coupon.getItemPrice(), ValueType.PRICE));
+		startDate.setText(basicDataFormatter.format(coupon.getStartDate(), ValueType.DATE_VALUE_FULL));
+		endDate.setText(basicDataFormatter.format(coupon.getEndDate(), ValueType.DATE_VALUE_FULL));
 		
 		totalCouponsAllowerPerPerson.setText(Integer.toString(coupon.getNumberAllowerPerIndividual()));
 		termsAndConditionLabel.setInnerText(finePrint);

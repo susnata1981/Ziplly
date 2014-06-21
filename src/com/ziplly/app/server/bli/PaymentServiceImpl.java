@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private static final String ZIPLLY_INC = "Ziplly Inc.";
 	private static final String COUPON_ID_LABEL = "couponId";
 	private static final String BUYER_ID_LABEL = "buyerId";
-	private static final String PURCHASE_COUPON_ID_LABEL = "purchaseCouponId";
+	private static final String COUPON_ORDER_ID_LABEL = "couponOrderId";
 	private static final String PAYMENT_TYPE = "paymentType";
 	private static final String MERCHANT_ID_LABEL = "sellerId";
 	private static final String SUBSCRIPTION_ID_LABEL = "subscriptionId";
@@ -90,8 +90,8 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public String generateJWTTokenForCoupon(
-			Long purchasedCouponId, 
+	public String generateTokenForCoupon(
+			Long orderId, 
 			Coupon coupon, 
 			Long buyerAccountId) throws InvalidKeyException, SignatureException {
 		
@@ -99,11 +99,11 @@ public class PaymentServiceImpl implements PaymentService {
 		JsonObject request = new JsonObject();
 		request.addProperty(NAME_LABEL, ZIPLLY_INC);
 		request.addProperty(DESCRIPTION_LABEL, coupon.getDescription());
-		request.addProperty(PRICE_LABEL, coupon.getPrice());
+		request.addProperty(PRICE_LABEL, coupon.getDiscountedPrice());
 		request.addProperty(CURRENCY_CODE_LABEL, Currency.getInstance(Locale.US).getCurrencyCode());
 		request.addProperty(COUPON_ID_LABEL, coupon.getCouponId());
 		request.addProperty(BUYER_ID_LABEL, buyerAccountId);
-		request.addProperty(PURCHASE_COUPON_ID_LABEL, purchasedCouponId);
+		request.addProperty(COUPON_ORDER_ID_LABEL, orderId);
 		request.addProperty(PAYMENT_TYPE, PaymentType.COUPON.name());
 		JsonToken token = createToken(request);
 		return token.serializeAndSign();

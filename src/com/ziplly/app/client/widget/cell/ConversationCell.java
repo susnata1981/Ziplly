@@ -7,9 +7,9 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.ziplly.app.server.model.jpa.Conversation;
+import com.ziplly.app.model.ConversationDTO;
 
-public class ConversationCell extends AbstractCell<Conversation> {
+public class ConversationCell extends AbstractCell<ConversationDTO> {
 	private SimpleEventBus eventBus;
 
 	public ConversationCell(SimpleEventBus eventBus) {
@@ -19,7 +19,7 @@ public class ConversationCell extends AbstractCell<Conversation> {
 
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context,
-	    Conversation value,
+	    ConversationDTO value,
 	    SafeHtmlBuilder sb) {
 
 		if (value == null) {
@@ -34,9 +34,9 @@ public class ConversationCell extends AbstractCell<Conversation> {
 	@Override
 	public void onBrowserEvent(Context context,
 	    Element parent,
-	    Conversation value,
+	    ConversationDTO value,
 	    NativeEvent event,
-	    ValueUpdater<Conversation> valueUpdater) {
+	    ValueUpdater<ConversationDTO> valueUpdater) {
 
 		// Window.alert("Conversation:"+value.getReceiver().getDisplayName());
 	}

@@ -2,6 +2,8 @@ package com.ziplly.app.server.handlers;
 
 import javax.persistence.EntityManager;
 
+import org.jboss.logging.Logger;
+
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.Action;
@@ -13,33 +15,39 @@ import com.ziplly.app.client.exceptions.InternalException;
 
 public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R extends Result> implements
     ActionHandler<T, R> {
-	@SuppressWarnings("unused")
-	private Provider<EntityManager> entityManagerProvider;
+  @SuppressWarnings("unused")
+  private Provider<EntityManager> entityManagerProvider;
+  private Logger logger = Logger.getLogger(AbstractSessionAwareActionHandler.class);
 
-	public AbstractSessionAwareActionHandler(Provider<EntityManager> entityManagerProvider) {
-		this.entityManagerProvider = entityManagerProvider;
-	}
+  public AbstractSessionAwareActionHandler(Provider<EntityManager> entityManagerProvider) {
+    this.entityManagerProvider = entityManagerProvider;
+  }
 
-	@Override
-	public R execute(T action, ExecutionContext context) throws DispatchException {
-		preHandler();
-		R result = doExecute(action, context);
-		postHandler(result);
-		return result;
-	}
+  @Override
+  public R execute(T action, ExecutionContext context) throws DispatchException {
+    try {
+      preHandler();
+      R result = doExecute(action, context);
+      postHandler(result);
+      return result;
+    } catch (Exception ex) {
+      logger.debug(String.format("FAILED TO PROCESS REQUEST %s", ex));
+      throw ex;
+    }
+  }
 
-	protected void postHandler(R result) throws InternalException {
-	}
+  protected void postHandler(R result) throws InternalException {
+  }
 
-	protected void preHandler() {
-	}
+  protected void preHandler() {
+  }
 
-	@Override
-	public abstract Class<T> getActionType();
+  @Override
+  public abstract Class<T> getActionType();
 
-	@Override
-	public void rollback(T arg0, R arg1, ExecutionContext arg2) throws DispatchException {
-	}
+  @Override
+  public void rollback(T arg0, R arg1, ExecutionContext arg2) throws DispatchException {
+  }
 
-	public abstract R doExecute(T action, ExecutionContext context) throws DispatchException;
+  public abstract R doExecute(T action, ExecutionContext context) throws DispatchException;
 }

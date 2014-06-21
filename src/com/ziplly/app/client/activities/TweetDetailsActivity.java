@@ -11,7 +11,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -29,7 +28,6 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
 import com.ziplly.app.shared.GetCommunityWallDataResult;
-import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.RedeemCouponAction;
 import com.ziplly.app.shared.RedeemCouponResult;
 
@@ -122,13 +120,9 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 			    }
 
 			    @Override
-			    public void onFailure(Throwable th) {
+			    public void postHandle(Throwable th) {
 				    if (th instanceof InvalidCouponException) {
-					    view.displayMessage(StringConstants.INVALID_COUPON, AlertType.ERROR);
-				    } else if (th instanceof CouponAlreadyUsedException) {
-					    view.displayMessage(StringConstants.COUPON_ALREADY_USED, AlertType.ERROR);
-				    } else {
-					    view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+					    view.displayMessage(th.getMessage(), AlertType.ERROR);
 				    }
 			    }
 		    });
@@ -241,10 +235,10 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 		placeController.goTo(new LoginPlace());
 	}
 
-	@Override
-  public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon) {
-		placeController.goTo(new LoginPlace());
-	}
+//	@Override
+//  public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon) {
+//		placeController.goTo(new LoginPlace());
+//	}
 
   @Override
   public void cancelTransaction(long transactionId) {

@@ -112,8 +112,8 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
     subscription.setSubscriptionPlan(plan);
     subscription.setAccount(account);
     subscription.setTransaction(transaction);
-    subscription.setTimeUpdated(TimeUtil.toTimestamp(now));
-    subscription.setTimeCreated(TimeUtil.toTimestamp(now));
+    subscription.setTimeUpdated(now);
+    subscription.setTimeCreated(now);
     subscription.setStatus(SubscriptionStatus.ACTIVE);
     subscriptionDao.save(subscription);
 
@@ -146,6 +146,7 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
     BusinessAccount account = BusinessAccount.class.cast(transaction.getBuyer());
     Subscription subscription = account.getLatestSubscription();
     subscription.setStatus(SubscriptionStatus.CANCELLED);
+    subscription.setTimeUpdated(new Date());
     subscriptionDao.save(subscription);
     logger.info(String.format("Subscription id %d cancelled", subscription.getSubscriptionId()));
   }

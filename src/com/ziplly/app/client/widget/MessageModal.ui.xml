@@ -29,7 +29,7 @@
 				<g:HTMLPanel ui:field="modalContainer">
 					<p ui:field="content" class="{style.message}"></p>
 				</g:HTMLPanel>
-				<b:Button type="PRIMARY" ui:field="okBtn" addStyleNames="{style.right}">Ok</b:Button>
+				<b:Button ui:field="okBtn" addStyleNames="{style.right}">Ok</b:Button>
 			</g:HTMLPanel>
 		</b:Modal>
 	</g:HTMLPanel>

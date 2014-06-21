@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
-import com.ziplly.app.server.bli.payment.BaseRequest;
+import com.ziplly.app.server.bli.payment.AbstractRequestHandler;
 import com.ziplly.app.server.bli.payment.PayloadParser;
 
 @Singleton
@@ -32,7 +32,7 @@ public class ConfirmPaymentServlet extends HttpServlet {
 	}
 
 	private void handlePayload(String parameter, HttpServletResponse res) {
-		BaseRequest request = parser.parse(parameter);
+		AbstractRequestHandler request = parser.parse(parameter);
 		try {
 	    request.completeTransaction();
 	    res.setStatus(200);

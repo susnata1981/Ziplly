@@ -28,12 +28,11 @@
 		float:
 		left;
 		display: block;
-		font-size: .85em;
+		font-size: 13px;
 		width: 100%;
-		font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+		font-family: Tahoma, Verdana, Segoe, sans-serif;
 		margin: 3px 2px;
 		padding: 5px 2px;
-		font-weight: 600;
 		}
 		.tweetFilterLink:hover {
 		background: #ccc;

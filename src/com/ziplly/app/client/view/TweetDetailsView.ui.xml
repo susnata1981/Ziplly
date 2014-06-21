@@ -7,19 +7,15 @@
 		width: 100%;
 		}
 	</ui:style>
-	<!-- <b:FluidContainer> <b:Row> <b:Column offset="1" size="9"> <b:Alert 
-		ui:field="message" close="false" /> </b:Column> </b:Row> <b:Row> <b:Column 
-		offset="1" size="9"> <g:HTMLPanel ui:field="communityWallPanel" addStyleNames="{style.communityWallPanel}"> 
-		</g:HTMLPanel> </b:Column> </b:Row> </b:FluidContainer> -->
-
-	<!-- <g:HTMLPanel addStyleNames="{style.communityWallPanel}"> <b:Alert ui:field="message" 
-		close="false" /> <g:HTMLPanel ui:field="communityWallPanel"> </g:HTMLPanel> 
-		</g:HTMLPanel> -->
-
 	<b:FluidContainer>
 		<b:FluidRow>
 			<b:Column size="10">
 				<b:Alert ui:field="message" close="false" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+		    <b:Column size="2">
+			    <b:Button ui:field="backBtn">Back</b:Button>
 			</b:Column>
 		</b:FluidRow>
 		<b:FluidRow>

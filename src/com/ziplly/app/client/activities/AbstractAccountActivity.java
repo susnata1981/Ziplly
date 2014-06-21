@@ -113,8 +113,8 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		    });
 	}
 
-	public void printCoupon(Long transactionId) {
-		goTo(new PrintCouponPlace(transactionId));
+	public void printCoupon(long orderId, long couponId) {
+		goTo(new PrintCouponPlace(orderId, couponId));
 	}
 
 	@Override
@@ -261,34 +261,34 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 
-	@Override
-	public void purchaseCoupon(String transactionId,
-	    PurchasedCouponAction.ResultStatus resultStatus,
-	    final CouponDTO coupon) {
-		PurchasedCouponAction action = new PurchasedCouponAction();
-		action.setCoupon(coupon);
-		action.setBuyer(ctx.getAccount());
-		action.setCouponTransactionId(transactionId);
-		action.setResultStatus(resultStatus);
-		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-
-			@Override
-			public void onSuccess(PurchaseCouponResult result) {
-				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
-				AlertType alertType = AlertType.SUCCESS;
-
-				switch (result.getCouponTransaction().getStatus()) {
-					case FAILURE:
-						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
-						alertType = AlertType.ERROR;
-						break;
-					default:
-						break;
-				}
-				view.displayMessage(displayMessage, alertType);
-			}
-		});
-	}
+//	@Override
+//	public void purchaseCoupon(String transactionId,
+//	    PurchasedCouponAction.ResultStatus resultStatus,
+//	    final CouponDTO coupon) {
+//		PurchasedCouponAction action = new PurchasedCouponAction();
+//		action.setCoupon(coupon);
+//		action.setBuyer(ctx.getAccount());
+//		action.setCouponTransactionId(transactionId);
+//		action.setResultStatus(resultStatus);
+//		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
+//
+//			@Override
+//			public void onSuccess(PurchaseCouponResult result) {
+//				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
+//				AlertType alertType = AlertType.SUCCESS;
+//
+//				switch (result.getCouponTransaction().getStatus()) {
+//					case FAILURE:
+//						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
+//						alertType = AlertType.ERROR;
+//						break;
+//					default:
+//						break;
+//				}
+//				view.displayMessage(displayMessage, alertType);
+//			}
+//		});
+//	}
 
 	public void reportSpam(SpamDTO spam, DispatcherCallbackAsync<ReportSpamResult> handler) {
 		if (spam == null) {
@@ -404,10 +404,10 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		});
 	}
 
-	@Override
-	public void getCouponQRCodeUrl(Long couponTransactionId) {
+	public void getCouponQRCodeUrl(long ordersId, long couponId) {
 		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
-		action.setCouponTransactionId(couponTransactionId);
+		action.setOrderId(ordersId);
+		action.setCouponId(couponId);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
 
 			@Override

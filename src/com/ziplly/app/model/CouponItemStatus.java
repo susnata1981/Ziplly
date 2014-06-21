@@ -1,6 +1,6 @@
 package com.ziplly.app.model;
 
-public enum PurchasedCouponStatus {
+public enum CouponItemStatus {
 	UNUSED,
 	USED, 
 	PENDING, 

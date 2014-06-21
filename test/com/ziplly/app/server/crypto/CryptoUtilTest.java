@@ -2,13 +2,22 @@ package com.ziplly.app.server.crypto;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.apache.commons.codec.EncoderException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.ziplly.app.base.AbstractBase;
-import com.ziplly.app.server.bli.CouponBLIImpl.CouponCodeDetails;
+import com.ziplly.app.server.bli.CouponCodeDetails;
 
 @RunWith(JUnit4.class)
 public class CryptoUtilTest extends AbstractBase {
@@ -24,13 +33,13 @@ public class CryptoUtilTest extends AbstractBase {
 		for(Long buyerId : buyerIds) {
 			for(Long sellerId : sellerIds) {
 				for(Long couponId : couponIds) {
-					for(Long transactionId : transactionIds) {
-						CouponCodeDetails ccd = createCouponCodeDetails(buyerId, sellerId, couponId, transactionId);
+					for(long orderId : orderIds) {
+						CouponCodeDetails ccd = createCouponCodeDetails(buyerId, sellerId, couponId, orderId);
 						
 						String text = ccd.encode();
-						
+						System.out.println("T = "+text);
 						String encryptedText = cryptoUtil.encrypt(text);
-						
+						System.out.println("E = "+encryptedText);
 						assertEquals(text, cryptoUtil.decrypt(encryptedText));
 					}
 				}
@@ -38,12 +47,21 @@ public class CryptoUtilTest extends AbstractBase {
 		}
 	}
 					
+	@Test
+	public void decryptTest() throws Exception {
+	  CouponCodeDetails ccd = createCouponCodeDetails(1L, 1L, 2L, 6L);
+	  String encryptedText = cryptoUtil.encrypt(ccd.encode());
+	  System.out.println(encryptedText);
+	  String decrypt = cryptoUtil.decrypt(encryptedText);
+	  System.out.println("Decrypted text = "+decrypt);
+	}
+	
 	CouponCodeDetails createCouponCodeDetails(Long buyerId, Long sellerId, Long couponId, Long transactionId) {
-		CouponCodeDetails ccd = new CouponCodeDetails();
+		CouponCodeDetails ccd = new CouponCodeDetails(null);
 		ccd.setBuyerAccountId(buyerId)
 		   .setSellerAccountId(sellerId)
 		   .setCouponId(couponId)
-		   .setCouponTransactionId(transactionId);
+		   .setOrderId(transactionId);
 		
 		return ccd;
 	}

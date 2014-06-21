@@ -3,13 +3,17 @@ package com.ziplly.app.client.view.coupon;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.ziplly.app.model.PurchasedCouponDTO;
-import com.ziplly.app.model.PurchasedCouponStatus;
-import com.ziplly.app.model.TransactionStatus;
+import com.google.gwt.user.client.Window;
+import com.ziplly.app.model.CouponItemDTO;
+import com.ziplly.app.model.CouponItemStatus;
 import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class CouponTransactionSummaryCalculator {
-  
+  private CommissionCalculator commissionCalculator;
+
+  public CouponTransactionSummaryCalculator() {
+    commissionCalculator = new CommissionCalculator();
+  }
   public TransactionSummary calculate(GetCouponTransactionResult result) {
     TransactionSummary summary = new TransactionSummary();
     summary.setTotalCouponsSold(result.getTotalTransactions());
@@ -21,59 +25,37 @@ public class CouponTransactionSummaryCalculator {
     summary.setTotalCouponsUnused(totalUnusedCouponCount);
     return summary;
   }
-  
-  private Long getRedeemCouponCount(List<PurchasedCouponDTO> purchasedCoupons) {
+
+  private Long getRedeemCouponCount(List<CouponItemDTO> purchasedCoupons) {
     long count = 0;
-    for(PurchasedCouponDTO pc : purchasedCoupons) {
-      if (pc.getTransaction().getStatus() == TransactionStatus.COMPLETE && 
-          pc.getStatus() == PurchasedCouponStatus.UNUSED) {
+    for (CouponItemDTO pc : purchasedCoupons) {
+      if (pc.getStatus() == CouponItemStatus.UNUSED) {
         count++;
       }
     }
-    
+
     return count;
   }
-  
+
   private BigDecimal getTotalSalesAmount(GetCouponTransactionResult result) {
     if (result.getTotalTransactions() > 0) {
-      return 
-          result
-              .getPurchasedCoupons()
-              .get(0)
-              .getCoupon()
-              .getPrice()
-              .multiply(BigDecimal.valueOf(result.getTotalTransactions()));
+      return result
+          .getPurchasedCoupons()
+          .get(0)
+          .getCoupon()
+          .getDiscountedPrice()
+          .multiply(BigDecimal.valueOf(result.getTotalTransactions()));
     }
-    
+
     return new BigDecimal(0);
   }
-  
-  private BigDecimal getTotalFees(GetCouponTransactionResult result) {  
+
+  private BigDecimal getTotalFees(GetCouponTransactionResult result) {
     BigDecimal totalFees = new BigDecimal(0);
-    
-    for(PurchasedCouponDTO pc : result.getPurchasedCoupons()) {
-      if (isTransactionComplete(pc)) {
-        totalFees.add(getTransactionFee(pc));
-      }
+    for (CouponItemDTO pc : result.getPurchasedCoupons()) {
+      totalFees = totalFees.add(commissionCalculator.calculateFee(pc.getCoupon().getDiscountedPrice()));
     }
+   
     return totalFees;
-  }
-  
-  private boolean isTransactionComplete(PurchasedCouponDTO pc) {
-    return pc.getTransaction().getStatus() == TransactionStatus.COMPLETE;
-  }
-  
-  private BigDecimal getTransactionFee(PurchasedCouponDTO pc) {
-    if (isTransactionComplete(pc)) {
-      BigDecimal commision = pc.getTransaction().getAmount().multiply(new BigDecimal(2.9/100));
-      BigDecimal minimum = new BigDecimal(.30);
-      if (commision.compareTo(minimum) > 0) {
-        return commision;
-      } else {
-        return minimum;
-      }
-    }
-    
-    return new BigDecimal(0);
   }
 }

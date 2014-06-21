@@ -1,14 +1,14 @@
 package com.ziplly.app.shared;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.customware.gwt.dispatch.shared.Result;
 
-import com.google.common.collect.Maps;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 
 public class GetJwtTokenResult implements Result {
-	private Map<SubscriptionPlanDTO, String> tokens = Maps.newHashMap();
+	private Map<SubscriptionPlanDTO, String> tokens = new HashMap<SubscriptionPlanDTO, String>();
 
 	public GetJwtTokenResult() {
 	}

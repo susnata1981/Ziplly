@@ -20,6 +20,7 @@
 			<b:Column size="2">
 				<b:NavPills>
 					<b:NavLink ui:field="couponFormLink" addStyleNames="{style.link}">Publish Coupon</b:NavLink>
+					<b:NavLink ui:field="viewCouponLink" addStyleNames="{style.link}">View Coupon</b:NavLink>
 					<b:NavLink ui:field="couponSalesLink" addStyleNames="{style.link}">Report</b:NavLink>
 				</b:NavPills>
 			</b:Column>

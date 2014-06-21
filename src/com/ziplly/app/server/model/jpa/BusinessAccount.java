@@ -91,7 +91,7 @@ public class BusinessAccount extends Account {
 
       @Override
       public int compare(Subscription o1, Subscription o2) {
-        return (int) (o2.getTimeCreated() - o1.getTimeCreated());
+        return (int) (o2.getTimeCreated().compareTo(o1.getTimeCreated()));
       }
 	    
 	  });
@@ -136,7 +136,7 @@ public class BusinessAccount extends Account {
 
       @Override
       public int compare(Subscription o1, Subscription o2) {
-        return (int) (o2.getTimeCreated() - o1.getTimeCreated());
+        return (int) (o2.getTimeCreated().compareTo(o1.getTimeCreated()));
       }
     });
     

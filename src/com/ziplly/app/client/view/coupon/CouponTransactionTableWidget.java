@@ -18,7 +18,7 @@ import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.widget.StyleHelper;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 
 public class CouponTransactionTableWidget extends Composite {
 
@@ -30,7 +30,7 @@ public class CouponTransactionTableWidget extends Composite {
 	@UiField(provided = true)
 	SimplePager pager;
 	@UiField(provided = true)
-	CellTable<PurchasedCouponDTO> couponTransactionTable;
+	CellTable<CouponItemDTO> couponTransactionTable;
 	@UiField
 	Alert message;
 	
@@ -56,9 +56,9 @@ public class CouponTransactionTableWidget extends Composite {
 
 	private void setupUi() {
 		pager = new SimplePager();
-		couponTransactionTable = new CellTable<PurchasedCouponDTO>();
+		couponTransactionTable = new CellTable<CouponItemDTO>();
 		couponTransactionTable.setEmptyTableWidget(new Label("No transaction"));
-		couponTransactionTable.setRowData(0, new ArrayList<PurchasedCouponDTO>());
+		couponTransactionTable.setRowData(0, new ArrayList<CouponItemDTO>());
 		couponTransactionTable.setHover(true);
 		buildTable();
 		pager.setDisplay(couponTransactionTable);
@@ -83,7 +83,7 @@ public class CouponTransactionTableWidget extends Composite {
 		couponTransactionTable.setRowCount(couponCount, true);
 	}
 	
-	public void displayPurchasedCoupons(List<PurchasedCouponDTO> purchasedCoupons) {
+	public void displayPurchasedCoupons(List<CouponItemDTO> purchasedCoupons) {
 	  StyleHelper.show(message.getElement(), false);
 		if (purchasedCoupons == null || purchasedCoupons.size() == 0) {
 			displayMessage(StringConstants.NO_COUPON_TRANSACTIONS, AlertType.INFO);
@@ -99,7 +99,7 @@ public class CouponTransactionTableWidget extends Composite {
 		}
   }
 	
-	public CellTable<PurchasedCouponDTO> getTable() {
+	public CellTable<CouponItemDTO> getTable() {
 		return couponTransactionTable;
 	}
 	

@@ -5,11 +5,11 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.ziplly.app.server.bli.CouponBLI;
 
-public class CouponRequest extends BaseRequest {
+public class CouponRequestHandler extends AbstractRequestHandler {
 	private CouponBLI couponBli;
 
 	@Inject
-	public CouponRequest(CouponBLI couponBli) {
+	public CouponRequestHandler(CouponBLI couponBli) {
 		this.couponBli = couponBli;
   }
 	
@@ -25,25 +25,25 @@ public class CouponRequest extends BaseRequest {
 	public void setBuyerId(Long buyerId) {
 		this.buyerId = buyerId;
 	}
-	public Long getPurchasedCouponId() {
-		return purchasedCouponId;
+	public Long getCouponOrderId() {
+		return couponOrderId;
 	}
-	public void setPurchasedCouponId(Long transactionId) {
-		this.purchasedCouponId = transactionId;
+	public void setCouponOrderId(Long couponOrderId) {
+		this.couponOrderId = couponOrderId;
 	}
 	
 	private Long couponId;
 	private Long buyerId;
-	private Long purchasedCouponId;
+	private Long couponOrderId;
 
 	@Override
   public String toString() {
 	  return super.toString() +  "couponId=" + couponId + ", buyerId="
-	      + buyerId + ", purchasedCouponId=" + purchasedCouponId + "]";
+	      + buyerId + ", couponOrderId=" + couponOrderId + "]";
   }
 	
 	@Override
   public void completeTransaction() throws DispatchException, Exception {
-		couponBli.completeTransaction(purchasedCouponId);
+		couponBli.completeTransaction(couponOrderId);
   }
 }

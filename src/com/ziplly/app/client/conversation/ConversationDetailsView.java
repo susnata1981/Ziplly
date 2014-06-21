@@ -61,7 +61,7 @@ public class ConversationDetailsView extends Composite {
     }
     
     senderLabel.setInnerText(conversation.getSender().getDisplayName());
-    timeLabel.setInnerText(formatter.format(conversation.getTimeCreated(), ValueType.DATE_VALUE));
+    timeLabel.setInnerText(formatter.format(conversation.getTimeCreated(), ValueType.DATE_VALUE_FULL));
     receiverLabel.setInnerText(conversation.getReceiver().getDisplayName());
     subjectLabel.setInnerText(conversation.getSubject());
     

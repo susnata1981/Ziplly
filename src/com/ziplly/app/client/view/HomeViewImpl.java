@@ -177,7 +177,6 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 		message.clear();
 		hideMessage(true);
 		tview.clear();
-
 		if (tweets.size() == 0) {
 			eventBus.fireEvent(new LoadingEventEnd());
 			return;

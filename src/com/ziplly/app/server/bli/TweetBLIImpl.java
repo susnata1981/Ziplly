@@ -1,5 +1,7 @@
 package com.ziplly.app.server.bli;
 
+import java.util.Date;
+
 import org.joda.time.DateTime;
 
 import com.google.inject.Inject;
@@ -127,50 +129,55 @@ public class TweetBLIImpl implements TweetBLI {
       return false;
     }
 
-    DateTime now = TimeUtil.getCurrentTime();
-    System.out.println("T = " + now.getMillis() + " N = " + now.toDate());
-    long lastSubscriptionCycle = getLastSubscriptionCycle(now, subscription.getTimeCreated());
-    System.out.println("T = " + lastSubscriptionCycle + " B = "
-        + TimeUtil.toDate(lastSubscriptionCycle));
+    Date now = new Date();
+    System.out.println("T = " + now.getTime() + " N = " + now);
+    DateTime lastSubscriptionCycle = getLastSubscriptionCycle(now, subscription.getTimeCreated());
+    System.out.println("T = " + lastSubscriptionCycle + " B = " + lastSubscriptionCycle);
+    
     long totalTweetCount =
         tweetDao.findTotalTweetsPublishedBetween(
             tweet.getSender().getAccountId(),
-            lastSubscriptionCycle,
-            now.getMillis());
+            lastSubscriptionCycle.toDate(),
+            now);
     return plan.getTweetsAllowed() > totalTweetCount;
   }
 
   // Unit test this function.
-  long getLastSubscriptionCycle(DateTime now, long subscriptionCreatedOn) {
-    DateTime subscriptionCreationTime = TimeUtil.toDateTime(subscriptionCreatedOn);
+  DateTime getLastSubscriptionCycle(Date now, Date subscriptionCreatedOn) {
+    DateTime subscriptionCreationTime = TimeUtil.toDateTime(subscriptionCreatedOn.getTime());
     int subCycleDayOfMonth = subscriptionCreationTime.getDayOfMonth();
-    int currDayOfMonth = now.getDayOfMonth();
+    DateTime dateTime = new DateTime(now);
+    int currDayOfMonth = dateTime.getDayOfMonth();
     DateTime lastBillingTime = null;
 
     if (subCycleDayOfMonth > currDayOfMonth) {
-      lastBillingTime = now.minusMonths(1).plusDays(subCycleDayOfMonth - currDayOfMonth);
-      return Math.max(lastBillingTime.getMillis(), subscriptionCreationTime.getMillis());
+      lastBillingTime = dateTime.minusMonths(1).plusDays(subCycleDayOfMonth - currDayOfMonth);
+//      return Math.max(lastBillingTime.getMillis(), subscriptionCreationTime.getMillis());
     } else if (subCycleDayOfMonth < currDayOfMonth) {
-      lastBillingTime = now.minusMonths(1).minusDays(currDayOfMonth).plusDays(subCycleDayOfMonth);
-      return Math.max(lastBillingTime.getMillis(), subscriptionCreationTime.getMillis());
+      lastBillingTime = dateTime.minusMonths(1).minusDays(currDayOfMonth).plusDays(subCycleDayOfMonth);
     } else {
-      lastBillingTime = now.minusMonths(1);
-      return Math.max(lastBillingTime.getMillis(), subscriptionCreationTime.getMillis());
+      lastBillingTime = dateTime.minusMonths(1);
     }
+    
+    return max(lastBillingTime, subscriptionCreationTime);
   }
 
+  private DateTime max(DateTime a, DateTime b) {
+    return a.isAfter(b) ? a : b;
+  }
+  
   private boolean isCouponPromotionWithinLimit(Subscription subscription,
       SubscriptionPlan plan,
       Tweet tweet) {
 
-    DateTime now = TimeUtil.getCurrentTime();
+    Date now = new Date();
     long totalCouponCount = 0L;
-    long lastSubscriptionCycle = getLastSubscriptionCycle(now, subscription.getTimeCreated());
+    DateTime lastSubscriptionCycle = getLastSubscriptionCycle(now, subscription.getTimeCreated());
     totalCouponCount =
         tweetDao.findTotalCouponsPublishedBetween(
             tweet.getSender().getAccountId(),
-            lastSubscriptionCycle,
-            now.getMillis());
+            lastSubscriptionCycle.toDate(),
+            now);
 
     return plan.getCouponsAllowed() > totalCouponCount;
   }

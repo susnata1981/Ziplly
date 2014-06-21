@@ -159,7 +159,7 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 
 		// Coupon transaction
 		bindHandler(CheckBuyerEligibilityForCouponAction.class, CheckBuyerEligibilityForCouponActionHandler.class);
-		bindHandler(PurchasedCouponAction.class, PurchaseCouponActionHandler.class);
+//		bindHandler(PurchasedCouponAction.class, PurchaseCouponActionHandler.class);
 		bindHandler(CancelCouponPurchaseAction.class, CancelCouponPurchaseActionHandler.class);
 		bindHandler(GetCouponTransactionAction.class, GetCouponTransactionActionHandler.class);
 		bindHandler(GetCouponQRCodeUrlAction.class, GetCouponQRCodeUrlActionHandler.class);

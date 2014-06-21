@@ -1,14 +1,18 @@
 package com.ziplly.app.client.view;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.TweetPresenter;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.TweetDTO;
@@ -23,20 +27,28 @@ public class TweetDetailsView extends Composite {
 	@UiField
 	Alert message;
 	@UiField
+	Button backBtn;
+	@UiField
 	HTMLPanel communityWallPanel;
+	
 	private TweetPresenter presenter;
 
 	public TweetDetailsView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		StyleHelper.show(message.getElement(), false);
+		displayMessage(false);
 	}
 
-	public void setPresenter(TweetPresenter presenter) {
+	private void displayMessage(boolean display) {
+	   StyleHelper.show(message, display);
+	   StyleHelper.show(backBtn, display);
+  }
+
+  public void setPresenter(TweetPresenter presenter) {
 		this.presenter = presenter;
 	}
 
 	public void display(TweetDTO tweet) {
-		StyleHelper.show(message.getElement(), false);
+	  displayMessage(false);
 		clearDisplay();
 		TweetWidget tw = new TweetWidget();
 		tw.setWidth("80%");
@@ -52,6 +64,11 @@ public class TweetDetailsView extends Composite {
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
-		StyleHelper.show(message.getElement(), true);
+		displayMessage(true);
+	}
+	
+	@UiHandler("backBtn")
+	public void back(ClickEvent event) {
+	  presenter.goTo(new HomePlace());
 	}
 }

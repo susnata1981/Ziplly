@@ -17,7 +17,7 @@ import com.ziplly.app.server.util.TimeUtil;
 
 @Entity
 @Table(name = "subscription")
-public class Subscription {
+public class Subscription extends AbstractEntity {
   private static final long serialVersionUID = 1L;
 
 	@Id
@@ -40,12 +40,6 @@ public class Subscription {
 	@Column(name = "status", nullable = false)
 	private String status;
 
-	@Column(name = "time_updated")
-	private long timeUpdated;
-	
-	@Column(name = "time_created")
-	private long timeCreated;
-	
 	public Subscription() {
   }
 	
@@ -54,8 +48,8 @@ public class Subscription {
 		this.subscriptionPlan = new SubscriptionPlan(subscription.getSubscriptionPlan());
 		this.transaction = new Transaction(subscription.getTransaction());
 		this.status = subscription.getStatus().name();
-		this.setTimeUpdated(TimeUtil.toTimestamp(subscription.getTimeUpdated()));
-		this.setTimeCreated(TimeUtil.toTimestamp(subscription.getTimeCreated()));
+		this.setTimeUpdated(subscription.getTimeUpdated());
+		this.setTimeCreated(subscription.getTimeCreated());
   }
 	
 	public Long getSubscriptionId() {
@@ -96,21 +90,5 @@ public class Subscription {
 
   public void setAccount(Account account) {
     this.account = account;
-  }
-
-  public long getTimeCreated() {
-    return timeCreated;
-  }
-
-  public void setTimeCreated(long timeCreated) {
-    this.timeCreated = timeCreated;
-  }
-
-  public long getTimeUpdated() {
-    return timeUpdated;
-  }
-
-  public void setTimeUpdated(long timeUpdated) {
-    this.timeUpdated = timeUpdated;
   }
 }

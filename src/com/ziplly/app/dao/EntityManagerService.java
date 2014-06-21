@@ -17,7 +17,7 @@ public class EntityManagerService {
 			properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.GoogleDriver");
 			properties.put(
 			    "javax.persistence.jdbc.url",
-			    "jdbc:google:mysql://zipplyrocks:z1/newzipllydb?user=zipllyadmin");
+			    "jdbc:google:mysql://zipplyrocks:z1/zipllydb?user=zipllyadmin");
 			properties.put("javax.persistence.jdbc.user", "zipllyadmin");
 			properties.put("javax.persistence.jdbc.password", "Sherica12");
 		} 

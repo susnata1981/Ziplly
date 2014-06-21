@@ -6,18 +6,18 @@ import java.util.List;
 import net.customware.gwt.dispatch.shared.Result;
 
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 
 public class GetCouponTransactionResult implements Result {
   private CouponDTO coupon;
-	private List<PurchasedCouponDTO> transactions = new ArrayList<PurchasedCouponDTO>();
+	private List<CouponItemDTO> transactions = new ArrayList<CouponItemDTO>();
 	private Long totalTransactions;
 	
-	public List<PurchasedCouponDTO> getPurchasedCoupons() {
+	public List<CouponItemDTO> getPurchasedCoupons() {
 	  return transactions;
   }
 
-	public void setPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
+	public void setPurchasedCoupons(List<CouponItemDTO> transactions) {
 	  this.transactions = transactions;
   }
 

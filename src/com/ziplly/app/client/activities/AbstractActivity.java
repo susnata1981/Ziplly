@@ -97,15 +97,6 @@ public abstract class AbstractActivity implements Activity {
 				hideLoadingIcon();
 			}
 		});
-		
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-      
-      @Override
-      public void onPlaceChange(PlaceChangeEvent event) {
-        goTo(event.getNewPlace());
-      }
-    });
-		
 	}
 
 	void showLodingIcon() {

@@ -3,13 +3,13 @@ package com.ziplly.app.client.view.factory;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ziplly.app.server.model.jpa.Neighborhood;
+import com.ziplly.app.model.NeighborhoodDTO;
 
 public class ConverterFactory {
 	private static Map<Key, Converter<?,?>> converters = new HashMap<Key, Converter<?,?>>();
 	
 	static {
-		converters.put(new Key(Neighborhood.class, String.class), new NeighborhoodToStringConverter());
+		converters.put(new Key(NeighborhoodDTO.class, String.class), new NeighborhoodToStringConverter());
 	}
 	
 	

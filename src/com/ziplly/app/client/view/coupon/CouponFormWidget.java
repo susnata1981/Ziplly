@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -44,7 +45,8 @@ import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
 public class CouponFormWidget extends AbstractView {
-
+  public static final DateTimeFormat PST_FORMAT = DateTimeFormat
+      .getFormat("dd/mm/yyyy hh:mm zz");
 	private static final int DESCRIPTION_MAX_LENGTH = 500;
   private static final int DESCRIPTION_MIN_LENGTH = 30;
   private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
@@ -189,6 +191,7 @@ public class CouponFormWidget extends AbstractView {
       @Override
       public void onValueChange(ValueChangeEvent<Date> event) {
         ValidationResult result = FieldVerifier.validateStartDate(startDate.getValue());
+        startDate.getValue().getTime();
         if (!result.isValid()) {
           setError(startDateCg, startDateHelpInline, result.getErrors().get(0).getErrorMessage());
         } else {
@@ -286,9 +289,8 @@ public class CouponFormWidget extends AbstractView {
 		BigDecimal discount = BigDecimal.valueOf(Double.parseDouble(discountWidget.getValue()));
 		BigDecimal itemPrice = BigDecimal.valueOf(Double.parseDouble(priceWidget.getValue()));
 		coupon.setItemPrice(itemPrice);
-		coupon.setDiscount(discount);
+		coupon.setDiscountedPrice(discount);
 		coupon.setNumberAllowerPerIndividual(Integer.parseInt(totalCouponAllowedTextBox.getValue()));
-		coupon.setPrice(discount);
 		coupon.setTimeCreated(new Date());
 		
 		if (uploadWidget.hasImage()) {

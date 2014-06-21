@@ -17,7 +17,7 @@ import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.bli.CouponBLI;
 import com.ziplly.app.server.bli.PaymentService;
 import com.ziplly.app.server.model.jpa.Coupon;
-import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponAction;
 import com.ziplly.app.shared.CheckBuyerEligibilityForCouponResult;
 
@@ -42,9 +42,6 @@ public class CheckBuyerEligibilityForCouponActionHandler
 	  this.paymentService = paymentService;
   }
 
-	/* (non-Javadoc)
-	 * @see com.ziplly.app.server.handlers.AbstractSessionAwareActionHandler#doExecute(net.customware.gwt.dispatch.shared.Action, net.customware.gwt.dispatch.server.ExecutionContext)
-	 */
 	@Override
   public CheckBuyerEligibilityForCouponResult
       doExecute(CheckBuyerEligibilityForCouponAction action, ExecutionContext context) throws DispatchException {
@@ -56,10 +53,10 @@ public class CheckBuyerEligibilityForCouponActionHandler
 		
 		accountBli.checkAccountEligibleForCouponPurchase(session.getAccount(), coupon);
 		try {
-			PurchasedCoupon pc = couponBli.createPendingTransaction(session.getAccount(), coupon);
+			CouponItem pc = couponBli.createPendingTransaction(session.getAccount(), coupon);
 			
-	    String jwtToken = paymentService.generateJWTTokenForCoupon(
-	    		pc.getPurchasedCouponId(), 
+	    String jwtToken = paymentService.generateTokenForCoupon(
+	    		pc.getCouponItemId(), 
 	    		coupon, 
 	    		session.getAccount().getAccountId());
 	    

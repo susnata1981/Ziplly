@@ -29,7 +29,7 @@ public class PayloadParser {
     this.subscriptionBli = subscriptionBli;
   }
 
-  public BaseRequest parse(String jwt_response) {
+  public AbstractRequestHandler parse(String jwt_response) {
     checkNotNull(jwt_response);
     String jwt = paymentService.deserialize(jwt_response);
     JsonParser parser = new JsonParser();
@@ -47,14 +47,14 @@ public class PayloadParser {
         // Cancellation
         if (payload_1.getResponse().getStatusCode() != null) {
           logger.info(String.format("Received subscription cancellation request for orderId %s", orderID));
-          BaseRequest response = new SubscriptionCancellationRequest(subscriptionBli);
+          AbstractRequestHandler response = new SubscriptionCancellationRequestHandler(subscriptionBli);
           response.setOrderId(orderID);
           return response;
         }
         // Purchase completion
         else {
           logger.info(String.format("Received postback for OrderID %s", orderID));
-          BaseRequest response = null;
+          AbstractRequestHandler response = null;
           Request req = payload_1.getRequest();
           if (req.getPaymentType() == PaymentType.COUPON) {
             logger.info(String.format("Received coupon completion notificaiton for orderId %s", orderID));
@@ -72,13 +72,13 @@ public class PayloadParser {
     throw new RuntimeException("Bad jwt string");
   }
 
-  private SubscriptionRequest parseSubscriptionField(Request req) {
-    SubscriptionRequest sr = new SubscriptionRequest(subscriptionBli);
+  private SubscriptionRequestHandler parseSubscriptionField(Request req) {
+    SubscriptionRequestHandler sr = new SubscriptionRequestHandler(subscriptionBli);
     parseSubscriptionSellerData(req.getSellerData(), sr);
     return sr;
   }
 
-  private void parseSubscriptionSellerData(String sellerData, SubscriptionRequest sr) {
+  private void parseSubscriptionSellerData(String sellerData, SubscriptionRequestHandler sr) {
     String[] split = sellerData.split(PaymentServiceImpl.VALUE_SEPARATOR);
     if (split.length != 2) {
       throw new RuntimeException("Error parsing subscription postback");
@@ -93,20 +93,20 @@ public class PayloadParser {
     return pair.split(PaymentServiceImpl.KEY_SEPARATOR)[1];
   }
 
-  private CouponRequest parseCouponFields(Request req) {
-    CouponRequest cr = new CouponRequest(couponBli);
+  private CouponRequestHandler parseCouponFields(Request req) {
+    CouponRequestHandler cr = new CouponRequestHandler(couponBli);
     parseCommonFields(req, cr);
-    checkNotNull(req.getPurchasedCouponId());
+    checkNotNull(req.getCouponOrderId());
     checkNotNull(req.getBuyerId());
     checkNotNull(req.getCouponId());
 
     cr.setBuyerId(Long.parseLong(req.getBuyerId()));
     cr.setCouponId(Long.parseLong(req.getCouponId()));
-    cr.setPurchasedCouponId(Long.parseLong(req.getPurchasedCouponId()));
+    cr.setCouponOrderId(Long.parseLong(req.getCouponOrderId()));
     return cr;
   }
 
-  private void parseCommonFields(Request req, BaseRequest res) {
+  private void parseCommonFields(Request req, AbstractRequestHandler res) {
     checkNotNull(req.getName());
     checkNotNull(req.getDescription());
     checkNotNull(req.getPrice());

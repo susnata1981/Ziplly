@@ -10,14 +10,30 @@
 		left: 25%;
 		padding: 6px;
 		border: 1px solid #ddd;
-			background: linear-gradient(#ED1C25, #F2555C);
+		color: #fff;
+		background: linear-gradient(#ED1C25, #F2555C);
+		border: 20px dotted #555;
+		}
+		.heading_large {
+			display: block;
+			font-size: 42px;
+			font-color: #fff;
+			text-align: center;
+			margin-bottom: 30px;
+		}
+		.heading_medium {
+			display: block;
+			font-size: 18px;
+			font-color: #fff;
+			text-align: center;
+			margin-bottom: 10px;
 		}
 		.panel .heading {
 			margin-top: 140;
 			text-align: center;
-			background: #fff;
+			color: #fff;
 			border-bottom: 1px solid #555;
-			color: #555;
+			text-align: center;
 		}
 		.logo {
 			position: absolute;
@@ -43,36 +59,42 @@
 			display: inline-block;
 			margin-bottom: 10px;
 			color: #fff !important;
+			font-size: 19px !important;
 		}
-		.panel .panel h6 {
+		.panel h6 {
 			margin: 30px 2px;
-			color: #555 !important;
 		}
 		.finePrint {
 			font-size: 12px !important;
 			padding: 2px;
 		}
+		.white-font {
+			color: #fff !important;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.panel}">
 		<b:Image ui:field="logo" addStyleNames="{style.logo}" />
-		<h6 class="{style.subheader}">connecting residents with businesses</h6>
-		<b:Heading size="3" ui:field="title" addStyleNames="{style.heading}" />
+		<b:Heading size="6" addStyleNames="{style.subheader}">connecting residents with businesses</b:Heading>
+		<span class="{style.heading_large}">
+		    <span ui:field="price" class="white-font" />
+		    <span> cash voucher</span>
+		</span>
+		<span ui:field="title" class="{style.heading_medium} white-font" />
 		<div class="{style.block}">
-			Merchant Name: <b:Label ui:field="businessName" addStyleNames="{style.whitelabel}"/>
+			<i>Merchant Name</i> <b:Label ui:field="businessName" addStyleNames="{style.whitelabel}"/>
 			<br/>
-		    Merchant Address: <b:Label ui:field="businessAddress" addStyleNames="{style.whitelabel}"/>
+		    <i>Merchant Address</i> <b:Label ui:field="businessAddress" addStyleNames="{style.whitelabel}"/>
 		    <br/>
-		    Phone: <b:Label ui:field="businessPhone" addStyleNames="{style.whitelabel}"/>
+		    <i>Phone</i> <b:Label ui:field="businessPhone" addStyleNames="{style.whitelabel}"/>
 		    <br/>
-		    Discount: <b:Label ui:field="discount" addStyleNames="{style.whitelabel}"/>
+		    <i>Price paid</i> <b:Label ui:field="discount" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Price: <b:Label ui:field="price" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Start Date: <b:Label ui:field="startDate" addStyleNames="{style.whitelabel}"/>
+			<i>Start Date</i> <b:Label ui:field="startDate" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			End Date: <b:Label ui:field="endDate" addStyleNames="{style.whitelabel}"/>
+			<i>End Date</i> <b:Label ui:field="endDate" addStyleNames="{style.whitelabel}"/>
 			<br/>
-			Number of coupons allowed per person: <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.whitelabel}"/>
+			<i>Number of coupons allowed per person</i> <b:Label ui:field="totalCouponsAllowerPerPerson" addStyleNames="{style.whitelabel}"/>
 			<br/>
 		</div>
 		
@@ -81,7 +103,7 @@
 		
 		<div class="{style.block}">
 		    <h5>Terms and conditions</h5><hr/>
-			<span ui:field="termsAndConditionLabel" addStyleNames="{style.finePrint}"></span>
+			<span ui:field="termsAndConditionLabel" class="{style.finePrint}"></span>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -376,7 +376,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public Long findTotalCouponsPublishedBetween(Long accountId, long before, long now) {
+  public long findTotalCouponsPublishedBetween(long accountId, Date before, Date now) {
     EntityManager em = getEntityManager();
     try {
       Query query =
@@ -397,8 +397,30 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     }
   }
 
+//  @Override
+//  public Long findTotalTweetsPublishedBetween(Long accountId, long before, long now) {
+//    EntityManager em = getEntityManager();
+//    try {
+//      Query query =
+//          em.createQuery("select count(*) from Tweet t where t.sender.accountId = :accountId "
+//                  + "and t.creationTime between :before and :now and status = :status and t.coupon.couponId is null");
+//      query.setParameter("accountId", accountId);
+//      query.setParameter("status", TweetStatus.ACTIVE.name());
+//      query.setParameter("before", before);
+//      query.setParameter("now", now);
+//      Long count = (Long) query.getSingleResult();
+//      return count;
+//    } catch (NoResultException nre) {
+//      logger.warning(String.format(
+//          "Failed to retrieve tweets for accountId %d exception %s",
+//          accountId,
+//          nre));
+//      return 0L;
+//    }
+//  }
+
   @Override
-  public Long findTotalTweetsPublishedBetween(Long accountId, long before, long now) {
+  public long findTotalTweetsPublishedBetween(long accountId, Date before, Date now) {
     EntityManager em = getEntityManager();
     try {
       Query query =
@@ -418,7 +440,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
       return 0L;
     }
   }
-
+  
   @Override
   public Long findTweetCountByAccountId(Long accountId) throws NotFoundException {
     if (accountId == null) {

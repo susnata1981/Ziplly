@@ -51,13 +51,13 @@ public class PrintCouponActivity extends AbstractActivity {
       public void onSuccess(PrintCouponView result) {
 				PrintCouponActivity.this.view = result;
 				panel.setWidget(view);
-				printCoupon(place.getCouponTransactionId());
+				printCoupon(place.getOrderId(), place.getCouponId());
       }
 		});
   }
 
-	private void printCoupon(Long transactionId) {
-		if (transactionId == null || transactionId <= 0) {
+	private void printCoupon(long orderId, long couponId) {
+		if (orderId <= 0) {
 			view.displayMessage(
 			    ErrorDefinitions.invalidCouponError.getErrorMessage(),
 			    ErrorDefinitions.invalidCouponError.getType());
@@ -65,7 +65,8 @@ public class PrintCouponActivity extends AbstractActivity {
 		}
 
 		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
-		action.setCouponTransactionId(transactionId);
+		action.setOrderId(orderId);
+		action.setCouponId(couponId);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
 
 			@Override
@@ -79,5 +80,4 @@ public class PrintCouponActivity extends AbstractActivity {
 	public void onStop() {
 		view.reset();
 	}
-
 }

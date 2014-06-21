@@ -55,7 +55,7 @@ import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -188,7 +188,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		badgePanel.getElement().setInnerHTML(accountFormatter.format(account, ValueType.BADGE));
 		lastLoginTime.setInnerText(basicDataFormatter.format(
 		    account.getLastLoginTime(),
-		    ValueType.DATE_VALUE_SHORT));
+		    ValueType.DATE_DIFF));
 
 		// Occupation panel
 		setValue(occupationSpan, account.getOccupation());
@@ -489,7 +489,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
   }
 	
 	@Override
-	public void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
+	public void displayPurchasedCoupons(List<CouponItemDTO> transactions) {
 		displayCouponTransactionPanel(true);
 		couponTransactionView.displayPurchasedCoupons(transactions);
 	}

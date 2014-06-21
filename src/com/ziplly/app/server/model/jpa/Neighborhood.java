@@ -81,7 +81,7 @@ public class Neighborhood extends AbstractEntity {
 		this.setNeighborhoodId(neighborhood.getNeighborhoodId());
 		this.setName(neighborhood.getName());
 		this.type = neighborhood.getType().name();
-		this.timeCreated = neighborhood.getTimeCreated();
+		this.setTimeCreated(neighborhood.getTimeCreated());
 		
 		if (neighborhood.getCity() != null) {
 			this.setCity(neighborhood.getCity());

@@ -3,8 +3,8 @@ package com.ziplly.app.shared;
 import net.customware.gwt.dispatch.shared.Action;
 
 public class GetCouponQRCodeUrlAction implements Action<GetCouponQRCodeUrlResult> {
-	private Long couponId;
-	private Long couponTransactionId;
+	private long couponId;
+	private long orderId;
 	
 	public GetCouponQRCodeUrlAction() {
   }
@@ -21,11 +21,11 @@ public class GetCouponQRCodeUrlAction implements Action<GetCouponQRCodeUrlResult
 	  this.couponId = couponId;
   }
 
-	public Long getCouponTransactionId() {
-	  return couponTransactionId;
+	public Long orderId() {
+	  return orderId;
   }
 
-	public void setCouponTransactionId(Long couponTransactionId) {
-	  this.couponTransactionId = couponTransactionId;
+	public void setOrderId(Long orderId) {
+	  this.orderId = orderId;
   }
 }

@@ -130,7 +130,6 @@ public class Account extends AbstractEntity {
 		
 		url = account.getUrl();
 		accessToken = account.getAccessToken();
-//		imageUrl = account.getImageUrl();
 		setRole(account.getRole());
 		setStatus(account.getStatus());
 		setLastLoginTime(account.getLastLoginTime());

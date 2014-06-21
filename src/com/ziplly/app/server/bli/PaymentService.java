@@ -40,7 +40,7 @@ public interface PaymentService {
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
 	 */
-	String generateJWTTokenForCoupon(
+	String generateTokenForCoupon(
 			Long transactionId, 
 			Coupon coupon, 
 			Long buyerAccountId) throws InvalidKeyException, SignatureException;

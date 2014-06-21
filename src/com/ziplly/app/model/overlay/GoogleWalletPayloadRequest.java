@@ -30,7 +30,7 @@ public class GoogleWalletPayloadRequest extends JavaScriptObject {
 		return this.buyerId;
 	}-*/;
 	
-	public final native int getPurchaseCouponId() /*-{
-		return this.purchaseCouponId;
+	public final native int getCouponOrderId() /*-{
+		return this.couponOrderId;
 	}-*/;
 }

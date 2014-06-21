@@ -69,4 +69,8 @@ public class PlaceUtils {
 		
 		return (account instanceof PersonalAccountDTO) ? new PersonalAccountPlace() : new BusinessAccountPlace();
 	}
+
+  public static String getPlaceToken(PrintCouponPlace place) {
+    return "" + place.getOrderId() + StringConstants.PLACE_SEPARATOR + place.getCouponId();
+  }
 }

@@ -10,27 +10,27 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.PurchasedCouponDAO;
+import com.ziplly.app.dao.OrderDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.PurchasedCouponStatus;
+import com.ziplly.app.model.OrderStatus;
 import com.ziplly.app.model.TransactionStatus;
 import com.ziplly.app.server.bli.AccountBLI;
-import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.Order;
 import com.ziplly.app.shared.CancelCouponPurchaseAction;
 import com.ziplly.app.shared.CancelCouponPurchaseResult;
 
 public class CancelCouponPurchaseActionHandler extends AbstractAccountActionHandler<CancelCouponPurchaseAction, CancelCouponPurchaseResult>{
 
-  private PurchasedCouponDAO purchasedCouponDao;
+  private OrderDAO orderDao;
 
   @Inject
   public CancelCouponPurchaseActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
-      PurchasedCouponDAO purchasedCouponDao) {
+      OrderDAO orderDao) {
     super(entityManagerProvider, accountDao, sessionDao, accountBli);
-    this.purchasedCouponDao = purchasedCouponDao;
+    this.orderDao = orderDao;
   }
 
   @Override
@@ -43,10 +43,10 @@ public class CancelCouponPurchaseActionHandler extends AbstractAccountActionHand
       ExecutionContext context) throws DispatchException {
     
     checkArgument(action.getPurchaseCouponId() > 0);
-    PurchasedCoupon pr = purchasedCouponDao.findById(action.getPurchaseCouponId());
-    pr.setStatus(PurchasedCouponStatus.CANCELLED);
-    pr.getTransaction().setStatus(TransactionStatus.CANCELLED);
-    purchasedCouponDao.save(pr);
+    Order order = orderDao.findById(action.getPurchaseCouponId());
+    order.setStatus(OrderStatus.CANCELLED);
+    order.getTransaction().setStatus(TransactionStatus.CANCELLED);
+    orderDao.save(order);
     return new CancelCouponPurchaseResult();
   }
 }

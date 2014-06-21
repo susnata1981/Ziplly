@@ -50,6 +50,7 @@
 		.logo {
 			float: left;
 			width: 84px;
+			margin-top: 4px;
 			height: 40px;
 		}
 		.feedbackLink {

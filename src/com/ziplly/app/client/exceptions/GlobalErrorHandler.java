@@ -40,6 +40,7 @@ public class GlobalErrorHandler {
 	  
 		if (errorDef.getCode() == ErrorCodes.NeedsLoginError) {
 		  controller.goTo(new LoginPlace());
+//		  eventBus.fireEvent(new NeedsLoginEvent());
 		  return;
 		} else if (errorDef.getCode() == ErrorCodes.NeedsSubscriptionError) {
 		  FlowPanel panel = new FlowPanel();
@@ -59,9 +60,9 @@ public class GlobalErrorHandler {
 		  });
 		  panel.add(planSettingAnchor);
 		  mmodal.setWidget(panel);
-      eventBus.fireEvent(new NeedsLoginEvent());
       return;
     }
+		
 		postHandle();
 	}
 

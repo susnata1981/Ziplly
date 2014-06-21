@@ -23,10 +23,10 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.ConfirmationModalWidget;
 import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -66,8 +66,10 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	@UiField
 	NavLink couponFormLink;
 	@UiField
+	NavLink viewCouponLink;
+	@UiField
 	NavLink couponSalesLink;
-
+	
 	@UiField
 	Style style;
 	
@@ -247,6 +249,11 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 		showView(couponFormLink);
 	}
 
+	@UiHandler("viewCouponLink")
+	public void showCoupon(ClickEvent event) {
+	  presenter.goTo(new HomePlace());
+	}
+	
 	@UiHandler("couponSalesLink")
 	public void showSalesForm(ClickEvent event) {
 		showView(couponSalesLink);

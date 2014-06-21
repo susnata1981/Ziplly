@@ -5,6 +5,7 @@ import net.customware.gwt.dispatch.shared.Action;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CouponDTO;
 
+@Deprecated
 public class PurchasedCouponAction implements Action<PurchaseCouponResult> {
 	public enum ResultStatus {
 		SUCCESS,

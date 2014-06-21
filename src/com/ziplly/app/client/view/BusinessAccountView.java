@@ -63,7 +63,7 @@ import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
@@ -322,7 +322,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		if (account.getLastLoginTime() != null) {
 			lastLoginTime.setInnerText(basicDataFormatter.format(
 			    account.getLastLoginTime(),
-			    ValueType.DATE_VALUE_SHORT));
+			    ValueType.DATE_DIFF));
 		}
 
 		displayHoursOfOperation();
@@ -638,7 +638,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
   }
 
 	@Override
-  public void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
+  public void displayPurchasedCoupons(List<CouponItemDTO> transactions) {
 		displayCouponTransactionPanel(true);
 		couponTransactionView.displayPurchasedCoupons(transactions);
   }

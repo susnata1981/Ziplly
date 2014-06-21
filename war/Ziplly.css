@@ -384,4 +384,14 @@ textarea {
 .help-inline {
 	font-size: 15px;
 }
+
+.text-align-center {
+	text-align: center;
+}
+.div-no-overflow {
+	overflow: hidden;
+}
+.numeric-font {
+	font-family: Arial Unicode MS, Arial, sans-serif !important;
+}
 /* This is used for notification drop down */

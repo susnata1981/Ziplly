@@ -35,6 +35,10 @@ public class BaseDAO {
 	
 	private void loadSellerBlackList() {
 	  String property = System.getProperty("app.blackListAccounts");
+	  if (property == null || property.length() == 0) {
+	    return;
+	  }
+	  
 	  String[] sellerIdStringList = property.split(",");
 	  for(String sid : sellerIdStringList) {
 	    blackListedAccounts.add(Long.parseLong(sid));

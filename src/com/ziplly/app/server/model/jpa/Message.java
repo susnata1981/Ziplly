@@ -35,7 +35,7 @@ public class Message implements Serializable {
 		this.message = m.getMessage();
 		this.sender = new Account(m.getSender());
 		this.receiver = new Account(m.getReceiver());
-		this.timeCreated = TimeUtil.toDate(m.getTimeCreated(), TimeUtil.PDT);
+		this.setTimeCreated(m.getTimeCreated());
 	}
 
 	public String getMessage() {

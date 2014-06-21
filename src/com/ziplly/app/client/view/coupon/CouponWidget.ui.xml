@@ -1,11 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:with type="com.ziplly.app.client.resource.ZResources" field="res"/>
+	<ui:with type="com.ziplly.app.client.resource.ZResources"
+		field="res" />
 	<ui:style>
 		.panel {
 			width: 100%;
-			-webkit-border-sizing: border-box;
+			float: left;
+			overflow: hidden;
+			border: 6px dotted #555;
 		}
 		figure {
 		height: 200px;
@@ -18,67 +21,60 @@
 		max-width: 100%;
 		max-height: 100%;
 		}
-		.h3 {
-			line-height: 26px;
-			font-weight: 300;
-		}
 		.punchLine {
-			color: #fff;
+			color: #fff !important;
 		}
 		.description {
-			float: left;
-			width: 100%;
-			padding: 6px;
-			overflow: hidden;
-			border: 1px solid #ddd;
-			background: linear-gradient(#ED1C25, #F2555C);
-		}
-		.description p {
-			font-size: 16px;
+		float: left;
+		width: 100%;
+		padding: 6px;
+		overflow: hidden;
+		border: 1px solid #ddd;
+		background: linear-gradient(#ED1C25, #F2555C);
 		}
 		.buttonDiv {
-			clear: both;
+		clear: both;
 		}
 		.description span {
-			display: inline-block;
-			font-size: 20px;
-			margin: 6px 0;
-			color: #fff !important;
+		display: inline-block;
+		font-size: 16px;
+		margin: 6px 0;
+		color: #fff !important;
 		}
 		.description ul {
 			margin: 0;
 		}
-		.description h1, h2, h4 {
-			color: #fff !important;
-			font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
-			text-align: center;
+		.description {
+		color: #fff !important;
+		font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+		font-size: 14px;
+		text-align: center;
 		}
 		.description ul li {
-			list-style: none;
-			font-size: 18px;
-			font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
-			margin-bottom: 10px;
+		list-style: none;
+		font-size: 15px;
+		margin-bottom: 10px;
 		}
 		.description .fineprint {
 			font-size: 12px !important;
 		}
 		.borderBottom {
-			padding-bottom: 2px !important;
-			border-bottom: 1px solid #fff;
+		padding-bottom: 2px !important;
+		border-bottom: 1px solid #fff;
 		}
 		.left {
-			float: left;
+		float: left;
 		}
 		.right {
-			float: right;
+		float: right;
 		}
 		.buyBtn {
-			opacity: 1 !important;
-			padding: 0 !important;
-			background-image: block;
+		opacity: 1 !important;
+		padding: 0 !important;
+		background-image: block;
 		}
 		.buyBtn:hover {
-			-webkit-transition: none !important;
+		-webkit-transition: none !important;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.panel}">
@@ -86,32 +82,30 @@
 			<g:Image ui:field="image" addStyleNames="{style.image}" />
 		</figure>
 		<div class="{style.description}">
-			<b:Heading size="2" ui:field="punchLine" addStyleNames="{style.punchLine}"></b:Heading>
+			<div class="text-align-center">
+				<span ui:field="businessName"/>
+				<g:Anchor ui:field="businessNameAnchor" addStyleNames="smalltext">website</g:Anchor>
+			</div>
+			<b:Heading size="1" ui:field="punchLine" addStyleNames="{style.punchLine}"></b:Heading>
 			<p>
-			    <b:Label>Description</b:Label>
+				<!-- <b:Label>Description</b:Label> -->
 				<span ui:field="couponDescription"></span>
 			</p>
 			<p>
 				<span ui:field="expirationShortTime"></span>
 			</p>
-			<div ui:field="couponDetails">
+			<div ui:field="couponDetails" addStyleNames="div-no-overflow">
 				<ul>
-				    <li>
-					    <b:Label>Business name</b:Label>
-						<span ui:field="businessName" />
-						<g:Anchor ui:field="businessNameAnchor" addStyleNames="smalltext">website</g:Anchor>
-					</li>
+					<!-- <li> <b:Label>Business name</b:Label> <span ui:field="businessName" 
+						/> <g:Anchor ui:field="businessNameAnchor" addStyleNames="smalltext">website</g:Anchor> 
+						</li> -->
 					<li>
-					    <b:Label>Address</b:Label>
+						<!-- <b:Label>Address</b:Label> -->
 						<span ui:field="address" />
 					</li>
 					<li>
-					    <b:Label>Business type</b:Label>
-						<span ui:field="businessType" />
-					</li>
-					<li>
-					    <b:Label>Website</b:Label>
-						<span ui:field="website" />
+						<!-- <b:Label>Business type</b:Label> -->
+						<!-- <span ui:field="businessType" /> -->
 					</li>
 					<li>
 						<b:Label>Quantity sold</b:Label>
@@ -122,19 +116,23 @@
 						<span ui:field="quantityRemaining" />
 					</li>
 					<li>
-					    <b:Label>Expires on</b:Label>
+						<b:Label>Expires on</b:Label>
 						<span ui:field="expirationTime" />
 					</li>
 					<li>
-					    <b:Label>Fine print</b:Label>
+						<!-- <b:Label>Fine print</b:Label> -->
 						<span class="{style.fineprint}" ui:field="finePrint" />
 					</li>
 				</ul>
 			</div>
 			<div class="{style.buttonDiv}">
-			    <b:Button type="INFO" addStyleNames="{style.left}" ui:field="learnButton">Learn more</b:Button>
-			    <b:Button type="INFO" addStyleNames="{style.left}" ui:field="hideDetailsButton">Hide</b:Button>
-				<g:Button addStyleNames="{style.right} {style.buyBtn} {res.style.googleBuyButtonImage}" ui:field="buyButton"/>
+				<b:Button type="INFO" addStyleNames="{style.left}"
+					ui:field="learnButton">Learn more</b:Button>
+				<b:Button type="INFO" addStyleNames="{style.left}"
+					ui:field="hideDetailsButton">Hide</b:Button>
+				<g:Button
+					addStyleNames="{style.right} {style.buyBtn} {res.style.googleBuyButtonImage}"
+					ui:field="buyButton" />
 			</div>
 		</div>
 	</g:HTMLPanel>

@@ -5,9 +5,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.activities.TweetPresenter;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
-import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
@@ -15,7 +13,6 @@ import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
 import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.PurchasedCouponAction.ResultStatus;
 
 public class TweetPresenterAdapter implements TweetPresenter {
   private PlaceController placeController;
@@ -80,10 +77,10 @@ public class TweetPresenterAdapter implements TweetPresenter {
   public void updateComment(CommentDTO comment) {
   }
 
-  @Override
-  public void purchaseCoupon(String transactionId, ResultStatus resultStatus, CouponDTO coupon) {
-    doLogin();
-  }
+//  @Override
+//  public void purchaseCoupon(String transactionId, ResultStatus resultStatus, CouponDTO coupon) {
+//    doLogin();
+//  }
 
   @Override
   public void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget) {

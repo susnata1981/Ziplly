@@ -18,7 +18,7 @@ import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.widget.StyleHelper;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 
 public class CouponTransactionView extends AbstractView implements View<CouponTransactionView.CouponTransactionPresenter> {
 	private static final int pageSize = 10;
@@ -35,9 +35,9 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	public static interface CouponTransactionPresenter extends Presenter {
 		void getPurchasedCoupons(int start, int pageSize);
 		
-		void getCouponQRCodeUrl(Long couponTransactionId);
+		void getCouponQRCodeUrl(long orderId, long couponId);
 
-		void printCoupon(Long couponId);
+		void printCoupon(long orderId, long couponId);
 	}
 	
 	private static CouponTransactionViewUiBinder uiBinder = GWT
@@ -57,7 +57,8 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	
 	public CouponTransactionView(EventBus eventBus) {
 		super(eventBus);
-		transactionWidget = new CouponTransactionTableWidget(Arrays.asList(transactionTableColumnDefinitions), pageSize, basicDataFormatter);
+		transactionWidget = new CouponTransactionTableWidget(
+		    Arrays.asList(transactionTableColumnDefinitions), pageSize, basicDataFormatter);
 		initWidget(uiBinder.createAndBindUi(this));
 		transactionPanel.add(transactionWidget);
 		setupEventHandler();
@@ -75,22 +76,22 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 
 		});
 		
-		Column<PurchasedCouponDTO, String> viewCouponColumn = getColumnIndex(ColumnDefinition.VIEW_COUPON); 
-		viewCouponColumn.setFieldUpdater(new FieldUpdater<PurchasedCouponDTO, String>() {
+		Column<CouponItemDTO, String> viewCouponColumn = getColumnIndex(ColumnDefinition.VIEW_COUPON); 
+		viewCouponColumn.setFieldUpdater(new FieldUpdater<CouponItemDTO, String>() {
 
 			@Override
-      public void update(int index, PurchasedCouponDTO object, String value) {
-				presenter.getCouponQRCodeUrl(object.getPurchasedCouponId());
+      public void update(int index, CouponItemDTO object, String value) {
+				presenter.getCouponQRCodeUrl(object.getOrderDetails().getOrder().getId(), object.getCoupon().getCouponId());
       }
 			
 		});
 		
-    Column<PurchasedCouponDTO, String> printCouponColumn = getColumnIndex(ColumnDefinition.PRINT_COUPON); 
-		printCouponColumn.setFieldUpdater(new FieldUpdater<PurchasedCouponDTO, String>() {
+    Column<CouponItemDTO, String> printCouponColumn = getColumnIndex(ColumnDefinition.PRINT_COUPON); 
+		printCouponColumn.setFieldUpdater(new FieldUpdater<CouponItemDTO, String>() {
 
 			@Override
-      public void update(int index, PurchasedCouponDTO object, String value) {
-				presenter.printCoupon(object.getPurchasedCouponId());
+      public void update(int index, CouponItemDTO object, String value) {
+				presenter.printCoupon(object.getOrderDetails().getOrder().getId(), object.getCoupon().getCouponId());
       }
 			
 		});
@@ -100,7 +101,7 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		transactionWidget.setRowCount(couponTransactionCount.intValue());
 	}
 	
-	public void displayPurchasedCoupons(List<PurchasedCouponDTO> transactions) {
+	public void displayPurchasedCoupons(List<CouponItemDTO> transactions) {
 		transactionWidget.displayPurchasedCoupons(transactions);
 	}
 	
@@ -125,11 +126,11 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	}
 	
   @SuppressWarnings("unchecked")
-  private <T> Column<PurchasedCouponDTO, T> getColumnIndex(ColumnDefinition colDefinition) {
+  private <T> Column<CouponItemDTO, T> getColumnIndex(ColumnDefinition colDefinition) {
   	int index = 0;
   	for(ColumnDefinition colDef : transactionTableColumnDefinitions) {
   		if (colDef == colDefinition) {
-  			return (Column<PurchasedCouponDTO, T>) transactionWidget.getTable().getColumn(index);
+  			return (Column<CouponItemDTO, T>) transactionWidget.getTable().getColumn(index);
   		}
   		index++;
   	}

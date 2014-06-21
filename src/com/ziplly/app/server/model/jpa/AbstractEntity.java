@@ -10,24 +10,21 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ziplly.app.server.util.TimeUtil;
-
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "time_created", updatable = false)
-	protected Date timeCreated;
+	private Date timeCreated;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "time_updated")
-	protected Date timeUpdated;
+	private Date timeUpdated;
 
 	@PrePersist
 	protected void onCreate() {
-		setTimeCreated(setTimeUpdated(new Date()));
+		setTimeCreated(new Date());
 	}
 
 	@PreUpdate
@@ -40,15 +37,14 @@ public class AbstractEntity implements Serializable {
 	}
 
 	public void setTimeCreated(Date timeCreated) {
-		this.timeCreated = TimeUtil.toDate(timeCreated, TimeUtil.UTC);
+	  this.timeCreated = timeCreated;
 	}
 
 	public Date getTimeUpdated() {
 		return timeUpdated;
 	}
 
-	public Date setTimeUpdated(Date timeUpdated) {
-	  this.timeUpdated = TimeUtil.toDate(timeUpdated, TimeUtil.UTC);
-		return timeUpdated;
+	public void setTimeUpdated(Date timeUpdated) {
+	  this.timeUpdated = timeUpdated;
 	}
 }

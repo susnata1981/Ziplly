@@ -80,7 +80,7 @@ public class DAOModule extends AbstractModule {
 		bind(ImageDAO.class).to(ImageDAOImpl.class).in(Singleton.class);
 		bind(CouponDAO.class).to(CouponDAOImpl.class).in(Singleton.class);
 		bind(TransactionDAO.class).to(TransactionDAOImpl.class).in(Singleton.class);
-		bind(PurchasedCouponDAO.class).to(PurchasedCouponDAOImpl.class).in(Singleton.class);
+		bind(OrderDAO.class).to(OrderDAOImpl.class).in(Singleton.class);
 		bind(EntityManagerService.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);

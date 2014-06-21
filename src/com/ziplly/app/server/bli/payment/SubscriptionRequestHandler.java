@@ -5,13 +5,13 @@ import com.ziplly.app.server.bli.SubscriptionBLI;
 
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class SubscriptionRequest extends BaseRequest {
+public class SubscriptionRequestHandler extends AbstractRequestHandler {
 	private Long sellerId;
 	private Long subscriptionId;
 	private SubscriptionBLI subscriptionBli;
 
 	@Inject
-	public SubscriptionRequest(SubscriptionBLI subscriptionBli) {
+	public SubscriptionRequestHandler(SubscriptionBLI subscriptionBli) {
 		this.subscriptionBli = subscriptionBli;
   }
 	

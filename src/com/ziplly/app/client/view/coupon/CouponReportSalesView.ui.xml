@@ -61,23 +61,23 @@
 							<ul>
 								<li>
 									<span class="{style.metricLabel}">Coupons Sold</span>
-									<b:Label ui:field="totalCouponsSoldLabel" />
+									<b:Label ui:field="totalCouponsSoldLabel" addStyleNames="numeric-font"/>
 								</li>
 								<li>
 									<span class="{style.metricLabel}">Total Sales Amount</span>
-									<b:Label ui:field="totalSalesLabel" />
+									<b:Label ui:field="totalSalesLabel" addStyleNames="numeric-font"/>
 								</li>
 								<li>
 									<span class="{style.metricLabel}">Total fees</span>
-									<b:Label ui:field="totalFee" />
+									<b:Label ui:field="totalFee" addStyleNames="numeric-font"/>
 								</li>
 								<li>
 									<span class="{style.metricLabel}">Total Coupons Redeemed</span>
-									<b:Label ui:field="totalCouponsRedeemed" />
+									<b:Label ui:field="totalCouponsRedeemed" addStyleNames="numeric-font"/>
 								</li>
 								<li>
 									<span class="{style.metricLabel}">Total Coupons Unused</span>
-									<b:Label ui:field="totalCouponsUnused" />
+									<b:Label ui:field="totalCouponsUnused" addStyleNames="numeric-font"/>
 								</li>
 							</ul>
 						</div>

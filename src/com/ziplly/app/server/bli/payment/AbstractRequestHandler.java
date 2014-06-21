@@ -2,7 +2,7 @@ package com.ziplly.app.server.bli.payment;
 
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public abstract class BaseRequest {
+public abstract class AbstractRequestHandler {
 	public String getName() {
 		return name;
 	}

@@ -143,7 +143,7 @@ public class CouponReportSalesView extends AbstractView {
 
 			@Override
 			public String getValue(CouponDTO c) {
-				return  basicDataFormatter.format(c.getPrice(), ValueType.PRICE);
+				return  basicDataFormatter.format(c.getItemPrice(), ValueType.PRICE);
 			}
 		};
 		
@@ -153,7 +153,7 @@ public class CouponReportSalesView extends AbstractView {
 
 			@Override
 			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getDiscount(), ValueType.PRICE);
+				return basicDataFormatter.format(c.getItemPrice().subtract(c.getDiscountedPrice()), ValueType.PRICE);
 			}
 		};
 		couponReportTable.addColumn(discount, "Discount");
@@ -171,7 +171,7 @@ public class CouponReportSalesView extends AbstractView {
 
 			@Override
 			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getStartDate(), ValueType.DATE_VALUE);
+				return basicDataFormatter.format(c.getStartDate(), ValueType.DATE_VALUE_FULL);
 			}
 		};
 		couponReportTable.addColumn(startTime, "Start time");
@@ -180,7 +180,7 @@ public class CouponReportSalesView extends AbstractView {
 
 			@Override
 			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getEndDate(), ValueType.DATE_VALUE);
+				return basicDataFormatter.format(c.getEndDate(), ValueType.DATE_VALUE_FULL);
 			}
 		};
 		couponReportTable.addColumn(endTime, "Expiration time");
@@ -189,7 +189,7 @@ public class CouponReportSalesView extends AbstractView {
 
 			@Override
 			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE);
+				return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE_FULL);
 			}
 		};
 		couponReportTable.addColumn(creationTime, "Creation time");
@@ -239,7 +239,7 @@ public class CouponReportSalesView extends AbstractView {
 		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSalesAmount(), ValueType.PRICE));
 		totalCouponsRedeemed.setText(summary.getTotalCouponsRedeemed().toString());
 		totalCouponsUnused.setText(summary.getTotalCouponsUnused().toString());
-		totalFee.setText(basicDataFormatter.format(summary.getTotalSalesAmount(), ValueType.PRICE));
+		totalFee.setText(basicDataFormatter.format(summary.getTotalFees(), ValueType.PRICE));
 	}
 
 	public CellTable<CouponDTO> getCouponReportTable() {

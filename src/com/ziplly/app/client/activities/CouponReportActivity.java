@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.ErrorDefinitions;
-import com.ziplly.app.client.exceptions.NeedsSubscriptionException;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.coupon.CouponFormWidget;

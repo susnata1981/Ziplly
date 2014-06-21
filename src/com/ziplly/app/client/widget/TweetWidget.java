@@ -65,7 +65,6 @@ import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
 import com.ziplly.app.client.view.factory.ValueType;
-import com.ziplly.app.client.widget.blocks.GoogleWalletPayButtonWidget;
 import com.ziplly.app.client.widget.blocks.GoogleWalletPostPayButtonHandler;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
@@ -209,7 +208,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 	private TweetPresenter presenter;
 	private TweetDTO tweet;
-	private GoogleWalletPayButtonWidget paymentButton;
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
@@ -536,7 +534,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		commentWidget.setProfileName(comment.getAuthor().getDisplayName());
 		commentWidget.setPostingDate(basicDataFormatter.format(
 		    comment.getTimeCreated(),
-		    ValueType.DATE_VALUE_MEDIUM));
+		    ValueType.DATE_DIFF));
 
 		commentWidget.getProfileAnchor().addClickHandler(new ClickHandler() {
 			@Override
@@ -718,7 +716,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			}
 		});
 
-		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_VALUE_MEDIUM);
+		String time = basicDataFormatter.format(tweet.getTimeCreated(), ValueType.DATE_DIFF);
 		timeCreated.setInnerHTML(time);
 
 		displayAuthorSection(tweet);
@@ -790,7 +788,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
       
       @Override
       public void onFailure(GoogleWalletFailureResult result) {
-        presenter.cancelTransaction(result.getRequest().getRequest().getPurchaseCouponId());
+        presenter.cancelTransaction(result.getRequest().getRequest().getCouponOrderId());
       }
     });
 	  flow.doPay(jwtToken);

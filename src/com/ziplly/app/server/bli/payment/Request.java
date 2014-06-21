@@ -8,7 +8,7 @@ public class Request {
 	private String paymentType;
 	private String couponId;
 	private String buyerId;
-	private String purchaseCouponId;
+	private String couponOrderId;
 	private String sellerId;
 	private String subscriptionId;
 	private String sellerData;
@@ -31,10 +31,9 @@ public class Request {
 	public String getBuyerId() {
 		return buyerId;
 	}
-	public String getPurchasedCouponId() {
-		return purchaseCouponId;
+	public String getCouponOrderId() {
+		return couponOrderId;
 	}
-	
 	@Override
 	public String toString() {
 		return name + " " + description;

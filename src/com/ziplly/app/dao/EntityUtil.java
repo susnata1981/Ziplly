@@ -21,11 +21,13 @@ import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
+import com.ziplly.app.model.OrderDTO;
+import com.ziplly.app.model.OrderDetailsDTO;
 import com.ziplly.app.model.PendingInvitationsDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.PrivacySettingsDTO;
-import com.ziplly.app.model.PurchasedCouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
@@ -50,7 +52,7 @@ import com.ziplly.app.server.model.jpa.PendingInvitations;
 import com.ziplly.app.server.model.jpa.PersonalAccount;
 import com.ziplly.app.server.model.jpa.PostalCode;
 import com.ziplly.app.server.model.jpa.PrivacySettings;
-import com.ziplly.app.server.model.jpa.PurchasedCoupon;
+import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.server.model.jpa.Spam;
 import com.ziplly.app.server.model.jpa.Subscription;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
@@ -350,8 +352,8 @@ public class EntityUtil {
 		// Avoid recursion
 		resp.setTransaction(clone(subscription.getTransaction(), topLevelOnly));
 		resp.setStatus(subscription.getStatus());
-		resp.setTimeUpdated(TimeUtil.toDate(subscription.getTimeUpdated()));
-		resp.setTimeCreated(TimeUtil.toDate(subscription.getTimeCreated()));
+		resp.setTimeUpdated(subscription.getTimeUpdated());
+		resp.setTimeCreated(subscription.getTimeCreated());
 		return resp;
 	}
 	
@@ -588,12 +590,10 @@ public class EntityUtil {
 		resp.setCouponId(coupon.getCouponId());
 		resp.setTitle(coupon.getTitle());
 		resp.setDescription(coupon.getDescription());
-		resp.setStartDate(TimeUtil.toDate(coupon.getStartTime()));
-		resp.setEndDate(TimeUtil.toDate(coupon.getEndTime()));
-		resp.setCouponPrice(coupon.getCouponPrice());
-		resp.setPrice(coupon.getPrice());
+    resp.setStartDate(coupon.getStartDate());
+    resp.setEndDate(coupon.getExpirationDate());
+		resp.setDiscountedPrice(coupon.getDiscountedPrice());
 		resp.setItemPrice(coupon.getItemPrice());
-		resp.setDiscount(coupon.getDiscount());
 		resp.setQuanity(coupon.getQuanity());
 		resp.setQuantityPurchased(coupon.getQuantityPurchased());
 		resp.setNumberAllowerPerIndividual(coupon.getNumberAllowerPerIndividual());
@@ -601,17 +601,24 @@ public class EntityUtil {
 		return resp;
 	}
 
-	public static PurchasedCouponDTO clone(PurchasedCoupon pc) {
+	public static CouponItemDTO clone(CouponItem pc) {
 		if (pc == null)
 			return null;
-		PurchasedCouponDTO resp = new PurchasedCouponDTO();
-		resp.setPurchasedCouponId(pc.getPurchasedCouponId());
+		CouponItemDTO resp = new CouponItemDTO();
+		resp.setCouponItemId(pc.getCouponItemId());
 		resp.setQrcode(pc.getQrcode());
 		resp.setStatus(pc.getStatus());
 		resp.setCoupon(clone(pc.getCoupon()));
-		resp.setTransaction(clone(pc.getTransaction()));
-		resp.setTimeUpdated(TimeUtil.toDate(pc.getTimeUpdated()));
-		resp.setTimeCreated(TimeUtil.toDate(pc.getTimeCreated()));
+		resp.setTimeUpdated(pc.getTimeUpdated());
+		resp.setTimeCreated(pc.getTimeCreated());
+		
+		OrderDTO order = new OrderDTO();
+		order.setId(pc.getOrderDetails().getOrder().getId());
+		OrderDetailsDTO orderDetails = new OrderDetailsDTO();
+		orderDetails.setId(pc.getOrderDetails().getId());
+		orderDetails.setOrder(order);
+		resp.setOrderDetails(orderDetails);
+		
 		return resp;
 	}
 
@@ -624,8 +631,8 @@ public class EntityUtil {
 		resp.setTransactionId(transaction.getTransactionId());
 		resp.setStatus(transaction.getStatus());
 		resp.setCurrency(transaction.getCurrency());
-		resp.setTimeUpdated(TimeUtil.toDate(transaction.getTimeUpdated()));
-		resp.setTimeCreated(TimeUtil.toDate(transaction.getTimeCreated()));
+		resp.setTimeUpdated(transaction.getTimeUpdated());
+		resp.setTimeCreated(transaction.getTimeCreated());
 
 		//	Avoid recursion
 		if (!topLevelOnly) {
@@ -652,9 +659,9 @@ public class EntityUtil {
 		return result;
 	}
 
-	public static List<PurchasedCouponDTO> clonePurchaseCouponList(List<PurchasedCoupon> purchasedCoupons) {
-		List<PurchasedCouponDTO> result = new ArrayList<PurchasedCouponDTO>();
-		for (PurchasedCoupon pr : purchasedCoupons) {
+	public static List<CouponItemDTO> clonePurchaseCouponList(List<CouponItem> purchasedCoupons) {
+		List<CouponItemDTO> result = new ArrayList<CouponItemDTO>();
+		for (CouponItem pr : purchasedCoupons) {
 			result.add(EntityUtil.clone(pr));
 		}
 

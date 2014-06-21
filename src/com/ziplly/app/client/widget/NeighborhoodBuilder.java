@@ -89,20 +89,31 @@ public class NeighborhoodBuilder {
 		return p;
 	}
 
+//	private static String getLocality(Map<NeighborhoodType, String> addressInfoMap) {
+//		boolean flag = false;
+//		for (NeighborhoodType ntype : addressInfoMap.keySet()) {
+//			if (flag) {
+//				return addressInfoMap.get(ntype);
+//			}
+//
+//			if (ntype == NeighborhoodType.NEIGHBORHOOD) {
+//				flag = true;
+//			}
+//		}
+//		return "";
+//	}
+
 	private static String getLocality(Map<NeighborhoodType, String> addressInfoMap) {
-		boolean flag = false;
-		for (NeighborhoodType ntype : addressInfoMap.keySet()) {
-			if (flag) {
-				return addressInfoMap.get(ntype);
-			}
-
-			if (ntype == NeighborhoodType.NEIGHBORHOOD) {
-				flag = true;
-			}
-		}
-		return "";
-	}
-
+    if (addressInfoMap.containsKey(NeighborhoodType.LOCALITY)) {
+      return addressInfoMap.get(NeighborhoodType.LOCALITY);
+    }
+    else if (addressInfoMap.containsKey(NeighborhoodType.SUB_LOCALITY)) {
+      return addressInfoMap.get(NeighborhoodType.SUB_LOCALITY);
+    }
+    
+    throw new RuntimeException("Invalid Address");
+  }
+	
 	private static PostalCodeDTO createPostalCode(TreeMap<NeighborhoodType, String> addressInfoMap) {
 		PostalCodeDTO p = new PostalCodeDTO();
 		p.setPostalCode(addressInfoMap.get(NeighborhoodType.POSTAL_CODE));
