@@ -1,8 +1,6 @@
 package com.ziplly.app.server;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,61 +12,28 @@ import org.apache.http.HttpStatus;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.ziplly.app.dao.AccountDAO;
-import com.ziplly.app.dao.AccountNotificationDAO;
-import com.ziplly.app.dao.NeighborhoodDAO;
-import com.ziplly.app.dao.PostalCodeDAO;
-import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.dao.SubscriptionPlanDAO;
-import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.server.bli.EmailService;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
-import com.ziplly.app.server.bli.TweetNotificationBLI;
-import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.shared.EmailTemplate;
 
 @Singleton
 public class NotificationServlet extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
 	private Logger logger = Logger.getLogger(NotificationServlet.class.getCanonicalName());
-	private EmailService emailService;
-	private AccountDAO accountDao;
-	private SessionDAO sessionDao;
-	private TweetDAO tweetDao;
-	private AccountNotificationDAO accountNotificationDao;
-	private NeighborhoodDAO neighborhoodDao;
-	private TweetNotificationBLI tweetNotificationBli;
-	private PostalCodeDAO postalCodeDao;
-  private SubscriptionPlanDAO subscriptionPlanDao;
+	private Notifier notifier;
+  private EmailService emailService;
 	private static String APP_ADMING_EMAIL_PROP = "app.admin.email";
 	
 	@Inject
-	public NotificationServlet(
-			EmailService emailService,
-			TweetDAO tweetDao,
-			SessionDAO sessionDao,
-			AccountDAO accountDao,
-			NeighborhoodDAO neighborhoodDao,
-			PostalCodeDAO postalCodeDao,
-			AccountNotificationDAO accountNotificationDAO,
-			SubscriptionPlanDAO subscriptionPlanDao,
-			TweetNotificationBLI tweetNotificationBLI) {
-		this.emailService = emailService;
-		this.postalCodeDao = postalCodeDao;
-		this.neighborhoodDao = neighborhoodDao;
-		this.accountDao = accountDao;
-		this.sessionDao = sessionDao;
-		this.tweetDao = tweetDao;
-		this.accountNotificationDao = accountNotificationDAO;
-		this.subscriptionPlanDao = subscriptionPlanDao;
-		this.tweetNotificationBli = tweetNotificationBLI;
+	public NotificationServlet(Notifier notifier,
+	    EmailService emailService) {
+		this.notifier = notifier;
+    this.emailService = emailService;
 	}
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		
 	  String actionString = req.getParameter(ZipllyServerConstants.ACTION_KEY);
 		EmailAction action = EmailAction.valueOf(actionString);
 		String senderAccountId = req.getParameter(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY);
@@ -88,7 +53,7 @@ public class NotificationServlet extends HttpServlet {
 				String tweetId = req.getParameter(ZipllyServerConstants.TWEET_ID_KEY);
 				NotificationType ntype = NotificationType.valueOf(notificationType);
 
-				tweetNotificationBli.sendNotification(
+				notifier.sendNotification(
 				    Long.parseLong(senderAccountId),
 				    Long.parseLong(neighborhoodId),
 				    Long.parseLong(tweetId),
@@ -101,7 +66,7 @@ public class NotificationServlet extends HttpServlet {
 				String senderName = req.getParameter(ZipllyServerConstants.SENDER_NAME_KEY);
 				String senderEmail = req.getParameter(ZipllyServerConstants.SENDER_EMAIL_KEY);
 				
-				tweetNotificationBli.sendEmail(
+				notifier.sendEmail(
 				    recipientEmail,
 				    recipientName,
 				    senderEmail,
@@ -125,27 +90,12 @@ public class NotificationServlet extends HttpServlet {
         recipientName = req.getParameter(ZipllyServerConstants.RECIPIENT_NAME_KEY);
         emailFrom = System.getProperty(APP_ADMING_EMAIL_PROP, "admin@ziplly.com");
         String subscriptionPlanId = req.getParameter(ZipllyServerConstants.SUBSCRIPTION_PLAN_ID_KEY);
-        sendSubscriptionNotification(recipientEmail, recipientName, subscriptionPlanId);
+        notifier.sendSubscriptionNotification(recipientEmail, recipientName, subscriptionPlanId);
 				break;
 		}
 		res.setStatus(HttpStatus.SC_OK);
 		res.getWriter().println("");
 	}
-
-	private void sendSubscriptionNotification(String recipientEmail, String recipientName, String subscriptionPlanId) {
-	  String emailFrom = System.getProperty(APP_ADMING_EMAIL_PROP, "admin@ziplly.com");
-	  EmailEntity from = new EmailEntity();
-    from.email = emailFrom;
-    EmailEntity to = new EmailEntity();
-    to.email = recipientEmail;
-    to.name  = recipientName;
-    
-    SubscriptionPlan plan = subscriptionPlanDao.get(Long.parseLong(subscriptionPlanId));
-    Map<String, String> data = new HashMap<String, String>();
-    data.put("planName", plan.getName());
-    data.put("planDescription", plan.getDescription());
-    emailService.sendTemplatedEmail(from, to, EmailTemplate.SUBSCRIPTION_NOTIFICATION, null);
-  }
 
   public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		logger.log(Level.INFO, String.format("Received _ah/start get call"));

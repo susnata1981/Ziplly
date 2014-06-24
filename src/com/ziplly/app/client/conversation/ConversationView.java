@@ -159,8 +159,6 @@ public class ConversationView extends AbstractView implements IConversationView 
 		tableResources = GWT.create(TableResources.class);
 		tableResources.cellTableStyle().ensureInjected();
 		conversationTable = new CellTable<ConversationDTO>(PAGE_SIZE, tableResources);
-//		conversationTable = new CellTable<ConversationDTO>(PAGE_SIZE);
-//		conversationTable.setTitle("Conversation history");
 		conversationTable.setBordered(true);
 		conversationTable.setHover(true);
 		conversationTable.setStriped(true);

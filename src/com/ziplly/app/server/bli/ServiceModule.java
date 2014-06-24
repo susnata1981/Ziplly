@@ -14,7 +14,8 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import com.ziplly.app.server.TaskSystemHelper;
+import com.ziplly.app.server.Notifier;
+import com.ziplly.app.server.NotifierImpl;
 import com.ziplly.app.server.crypto.CryptoModule;
 
 /**
@@ -55,6 +56,7 @@ public class ServiceModule extends AbstractModule {
 		bind(CouponBLI.class).to(CouponBLIImpl.class).in(Singleton.class);
 		bind(SubscriptionBLI.class).to(SubscriptionBLIImpl.class).in(Singleton.class);
 		bind(TaskSystemHelper.class).in(Singleton.class);
+		bind(Notifier.class).to(NotifierImpl.class).in(Singleton.class);
   }
 	
 	private static Properties loadProperties(String name) throws IOException {

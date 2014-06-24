@@ -1,4 +1,4 @@
-package com.ziplly.app.server;
+package com.ziplly.app.server.bli;
 
 import java.util.logging.Logger;
 
@@ -9,6 +9,8 @@ import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.ziplly.app.dao.DAOModule.BackendAddress;
+import com.ziplly.app.server.EmailAction;
+import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -16,17 +18,14 @@ public class TaskSystemHelper {
   private final String mailEndpoint;
   private final String backendAddress;
   private final Queue queue;
-  private final String emailQueue;
 
   private Logger logger = Logger.getLogger(TaskSystemHelper.class.getName());
   
   @Inject
   public TaskSystemHelper(
       @Named("mail_endpoint") String mailEndpoint,
-      @Named("email_queue_name") String emailQueue,
       @BackendAddress String backendAddress) {
     this.mailEndpoint = mailEndpoint;
-    this.emailQueue = emailQueue;
     this.backendAddress = backendAddress;
     this.queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
     

@@ -15,7 +15,7 @@ public class TweetTypeTest {
             TweetType.ANNOUNCEMENT,
             TweetType.SECURITY_ALERTS,
             TweetType.OFFERS,
-            TweetType.HOT_DEALS,
+//            TweetType.HOT_DEALS,
             TweetType.COUPON),
         TweetType.getTweetTypesForRequiringNotification());
   }

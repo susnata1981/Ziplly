@@ -136,7 +136,6 @@ public class HomeViewImpl extends AbstractView implements HomeView {
 	@Inject
 	public HomeViewImpl(EventBus eventBus) {
 		super(eventBus);
-    System.out.println("HOMEVIEW BUS="+eventBus);
 		tweetBox = new TweetBox(eventBus);
 		profileListWidget = new ProfileListWidget(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
