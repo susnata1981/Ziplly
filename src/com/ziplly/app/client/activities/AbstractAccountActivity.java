@@ -439,7 +439,8 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	    int page,
 	    int pageSize,
 	    final boolean displayNoTweetsMessage) {
-		eventBus.fireEvent(new LoadingEventStart());
+
+	  eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
 

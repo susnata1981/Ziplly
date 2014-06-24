@@ -80,8 +80,6 @@ import com.ziplly.app.shared.GetTweetCategoryDetailsAction;
 import com.ziplly.app.shared.GetTweetCategoryDetailsResult;
 import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
-import com.ziplly.app.shared.PurchaseCouponResult;
-import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SendMessageAction;
@@ -304,33 +302,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	public void postComment(final CommentDTO comment) {
 		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
 	}
-
-//	@Override
-//	public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, final CouponDTO coupon) {
-//		PurchasedCouponAction action = new PurchasedCouponAction();
-//		action.setCoupon(coupon);
-//		action.setBuyer(ctx.getAccount());
-//		action.setCouponTransactionId(transactionId);
-//		action.setResultStatus(resultStatus);
-//		dispatcher.execute(action, new DispatcherCallbackAsync<PurchaseCouponResult>() {
-//		  
-//			@Override
-//			public void onSuccess(PurchaseCouponResult result) {
-//				String displayMessage = StringConstants.COUPON_PURCHASE_SUCCESS;
-//				AlertType alertType = AlertType.SUCCESS;
-//				
-//				switch(result.getCouponTransaction().getStatus()) {
-//					case FAILURE:
-//						displayMessage = StringConstants.COUPON_PURCHASE_FAILED;
-//						alertType = AlertType.ERROR;
-//						break;
-//				default:
-//					break;
-//				}
-//				view.displayMessage(displayMessage, alertType);
-//			}
-//		});
-//	}
 
 	@Override
 	public void reportTweetAsSpam(TweetDTO tweet) {

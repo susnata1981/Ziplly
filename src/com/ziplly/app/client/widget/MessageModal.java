@@ -20,6 +20,7 @@ public class MessageModal extends Composite {
 
   public MessageModal() {
     initWidget(uiBinder.createAndBindUi(this));
+    modal.setKeyboard(false);
   }
 
   @UiField
@@ -37,31 +38,30 @@ public class MessageModal extends Composite {
     modalContainer.add(widget);
     StyleHelper.show(content, false);
   }
-  
+
   public void setContent(String msg) {
     content.setInnerHTML(msg);
   }
-  
+
   public void setTitle(String msg) {
-//    modal.setTitle(title);
     title.setInnerText(msg);
-    
+
   }
-  
+
   @UiHandler("okBtn")
   public void ok(ClickEvent event) {
     modal.hide();
   }
-  
-  public void show() {
-    if (!modal.isVisible()) {
-      modal.show();
-    }
+
+  public Button getButton() {
+    return okBtn;
   }
-  
+
+  public void show() {
+    modal.show();
+  }
+
   public void hide() {
-    if (modal.isVisible()) {
-      modal.hide();
-    }
+    modal.hide();
   }
 }

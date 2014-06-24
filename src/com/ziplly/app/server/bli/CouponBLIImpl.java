@@ -67,11 +67,10 @@ public class CouponBLIImpl implements CouponBLI {
   @Override
   public String getQrcode(long buyerAccountId, long sellerAccountId, long couponId, long orderId) {
     CouponCodeDetails ccd = new CouponCodeDetails(cryptoUtil);
-    ccd
-        .setBuyerAccountId(buyerAccountId)
-        .setSellerAccountId(sellerAccountId)
-        .setCouponId(couponId)
-        .setOrderId(orderId);
+    ccd.setBuyerAccountId(buyerAccountId)
+       .setSellerAccountId(sellerAccountId)
+       .setCouponId(couponId)
+       .setOrderId(orderId);
 
     try {
       return ccd.getEncryptedCouponCode();
@@ -82,7 +81,7 @@ public class CouponBLIImpl implements CouponBLI {
 
   @Override
   public String getQrcodeUrl(CouponItem pr) throws UnsupportedEncodingException {
-    String redeemUrl = couponRedeemEndpoint + encode(pr.getQrcode());
+    String redeemUrl = encode(couponRedeemEndpoint + pr.getQrcode());
     return qrcodeEndpoint + redeemUrl;
   }
 
@@ -117,11 +116,11 @@ public class CouponBLIImpl implements CouponBLI {
 
       if (order.getStatus() != OrderStatus.COMPLETED
           && order.getTransaction().getStatus() != TransactionStatus.COMPLETE) {
-        throw new InvalidCouponException(encodedCouponData);
+        throw new InvalidCouponException("Coupon hasn't been purchased");
       }
 
       if (item.getStatus() == CouponItemStatus.USED) {
-        throw new CouponAlreadyUsedException(encodedCouponData);
+        throw new CouponAlreadyUsedException("Coupon has already been used");
       }
 
       // Otherwise mark the coupon as used
@@ -132,7 +131,7 @@ public class CouponBLIImpl implements CouponBLI {
       orderDAO.update(order);
       return coupon;
     } catch (NoResultException ex) {
-      throw new InvalidCouponException("No coupon was found");
+      throw new InvalidCouponException("Invalid coupon: no coupon was found");
     }
   }
 
@@ -187,7 +186,7 @@ public class CouponBLIImpl implements CouponBLI {
     try {
       checkCouponEligibility(order.getTransaction().getBuyer(), order.getOrderDetails());
     } catch (CouponSoldOutException | UsageLimitExceededException | CouponCampaignEndedException ex) {
-      logger.severe(String.format("Order %s eneligible for purchase", order));
+      logger.severe(String.format("Order %s ineligible for purchase because of %s", order, ex));
       order.setStatus(OrderStatus.ELIGIBILITY_FAILED);
       order.getTransaction().setStatus(TransactionStatus.ELIGIBILITY_FAILED);
       orderDAO.update(order);

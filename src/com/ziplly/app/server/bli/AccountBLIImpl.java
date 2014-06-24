@@ -803,8 +803,8 @@ public class AccountBLIImpl implements AccountBLI {
           CouponCampaignEndedException {
 
     logger.info(String.format("Checking coupon eligibility for coupon %s, account %s", coupon, account));
+    
     if (coupon.getQuantityPurchased() >= coupon.getQuanity()) {
-      // Log error
       logger.info(String.format("Sold out %s", coupon));
       throw new CouponSoldOutException(String.format("Coupon: %s sold out.", coupon.getDescription()));
     }
@@ -832,10 +832,11 @@ public class AccountBLIImpl implements AccountBLI {
     // check date validity
     // The Buy button should be disabled in the view for these date validity
     // fail.
-    DateTime currentTime = TimeUtil.getCurrentTime();
+    Date currTime = new Date();
 
-    if (currentTime.getMillis() > coupon.getExpirationDate().getTime()) {
+    if (currTime.getTime() > coupon.getExpirationDate().getTime()) {
       logger.info(String.format("CouponCampaignEndedException %s", coupon));
+      
       throw new CouponCampaignEndedException(String.format(
           "Coupon: %s discount is no longer available.",
           coupon.getDescription()));

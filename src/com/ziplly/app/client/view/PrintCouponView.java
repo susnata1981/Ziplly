@@ -1,9 +1,7 @@
 package com.ziplly.app.client.view;
 
-import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -33,10 +31,6 @@ public class PrintCouponView extends AbstractView {
 		RootPanel.get("nav").getElement().getStyle().setDisplay(Display.NONE);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-
-	public void displayMessage(String errorMessage, AlertType type) {
-	  
-  }
 
 	@UiField
 	Image logo;
@@ -82,7 +76,7 @@ public class PrintCouponView extends AbstractView {
 		businessAddress.setText(businessAccount.getLocations().get(0).getAddress());
 		businessPhone.setText(businessAccount.getPhone());
 		
-		discount.setText(basicDataFormatter.format(coupon.getDiscountedPrice(), ValueType.PERCENT));
+		discount.setText(basicDataFormatter.format(coupon.getDiscountedPrice(), ValueType.PRICE));
 		price.setInnerText(basicDataFormatter.format(coupon.getItemPrice(), ValueType.PRICE));
 		startDate.setText(basicDataFormatter.format(coupon.getStartDate(), ValueType.DATE_VALUE_FULL));
 		endDate.setText(basicDataFormatter.format(coupon.getEndDate(), ValueType.DATE_VALUE_FULL));

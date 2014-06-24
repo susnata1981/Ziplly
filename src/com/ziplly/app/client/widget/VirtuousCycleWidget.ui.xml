@@ -60,9 +60,10 @@
 		text-align: left;
 		display: block;
 		margin: 4px 0;
+		font-family: Cambria, Georgia, serif;
 		}
 		.middle {
-		left:30%;
+		left: 30%;
 		top: 0;
 		margin-bottom: 20px;
 		}
@@ -97,7 +98,7 @@
 		-webkit-transform:
 		rotate(180deg);
 		position: absolute;
-		left: 195px;
+		left: 215px;
 		bottom: 45px;
 		}
 	</ui:style>

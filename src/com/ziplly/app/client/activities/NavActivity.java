@@ -225,6 +225,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 				return;
 			case SECURITY_ALERT:
 			case ANNOUNCEMENT:
+			case COUPON:
 			case OFFERS:
 			default:
 				HomePlace place = new HomePlace(an.getTweet().getTweetId());

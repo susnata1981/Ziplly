@@ -11,7 +11,7 @@ insert into interest (name) values ("Biking");
 insert into interest (name) values ("Electronics");
 insert into interest (name) values ("Movies");
 
-insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Connect with your customers', 3, 'Basic plan', now(), "BASIC","ENABLED", 3, 0);
+insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Connect with your customers', 5, 'Basic plan', now(), "BASIC","ENABLED", 3, 0);
 insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ('Publish upto 6 coupons/month', 25, 'Pro plan', now(),"PREMIUM", "ENABLED", 6, 6);
 insert into subscription_plan (description,fee,name,time_created,plan_type, status, tweets_allowed, coupons_allowed) values ("Publish upto 100 coupons/month", 50, "Premium plan", now(), "PRO", "ENABLED", 100, 100);
 

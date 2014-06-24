@@ -241,9 +241,6 @@
 										<b>11111111</b>
 									</i>
 								</span>
-								<g:Anchor ui:field="howItWorksInDetailAnchor"
-									addStyleNames="{style.howItWorksInDetailAnchor}">How
-									It works</g:Anchor>
 							</g:HTMLPanel>
 						</b:Column>
 					</b:Row>

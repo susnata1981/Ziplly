@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 import java.util.Properties;
 
 import com.google.appengine.api.utils.SystemProperty;
-import com.google.gwt.core.client.GWT;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import com.ziplly.app.server.TaskSystemHelper;
 import com.ziplly.app.server.crypto.CryptoModule;
 
 /**
@@ -54,6 +54,7 @@ public class ServiceModule extends AbstractModule {
 		bind(EmailService.class).to(EmailServiceImpl.class).in(Singleton.class);
 		bind(CouponBLI.class).to(CouponBLIImpl.class).in(Singleton.class);
 		bind(SubscriptionBLI.class).to(SubscriptionBLIImpl.class).in(Singleton.class);
+		bind(TaskSystemHelper.class).in(Singleton.class);
   }
 	
 	private static Properties loadProperties(String name) throws IOException {
@@ -66,7 +67,6 @@ public class ServiceModule extends AbstractModule {
 				is.close();
 			}
 		}
-		
 		return properties;
 	}
 	

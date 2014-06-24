@@ -14,6 +14,7 @@ import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.HashtagDTO;
 import com.ziplly.app.model.ImageDTO;
 import com.ziplly.app.model.InterestDTO;
@@ -27,7 +28,6 @@ import com.ziplly.app.model.PendingInvitationsDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.PostalCodeDTO;
 import com.ziplly.app.model.PrivacySettingsDTO;
-import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.TransactionDTO;
@@ -41,6 +41,7 @@ import com.ziplly.app.server.model.jpa.BusinessProperties;
 import com.ziplly.app.server.model.jpa.Comment;
 import com.ziplly.app.server.model.jpa.Conversation;
 import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.server.model.jpa.Hashtag;
 import com.ziplly.app.server.model.jpa.Image;
 import com.ziplly.app.server.model.jpa.Interest;
@@ -52,13 +53,11 @@ import com.ziplly.app.server.model.jpa.PendingInvitations;
 import com.ziplly.app.server.model.jpa.PersonalAccount;
 import com.ziplly.app.server.model.jpa.PostalCode;
 import com.ziplly.app.server.model.jpa.PrivacySettings;
-import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.server.model.jpa.Spam;
 import com.ziplly.app.server.model.jpa.Subscription;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.server.model.jpa.Tweet;
-import com.ziplly.app.server.util.TimeUtil;
 
 public class EntityUtil {
 
@@ -334,7 +333,7 @@ public class EntityUtil {
 		resp.setDescription(plan.getDescription());
 		resp.setFee(plan.getFee());
 		resp.setCouponsAllowed(plan.getCouponsAllowed());
-		resp.setTweetsAllowed(resp.getTweetsAllowed());
+		resp.setTweetsAllowed(plan.getTweetsAllowed());
 		resp.setStatus(plan.getStatus());
 		resp.setPlanType(plan.getPlanType());
 		resp.setTimeCreated(plan.getTimeCreated());

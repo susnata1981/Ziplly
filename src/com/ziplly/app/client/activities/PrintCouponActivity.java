@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.ErrorDefinitions;
 import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.view.PrintCouponView;
 import com.ziplly.app.shared.GetCouponQRCodeUrlAction;
@@ -57,17 +56,10 @@ public class PrintCouponActivity extends AbstractActivity {
   }
 
 	private void printCoupon(long orderId, long couponId) {
-		if (orderId <= 0) {
-			view.displayMessage(
-			    ErrorDefinitions.invalidCouponError.getErrorMessage(),
-			    ErrorDefinitions.invalidCouponError.getType());
-			return;
-		}
-
 		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
 		action.setOrderId(orderId);
 		action.setCouponId(couponId);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetCouponQRCodeUrlResult result) {

@@ -5,7 +5,8 @@ public enum NotificationType {
 	SECURITY_ALERT("Security alert", true),
 	ANNOUNCEMENT("Announcement", true),
 	OFFERS("Offer", true),
-	NONE("None", false);
+	COUPON("Coupon", true),
+	NONE("None", false); 
 
 	/*
 	 * Whether it's visible to the user.

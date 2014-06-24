@@ -96,16 +96,9 @@
 			</p>
 			<div ui:field="couponDetails" addStyleNames="div-no-overflow">
 				<ul>
-					<!-- <li> <b:Label>Business name</b:Label> <span ui:field="businessName" 
-						/> <g:Anchor ui:field="businessNameAnchor" addStyleNames="smalltext">website</g:Anchor> 
-						</li> -->
 					<li>
 						<!-- <b:Label>Address</b:Label> -->
 						<span ui:field="address" />
-					</li>
-					<li>
-						<!-- <b:Label>Business type</b:Label> -->
-						<!-- <span ui:field="businessType" /> -->
 					</li>
 					<li>
 						<b:Label>Quantity sold</b:Label>
@@ -114,6 +107,10 @@
 					<li>
 						<b:Label>Quantity remaining</b:Label>
 						<span ui:field="quantityRemaining" />
+					</li>
+					<li>
+						<b:Label>Starts on</b:Label>
+						<span ui:field="startTime" />
 					</li>
 					<li>
 						<b:Label>Expires on</b:Label>

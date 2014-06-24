@@ -39,7 +39,7 @@ public class CouponWidget extends Composite {
     @Template("${0} voucher for ${1}")
     public SafeHtml couponTitle(String origPrice, String discountedPrice);
   }
-  
+
   public CouponWidget() {
     initWidget(uiBinder.createAndBindUi(this));
     StyleHelper.show(couponDetails, false);
@@ -47,7 +47,7 @@ public class CouponWidget extends Composite {
     setupHandlers();
     ZResources.IMPL.style().ensureInjected();
   }
-  
+
   private void setupHandlers() {
     learnButton.addClickHandler(new ClickHandler() {
 
@@ -58,7 +58,7 @@ public class CouponWidget extends Composite {
         StyleHelper.show(hideDetailsButton, true);
       }
     });
-    
+
     hideDetailsButton.addClickHandler(new ClickHandler() {
 
       @Override
@@ -67,12 +67,12 @@ public class CouponWidget extends Composite {
         StyleHelper.show(learnButton, true);
         StyleHelper.show(hideDetailsButton, false);
       }
-      
+
     });
   }
 
-//  @UiField
-//  Heading couponTitle;
+  // @UiField
+  // Heading couponTitle;
 
   @UiField
   Image image;
@@ -94,10 +94,8 @@ public class CouponWidget extends Composite {
   SpanElement businessName;
   @UiField
   SpanElement address;
-//  @UiField
-//  SpanElement businessType;
-//  @UiField
-//  SpanElement website;
+  @UiField
+  SpanElement startTime;
   @UiField
   SpanElement expirationTime;
   @UiField
@@ -110,11 +108,11 @@ public class CouponWidget extends Composite {
   Button hideDetailsButton;
   @UiField
   com.google.gwt.user.client.ui.Button buyButton;
-  
+
   private CouponTitleTemplate titleTemplate = GWT.create(CouponTitleTemplate.class);
-  
+
   private BasicDataFormatter formatter = new BasicDataFormatter();
-  
+
   public void displayCoupon(CouponDTO coupon) {
     ImageDTO imageDto = getImage(coupon);
     if (imageDto != null) {
@@ -122,24 +120,22 @@ public class CouponWidget extends Composite {
     } else {
       StyleHelper.show(figure, false);
     }
-    
+
     setPunchLine(coupon);
-//    couponTitle.setText(getTitle(coupon));
     couponDescription.setInnerHTML(SafeHtmlUtils.htmlEscape(coupon.getDescription()));
 
     BusinessAccountDTO ba = (BusinessAccountDTO) coupon.getTweet().getSender();
     businessName.setInnerText(ba.getDisplayName());
     address.setInnerText(ba.getLocations().get(0).getAddress());
-//    businessType.setInnerText(ba.getCategory().getName());
-//    displayWebsiteIfPresent(ba);
     long remaining = coupon.getQuanity() - coupon.getQuantityPurchased();
     quantityRemaining.setInnerText(Long.toString(remaining));
     quantitySold.setInnerText(Long.toString(coupon.getQuantityPurchased()));
-    
+
+    startTime.setInnerHTML(formatter.format(coupon.getStartDate(), ValueType.DATE_VALUE_FULL));
     expirationTime.setInnerHTML(formatter.format(coupon.getEndDate(), ValueType.DATE_VALUE_FULL));
-//    expirationTime.setInnerHTML(formatter.format(new Date(), ValueType.DATE_VALUE_FULL));
-    finePrint.setInnerHTML(ZResources.IMPL.finePrint().getText());
     setExpirationTime(coupon);
+
+    finePrint.setInnerHTML(ZResources.IMPL.finePrint().getText());
   }
 
   public Anchor getBusinessPageAnchor() {
@@ -151,19 +147,25 @@ public class CouponWidget extends Composite {
     if (coupon.getEndDate().before(now)) {
       expirationShortTime.setInnerText("EXPIRED");
     } else {
-      expirationShortTime.setInnerText(
-          BasicDataFormatter.getTimeDiff(coupon.getEndDate(), new Date(), BasicDataFormatter.couponTimeTemplate) + " LEFT");
+      expirationShortTime.setInnerText(BasicDataFormatter.getTimeDiff(
+          coupon.getEndDate(),
+          new Date(),
+          BasicDataFormatter.couponTimeTemplate) + " LEFT");
     }
   }
 
   public com.google.gwt.user.client.ui.Button getBuyButton() {
     return buyButton;
   }
-  
+
   private void setPunchLine(CouponDTO coupon) {
-    SafeHtml text = titleTemplate.couponTitle(coupon.getItemPrice().toString(), coupon.getDiscountedPrice().toString());
-    punchLine.setText(text.asString());
-    
+    if (coupon.getItemPrice() != null && coupon.getDiscountedPrice() != null) {
+      SafeHtml text =
+          titleTemplate.couponTitle(coupon.getItemPrice().toString(), coupon
+              .getDiscountedPrice()
+              .toString());
+      punchLine.setText(text.asString());
+    }
   }
 
   private ImageDTO getImage(CouponDTO coupon) {
@@ -171,8 +173,7 @@ public class CouponWidget extends Composite {
     if (images.size() > 0) {
       return images.get(0);
     }
-    
+
     return null;
   }
-  
 }

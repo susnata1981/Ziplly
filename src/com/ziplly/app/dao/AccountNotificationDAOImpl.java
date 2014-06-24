@@ -29,6 +29,15 @@ public class AccountNotificationDAOImpl extends BaseDAO implements AccountNotifi
 		em.merge(an);
 	}
 
+	@Transactional
+  @Override
+  public void save(List<AccountNotification> notifications) {
+    Preconditions.checkArgument(notifications != null, "Invalid argument to save");
+    for(AccountNotification an : notifications) {
+      save(an);
+    }
+  }
+
 	@Override
 	public List<AccountNotificationDTO> findAccountNotificationByAccountId(Long recipientId) {
 		Preconditions.checkArgument(

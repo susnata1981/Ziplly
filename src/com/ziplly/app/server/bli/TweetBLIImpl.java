@@ -58,7 +58,7 @@ public class TweetBLIImpl implements TweetBLI {
     }
 
     TweetDTO savedTweet = tweetDao.save(tweet);
-    tweetNotificationBli.sendNotificationsIfRequired(savedTweet);
+    tweetNotificationBli.sendNotificationsIfRequired(tweet);
 
     return tweet;
   }

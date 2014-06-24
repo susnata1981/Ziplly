@@ -1,6 +1,7 @@
 package com.ziplly.app.shared;
 
 public enum EmailTemplate {
+  NONE("NONE","NONE"),
 	WELCOME_REGISTRATION("welcome.ftl", "Welcome to Ziplly! Confirm your email with us."),
 	INVITE_PEOPLE("invite.ftl", "Invitation to join ziplly.com"),
 	PASSWORD_RECOVERY("password_recovery.ftl", "Reset your password for Ziplly"),

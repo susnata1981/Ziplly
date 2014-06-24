@@ -8,6 +8,8 @@ import com.ziplly.app.server.model.jpa.AccountNotification;
 public interface AccountNotificationDAO {
 	void save(AccountNotification an);
 
+	void save(List<AccountNotification> notifications);
+	 
 	List<AccountNotificationDTO> findAccountNotificationByAccountId(Long accountId);
 
 	void update(AccountNotification an);

@@ -9,7 +9,9 @@ import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PricingPlanWidget extends Composite {
@@ -57,6 +59,13 @@ public class PricingPlanWidget extends Composite {
   
   @UiField
   Element couponCommission;
+  
+  @UiField
+  HTMLPanel panel;
+  
+  public void setWidth(String width) {
+    panel.setWidth(width);
+  }
   
   public void setTitle(String title) {
     titleSpan.setInnerText(title);

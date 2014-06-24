@@ -8,7 +8,6 @@ import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -42,187 +41,186 @@ import com.ziplly.app.shared.GetLoggedInUserAction;
 import com.ziplly.app.shared.GetLoggedInUserResult;
 
 public abstract class AbstractActivity implements Activity {
-	protected CachingDispatcherAsync dispatcher;
-	protected PlaceController placeController;
-	protected EventBus eventBus;
-	protected ApplicationContext ctx;
-	protected LoadingPanelWidget loadingModal;
-	// Maximum number of target neighborhoods visible
-	private int maxNeighborhoodsVisible = 2;
-	protected StringDefinitions stringDefinitions = GWT.create(StringDefinitions.class);
-	
-	public AbstractActivity(CachingDispatcherAsync dispatcher,
-	    EventBus eventBus,
-	    PlaceController placeController,
-	    ApplicationContext ctx) {
-		this.dispatcher = dispatcher;
-		this.eventBus = eventBus;
-		this.placeController = placeController;
-		this.ctx = ctx;
-		loadingModal = new LoadingPanelWidget();
-		initializeEnvironment();
-	}
+  protected CachingDispatcherAsync dispatcher;
+  protected PlaceController placeController;
+  protected EventBus eventBus;
+  protected ApplicationContext ctx;
+  protected static LoadingPanelWidget loadingModal = new LoadingPanelWidget();
+  // Maximum number of target neighborhoods visible
+  private int maxNeighborhoodsVisible = 2;
+  protected StringDefinitions stringDefinitions = GWT.create(StringDefinitions.class);
 
-	private void initializeEnvironment() {
-		if (!ctx.isEnvironmentSet()) {
-			dispatcher.execute(
-			    new GetEnvironmentAction(),
-			    new DispatcherCallbackAsync<GetEnvironmentResult>() {
-
-				    @Override
-				    public void onSuccess(GetEnvironmentResult result) {
-					    ctx.setEnvironment(result.getEnvironment());
-				    }
-			    });
-		}
-	}
-
-	public Environment getEnvironment() {
-		return ctx.getEnvironment();
-	}
-
-	protected void setupHandlers() {
-		eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
-
-			@Override
-			public void onEvent(LoadingEventStart event) {
-				showLodingIcon();
-			}
-		});
-
-		eventBus.addHandler(LoadingEventEnd.TYPE, new LoadingEventEndHandler() {
-
-			@Override
-			public void onEvent(LoadingEventEnd event) {
-				hideLoadingIcon();
-			}
-		});
-	}
-
-	void showLodingIcon() {
-		loadingModal.show(true);
-	}
-
-	void hideLoadingIcon() {
-		loadingModal.show(false);
-	}
-
-	public void goTo(Place place) {
-		placeController.goTo(place);
-	}
-
-	@Override
-	public String mayStop() {
-		return null;
-	}
-
-	@Override
-	public void onCancel() {
-	}
-
-	@Override
-	public void onStop() {
-	}
-
-	/**
-	 * Checks to see if user is logged in and calls doStart if user is logged in.
-	 * Otherwise it forwards the user to LoginView.
-	 */
-	public void checkAccountLogin() {
-		// If user already logged in then just call doStart.
-		if (userLoggedIn()) {
-			doStart();
-			return;
-		}
-
-		GetLoggedInUserAction action = new GetLoggedInUserAction();
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
-			@Override
-			public void onSuccess(GetLoggedInUserResult result) {
-				if (result != null && result.getAccount() != null) {
-					ctx.setAccount(result.getAccount());
-					eventBus.fireEvent(new LoginEvent(result.getAccount()));
-					doStart();
-				} else {
-					// This could be overridden by client.
-					doStartOnUserNotLoggedIn();
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
-
-		});
-	}
-
-	protected boolean userLoggedIn() {
-		return ctx.getAccount() != null;
+  public AbstractActivity(CachingDispatcherAsync dispatcher,
+      EventBus eventBus,
+      PlaceController placeController,
+      ApplicationContext ctx) {
+    this.dispatcher = dispatcher;
+    this.eventBus = eventBus;
+    this.placeController = placeController;
+    this.ctx = ctx;
+    initializeEnvironment();
   }
 
-	/**
-	 * Activity needs to define behavior in case user is logged in.
-	 */
-	protected abstract void doStart();
+  private void initializeEnvironment() {
+    if (!ctx.isEnvironmentSet()) {
+      dispatcher.execute(
+          new GetEnvironmentAction(),
+          new DispatcherCallbackAsync<GetEnvironmentResult>() {
 
-	/**
-	 * If user is not logged in, default behavior is to redirect to Login view.
-	 */
-	protected void doStartOnUserNotLoggedIn() {
-		placeController.goTo(new LoginPlace());
-	}
+            @Override
+            public void onSuccess(GetEnvironmentResult result) {
+              ctx.setEnvironment(result.getEnvironment());
+            }
+          });
+    }
+  }
 
-	protected void forward(AccountDTO acct) {
-		if (acct != null) {
-			if (acct instanceof PersonalAccountDTO) {
-				goTo(new PersonalAccountPlace());
-			} else if (acct instanceof BusinessAccountDTO) {
-				goTo(new BusinessAccountPlace());
-			}
-		}
-	}
+  public Environment getEnvironment() {
+    return ctx.getEnvironment();
+  }
 
-	/**
-	 * Get the list of target neighborhoods in child to parent order.
-	 */
-	protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
-		if (ctx.getAccount() != null) {
-			List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
-			NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
-			neighborhoods.add(neighborhood);
-			NeighborhoodDTO parentNeighborhood = neighborhood.getParentNeighborhood();
-			int count = 0;
-			while (parentNeighborhood != null && count < maxNeighborhoodsVisible) {
-				neighborhoods.add(parentNeighborhood);
-				parentNeighborhood = parentNeighborhood.getParentNeighborhood();
-				count++;
-			}
+  protected void setupHandlers() {
+    eventBus.addHandler(LoadingEventStart.TYPE, new LoadingEventStartHandler() {
 
-			return neighborhoods;
-		} else {
-			return Collections.emptyList();
-		}
-	}
+      @Override
+      public void onEvent(LoadingEventStart event) {
+        showLodingIcon();
+      }
+    });
 
-	public class AccountNotificationHandler extends
-	    DispatcherCallbackAsync<GetAccountNotificationResult> {
+    eventBus.addHandler(LoadingEventEnd.TYPE, new LoadingEventEndHandler() {
 
-		@Override
-		public void onSuccess(GetAccountNotificationResult result) {
-			eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
-		}
-	}
+      @Override
+      public void onEvent(LoadingEventEnd event) {
+        hideLoadingIcon();
+      }
+    });
+  }
 
-	public static native void log(String msg) /*-{
+  void showLodingIcon() {
+    loadingModal.show(true);
+  }
+
+  void hideLoadingIcon() {
+    loadingModal.show(false);
+  }
+
+  public void goTo(Place place) {
+    placeController.goTo(place);
+  }
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
+
+  /**
+   * Checks to see if user is logged in and calls doStart if user is logged in.
+   * Otherwise it forwards the user to LoginView.
+   */
+  public void checkAccountLogin() {
+    // If user already logged in then just call doStart.
+    if (userLoggedIn()) {
+      doStart();
+      return;
+    }
+
+    GetLoggedInUserAction action = new GetLoggedInUserAction();
+    dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+      @Override
+      public void onSuccess(GetLoggedInUserResult result) {
+        if (result != null && result.getAccount() != null) {
+          ctx.setAccount(result.getAccount());
+          eventBus.fireEvent(new LoginEvent(result.getAccount()));
+          doStart();
+        } else {
+          // This could be overridden by client.
+          doStartOnUserNotLoggedIn();
+        }
+      }
+
+      @Override
+      public void onFailure(Throwable caught) {
+        Window.alert(caught.getLocalizedMessage());
+      }
+
+    });
+  }
+
+  protected boolean userLoggedIn() {
+    return ctx.getAccount() != null;
+  }
+
+  /**
+   * Activity needs to define behavior in case user is logged in.
+   */
+  protected abstract void doStart();
+
+  /**
+   * If user is not logged in, default behavior is to redirect to Login view.
+   */
+  protected void doStartOnUserNotLoggedIn() {
+    placeController.goTo(new LoginPlace());
+  }
+
+  protected void forward(AccountDTO acct) {
+    if (acct != null) {
+      if (acct instanceof PersonalAccountDTO) {
+        goTo(new PersonalAccountPlace());
+      } else if (acct instanceof BusinessAccountDTO) {
+        goTo(new BusinessAccountPlace());
+      }
+    }
+  }
+
+  /**
+   * Get the list of target neighborhoods in child to parent order.
+   */
+  protected List<NeighborhoodDTO> getTargetNeighborhoodList() {
+    if (ctx.getAccount() != null) {
+      List<NeighborhoodDTO> neighborhoods = new ArrayList<NeighborhoodDTO>();
+      NeighborhoodDTO neighborhood = ctx.getCurrentNeighborhood();
+      neighborhoods.add(neighborhood);
+      NeighborhoodDTO parentNeighborhood = neighborhood.getParentNeighborhood();
+      int count = 0;
+      while (parentNeighborhood != null && count < maxNeighborhoodsVisible) {
+        neighborhoods.add(parentNeighborhood);
+        parentNeighborhood = parentNeighborhood.getParentNeighborhood();
+        count++;
+      }
+
+      return neighborhoods;
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public class AccountNotificationHandler extends
+      DispatcherCallbackAsync<GetAccountNotificationResult> {
+
+    @Override
+    public void onSuccess(GetAccountNotificationResult result) {
+      eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
+    }
+  }
+
+  public static native void log(String msg) /*-{
 		$wnd.console.log(msg);
-	}-*/;
+  }-*/;
 
   public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
     setFormUploadActionUrl(formUploadWidget);
     setupFormCompleteHandler(formUploadWidget);
   }
-  
+
   private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
     dispatcher.execute(
         new GetImageUploadUrlAction(),
@@ -238,7 +236,7 @@ public abstract class AbstractActivity implements Activity {
           }
         });
   }
-  
+
   private void setupFormCompleteHandler(final FormUploadWidget formUploadWidget) {
     formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
 
@@ -246,7 +244,7 @@ public abstract class AbstractActivity implements Activity {
       public void onSubmitComplete(SubmitCompleteEvent event) {
         try {
           if (event.getResults() != null) {
-//            ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
+            // ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
             formUploadWidget.displayImagePreview(event.getResults());
           }
         } catch (Error error) {

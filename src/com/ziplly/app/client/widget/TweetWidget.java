@@ -784,6 +784,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
       
       @Override
       public void onSuccess(GoogleWalletSuccessResult result) {
+        MessageModal modal = new MessageModal();
+        modal.setContent(StringConstants.PAYMENT_SUCCESSFULL);
+        modal.show();
       }
       
       @Override
@@ -791,6 +794,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
         presenter.cancelTransaction(result.getRequest().getRequest().getCouponOrderId());
       }
     });
+	  
 	  flow.doPay(jwtToken);
 	}
 	

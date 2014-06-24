@@ -8,7 +8,6 @@
 		border: 1px solid #ccc;
 		-webskit-box-shadow: 3px 3px 5px 5px #ccc;
 		border-radius: 5px;
-		width: 210px;
 		}
 		.panel h2 {
 			height: 80px;
@@ -58,13 +57,14 @@
 			font-size: 15px;
 			color: #555;
 			font-family: Arial, Helvetica, sans-serif;
+			text-align:center;
 		}
 		.middle {
 			text-align: center;
 			font-size: 16px;
 		}
 	</ui:style>
-	<g:HTMLPanel addStyleNames="{style.panel}">
+	<g:HTMLPanel ui:field="panel" addStyleNames="{style.panel}">
 		<div class="{style.planHeader}" ui:field="planHeader">
 			<h2><span ui:field="titleSpan"/></h2>
 			<h4>
@@ -73,7 +73,8 @@
 			</h4>
 			<h5 ui:field="couponCommission">
 			    <div class="{style.middle}"> + </div>
-				<strong>2.9% (or 30 cents)/transaction +</strong>
+				<strong>2.9% (or 30 cents)/transaction </strong>
+				<div class="{style.middle}"> + </div>
 				<strong>3% commission</strong>
 			</h5>
 		</div>

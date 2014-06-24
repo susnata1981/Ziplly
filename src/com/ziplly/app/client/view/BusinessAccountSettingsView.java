@@ -13,7 +13,6 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.FileUpload;
-import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -39,6 +38,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -687,8 +687,11 @@ public class BusinessAccountSettingsView extends AbstractView implements
 	  
 	  for(SubscriptionPlanDTO plan : plans) {
 	    PricingPlanWidget widget = createPricingPlanWidget(plan);
+	    widget.setTweetCount(Long.toString(plan.getTweetsAllowed()));
+	    widget.setCouponCount(Long.toString(plan.getCouponsAllowed()));
 	    if (plan.getPlanType() == SubscriptionPlanType.BASIC) {
 	      widget.hideFees();
+	      widget.setWidth("210px");
 	    }
 	    
 	    if (activePlan != null) {

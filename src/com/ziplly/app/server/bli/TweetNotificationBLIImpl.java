@@ -1,15 +1,11 @@
 package com.ziplly.app.server.bli;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.appengine.api.backends.BackendServiceFactory;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -19,7 +15,6 @@ import com.google.inject.Inject;
 import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.AccountNotificationDAO;
-import com.ziplly.app.dao.DAOModule.BackendAddress;
 import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
@@ -35,12 +30,11 @@ import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.EmailAction;
-import com.ziplly.app.server.ZipllyServerConstants;
+import com.ziplly.app.server.TaskSystemHelper;
 import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.AccountNotification;
 import com.ziplly.app.server.model.jpa.Session;
 import com.ziplly.app.server.model.jpa.Subscription;
-import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Transaction;
 import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
@@ -50,20 +44,15 @@ import com.ziplly.app.shared.EmailTemplate;
 public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	Logger logger = Logger.getLogger(TweetNotificationBLIImpl.class.getCanonicalName());
 
-	private ImmutableList<TweetType> emailNotificationTypeList = ImmutableList.of(
-	    TweetType.ANNOUNCEMENT,
-	    TweetType.SECURITY_ALERTS,
-	    TweetType.OFFERS,
-	    TweetType.HOT_DEALS,
-	    TweetType.COUPON);
-
 	private final AccountDAO accountDao;
 	private final NeighborhoodDAO neighborhoodDao;
 	private final TweetDAO tweetDao;
 	private final EmailService emailService;
 	private final AccountNotificationDAO accountNotificationDao;
 	private final SessionDAO sessionDao;
-	private String backendAddress;
+  private List<TweetType> emailNotificationTypeList;
+
+  private TaskSystemHelper taskSystemHelper;
 
 	@Inject
 	public TweetNotificationBLIImpl(
@@ -73,76 +62,37 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	    TweetDAO tweetDao,
 	    AccountNotificationDAO accountNotificationDao,
 	    EmailService emailService,
-	    @BackendAddress String backendAddress) {
+	    TaskSystemHelper taskSystemHelper) {
 		this.accountDao = accountDao;
 		this.sessionDao = sessionDao;
 		this.neighborhoodDao = neighborhoodDao;
 		this.tweetDao = tweetDao;
 		this.accountNotificationDao = accountNotificationDao;
+		this.taskSystemHelper = taskSystemHelper;
 		this.emailService = emailService;
-		this.backendAddress = backendAddress;
+		emailNotificationTypeList = TweetType.getTweetTypesForRequiringNotification();
 	}
 
-	private boolean shouldSendNotification(TweetDTO tweet) {
+	private boolean shouldSendNotification(Tweet tweet) {
 		return emailNotificationTypeList.contains(tweet.getType());
 	}
 
 	/**
 	 * Called by TweetActionHandler
-	 * 
-	 * @throws NotFoundException
 	 */
 	@Override
-	public void sendNotificationsIfRequired(TweetDTO tweet) throws NotFoundException {
+	public void sendNotificationsIfRequired(Tweet tweet) throws NotFoundException {
 		logger.info(String.format("Received request to send notification %s", tweet));
 		if (!shouldSendNotification(tweet)) {
 			return;
 		}
 
-		EmailTemplate template = getEmailTemplate(tweet.getType());
-		AccountDTO sender = tweet.getSender();
-		Session session = sessionDao.findSessionByAccountId(sender.getAccountId());
-		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-
-		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-		logger.info(String.format(
-		    "Adding notification request to queue %s, backend(0) %s, endpoint %s",
-		    queue,
-		    backendAddress,
-		    mailEndpoint));
-
-		TaskOptions options =
-		    TaskOptions.Builder
-		        .withUrl(mailEndpoint)
-		        .method(Method.POST)
-		        .param(ZipllyServerConstants.ACTION_KEY, EmailAction.BY_NEIGHBORHOOD.name())
-		        .param(
-		            ZipllyServerConstants.NEIGHBORHOOD_ID_KEY,
-		            Long.toString(session.getLocation().getNeighborhood().getNeighborhoodId()))
-		        .param(ZipllyServerConstants.SENDER_ACCOUNT_ID_KEY, sender.getAccountId().toString())
-		        .param(ZipllyServerConstants.TWEET_ID_KEY, tweet.getTweetId().toString())
-		        .param(
-		            ZipllyServerConstants.NOTIFICATION_TYPE_KEY,
-		            tweet.getType().getNotificationType().name())
-		        .param(ZipllyServerConstants.EMAIL_TEMPLATE_ID_KEY, template.name())
-		        .header(ZipllyServerConstants.HOST_KEY, backendAddress);
-		queue.add(options);
-	}
-
-	private EmailTemplate getEmailTemplate(TweetType type) {
-	  switch (type) {
-      case ANNOUNCEMENT:
-        return EmailTemplate.ANNOUNCEMENT;
-      case HOT_DEALS:
-      case OFFERS:
-        return EmailTemplate.OFFER;
-      case COUPON:
-        return EmailTemplate.COUPON_PUBLISHED;
-      case SECURITY_ALERTS:
-      default:
-        return EmailTemplate.SECURITY_ALERT;
-    }
+		Session session = sessionDao.findSessionByAccountId(tweet.getSender().getAccountId());
+		
+		taskSystemHelper.addTask(
+		    EmailAction.BY_NEIGHBORHOOD,
+		    session.getLocation().getNeighborhood().getNeighborhoodId().longValue(), 
+		    tweet);
 	}
 	
 	/**
@@ -154,7 +104,8 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	 * subscribers 2. Account notification to every applicable resident
 	 */
 	@Override
-	public void sendNotification(Long senderAccountId,
+	public void sendNotification(
+	    Long senderAccountId,
 	    Long neighborhoodId,
 	    Long tweetId,
 	    NotificationType ntype,
@@ -172,6 +123,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		    tweetId,
 		    ntype,
 		    emailTemplate));
+		
 		try {
 			TweetDTO tweet = tweetDao.findTweetById(tweetId);
 			Account sender = accountDao.findById(senderAccountId);
@@ -187,7 +139,6 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 
 			// Account notification
 			sendAccountNotifications(sender, unfilteredRecipients, tweet, ntype);
-
 		} catch (NotFoundException nfe) {
 			logger.log(Level.SEVERE, String.format("Unable to find account with id %d", senderAccountId));
 		} catch (NumberFormatException nfe) {
@@ -195,23 +146,28 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		}
 	}
 
-	private void sendAccountNotifications(Account sender,
+	private void sendAccountNotifications(
+	    Account sender,
 	    List<AccountDTO> recipients,
 	    TweetDTO tweet,
 	    NotificationType ntype) {
-
-		for (AccountDTO account : recipients) {
+	  
+	  List<AccountNotification> notifications = new ArrayList<>();
+	  for (AccountDTO account : recipients) {
+		  Date now = new Date();
 			AccountNotification an = new AccountNotification();
 			an.setRecipient(EntityUtil.convert(account));
 			an.setSender(sender);
 			an.setReadStatus(ReadStatus.UNREAD);
 			an.setType(ntype);
 			an.setStatus(RecordStatus.ACTIVE);
-			an.setTimeCreated(new Date());
-			an.setTimeUpdated(new Date());
+			an.setTimeCreated(now);
+			an.setTimeUpdated(now);
 			an.setTweet(new Tweet(tweet));
-			accountNotificationDao.save(an);
+			notifications.add(an);
 		}
+		
+    accountNotificationDao.save(notifications);
 	}
 
 	private List<AccountDTO> getAllRecipients(Long neighborhoodId) {
@@ -233,8 +189,7 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 				recipients.addAll(accountDao.findAccountsByNeighborhood(
 				    EntityType.BUSINESS_ACCOUNT,
 				    neighborhood.getNeighborhoodId(),
-				    0, // start
-				    // index
+				    0, // start index
 				    Integer.MAX_VALUE)); // end index
 			}
 
@@ -249,7 +204,8 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 		return ImmutableList.of();
 	}
 
-	private List<AccountDTO> filterRecipientsByNotificationAction(final List<AccountDTO> recipients,
+	private List<AccountDTO> filterRecipientsByNotificationAction(
+	    final List<AccountDTO> recipients,
 	    final TweetType tweetType,
 	    final NotificationAction naction) {
 
@@ -316,64 +272,86 @@ public class TweetNotificationBLIImpl implements TweetNotificationBLI {
 	 * Called by SendMessageActionHandler
 	 */
 	@Override
-	public void sendEmail(Account sender, Account receiver, EmailTemplate template) {
-		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-		String backendAddress =
-		    BackendServiceFactory.getBackendService().getBackendAddress(
-		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
-		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-		TaskOptions options =
-		    TaskOptions.Builder
-		        .withUrl(mailEndpoint)
-		        .method(Method.POST)
-		        .param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
-		        .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
-		        .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
-		        .param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
-		        .param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
-		        .param("emailTemplateId", template.name())
-		        .header("Host", backendAddress);
-		queue.add(options);
+	public void sendEmail(Account sender, Account recipient, EmailTemplate template) {
+//		Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+//		String backendAddress =
+//		    BackendServiceFactory.getBackendService().getBackendAddress(
+//		        System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+//		String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+//
+//		TaskOptions options =
+//		    TaskOptions.Builder
+//		        .withUrl(mailEndpoint)
+//		        .method(Method.POST)
+//		        .param(ZipllyServerConstants.ACTION_KEY, EmailAction.INDIVIDUAL.name())
+//		        .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, receiver.getEmail())
+//		        .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, receiver.getName())
+//		        .param(ZipllyServerConstants.SENDER_NAME_KEY, sender.getName())
+//		        .param(ZipllyServerConstants.SENDER_EMAIL_KEY, sender.getEmail())
+//		        .param("emailTemplateId", template.name())
+//		        .header("Host", backendAddress);
+//		queue.add(options);
+		
+		taskSystemHelper.addTask(EmailAction.INDIVIDUAL, 
+		    recipient.getName(), 
+		    recipient.getEmail(), 
+		    sender.getName(), 
+		    sender.getEmail(), 
+		    template);
 	}
 
   @Override
   public void sendCouponPurchaseNotification(Transaction txn, EmailTemplate couponPurchase) {
-    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-    String backendAddress =
-        BackendServiceFactory.getBackendService().getBackendAddress(
-            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
-    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-    TaskOptions options =
-        TaskOptions.Builder
-            .withUrl(mailEndpoint)
-            .method(Method.POST)
-            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.COUPON_TRANSACTION_SUCCESSFUL.name())
-            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, txn.getBuyer().getEmail())
-            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, txn.getBuyer().getName())
-            .header("Host", backendAddress);
-    queue.add(options);
+//    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+//    String backendAddress =
+//        BackendServiceFactory.getBackendService().getBackendAddress(
+//            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+//    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+//
+//    TaskOptions options =
+//        TaskOptions.Builder
+//            .withUrl(mailEndpoint)
+//            .method(Method.POST)
+//            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.COUPON_TRANSACTION_SUCCESSFUL.name())
+//            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, txn.getBuyer().getEmail())
+//            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, txn.getBuyer().getName())
+//            .header("Host", backendAddress);
+//    queue.add(options);
+    
+    Account recipient = txn.getBuyer();
+    taskSystemHelper.addTask(
+        EmailAction.COUPON_TRANSACTION_SUCCESSFUL, 
+        recipient.getName(), 
+        recipient.getEmail(), 
+        couponPurchase);
   }
   
   @Override
   public void sendSubscriptionCompletionNotification(Subscription subscription, EmailTemplate couponPurchase) {
-    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
-    String backendAddress =
-        BackendServiceFactory.getBackendService().getBackendAddress(
-            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
-    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
-
-    TaskOptions options =
-        TaskOptions.Builder
-            .withUrl(mailEndpoint)
-            .method(Method.POST)
-            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.SUBSCRIPTION_NOTFICATION.name())
-            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, subscription.getAccount().getEmail())
-            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, subscription.getAccount().getName())
-            .param(ZipllyServerConstants.SUBSCRIPTION_PLAN_ID_KEY, subscription.getSubscriptionPlan().getSubscriptionId().toString())
-            .header("Host", backendAddress);
-    queue.add(options);
+//    Queue queue = QueueFactory.getQueue(ZipllyServerConstants.EMAIL_QUEUE_NAME);
+//    String backendAddress =
+//        BackendServiceFactory.getBackendService().getBackendAddress(
+//            System.getProperty(ZipllyServerConstants.BACKEND_INSTANCE_NAME_1));
+//    String mailEndpoint = System.getProperty(ZipllyServerConstants.MAIL_ENDPOINT);
+//
+//    TaskOptions options =
+//        TaskOptions.Builder
+//            .withUrl(mailEndpoint)
+//            .method(Method.POST)
+//            .param(ZipllyServerConstants.ACTION_KEY, EmailAction.SUBSCRIPTION_NOTFICATION.name())
+//            .param(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, subscription.getAccount().getEmail())
+//            .param(ZipllyServerConstants.RECIPIENT_NAME_KEY, subscription.getAccount().getName())
+//            .param(ZipllyServerConstants.SUBSCRIPTION_PLAN_ID_KEY, subscription.getSubscriptionPlan().getSubscriptionId().toString())
+//            .header("Host", backendAddress);
+//    queue.add(options);
+    
+    Account recipient = subscription.getAccount();
+    taskSystemHelper.addTask(
+        EmailAction.COUPON_TRANSACTION_SUCCESSFUL, 
+        recipient.getName(), 
+        recipient.getEmail(),
+        subscription.getSubscriptionPlan().getSubscriptionId(),
+        couponPurchase);
   }
   
 }

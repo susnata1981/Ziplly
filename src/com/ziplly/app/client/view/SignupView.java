@@ -78,9 +78,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	Anchor howItWorksAnchor;
 
 	@UiField
-	Anchor howItWorksInDetailAnchor;
-	
-	@UiField
 	TextBox firstname;
 	@UiField
 	ControlGroup firstnameCg;
@@ -552,12 +549,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		navigateToElement(elem);
 	}
 
-	@UiHandler("howItWorksInDetailAnchor")
-	void howItWorksInDetailAnchor(ClickEvent event) {
-		event.preventDefault();
-		navigateToElement(DOM.getElementById("howItWorksInDetailLink"));
-	}
-	
 	/**
 	 * Link within page.
 	 */

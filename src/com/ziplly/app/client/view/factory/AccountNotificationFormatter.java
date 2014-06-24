@@ -32,6 +32,11 @@ public class AccountNotificationFormatter extends AbstractValueFormatter<Account
 				content.append("&nbsp;" + value.getSender().getDisplayName());
 				content.append(basicValueFormatter.format("&nbsp;posted an offer", ValueType.STRING_VALUE));
 				return content.toString();
+			case COUPON:
+	       content.append(format(value, ValueType.ACCOUNT_NOTIFICATION_SENDER_IMAGE));
+	       content.append("&nbsp;" + value.getSender().getDisplayName());
+	       content.append(basicValueFormatter.format("&nbsp;posted a coupon", ValueType.STRING_VALUE));
+	       return content.toString();
 			case ACCOUNT_NOTIFICATION_SENDER_IMAGE:
 				content.append("<img src='"
 				    + basicValueFormatter.format(value.getSender(), ValueType.PROFILE_IMAGE_URL) + "' width='25px' height='25px'/>");

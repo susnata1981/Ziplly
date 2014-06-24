@@ -83,7 +83,7 @@ public class ColumnDefinition implements Comparable<ColumnDefinition> {
 
 		    @Override
 		    public String getValue(CouponItemDTO object) {
-			    return "View Code";
+			    return "View Coupon";
 		    }
 	    });
 	public static final ColumnDefinition PRINT_COUPON = new ColumnDefinition(
@@ -92,7 +92,7 @@ public class ColumnDefinition implements Comparable<ColumnDefinition> {
 
 		    @Override
 		    public String getValue(CouponItemDTO object) {
-			    return "Print";
+			    return "Print Coupon";
 		    }
 	    });
 	
@@ -118,100 +118,3 @@ public class ColumnDefinition implements Comparable<ColumnDefinition> {
 		return title.compareTo(o.title);
   }
 }
-
-// private void buildTable() {
-// Column<CouponTransactionDTO, String> couponDescription = new
-// TextColumn<CouponTransactionDTO>() {
-//
-// @Override
-// public String getValue(CouponTransactionDTO c) {
-// return c.getCoupon().getDescription();
-// }
-// };
-// transactionWidget.addColumn(couponDescription, "Description");
-//
-// Column<CouponTransactionDTO, Number> couponPrice = new
-// Column<CouponTransactionDTO, Number>(new NumberCell()) {
-//
-// @Override
-// public Number getValue(CouponTransactionDTO c) {
-// return c.getCoupon().getPrice().doubleValue();
-// }
-// };
-// transactionWidget.addColumn(couponPrice, "Price");
-//
-// Column<CouponTransactionDTO, Number> discount = new
-// Column<CouponTransactionDTO, Number>(new NumberCell()) {
-//
-// @Override
-// public Number getValue(CouponTransactionDTO c) {
-// return c.getCoupon().getDiscount().doubleValue();
-// }
-// };
-// transactionWidget.addColumn(discount, "Discount");
-//
-// Column<CouponTransactionDTO, String> status = new
-// TextColumn<CouponTransactionDTO>() {
-//
-// @Override
-// public String getValue(CouponTransactionDTO c) {
-// return c.getPurchasedCoupon().getStatus().name();
-// }
-// };
-// transactionWidget.addColumn(status, "Status");
-//
-// Column<CouponTransactionDTO, String> timePurchased = new
-// TextColumn<CouponTransactionDTO>() {
-//
-// @Override
-// public String getValue(CouponTransactionDTO c) {
-// return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE);
-// }
-// };
-// transactionWidget.addColumn(timePurchased, "Time Purchased");
-//
-// ButtonCell viewButtonCell = new ButtonCell(IconType.BARCODE);
-// final TooltipCellDecorator<String> decorator = new
-// TooltipCellDecorator<String>(viewButtonCell);
-// decorator.setText("View coupon");
-// Column<CouponTransactionDTO, String> buttonCol = new
-// Column<CouponTransactionDTO, String>(decorator) {
-//
-// @Override
-// public String getValue(CouponTransactionDTO object) {
-// return "view";
-// }
-// };
-// buttonCol.setFieldUpdater(new FieldUpdater<CouponTransactionDTO, String>() {
-//
-// @Override
-// public void update(int index, CouponTransactionDTO object, String value) {
-// presenter.getCouponQRCodeUrl(object.getTransactionId());
-// }
-//
-// });
-// transactionWidget.addColumn(buttonCol);
-//
-// ButtonCell printButtonCell = new ButtonCell(IconType.BARCODE);
-// final TooltipCellDecorator<String> printCouponDecorator = new
-// TooltipCellDecorator<String>(printButtonCell);
-// decorator.setText("Print coupon");
-// Column<CouponTransactionDTO, String> printbuttonCol = new
-// Column<CouponTransactionDTO, String>(printCouponDecorator) {
-//
-// @Override
-// public String getValue(CouponTransactionDTO object) {
-// return "print";
-// }
-// };
-// printbuttonCol.setFieldUpdater(new FieldUpdater<CouponTransactionDTO,
-// String>() {
-//
-// @Override
-// public void update(int index, CouponTransactionDTO object, String value) {
-// presenter.printCoupon(object.getTransactionId());
-// }
-//
-// });
-// transactionWidget.addColumn(printbuttonCol);
-// }

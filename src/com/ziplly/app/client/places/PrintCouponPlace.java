@@ -1,5 +1,7 @@
 package com.ziplly.app.client.places;
 
+import java.util.List;
+
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
 
@@ -39,12 +41,17 @@ public class PrintCouponPlace extends Place {
     public PrintCouponPlace getPlace(String token) {
       tokenize(token);
       try {
+        List<String> tokens = getTokens();
+        if (tokens.size() != 2) {
+          PrintCouponPlace place = new PrintCouponPlace(-1, -1);
+          return place;
+        }
         long orderId = Long.parseLong(getTokenAt(0));
         long couponId = Long.parseLong(getTokenAt(1));
         PrintCouponPlace place = new PrintCouponPlace(orderId, couponId);
         return place;
       } catch (NumberFormatException ex) {
-        PrintCouponPlace place = new PrintCouponPlace(-1, 0);
+        PrintCouponPlace place = new PrintCouponPlace(-1, -1);
         return place;
       }
     }

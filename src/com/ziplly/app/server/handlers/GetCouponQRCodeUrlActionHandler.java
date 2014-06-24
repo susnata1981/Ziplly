@@ -3,7 +3,6 @@ package com.ziplly.app.server.handlers;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -59,7 +58,8 @@ public class GetCouponQRCodeUrlActionHandler extends AbstractAccountActionHandle
 				throw new AccessException(String.format("User doesn't have access to this resource"));
 			}
 			
-			CouponItem item = orderDao.findCouponItemByOrderAndCouponId(order.getId(), action.getCouponId());
+			CouponItem item = orderDao.findCouponItemByOrderAndCouponId(
+			    order.getId(), action.getCouponId());
 			String qrcodeUrl = couponBli.getQrcodeUrl(item);
 			result.setUrl(qrcodeUrl);
 			result.setCoupon(EntityUtil.clone(item.getCoupon()));

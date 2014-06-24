@@ -14,6 +14,7 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.Tab;
@@ -41,6 +42,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -154,9 +156,9 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	HTMLPanel privacyPanel;
 	private Map<PrivacySettingsDTO, ShareSettingsWidget> privacySettingsMap =
 	    new HashMap<PrivacySettingsDTO, ShareSettingsWidget>();
-	private PrivacySettingsFormatter privacySettingsFormatter =
-	    (PrivacySettingsFormatter) AbstractValueFormatterFactory
-	        .getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
+//	private PrivacySettingsFormatter privacySettingsFormatter =
+//	    (PrivacySettingsFormatter) AbstractValueFormatterFactory
+//	        .getValueFamilyFormatter(ValueFamilyType.PRIVACY_SETTINGS);
 
 	//
 	// Occupation
@@ -240,7 +242,6 @@ public class PersonalAccountSettingsView extends AbstractView implements
 	public PersonalAccountSettingsView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
-		setBackgroundImage(ZResources.IMPL.profileBackground().getSafeUri().asString());
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
 		StyleHelper.show(loadingImage.getElement(), false);
@@ -339,8 +340,6 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 	/**
 	 * Populates privacy settings
-	 * 
-	 * @param account
 	 */
 	private void populatePrivacySettings(PersonalAccountDTO account) {
 		privacyPanel.clear();
@@ -348,8 +347,11 @@ public class PersonalAccountSettingsView extends AbstractView implements
 
 		for (PrivacySettingsDTO ps : account.getPrivacySettings()) {
 			HPanel panel = new HPanel();
-			HTMLPanel span =
-			    new HTMLPanel(ps.getSection().getName());//privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
+			Label privacySettingsLabel = new Label(ps.getSection().getName());
+			privacySettingsLabel.setStyleName(style.profileInfoHeaderNoBackground());
+			
+			FlowPanel span = new FlowPanel();//privacySettingsFormatter.format(ps, ValueType.PRIVACY_FIELD_NAME));
+			span.add(privacySettingsLabel);
 			span.setStyleName(style.profileInfoHeaderNoBackground());
 			ShareSettingsWidget shareSettingWidget = new ShareSettingsWidget(ps.getAllowedShareSettings());
 			shareSettingWidget.setSelection(ps.getSetting());
@@ -402,9 +404,14 @@ public class PersonalAccountSettingsView extends AbstractView implements
 			ListBox action = getNotificationActionListBox();
 			action.setSelectedIndex(ans.getAction().ordinal());
 			HPanel panel = new HPanel();
-			HTMLPanel span =
-			    new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
-			span.setWidth("120px");
+			FlowPanel span = new FlowPanel();
+	    Label notificationLabel = new Label(ans.getType().getNotificationName());
+	    notificationLabel.setStyleName(style.profileInfoHeaderNoBackground());
+	    span.add(notificationLabel);
+			
+//			HTMLPanel span =
+//			    new HTMLPanel(basicDataFormatter.format(ans.getType(), ValueType.NOTIFICATION_TYPE));
+//			span.setWidth("120px");
 			panel.add(span);
 			panel.add(action);
 			notificationPanel.add(panel);

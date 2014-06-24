@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
+import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.places.OAuthPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.NavView;
@@ -77,6 +78,7 @@ public class ZipllyController {
 		this.placeController = placeController;
 		this.defaultPlace = new SignupPlace();
 		historyHandler.register(placeController, eventBus, defaultPlace);
+		GlobalErrorHandler.setEventBus(eventBus);
 	}
 
 	public static native void consolelog(String msg) /*-{

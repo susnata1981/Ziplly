@@ -6,11 +6,13 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.Subscription;
 import com.ziplly.app.server.model.jpa.Transaction;
+import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
 
 public interface TweetNotificationBLI {
-	void sendNotificationsIfRequired(TweetDTO savedTweet) throws NotFoundException;
-
+//	void sendNotificationsIfRequired(TweetDTO savedTweet) throws NotFoundException;
+  void sendNotificationsIfRequired(Tweet tweet) throws NotFoundException;
+  
 	void sendNotification(Long senderAccountId,
 	    Long neighborhoodId,
 	    Long tweetId,
@@ -29,4 +31,5 @@ public interface TweetNotificationBLI {
 
   void sendSubscriptionCompletionNotification(Subscription subscription,
       EmailTemplate subscriptionPurchase);
+
 }

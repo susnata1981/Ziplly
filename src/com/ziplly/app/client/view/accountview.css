@@ -329,7 +329,6 @@ h2.heading {
 	width: 180px;
 	height: 200px;
 	margin-bottom: 2px;
-	border: 1px solid #bbb;
 	padding: 6px;
 }
 
@@ -426,9 +425,9 @@ input[type="text"], input[type="password"] {
 
 .profileInfoHeaderNoBackground {
 	display: block;
-	font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
 	font-size: 16px;
-	width: 50%;
+	width: 170px;
 	margin: 2px 0;
 	color: #555;
 }

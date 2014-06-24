@@ -17,7 +17,6 @@ public class PaymentFlow {
 				.buy({
 					'jwt' : jwtToken,
 					'success' : function(result) {
-						console.log(result);
 						that.@com.ziplly.app.client.activities.util.PaymentFlow::onSuccess(Lcom/ziplly/app/model/overlay/GoogleWalletSuccessResult;)(result);
 					},
 					'failure' : function(result) {
