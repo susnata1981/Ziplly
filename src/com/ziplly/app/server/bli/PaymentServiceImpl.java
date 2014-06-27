@@ -6,6 +6,7 @@ import java.security.SignatureException;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import net.oauth.jsontoken.JsonToken;
@@ -54,12 +55,15 @@ public class PaymentServiceImpl implements PaymentService {
 	private final String sellerSecret;
 	private final String sellerId;
 
+	private Logger logger = Logger.getLogger(PaymentServiceImpl.class.getName());
+	
 	@Inject
 	public PaymentServiceImpl(
 			@Named("seller_id") String sellerId, 
 			@Named("seller_secret") String sellerSecret) {
 		this.sellerId = sellerId;
 		this.sellerSecret = sellerSecret;
+		logger.info(String.format("PAYMENT SERVICE using id %s, secret %s", sellerId, sellerSecret));
   }
 
 	@Deprecated
@@ -172,7 +176,6 @@ public class PaymentServiceImpl implements PaymentService {
     // Current time and signing algorithm
     Calendar cal = Calendar.getInstance();
     HmacSHA256Signer signer = new HmacSHA256Signer(sellerId, null, sellerSecret.getBytes());
-
     // Configure JSON token
     JsonToken token = new JsonToken(signer);
     token.setAudience(AUD_GOOGLE);

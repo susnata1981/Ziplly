@@ -369,9 +369,10 @@ public class ConversationView extends AbstractView implements IConversationView 
           return;
         }
         
+        Date now = new Date();
         MessageDTO m = new MessageDTO();
         m.setMessage(cdv.getReplyContent());
-        m.setTimeCreated(new Date());
+        m.setTimeCreated(now);
         if (conversation.isSender()) {
           m.setReceiver(conversation.getReceiver());
           m.setSender(conversation.getSender());
@@ -380,7 +381,7 @@ public class ConversationView extends AbstractView implements IConversationView 
           m.setSender(conversation.getReceiver());
         }
         conversation.add(m);
-        conversation.setTimeUpdated(new Date());
+        conversation.setTimeUpdated(now);
         presenter.sendMessage(conversation);
         cdv.clear();
       }

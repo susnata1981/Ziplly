@@ -5,7 +5,7 @@ public enum TransactionStatus {
 	ACTIVE, 
 	CANCELLED, 
 	FAILURE, 
-	COMPLETE,
+	COMPLETED,
 	PENDING_COMPLETE,
 	ELIGIBILITY_FAILED;
 }

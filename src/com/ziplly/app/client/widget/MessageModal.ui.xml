@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:style>
+	<ui:style type="com.ziplly.app.client.widget.MessageModal.Style">
 		.message {
 		display: block;
 		padding: 4px;
@@ -18,12 +18,16 @@
 			background: #FF1919;
 			padding: 0 6px;
 		}
+		.success {
+			background: #94FF94;
+			padding: 0 6px;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.modalPanel}">
 		<b:Modal ui:field="modal" title="" backdrop="STATIC" keyboard="true"
 			animation="true">
 			<g:HTMLPanel>
-			    <g:HTMLPanel ui:field="modalHeader" addStyleNames="{style.error}">
+			    <g:HTMLPanel ui:field="modalHeader">
 			        <h3 ui:field="title"/>
 			    </g:HTMLPanel>
 				<g:HTMLPanel ui:field="modalContainer">

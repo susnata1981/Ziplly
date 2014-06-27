@@ -381,7 +381,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     try {
       Query query =
           em.createQuery("select count(*) from Tweet where sender.accountId = :accountId "
-                  + "and creationTime between :before and :now and status = :status and coupon.couponId is not null");
+                  + "and timeCreated between :before and :now and status = :status and coupon.couponId is not null");
       query.setParameter("accountId", accountId);
       query.setParameter("status", TweetStatus.ACTIVE.name());
       query.setParameter("before", before);

@@ -21,9 +21,9 @@ import com.google.inject.name.Named;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
+import com.ziplly.app.client.exceptions.CouponPurchaseLimitExceededException;
 import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
-import com.ziplly.app.client.exceptions.UsageLimitExceededException;
 import com.ziplly.app.dao.OrderDAO;
 import com.ziplly.app.model.CouponItemStatus;
 import com.ziplly.app.model.OrderStatus;
@@ -95,11 +95,13 @@ public class CouponBLIImpl implements CouponBLI {
       redeemCoupon(String encodedCouponData, Long sellerAccountId) throws InvalidCouponException,
           CouponAlreadyUsedException {
 
+    logger.info(String.format("Redeeming coupon %s for account %d", encodedCouponData, sellerAccountId));
     checkArgument(encodedCouponData != null && sellerAccountId != null);
 
     CouponCodeDetails couponCodeDetails = new CouponCodeDetails(cryptoUtil);
     try {
       couponCodeDetails = couponCodeDetails.decode(decode(encodedCouponData));
+      logger.info(String.format("Decrypted coupon %s", couponCodeDetails));
     } catch (Exception e) {
       logger.severe(String.format("Unable to decrypt coupon code %s", encodedCouponData));
       throw new InvalidCouponException(encodedCouponData);
@@ -111,8 +113,8 @@ public class CouponBLIImpl implements CouponBLI {
       Order order = orderDAO.findById(couponCodeDetails.getOrderId());
       CouponItem item =
           orderDAO.findCouponItemByOrderAndCouponId(
-              couponCodeDetails.getCouponId(),
-              couponCodeDetails.getOrderId());
+              couponCodeDetails.getOrderId(),
+              couponCodeDetails.getCouponId());
 
       if (order.getStatus() != OrderStatus.COMPLETED
           && order.getTransaction().getStatus() != TransactionStatus.COMPLETE) {
@@ -129,9 +131,11 @@ public class CouponBLIImpl implements CouponBLI {
       Coupon coupon = item.getCoupon();
       coupon.setQuantityPurchased(coupon.getQuantityPurchased() + 1);
       orderDAO.update(order);
+      
+      logger.info(String.format("Redeeming coupon %s successful", coupon));
       return coupon;
     } catch (NoResultException ex) {
-      throw new InvalidCouponException("Invalid coupon: no coupon was found");
+      throw new InvalidCouponException(String.format("Invalid coupon %s: no coupon was found",couponCodeDetails));
     }
   }
 
@@ -174,8 +178,7 @@ public class CouponBLIImpl implements CouponBLI {
   @Override
   @Transactional
   public void completeTransaction(Long orderId) throws CouponSoldOutException,
-      UsageLimitExceededException,
-      CouponCampaignEndedException {
+      CouponCampaignEndedException, CouponPurchaseLimitExceededException {
 
     logger.info(String.format("Complete transaction called for order %d", orderId));
     Date now = new Date();
@@ -185,7 +188,7 @@ public class CouponBLIImpl implements CouponBLI {
 
     try {
       checkCouponEligibility(order.getTransaction().getBuyer(), order.getOrderDetails());
-    } catch (CouponSoldOutException | UsageLimitExceededException | CouponCampaignEndedException ex) {
+    } catch (CouponSoldOutException | CouponPurchaseLimitExceededException | CouponCampaignEndedException ex) {
       logger.severe(String.format("Order %s ineligible for purchase because of %s", order, ex));
       order.setStatus(OrderStatus.ELIGIBILITY_FAILED);
       order.getTransaction().setStatus(TransactionStatus.ELIGIBILITY_FAILED);
@@ -229,8 +232,7 @@ public class CouponBLIImpl implements CouponBLI {
 
   private void
       checkCouponEligibility(Account buyer, Collection<OrderDetails> orderDetails) throws CouponSoldOutException,
-          UsageLimitExceededException,
-          CouponCampaignEndedException {
+          CouponCampaignEndedException, CouponPurchaseLimitExceededException {
 
     Iterator<OrderDetails> iterator = orderDetails.iterator();
     while (iterator.hasNext()) {

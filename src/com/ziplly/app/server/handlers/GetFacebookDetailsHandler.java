@@ -10,9 +10,10 @@ import net.customware.gwt.dispatch.shared.DispatchException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.shared.GetFacebookDetailsAction;
 import com.ziplly.app.shared.GetFacebookDetailsResult;
 
@@ -38,9 +39,9 @@ public class GetFacebookDetailsHandler extends
 			throw new IllegalArgumentException();
 		}
 		logger.info(String.format("Initiating token exchange %s", input.getCode()));
-		AccountDTO account = accountBli.getFacebookDetails(input.getCode());
+		Account account = accountBli.getFacebookDetails(input.getCode());
 		logger.info(String.format("Received account back from fb %s", account));
-		return new GetFacebookDetailsResult(account);
+		return new GetFacebookDetailsResult(EntityUtil.convert(account));
 	}
 
 	@Override

@@ -125,4 +125,5 @@ public interface StringDefinitions extends Constants {
   String failedValidation();
   String paymentCanclled();
   String error();
+  String couponPurchaseLimitExceededException();
 }

@@ -14,6 +14,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.Popover;
@@ -629,7 +630,6 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		likeAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				System.out.println("Clicked on like tweet:" + tweet.getTweetId());
 				presenter.likeTweet(tweet.getTweetId());
 			}
 		});
@@ -680,18 +680,24 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		modal.setTitle("people who liked this post");
 		for (final LoveDTO like : tweet.getLikes()) {
 			AccountDTO acct = like.getAuthor();
-			String content = accountFormatter.format(acct, ValueType.PROFILE_IMAGE_URL);
-			Anchor profileLink = new Anchor();
-			profileLink.getElement().setInnerHTML(content);
-			profileLink.setStyleName(style.profileLinkAnchor());
-			profileLink.addClickHandler(new ClickHandler() {
+			HPanel hpanel = new HPanel();
+			Image profileImage = new Image();
+			String imageUrl = accountFormatter.format(acct, ValueType.PROFILE_IMAGE_URL);
+			profileImage.setWidth("40px");
+			profileImage.setHeight("40px");
+			profileImage.setUrl(imageUrl);
+			Anchor name = new Anchor(acct.getDisplayName());
+			hpanel.add(profileImage);
+			hpanel.add(name);
+			name.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+				  modal.hide();
 					displayPublicProfile(like.getAuthor());
 				}
 			});
 			likes.add(like);
-			modal.add(profileLink);
+			modal.add(hpanel);
 		}
 		modal.toggle();
 	}

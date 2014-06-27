@@ -80,7 +80,7 @@ public class ServiceModule extends AbstractModule {
 		  return "http://cf.zipllydevel.appspot.com/#tweet:couponredeem:";
 		} else {
 //			return "http://www.ziplly.com#tweet:couponredeem:";
-		  return "http://cf.zipllydevel.appspot.com/#tweet:couponredeem:";
+		  return "http://cf.zipplyrocks.appspot.com/#tweet:couponredeem:";
 		}
 	}
 	

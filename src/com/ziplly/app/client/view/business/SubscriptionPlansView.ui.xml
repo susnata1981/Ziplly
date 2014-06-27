@@ -9,12 +9,4 @@
 		<b:FluidRow ui:field="row">
 		</b:FluidRow>	
 	</b:FluidContainer>		    
-	<!-- <g:HTMLPanel ui:field="panel">
-		<dt:PricingPlanWidget price="FREE" tweetCount="3"
-			couponCount="0" title="BASIC" />
-		<dt:PricingPlanWidget price="25$" tweetCount="6"
-			couponCount="6" title="PREMIUM" titleHue="GREEN" />
-		<dt:PricingPlanWidget price="50$" tweetCount="unlimited"
-			couponCount="unlimited" title="PRO" />
-	</g:HTMLPanel> -->
 </ui:UiBinder> 

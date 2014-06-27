@@ -48,8 +48,8 @@ public class RegisterAccountActionHandler extends
 				saveImage = ((PersonalAccountDTO) accountDto).getFacebookRegistration();
 			}
 
-			AccountDTO newAccount = accountBli.register(account, saveImage);
-			result.setAccount(newAccount);
+			Account newAccount = accountBli.register(account, saveImage);
+			result.setAccount(EntityUtil.convert(newAccount));
 			result.setUid(accountDto.getUid());
 			return result;
 		} catch (AccountExistsException e) {

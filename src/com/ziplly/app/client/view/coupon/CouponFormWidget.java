@@ -275,9 +275,10 @@ public class CouponFormWidget extends AbstractView {
   }
 
   public CouponDTO getCoupon() {
-		if (!validate()) {
-			return null;
-		}
+//		if (!validate()) {
+//			return null;
+//		}
+//		assert(validate());
 		
 		CouponDTO coupon = new CouponDTO();
 		coupon.setTitle(titleWidget.getValue());

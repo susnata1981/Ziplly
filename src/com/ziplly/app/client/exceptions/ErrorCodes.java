@@ -18,5 +18,6 @@ public enum ErrorCodes {
 	NotSharedError,
 	OAuthError,
 	SoldoutError,
-	UsageLimitExceededError, 
+	UsageLimitExceededError,
+	CouponPurchaseLimitExceededError,
 }

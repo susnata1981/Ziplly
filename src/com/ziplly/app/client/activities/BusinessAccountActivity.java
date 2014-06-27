@@ -103,7 +103,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 				bind();
 				setupHandlers();
 				go(BusinessAccountActivity.this.panel);
-				if (place.getAccountId() != null) {
+				if (place.getAccountId() != 0) {
 					displayPublicProfile(place.getAccountId());
 				} else if (place.isShowTransactions()) {
 					displayProfile();
@@ -125,7 +125,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 				bind();
 				setupHandlers();
 				go(BusinessAccountActivity.this.panel);
-				if (place.getAccountId() != null) {
+				if (place.getAccountId() != 0) {
 					displayPublicProfile(place.getAccountId());
 				} else {
 					placeController.goTo(new LoginPlace());
@@ -197,7 +197,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	public void onScrollBottomHit() {
 		tweetPageIndex++;
 		GetTweetForUserAction action = null;
-		if (place.getAccountId() != null) {
+		if (place.getAccountId() != 0) {
 			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE);
 		} else if (ctx.getAccount() != null) {
 			action =

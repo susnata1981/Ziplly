@@ -136,7 +136,6 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	@Override
 	public void checkCouponPurchaseEligibility(final CouponDTO coupon, final TweetWidget widget) {
-		
 		CheckBuyerEligibilityForCouponAction eligibilityAction =
 		    new CheckBuyerEligibilityForCouponAction();
 		eligibilityAction.setCoupon(coupon);

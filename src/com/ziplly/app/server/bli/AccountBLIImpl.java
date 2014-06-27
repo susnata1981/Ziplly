@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
 
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -42,6 +41,7 @@ import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.client.exceptions.AccountExistsException;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.CouponCampaignEndedException;
+import com.ziplly.app.client.exceptions.CouponPurchaseLimitExceededException;
 import com.ziplly.app.client.exceptions.CouponSoldOutException;
 import com.ziplly.app.client.exceptions.DuplicateException;
 import com.ziplly.app.client.exceptions.InternalException;
@@ -69,12 +69,10 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.AccountType;
 import com.ziplly.app.model.Gender;
-import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.NotificationAction;
 import com.ziplly.app.model.NotificationType;
 import com.ziplly.app.model.OrderStatus;
 import com.ziplly.app.model.PasswordRecoveryStatus;
-import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.ZipllyServerConstants;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.model.jpa.Account;
@@ -90,7 +88,6 @@ import com.ziplly.app.server.model.jpa.PrivacySettings;
 import com.ziplly.app.server.model.jpa.Session;
 import com.ziplly.app.server.oauth.AuthFlowManagerFactory;
 import com.ziplly.app.server.oauth.OAuthFlowManager;
-import com.ziplly.app.server.util.TimeUtil;
 import com.ziplly.app.shared.BCrypt;
 import com.ziplly.app.shared.EmailTemplate;
 
@@ -179,7 +176,7 @@ public class AccountBLIImpl implements AccountBLI {
   }
 
   @Override
-  public AccountDTO register(Account account, boolean saveImage) throws AccountExistsException,
+  public Account register(Account account, boolean saveImage) throws AccountExistsException,
       InternalException,
       UnsupportedEncodingException,
       NoSuchAlgorithmException {
@@ -189,7 +186,7 @@ public class AccountBLIImpl implements AccountBLI {
     }
 
     // check for existing account
-    AccountDTO existingAccount = null;
+    Account existingAccount = null;
     try {
       existingAccount = accountDao.findByEmail(account.getEmail());
     } catch (NotFoundException nfe) {
@@ -213,12 +210,12 @@ public class AccountBLIImpl implements AccountBLI {
     account.setStatus(status);
 
     // create account otherwise
-    AccountDTO response = accountDao.save(account);
+    Account response = accountDao.save(account);
 
     // Send email verification.
     if (isEmailVerificationRequired(account)) {
       sendEmailVerification(response);
-      return EntityUtil.convert(account);
+      return account;
     } else {
       // login user
       Long uid = doLogin(response);
@@ -242,7 +239,7 @@ public class AccountBLIImpl implements AccountBLI {
     emailService.sendTemplatedEmailFromSender(builder);
   }
 
-  private void sendEmailVerification(AccountDTO account) throws InternalException,
+  private void sendEmailVerification(Account account) throws InternalException,
       UnsupportedEncodingException,
       NoSuchAlgorithmException {
     Preconditions.checkNotNull(account);
@@ -265,7 +262,7 @@ public class AccountBLIImpl implements AccountBLI {
       ar.setAccountId(account.getAccountId());
       ar.setStatus(AccountRegistrationStatus.UNUSED);
       AccountType atype =
-          (account instanceof PersonalAccountDTO) ? AccountType.PERSONAL : AccountType.BUSINESS;
+          (account instanceof PersonalAccount) ? AccountType.PERSONAL : AccountType.BUSINESS;
       ar.setAccountType(atype);
       accountRegistrationDao.save(ar);
 
@@ -282,7 +279,7 @@ public class AccountBLIImpl implements AccountBLI {
 
   // Sends the email
   private void
-      sendEmailVerificationCode(String verificationCode, AccountDTO account) throws UnsupportedEncodingException,
+      sendEmailVerificationCode(String verificationCode, Account account) throws UnsupportedEncodingException,
           NoSuchAlgorithmException {
 
     EmailEntity from = new EmailEntity();
@@ -291,9 +288,9 @@ public class AccountBLIImpl implements AccountBLI {
 
     EmailEntity to = new EmailEntity();
     to.email = account.getEmail();
-    to.name = account.getDisplayName();
+    to.name = account.getName();
     Map<String, String> data = Maps.newHashMap();
-    data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
+    data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getName());
     data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
     data.put(ZipllyServerConstants.SENDER_NAME_KEY, ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
     data.put(
@@ -311,7 +308,7 @@ public class AccountBLIImpl implements AccountBLI {
    * @param istream
    * @param ostream
    * @throws IOException
-   */
+   *
   private BlobKey saveImage(String url) {
     Preconditions.checkArgument(url != null);
     String fname = UUID.randomUUID().toString();
@@ -332,7 +329,9 @@ public class AccountBLIImpl implements AccountBLI {
 
     return null;
   }
-
+  */
+  
+  /**
   private void copy(InputStream istream, OutputStream ostream) throws IOException {
     byte[] buffer = new byte[BUFFER_SIZE];
     int bytesRead = istream.read(buffer);
@@ -346,7 +345,8 @@ public class AccountBLIImpl implements AccountBLI {
       ostream.close();
     }
   }
-
+  */
+  
   private void createDefaultNotificationSettings(Account account) {
     for (NotificationType type : NotificationType.values()) {
       if (type.isVisible()) {
@@ -372,12 +372,11 @@ public class AccountBLIImpl implements AccountBLI {
   }
 
   @Override
-  public AccountDTO
-      validateLogin(String email, String password) throws InvalidCredentialsException,
+  public Account validateLogin(String email, String password) throws InvalidCredentialsException,
           NotFoundException,
           AccountNotActiveException {
 
-    AccountDTO account = doValidateLogin(email, password);
+    Account account = doValidateLogin(email, password);
 
     // Throw error if account isn't active
     if (account.getStatus() != AccountStatus.ACTIVE) {
@@ -390,12 +389,11 @@ public class AccountBLIImpl implements AccountBLI {
     return account;
   }
 
-  private AccountDTO
+  private Account
       doValidateLogin(String email, String password) throws InvalidCredentialsException,
           NotFoundException {
-    AccountDTO account = null;
     try {
-      account = accountDao.findByEmail(email);
+      Account account = accountDao.findByEmail(email);
       String storedPassword = account.getPassword();
       boolean checkpw = BCrypt.checkpw(password, storedPassword);
       if (!checkpw) {
@@ -403,19 +401,18 @@ public class AccountBLIImpl implements AccountBLI {
       }
       // Update last login time.
       account.setLastLoginTime(new Date());
-      accountDao.update(EntityUtil.convert(account));
+      accountDao.update(account);
+      return account;
     } catch (NotFoundException e) {
       throw e;
     }
-
-    return account;
   }
 
   @Override
-  public Long doLogin(AccountDTO account) {
+  public Long doLogin(Account account) {
     Session session = new Session();
-    session.setAccount(EntityUtil.convert(account));
-    session.setLocation(new Location(getDefaultLocation(account)));
+    session.setAccount(account);
+    session.setLocation(getDefaultLocation(account));
     Date currTime = new Date();
     Date expireAt = new Date(currTime.getTime() + hoursInMillis);
     session.setExpireAt(expireAt);
@@ -427,12 +424,12 @@ public class AccountBLIImpl implements AccountBLI {
     storeCookie(uid);
 
     // set current location
-    account.setCurrentLocation(EntityUtil.clone(session.getLocation()));
+    account.setCurrentLocation(session.getLocation());
     return uid;
   }
 
-  private LocationDTO getDefaultLocation(AccountDTO account) {
-    return account.getLocations().get(0);
+  private Location getDefaultLocation(Account account) {
+    return account.getLocations().iterator().next();
   }
 
   @Override
@@ -459,11 +456,11 @@ public class AccountBLIImpl implements AccountBLI {
   }
 
   @Override
-  public AccountDTO getFacebookDetails(String code) throws OAuthException {
+  public Account getFacebookDetails(String code) throws OAuthException {
 
     Account loggedInAccount = getLoggedInUserBasedOnCookie();
     if (loggedInAccount != null) {
-      return EntityUtil.convert(loggedInAccount);
+      return loggedInAccount;
     }
 
     OAuthFlowManager authFlowManager = AuthFlowManagerFactory.get(authConfig);
@@ -481,13 +478,13 @@ public class AccountBLIImpl implements AccountBLI {
       return null;
     }
 
-    AccountDTO response = null;
+    Account response = null;
     try {
       response = accountDao.findByEmail(fuser.getEmail());
     } catch (NotFoundException nfe) {
       System.out.println("didn't find account.");
       // create user
-      PersonalAccountDTO account = new PersonalAccountDTO();
+      PersonalAccount account = new PersonalAccount();
       account.setEmail(fuser.getEmail());
       account.setFirstName(fuser.getFirstName());
       account.setLastName(fuser.getLastName());
@@ -510,7 +507,7 @@ public class AccountBLIImpl implements AccountBLI {
     // login user
     Long uid = doLogin(response);
     // AccountDTO result = new AccountDTO(response);
-    if (response instanceof PersonalAccountDTO) {
+    if (response instanceof PersonalAccount) {
       response.setUid(uid);
       return response;
     }
@@ -519,16 +516,15 @@ public class AccountBLIImpl implements AccountBLI {
   }
 
   @Override
-  public AccountDTO updateAccount(Account account) throws NeedsLoginException, NotFoundException {
+  public Account updateAccount(Account account) throws NeedsLoginException, NotFoundException {
     if (!isValidSession()) {
       throw new NeedsLoginException();
     }
 
     try {
-      accountDao.update(account);
-      AccountDTO response = EntityUtil.convert(account);
+      Account response = accountDao.update(account);
       Session session = sessionDao.findSessionByAccountId(account.getAccountId());
-      response.setCurrentLocation(EntityUtil.clone(session.getLocation()));
+      response.setCurrentLocation(session.getLocation());
       return response;
     } catch (NotFoundException e) {
       logger.severe(String.format(
@@ -664,7 +660,7 @@ public class AccountBLIImpl implements AccountBLI {
       throw new IllegalArgumentException();
     }
 
-    AccountDTO account = accountDao.findByEmail(email);
+    Account account = accountDao.findByEmail(email);
     String hash = getHash(account);
     passwordRecoveryDao.createOrUpdate(email, hash);
 
@@ -674,9 +670,9 @@ public class AccountBLIImpl implements AccountBLI {
 
     EmailEntity to = new EmailEntity();
     to.email = email;
-    to.name = account.getDisplayName();
+    to.name = account.getName();
     Map<String, String> data = Maps.newHashMap();
-    data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getDisplayName());
+    data.put(ZipllyServerConstants.RECIPIENT_NAME_KEY, account.getName());
     data.put(ZipllyServerConstants.RECIPIENT_EMAIL_KEY, account.getEmail());
     data.put(ZipllyServerConstants.SENDER_NAME_KEY, ZipllyServerConstants.APP_ADMIN_EMAIL_NAME);
     data.put(
@@ -700,7 +696,7 @@ public class AccountBLIImpl implements AccountBLI {
   }
 
   @Override
-  public AccountDTO verifyPasswordRecoverLink(String hash) throws AccessException,
+  public Account verifyPasswordRecoverLink(String hash) throws AccessException,
       NotFoundException {
     if (hash == null) {
       throw new IllegalArgumentException();
@@ -716,14 +712,14 @@ public class AccountBLIImpl implements AccountBLI {
       if (pr.getStatus() != PasswordRecoveryStatus.PENDING) {
         throw new AccessException();
       }
-      AccountDTO account = accountDao.findByEmail(pr.getEmail());
+      Account account = accountDao.findByEmail(pr.getEmail());
       return account;
     }
 
     return null;
   }
 
-  private String getHash(AccountDTO account) throws UnsupportedEncodingException,
+  private String getHash(Account account) throws UnsupportedEncodingException,
       NoSuchAlgorithmException {
     if (account == null) {
       throw new IllegalArgumentException();
@@ -757,7 +753,7 @@ public class AccountBLIImpl implements AccountBLI {
       UnsupportedEncodingException,
       NoSuchAlgorithmException {
     try {
-      AccountDTO account = accountDao.findByEmail(email);
+      Account account = accountDao.findByEmail(email);
       if (account.getStatus() != AccountStatus.PENDING_ACTIVATION) {
         throw new AccountExistsException();
       }
@@ -797,10 +793,8 @@ public class AccountBLIImpl implements AccountBLI {
    * allowed per user
    */
   @Override
-  public void
-      checkAccountEligibleForCouponPurchase(Account account, Coupon coupon) throws CouponSoldOutException,
-          UsageLimitExceededException,
-          CouponCampaignEndedException {
+  public void checkAccountEligibleForCouponPurchase(Account account, Coupon coupon) 
+          throws CouponSoldOutException, CouponCampaignEndedException, CouponPurchaseLimitExceededException {
 
     logger.info(String.format("Checking coupon eligibility for coupon %s, account %s", coupon, account));
     
@@ -810,19 +804,16 @@ public class AccountBLIImpl implements AccountBLI {
     }
 
     // Should the publisher be allowed to buy??
-
     // Check the number of same coupons allowed per user.
     try {
       List<CouponItem> purchasedCoupons =
           orderDao.findByAccountAndCouponId(coupon.getCouponId(), account.getAccountId(), OrderStatus.COMPLETED);
 
-      // int purchasedCouponCount = getTotalCouponsPurchased(purchasedCoupons);
       int purchasedCouponCount = purchasedCoupons.size();
-      // There will be a pending transaction, so it would at least be equal.
-      // We need to check more >.
-      if (purchasedCouponCount > coupon.getNumberAllowerPerIndividual()) {
+
+      if (purchasedCouponCount >= coupon.getNumberAllowerPerIndividual()) {
         logger.info(String.format("UsageLimitExceededException %s", coupon));
-        throw new UsageLimitExceededException("You have previously purchased the coupon.");
+        throw new CouponPurchaseLimitExceededException("You have previously purchased this coupon.");
       }
     } catch (NoResultException nre) {
       logger.info(String.format("First time buyer of %s", coupon));
@@ -841,5 +832,7 @@ public class AccountBLIImpl implements AccountBLI {
           "Coupon: %s discount is no longer available.",
           coupon.getDescription()));
     }
+    
+    logger.info(String.format("Buyer eligibility for coupon %s, account %s", coupon, account));
   }
 }

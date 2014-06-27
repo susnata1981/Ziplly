@@ -13,7 +13,6 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.CommentDTO;
 import com.ziplly.app.model.CouponItemDTO;
-import com.ziplly.app.model.TransactionDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.TweetDTO;

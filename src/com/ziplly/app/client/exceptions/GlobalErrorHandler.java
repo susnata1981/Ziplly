@@ -1,5 +1,6 @@
 package com.ziplly.app.client.exceptions;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.PlaceChangeEvent;
@@ -9,14 +10,13 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.MessageModal;
 
 public class GlobalErrorHandler {
   AlertModal modal = new AlertModal();
-  MessageModal mmodal = new MessageModal();
+  MessageModal mmodal = new MessageModal("Error", AlertType.SUCCESS);
 //  PlaceController controller;
   private static EventBus eventBus;
 
@@ -31,7 +31,6 @@ public class GlobalErrorHandler {
     }
 
     mmodal.setContent(errorDef.getErrorMessage());
-    mmodal.setTitle("Error");
     mmodal.show();
 
     if (errorDef.getCode() == ErrorCodes.NeedsLoginError) {
@@ -49,7 +48,7 @@ public class GlobalErrorHandler {
           BusinessAccountSettingsPlace settingsPlace =
               new BusinessAccountSettingsPlace(
                   BusinessAccountSettingsPlace.SettingsTab.SUBSCRIPTION_PLANS);
-//          mmodal.hide();
+          mmodal.hide();
           eventBus.fireEvent(new PlaceChangeEvent(settingsPlace));
           return;
         }
@@ -57,19 +56,7 @@ public class GlobalErrorHandler {
       panel.add(planSettingAnchor);
       mmodal.setWidget(panel);
       return;
-    } else {
-      mmodal.getButton().setText("Back");
-      mmodal.getButton().addClickHandler(new ClickHandler() {
-
-        @Override
-        public void onClick(ClickEvent event) {
-          mmodal.hide();
-          eventBus.fireEvent(new PlaceChangeEvent(new HomePlace()));
-          return;
-        }
-
-      });
-    }
+    } 
 
     postHandle();
   }

@@ -48,7 +48,7 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 	}
 
 	@Override
-	public AccountDTO findByEmail(String email) throws NotFoundException {
+	public Account findByEmail(String email) throws NotFoundException {
 		if (email == null) {
 			throw new IllegalArgumentException("Invalid arguement to findByEmail");
 		}
@@ -58,7 +58,7 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 		try {
 			Account account = (Account) query.getSingleResult();
 			account.getTweets();
-			return EntityUtil.convert(account);
+			return account;
 		} catch (NoResultException ex) {
 			logger.info(String.format("Didn't find account with %s", email));
 			throw new NotFoundException();
@@ -102,18 +102,18 @@ public class AccountDAOImpl extends BaseDAO implements AccountDAO {
 
 	@Transactional
 	@Override
-	public AccountDTO save(Account account) {
+	public Account save(Account account) {
 		EntityManager em = getEntityManager();
 		em.persist(account);
-		return EntityUtil.convert(account);
+		return account;
 	}
 
 	@Transactional
 	@Override
-	public AccountDTO update(Account account) {
+	public Account update(Account account) {
 		EntityManager em = getEntityManager();
 		Account updatedAccount = em.merge(account);
-		return EntityUtil.convert(updatedAccount);
+		return updatedAccount;
 	}
 
 	@Transactional

@@ -108,6 +108,8 @@ public class BasicDataFormatter implements Formatter<Object> {
         return ((TweetType) value).getTweetName();
       case NOTIFICATION_TYPE:
         return ((NotificationType) value).getNotificationName();
+      case PROFILE_IMAGE_URL_AS_BACKGROUND:
+        return getProfileImageUrl((AccountDTO) value);
       case PROFILE_IMAGE_URL:
         return getImageUrl((AccountDTO) value);
       case ADDRESS:
@@ -149,6 +151,15 @@ public class BasicDataFormatter implements Formatter<Object> {
     return imgUrl;
   }
 
+  String getProfileImageUrl(AccountDTO value) {
+    String imgUrl = "";
+    if (value.getImages().size() > 0) {
+      imgUrl = value.getImages().get(0).getUrl() + "=s1600";
+    } 
+    
+    return imgUrl;
+  }
+  
   public static String getContent(String content) {
     StringBuilder newContent = new StringBuilder();
     boolean foundPattern = true;

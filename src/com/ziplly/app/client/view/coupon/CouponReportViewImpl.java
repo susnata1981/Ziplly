@@ -162,6 +162,7 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 						        public void confirm() {
 							        confirmationWidget.show(false);
 							        doPublishCoupon();
+							        couponFormWidget.showButtons(true);
 //							        eventBus.fireEvent(new LoadingEventStart());
 						        }
 

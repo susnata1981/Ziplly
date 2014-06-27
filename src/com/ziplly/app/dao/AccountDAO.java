@@ -13,17 +13,17 @@ import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.server.model.jpa.Account;
 
 public interface AccountDAO {
-  AccountDTO findByEmail(String email) throws NotFoundException;
+  Account findByEmail(String email) throws NotFoundException;
 
   AccountDTO findByEmailAndPassword(String email, String password) throws NotFoundException;
 
   Account findById(Long accountId) throws NotFoundException;
 
-  AccountDTO save(Account user);
+  Account save(Account user);
 
   void updatePassword(Account account);
 
-  AccountDTO update(Account user);
+  Account update(Account user);
 
   List<Account> getAll(int start, int end);
 

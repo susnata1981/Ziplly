@@ -99,7 +99,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 				bind();
 				setupHandlers();
 				go(PersonalAccountActivity.this.panel);
-				if (place.getAccountId() != null) {
+				if (place.getAccountId() != 0) {
 					displayPublicProfile(place.getAccountId());
 				} else if (place.isShowTransactions()) {
 					displayProfile();
@@ -182,7 +182,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	public void onScrollBottomHit() {
 		tweetPageIndex++;
 		GetTweetForUserAction action = null;
-		if (place.getAccountId() != null) {
+		if (place.getAccountId() != 0) {
 			action = new GetTweetForUserAction(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE);
 		} else if (ctx.getAccount() != null) {
 			action =

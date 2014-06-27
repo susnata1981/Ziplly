@@ -113,6 +113,12 @@ public class ErrorDefinitions {
 			stringDefinitions.usageLimitExceededError(),
 			AlertType.ERROR);
 	
+	public static final ErrorDefinition<?> couponPurchaseLimitExceeded = new ErrorDefinition<CouponPurchaseLimitExceededException>(
+	    CouponPurchaseLimitExceededException.class,
+      ErrorCodes.CouponPurchaseLimitExceededError,
+      stringDefinitions.couponPurchaseLimitExceededException(),
+      AlertType.ERROR);
+	
 	static {
 		errorMap.put(accessError.getException(), accessError);
 		errorMap.put(duplicateError.getException(), duplicateError);
@@ -131,6 +137,7 @@ public class ErrorDefinitions {
 		errorMap.put(soldoutError.getException(), soldoutError);
 		errorMap.put(needsSubscriptionError.getException(), needsSubscriptionError);
 		errorMap.put(usageLimitExceededError.getException(), usageLimitExceededError);
+		errorMap.put(couponPurchaseLimitExceeded.getException(), couponPurchaseLimitExceeded);
 	}
 	
 	public static <T extends DispatchException> ErrorDefinition<T> getErrorDefinition(Class<?> clazz) {

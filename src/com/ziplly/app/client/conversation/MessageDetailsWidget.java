@@ -2,8 +2,10 @@ package com.ziplly.app.client.conversation;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,7 +43,7 @@ public class MessageDetailsWidget extends Composite {
     
     senderImage.setUrl(formatter.format(message.getSender(), ValueType.PROFILE_IMAGE_URL));
     senderName.setInnerText(message.getSender().getDisplayName());
-    messageSpan.setInnerText(message.getMessage());
+    messageSpan.setInnerHTML(message.getMessage());
     timeSent.setInnerText(formatter.format(message.getTimeCreated(), ValueType.DATE_DIFF));
   }
 

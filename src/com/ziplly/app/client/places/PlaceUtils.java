@@ -1,7 +1,6 @@
 package com.ziplly.app.client.places;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.Window;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.AccountDTO;
@@ -11,7 +10,9 @@ import com.ziplly.app.model.TweetDTO;
 
 public class PlaceUtils {
 
-	public static String getPlaceTokenForNeighborhood(Long neighborhoodId) {
+	private static final String HASH = "#";
+
+  public static String getPlaceTokenForNeighborhood(Long neighborhoodId) {
 		return StringConstants.NEIGHBORHOOD_TOKEN + StringConstants.PLACE_VALUE_SEPARATOR + neighborhoodId;
 	}
 
@@ -40,7 +41,7 @@ public class PlaceUtils {
 	}
 	
 	public static String toString(BusinessAccountSettingsPlace place) {
-	  return GWT.getHostPageBaseURL() + "#" + "businesssettings" + 
+	  return GWT.getHostPageBaseURL() + HASH + "businesssettings" + 
         StringConstants.PLACE_SEPARATOR  +
         place.getTab().name();
 	}
@@ -56,7 +57,7 @@ public class PlaceUtils {
 	}
 
 	public static String getPlaceTokenForTweetDetails(TweetDTO tweet) {
-		return GWT.getHostPageBaseURL() + "#" + StringConstants.TWEET_DETAILS_TOKEN
+		return GWT.getHostPageBaseURL() + HASH + StringConstants.TWEET_DETAILS_TOKEN
 		    + StringConstants.PLACE_SEPARATOR 
 		    + tweet.getTweetId();
 	}
@@ -72,5 +73,13 @@ public class PlaceUtils {
 
   public static String getPlaceToken(PrintCouponPlace place) {
     return "" + place.getOrderId() + StringConstants.PLACE_SEPARATOR + place.getCouponId();
+  }
+
+  public static String getPlaceToken(PersonalAccountPlace place) {
+    return place.getAccountId() + StringConstants.PLACE_SEPARATOR + place.isShowTransactions();
+  }
+  
+  public static String getPlaceToken(BusinessAccountPlace place) {
+    return place.getAccountId() + StringConstants.PLACE_SEPARATOR + place.isShowTransactions();
   }
 }

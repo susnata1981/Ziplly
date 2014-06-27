@@ -59,6 +59,8 @@ public class BusinessAccountSettingsActivity extends
 		void initiatePay(Long subscriptionId, String token);
 
     void setTab(SettingsTab tab);
+
+    void clearPasswords();
 	}
 
 	private AcceptsOneWidget panel;
@@ -167,6 +169,7 @@ public class BusinessAccountSettingsActivity extends
 			@Override
 			public void onSuccess(UpdatePasswordResult result) {
 				view.displayMessage(StringConstants.PASSWORD_UPDATED, AlertType.SUCCESS);
+				view.clearPasswords();
 			}
 
 			@Override
@@ -176,6 +179,7 @@ public class BusinessAccountSettingsActivity extends
 				} else {
 					view.displayMessage(StringConstants.PASSWORD_UPDATE_FAILURE, AlertType.ERROR);
 				}
+				view.clearPasswords();
 			}
 		});
 	}

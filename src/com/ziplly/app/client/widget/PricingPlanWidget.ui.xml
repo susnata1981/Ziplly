@@ -49,6 +49,7 @@
 			font-size: 20px;
 			line-height: 26px;
 			font-family: 'ProximaNova-Regular', Arial, Helvetica, sans-serif;
+			text-align:center;
 		}
 		.planDetails li {
 			list-style: none;	

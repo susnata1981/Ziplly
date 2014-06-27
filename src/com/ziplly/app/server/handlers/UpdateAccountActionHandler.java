@@ -41,7 +41,9 @@ public class UpdateAccountActionHandler extends
 		AccountDTO accountDto = action.getAccount();
 		Account account = EntityUtil.convert(accountDto);
 
-		AccountDTO result = accountBli.updateAccount(account);
+		Account updatedAccount = accountBli.updateAccount(account);
+    AccountDTO result = EntityUtil.convert(updatedAccount);
+//		Account result = accountBli.updateAccount(account);
 		// accountBli.setCurrentLocation(result,
 		// session.getLocation().getNeighborhood().getNeighborhoodId());
 		result.setCurrentLocation(EntityUtil.clone(session.getLocation()));

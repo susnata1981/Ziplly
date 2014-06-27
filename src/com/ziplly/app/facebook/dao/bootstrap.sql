@@ -21,3 +21,7 @@ insert into subscription values (2, 'ACTIVE', 1402135359000, 1402135359000, 1, 1
 create user 'zipllyadmin'@'localhost' identified by 'Sherica12';
 grant all privileges on zipllydb.* to 'zipllyadmin'@'localhost';
 flush privileges
+
+update orders set status='COMPLETED';
+update transaction set status='COMPLETED';
+	update coupon_item set status='UNUSED';

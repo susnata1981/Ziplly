@@ -10,9 +10,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.AccessException;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.shared.VerifyPasswordRecoveryHashAction;
 import com.ziplly.app.shared.VerifyPasswordRecoveryHashResult;
 
@@ -38,8 +40,9 @@ public class VerifyPasswordRecoveryHashActionHandler
 		}
 
 		try {
-			AccountDTO account = accountBli.verifyPasswordRecoverLink(action.getHash());
-			return new VerifyPasswordRecoveryHashResult(account);
+			Account account = accountBli.verifyPasswordRecoverLink(action.getHash());
+			AccountDTO result = EntityUtil.convert(account);
+			return new VerifyPasswordRecoveryHashResult(result);
 		} catch (NoResultException nre) {
 			throw new AccessException("IllegalAccess");
 		}

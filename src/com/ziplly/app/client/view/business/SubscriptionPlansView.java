@@ -19,6 +19,7 @@ import com.ziplly.app.client.widget.PricingPlanWidget;
 import com.ziplly.app.client.widget.PricingPlanWidget.TITLE_HUE;
 import com.ziplly.app.model.SubscriptionPlanDTO;
 import com.ziplly.app.model.SubscriptionPlanType;
+import com.ziplly.app.model.overlay.SubscriptionDTO;
 
 public class SubscriptionPlansView extends Composite {
 
@@ -43,7 +44,10 @@ public class SubscriptionPlansView extends Composite {
   
   public void displaySubscriptionPlans(List<SubscriptionPlanDTO> plans) {
     int total = plans.size();
-    total = (total == 0) ? 4 : total;
+    if (total == 0) {
+      return;
+    }
+    
     int colSize = 12 / total; // this should be 3
     
     for(final SubscriptionPlanDTO plan : plans) {
@@ -84,5 +88,33 @@ public class SubscriptionPlansView extends Composite {
   
   public PricingPlanWidget getWidget(long subscriptionPlanId) {
     return planIdToPlanMap.get(subscriptionPlanId);
+  }
+
+  public void setActivePlan(SubscriptionDTO activePlan) {
+    if (activePlan == null) {
+      return;
+    }
+    
+    String buttonText = "Choose";
+    boolean basicPlanEnabled = false;
+    if (activePlan.getSubscriptionPlan().getPlanType() == SubscriptionPlanType.BASIC) {
+      basicPlanEnabled = true;
+      buttonText = "Upgrade";
+    } 
+ 
+    for(Long subscriptionId : planIdToPlanMap.keySet()) {
+      PricingPlanWidget pricingPlanWidget = planIdToPlanMap.get(subscriptionId);
+      
+      if (subscriptionId == activePlan.getSubscriptionPlan().getSubscriptionId()) {
+        pricingPlanWidget.getChoosePlanButton().setText("Active");
+        pricingPlanWidget.getChoosePlanButton().setEnabled(false);
+      } else {
+        pricingPlanWidget.getChoosePlanButton().setText(buttonText);
+      }
+      
+      if (!basicPlanEnabled) {
+        pricingPlanWidget.getChoosePlanButton().setEnabled(false);
+      }
+    }
   }
 }
