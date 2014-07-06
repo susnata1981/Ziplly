@@ -77,21 +77,11 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 		Query query = em.createQuery("select count(distinct c.transactionId) from Transaction c "
 				+ "where buyer.accountId = :accountId and status = :status")
 				.setParameter("accountId", accountId)
-				.setParameter("status", TransactionStatus.COMPLETE.name());
+				.setParameter("status", TransactionStatus.COMPLETED.name());
 		
 		Long count = (Long) query.getSingleResult();
 		return count;
   }
-	
-//	@Transactional
-//	@Override
-//  public Coupon findByCouponId(Long couponId) {
-//		Preconditions.checkNotNull(couponId);
-//		EntityManager em = entityManagerProvider.get();
-//		Query query = em.createQuery("from Coupon where couponId = :couponId")
-//				.setParameter("couponId", couponId);
-//		return (Coupon) query.getSingleResult();
-//  }
 
 	@Override
   public List<Transaction> findByAccountAndCouponId(Long couponId,
@@ -103,7 +93,7 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
 		Query query = em.createQuery("from Transaction where buyer.accountId = :accountId "
 				+ "and coupon.couponId = :couponId and status = :status")
 				.setParameter("accountId", accountId)
-				.setParameter("status", TransactionStatus.COMPLETE.name())
+				.setParameter("status", TransactionStatus.COMPLETED.name())
 				.setParameter("couponId", couponId);
 		
 		@SuppressWarnings("unchecked")
@@ -158,24 +148,4 @@ public class TransactionDAOImpl extends BaseDAO implements TransactionDAO {
     
     return (Transaction) query.getSingleResult();
   }
-
-//	@Override
-//  public List<Transaction> findTransactionByCouponId(Long couponId, int start, int pageSize) {
-//		EntityManager em = entityManagerProvider.get();
-//		Query query = em.createQuery("from Transaction c where c.coupon.couponId = :couponId")
-//				.setParameter("couponId", couponId)
-//				.setFirstResult(start)
-//				.setMaxResults(pageSize);
-//		
-//		return query.getResultList();
-//  }
-
-//	@Override
-//  public Long getTotalCountByByCouponId(Long couponId) {
-//		EntityManager em = entityManagerProvider.get();
-//		Query query = em.createQuery("select count(c) from Transaction c where c.coupon.couponId = :couponId")
-//				.setParameter("couponId", couponId);
-//		
-//		return (Long) query.getSingleResult();
-//  }
 }

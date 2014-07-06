@@ -21,7 +21,7 @@
 
   <!-- Configure java.util.logging -->
   <system-properties>
-    <property name="app.environment" value="PROD" />
+    <property name="app.environment" value="DEVEL" />
     <property name="gcs_bucket_name" value="ziplly_images" />
     
     <property name="app.mail.endpoint" value="/ziplly/sendmail" />

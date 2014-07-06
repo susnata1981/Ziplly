@@ -53,7 +53,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
   @Transactional
   @Override
-  public List<NeighborhoodDTO> findByPostalCode(String postalCode) {
+  public List<Neighborhood> findByPostalCode(String postalCode) {
     Query query =
         getEntityManager().createQuery(
             "select n from Neighborhood n join n.postalCodes p"
@@ -65,11 +65,12 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
     try {
       @SuppressWarnings("unchecked")
       List<Neighborhood> neighborhoods = (List<Neighborhood>) query.getResultList();
-      List<NeighborhoodDTO> response = Lists.newArrayList();
-      for (Neighborhood neighborhood : neighborhoods) {
-        response.add(EntityUtil.clone(neighborhood));
-      }
-      return response;
+      return neighborhoods;
+//      List<NeighborhoodDTO> response = Lists.newArrayList();
+//      for (Neighborhood neighborhood : neighborhoods) {
+//        response.add(EntityUtil.clone(neighborhood));
+//      }
+//      return response;
     } catch (NoResultException nre) {
       logger.warn(String.format("Couldn't find neighborhood with postal code: %d", postalCode));
       return ImmutableList.of();
@@ -78,11 +79,11 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
   @Transactional
   @Override
-  public List<NeighborhoodDTO> findAll() {
+  public List<Neighborhood> findAll() {
     Query query = getEntityManager().createQuery("from Neighborhood");
     @SuppressWarnings("unchecked")
     List<Neighborhood> result = query.getResultList();
-    return EntityUtil.cloneNeighborhoodList(result);
+    return result;
   }
 
   @Deprecated
@@ -106,11 +107,10 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
   @Transactional
   @Override
-  public List<NeighborhoodDTO>
+  public List<Neighborhood>
       findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException {
-    // EntityManager em = EntityManagerService.getInstance().getEntityManager();
 
-    List<NeighborhoodDTO> result = Lists.newArrayList();
+    List<Neighborhood> result = Lists.newArrayList();
     try {
       Query query =
           getEntityManager().createQuery(
@@ -118,9 +118,9 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
       query.setParameter("neighborhoodId", neighborhoodId);
       List<Neighborhood> neighborhoods = query.getResultList();
       for (Neighborhood neighborhood : neighborhoods) {
-        result.add(EntityUtil.clone(neighborhood));
+        result.add(neighborhood);
 
-        List<NeighborhoodDTO> childNeighborhoods =
+        List<Neighborhood> childNeighborhoods =
             findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
         if (childNeighborhoods.size() == 0) {
           continue;
@@ -136,11 +136,11 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
   @Transactional
   @Override
-  public List<NeighborhoodDTO>
+  public List<Neighborhood>
       findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId) throws NotFoundException {
 
     EntityManager em = getEntityManager();
-    List<NeighborhoodDTO> result = Lists.newArrayList();
+    List<Neighborhood> result = Lists.newArrayList();
 
     try {
       Query query =
@@ -149,9 +149,9 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
       query.setParameter("neighborhoodId", neighborhoodId);
       List<Neighborhood> neighborhoods = query.getResultList();
       for (Neighborhood neighborhood : neighborhoods) {
-        result.add(EntityUtil.clone(neighborhood));
+        result.add(neighborhood);
 
-        List<NeighborhoodDTO> childNeighborhoods =
+        List<Neighborhood> childNeighborhoods =
             findAllDescendentNeighborhoods(neighborhood.getNeighborhoodId());
         if (childNeighborhoods.size() == 0) {
           continue;
@@ -254,7 +254,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
 
   @Transactional
   @Override
-  public List<NeighborhoodDTO> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood) {
+  public List<Neighborhood> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood) {
     Preconditions.checkNotNull(neighborhood);
 
     try {
@@ -266,7 +266,7 @@ public class NeighborhoodDAOImpl extends BaseDAO implements NeighborhoodDAO {
           .setParameter("type", NeighborhoodType.NEIGHBORHOOD.name())
           .setParameter("state", neighborhood.getState());
       List<Neighborhood> neighborhoods = query.getResultList();
-      return EntityUtil.cloneNeighborhoodList(neighborhoods);
+      return neighborhoods;
     } catch (NoResultException nre) {
       return Collections.emptyList();
     }

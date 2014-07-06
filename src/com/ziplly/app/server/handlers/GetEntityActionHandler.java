@@ -18,8 +18,8 @@ import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.EntityType;
-import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Neighborhood;
 import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityResult;
 
@@ -58,7 +58,7 @@ public class GetEntityActionHandler extends
 		List<AccountDTO> accounts = Lists.newArrayList();
 		result.setEntityType(action.getEntityType());
 
-		List<NeighborhoodDTO> neighborhoods;
+		List<Neighborhood> neighborhoods;
 		List<Long> allNeighborhoodIds = Lists.newArrayList();
 
 		switch (action.getSearchType()) {
@@ -123,15 +123,15 @@ public class GetEntityActionHandler extends
 		return GetEntityListAction.class;
 	}
 
-	private List<Long> getNeighbodhoodIdList(List<NeighborhoodDTO> neighborhoods) {
+	private List<Long> getNeighbodhoodIdList(List<Neighborhood> neighborhoods) {
 		if (neighborhoods.size() == 0) {
 			return Collections.emptyList();
 		}
 
-		return Lists.transform(neighborhoods, new Function<NeighborhoodDTO, Long>() {
+		return Lists.transform(neighborhoods, new Function<Neighborhood, Long>() {
 
 			@Override
-			public Long apply(NeighborhoodDTO n) {
+			public Long apply(Neighborhood n) {
 				return n.getNeighborhoodId();
 			}
 		});

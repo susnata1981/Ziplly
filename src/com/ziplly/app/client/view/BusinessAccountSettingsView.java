@@ -596,10 +596,7 @@ public class BusinessAccountSettingsView extends AbstractView implements
 
 	@Override
 	public void displayMessage(String msg, AlertType type) {
-//		message.setType(type);
-//		message.setText(msg);
-//		message.setVisible(true);
-		MessageModal modal = new MessageModal();
+		MessageModal modal = new MessageModal(msg, type);
 		modal.setContent(msg);
 		modal.show();
 	}

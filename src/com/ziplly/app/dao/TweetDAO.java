@@ -26,7 +26,7 @@ public interface TweetDAO {
 
   Long findTotalCouponsByAccountIdAndMonth(Long accountId, long date);
 
-  TweetDTO findTweetById(Long tweetId) throws NotFoundException;
+  Tweet findTweetById(Long tweetId) throws NotFoundException;
 
   List<TweetDTO> findAll();
 
@@ -35,12 +35,12 @@ public interface TweetDAO {
   /**
    * Retrieves all tweets based on Neighborhood
    */
-  List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize);
+  List<Tweet> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize);
 
   /**
    * Retrieves specific tweet type (except coupons) based on Neighborhood
    */
-  List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type,
+  List<Tweet> findTweetsByTypeAndNeighborhood(TweetType type,
       Long neighborhoodId,
       int page,
       int pageSize) throws NotFoundException;
@@ -50,7 +50,7 @@ public interface TweetDAO {
    * coupons that are published one level up. This could change once we've more
    * traffic and there's no need to pull that data.
    */
-  List<TweetDTO> findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize);
+  List<Tweet> findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize);
 
   // long findTotalCouponsPublishedBetween(Long accountId, long before, long
   // now);

@@ -172,6 +172,7 @@ public class AccountBLIImpl implements AccountBLI {
     if (accountId == null) {
       throw new IllegalArgumentException();
     }
+    
     return accountDao.findById(accountId);
   }
 

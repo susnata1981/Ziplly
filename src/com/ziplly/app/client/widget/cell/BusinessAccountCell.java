@@ -10,6 +10,9 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.places.BusinessPlace;
+import com.ziplly.app.client.places.PlaceParserImpl;
 import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.view.CommunityViewState;
 import com.ziplly.app.client.view.ImageUtil;
@@ -19,10 +22,21 @@ import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.shared.FieldVerifier;
 
 public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
-
 	private final CommunityViewState state;
+  private final String BASE_URL;
 
-	@Override
+  public BusinessAccountCell(CommunityViewState state) {
+    super(BrowserEvents.CLICK);
+    this.state = state;
+    String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
+    if (environment.equalsIgnoreCase("DEVEL")) {
+      BASE_URL = "http://127.0.0.1:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997";
+    } else {
+      BASE_URL = GWT.getHostPageBaseURL();
+    }
+  }
+  
+  @Override
 	public void onBrowserEvent(Context context,
 	    Element parent,
 	    BusinessAccountDTO value,
@@ -34,16 +48,7 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		}
 
 		super.onBrowserEvent(context, parent, value, event, valueUpdater);
-		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
-		String accountId = value.getAccountId().toString();
-		String redirectUrl = "";
-
-		if (environment.equalsIgnoreCase("DEVEL")) {
-			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, "");
-		} else {
-			redirectUrl = GWT.getHostPageBaseURL();
-		}
-
+		long accountId = value.getAccountId();
 		NodeList<Element> buttons = parent.getElementsByTagName("button");
 		NodeList<Element> anchors = parent.getElementsByTagName("a");
 		Element websiteAnchor = getAnchorWithClass(anchors, "website-row-anchor");
@@ -52,17 +57,29 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		EventTarget target = event.getEventTarget();
 
 		if (button.isOrHasChild(Element.as(target))) {
-			redirectUrl += "#business:" + PlaceUtils.getPlaceTokenForMessaging(Long.parseLong(accountId), state.getNeighborhoodId());
-			Window.Location.replace(redirectUrl);
+			BusinessPlace place = new BusinessPlace();
+			place.setAccountId(accountId);
+			place.setNeighborhoodId(state.getNeighborhoodId());
+			place.setPostalCode(state.getPostalCode());
+			Window.Location.replace(getRedirectUrl(place));
 		} 
 		else if (!websiteAnchor.isOrHasChild(Element.as(target))) {
 			// Redirect only if it's a click on the profile
-			redirectUrl = redirectUrl + "#businessaccount:" + accountId;
-			Window.Location.replace(redirectUrl);
+		  BusinessAccountPlace place = new BusinessAccountPlace();
+		  place.setAccountId(accountId);
+			Window.Location.replace(getRedirectUrl(place));
 		}
 	}
 
-	private Element getAnchorWithClass(NodeList<Element> anchors, String className) {
+	private String getRedirectUrl(BusinessPlace place) {
+	  return BASE_URL + PlaceParserImpl.HASH + BusinessPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
+  }
+
+  private String getRedirectUrl(BusinessAccountPlace place) {
+	  return BASE_URL + PlaceParserImpl.HASH + BusinessAccountPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place); 
+  }
+
+  private Element getAnchorWithClass(NodeList<Element> anchors, String className) {
 		int len = anchors.getLength();
 		for(int i=0; i<len; i++) {
 			Element elem = anchors.getItem(i);
@@ -73,11 +90,6 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 		
 		return null;
   }
-
-	public BusinessAccountCell(CommunityViewState state) {
-		super(BrowserEvents.CLICK);
-		this.state = state;
-	}
 
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context,

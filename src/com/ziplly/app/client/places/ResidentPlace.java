@@ -1,46 +1,33 @@
 package com.ziplly.app.client.places;
 
+import java.util.Map;
+
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.Gender;
 
 public class ResidentPlace extends Place {
-	private String token;
-	private Long accountId;
-	private Long neighborhoodId;
-	private Gender gender;
+  public static final String TOKEN = "residents";
+	private long accountId;
+	private long neighborhoodId;
+	private Gender gender = Gender.NOT_SPECIFIED;
 
 	public ResidentPlace() {
-		this.setToken("");
 	}
 
-	public ResidentPlace(String token) {
-		this.setToken(token);
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public Long getAccountId() {
+	public long getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(Long accountId) {
+	public void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
 
-	public Long getNeighborhoodId() {
+	public long getNeighborhoodId() {
 		return neighborhoodId;
 	}
 
-	public void setNeighborhoodId(Long neighborhoodId) {
+	public void setNeighborhoodId(long neighborhoodId) {
 		this.neighborhoodId = neighborhoodId;
 	}
 
@@ -53,50 +40,33 @@ public class ResidentPlace extends Place {
 	}
 
 	@Prefix("residents")
-	public static class Tokenizer implements PlaceTokenizer<ResidentPlace> {
+	public static class Tokenizer extends BaseTokenizer<ResidentPlace> {
 
-		@Override
-		public ResidentPlace getPlace(String token) {
-			if (token != null) {
-				try {
-					String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-					if (tokens.length > 1) {
-						ResidentPlace place = new ResidentPlace();
-						for (int i = 0; i < tokens.length;i++) {
-							String tok = tokens[i];
-							String[] split = tok.split(StringConstants.PLACE_VALUE_SEPARATOR);
-							if (split[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
-								long accountId = Long.parseLong(split[1]);
-								place.setAccountId(accountId);
-							} else if (split[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
-								long neighborhoodId = Long.parseLong(split[1]);
-								place.setNeighborhoodId(neighborhoodId);
-							} else if (split[0].equalsIgnoreCase(StringConstants.GENDER_TOKEN)) {
-								String gender = split[1];
-								place.setGender(Gender.valueOf(gender));
-							} else {
-								throw new RuntimeException("Invalid url in resident view");
-							}
-						}
-						return place;
-					}
-				} catch (Exception ex) {
-					// Something happened.
-					return new ResidentPlace(token);
-				}
-			}
-			return new ResidentPlace("");
-		}
-
+	  @Override
+    public ResidentPlace getPlace(String token) {
+      try {
+        ResidentPlace place = new ResidentPlace();
+        Map<AttributeKey, AttributeValue> params = parser.parse(token);
+        
+        for(AttributeKey key: params.keySet()) {
+          AttributeValue attrValue = params.get(key);
+          if (key.equals(AttributeKey.SEND_MESSAGE_TOKEN)) {
+            place.setAccountId(Long.parseLong(attrValue.value()));
+          } else if (key.equals(AttributeKey.NEIGHBORHOOD_ID)) {
+            place.setNeighborhoodId(Long.parseLong(params.get(key).value()));
+          } else if (key.equals(AttributeKey.GENDER_KEY)) {
+            place.setGender(Gender.valueOf(attrValue.value()));
+          } 
+        }
+        
+        return place;
+      } catch (Exception ex) {
+        return new ResidentPlace();
+      }
+    }
 		@Override
 		public String getToken(ResidentPlace place) {
-			if (place.getAccountId() != null) {
-				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId(), place.getNeighborhoodId(), place.getGender());
-			} else if (place.getNeighborhoodId() != null) {
-				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
-			} else {
-				return "";
-			}
+		  return PlaceUtils.getPlaceToken(place);
 		}
 	}
 }

@@ -101,14 +101,14 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId,
+  public List<Tweet> findTweetsByNeighborhood(Long neighborhoodId,
       int page,
       int pageSize) {
 
     return findTweetsByNeighborhood(neighborhoodId, TweetType.getPromotionTypes(), page, pageSize);
   }
 
-  private List<TweetDTO> findTweetsByNeighborhood(Long neighborhoodId,
+  private List<Tweet> findTweetsByNeighborhood(Long neighborhoodId,
       List<TweetType> promotionTypes,
       int page,
       int pageSize) {
@@ -138,7 +138,8 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 
       @SuppressWarnings("unchecked")
       List<Tweet> tweets = (List<Tweet>) query.getResultList();
-      return EntityUtil.cloneList(tweets);
+      return tweets;
+//      return EntityUtil.cloneList(tweets);
     } catch (NoResultException nre) {
       logger.warning(String.format(
           "Failed to retrieve tweets for neighborhoodId %d, exception %s",
@@ -149,7 +150,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public List<TweetDTO> findTweetsByTypeAndNeighborhood(TweetType type,
+  public List<Tweet> findTweetsByTypeAndNeighborhood(TweetType type,
       Long neighborhoodId,
       int page,
       int pageSize) throws NotFoundException {
@@ -170,7 +171,8 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
           tweets.size(),
           type.name(),
           neighborhoodId));
-      return EntityUtil.cloneList(tweets);
+//      return EntityUtil.cloneList(tweets);
+      return tweets;
     } catch (NoResultException nre) {
       logger.warning(String.format(
           "Failed to retrieve tweets for type %s, neighborhoodId %d, exception %s",
@@ -182,7 +184,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public List<TweetDTO>
+  public List<Tweet>
       findCouponsByNeighborhood(Long neighborhoodId, int page, int pageSize) {
  
     if (neighborhoodId == null) {
@@ -209,7 +211,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 
       @SuppressWarnings("unchecked")
       List<Tweet> tweets = (List<Tweet>) query.getResultList();
-      return EntityUtil.cloneList(tweets);
+      return tweets;
     } catch (NoResultException nre) {
       logger.warning(String.format(
           "Failed to retrieve tweets for neighborhoodId %d, exception %s",
@@ -466,7 +468,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   }
 
   @Override
-  public TweetDTO findTweetById(Long tweetId) throws NotFoundException {
+  public Tweet findTweetById(Long tweetId) throws NotFoundException {
     if (tweetId == null) {
       throw new IllegalArgumentException();
     }
@@ -475,8 +477,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     try {
       Query query = em.createQuery("from Tweet t where t.tweetId = :tweetId");
       query.setParameter("tweetId", tweetId);
-      Tweet result = (Tweet) query.getSingleResult();
-      return EntityUtil.clone(result);
+      return (Tweet) query.getSingleResult();
     } catch (NoResultException nre) {
       logger.warning(String.format(
           "Failed to retrieve tweet with id[%d] exception %s",

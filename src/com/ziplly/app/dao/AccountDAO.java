@@ -38,7 +38,7 @@ public interface AccountDAO {
   @Deprecated
   List<AccountDTO> findAllAccountsByZip(int zip);
 
-  List<AccountDTO> findAccountsByNeighborhood(EntityType entityType,
+  List<Account> findAccountsByNeighborhood(EntityType entityType,
       Long neighborhoodId,
       int pageStart,
       int pageSize);

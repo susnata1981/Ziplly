@@ -259,12 +259,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 				placeController.goTo(new PersonalAccountPlace(account.getAccountId()));
 			}
 		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			super.onFailure(th);
-			view.displayProfileSection(false);
-		}
 	}
 
 	private class GetAccountDetailsActionHandler extends

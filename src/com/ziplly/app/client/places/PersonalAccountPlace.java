@@ -1,5 +1,7 @@
 package com.ziplly.app.client.places;
 
+import java.util.Map;
+
 import com.google.gwt.place.shared.Prefix;
 
 public class PersonalAccountPlace extends AccountPlace {
@@ -19,21 +21,22 @@ public class PersonalAccountPlace extends AccountPlace {
     public PersonalAccountPlace getPlace(String token) {
       try {
         PersonalAccountPlace place = new PersonalAccountPlace();
-        if (token != null && !"".equals(token)) {
-          tokenize(token);
-          long accountId = Long.parseLong(getTokenAt(0));
-          place.setAccountId(accountId);
-          boolean showTransaction = Boolean.parseBoolean(getTokenAt(1));
-          place.setShowTransactions(showTransaction);
-          return place;
+        Map<AttributeKey, AttributeValue> params = parser.parse(token);
+        
+        for(AttributeKey key: params.keySet()) {
+          if (key.equals(AttributeKey.TRANSACTION_VIEW_TOKEN)) {
+            place.setShowTransactions(true);
+          } else if (key.equals(AttributeKey.ACCOUNT_ID)) {
+            place.setAccountId(Long.parseLong(params.get(key).value()));
+          }
         }
-
+        
         return place;
       } catch (Exception ex) {
         return new PersonalAccountPlace();
       }
     }
-
+    
     @Override
     public String getToken(PersonalAccountPlace place) {
       return PlaceUtils.getPlaceToken(place);

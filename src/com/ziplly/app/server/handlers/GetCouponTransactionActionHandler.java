@@ -87,12 +87,12 @@ public class GetCouponTransactionActionHandler extends AbstractAccountActionHand
 		TransactionDetails details = new TransactionDetails();
 		details.setPurchasedCoupons(orderDao.findByAccountIdAndStatus(
 				session.getAccount().getAccountId(), 
-				TransactionStatus.COMPLETE, 
+				TransactionStatus.COMPLETED, 
 				action.getStart(), 
 				action.getPageSize()));
 		
 		details.setTotalTransactionCount(orderDao.getTotalCountByAccountIdAndStatus(
-				session.getAccount().getAccountId(), TransactionStatus.COMPLETE));
+				session.getAccount().getAccountId(), TransactionStatus.COMPLETED));
 		return details;
   }
 	

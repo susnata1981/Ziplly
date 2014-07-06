@@ -102,7 +102,7 @@ public class SubscriptionBLIImpl implements SubscriptionBLI {
     Transaction transaction = new Transaction();
     transaction.setAmount(plan.getFee());
     transaction.setBuyer(account);
-    transaction.setStatus(TransactionStatus.COMPLETE);
+    transaction.setStatus(TransactionStatus.COMPLETED);
     transaction.setCurrency(Locale.US.getCountry());
     transaction.setOrderId(orderId);
     transaction.setTimeCreated(now);

@@ -9,7 +9,6 @@ import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.TweetDTO;
 
 public class PlaceUtils {
-
 	private static final String HASH = "#";
 
   public static String getPlaceTokenForNeighborhood(Long neighborhoodId) {
@@ -76,10 +75,46 @@ public class PlaceUtils {
   }
 
   public static String getPlaceToken(PersonalAccountPlace place) {
-    return place.getAccountId() + StringConstants.PLACE_SEPARATOR + place.isShowTransactions();
+    return getAccountPlaceToken(place);
   }
   
   public static String getPlaceToken(BusinessAccountPlace place) {
-    return place.getAccountId() + StringConstants.PLACE_SEPARATOR + place.isShowTransactions();
+    return getAccountPlaceToken(place);
+  }
+  
+  private static String getAccountPlaceToken(AccountPlace place) {
+    return AttributeKey.ACCOUNT_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getAccountId() 
+        + PlaceParserImpl.PLACE_SEPARATOR 
+        + AttributeKey.TRANSACTION_VIEW_TOKEN.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.isShowTransactions();
+  }
+
+  public static String getPlaceToken(ConversationPlace place) {
+    return AttributeKey.CONVERSATION_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getConversationId(); 
+  }
+
+  public static String getPlaceToken(HomePlace place) {
+    return AttributeKey.TWEET_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getTweetId() 
+        + PlaceParserImpl.PLACE_SEPARATOR 
+        + AttributeKey.TWEET_CATEGORY.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getTweetType();
+  }
+
+  public static String getPlaceToken(TweetDetailsPlace place) {
+    return AttributeKey.TWEET_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getTweetId(); 
+  }
+
+  public static String getPlaceToken(BusinessPlace place) {
+    return AttributeKey.SEND_MESSAGE_TOKEN.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getAccountId() 
+        + PlaceParserImpl.PLACE_SEPARATOR 
+        + AttributeKey.NEIGHBORHOOD_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getNeighborhoodId()
+        + PlaceParserImpl.PLACE_SEPARATOR
+        + AttributeKey.POSTAL_CODE.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getPostalCode();
+  }
+  
+  public static String getPlaceToken(ResidentPlace place) {
+    return AttributeKey.SEND_MESSAGE_TOKEN.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getAccountId() 
+        + PlaceParserImpl.PLACE_SEPARATOR 
+        + AttributeKey.NEIGHBORHOOD_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getNeighborhoodId()
+        + PlaceParserImpl.PLACE_SEPARATOR
+        + AttributeKey.GENDER_KEY.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getGender();
   }
 }

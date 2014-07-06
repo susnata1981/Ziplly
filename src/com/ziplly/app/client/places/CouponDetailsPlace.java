@@ -2,13 +2,14 @@ package com.ziplly.app.client.places;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
+import com.google.inject.Inject;
 
 public class CouponDetailsPlace extends Place {
 	
 	@Prefix("coupon")
 	public static class Tokenizer extends BaseTokenizer<CouponDetailsPlace> {
 
-		private static final String REDEEM_TOKEN = "redeem";
+    private static final String REDEEM_TOKEN = "redeem";
 		@Override
 		public CouponDetailsPlace getPlace(String token) {
 			try {

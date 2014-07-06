@@ -45,28 +45,27 @@ public class DeleteTweetActionHandler extends
 
 		validateSession();
 
-		TweetDTO tweetDto;
+		Tweet tweet;
 		try {
-			tweetDto = tweetDao.findTweetById(action.getTweetId());
+			tweet = tweetDao.findTweetById(action.getTweetId());
 		} catch (NoResultException nre) {
 			throw new NotFoundException();
 		}
 
-		Account sender = accountDao.findById(tweetDto.getSender().getAccountId());
-
-		// TODO
+		// Can't remove coupons.
+		assert(tweet.getCoupon() == null);
+		
 		// Need to load sender account separately before hasPermission call.
-		if (!hasPermission(tweetDto.getSender())) {
-			throw new AccessException();
+		if (!hasPermission(tweet.getSender())) {
+			throw new AccessException("You don't have permission to delete this message");
 		}
 
-		Tweet tweet = new Tweet(tweetDto);
 		tweetDao.delete(tweet);
 
 		return new DeleteTweetResult();
 	}
 
-	private boolean hasPermission(AccountDTO sender) {
+	private boolean hasPermission(Account sender) {
 		return (session.getAccount().getAccountId() == sender.getAccountId())
 		    || session.getAccount().getRole() == Role.ADMINISTRATOR;
 	}

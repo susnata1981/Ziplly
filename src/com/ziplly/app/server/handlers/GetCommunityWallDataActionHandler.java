@@ -83,12 +83,12 @@ public class GetCommunityWallDataActionHandler extends
       getTweetsByNeighborhood(GetCommunityWallDataAction action) throws NotFoundException {
 
     GetCommunityWallDataResult result = new GetCommunityWallDataResult();
-    List<TweetDTO> tweets =
+    List<Tweet> tweets =
         tweetDao.findTweetsByNeighborhood(
             action.getNeighborhood().getNeighborhoodId(),
             action.getPage(),
             action.getPageSize());
-    result.setTweets(tweets);
+    result.setTweets(EntityUtil.cloneList(tweets));
     return result;
   }
 
@@ -96,10 +96,10 @@ public class GetCommunityWallDataActionHandler extends
       getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
     GetCommunityWallDataResult result = new GetCommunityWallDataResult();
     try {
-      Long tweetId = Long.parseLong(action.getTweetId());
-      TweetDTO tweet = tweetDao.findTweetById(tweetId);
+      long tweetId = action.getTweetId();
+      Tweet tweet = tweetDao.findTweetById(tweetId);
       ArrayList<TweetDTO> tweets = new ArrayList<TweetDTO>();
-      tweets.add(tweet);
+      tweets.add(EntityUtil.clone(tweet));
       result.setTweets(tweets);
     } catch (NotFoundException nfe) {
       logger.severe(String.format("Couldn't find tweets for tweetId %s", action.getTweetId()));
@@ -113,7 +113,7 @@ public class GetCommunityWallDataActionHandler extends
   private GetCommunityWallDataResult
       getTweetsByHashtag(GetCommunityWallDataAction action) throws NotFoundException {
     Long neighborhoodId = session.getLocation().getNeighborhood().getNeighborhoodId();
-    List<TweetDTO> tweets =
+    List<Tweet> tweets =
         hashtagDao.getTweetsForTagAndNeighborhood(
             action.getHashtag(),
             neighborhoodId,
@@ -121,7 +121,7 @@ public class GetCommunityWallDataActionHandler extends
             action.getPageSize());
 
     GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
-    gcwdr.setTweets(tweets);
+    gcwdr.setTweets(EntityUtil.cloneList(tweets));
     return gcwdr;
   }
 
@@ -129,7 +129,7 @@ public class GetCommunityWallDataActionHandler extends
       getTweetsByCategory(GetCommunityWallDataAction action) throws NotFoundException {
 
     TweetType type = action.getType();
-    List<TweetDTO> tweets = null;
+    List<Tweet> tweets = null;
 
     if (type.equals(TweetType.ALL)) {
       tweets =
@@ -150,7 +150,7 @@ public class GetCommunityWallDataActionHandler extends
     }
 
     GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();
-    gcwdr.setTweets(tweets);
+    gcwdr.setTweets(EntityUtil.cloneList(tweets));
     return gcwdr;
   }
 

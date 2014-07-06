@@ -12,11 +12,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
 import com.ziplly.app.client.exceptions.NotFoundException;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.HashtagDTO;
-import com.ziplly.app.model.LocationDTO;
-import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.Hashtag;
+import com.ziplly.app.server.model.jpa.Location;
+import com.ziplly.app.server.model.jpa.Tweet;
 
 public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 
@@ -109,7 +109,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 
 	@Transactional
 	@Override
-	public List<TweetDTO>
+	public List<Tweet>
 	    getTweetsForTag(String hashtag, int page, int pageSize) throws NotFoundException {
 
 		if (hashtag == null) {
@@ -117,7 +117,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		List<TweetDTO> tweets = Lists.newArrayList();
+		List<Tweet> tweets = Lists.newArrayList();
 		try {
 			HashtagDTO result = findByName(hashtag);
 			int start = page * pageSize;
@@ -131,7 +131,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 			@SuppressWarnings("unchecked")
 			List<BigInteger> tweetIds = query.getResultList();
 			for (BigInteger tweetId : tweetIds) {
-				TweetDTO tweet = tweetDao.findTweetById(tweetId.longValue());
+				Tweet tweet = tweetDao.findTweetById(tweetId.longValue());
 				tweets.add(tweet);
 			}
 		} catch (NoResultException nre) {
@@ -142,7 +142,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 	}
 
 	@Override
-	public List<TweetDTO> getTweetsForTagAndNeighborhood(String hashtag,
+	public List<Tweet> getTweetsForTagAndNeighborhood(String hashtag,
 	    Long neighborhoodId,
 	    int page,
 	    int pageSize) throws NotFoundException {
@@ -151,7 +151,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		}
 
 		EntityManager em = getEntityManager();
-		List<TweetDTO> tweets = Lists.newArrayList();
+		List<Tweet> tweets = Lists.newArrayList();
 		try {
 			HashtagDTO result = findByName(hashtag);
 			int start = page * pageSize;
@@ -164,7 +164,7 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 
 			for (Object tweetId : query.getResultList()) {
 				BigInteger id = (BigInteger) tweetId;
-				TweetDTO tweet = tweetDao.findTweetById(id.longValue());
+				Tweet tweet = tweetDao.findTweetById(id.longValue());
 				// if (tweet.getSender().getNeighborhood().getNeighborhoodId() ==
 				// neighborhoodId) {
 				// tweets.add(tweet);
@@ -180,8 +180,8 @@ public class HashtagDAOImpl extends BaseDAO implements HashtagDAO {
 		return tweets;
 	}
 
-	public boolean containsNeighborhood(AccountDTO account, Long neighborhoodId) {
-		for (LocationDTO loc : account.getLocations()) {
+	public boolean containsNeighborhood(Account account, Long neighborhoodId) {
+		for (Location loc : account.getLocations()) {
 			if (loc.getNeighborhood().getNeighborhoodId() == neighborhoodId) {
 				return true;
 			}

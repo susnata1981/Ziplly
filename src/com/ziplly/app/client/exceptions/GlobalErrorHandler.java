@@ -9,14 +9,16 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
+import com.ziplly.app.client.places.AccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.widget.AlertModal;
 import com.ziplly.app.client.widget.MessageModal;
 
 public class GlobalErrorHandler {
   AlertModal modal = new AlertModal();
-  MessageModal mmodal = new MessageModal("Error", AlertType.SUCCESS);
+  MessageModal mmodal = new MessageModal("Error", AlertType.ERROR);
 //  PlaceController controller;
   private static EventBus eventBus;
 
@@ -56,7 +58,18 @@ public class GlobalErrorHandler {
       panel.add(planSettingAnchor);
       mmodal.setWidget(panel);
       return;
-    } 
+    }  else if (errorDef.getCode() == ErrorCodes.NotFoundError) {
+      mmodal.getButton().addClickHandler(new ClickHandler() {
+
+        @Override
+        public void onClick(ClickEvent event) {
+          mmodal.hide();
+          eventBus.fireEvent(new PlaceChangeEvent(new PersonalAccountPlace()));
+          return;
+        }
+        
+      });
+    }
 
     postHandle();
   }

@@ -38,7 +38,7 @@ public class GetAccountByIdActionHandler extends
 	    doExecute(GetAccountByIdAction action, ExecutionContext arg1) throws DispatchException {
 
 		if (action == null || action.getAccountId() == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Account id not present");
 		}
 
 		GetAccountByIdResult result = new GetAccountByIdResult();

@@ -12,21 +12,21 @@ public interface NeighborhoodDAO {
 	List<Neighborhood> getAll(int start, int end);
 
 	// NeighborhoodDTO findFirstByPostalCode(int postalCode);
-	List<NeighborhoodDTO> findAll();
+	List<Neighborhood> findAll();
 
 	Long findTotalNeighborhoods(String countQuery);
 
-	List<NeighborhoodDTO> findByPostalCode(String postalCode);
+	List<Neighborhood> findByPostalCode(String postalCode);
 
 	/**
 	 * Returns the list of all neighborhoods under that neighborhood.
 	 * 
 	 * @throws NotFoundException
 	 */
-	List<NeighborhoodDTO>
+	List<Neighborhood>
 	    findAllDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
 
-	List<NeighborhoodDTO>
+	List<Neighborhood>
 	    findAllDescendentNeighborhoodsIncludingItself(Long neighborhoodId) throws NotFoundException;
 
 	void update(Neighborhood neighborhood);
@@ -42,7 +42,7 @@ public interface NeighborhoodDAO {
 	 */
 	NeighborhoodDTO findOrCreateNeighborhood(NeighborhoodDTO neighborhood);
 
-	List<NeighborhoodDTO> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood);
+	List<Neighborhood> findNeighborhoodsByLocality(NeighborhoodDTO neighborhood);
 
   List<Neighborhood> findDescendentNeighborhoods(Long neighborhoodId) throws NotFoundException;
 

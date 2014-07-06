@@ -9,7 +9,8 @@ public class CommunityViewState {
 	GetEntityListAction action = new GetEntityListAction();
 	protected int start;
 	protected int pageSize;
-	protected Long neighborhoodId;
+	protected long neighborhoodId;
+  private String postalCode;
 
 	public CommunityViewState(EntityType type, int pageSize) {
 		start = 0;
@@ -19,6 +20,7 @@ public class CommunityViewState {
 	}
 
 	public void searchByZip(String zip) {
+	  this.setPostalCode(zip);
 		reset();
 		action.setSearchType(SearchType.BY_ZIP);
 		action.setZip(zip);
@@ -52,11 +54,19 @@ public class CommunityViewState {
 		return start;
 	}
 
-	public void setNeighborhood(Long neighborhoodId) {
+	public void setNeighborhood(long neighborhoodId) {
 		this.neighborhoodId = neighborhoodId;
 	}
 
-	public Long getNeighborhoodId() {
+	public long getNeighborhoodId() {
 		return neighborhoodId;
 	}
+
+  public String getPostalCode() {
+    return postalCode;
+  }
+
+  public void setPostalCode(String postalCode) {
+    this.postalCode = postalCode;
+  }
 }

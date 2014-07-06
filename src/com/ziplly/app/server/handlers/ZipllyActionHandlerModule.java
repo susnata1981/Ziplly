@@ -43,7 +43,6 @@ import com.ziplly.app.shared.GetTweetsAction;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.MyAction;
-import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.RedeemCouponAction;
 import com.ziplly.app.shared.RegisterAccountAction;
 import com.ziplly.app.shared.ReportSpamAction;
@@ -159,7 +158,6 @@ public class ZipllyActionHandlerModule extends ActionHandlerModule {
 
 		// Coupon transaction
 		bindHandler(CheckBuyerEligibilityForCouponAction.class, CheckBuyerEligibilityForCouponActionHandler.class);
-//		bindHandler(PurchasedCouponAction.class, PurchaseCouponActionHandler.class);
 		bindHandler(CancelCouponPurchaseAction.class, CancelCouponPurchaseActionHandler.class);
 		bindHandler(GetCouponTransactionAction.class, GetCouponTransactionActionHandler.class);
 		bindHandler(GetCouponQRCodeUrlAction.class, GetCouponQRCodeUrlActionHandler.class);

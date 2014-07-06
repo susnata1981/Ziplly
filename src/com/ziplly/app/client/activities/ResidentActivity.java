@@ -1,6 +1,5 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -10,6 +9,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.activities.util.ConversionUtil;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.LoginPlace;
@@ -19,7 +19,6 @@ import com.ziplly.app.client.view.ResidentsView.EntityListViewPresenter;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
@@ -86,66 +85,66 @@ public class ResidentActivity extends AbstractActivity implements
 	}
 
 	protected void displayInitalRange() {
-		if (place.getAccountId() != null) {
+		if (place.getAccountId() != 0) {
 			view.displaySendMessageWidget(place.getAccountId());
 			updateMessageWidgetWithAccountDetails(place.getAccountId());
 		}
 
-		GetEntityListAction action = new GetEntityListAction(EntityType.PERSONAL_ACCOUNT);
-		action.setPage(0);
-		action.setPageSize(view.getPageSize());
-		action.setNeedTotalEntityCount(true);
-		Long neighborhoodId =
-		    (place.getNeighborhoodId() != null) ? place.getNeighborhoodId() : ctx
-		        .getCurrentNeighborhood()
-		        .getNeighborhoodId();
-		Gender gender = place.getGender() != null ? place.getGender() : Gender.ALL;
-		action.setNeighborhoodId(neighborhoodId);
-		action.setGender(gender);
-		getPersonalAccountList(action);
-		view.setNeighborhoodId(neighborhoodId);
-		view.setGender(gender);
+		GetEntityListAction action = getEntityListAction();
+		dispatcher.execute(action, handler);
 	}
 
-	private void updateMessageWidgetWithAccountDetails(Long accountId) {
-		dispatcher.execute(
-		    new GetAccountByIdAction(accountId),
-		    new DispatcherCallbackAsync<GetAccountByIdResult>() {
+	private GetEntityListAction getEntityListAction() {
+    GetEntityListAction action = new GetEntityListAction(EntityType.PERSONAL_ACCOUNT);
+    action.setPage(0);
+    action.setPageSize(view.getPageSize());
+    action.setNeedTotalEntityCount(true);
+    
+    long neighborhoodId = getNeighborhoodId();
+    view.setNeighborhoodId(neighborhoodId);
+    action.setNeighborhoodId(neighborhoodId);
+    Gender gender = place.getGender() != Gender.NOT_SPECIFIED ? place.getGender() : Gender.ALL;
+    action.setGender(gender);
+    return action;
+  }
+	
+  private long getNeighborhoodId() {
+    return (place.getNeighborhoodId() != 0) ? place.getNeighborhoodId() : ctx
+        .getCurrentNeighborhood()
+        .getNeighborhoodId();
+  }
 
-			    @Override
-			    public void onSuccess(GetAccountByIdResult result) {
-				    view.updateMessageWidget(result.getAccount());
-			    }
-		    });
-	}
+  private void updateMessageWidgetWithAccountDetails(Long accountId) {
+    dispatcher.execute(
+        new GetAccountByIdAction(accountId),
+        new DispatcherCallbackAsync<GetAccountByIdResult>() {
+
+          @Override
+          public void onSuccess(GetAccountByIdResult result) {
+            view.updateMessageWidget(result.getAccount());
+          }
+        });
+  }
 
 	/**
 	 * Main method being called from ResidentView
 	 */
 	@Override
 	public void getPersonalAccountList(GetEntityListAction action) {
+	  action.setEntityType(EntityType.PERSONAL_ACCOUNT);
 		dispatcher.execute(action, handler);
 	};
 
 	private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
-		@Override
+		
+	  @Override
 		public void onSuccess(GetEntityResult result) {
-			List<PersonalAccountDTO> accounts = new ArrayList<PersonalAccountDTO>();
-			if (result.getEntityType() == EntityType.PERSONAL_ACCOUNT) {
-				for (AccountDTO acct : result.getAccounts()) {
-					accounts.add((PersonalAccountDTO) acct);
-				}
-			}
-
+	    List<PersonalAccountDTO> accounts = ConversionUtil.convert(
+	        result.getAccounts(), PersonalAccountDTO.class);
 			if (result.getCount() != null) {
 				view.setTotalRowCount(result.getCount());
 			}
 			view.display(accounts);
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 		}
 	}
 

@@ -1,12 +1,13 @@
 package com.ziplly.app.client.places;
 
+import java.util.Map;
+
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.TweetType;
 
 public class HomePlace extends Place {
-	private Long tweetId;
+	private long tweetId;
 	private String tweetType;
 	private String couponCode;
 
@@ -19,72 +20,53 @@ public class HomePlace extends Place {
 	}
 
 	public HomePlace(Long tweetId) {
+	  this();
 		this.tweetId = tweetId;
 	}
 
 	public String getTweetType() {
-		return tweetType;
-	}
-
-	public void setTweetType(String tweetType) {
-		this.tweetType = tweetType;
+		return tweetType.toLowerCase();
 	}
 
 	public void setTweetType(TweetType tweetType) {
 		this.tweetType = tweetType.name();
 	}
 	
-	public Long getTweetId() {
+	public long getTweetId() {
 		return tweetId;
 	}
 
-	public void setTweetId(Long tweetId) {
+	public void setTweetId(long tweetId) {
 		this.tweetId = tweetId;
 	}
 
 	@Prefix("home")
 	public static class Tokenizer extends BaseTokenizer<HomePlace> {
-	
-		@Override
-		public HomePlace getPlace(String token) {
-			try {
-				tokenize(token);
-				String token0 = getTokenAt(0);
-				HomePlace place = new HomePlace();
-				// Tweet details
-				if (token0.startsWith(StringConstants.HOME_TWEET_TOKEN)) {
-					long tweetId = Long.parseLong(getTokenAt(1));
-					place.setTweetId(tweetId);
-					return place;
-				} 
-				// Coupon redeem
-				else if (StringConstants.COUPON_REDEEM_TOKEN.equalsIgnoreCase(token0)) {
-					String token1 = getTokenAt(1);
-					place.setCouponCode(token1);
-					return place;
-				} 
-				// Tweet category
-				else {
-					TweetType type = TweetType.valueOf(getTokenAt(1).toUpperCase());
-					place.setTweetType(type);
-					return new HomePlace(type);
-				}
-			} catch (Exception ex) {
-				// return default HomePlace.
-			}
-			
-			return new HomePlace();
-		}
 
+	  @Override
+    public HomePlace getPlace(String token) {
+      try {
+        HomePlace place = new HomePlace();
+        Map<AttributeKey, AttributeValue> params = parser.parse(token);
+        
+        for(AttributeKey key: params.keySet()) {
+          String value = params.get(key).value();
+          if (key.equals(AttributeKey.TWEET_ID)) {
+            place.setTweetId(Long.parseLong(value));
+          } else if (key.equals(AttributeKey.TWEET_CATEGORY)) {
+            place.setTweetType(TweetType.valueOf(value.toUpperCase()));
+          }
+        }
+        
+        return place;
+      } catch (Exception ex) {
+        return new HomePlace();
+      }
+    }
+	  
 		@Override
 		public String getToken(HomePlace place) {
-			if (place.getTweetId() != null) {
-				return PlaceUtils.getHomePlaceTokenForMessaging(place.getTweetId());
-			} else if (place.getTweetType() != null) {
-				return PlaceUtils.getHomePlaceTokenForTweetType(place.getTweetType());
-			} else {
-				return "";
-			}
+		  return PlaceUtils.getPlaceToken(place);
 		}
 	}
 

@@ -6,6 +6,7 @@ import com.google.inject.persist.PersistFilter;
 import com.google.inject.servlet.ServletModule;
 import com.ziplly.app.server.ConfirmPaymentServlet;
 import com.ziplly.app.server.NotificationServlet;
+import com.ziplly.app.server.UploadServlet;
 
 public class DispatchServletModule extends ServletModule {
 
@@ -16,8 +17,7 @@ public class DispatchServletModule extends ServletModule {
 		serve("/ziplly/sendmail", "/_ah/start").with(NotificationServlet.class);
 		serve("/ziplly/dispatch").with(GuiceStandardDispatchServlet.class);
 		serve("/ziplly/confirmpayment").with(ConfirmPaymentServlet.class);
-		
-		// serve("/ziplly/upload").with(UploadServlet.class);
+		serve("/ziplly/upload").with(UploadServlet.class);
 		// TODO needs to be turned on later.
 	}
 }

@@ -2,6 +2,7 @@ package com.ziplly.app.client.places;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
+import com.google.inject.Inject;
 
 public class CouponExplorerPlace extends Place {
 

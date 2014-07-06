@@ -10,97 +10,109 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.BusinessAccountPlace;
+import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.places.PlaceParserImpl;
 import com.ziplly.app.client.places.PlaceUtils;
+import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.ResidentViewState;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
-	// ZGinInjector injector = GWT.create(ZGinInjector.class);
-	// private PlaceController placeController;
+  private ResidentViewState state;
+  private String BASE_URL;
 
-	private ResidentViewState state;
+  public PersonalAccountCell(ResidentViewState state) {
+    super(BrowserEvents.CLICK);
+    this.state = state;
+    String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
+    if (environment.equalsIgnoreCase("DEVEL")) {
+      BASE_URL = "http://127.0.0.1:8888/Ziplly.html?gwt.codesvr=127.0.0.1:9997";
+    } else {
+      BASE_URL = GWT.getHostPageBaseURL();
+    }
+  }
 
-	public PersonalAccountCell(ResidentViewState state) {
-		super(BrowserEvents.CLICK);
-		this.state = state;
-	}
+  @Override
+  public void onBrowserEvent(Context context,
+      Element parent,
+      PersonalAccountDTO value,
+      NativeEvent event,
+      ValueUpdater<PersonalAccountDTO> valueUpdater) {
+    super.onBrowserEvent(context, parent, value, event, valueUpdater);
+    if (value == null) {
+      return;
+    }
 
-	@Override
-	public void onBrowserEvent(Context context,
-	    Element parent,
-	    PersonalAccountDTO value,
-	    NativeEvent event,
-	    ValueUpdater<PersonalAccountDTO> valueUpdater) {
-		super.onBrowserEvent(context, parent, value, event, valueUpdater);
-		if (value == null) {
-			return;
-		}
+    long accountId = value.getAccountId();
 
-		String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");
-		String accountId = value.getAccountId().toString();
-		String redirectUrl = "";
+    NodeList<Element> buttons = parent.getElementsByTagName("button");
+    Element button = buttons.getItem(0);
+    EventTarget target = event.getEventTarget();
 
-		if (environment.equalsIgnoreCase("DEVEL")) {
-			redirectUrl = System.getProperty(StringConstants.REDIRECT_URI, "");
-		} else {
-			redirectUrl = GWT.getHostPageBaseURL();
-		}
+    if (button.isOrHasChild(Element.as(target))) {
+      ResidentPlace place = new ResidentPlace();
+      place.setAccountId(accountId);
+      place.setNeighborhoodId(state.getNeighborhoodId());
+      place.setGender(state.getGender());
+      Window.Location.replace(getRedirectUrl(place));
+    } else {
+      // Redirect only if it's a click on the profile
+      PersonalAccountPlace place = new PersonalAccountPlace();
+      place.setAccountId(accountId);
+      Window.Location.replace(getRedirectUrl(place));
+    }
+  }
 
-		NodeList<Element> buttons = parent.getElementsByTagName("button");
-		Element button = buttons.getItem(0);
-		EventTarget target = event.getEventTarget();
+  private String getRedirectUrl(ResidentPlace place) {
+    return BASE_URL + PlaceParserImpl.HASH + ResidentPlace.TOKEN
+        + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
+  }
 
-		if (button.isOrHasChild(Element.as(target))) {
-//			redirectUrl =
-//			    redirectUrl + "#residents:" + StringConstants.SEND_MESSAGE_TOKEN
-//			        + StringConstants.PLACE_SEPARATOR + accountId;
-			redirectUrl = redirectUrl + "#residents:" + PlaceUtils.getPlaceTokenForMessaging(value.getAccountId(), state.getNeighborhoodId(), state.getGender());
-		} else {
-			redirectUrl = redirectUrl + "#personalaccount:" + accountId;
-		}
+  private String getRedirectUrl(PersonalAccountPlace place) {
+    return BASE_URL + PlaceParserImpl.HASH + BusinessAccountPlace.TOKEN
+        + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
+  }
 
-		Window.Location.replace(redirectUrl);
-	}
+  @Override
+  public void render(com.google.gwt.cell.client.Cell.Context context,
+      PersonalAccountDTO value,
+      SafeHtmlBuilder sb) {
 
-	@Override
-	public void render(com.google.gwt.cell.client.Cell.Context context,
-	    PersonalAccountDTO value,
-	    SafeHtmlBuilder sb) {
+    if (value == null) {
+      return;
+    }
 
-		if (value == null) {
-			return;
-		}
+    String imgUrl = ImageUtil.getImageUtil(value);
 
-		String imgUrl = ImageUtil.getImageUtil(value);
+    String introduction =
+        value.getIntroduction() != null ? value.getIntroduction() : StringConstants.NOT_AVAILABLE;
 
-		String introduction =
-		    value.getIntroduction() != null ? value.getIntroduction() : StringConstants.NOT_AVAILABLE;
-
-		if (value != null) {
-			sb
-			    .appendHtmlConstant(" <div class='pcell'>"
-			        + "<div class='pcell-image'>"
-			        + "<img src='"
-			        + imgUrl
-			        + "'></img>"
-			        + "</div>"
-			        + "<div class='pcell-info'>"
-			        + "<span class='pcell-row-heading'>"
-			        + value.getDisplayName()
-			        + "</span>"
-			        + "<span class='pcell-row'><span class='pcell-row-info-heading'>Gender</span>&nbsp;"
-			        + value.getGender().name().toLowerCase()
-			        + "</span>"
-			        + "<span class='pcell-row'><span class='pcell-row-info-heading'>Introduction</span>&nbsp;"
-			        + introduction
-			        + "</span>"
-			        + "<span class='pcell-row'><span class='pcell-row-info-heading'>Location</span>&nbsp;"
-			        + value.getLocations().get(0).getNeighborhood().getName()
-			        + "</span>"
-			        + "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
-			        + "</div>" + "</div>");
-		}
-	}
+    if (value != null) {
+      sb
+          .appendHtmlConstant(" <div class='pcell'>"
+              + "<div class='pcell-image'>"
+              + "<img src='"
+              + imgUrl
+              + "'></img>"
+              + "</div>"
+              + "<div class='pcell-info'>"
+              + "<span class='pcell-row-heading'>"
+              + value.getDisplayName()
+              + "</span>"
+              + "<span class='pcell-row'><span class='pcell-row-info-heading'>Gender</span>&nbsp;"
+              + value.getGender().name().toLowerCase()
+              + "</span>"
+              + "<span class='pcell-row'><span class='pcell-row-info-heading'>Introduction</span>&nbsp;"
+              + introduction
+              + "</span>"
+              + "<span class='pcell-row'><span class='pcell-row-info-heading'>Location</span>&nbsp;"
+              + value.getLocations().get(0).getNeighborhood().getName()
+              + "</span>"
+              + "<span class='pcell-row'><button class='btn btn-primary btn-mini pcell-btn'>Send Message</button></span>"
+              + "</div>" + "</div>");
+    }
+  }
 }

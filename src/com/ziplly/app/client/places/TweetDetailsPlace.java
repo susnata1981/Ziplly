@@ -1,11 +1,12 @@
 package com.ziplly.app.client.places;
 
+import java.util.Map;
+
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.Prefix;
-import com.ziplly.app.client.view.StringConstants;
 
 public class TweetDetailsPlace extends Place {
-	private Long tweetId;
+	private long tweetId;
 	private String couponRedeemCode;
 	
 	public TweetDetailsPlace() {
@@ -13,33 +14,31 @@ public class TweetDetailsPlace extends Place {
 	
 	@Prefix("tweet")
 	public static class Tokenizer extends BaseTokenizer<TweetDetailsPlace> {
-		@Override
-		public TweetDetailsPlace getPlace(String token) {
-			try {
-				tokenize(token);
-				TweetDetailsPlace place = new TweetDetailsPlace();
-				String token0 = getTokenAt(0);
-				
-				if (StringConstants.COUPON_REDEEM_TOKEN.equalsIgnoreCase(token0)) {
-					String token1 = getTokenAt(1);
-					place.setCouponRedeemCode(token1);
-					return place;
-				}
 
-				long tweetId = Long.parseLong(token);
-				place.setTweetId(tweetId);
-				return place;
-			} catch (Exception ex) {
-				return new TweetDetailsPlace(0L);
-			}
-		}
-
+	  @Override
+    public TweetDetailsPlace getPlace(String token) {
+      try {
+        TweetDetailsPlace place = new TweetDetailsPlace();
+        Map<AttributeKey, AttributeValue> params = parser.parse(token);
+        
+        for(AttributeKey key: params.keySet()) {
+          String value = params.get(key).value();
+          if (key.equals(AttributeKey.COUPON_REDEEM)) {
+            place.setCouponRedeemCode(value);
+          } else if (key.equals(AttributeKey.TWEET_ID)) {
+            place.setTweetId(Long.parseLong(value));
+          }
+        }
+        
+        return place;
+      } catch (Exception ex) {
+        return new TweetDetailsPlace();
+      }
+    }
+	  
 		@Override
 		public String getToken(TweetDetailsPlace place) {
-			if (place.getTweetId() != null) {
-				return place.getTweetId().toString();
-			}
-			return "";
+		  return PlaceUtils.getPlaceToken(place);
 		}
 	}
 
@@ -47,7 +46,7 @@ public class TweetDetailsPlace extends Place {
 		this.tweetId = tweetId;
 	}
 
-	public Long getTweetId() {
+	public long getTweetId() {
 		return tweetId;
 	}
 

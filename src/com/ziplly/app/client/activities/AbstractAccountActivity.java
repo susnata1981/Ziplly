@@ -58,8 +58,6 @@ import com.ziplly.app.shared.LikeResult;
 import com.ziplly.app.shared.LikeTweetAction;
 import com.ziplly.app.shared.LogoutAction;
 import com.ziplly.app.shared.LogoutResult;
-import com.ziplly.app.shared.PurchaseCouponResult;
-import com.ziplly.app.shared.PurchasedCouponAction;
 import com.ziplly.app.shared.ReportSpamAction;
 import com.ziplly.app.shared.ReportSpamResult;
 import com.ziplly.app.shared.SendEmailAction;

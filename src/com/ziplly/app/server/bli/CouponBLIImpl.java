@@ -117,7 +117,7 @@ public class CouponBLIImpl implements CouponBLI {
               couponCodeDetails.getCouponId());
 
       if (order.getStatus() != OrderStatus.COMPLETED
-          && order.getTransaction().getStatus() != TransactionStatus.COMPLETE) {
+          && order.getTransaction().getStatus() != TransactionStatus.COMPLETED) {
         throw new InvalidCouponException("Coupon hasn't been purchased");
       }
 
@@ -218,7 +218,7 @@ public class CouponBLIImpl implements CouponBLI {
 
     // Update the status
     Transaction transaction = order.getTransaction();
-    transaction.setStatus(TransactionStatus.COMPLETE);
+    transaction.setStatus(TransactionStatus.COMPLETED);
     transaction.setTimeUpdated(now);
     order.setStatus(OrderStatus.COMPLETED);
 

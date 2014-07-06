@@ -20,15 +20,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
-import com.ziplly.app.client.places.BusinessPlace;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
 import com.ziplly.app.client.view.factory.ValueType;
+import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.cell.BusinessAccountCell;
@@ -158,7 +156,8 @@ public class BusinessView extends AbstractView implements
 		if (!FieldVerifier.isEmpty(zipTextBox.getText())) {
 			boolean valid = validateZip();
 			if (!valid) {
-				Window.alert("Please enter a valid zip");
+				MessageModal modal = new MessageModal("Please enter a valid zip", AlertType.ERROR);
+				modal.show();
 				return;
 			}
 			state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
@@ -167,6 +166,7 @@ public class BusinessView extends AbstractView implements
 			    .get(neighborhoodListBox.getSelectedIndex())
 			    .getNeighborhoodId());
 		}
+		
 		searchBtn.setEnabled(false);
 		presenter.getBusinessList(state.getCurrentEntityListAction());
 	}

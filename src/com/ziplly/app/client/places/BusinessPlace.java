@@ -1,36 +1,21 @@
 package com.ziplly.app.client.places;
 
+import java.util.Map;
+
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
-import com.ziplly.app.client.view.StringConstants;
 
 public class BusinessPlace extends Place {
-	private String token;
-	private Long accountId;
-	private Long neighborhoodId;
+	public static final String TOKEN = "business";
+	private long accountId;
+	private long neighborhoodId;
+	private String postalCode = "";
 
-	public BusinessPlace() {
-		setToken("");
-	}
-
-	public BusinessPlace(String token) {
-		setToken(token);
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public Long getAccountId() {
+	public long getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(Long accountId) {
+	public void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
 
@@ -38,79 +23,47 @@ public class BusinessPlace extends Place {
 		return neighborhoodId;
 	}
 
-	public void setNeighborhoodId(Long neighborhoodId) {
+	public void setNeighborhoodId(long neighborhoodId) {
 		this.neighborhoodId = neighborhoodId;
 	}
 
-	@Prefix("business")
-	public static class Tokenizer implements PlaceTokenizer<BusinessPlace> {
-		
-		@Override
-		public BusinessPlace getPlace(String token) {
-//			if (token != null) {
-//				String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-//				if (tokens.length > 1) {
-//					if (tokens[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
-//						try {
-//							long accountId = Long.parseLong(tokens[1]);
-//							BusinessPlace place = new BusinessPlace();
-//							place.setAccountId(accountId);
-//							return place;
-//						} catch (NumberFormatException nfe) {
-//							return new BusinessPlace("");
-//						}
-//					}
-//				} else if (tokens[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
-//					try {
-//						long neighborhoodId = Long.parseLong(tokens[1]);
-//						BusinessPlace place = new BusinessPlace();
-//						place.setNeighborhoodId(neighborhoodId);
-//						return place;
-//					} catch (NumberFormatException nfe) {
-//						return new BusinessPlace("");
-//					}
-//				}
-//				return new BusinessPlace(token);
-//			}
-//			return new BusinessPlace("");
-			
-			if (token != null) {
-				try {
-					String[] tokens = token.split(StringConstants.PLACE_SEPARATOR);
-					if (tokens.length > 1) {
-						BusinessPlace place = new BusinessPlace();
-						for (int i = 0; i < tokens.length;i++) {
-							String tok = tokens[i];
-							String[] split = tok.split(StringConstants.PLACE_VALUE_SEPARATOR);
-							if (split[0].equalsIgnoreCase(StringConstants.SEND_MESSAGE_TOKEN)) {
-								long accountId = Long.parseLong(split[1]);
-								place.setAccountId(accountId);
-							} else if (split[0].equalsIgnoreCase(StringConstants.NEIGHBORHOOD_TOKEN)) {
-								long neighborhoodId = Long.parseLong(split[1]);
-								place.setNeighborhoodId(neighborhoodId);
-							} else {
-								throw new RuntimeException("Invalid url in resident view");
-							}
-						}
-						return place;
-					}
-				} catch (Exception ex) {
-					// Something happened.
-					return new BusinessPlace(token);
-				}
-			}
-			return new BusinessPlace("");
-		}
+	public String getPostalCode() {
+    return postalCode;
+  }
 
+  public void setPostalCode(String postalCode) {
+    this.postalCode = postalCode;
+  }
+
+  @Prefix("business")
+	public static class Tokenizer extends BaseTokenizer<BusinessPlace> {
+		
+	  @Override
+    public BusinessPlace getPlace(String token) {
+	    try {
+	      BusinessPlace place = new BusinessPlace();
+        Map<AttributeKey, AttributeValue> params = parser.parse(token);
+        
+        for(AttributeKey key: params.keySet()) {
+          AttributeValue attrValue = params.get(key);
+          if (key.equals(AttributeKey.SEND_MESSAGE_TOKEN)) {
+            place.setAccountId(Long.parseLong(attrValue.value()));
+          } else if (key.equals(AttributeKey.NEIGHBORHOOD_ID)) {
+            place.setNeighborhoodId(Long.parseLong(params.get(key).value()));
+          } else if (key.equals(AttributeKey.POSTAL_CODE)) {
+            place.setPostalCode(attrValue.value());
+          }
+        }
+        
+        return place;
+      } catch (Exception ex) {
+        return new BusinessPlace();
+      }
+    }
+	  
 		@Override
 		public String getToken(BusinessPlace place) {
-			if (place.getAccountId() != null) {
-				return PlaceUtils.getPlaceTokenForMessaging(place.getAccountId(), place.getNeighborhoodId());
-			} else if (place.getNeighborhoodId() != null) {
-				return PlaceUtils.getPlaceTokenForNeighborhood(place.getNeighborhoodId());
-			} else {
-				return "";
-			}
+		  return PlaceUtils.getPlaceToken(place);
 		}
 	}
 }

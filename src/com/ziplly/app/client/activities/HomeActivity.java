@@ -422,14 +422,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	protected void doStart() {
 		state.setCurrentNeighborhood(ctx.getCurrentNeighborhood());
 		displayCommunityWall();
-		// account specific.
+		// Account specific.
 		getAccountNotifications();
 		getAccountDetails();
 	}
 
 	@Override
 	protected void doStartOnUserNotLoggedIn() {
-		if (place.getTweetId() != null) {
+		if (place.getTweetId() != 0) {
 			GetCommunityWallDataAction searchCriteria = state.getSearchCriteria(place);
 			getTweetData(searchCriteria);
 			return;
@@ -490,7 +490,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	 */
 	private void displayCommunityWall() {
 		viewProvider.get(new AsyncCallback<HomeViewImpl>() {
-			@Override
+			
+		  @Override
 			public void onFailure(Throwable caught) {
 				Window.alert("Failed to load information.");
 			}

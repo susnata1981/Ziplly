@@ -263,7 +263,7 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 
 		// image section
 		StyleHelper.setBackgroundImage(
-				accountFormatter.format(account, ValueType.PROFILE_BACKROUND_URL));
+				basicDataFormatter.format(account, ValueType.PROFILE_IMAGE_URL_AS_BACKGROUND));
 
 		name.setInnerHTML(account.getDisplayName());
 

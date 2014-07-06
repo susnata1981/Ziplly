@@ -13,7 +13,7 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 	private GetCommunityWallDataAction.SearchType searchType;
 	private TweetType type;
 	private String hashtag;
-	private String tweetId;
+	private long tweetId;
 	private int page;
 	private int pageSize;
 	private NeighborhoodDTO neighborhood;
@@ -75,11 +75,11 @@ public class GetCommunityWallDataAction implements Action<GetCommunityWallDataRe
 		this.hashtag = hashtag;
 	}
 
-	public String getTweetId() {
+	public long getTweetId() {
 		return tweetId;
 	}
 
-	public void setTweetId(String tweetId) {
+	public void setTweetId(long tweetId) {
 		this.tweetId = tweetId;
 	}
 

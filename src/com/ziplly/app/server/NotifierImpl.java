@@ -37,6 +37,8 @@ import com.ziplly.app.server.bli.EmailServiceImpl;
 import com.ziplly.app.server.bli.EmailServiceImpl.EmailEntity;
 import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.AccountNotification;
+import com.ziplly.app.server.model.jpa.AccountNotificationSettings;
+import com.ziplly.app.server.model.jpa.Neighborhood;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.EmailTemplate;
@@ -93,12 +95,12 @@ public class NotifierImpl implements Notifier {
         emailTemplate));
     
     try {
-      TweetDTO tweet = tweetDao.findTweetById(tweetId);
+      Tweet tweet = tweetDao.findTweetById(tweetId);
       Account sender = accountDao.findById(senderAccountId);
-      List<AccountDTO> unfilteredRecipients = getAllRecipients(neighborhoodId);
+      List<Account> unfilteredRecipients = getAllRecipients(neighborhoodId);
 
       // Email notification
-      List<AccountDTO> emailSubscribers =
+      List<Account> emailSubscribers =
           filterRecipientsByNotificationAction(
               unfilteredRecipients,
               tweet.getType(),
@@ -150,35 +152,36 @@ public class NotifierImpl implements Notifier {
   
   private void sendAccountNotifications(
       Account sender,
-      List<AccountDTO> recipients,
-      TweetDTO tweet,
+      List<Account> recipients,
+      Tweet tweet,
       NotificationType ntype) {
     
     List<AccountNotification> notifications = new ArrayList<>();
-    for (AccountDTO account : recipients) {
-      Date now = new Date();
+    Date now = new Date();
+    
+    for (Account account : recipients) {
       AccountNotification an = new AccountNotification();
-      an.setRecipient(EntityUtil.convert(account));
+      an.setRecipient(account);
       an.setSender(sender);
       an.setReadStatus(ReadStatus.UNREAD);
       an.setType(ntype);
       an.setStatus(RecordStatus.ACTIVE);
       an.setTimeCreated(now);
       an.setTimeUpdated(now);
-      an.setTweet(new Tweet(tweet));
+      an.setTweet(tweet);
       notifications.add(an);
     }
     
     accountNotificationDao.save(notifications);
   }
 
-  private List<AccountDTO> getAllRecipients(Long neighborhoodId) {
+  private List<Account> getAllRecipients(Long neighborhoodId) {
     try {
-      List<NeighborhoodDTO> neighborhoods =
+      List<Neighborhood> neighborhoods =
           neighborhoodDao.findAllDescendentNeighborhoodsIncludingItself(neighborhoodId);
 
-      List<AccountDTO> recipients = Lists.newArrayList();
-      for (NeighborhoodDTO neighborhood : neighborhoods) {
+      List<Account> recipients = Lists.newArrayList();
+      for (Neighborhood neighborhood : neighborhoods) {
         // retrieve upto MAX_VALUE personal accounts (might need to
         // change in future)
         recipients.addAll(accountDao.findAccountsByNeighborhood(
@@ -206,17 +209,17 @@ public class NotifierImpl implements Notifier {
     return ImmutableList.of();
   }
 
-  private List<AccountDTO> filterRecipientsByNotificationAction(
-      final List<AccountDTO> recipients,
+  private List<Account> filterRecipientsByNotificationAction(
+      final List<Account> recipients,
       final TweetType tweetType,
       final NotificationAction naction) {
 
-    Iterable<AccountDTO> recipientsNeedingEmailNotification =
-        Iterables.filter(recipients, new Predicate<AccountDTO>() {
+    Iterable<Account> recipientsNeedingEmailNotification =
+        Iterables.filter(recipients, new Predicate<Account>() {
           @Override
-          public boolean apply(AccountDTO acct) {
+          public boolean apply(Account acct) {
             NotificationType notificationType = tweetType.getNotificationType();
-            for (AccountNotificationSettingsDTO ans : acct.getNotificationSettings()) {
+            for (AccountNotificationSettings ans : acct.getNotificationSettings()) {
               if (ans.getType() == notificationType) {
                 return ans.getAction() == naction;
               }
@@ -235,14 +238,14 @@ public class NotifierImpl implements Notifier {
    * @param sender
    * @param emailTemplate
    */
-  private void sendEmails(List<AccountDTO> emailSubscribers,
+  private void sendEmails(List<Account> emailSubscribers,
       Account sender,
       EmailTemplate emailTemplate) {
 
-    for (AccountDTO acct : emailSubscribers) {
+    for (Account acct : emailSubscribers) {
       sendEmail(
           acct.getEmail(),
-          acct.getDisplayName(),
+          acct.getName(),
           sender.getEmail(),
           sender.getName(),
           emailTemplate);

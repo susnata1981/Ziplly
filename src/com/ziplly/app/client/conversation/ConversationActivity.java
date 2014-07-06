@@ -11,8 +11,6 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AbstractActivity;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.exceptions.AccessException;
-import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.view.IConversationView;
 import com.ziplly.app.client.view.StringConstants;
@@ -75,11 +73,6 @@ public class ConversationActivity extends AbstractActivity implements
 				go(ConversationActivity.this.panel);
 				setupHandlers();
 				internalStart();
-				// if (ctx.getAccount() != null) {
-				// internalStart();
-				// } else {
-				// checkAccountLogin();
-				// }
 			}
 		});
 	}
@@ -113,7 +106,7 @@ public class ConversationActivity extends AbstractActivity implements
 	}
 
 	private void internalStart() {
-		if (place.getConversationId() != null) {
+		if (place.getConversationId() != 0) {
 			GetConversationsAction action = new GetConversationsAction();
 			action.setType(ConversationType.SINGLE);
 			action.setConversationId(place.getConversationId());

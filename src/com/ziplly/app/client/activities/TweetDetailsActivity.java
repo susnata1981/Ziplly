@@ -55,11 +55,11 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 		checkAccountLogin();
 	}
 
-	private void fetchTweet(Long tweetId) {
+	private void fetchTweet(long tweetId) {
 		view.clearDisplay();
 		GetCommunityWallDataAction action = new GetCommunityWallDataAction();
 		action.setSearchType(SearchType.TWEET_BY_ID);
-		action.setTweetId(tweetId.toString());
+		action.setTweetId(tweetId);
 		dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
 
 			@Override
@@ -70,15 +70,6 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 					view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
 				}
 			}
-//
-//			@Override
-//			public void onFailure(Throwable th) {
-//				if (th instanceof NotFoundException) {
-//					view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-//				} else {
-//					view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-//				}
-//			}
 		});
 	}
 
@@ -146,7 +137,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 
 				TweetDetailsActivity.this.view = result;
 				view.setPresenter(TweetDetailsActivity.this);
-				if (place.getTweetId() != null) {
+				if (place.getTweetId() != 0) {
 					fetchTweet(place.getTweetId());
 				} else {
 					placeController.goTo(new SignupPlace());
@@ -234,11 +225,6 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	public void initializeUploadForm(FormUploadWidget formUploadWidget) {
 		placeController.goTo(new LoginPlace());
 	}
-
-//	@Override
-//  public void purchaseCoupon(String transactionId, PurchasedCouponAction.ResultStatus resultStatus, CouponDTO coupon) {
-//		placeController.goTo(new LoginPlace());
-//	}
 
   @Override
   public void cancelTransaction(long transactionId) {

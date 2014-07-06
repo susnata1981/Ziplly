@@ -11,10 +11,12 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
+import com.ziplly.app.dao.EntityUtil;
 import com.ziplly.app.dao.NeighborhoodDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.model.jpa.Neighborhood;
 import com.ziplly.app.shared.GetNeighborhoodAction;
 import com.ziplly.app.shared.GetNeighborhoodResult;
 
@@ -41,12 +43,12 @@ public class GetNeighborhoodActionHandler extends
 		Preconditions.checkArgument(action != null);
 
 		GetNeighborhoodResult result = new GetNeighborhoodResult();
-		List<NeighborhoodDTO> neighborhoods = null;
+		List<Neighborhood> neighborhoods = null;
 		switch (action.getSearchType()) {
 			case ALL:
 				neighborhoods = neighborhoodDao.findAll();
-				for (NeighborhoodDTO n : neighborhoods) {
-					result.getNeighbordhoods().add(n);
+				for (Neighborhood n : neighborhoods) {
+					result.getNeighbordhoods().add(EntityUtil.clone(n));
 				}
 				return result;
 			case BY_NEIGHBORHOOD:
@@ -57,13 +59,13 @@ public class GetNeighborhoodActionHandler extends
 			case BY_NEIGHBORHOOD_LOCALITY:
 				Preconditions.checkNotNull(action.getNeighborhood());
 				neighborhoods = neighborhoodDao.findNeighborhoodsByLocality(action.getNeighborhood());
-				result.getNeighbordhoods().addAll(neighborhoods);
+				result.getNeighbordhoods().addAll(EntityUtil.cloneNeighborhoodList(neighborhoods));
 				return result;
 			case BY_ZIP:
 			default:
 				neighborhoods = neighborhoodDao.findByPostalCode(action.getPostalCode());
-				for (NeighborhoodDTO n : neighborhoods) {
-					result.getNeighbordhoods().add(n);
+				for (Neighborhood n : neighborhoods) {
+					result.getNeighbordhoods().add(EntityUtil.clone(n));
 				}
 				return result;
 		}

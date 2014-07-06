@@ -20,12 +20,12 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.ImageDAO;
-import com.ziplly.app.dao.ImageDAOImpl;
 import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.server.model.jpa.Image;
 
@@ -38,9 +38,11 @@ public class UploadServlet extends HttpServlet {
 	private final ImageDAO imageDao;
 	private final ImagesService imageService = ImagesServiceFactory.getImagesService();
 
-	public UploadServlet() {
+	@Inject
+	public UploadServlet(ImageDAO imageDao) {
 		System.out.println("Creating upload servlet...");
-		this.imageDao = new ImageDAOImpl(new EntityManagerProvider()); 
+//		this.imageDao = new ImageDAOImpl(new EntityManagerProvider());
+		this.imageDao = imageDao;
 	}
 
 	@Override

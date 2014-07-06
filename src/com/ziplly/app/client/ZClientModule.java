@@ -33,6 +33,8 @@ import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
+import com.ziplly.app.client.places.PlaceParser;
+import com.ziplly.app.client.places.PlaceParserImpl;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.view.AboutView;
 import com.ziplly.app.client.view.AccountView;
@@ -67,11 +69,13 @@ public class ZClientModule extends AbstractGinModule {
 		bindConstant().annotatedWith(TweetsPerPage.class).to(10);
 		bindConstant().annotatedWith(Names.named("tpp")).to(5);
 		
+		bind(PlaceParser.class).to(PlaceParserImpl.class).in(Singleton.class);
 		bind(ApplicationContext.class).in(Singleton.class);
 		bind(CachingDispatcherAsync.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 
+		
 		// main presenter
 		bind(ZipllyController.class).in(Singleton.class);
 

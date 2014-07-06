@@ -10,7 +10,12 @@ import com.ziplly.app.client.view.StringConstants;
 
 public abstract class BaseTokenizer<T extends Place> implements PlaceTokenizer<T> {
 	private final List<String> tokens = new ArrayList<String>();
-	
+  protected PlaceParser parser;
+  
+	public BaseTokenizer() {
+	  this.parser = new PlaceParserImpl();
+  }
+
 	public void tokenize(String token) {
 		if (token != null) {
 			try {

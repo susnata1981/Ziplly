@@ -22,7 +22,6 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
-import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
