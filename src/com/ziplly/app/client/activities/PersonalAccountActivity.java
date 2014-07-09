@@ -1,5 +1,6 @@
 package com.ziplly.app.client.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -15,6 +16,7 @@ import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.AccountView;
+import com.ziplly.app.client.view.PendingActionTypes;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
@@ -26,6 +28,7 @@ import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.DeleteTweetAction;
 import com.ziplly.app.shared.DeleteTweetResult;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -151,10 +154,24 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		getAccountNotifications();
 		setupImageUpload();
 		// Display account updates
-		view.displayAccontUpdate();
+		displayAccontUpdate();
 	}
 
-	private void setupImageUpload() {
+	private void displayAccontUpdate() {
+	  PersonalAccountDTO account = (PersonalAccountDTO) ctx.getAccount();
+    List<PendingActionTypes> pendingActions = new ArrayList<PendingActionTypes>();
+    
+    if (account.getImages().size() == 0 
+        || account.getInterests().isEmpty() 
+        || FieldVerifier.isEmpty(account.getOccupation())
+        || FieldVerifier.isEmpty(account.getIntroduction())) {
+      pendingActions.add(PendingActionTypes.INCOMPLETE_ACCOUNT_SETTINGS);
+    }
+    
+    view.displayAccontUpdate(pendingActions);
+  }
+
+  private void setupImageUpload() {
 		setImageUploadUrl();
 		setUploadImageHandler();
 	}

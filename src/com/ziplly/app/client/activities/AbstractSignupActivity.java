@@ -1,8 +1,7 @@
 package com.ziplly.app.client.activities;
 
-import java.util.logging.Logger;
-
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.ziplly.app.client.ApplicationContext;
@@ -14,7 +13,7 @@ import com.ziplly.app.client.view.ISignupView;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
-import com.ziplly.app.client.view.event.LoginEvent;
+import com.ziplly.app.client.view.signup.SignupViewMessages;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.AccountStatus;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -33,9 +32,9 @@ import com.ziplly.app.shared.RegisterAccountResult;
 
 public abstract class AbstractSignupActivity extends AbstractActivity implements
     SignupActivityPresenter {
-	ISignupView<SignupActivityPresenter> view;
-	Logger logger = Logger.getLogger(AbstractSignupActivity.class.getName());
-	RegisterAccountHandler registerAccountHandler = new RegisterAccountHandler();
+  
+  private SignupViewMessages signupViewMessages = GWT.create(SignupViewMessages.class);
+	protected ISignupView<SignupActivityPresenter> view;
 
 	public AbstractSignupActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
@@ -50,7 +49,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	@Override
 	public void register(AccountDTO account) {
 		eventBus.fireEvent(new LoadingEventStart());
-		dispatcher.execute(new RegisterAccountAction(account), registerAccountHandler);
+		dispatcher.execute(new RegisterAccountAction(account), new RegisterAccountHandler(account));
 	}
 
 	@Deprecated
@@ -159,7 +158,8 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		dispatcher.execute(
 		    new DeleteImageAction(url),
 		    new DispatcherCallbackAsync<DeleteImageResult>() {
-			    @Override
+			    
+		      @Override
 			    public void onSuccess(DeleteImageResult result) {
 				    // Nothing to do.
 			    }
@@ -167,32 +167,27 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 
 	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
+	  private AccountDTO account;
 
+    public RegisterAccountHandler(AccountDTO account) {
+	    this.account = account;
+    }
+    
 		@Override
 		public void onSuccess(RegisterAccountResult result) {
-			// String property =
-			// System.getProperty(StringConstants.EMAIL_VERIFICATION_FEATURE_FLAG,
-			// "true");
-			// boolean isEmailVerificationRequired = Boolean.valueOf(property);
-
 			if (result.getAccount().getStatus() != AccountStatus.ACTIVE) {
 				view.clear();
 				view.displayMessage(StringConstants.EMAIL_VERIFICATION_SENT, AlertType.SUCCESS);
-			} else {
-				ctx.setAccount(result.getAccount());
-				eventBus.fireEvent(new LoginEvent(result.getAccount()));
-				view.clear();
-				forward(result.getAccount());
-			}
+			} 
 			eventBus.fireEvent(new LoadingEventEnd());
 		}
 
 		@Override
 		public void onFailure(Throwable th) {
 			if (th instanceof AccountExistsException) {
-				view.displayMessage(StringConstants.EMAIL_ALREADY_EXISTS, AlertType.ERROR);
+				view.displayMessage(signupViewMessages.duplicateAccount(account.getEmail()), AlertType.ERROR);
 			} else {
-				view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+				view.displayMessage(stringDefinitions.internalError(), AlertType.ERROR);
 			}
 			eventBus.fireEvent(new LoadingEventEnd());
 		}

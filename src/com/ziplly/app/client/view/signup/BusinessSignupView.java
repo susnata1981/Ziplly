@@ -1,13 +1,14 @@
-package com.ziplly.app.client.view;
+package com.ziplly.app.client.view.signup;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
+import com.github.gwtbootstrap.client.ui.Controls;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -28,68 +29,89 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.SignupActivityPresenter;
-import com.ziplly.app.client.oauth.OAuthConfig;
-import com.ziplly.app.client.oauth.OAuthFactory;
-import com.ziplly.app.client.oauth.OAuthProvider;
+import com.ziplly.app.client.activities.util.CommonUtil;
 import com.ziplly.app.client.places.AboutPlace;
-import com.ziplly.app.client.places.BusinessSignupPlace;
+import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.client.view.AboutViewSection;
+import com.ziplly.app.client.view.AbstractView;
+import com.ziplly.app.client.view.ISignupView;
+import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.GooglePlacesWidget;
-import com.ziplly.app.client.widget.NeighborhoodSelectorWidget;
 import com.ziplly.app.client.widget.NotYetLaunchedWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountStatus;
-import com.ziplly.app.model.Badge;
-import com.ziplly.app.model.Gender;
+import com.ziplly.app.model.BusinessAccountDTO;
+import com.ziplly.app.model.BusinessCategory;
+import com.ziplly.app.model.BusinessPropertiesDTO;
+import com.ziplly.app.model.BusinessType;
+import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.model.PriceRange;
 import com.ziplly.app.model.Role;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class SignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
-	private static SignupViewUiBinder uiBinder = GWT.create(SignupViewUiBinder.class);
-
-	interface SignupViewUiBinder extends UiBinder<Widget, SignupView> {
-	}
-
-	@UiFactory
-	ZResources resources() {
-		ZResources.IMPL.style().ensureInjected();
-		return ZResources.IMPL;
-	}
-
-	boolean checkEmailInvitationStatus = false;
-	boolean isServiceAvailable = true;
+public class BusinessSignupView extends AbstractView implements ISignupView<SignupActivityPresenter> {
+	private String streetName;
+	private String city;
+	private String state;
+	private String zipCode;
 	private NeighborhoodDTO selectedNeighborhood;
-//	private List<NeighborhoodDTO> neighborhoods;
+	private boolean isServiceAvailable = true;
+	private boolean doValidation = true;
+
+	private static final String START_TIME = "9AM";
+	private static final String END_TIME = "9PM";
+	private static BusinessSignupViewUiBinder uiBinder = GWT.create(BusinessSignupViewUiBinder.class);
+
+	interface BusinessSignupViewUiBinder extends UiBinder<Widget, BusinessSignupView> {
+	}
 
 	@UiField
-	Anchor howItWorksAnchor;
+	TextBox businessName;
+	@UiField
+	ControlGroup businessNameCg;
+	@UiField
+	HelpInline businessNameError;
 
 	@UiField
-	TextBox firstname;
-	@UiField
-	ControlGroup firstnameCg;
-	@UiField
-	HelpInline firstnameError;
+	ListBox businessCategory;
 
 	@UiField
-	TextBox lastname;
+	TextBox street1;
 	@UiField
-	ControlGroup lastnameCg;
+	ControlGroup street1Cg;
 	@UiField
-	HelpInline lastnameError;
+	HelpInline street1Error;
+	@UiField
+	Image neighborhoodLoadingImage;
+
+	@UiField
+	ControlGroup phoneCg;
+	@UiField
+	HelpInline phoneError;
+	@UiField
+	TextBox phone;
+
+	@UiField
+	ControlGroup neighborhoodCg;
+	@UiField
+	Controls neighborhoodControl;
+	@UiField
+	HTMLPanel neighborhoodListPanel;
+	@UiField
+	HelpInline neighborhoodError;
 
 	@UiField
 	TextBox email;
@@ -97,12 +119,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	ControlGroup emailCg;
 	@UiField
 	HelpInline emailError;
-
-	@UiField
-	ListBox genderListBox;
-
-	@UiField
-	Image neighborhoodLoadingImage;
 
 	@UiField
 	PasswordTextBox password;
@@ -115,21 +131,14 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	Alert infoField;
 
 	@UiField
-	Anchor loginAnchor;
-	
-	@UiField
 	Button signupBtn;
 
 	@UiField
 	Anchor signInAnchor;
 
+	// how it works section
 	@UiField
-	Anchor facebookSignupAnchor;
-
-	@UiField
-	Button businessSignupBtn;
-
-	// How it works section
+	Anchor learnMoreAnchor;
 	@UiField
 	Button createProfileBtn;
 	@UiField
@@ -138,49 +147,41 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	Button postMessageBtn;
 
 	@UiField
-	Anchor termsOfUseAnchor;
-	@UiField
 	Anchor privacyPolicyAnchor;
+	@UiField
+	Anchor termsOfUseAnchor;
 
-	@UiField
-	TextBox address;
-	@UiField
-	ControlGroup addressCg;
-	@UiField
-	HelpInline addressError;
 	@UiField
 	Anchor clearAddressAnchor;
 	
+	@UiField
+  Anchor pricingAnchor;
+	
+	SignupActivityPresenter presenter;
 	private GooglePlacesWidget placesWidget;
 	
-	String profileImageUrl;
-	NeighborhoodSelectorWidget neighborhoodSelectionWidget;
-	SignupActivityPresenter presenter;
-	private boolean facebookRegistration;
-	private boolean doValidation = true;
-	private OAuthConfig authConfig;
-
 	@Inject
-	public SignupView(EventBus eventBus) {
+	public BusinessSignupView(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
-		StyleHelper.show(firstnameError.getElement(), false);
-		StyleHelper.show(lastnameError.getElement(), false);
+		neighborhoodControl.setVisible(false);
+		placesWidget = new GooglePlacesWidget(street1, street1Cg, street1Error, clearAddressAnchor, new GooglePlacesWidget.Listener() {
+
+			@Override
+      public void onChange(NeighborhoodDTO n) {
+				presenter.getNeighborhoodData(n);
+      }
+		});
+		
+		populateBusinessCategory();
 		StyleHelper.show(neighborhoodLoadingImage.getElement(), false);
 		setupHandlers();
-		for (Gender g : Gender.getValuesForSignup()) {
-			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
+	}
+
+  private void populateBusinessCategory() {
+		for (BusinessCategory category : BusinessCategory.values()) {
+			businessCategory.addItem(category.getName());
 		}
-		
-		placesWidget = new GooglePlacesWidget(address, addressCg, addressError, clearAddressAnchor, new GooglePlacesWidget.Listener() {
-			
-			@Override
-			public void onChange(NeighborhoodDTO n) {
-				if (n != null) {
-					presenter.getNeighborhoodData(n);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -189,56 +190,61 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	}
 
 	private void setupHandlers() {
-		firstname.addBlurHandler(new BlurHandler() {
+		businessName.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
 				if (!doValidation) {
 					return;
 				}
 
-				boolean validateName = validateName(firstname.getText(), firstnameCg, firstnameError);
+				boolean validateName =
+				    validateName(businessName.getText(), businessNameCg, businessNameError);
 				if (validateName) {
-					firstnameCg.setType(ControlGroupType.SUCCESS);
-					firstnameError.setVisible(false);
+					businessNameCg.setType(ControlGroupType.SUCCESS);
+					businessNameError.setVisible(false);
 				}
 			}
 		});
 
-		lastname.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				if (!doValidation) {
-					return;
-				}
-
-				boolean validateName = validateName(lastname.getText(), lastnameCg, lastnameError);
-				if (validateName) {
-					lastnameCg.setType(ControlGroupType.SUCCESS);
-					lastnameError.setVisible(false);
-				}
-			}
-		});
-		
 		email.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
 				if (!doValidation) {
 					return;
 				}
-				boolean validateEmail = validateEmail();
-				if (validateEmail) {
+
+				boolean validateName = validateName(email.getText(), emailCg, emailError);
+				if (validateName) {
 					emailCg.setType(ControlGroupType.SUCCESS);
 					emailError.setVisible(false);
 				}
 			}
 		});
 
+		phone.addBlurHandler(new BlurHandler() {
+
+      @Override
+      public void onBlur(BlurEvent event) {
+        if (!doValidation) {
+          return;
+        }
+        
+        boolean valid = validatePhone();
+        if (valid) {
+          phoneCg.setType(ControlGroupType.SUCCESS);
+          phoneError.setVisible(false);
+        }
+      }
+		  
+		});
+		
 		password.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
 				if (!doValidation) {
 					return;
 				}
+
 				boolean validateName = validatePassword(password.getText(), passwordCg, passwordError);
 				if (validateName) {
 					passwordCg.setType(ControlGroupType.SUCCESS);
@@ -256,6 +262,32 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 				}
 			}
 		}, KeyDownEvent.getType());
+		
+	}
+
+	void validateAddressField() {
+		doValidation = true;
+		boolean validateAddress = validateAddress(street1.getText(), street1Cg, street1Error);
+		if (validateAddress) {
+			// reset isServiceAvailable
+			isServiceAvailable = true;
+			// Call presenter to get Neighborhood data
+			presenter.getNeighborhoodData(FieldVerifier.sanitize(zipCode));
+			street1Cg.setType(ControlGroupType.SUCCESS);
+			street1Error.setVisible(false);
+		}
+	}
+
+	@UiFactory
+	ZResources resources() {
+		ZResources.IMPL.style().ensureInjected();
+		return ZResources.IMPL;
+	}
+
+	@Override
+	public void onAttach() {
+		super.onAttach();
+//		initializePlacesApi(street1.getElement());
 	}
 
 	public void reset() {
@@ -273,10 +305,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		return true;
 	}
 
-	public void verifiedEmailInvitationStatus() {
-		checkEmailInvitationStatus = true;
-	}
-
 	boolean validateEmail() {
 		String emailInput = email.getText().trim();
 		ValidationResult result = FieldVerifier.validateEmail(emailInput);
@@ -286,7 +314,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 			emailError.setVisible(true);
 			return false;
 		}
-
 		return true;
 	}
 
@@ -302,71 +329,86 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 	}
 
 	boolean validateInput() {
-		String firstnameInput = firstname.getText().trim();
+		String businessNameInput = businessName.getText().trim();
 		boolean valid = true;
-		valid &= validateName(firstnameInput, firstnameCg, firstnameError);
+		valid &= validateName(businessNameInput, businessNameCg, businessNameError);
 
-		String lastnameInput = lastname.getText().trim();
-		valid &= validateName(lastnameInput, lastnameCg, lastnameError);
+//		String street = street1.getText().trim();
+//		valid &= validateAddress(street, street1Cg, street1Error);
+		
+		valid &= placesWidget.validateAddress();
+//			valid &= (selectedNeighborhood != null);
+			
+//		valid &= validateNeighborhood();
 
 		valid &= validateEmail();
 
-//		valid &= validateZip();
+		valid &= validatePhone();
 
-//		valid &= (selectedNeighborhood != null);
-		
-		valid &= placesWidget.validateAddress();
-		
 		String passwordInput = password.getText().trim();
 		valid &= validatePassword(passwordInput, passwordCg, passwordError);
-
-//		valid &= validateNeighborhood();
 
 		return valid;
 	}
 
-//	private boolean validateNeighborhood() {
-//		selectedNeighborhood = getNeighborhoodSelection();
-//		if (selectedNeighborhood == null) {
-//			neighborhoodCg.setType(ControlGroupType.ERROR);
-//			neighborhoodError.setText(StringConstants.NEIGHBORHOOD_NOT_SELECTED);
-//			neighborhoodError.setVisible(false);
-//			return false;
-//		}
-//
-//		return true;
-//	}
+	private boolean validatePhone() {
+		String phoneNumber = phone.getText().trim();
+		ValidationResult result = FieldVerifier.validatePhone(phoneNumber);
+		if (!result.isValid()) {
+			phoneCg.setType(ControlGroupType.ERROR);
+			phoneError.setText(result.getErrors().get(0).getErrorMessage());
+			phoneError.setVisible(true);
+			return false;
+		}
+		return true;
+	}
+
+	private boolean validateAddress(String input, ControlGroup cg, HelpInline helpInline) {
+		if (streetName == null || city == null || state == null || zipCode == null) {
+			cg.setType(ControlGroupType.ERROR);
+			helpInline.setText(StringConstants.INVALID_ADDRESS);
+			helpInline.setVisible(true);
+			return false;
+		}
+		return true;
+	}
 
 	void resetForm() {
 		resetFormFields();
-//		clearNeighborhoodSection();
 		resetErrors();
 		infoField.setVisible(false);
 	}
 
 	void resetFormFields() {
-		firstname.setText("");
-		lastname.setText("");
+		businessName.setText("");
+		street1.setText("");
 		email.setText("");
+		phone.setText("");
 		password.setText("");
-//		zip.setText("");
+		neighborhoodListPanel.clear();
 	}
 
 	void resetErrors() {
-		firstnameCg.setType(ControlGroupType.NONE);
-		firstnameError.setVisible(false);
-		lastnameCg.setType(ControlGroupType.NONE);
-		lastnameError.setVisible(false);
-		passwordCg.setType(ControlGroupType.NONE);
-		passwordError.setVisible(false);
+		businessNameCg.setType(ControlGroupType.NONE);
+		businessNameError.setVisible(false);
+		street1Cg.setType(ControlGroupType.NONE);
+		street1Error.setVisible(false);
 		emailCg.setType(ControlGroupType.NONE);
 		emailError.setVisible(false);
+		phoneCg.setType(ControlGroupType.NONE);
+		phoneError.setVisible(false);
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodError.setVisible(false);
+		passwordCg.setType(ControlGroupType.NONE);
+		passwordError.setVisible(false);
 	}
 
 	@UiHandler("signupBtn")
 	void signup(ClickEvent event) {
 		resetErrors();
 
+		// checks to see if ziplly is available in the area code.
+		// this is set inside displayNotYetLaunchedWidget function.
 		if (!isServiceAvailable) {
 			displayMessage(StringConstants.SERVICE_NOT_AVAILABLE, AlertType.ERROR);
 			return;
@@ -375,71 +417,79 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		if (!validateInput()) {
 			return;
 		}
-
 		infoField.setType(AlertType.SUCCESS);
-		String firstnameInput = firstname.getText().trim();
-		String lastnameInput = lastname.getText().trim();
+		String name = businessName.getText().trim();
+		String streetOne = street1.getText().trim();
 		String emailInput = email.getText().trim();
-		PersonalAccountDTO account = new PersonalAccountDTO();
-		account.setFirstName(firstnameInput);
-		account.setLastName(lastnameInput);
-		account.setStatus(AccountStatus.PENDING_ACTIVATION);
-		account.setEmail(emailInput);
-		Gender selectedGender = Gender.values()[genderListBox.getSelectedIndex()];
-		account.setGender(selectedGender);
-		account.setPassword(password.getText().trim());
+		BusinessAccountDTO account = new BusinessAccountDTO();
+		account.setName(name);
+		account.setPhone(FieldVerifier.getEscapedText(phone.getText()));
+
 		LocationDTO location = new LocationDTO();
-//		location.setNeighborhood(selectedNeighborhood);
 		location.setNeighborhood(selectedNeighborhood);
+		location.setAddress(streetOne);
 		location.setType(LocationType.PRIMARY);
-		location.setTimeCreated(new Date());
 		location.setTimeUpdated(new Date());
+		location.setTimeCreated(new Date());
 		account.addLocation(location);
 
+		// this should go away.
+		// account.setNeighborhood(selectedNeighborhood);
+		// account.setCity(city);
+		// account.setState(state);
+		// account.setZip(Integer.parseInt(zipCode));
+
+		// business category
+		BusinessCategory category = BusinessCategory.values()[businessCategory.getSelectedIndex()];
+		account.setCategory(category);
+
+		// Hardcoded to COMMERCIAL for now (Need admin privileges to change it for
+		// public institutions)
+		account.setBusinessType(BusinessType.COMMERCIAL);
+
 		account.setRole(Role.USER);
-		account.setBadge(Badge.chipmunk);
+		account.setEmail(emailInput);
+		account.setStatus(AccountStatus.PENDING_ACTIVATION);
+		account.setPassword(password.getText().trim());
 		account.setLastLoginTime(new Date());
 		account.setTimeCreated(new Date());
 
-		if (facebookRegistration) {
-			account.setFacebookRegistration(true);
-		}
+		account.setProperties(getDefaultProperties());
 
-		//
-		// RESTRICT_REGISTRATION_FEATURE
-		//
-		String value = System.getProperty(StringConstants.RESTRICT_REGISTRATION_FEATURE, "false");
-		boolean isRegistrationRescricted = Boolean.valueOf(value);
+    // RESTRICT_REGISTRATION_FEATURE
+		boolean isRegistrationRescricted = FeatureFlags.RegistrationRestcricted.isEnabled();
+
 		if (isRegistrationRescricted) {
-			String code = Window.Location.getParameter("code");
+		  String code = CommonUtil.getUrlParameter("code");
 			presenter.register(account, code);
 		} else {
 			presenter.register(account);
 		}
 	}
 
-//	private NeighborhoodDTO getNeighborhoodSelection() {
-//		int count = neighborhoodListPanel.getWidgetCount();
-//		for (int i = 0; i < count; i++) {
-//			RadioButton rb = (RadioButton) neighborhoodListPanel.getWidget(i);
-//			if (rb.getValue()) {
-//				return neighborhoods.get(i);
-//			}
-//		}
-//
-//		return null;
-//	}
+	private BusinessPropertiesDTO getDefaultProperties() {
+		BusinessPropertiesDTO properties = new BusinessPropertiesDTO();
+		properties.setAcceptsCreditCard(true);
+		properties.setMondayStartTime(START_TIME);
+		properties.setMondayEndTime(END_TIME);
+		properties.setTuesdayStartTime(START_TIME);
+		properties.setTuesdayEndTime(END_TIME);
+		properties.setWednesdayStartTime(START_TIME);
+		properties.setWednesdayEndTime(END_TIME);
+		properties.setThursdayStartTime(START_TIME);
+		properties.setThursdayEndTime(END_TIME);
+		properties.setFridayStartTime(START_TIME);
+		properties.setFridayEndTime(END_TIME);
+		properties.setSaturdayStartTime(START_TIME);
+		properties.setSaturdayEndTime(END_TIME);
+		properties.setSundayStartTime(START_TIME);
+		properties.setSundayEndTime(END_TIME);
 
-	public void displayAccount(PersonalAccountDTO account) {
-		resetForm();
-		firstname.setText(account.getFirstName());
-		lastname.setText(account.getLastName());
-		email.setText(account.getEmail());
-
-		genderListBox.setSelectedIndex(account.getGender().ordinal());
-//		zip.setText("");
-//		neighborhoodControl.setVisible(false);
-		facebookRegistration = true;
+		properties.setPriceRange(PriceRange.MEDIUM);
+		properties.setWifiAvailable(false);
+		properties.setParkingAvailable(true);
+		properties.setPriceRange(PriceRange.MEDIUM);
+		return properties;
 	}
 
 	@Override
@@ -448,47 +498,38 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		placesWidget.clear();
 	}
 
+	public void clearMessage() {
+		infoField.setText("");
+		infoField.setVisible(false);
+	}
+
+	public void clearNeighborhoodSection() {
+		neighborhoodListPanel.clear();
+		neighborhoodCg.setType(ControlGroupType.NONE);
+		neighborhoodControl.setVisible(false);
+	}
+
 	@Override
 	public void setPresenter(SignupActivityPresenter presenter) {
 		this.presenter = presenter;
 		placesWidget.setPresenter(presenter);
 	}
 
-	@UiHandler("businessSignupBtn")
-	public void businessSignup(ClickEvent event) {
-		presenter.goTo(new BusinessSignupPlace());
+	@Override
+	public void displayAccount(PersonalAccountDTO a) {
+		throw new RuntimeException();
 	}
 
-	@UiHandler("signInAnchor")
-	public void signIn(ClickEvent event) {
-		presenter.goTo(new LoginPlace());
-	}
-
+	@Override
 	public void displayMessage(String msg, AlertType type) {
 		infoField.setText(msg);
 		infoField.setType(type);
 		infoField.setVisible(true);
 	}
 
-	public void clearMessage() {
-		infoField.setText("");
-		infoField.setVisible(false);
-	}
-
-	@Deprecated
-	@Override
-	public void displayNeighborhoods(List<NeighborhoodDTO> neighborhoods) {
-//		clearMessage();
-//		neighborhoodListPanel.clear();
-//		this.neighborhoods = neighborhoods;
-//		for (NeighborhoodDTO n : neighborhoods) {
-//			RadioButton rb = new RadioButton("neighborhood");
-//			rb.setText(n.getName());
-//			neighborhoodListPanel.add(rb);
-//		}
-//		neighborhoodControl.setVisible(true);
-	}
-
+	/**
+	 * Displays a modal window to get user information
+	 */
 	@Override
 	public void displayNotYetLaunchedWidget() {
 		isServiceAvailable = false;
@@ -496,17 +537,11 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		resetErrors();
 		final NotYetLaunchedWidget widget = new NotYetLaunchedWidget();
 		widget.addClickHandler(new ClickHandler() {
-
 			@Override
 			public void onClick(ClickEvent event) {
 				String email = widget.getEmail();
 				String postalCode = widget.getPostalCode();
-				boolean valid = widget.validateInput();
-				if (!valid) {
-					return;
-				}
 				presenter.addToInviteList(email, Integer.parseInt(postalCode));
-				widget.show(false);
 			}
 
 		});
@@ -514,6 +549,7 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		widget.show(true);
 	}
 
+	@Override
 	public void displayNeighborhoodListLoading(boolean display) {
 		if (display) {
 			neighborhoodLoadingImage.setUrl(ZResources.IMPL.loadingImageSmall().getSafeUri());
@@ -523,45 +559,39 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		}
 	}
 
-	/**
-	 * Signup/Login using facebook
-	 */
-	@UiHandler("facebookSignupAnchor")
-	void signupUsingFacebook(ClickEvent event) {
-		try {
-			if (authConfig == null) {
-				authConfig =
-				    OAuthFactory.getAuthConfig(OAuthProvider.FACEBOOK.name(), presenter.getEnvironment());
-			}
-			Window.Location.replace(authConfig.getAuthorizationUrl());
-		} catch (UnsupportedEncodingException e) {
-			// It should never get here.
-		}
+	@UiHandler("signInAnchor")
+	public void signIn(ClickEvent event) {
+		presenter.goTo(new LoginPlace());
 	}
 
-	/**
-	 * Link within page.
-	 */
-	@UiHandler("howItWorksAnchor")
-	void learnMore(ClickEvent event) {
+	@UiHandler("learnMoreAnchor")
+	public void learnMore(ClickEvent event) {
 		event.preventDefault();
 		Element elem = DOM.getElementById("howItWorksLink");
 		navigateToElement(elem);
 	}
 
-	/**
-	 * Link within page.
-	 */
 	@UiHandler("createProfileBtn")
-	void createAccount(ClickEvent event) {
+	public void createProfile(ClickEvent event) {
 		event.preventDefault();
 		Element elem = DOM.getElementById("signupFormLink");
 		navigateToElement(elem);
 	}
 
-	@UiHandler({ "exploreBtn", "postMessageBtn" })
-	void exploreNeighborhod(ClickEvent event) {
+	@UiHandler("postMessageBtn")
+	public void postMessage(ClickEvent event) {
 		presenter.goTo(new LoginPlace());
+	}
+
+	@UiHandler("exploreBtn")
+	public void explore(ClickEvent event) {
+		presenter.goTo(new BusinessAccountSettingsPlace());
+	}
+
+	private void navigateToElement(Element elem) {
+		if (elem != null) {
+			elem.scrollIntoView();
+		}
 	}
 
 	@UiHandler("privacyPolicyAnchor")
@@ -574,17 +604,6 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
 		presenter.goTo(new AboutPlace(AboutViewSection.TOS));
 	}
 
-	@UiHandler("loginAnchor")
-	public void gotoLogin(ClickEvent event) {
-		presenter.goTo(new LoginPlace());
-	}
-	
-	private void navigateToElement(Element elem) {
-		if (elem != null) {
-			elem.scrollIntoView();
-		}
-	}
-	
 	@Override
 	public void displayNeighborhood(NeighborhoodDTO n) {
 		selectedNeighborhood = n;
@@ -605,11 +624,17 @@ public class SignupView extends AbstractView implements ISignupView<SignupActivi
   public void displayNeighborhoodList(List<NeighborhoodDTO> foundNeighborhoods) {
 		placesWidget.displayNeighborhoodList(foundNeighborhoods);
   }
-
+	
 	@Override
   public void displayErrorDuringNeighborhoodSelection(String failedToAddNeighborhood,
       AlertType error) {
 		
 		placesWidget.displayErrorDuringNeighborhoodSelection(failedToAddNeighborhood, error);
   }
+	
+	@UiHandler("pricingAnchor")
+	public void click(ClickEvent event) {
+	  Element elem = DOM.getElementById("pricingPlans");
+	  navigateToElement(elem);
+	}
 }

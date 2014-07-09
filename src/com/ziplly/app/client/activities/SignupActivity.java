@@ -3,6 +3,7 @@ package com.ziplly.app.client.activities;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
@@ -10,7 +11,7 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.SignupPlace;
-import com.ziplly.app.client.view.SignupView;
+import com.ziplly.app.client.view.signup.SignupView;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
@@ -48,7 +49,7 @@ public class SignupActivity extends AbstractSignupActivity {
 
 			@Override
 			public void onFailure(final Throwable caught) {
-				// TODO Auto-generated method stub
+			  Window.alert(stringDefinitions.pageLoadError());
 			}
 
 			@Override

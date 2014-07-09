@@ -385,13 +385,37 @@ textarea {
 	font-size: 15px;
 }
 
+text-align-left {
+	text-align: left;
+}
+
 .text-align-center {
 	text-align: center;
 }
+
 .div-no-overflow {
 	overflow: hidden;
 }
+
 .numeric-font {
 	font-family: Arial Unicode MS, Arial, sans-serif !important;
+}
+.border-box-with-padding {
+	border: 1px solid #aaa;
+	padding: 4px;
+}
+.border-bottom-with-padding {
+	border-bottom: 1px solid #ddd;
+	padding: 4px;
+}
+
+/*************************** Account View Section ********************************/
+.padding-left {
+	padding-left: 6px;
+}
+
+.account-update-small-font {
+	font-size: 13px !important;
+	color: red !important;
 }
 /* This is used for notification drop down */

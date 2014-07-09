@@ -18,8 +18,6 @@ public interface ISignupView<T extends SignupActivityPresenter> extends View<T> 
 
 	void displayMessage(String accountDoesNotExist, AlertType error);
 
-	void displayNeighborhoods(List<NeighborhoodDTO> neighbordhoods);
-
 	void displayNotYetLaunchedWidget();
 
 	void displayNeighborhoodListLoading(boolean b);

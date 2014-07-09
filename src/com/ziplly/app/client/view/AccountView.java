@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.AlertBlock;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.FluidRow;
 import com.github.gwtbootstrap.client.ui.Heading;
@@ -15,10 +14,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -38,8 +37,6 @@ import com.google.maps.gwt.client.MarkerOptions;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.TweetPresenter;
-import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
-import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.coupon.CouponTransactionView;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
@@ -51,18 +48,17 @@ import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.InterestDTO;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class AccountView extends AbstractView implements IAccountView<PersonalAccountDTO>, TopLevelView {
+public class AccountView extends AbstractBaseAccountView implements IAccountView<PersonalAccountDTO>, TopLevelView {
 
 	private static AccountViewUiBinder uiBinder = GWT.create(AccountViewUiBinder.class);
 
@@ -112,8 +108,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField
 	ProfileStatWidget likeCountWidget;
 
-	private ITweetView<TweetPresenter> tview = new TweetView();
-
 	// Tweet section
 	@UiField
 	HTMLPanel tweetSection;
@@ -130,15 +124,12 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@UiField(provided = true)
 	CouponTransactionView couponTransactionView;
 	
-	// Updates section
-	@UiField
-	AlertBlock updateAlertBlock;
-
-	EmailWidget emailWidget;
-	AccountPresenter<PersonalAccountDTO> presenter;
+	private EmailWidget emailWidget;
+	private AccountPresenter<PersonalAccountDTO> presenter;
 	private PersonalAccountDTO account;
 	private SendMessageWidget smw;
 	private GoogleMapWidget mapWidget = new GoogleMapWidget();
+	private ITweetView<TweetPresenter> tview = new TweetView();
 	
 	private String tweetWidgetWidth = "94%";
 	private String tweetBoxWidth = "97%";
@@ -159,7 +150,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		tweetBox.setTweetCategory(TweetType.getAllTweetTypeForPublishingByUser());
 		tview.setWidth(tweetWidgetWidth);
 		tview.setHeight(TWEET_VIEW_HEIGHT);
-//		StyleHelper.setBackgroundImage(ZResources.IMPL.profileBackground());
 		tweetSection.add(tview);
 		displayCouponTransactionPanel(false);
   }
@@ -289,7 +279,7 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
 	public void displayPublicProfile(PersonalAccountDTO account) {
 		displayProfile(account);
-		displayAccontUpdateSection(false);
+		displayAccontUpdatePanel(false);
 		displayTweetBox(false);
 	}
 
@@ -423,12 +413,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	}
 
 	@Override
-	public void displayNotificationWidget(boolean show) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void displayProfileSection(boolean display) {
 		StyleHelper.show(profileSectionRow.getElement(), display);
 	}
@@ -438,40 +422,6 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
 	}
 
-	@Override
-	public void displayAccontUpdate() {
-		if (isAccountNotComplete()) {
-			addAccountProfileNotCompleteMessage();
-		} else {
-			String uploadImageHtml = "There are no updates at this moment";
-			updateAlertBlock.setHTML(uploadImageHtml);
-		}
-		displayAccontUpdateSection(true);
-	}
-
-	private void displayAccontUpdateSection(boolean display) {
-		StyleHelper.show(accountUpdatePanel, display);
-	}
-
-	private boolean isAccountNotComplete() {
-		return FieldVerifier.isEmpty(account.getIntroduction()) || account.getInterests().size() == 0
-		    || account.getImages().size() == 0;
-	}
-
-	private void addAccountProfileNotCompleteMessage() {
-		updateAlertBlock.setHTML(StringConstants.ACCOUNT_NOT_COMPLETE);
-		Anchor accountSettingsAnchor = new Anchor();
-		accountSettingsAnchor.setText("settings");
-		accountSettingsAnchor.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.goTo(new PersonalAccountSettingsPlace());
-			}
-		});
-
-		updateAlertBlock.add(accountSettingsAnchor);
-	}
 
 	@Override
   public ITweetView<TweetPresenter> getTweetView() {
@@ -517,5 +467,20 @@ public class AccountView extends AbstractView implements IAccountView<PersonalAc
 	@Override
   public void displayCouponTransactions() {
 		internalDisplayCouponTransactions();
+  }
+	
+  @Override
+  public void goTo(Place place) {
+    presenter.goTo(place);
+  }
+
+  @Override
+  public void displayAccontUpdatePanel(boolean display) {
+    StyleHelper.show(accountUpdatePanel, display);
+  }
+
+  @Override
+  public void displayAccontUpdate(List<PendingActionTypes> updates) {
+    super.displayAccontUpdate(accountUpdatePanel, updates);
   }
 }

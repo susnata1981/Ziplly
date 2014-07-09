@@ -55,7 +55,6 @@ import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.AdminView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
-import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeViewImpl;
@@ -64,10 +63,11 @@ import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.PrintCouponView;
 import com.ziplly.app.client.view.ResidentsView;
-import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.TweetDetailsView;
 import com.ziplly.app.client.view.coupon.CouponExplorerActivity;
 import com.ziplly.app.client.view.coupon.CouponExplorerView;
+import com.ziplly.app.client.view.signup.BusinessSignupView;
+import com.ziplly.app.client.view.signup.SignupView;
 
 public class ZipllyActivityMapper implements ActivityMapper {
 	private PlaceController placeController;

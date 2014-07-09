@@ -3,7 +3,6 @@ package com.ziplly.app.client.view;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.AlertBlock;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidContainer;
@@ -19,6 +18,7 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -42,7 +42,6 @@ import com.ziplly.app.client.activities.AccountPresenter;
 import com.ziplly.app.client.activities.BusinessAccountActivity.IBusinessAccountView;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
-import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.view.coupon.CouponTransactionView;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.factory.ValueType;
@@ -59,24 +58,27 @@ import com.ziplly.app.client.widget.TweetBox;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.BusinessPropertiesDTO;
 import com.ziplly.app.model.CommentDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.model.LocationType;
 import com.ziplly.app.model.LoveDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
-import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
-import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountDetailsResult;
 import com.ziplly.app.shared.GetLatLngResult;
 
-public class BusinessAccountView extends AbstractView implements IBusinessAccountView, TopLevelView {
+public class BusinessAccountView extends AbstractBaseAccountView implements IBusinessAccountView, TopLevelView {
 
 	interface BusinessAccountViewUiBinder extends UiBinder<Widget, BusinessAccountView> {
 	}
 
 	interface Style extends CssResource {
 		String smallfont();
+		
+		String accountUpdateSmallfont();
+
+    String paddingLeft();
 	}
 
 	private static final String TWEET_BOX_WIDTH = "97%";
@@ -203,10 +205,6 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@UiField(provided = true)
 	CouponTransactionView couponTransactionView;
 	
-	// Update section
-	@UiField
-	AlertBlock updateAlertBlock;
-
 	@UiField
 	Column messageSection;
 
@@ -562,22 +560,6 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	}
 
 	@Override
-	public void displayNotificationWidget(boolean show) {
-		if (show) {
-			popupPanel = new PopupPanel();
-			popupPanel.setWidget(notificationWidget);
-			popupPanel.setPopupPosition(Window.getClientWidth() - 270, 70);
-			messageSection.add(popupPanel);
-			popupPanel.show();
-		} else {
-			if (popupPanel != null) {
-				popupPanel.hide();
-				messageSection.remove(popupPanel);
-			}
-		}
-	}
-
-	@Override
 	public void displayProfileSection(boolean display) {
 		StyleHelper.show(profileSectionRow, display);
 	}
@@ -585,41 +567,6 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
 	public void displayTargetNeighborhoods(List<NeighborhoodDTO> targetNeighborhoodList) {
 		tweetBox.initializeTargetNeighborhood(targetNeighborhoodList);
-	}
-
-	@Override
-	public void displayAccontUpdate() {
-		if (isAccountNotComplete()) {
-			addAccountProfileNotCompleteMessage();
-		} else {
-			String uploadImageHtml = "There are no updates at this moment";
-			updateAlertBlock.setHTML(uploadImageHtml);
-		}
-		
-		displayAccontUpdatePanel(true);
-	}
-
-	private boolean isAccountNotComplete() {
-		return FieldVerifier.isEmpty(account.getWebsite()) || account.getImages().size() == 0;
-	}
-
-	private void addAccountProfileNotCompleteMessage() {
-		updateAlertBlock.setHTML(StringConstants.ACCOUNT_NOT_COMPLETE_FOR_BUSINESS);
-		Anchor accountSettingsAnchor = new Anchor();
-		accountSettingsAnchor.setText("settings");
-		accountSettingsAnchor.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.goTo(new PersonalAccountSettingsPlace());
-			}
-		});
-
-		updateAlertBlock.add(accountSettingsAnchor);
-	}
-
-	private void displayAccontUpdatePanel(boolean show) {
-		StyleHelper.show(accountUpdatePanel, show);
 	}
 
 	@Override
@@ -648,6 +595,11 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 		couponTransactionView.setRowCount(couponTransactionCount);
 	}
 	
+	@Override
+  public void displayAccontUpdate(List<PendingActionTypes> updates) {
+	  super.displayAccontUpdate(accountUpdatePanel, updates);
+  }
+
 	private void displayCouponTransactionPanel(boolean display) {
 		StyleHelper.show(couponTransactionPanel, display);
 		StyleHelper.show(tweetSection, !display);
@@ -666,5 +618,15 @@ public class BusinessAccountView extends AbstractView implements IBusinessAccoun
 	@Override
   public void displayCouponTransactions() {
 		internalDisplayCouponTransactions();
+  }
+
+  @Override
+  public void goTo(Place place) {
+    presenter.goTo(place);
+  }
+
+  @Override
+  public void displayAccontUpdatePanel(boolean show) {
+    StyleHelper.show(accountUpdatePanel, show);
   }
 }

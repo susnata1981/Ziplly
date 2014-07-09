@@ -31,8 +31,8 @@ public class StringConstants {
 	public static final String NOT_SHARED = "not shared";
 	public static final String EMAIL_SENT = "Email sent";
 	public static final String SENDER_NAME_KEY = "senderName";
-	public static final String RESTRICT_REGISTRATION_FEATURE =
-	    "app.feature.enableRestrictedRegistration";
+//	public static final String RESTRICT_REGISTRATION_FEATURE =
+//	    "app.feature.enableRestrictedRegistration";
 	public static final String NEEDS_INVITATION = "Needs invitation.";
 	public static final String HASHTAG_PREFIX = "#";
 	public static final String COMMENT_LENGTH_EXCEEDED = "Comment length exceeded.";

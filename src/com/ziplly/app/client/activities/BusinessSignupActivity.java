@@ -10,8 +10,8 @@ import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.HomePlace;
-import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.signup.BusinessSignupView;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.AccountDTO;
 

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.exceptions.ErrorDefinitions.ErrorDefinition;
-import com.ziplly.app.client.places.AccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;

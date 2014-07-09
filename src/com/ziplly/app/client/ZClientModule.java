@@ -40,7 +40,6 @@ import com.ziplly.app.client.view.AboutView;
 import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.BusinessAccountSettingsView;
 import com.ziplly.app.client.view.BusinessAccountView;
-import com.ziplly.app.client.view.BusinessSignupView;
 import com.ziplly.app.client.view.EmailVerificationView;
 import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.IAccountView;
@@ -51,9 +50,10 @@ import com.ziplly.app.client.view.NavView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
 import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.ResidentsView;
-import com.ziplly.app.client.view.SignupView;
 import com.ziplly.app.client.view.TweetDetailsView;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl;
+import com.ziplly.app.client.view.signup.BusinessSignupView;
+import com.ziplly.app.client.view.signup.SignupView;
 import com.ziplly.app.client.widget.SendMessageWidget;
 
 public class ZClientModule extends AbstractGinModule {

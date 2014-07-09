@@ -1,6 +1,7 @@
 package com.ziplly.app.model;
 
 public enum FeatureFlags {
+  RegistrationRestcricted(false),
   EnableCouponFeature(true),
   OneCouponPerIndividual(true),
   EnablePaymentPlan(false),

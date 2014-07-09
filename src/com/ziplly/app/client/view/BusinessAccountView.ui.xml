@@ -35,7 +35,7 @@
 		</b:FluidRow>
 		<b:FluidRow ui:field="profileSectionRow">
 			<b:Column size="3" addStyleNames="{bstyle.transparentColumn} {style.colSpan}">
-				<g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="border-box-with-padding">
 					<div>
 						<div>
 							<g:HTMLPanel ui:field="profileImagePanel"
@@ -45,7 +45,7 @@
 								</div>
 								<h3 class="{style.profileCaption}" ui:field="name" />
 							</g:HTMLPanel>
-							<div class="{style.profileInfoBox}">
+							<div>
 								<h3 ui:field="businessName" class="{bstyle.profileInfoBoxHeading}" />
 								<b:Paragraph ui:field="description" addStyleNames="{style.description}" />
 								<div class="{style.businessInfoItem}">
@@ -59,7 +59,7 @@
 								</div>
 								<div class="{style.businessInfoItem}">
 									<span class="{style.profileInfoHeader}">Email</span>
-									<g:Anchor ui:field="emailLink">
+									<g:Anchor ui:field="emailLink" addStyleNames="{style.emailValue}">
 										<span ui:field="email" class="{style.profileInfoValue}"/>
 									</g:Anchor>
 								</div>
@@ -170,10 +170,8 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="2" addStyleNames="{style.colSpan}">
-				<g:HTMLPanel ui:field="accountUpdatePanel">
-					<b:AlertBlock type="INFO" heading="Updates" close="false"
-						ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
-					</b:AlertBlock>
+				<g:HTMLPanel ui:field="accountUpdatePanel" addStyleNames="border-box-with-padding">
+				    <h4 class="border-bottom-with-padding text-align-left">Pending actions</h4>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

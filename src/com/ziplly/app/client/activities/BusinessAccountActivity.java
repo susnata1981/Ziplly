@@ -1,5 +1,6 @@
 package com.ziplly.app.client.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -15,6 +16,7 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
+import com.ziplly.app.client.view.PendingActionTypes;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.StringConstants;
@@ -25,6 +27,7 @@ import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
 import com.ziplly.app.model.SpamDTO;
 import com.ziplly.app.model.TweetDTO;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetAccountByIdAction;
 import com.ziplly.app.shared.GetAccountByIdResult;
 import com.ziplly.app.shared.GetAccountDetailsResult;
@@ -166,10 +169,26 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		displayMap(ctx.getAccount().getLocations().get(0).getAddress());
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
-		view.displayAccontUpdate();
+		displayAccontUpdate();
+		
 	}
 
-	private void setupImageUpload() {
+	private void displayAccontUpdate() {
+	  BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
+	  List<PendingActionTypes> pendingActions = new ArrayList<PendingActionTypes>();
+	  
+	  if (account.getSubscriptions().size() == 0) {
+	    pendingActions.add(PendingActionTypes.SUBSCRIPTION_REQUIRED);
+	  }
+	  
+	  if (account.getImages().size() == 0 || FieldVerifier.isEmpty(account.getWebsite())) {
+	    pendingActions.add(PendingActionTypes.INCOMPLETE_ACCOUNT_SETTINGS);
+	  }
+	  
+	  view.displayAccontUpdate(pendingActions);
+  }
+
+  private void setupImageUpload() {
 		setImageUploadUrl();
 		setUploadImageHandler();
 	}

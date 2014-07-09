@@ -126,4 +126,5 @@ public interface StringDefinitions extends Constants {
   String paymentCanclled();
   String error();
   String couponPurchaseLimitExceededException();
+  String pageLoadError();
 }
