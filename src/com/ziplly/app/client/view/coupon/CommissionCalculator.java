@@ -3,7 +3,7 @@ package com.ziplly.app.client.view.coupon;
 import java.math.BigDecimal;
 
 public class CommissionCalculator {
-  private static BigDecimal ZIPLLY_COMMISSION = new BigDecimal(3.0 / 100);
+  private static BigDecimal ZIPLLY_COMMISSION = new BigDecimal(5.0 / 100);
   private static BigDecimal GOOGLE_COMMISSION = new BigDecimal(2.9 / 100);
   private static BigDecimal MIN_GOOGLE_COMMISSION = new BigDecimal(.30);
   

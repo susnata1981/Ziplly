@@ -30,6 +30,16 @@ public class ColumnDefinition implements Comparable<ColumnDefinition> {
 		printButtonDecorator.setText("Print coupon");
 	}
 	
+	public static final ColumnDefinition TITLE = new ColumnDefinition(
+      "Title",
+      new TextColumn<CouponItemDTO>() {
+
+        @Override
+        public String getValue(CouponItemDTO pr) {
+          return pr.getCoupon().getTitle();
+        }
+      });
+	
 	public static final ColumnDefinition DESCRIPTION = new ColumnDefinition(
 	    "Description",
 	    new TextColumn<CouponItemDTO>() {

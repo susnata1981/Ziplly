@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+	xmlns:dt="urn:import:com.ziplly.app.client.widget">
 	<ui:style type="com.ziplly.app.client.view.NavView.Style">
 		@external notificationDropdown dropdown-menu;
 		.navbarPanel {
@@ -93,7 +95,8 @@
 				</b:Dropdown>
 				<b:NavLink ui:field="blogLink" addStyleNames="{style.navlink}">Blog</b:NavLink> 
 				<b:NavLink ui:field="aboutLink" addStyleNames="{style.navlink}">About</b:NavLink>
-				<b:Dropdown ui:field="locationDropdown" text="location" icon="BOOKMARK" addStyleNames="{style.navlink} {style.rightNavLink}">
+				<dt:ZAnchor ui:field="likeAnchor" icon="THUMBS_UP" />
+				<b:Dropdown ui:field="locationDropdown" text="location" icon="BOOKMARK" addStyleNames="{style.navlink} {style.rightNavLink}"> 
 				</b:Dropdown>
 			</b:Nav>
 		</b:ResponsiveNavbar>

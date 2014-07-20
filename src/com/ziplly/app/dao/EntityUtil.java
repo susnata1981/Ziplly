@@ -658,7 +658,7 @@ public class EntityUtil {
 		return result;
 	}
 
-	public static List<CouponItemDTO> clonePurchaseCouponList(List<CouponItem> purchasedCoupons) {
+	public static List<CouponItemDTO> cloneCouponItems(List<CouponItem> purchasedCoupons) {
 		List<CouponItemDTO> result = new ArrayList<CouponItemDTO>();
 		for (CouponItem pr : purchasedCoupons) {
 			result.add(EntityUtil.clone(pr));

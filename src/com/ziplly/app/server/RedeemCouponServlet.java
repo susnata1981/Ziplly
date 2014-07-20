@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
-
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,8 +13,8 @@ import com.ziplly.app.client.exceptions.CouponAlreadyUsedException;
 import com.ziplly.app.client.exceptions.InvalidCouponException;
 import com.ziplly.app.client.exceptions.NeedsLoginException;
 import com.ziplly.app.server.bli.CouponBLI;
-import com.ziplly.app.server.bli.SessionBLI;
 import com.ziplly.app.server.bli.ServiceModule.ApplicationLoginUrl;
+import com.ziplly.app.server.bli.SessionBLI;
 import com.ziplly.app.server.model.jpa.Session;
 
 @Singleton

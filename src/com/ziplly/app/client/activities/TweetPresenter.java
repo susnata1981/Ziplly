@@ -1,7 +1,7 @@
 package com.ziplly.app.client.activities;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.CommentDTO;
@@ -34,7 +34,7 @@ public interface TweetPresenter extends SendMessagePresenter {
 
 	void checkCouponPurchaseEligibility(CouponDTO coupon, TweetWidget tweetWidget);
 
-	void getCouponFormActionUrl(CouponFormWidget couponFormWidget);
+	void getCouponFormActionUrl(CouponFormWidgetModal couponFormWidget);
 
 	void initializeUploadForm(FormUploadWidget formUploadWidget);
 

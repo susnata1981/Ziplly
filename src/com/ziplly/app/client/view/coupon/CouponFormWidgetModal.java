@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -23,7 +25,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.view.AbstractView;
@@ -44,14 +45,14 @@ import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class CouponFormWidget extends AbstractView {
+public class CouponFormWidgetModal extends AbstractView {
   public static final DateTimeFormat PST_FORMAT = DateTimeFormat
       .getFormat("dd/mm/yyyy hh:mm zz");
 	private static final int DESCRIPTION_MAX_LENGTH = 500;
   private static final int DESCRIPTION_MIN_LENGTH = 30;
-  private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
+  private static CouponFormWidgetModalUiBinder uiBinder = GWT.create(CouponFormWidgetModalUiBinder.class);
 
-	interface CouponFormWidgetUiBinder extends UiBinder<Widget, CouponFormWidgetModal> {
+	interface CouponFormWidgetModalUiBinder extends UiBinder<Widget, CouponFormWidgetModal> {
 	}
 
 	private AbstractBaseTextWidget titleWidget;
@@ -61,6 +62,9 @@ public class CouponFormWidget extends AbstractView {
 	private AbstractBaseTextWidget quantityWidget;
 	private AbstractBaseTextWidget totalCouponAllowedWidget;
 
+	@UiField
+	Modal modal;
+	  
 	@UiField
 	Alert message;
 	
@@ -127,8 +131,12 @@ public class CouponFormWidget extends AbstractView {
 	
 	@UiField
 	Button tweetBtn;
+//	@UiField
+//	Panel horizontalButtonPanel;
 	@UiField
-	Panel horizontalButtonPanel;
+	ButtonGroup previewButtonGroup;
+	@UiField
+	ButtonGroup shareCouponButtonGroup;
 	@UiField
 	Button cancelBtn;
 	@UiField
@@ -146,7 +154,7 @@ public class CouponFormWidget extends AbstractView {
 	AbstractBaseTextWidget [] textBoxWidgets = new AbstractBaseTextWidget [6];
   private BusinessAccountDTO account;
 	
-	public CouponFormWidget(EventBus eventBus) {
+	public CouponFormWidgetModal(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		int count = 0;
@@ -351,7 +359,7 @@ public class CouponFormWidget extends AbstractView {
 	}
 
 	public void showButtons(boolean display) {
-		StyleHelper.show(horizontalButtonPanel, display);
+		StyleHelper.show(previewButtonGroup, display);
   }
 
 	public void setFormUploadActionUrl(String url) {
@@ -364,18 +372,19 @@ public class CouponFormWidget extends AbstractView {
 	
 	private void displayPreview(boolean show) {
 		StyleHelper.show(previewPanel, show);
+		StyleHelper.show(shareCouponButtonGroup, show);
 	}
 
 	@UiHandler("changeTweetAnchor")
 	public void changeTweet(ClickEvent event) {
 		displayPreview(false);
-		showHorizontalButtonPanel(true);
+		showPreviewButtonGroup(true);
 	}
 
 	@UiHandler("previewCancelBtn")
 	public void cancelPreview(ClickEvent event) {
 		displayPreview(false);
-		showHorizontalButtonPanel(true);
+		showPreviewButtonGroup(true);
 	}
 
 	public Button getTweetButton() {
@@ -406,12 +415,12 @@ public class CouponFormWidget extends AbstractView {
 		  ImageDTO image = coupon.getTweet().getImages().get(0);
 		  StyleHelper.setBackgroundImage(contentPanel.getElement(), image.getUrl());
 		}
-		showHorizontalButtonPanel(false);
+		showPreviewButtonGroup(false);
 		displayPreview(true);
   }
 
-	private void showHorizontalButtonPanel(boolean show) {
-		StyleHelper.show(horizontalButtonPanel, show);
+	private void showPreviewButtonGroup(boolean show) {
+		StyleHelper.show(previewButtonGroup, show);
   }
 
   public BusinessAccountDTO getAccount() {
@@ -431,6 +440,19 @@ public class CouponFormWidget extends AbstractView {
   private void setStatus(ControlGroupType type, ControlGroup cg, HelpInline helpInline, String msg) {
     cg.setType(type);
     helpInline.setText(msg);
-    helpInline.setVisible(false);
+    helpInline.setVisible(true);
+  }
+
+  public void show(boolean visible) {
+    if (visible) {
+      modal.show();
+    } else {
+      modal.hide();
+    }
+  }
+  
+  @UiHandler(value = {"previewCancelBtn", "cancelBtn"})
+  public void cancel(ClickEvent event) {
+    modal.hide();
   }
 }

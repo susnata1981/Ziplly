@@ -12,6 +12,7 @@ import net.customware.gwt.dispatch.shared.Result;
 
 import com.google.inject.Provider;
 import com.ziplly.app.client.exceptions.InternalException;
+import com.ziplly.app.client.exceptions.NeedsLoginException;
 
 public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R extends Result> implements
     ActionHandler<T, R> {
@@ -39,7 +40,7 @@ public abstract class AbstractSessionAwareActionHandler<T extends Action<R>, R e
   protected void postHandler(R result) throws InternalException {
   }
 
-  protected void preHandler() {
+  protected void preHandler() throws DispatchException {
   }
 
   @Override

@@ -1,6 +1,5 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
@@ -20,7 +19,6 @@ import com.ziplly.app.client.view.BusinessView.EntityListViewPresenter;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.ConversationDTO;
 import com.ziplly.app.model.EntityType;
@@ -104,8 +102,8 @@ public class BusinessActivity extends AbstractActivity implements
     action.setNeedTotalEntityCount(true);
     
     if (!FieldVerifier.isEmpty(place.getPostalCode())) {
-      action.setZip(place.getPostalCode());
-      action.setSearchType(SearchType.BY_ZIP);
+      action.setPostalCode(place.getPostalCode());
+      action.setSearchType(SearchType.BY_POSTALCODE);
     } else {
       long neighborhoodId = getNeighborhoodId();
       view.setNeighborhoodId(neighborhoodId);
@@ -117,8 +115,8 @@ public class BusinessActivity extends AbstractActivity implements
   }
 
   private long getNeighborhoodId() {
-    return (place.getNeighborhoodId() != 0) ? place.getNeighborhoodId() : ctx.getCurrentNeighborhood()
-        .getNeighborhoodId();
+    return (place.getNeighborhoodId() != 0) ? place.getNeighborhoodId() 
+        : ctx.getCurrentNeighborhood().getNeighborhoodId();
   }
 
   @Override

@@ -85,10 +85,8 @@
 				</g:HTMLPanel>
 			</b:Column>
 			<b:Column size="3" addStyleNames="{style.colSpan}">
-				<g:HTMLPanel ui:field="accountUpdatePanel">
-					<b:AlertBlock type="INFO" heading="Updates" close="false"
-						ui:field="updateAlertBlock" addStyleNames="{style.updateAlertBlock}">
-					</b:AlertBlock>
+				<g:HTMLPanel ui:field="accountUpdatePanel" addStyleNames="border-box-with-padding">
+				    <h4 class="border-bottom-with-padding text-align-left">Pending actions</h4>
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

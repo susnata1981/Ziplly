@@ -32,7 +32,7 @@ import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.shared.GetCouponTransactionResult;
+import com.ziplly.app.model.CouponItemDTO;
 
 public class CouponReportViewImpl extends AbstractView implements CouponReportView {
 
@@ -60,11 +60,8 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 
 	@UiField(provided = true)
 	CouponReportSalesView couponSalesView;
-	@UiField(provided = true)
-	CouponFormWidget couponFormWidget;
+	CouponFormWidgetModal couponFormWidget;
 
-	@UiField
-	NavLink couponFormLink;
 	@UiField
 	NavLink viewCouponLink;
 	@UiField
@@ -73,7 +70,7 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	@UiField
 	Style style;
 	
-	Map<NavLink, Composite> linkToViewMap;
+	private Map<NavLink, Composite> linkToViewMap;
 	private static final int couponDataPageSize = 10;
 	private int couponDataStart;
 	private CouponReportPresenter presenter;
@@ -83,18 +80,18 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	public CouponReportViewImpl(EventBus eventBus) {
 		super(eventBus);
 		linkToViewMap = new HashMap<NavLink, Composite>();
-		couponFormWidget = new CouponFormWidget(eventBus);
 		couponSalesView = new CouponReportSalesView(eventBus);
+		couponFormWidget = couponSalesView.getCouponFormWidget();
 		ZResources.IMPL.style().ensureInjected();
 		initWidget(uiBinder.createAndBindUi(this));
 		setupEventHandler();
 		message.setVisible(false);
 		buildNavLinkMap();
-		showView(couponFormLink);
+		showView(couponSalesLink);
 	}
 
 	private void buildNavLinkMap() {
-		linkToViewMap.put(couponFormLink, couponFormWidget);
+//		linkToViewMap.put(couponFormLink, couponFormWidget);
 		linkToViewMap.put(couponSalesLink, couponSalesView);
 	}
 
@@ -126,6 +123,15 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 				presenter.loadCouponData(0, couponDataPageSize);
       }
 			
+		});
+		
+		couponSalesView.getNewCouponButton().addClickHandler(new ClickHandler() {
+
+      @Override
+      public void onClick(ClickEvent event) {
+        couponSalesView.showCreateFormWidget();
+      }
+		  
 		});
 		
 		couponFormWidget.getCancelButton().addClickHandler(new ClickHandler() {
@@ -231,23 +237,18 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	}
 
 	@Override
-	public void setTotalCouponCount(Long totalCouponCount) {
+	public void setTotalCouponCount(long totalCouponCount) {
 		couponSalesView.setRowCount(totalCouponCount);
 	}
 
 	@Override
-	public void displayCouponDetails(GetCouponTransactionResult result) {
-		couponSalesView.displayCouponDetails(result);
+	public void displayCouponDetails(List<CouponDTO> coupons, List<CouponItemDTO> couponItems) {
+		couponSalesView.displayCouponDetails(coupons, couponItems);
 	}
 
 	@Override
 	public void displaySummary(TransactionSummary summary) {
 		couponSalesView.displaySummary(summary);
-	}
-
-	@UiHandler("couponFormLink")
-	public void showCouponForm(ClickEvent event) {
-		showView(couponFormLink);
 	}
 
 	@UiHandler("viewCouponLink")
@@ -273,12 +274,12 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
 	}
 	
 	private void internalDisplayCouponDetails(CouponDTO coupon) {
-		couponSalesView.setCouponDetailsTableHeading(coupon);
+//		couponSalesView.setCouponDetailsTableHeading(coupon);
 		presenter.loadCouponDetails(coupon, 0, couponDataPageSize);
 	}
 
   @Override
-  public CouponFormWidget getCouponFormWidget() {
+  public CouponFormWidgetModal getCouponFormWidget() {
     return couponFormWidget;
   }
 }

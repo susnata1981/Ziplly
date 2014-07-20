@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttributeValue {
+  private static final String EMPTY_STRING = "";
   private List<String> values = new ArrayList<String>();
 
   public AttributeValue(String value) {
@@ -19,6 +20,10 @@ public class AttributeValue {
   }
   
   public String value() {
+    if (values.size() == 0) {
+      return EMPTY_STRING;
+    }
+    
     assert(values.size() == 1);
     return values.get(0);
   }

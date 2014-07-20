@@ -14,18 +14,18 @@ import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.PlaceParserImpl;
 import com.ziplly.app.client.places.PlaceUtils;
-import com.ziplly.app.client.view.CommunityViewState;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.community.BusinessViewState;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.LocationDTO;
 import com.ziplly.app.shared.FieldVerifier;
 
 public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
-	private final CommunityViewState state;
+	private final BusinessViewState state;
   private final String BASE_URL;
 
-  public BusinessAccountCell(CommunityViewState state) {
+  public BusinessAccountCell(BusinessViewState state) {
     super(BrowserEvents.CLICK);
     this.state = state;
     String environment = System.getProperty(StringConstants.APP_ENVIRONMENT, "devel");

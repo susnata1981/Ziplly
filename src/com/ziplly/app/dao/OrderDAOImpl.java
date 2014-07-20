@@ -51,6 +51,20 @@ public class OrderDAOImpl extends BaseDAO implements OrderDAO {
 	}
 	
 	@Override
+  public List<CouponItem> findTransactionByCouponIds(List<Long> couponIds, int start, int pageSize) {
+    EntityManager em = entityManagerProvider.get();
+    Query query =
+        em
+            .createQuery("from CouponItem item where item.coupon.couponId in (:couponIds) and status in (:status)")
+            .setParameter("couponIds", couponIds)
+            .setParameter("status", ImmutableList.of(CouponItemStatus.UNUSED.name(), CouponItemStatus.USED.name()))
+            .setFirstResult(start)
+            .setMaxResults(pageSize);
+
+    return query.getResultList();
+  }
+	
+	@Override
 	public Long getTotalCountByByCouponId(Long couponId) {
 		EntityManager em = entityManagerProvider.get();
 		Query query =

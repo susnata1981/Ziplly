@@ -7,7 +7,7 @@ import com.ziplly.app.model.Gender;
 
 public class GetEntityListAction implements Action<GetEntityResult> {
 	public enum SearchType {
-		BY_ZIP, BY_NEIGHBORHOOD, BY_GENDER, OTHER;
+		BY_POSTALCODE, BY_NEIGHBORHOOD, BY_GENDER, OTHER;
 	}
 
 	private int page;
@@ -70,7 +70,7 @@ public class GetEntityListAction implements Action<GetEntityResult> {
 		return zip;
 	}
 
-	public void setZip(String zip) {
+	public void setPostalCode(String zip) {
 		this.zip = zip;
 	}
 

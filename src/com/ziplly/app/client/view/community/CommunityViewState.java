@@ -1,4 +1,4 @@
-package com.ziplly.app.client.view;
+package com.ziplly.app.client.view.community;
 
 import com.google.gwt.view.client.Range;
 import com.ziplly.app.model.EntityType;
@@ -6,25 +6,17 @@ import com.ziplly.app.shared.GetEntityListAction;
 import com.ziplly.app.shared.GetEntityListAction.SearchType;
 
 public class CommunityViewState {
-	GetEntityListAction action = new GetEntityListAction();
+  public static final int PAGE_SIZE = 10;
+	protected GetEntityListAction action = new GetEntityListAction();
 	protected int start;
-	protected int pageSize;
 	protected long neighborhoodId;
-  private String postalCode;
 
-	public CommunityViewState(EntityType type, int pageSize) {
+	public CommunityViewState(EntityType type, long neighborhoodId) {
 		start = 0;
-		this.pageSize = pageSize;
+		this.neighborhoodId = neighborhoodId;
 		action.setEntityType(type);
-		action.setPageSize(this.pageSize);
-	}
-
-	public void searchByZip(String zip) {
-	  this.setPostalCode(zip);
-		reset();
-		action.setSearchType(SearchType.BY_ZIP);
-		action.setZip(zip);
-		action.setPage(start);
+		action.setPageSize(PAGE_SIZE);
+    action.setNeedTotalEntityCount(true);
 	}
 
 	public void searchByNeighborhood(Long neighborhoodId) {
@@ -37,7 +29,6 @@ public class CommunityViewState {
 	public void reset() {
 		start = 0;
 		action.setSearchType(SearchType.OTHER);
-		action.setNeedTotalEntityCount(true);
 	}
 
 	public GetEntityListAction getCurrentEntityListAction() {
@@ -62,11 +53,7 @@ public class CommunityViewState {
 		return neighborhoodId;
 	}
 
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
+  public int getPageSize() {
+    return PAGE_SIZE;
   }
 }

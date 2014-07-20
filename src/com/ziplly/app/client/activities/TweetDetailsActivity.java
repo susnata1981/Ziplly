@@ -18,7 +18,7 @@ import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.TweetDetailsView;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.client.widget.blocks.FormUploadWidget;
 import com.ziplly.app.model.CommentDTO;
@@ -217,7 +217,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	}
 
 	@Override
-	public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+	public void getCouponFormActionUrl(CouponFormWidgetModal couponFormWidget) {
 		placeController.goTo(new LoginPlace());
 	}
 

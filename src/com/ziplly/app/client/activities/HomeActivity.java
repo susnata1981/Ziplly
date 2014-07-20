@@ -30,7 +30,7 @@ import com.ziplly.app.client.view.ITweetView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
@@ -213,7 +213,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	@Override
-	public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+	public void getCouponFormActionUrl(CouponFormWidgetModal couponFormWidget) {
 	}
 
 	@Override

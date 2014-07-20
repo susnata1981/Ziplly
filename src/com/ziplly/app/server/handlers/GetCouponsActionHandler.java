@@ -14,25 +14,29 @@ import com.google.inject.Provider;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.CouponDAO;
 import com.ziplly.app.dao.EntityUtil;
+import com.ziplly.app.dao.OrderDAO;
 import com.ziplly.app.dao.SessionDAO;
-import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.model.jpa.Coupon;
+import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.shared.GetCouponsAction;
 import com.ziplly.app.shared.GetCouponsResult;
 
 public class GetCouponsActionHandler extends AbstractAccountActionHandler<GetCouponsAction, GetCouponsResult>{
-
 	private CouponDAO couponDao;
+  private OrderDAO orderDao;
 
 	@Inject
 	public GetCouponsActionHandler(Provider<EntityManager> entityManagerProvider,
       AccountDAO accountDao,
       SessionDAO sessionDao,
       AccountBLI accountBli,
-      CouponDAO couponDao) {
+      CouponDAO couponDao,
+      OrderDAO orderDao) {
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	  this.couponDao = couponDao;
+	  this.orderDao = orderDao;
   }
 
 	@Override
@@ -44,16 +48,27 @@ public class GetCouponsActionHandler extends AbstractAccountActionHandler<GetCou
   public GetCouponsResult
       doExecute(GetCouponsAction action, ExecutionContext context) throws DispatchException {
 		
-		validateSession();
 		checkArgument(action.getAccountId() == session.getAccount().getAccountId());
 		checkArgument(action.getPageSize() > 0);
 
-		List<Coupon> coupons = couponDao.findCouponsByAccountId(action.getAccountId(), action.getStart(), action.getPageSize());
-		Long totalCouponCount = couponDao.getTotalCouponCountByAccountId(action.getAccountId());
-		List<CouponDTO> couponList = EntityUtil.cloneCouponList(coupons);
 		GetCouponsResult result = new GetCouponsResult();
-		result.getCoupons().addAll(couponList);
+		List<Coupon> coupons = couponDao.findCouponsByAccountId(action.getAccountId(), action.getStart(), action.getPageSize());
+		
+		for(Coupon coupon : coupons) {
+		  List<CouponItem> couponItems = loadCouponTransactions(coupon.getCouponId(), 0, Integer.MAX_VALUE);
+		  List<CouponItemDTO> couponItemDtos = EntityUtil.cloneCouponItems(couponItems);
+		  result.addTransactions(EntityUtil.clone(coupon), couponItemDtos);
+		}
+		
+		long totalCouponCount = couponDao.getTotalCouponCountByAccountId(action.getAccountId());
 		result.setTotalCouponCount(totalCouponCount);
 		return result;
+  }
+	
+	private List<CouponItem> loadCouponTransactions(long couponId, int pageStart, int pageSize) {
+    return orderDao.findTransactionByCouponId(
+        couponId,
+        pageStart,
+        pageSize);
   }
 }

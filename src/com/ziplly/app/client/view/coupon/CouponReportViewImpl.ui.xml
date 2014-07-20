@@ -19,7 +19,6 @@
 		<b:FluidRow>
 			<b:Column size="2">
 				<b:NavPills>
-					<b:NavLink ui:field="couponFormLink" addStyleNames="{style.link}">Publish Coupon</b:NavLink>
 					<b:NavLink ui:field="couponSalesLink" addStyleNames="{style.link}">View Report</b:NavLink>
 					<b:NavLink ui:field="viewCouponLink" addStyleNames="{style.link}">View Coupon</b:NavLink>
 				</b:NavPills>
@@ -28,7 +27,7 @@
 				<g:HTMLPanel>
 				    <b:Alert ui:field="message" close="false" />
 					<dv:CouponReportSalesView ui:field="couponSalesView" />
-					<dv:CouponFormWidget ui:field="couponFormWidget" />
+					<!-- <dv:CouponFormWidget ui:field="couponFormWidget" /> -->
 				</g:HTMLPanel>
 			</b:Column>
 		</b:FluidRow>

@@ -323,6 +323,8 @@
 						</b:Row>
 					</b:Tab>
 					<b:Tab heading="Subscription Plans" ui:field="subscriptionTab">
+					    <b:Row>
+							<b:Column offset="1" size="11">
 						<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
 							<b:Alert ui:field="paymentStatus" close="false" />
 							<div class="profile_section_heading">
@@ -332,8 +334,12 @@
 								addStyleNames="{style.subscriptionPlanTablePanel}">
 							</g:HTMLPanel>
 						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
 					</b:Tab>
 					<b:Tab heading="Transaction Details" ui:field="transactionDetailsTab">
+					    <b:Row>
+							<b:Column offset="1" size="11">
 					    <g:HTMLPanel>
 					        <div class="profile_section_heading">
 								<span>Subscription history</span>
@@ -341,8 +347,12 @@
 							<g:HTMLPanel ui:field="transactionDetailsPanel">
 							</g:HTMLPanel>
 					    </g:HTMLPanel>
+					    </b:Column>
+					    </b:Row>
 					</b:Tab>
 					<b:Tab ui:field="notification" heading="Notification">
+					    <b:Row>
+							<b:Column offset="1" size="11">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
 								<span>Select your notificaiton settings</span>
@@ -357,6 +367,8 @@
 							<g:HTMLPanel ui:field="notificationPanel">
 							</g:HTMLPanel>
 						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
 					</b:Tab>
 					<!-- <b:Tab ui:field="location" heading="Locations">
 						<g:HTMLPanel>
@@ -370,6 +382,8 @@
 						</g:HTMLPanel>
 					</b:Tab> -->
 					<b:Tab heading="Password Reset">
+					    <b:Row>
+							<b:Column offset="1" size="11">
 						<g:HTMLPanel>
 							<div class="profile_section_heading">
 								<span>Reset your password</span>
@@ -400,6 +414,8 @@
 							</b:ControlGroup>
 							<b:Button ui:field="updatePasswordBtn">Update password</b:Button>
 						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
 					</b:Tab>
 				</b:TabPanel>
 			</b:Column>

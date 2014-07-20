@@ -42,7 +42,7 @@ import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.View;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
@@ -84,7 +84,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 	ListBox tweetTargetNeighborhoodList;
 
 	@UiField(provided = true)
-	CouponFormWidget couponFormWidget;
+	CouponFormWidgetModal couponFormWidget;
 
 	@UiField
 	HorizontalPanel horizontalButtonPanel;
@@ -139,7 +139,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 
 	public TweetBox(EventBus eventBus) {
 		super(eventBus);
-		couponFormWidget = new CouponFormWidget(eventBus);
+		couponFormWidget = new CouponFormWidgetModal(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(false);
 		setupUi();

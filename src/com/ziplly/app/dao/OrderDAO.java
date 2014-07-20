@@ -15,6 +15,8 @@ public interface OrderDAO {
 	
 	List<CouponItem> findTransactionByCouponId(Long couponId, int start, int pageSize);
 	
+	List<CouponItem> findTransactionByCouponIds(List<Long> couponIds, int start, int pageSize);
+	
 	Long getTotalCountByByCouponId(Long couponId);
 	
 	List<CouponItem> findByAccountIdAndStatus(

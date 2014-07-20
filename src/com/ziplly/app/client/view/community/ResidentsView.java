@@ -1,7 +1,8 @@
-package com.ziplly.app.client.view;
+package com.ziplly.app.client.view.community;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
@@ -22,6 +23,13 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.activities.util.CommonUtil;
+import com.ziplly.app.client.places.AttributeKey;
+import com.ziplly.app.client.places.BusinessPlace;
+import com.ziplly.app.client.places.ResidentPlace;
+import com.ziplly.app.client.view.AbstractView;
+import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.View;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.SendMessageWidget;
 import com.ziplly.app.client.widget.StyleHelper;
@@ -31,11 +39,11 @@ import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
+import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.GetEntityListAction;
 
 public class ResidentsView extends AbstractView implements
     View<ResidentsView.EntityListViewPresenter> {
-	private static final int PAGE_SIZE = 10;
 
 	public interface EntityListViewPresenter extends Presenter {
 		public void getPersonalAccountList(GetEntityListAction currentEntityListAction);
@@ -72,16 +80,18 @@ public class ResidentsView extends AbstractView implements
 
 	private EntityListViewPresenter presenter;
 	private SendMessageWidget smw;
-	private ResidentViewState state = new ResidentViewState(EntityType.PERSONAL_ACCOUNT, PAGE_SIZE);
-	private List<Gender> genderList = new ArrayList<Gender>();
+	private ResidentViewState state;
+	private Map<String, Gender> genderList = new LinkedHashMap<String, Gender>();
 
 	private List<NeighborhoodDTO> neighborhoods;
 
 	@Inject
 	public ResidentsView(EventBus eventBus) {
 		super(eventBus);
+		ResidentPlace place = getPlaceFromUrl();
+		state = new ResidentViewState(EntityType.PERSONAL_ACCOUNT, place.getNeighborhoodId(), place.getGender());
 		residentList = new CellList<PersonalAccountDTO>(new PersonalAccountCell(state));
-		residentList.setPageSize(PAGE_SIZE);
+		residentList.setPageSize(state.getPageSize());
 		pager = new SimplePager();
 		pager.setDisplay(residentList);
 		initWidget(uiBinder.createAndBindUi(this));
@@ -89,19 +99,50 @@ public class ResidentsView extends AbstractView implements
 		message.setClose(false);
 		StyleHelper.show(status.getElement(), false);
 		status.setClose(false);
+		renderGenderListBox();
 		setupHandlers();
-
-		genderList.clear();
-		genderListBox.clear();
-		for (Gender g : Gender.getValuesForSearch()) {
-			genderListBox.addItem(basicDataFormatter.format(g, ValueType.GENDER));
-			genderList.add(g);
-		}
-		genderListBox.setSelectedIndex(genderList.indexOf(state.getGender()));
 	}
 
+	 private void renderGenderListBox() {
+	    genderList.clear();
+	    genderListBox.clear();
+	    for (Gender g : Gender.getValuesForSearch()) {
+	      String genderName = basicDataFormatter.format(g, ValueType.GENDER);
+	      genderListBox.addItem(genderName);
+	      genderList.put(genderName, g);
+	    }
+	    
+	    setSelectedGender(state.getGender());
+  }
+
+  private ResidentPlace getPlaceFromUrl() {
+	    ResidentPlace place = new ResidentPlace();
+	    try {
+	      String neighborhoodId =
+	          CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.NEIGHBORHOOD_ID);
+	      if (!FieldVerifier.isEmpty(neighborhoodId) && FieldVerifier.isNumber(neighborhoodId)) {
+	        place.setNeighborhoodId(Long.parseLong(neighborhoodId));
+	      }
+
+	      String accountId = CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.ACCOUNT_ID);
+	      if (!FieldVerifier.isEmpty(accountId) && FieldVerifier.isNumber(accountId)) {
+	        place.setAccountId(Long.parseLong(accountId));
+	      }
+
+	      String gender = CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.GENDER_KEY);
+	      if (!FieldVerifier.isEmpty(gender)) {
+	        place.setGender(Gender.valueOf(gender));
+	      } else {
+	        place.setGender(Gender.ALL);
+	      }
+
+	      return place;
+	    } catch (Exception ex) {
+	      return place;
+	    }
+	 }
+	 
 	private void setupHandlers() {
-		
 		residentList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
@@ -114,7 +155,9 @@ public class ResidentsView extends AbstractView implements
 
 			@Override
       public void onChange(ChangeEvent event) {
-				state.setNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
+				long neighborhoodId = neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId();
+				state.searchByNeighborhood(neighborhoodId);
+				presenter.getPersonalAccountList(state.getCurrentEntityListAction());
       }
 			
 		});
@@ -123,7 +166,9 @@ public class ResidentsView extends AbstractView implements
 
 			@Override
       public void onChange(ChangeEvent event) {
-				state.setGender(genderList.get(genderListBox.getSelectedIndex()));
+				String genderName = genderListBox.getValue(genderListBox.getSelectedIndex());
+				state.searchByGender(genderList.get(genderName));
+				presenter.getPersonalAccountList(state.getCurrentEntityListAction());
       }
 			
 		});
@@ -189,7 +234,8 @@ public class ResidentsView extends AbstractView implements
 	void resetSearch(ClickEvent event) {
 		resetBtn.setEnabled(false);
 		state.reset();
-		genderListBox.setSelectedIndex(state.getGender().ordinal());
+		setSelectedGender(state.getGender());
+		state.setNeighborhood(neighborhoods.get(0).getNeighborhoodId());
 		presenter.getPersonalAccountList(state.getCurrentEntityListAction());
 	}
 
@@ -199,7 +245,7 @@ public class ResidentsView extends AbstractView implements
 	}
 
 	public int getPageSize() {
-		return PAGE_SIZE;
+		return state.getPageSize();
 	}
 
 	@Override
@@ -245,6 +291,11 @@ public class ResidentsView extends AbstractView implements
   }
 
 	public void setGender(Gender gender) {
-		genderListBox.setSelectedIndex(genderList.indexOf(gender));
+	  setSelectedGender(gender);
+  }
+	
+  private void setSelectedGender(Gender gender) {
+    String selectedValue = basicDataFormatter.format(state.getGender(), ValueType.GENDER);
+    genderListBox.setSelectedValue(selectedValue);
   }
 }

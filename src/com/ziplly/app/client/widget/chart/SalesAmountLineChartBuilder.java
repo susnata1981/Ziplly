@@ -2,35 +2,27 @@ package com.ziplly.app.client.widget.chart;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.ziplly.app.client.view.coupon.DateKey;
 import com.ziplly.app.model.CouponItemDTO;
-import com.ziplly.app.shared.GetCouponTransactionResult;
 
 public class SalesAmountLineChartBuilder extends AbstractLineChartBuilder {
   
   // Calculates sales $
-  public Map<Date, Double> aggregateData(final GetCouponTransactionResult result) {
-    Map<Date, Double> salesPerDate = new HashMap<Date, Double>();
+  public Map<DateKey, Double> aggregateData(final List<CouponItemDTO> transactions) {
+    Map<DateKey, Double> salesPerDate = new HashMap<DateKey, Double>();
     
-    if (result.getPurchasedCoupons().size() == 0) {
-      Date startDate = result.getCoupon().getStartDate();
-      Date endDate = new Date();
-      return createNoDataSet(startDate, endDate);
-    }
-    
-    for(CouponItemDTO pr : result.getPurchasedCoupons()) {
-//      if (pr.getTransaction().getStatus() != TransactionStatus.ACTIVE) {
-//        continue;
-//      }
-      
+    for(CouponItemDTO pr : transactions) {
       Date timeCreated = pr.getTimeCreated();
-      if (salesPerDate.get(timeCreated) == null) {
-        salesPerDate.put(timeCreated, new Double(0));
+      DateKey dateKey = DateKey.get(timeCreated);
+      if (salesPerDate.get(dateKey) == null) {
+        salesPerDate.put(DateKey.get(timeCreated), new Double(0));
       }
       
-      Double amount = salesPerDate.get(timeCreated) + pr.getCoupon().getDiscountedPrice().doubleValue();
-      salesPerDate.put(timeCreated, amount);
+      Double amount = salesPerDate.get(dateKey) + pr.getCoupon().getDiscountedPrice().doubleValue();
+      salesPerDate.put(dateKey, amount);
     }
     
     return salesPerDate;

@@ -92,7 +92,7 @@ public class TweetPresenterAdapter implements TweetPresenter {
   }
 
   @Override
-  public void getCouponFormActionUrl(CouponFormWidget couponFormWidget) {
+  public void getCouponFormActionUrl(CouponFormWidgetModal couponFormWidget) {
   }
 
   @Override

@@ -2,17 +2,16 @@ package com.ziplly.app.client.widget.chart;
 
 import java.util.Map;
 
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.google.gwt.user.client.Window;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.corechart.LineChart;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
 import com.googlecode.gwt.charts.client.options.HAxis;
+import com.googlecode.gwt.charts.client.options.Legend;
+import com.googlecode.gwt.charts.client.options.LegendPosition;
 import com.googlecode.gwt.charts.client.options.Options;
 import com.googlecode.gwt.charts.client.options.VAxis;
-import com.ziplly.app.client.view.StringConstants;
 
 public class LineChartWidget extends AbstractChartWidget<Double> {
 
@@ -35,7 +34,6 @@ public class LineChartWidget extends AbstractChartWidget<Double> {
   public DataTable buildTable() {
 		DataTable dataTable = DataTable.create();
 		Map<ChartColumn, Value<Double>> valueMap = getAdapter().getValueMap();
-		
 		dataTable.addColumn(ColumnType.STRING, xAxisTitle);
 		for(ChartColumn col : getAdapter().getColumns()) {
 			dataTable.addColumn(ColumnType.NUMBER, col.getName());
@@ -59,11 +57,12 @@ public class LineChartWidget extends AbstractChartWidget<Double> {
 	@Override
   public LineChartOptions createOptions(String title) {
 		LineChartOptions options = LineChartOptions.create();
-		options.setBackgroundColor("#f0f0f0");
 		options.setFontName("Tahoma");
 		options.setTitle(title);
 		options.setHAxis(HAxis.create(xAxisTitle));
 		options.setVAxis(VAxis.create(yAxisTitle));
+		options.setTheme("");
+		options.setLegend(Legend.create(LegendPosition.NONE));
 		options.setHeight(400);
 		return options;
   }

@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 public class TransactionSummary {
   private BigDecimal totalSalesAmount;
   private BigDecimal totalFees;
-  private Long totalCouponsSold;
-  private Long totalCouponsRedeemed;
-  private Long totalCouponsUnused;
+  private long totalCouponsSold;
+  private long totalCouponsRedeemed;
+  private long totalCouponsUnused;
   
   public BigDecimal getTotalSalesAmount() {
     return totalSalesAmount;
@@ -17,27 +17,27 @@ public class TransactionSummary {
     this.totalSalesAmount = totalSales;
   }
 
-  public Long getTotalCouponsRedeemed() {
+  public long getTotalCouponsRedeemed() {
     return totalCouponsRedeemed;
   }
 
-  public void setTotalCouponsRedeemed(Long totalCouponsRedeemed) {
+  public void setTotalCouponsRedeemed(long totalCouponsRedeemed) {
     this.totalCouponsRedeemed = totalCouponsRedeemed;
   }
 
-  public Long getTotalCouponsSold() {
+  public long getTotalCouponsSold() {
     return totalCouponsSold;
   }
 
-  public void setTotalCouponsSold(Long totalCouponsSold) {
+  public void setTotalCouponsSold(long totalCouponsSold) {
     this.totalCouponsSold = totalCouponsSold;
   }
 
-  public Long getTotalCouponsUnused() {
+  public long getTotalCouponsUnused() {
     return totalCouponsUnused;
   }
 
-  public void setTotalCouponsUnused(Long totalCouponsUnused) {
+  public void setTotalCouponsUnused(long totalCouponsUnused) {
     this.totalCouponsUnused = totalCouponsUnused;
   }
 

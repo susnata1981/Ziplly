@@ -8,8 +8,8 @@
 		.imagePanel {
 		clear: both;
 		display: block;
-		border: 1px solid #ddd;
 		border-shadow: 4px 4px 4px #555;
+		height: 200px;
 		}
 		.image {
 		max-width: 100%;

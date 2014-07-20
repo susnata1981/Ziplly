@@ -41,13 +41,13 @@ public class CouponDTO implements Serializable {
 		this.description = description;
 	}
 	public Date getStartDate() {
-		return startDate;
+		return (Date) startDate.clone();
 	}
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 	public Date getEndDate() {
-		return endDate;
+		return (Date) endDate.clone();
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
@@ -71,7 +71,7 @@ public class CouponDTO implements Serializable {
 	  this.quantityPurchased = quantityPurchased;
   }
 	public Date getTimeCreated() {
-	  return timeCreated;
+	  return (Date) timeCreated.clone();
   }
 	public void setTimeCreated(Date timeCreated) {
 	  this.timeCreated = timeCreated;

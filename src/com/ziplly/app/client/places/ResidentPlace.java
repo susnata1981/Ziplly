@@ -10,7 +10,7 @@ public class ResidentPlace extends Place {
   public static final String TOKEN = "residents";
 	private long accountId;
 	private long neighborhoodId;
-	private Gender gender = Gender.NOT_SPECIFIED;
+	private Gender gender = Gender.ALL;
 
 	public ResidentPlace() {
 	}

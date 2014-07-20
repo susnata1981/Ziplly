@@ -16,7 +16,7 @@ import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PrintCouponPlace;
 import com.ziplly.app.client.view.IAccountView;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.AccountUpdateEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
@@ -83,6 +83,9 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	protected int TWEETS_PER_PAGE = 5;
 	protected IAccountView<T> view;
 
+	protected List<TweetDTO> lastTweetList;
+  protected TweetViewBinder binder;
+  
 	public AbstractAccountActivity(CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -152,7 +155,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	@Deprecated
 	@Override
-	public void getCouponFormActionUrl(final CouponFormWidget couponFormWidget) {
+	public void getCouponFormActionUrl(final CouponFormWidgetModal couponFormWidget) {
 		dispatcher.execute(
 		    new GetImageUploadUrlAction(),
 		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
@@ -173,32 +176,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public SendMessagePresenter getSendMessagePresenter() {
 		return this;
 	}
-
-	public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();
-
-//	@Override
-//	public void initializeUploadForm(final FormUploadWidget formUploadWidget) {
-//		setFormUploadActionUrl(formUploadWidget);
-//
-//		formUploadWidget.setUploadFormSubmitCompleteHandler(new SubmitCompleteHandler() {
-//
-//			@Override
-//			public void onSubmitComplete(SubmitCompleteEvent event) {
-//				try {
-//					if (event.getResults() != null) {
-//						ImageDTO imageDto = ImageUtil.parseImageUrl(event.getResults());
-//						formUploadWidget.displayImagePreview(imageDto.getUrl());
-//						setFormUploadActionUrl(formUploadWidget);
-//					}
-//				} catch (Error error) {
-//					view.displayMessage(StringConstants.INVALID_IMAGE, AlertType.ERROR);
-//					setFormUploadActionUrl(formUploadWidget);
-//				}
-//			}
-//
-//		});
-//	}
-
+  
 	@Override
 	public void invitePeople(List<String> emails) {
 		SendEmailAction action = new SendEmailAction();
@@ -461,8 +439,6 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		dispatcher.execute(new GetAccountNotificationAction(), accountNotificationHandler);
 	}
 
-	protected abstract void onAccountDetailsUpdate();
-
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
@@ -484,12 +460,22 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
   @Override
   public void cancelTransaction(long transactionId) {
-    Window.alert("Txn ID = "+transactionId);
+    Window.alert("Cancelled transaction: "+transactionId);
   }
 	
   public void displayMap(NeighborhoodDTO n) {
     view.displayMap(n.getPostalCodes().get(0).toString());
   }
 
-	abstract void stopThreads();
+  protected void stopThreads() {
+    if (binder != null) {
+      binder.stop();
+    }
+  }
+
+  protected abstract void onAccountDetailsUpdate();
+  
+  public abstract DispatcherCallbackAsync<TweetResult> getTweetHandler();
+  
+  public abstract void displayAccontUpdate();
 }

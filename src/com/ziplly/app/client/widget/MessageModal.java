@@ -30,7 +30,6 @@ public class MessageModal extends Composite {
   
   public MessageModal() {
     this("SUCCESS", AlertType.SUCCESS);
-    initWidget(uiBinder.createAndBindUi(this));
     modal.setKeyboard(false);
   }
 

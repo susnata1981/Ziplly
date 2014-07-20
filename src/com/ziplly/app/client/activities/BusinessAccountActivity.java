@@ -16,9 +16,9 @@ import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.view.PendingActionTypes;
 import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.IAccountView;
+import com.ziplly.app.client.view.PendingActionTypes;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
 import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
@@ -43,7 +43,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
 	private List<TweetDTO> lastTweetList;
-	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler();
 	private TweetHandler tweetHandler = new TweetHandler();
 	private AsyncProvider<BusinessAccountView> viewProvider;
@@ -170,10 +169,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		getAccountDetails(new GetAccountDetailsActionHandler());
 		setupImageUpload();
 		displayAccontUpdate();
-		
 	}
 
-	private void displayAccontUpdate() {
+	@Override
+	public void displayAccontUpdate() {
 	  BusinessAccountDTO account = (BusinessAccountDTO) ctx.getAccount();
 	  List<PendingActionTypes> pendingActions = new ArrayList<PendingActionTypes>();
 	  
@@ -311,13 +310,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		@Override
 		public void onSuccess(ReportSpamResult result) {
 			view.displayModalMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
-		}
-	}
-
-	@Override
-	void stopThreads() {
-		if (binder != null) {
-			binder.stop();
 		}
 	}
 

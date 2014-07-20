@@ -1,5 +1,6 @@
 package com.ziplly.app.client.activities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,14 +16,16 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.view.View;
-import com.ziplly.app.client.view.coupon.CouponFormWidget;
+import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.view.coupon.CouponReportViewImpl.CouponReportPresenter;
 import com.ziplly.app.client.view.coupon.CouponTransactionSummaryCalculator;
 import com.ziplly.app.client.view.coupon.TransactionSummary;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
+import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.CouponDTO;
+import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.model.FeatureFlags;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetStatus;
@@ -36,11 +39,11 @@ import com.ziplly.app.shared.TweetAction;
 import com.ziplly.app.shared.TweetResult;
 
 public class CouponReportActivity extends AbstractActivity implements CouponReportPresenter {
-
   private AcceptsOneWidget panel;
   private AsyncProvider<CouponReportView> viewProvider;
   protected CouponReportView view;
-
+  private CouponTransactionSummaryCalculator calculator;
+  
   public CouponReportActivity(CachingDispatcherAsync dispatcher,
       EventBus eventBus,
       PlaceController placeController,
@@ -49,6 +52,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
       AsyncProvider<CouponReportView> viewProvider) {
     super(dispatcher, eventBus, placeController, ctx);
     this.viewProvider = viewProvider;
+    this.calculator = new CouponTransactionSummaryCalculator();
   }
 
   public static interface CouponReportView extends View<CouponReportPresenter> {
@@ -59,15 +63,15 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
     void displayCoupons(int start, List<CouponDTO> coupons);
 
-    void setTotalCouponCount(Long totalCouponCount);
+    void setTotalCouponCount(long totalCouponCount);
 
-    void displayCouponDetails(GetCouponTransactionResult result);
+    void displayCouponDetails(List<CouponDTO> coupons, List<CouponItemDTO> couponItems);
 
     void displaySummary(TransactionSummary summary);
 
     void displayMessage(String message, AlertType success);
 
-    CouponFormWidget getCouponFormWidget();
+    CouponFormWidgetModal getCouponFormWidget();
   }
 
   @Override
@@ -101,17 +105,21 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
     action.setStart(start);
     action.setPageSize(pageSize);
     action.setAccountId(ctx.getAccount().getAccountId());
-
+    eventBus.fireEvent(new LoadingEventStart());
     dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponsResult>() {
 
       @Override
       public void onSuccess(GetCouponsResult result) {
         view.displayCoupons(start, result.getCoupons());
         view.setTotalCouponCount(result.getTotalCouponCount());
+        view.displayCouponDetails(result.getCoupons(), result.getCouponItems());
+        view.displaySummary(calculator.calculate(result.getCouponTransactionMap()));
+        eventBus.fireEvent(new LoadingEventEnd());
       }
+      
     });
   }
-
+  
   @Override
   public void bind() {
     this.view.setPresenter(this);
@@ -128,14 +136,17 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
 
       @Override
       public void onSuccess(GetCouponTransactionResult result) {
-        view.displayCouponDetails(result);
-        displayCouponCampaignSummary(result);
+        displayCouponDetails(result);
       }
+
     });
   }
 
-  private void displayCouponCampaignSummary(GetCouponTransactionResult result) {
-    CouponTransactionSummaryCalculator calculator = new CouponTransactionSummaryCalculator();
+  private void displayCouponDetails(GetCouponTransactionResult result) {
+//    DateRange range = dataBuilder.getCouponStartEndDateRange(result.getCoupon());
+    List<CouponDTO> coupons = new ArrayList<CouponDTO>();
+    coupons.add(result.getCoupon());
+    view.displayCouponDetails(coupons, result.getPurchasedCoupons());
     view.displaySummary(calculator.calculate(result));
   }
 

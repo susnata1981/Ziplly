@@ -333,4 +333,13 @@ public class FieldVerifier {
 	public static String getMessageTooShortError(int minLength) {
     return "Message can't be shorter than " + minLength + " characters.";
   }
+
+  public static boolean isNumber(String neighborhoodId) {
+    try {
+      Long.parseLong(neighborhoodId);
+      return true;
+    } catch(NumberFormatException ex) {
+      return false;
+    }
+  }
 }

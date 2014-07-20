@@ -58,6 +58,16 @@ public abstract class AbstractAccountActionHandler<T extends Action<R>, R extend
 		}
 	}
 
+	@Override
+	protected void preHandler() throws DispatchException {
+	  super.preHandler();
+	  try {
+      validateSession();
+    } catch (NeedsLoginException e) {
+      throw new NeedsLoginException("Please login first");
+    }
+	}
+	
 	protected boolean isValidSession(Session session) {
 		if (session == null) {
 			return false;

@@ -150,7 +150,7 @@
 					addStyleNames="{style.listBox}">
 				</b:ListBox>
 			</b:Controls>
-			<dv:CouponFormWidget ui:field="couponFormWidget" />
+			<dv:CouponFormWidgetModal ui:field="couponFormWidget" />
 		</g:HTMLPanel>
 		<!-- </b:Form> -->
 		<b:Modal ui:field="embedLinkModal" backdrop="STATIC" keyboard="true">

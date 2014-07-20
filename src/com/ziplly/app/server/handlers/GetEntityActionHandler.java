@@ -62,7 +62,7 @@ public class GetEntityActionHandler extends
 		List<Long> allNeighborhoodIds = Lists.newArrayList();
 
 		switch (action.getSearchType()) {
-			case BY_ZIP:
+			case BY_POSTALCODE:
 				neighborhoods = neighborhoodDao.findByPostalCode(action.getZip());
 				allNeighborhoodIds.addAll(getNeighbodhoodIdList(neighborhoods));
 				break;

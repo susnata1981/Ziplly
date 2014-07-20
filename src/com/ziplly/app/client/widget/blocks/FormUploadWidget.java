@@ -155,14 +155,14 @@ public class FormUploadWidget extends Composite {
 
   private void displayImage(String image) {
     imagePreview.setUrl(image);
-    imagePreview.setHeight("300px");
-    imagePreview.addLoadHandler(new LoadHandler() {
-
-      @Override
-      public void onLoad(LoadEvent event) {
-        imagePanel.setHeight(imagePreview.getHeight()+"px");
-      }
-    });
+//    imagePreview.setHeight("300px");
+//    imagePreview.addLoadHandler(new LoadHandler() {
+//
+//      @Override
+//      public void onLoad(LoadEvent event) {
+//        imagePanel.setHeight(imagePreview.getHeight()+"px");
+//      }
+//    });
   }
   
   private void onUpload() {

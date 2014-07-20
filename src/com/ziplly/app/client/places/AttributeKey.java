@@ -11,6 +11,7 @@ public enum AttributeKey {
   NEIGHBORHOOD_ID("neighborhoodId"),
   POSTAL_CODE("postalCode"),
   GENDER_KEY("gender"),
+  SEND_MESSAGE("sendMessage"),
   NONE("none");
   
   private String name;

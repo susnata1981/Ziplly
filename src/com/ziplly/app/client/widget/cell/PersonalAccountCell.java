@@ -16,8 +16,8 @@ import com.ziplly.app.client.places.PlaceParserImpl;
 import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.view.ImageUtil;
-import com.ziplly.app.client.view.ResidentViewState;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.community.ResidentViewState;
 import com.ziplly.app.model.PersonalAccountDTO;
 
 public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {

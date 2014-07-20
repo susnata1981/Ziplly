@@ -14,9 +14,8 @@ import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.ResidentPlace;
-import com.ziplly.app.client.view.ResidentsView;
-import com.ziplly.app.client.view.ResidentsView.EntityListViewPresenter;
 import com.ziplly.app.client.view.StringConstants;
+import com.ziplly.app.client.view.community.ResidentsView;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.LoginEventHandler;
 import com.ziplly.app.model.ConversationDTO;
@@ -30,9 +29,7 @@ import com.ziplly.app.shared.GetEntityResult;
 import com.ziplly.app.shared.SendMessageAction;
 import com.ziplly.app.shared.SendMessageResult;
 
-public class ResidentActivity extends AbstractActivity implements
-    EntityListViewPresenter,
-    SendMessagePresenter {
+public class ResidentActivity extends AbstractActivity implements ResidentsView.EntityListViewPresenter, SendMessagePresenter {
 	private ResidentsView view;
 	private ResidentPlace place;
 	private EntityListHandler handler = new EntityListHandler();

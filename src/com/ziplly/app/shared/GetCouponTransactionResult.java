@@ -10,30 +10,31 @@ import com.ziplly.app.model.CouponItemDTO;
 
 public class GetCouponTransactionResult implements Result {
   private CouponDTO coupon;
-	private List<CouponItemDTO> transactions = new ArrayList<CouponItemDTO>();
-	private Long totalTransactions;
-	
-	public List<CouponItemDTO> getPurchasedCoupons() {
-	  return transactions;
+  private List<CouponItemDTO> transactions = new ArrayList<CouponItemDTO>();
+
+  private Long totalTransactions;
+
+  public List<CouponItemDTO> getPurchasedCoupons() {
+    return transactions;
   }
 
-	public void setPurchasedCoupons(List<CouponItemDTO> transactions) {
-	  this.transactions = transactions;
+  public void setPurchasedCoupons(List<CouponItemDTO> transactions) {
+    this.transactions = transactions;
   }
 
-	public Long getTotalTransactions() {
-	  return totalTransactions;
+  public Long getTotalTransactions() {
+    return totalTransactions;
   }
 
-	public void setTotalTransactions(Long totalTransactions) {
-	  this.totalTransactions = totalTransactions;
+  public void setTotalTransactions(Long totalTransactions) {
+    this.totalTransactions = totalTransactions;
   }
 
- public CouponDTO getCoupon() {
-  return coupon;
- }
+  public CouponDTO getCoupon() {
+    return coupon;
+  }
 
- public void setCoupon(CouponDTO coupon) {
-  this.coupon = coupon;
- }
+  public void setCoupon(CouponDTO coupon) {
+    this.coupon = coupon;
+  }
 }

@@ -1,5 +1,6 @@
 package com.ziplly.app.client.view.coupon;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -16,8 +17,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
@@ -30,255 +29,224 @@ import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.chart.ChartType;
 import com.ziplly.app.client.widget.chart.LineChartWidget;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.shared.GetCouponTransactionResult;
+import com.ziplly.app.model.CouponItemDTO;
 
 public class CouponReportSalesView extends AbstractView {
 
-	private static CouponReportSalesViewUiBinder uiBinder = GWT
-	    .create(CouponReportSalesViewUiBinder.class);
+  private static CouponReportSalesViewUiBinder uiBinder = GWT
+      .create(CouponReportSalesViewUiBinder.class);
 
-	interface CouponReportSalesViewUiBinder extends UiBinder<Widget, CouponReportSalesView> {
-	}
+  interface CouponReportSalesViewUiBinder extends UiBinder<Widget, CouponReportSalesView> {
+  }
 
-	public static interface CouponReportPresenter extends Presenter {
-		void loadCouponData(int couponDataStart, int coupondatapagesize);
+  public static interface CouponReportPresenter extends Presenter {
+    void loadCouponData(int couponDataStart, int coupondatapagesize);
 
-		void loadCouponDetails(CouponDTO coupon, int start, int pageSize);
-	}
+    void loadCouponDetails(CouponDTO coupon, int start, int pageSize);
+  }
 
-	@UiField
-	Alert message;
-	@UiField(provided = true)
-	SimplePager pager;
-	@UiField(provided = true)
-	CellTable<CouponDTO> couponReportTable;
-	final NoSelectionModel<CouponDTO> couponTableSelectionModel = new NoSelectionModel<CouponDTO>();
+  @UiField
+  Alert message;
+  @UiField(provided = true)
+  SimplePager pager;
+  @UiField(provided = true)
+  CellTable<CouponDTO> couponReportTable;
+  final NoSelectionModel<CouponDTO> couponTableSelectionModel = new NoSelectionModel<CouponDTO>();
 
-	@UiField
-	Label totalSalesLabel;
+  @UiField
+  Label totalSalesLabel;
 
-	@UiField
-	Heading couponTransactionDetailsHeading;
-	@UiField
-	HTMLPanel couponTransactionDetailsPanel;
-	@UiField
-	Button refreshBtn;
-	@UiField
-	Label totalCouponsSoldLabel;
-	@UiField
-	Label totalCouponsRedeemed;
-	@UiField
-	Label totalCouponsUnused;
-	@UiField
-	Label totalFee;
-	@UiField
-	HTMLPanel chartsPanel;
-	@UiField
-	ListBox chartTypeListBox;
-	
-  private GetCouponTransactionResult couponTransactions;
-	private static final int couponDataPageSize = 10;
+//  @UiField
+//  Heading couponTransactionDetailsHeading;
+  @UiField
+  HTMLPanel couponTransactionDetailsPanel;
+  @UiField
+  Button newCouponBtn;
+  @UiField
+  Button refreshBtn;
+  @UiField
+  Label totalCouponsSoldLabel;
+  @UiField
+  Label totalCouponsRedeemed;
+  @UiField
+  Label totalCouponsUnused;
+  @UiField
+  Label totalFee;
+  @UiField
+  HTMLPanel chartsPanel;
+  @UiField
+  ListBox chartTypeListBox;
+  @UiField
+  Heading chartTitle;
 
-	@Inject
-	public CouponReportSalesView(EventBus eventBus) {
-		super(eventBus);
-		pager = new SimplePager();
-		couponReportTable = new CellTable<CouponDTO>();
-		couponReportTable.setHover(true);
-		pager.setDisplay(couponReportTable);
-		pager.setPageSize(couponDataPageSize);
-		buildTable();
-		initWidget(uiBinder.createAndBindUi(this));
-		setupUi();
-		setupHandlers();
-	}
+//  private CouponFormWidgetModal couponFormWidget;
+  private CouponFormWidgetModal couponFormModal;
+  
+  private List<CouponItemDTO> couponItems;
+  private static final int couponDataPageSize = 10;
+  private List<CouponDTO> coupons;
 
-	private void setupUi() {
-	  populateChartTypeListBox();
-	  message.setVisible(false);
+  @Inject
+  public CouponReportSalesView(EventBus eventBus) {
+    super(eventBus);
+//    this.couponFormWidget =  new CouponFormWidgetModal(eventBus);
+    this.couponFormModal = new CouponFormWidgetModal(eventBus);
+    pager = new SimplePager();
+    couponReportTable = buildCouponTable();
+    pager.setDisplay(couponReportTable);
+    pager.setPageSize(couponDataPageSize);
+
+    initWidget(uiBinder.createAndBindUi(this));
+    setupUi();
+    setupHandlers();
+  }
+
+  private CellTable<CouponDTO> buildCouponTable() {
+    CouponReportTableBuilder builder = new CouponReportTableBuilder();
+    return builder
+        .with(CouponReportTableBuilder.COUPON_TITLE)
+        .with(CouponReportTableBuilder.COUPON_DESCRIPTION)
+        .with(CouponReportTableBuilder.COUPON_PRICE)
+        .with(CouponReportTableBuilder.COUPON_DISCOUNT)
+        .with(CouponReportTableBuilder.COUPON_STATUS)
+        .with(CouponReportTableBuilder.COUPON_START_TIME)
+        .with(CouponReportTableBuilder.COUPON_END_TIME)
+        .setSelectionModel(couponTableSelectionModel)
+        .setHover(true)
+        .build();
+  }
+
+  private void setupUi() {
+    populateChartTypeListBox();
+    message.setVisible(false);
     displayCouponTransactionDetailsPanel(false);
   }
 
   private void setupHandlers() {
-	  chartTypeListBox.addChangeHandler(new ChangeHandler() {
+    chartTypeListBox.addChangeHandler(new ChangeHandler() {
 
       @Override
       public void onChange(ChangeEvent event) {
         int index = chartTypeListBox.getSelectedIndex();
         displayChart(ChartType.values()[index]);
       }
-	  });
+    });
   }
 
-	public void setRowCount(Long couponCount) {
-		couponReportTable.setRowCount(couponCount.intValue(), true);
-	}
+  public void setRowCount(Long couponCount) {
+    couponReportTable.setRowCount(couponCount.intValue(), true);
+  }
 
-	public void displayCoupons(int start, List<CouponDTO> coupons) {
-		message.setVisible(false);
+  public void displayCoupons(int start, List<CouponDTO> coupons) {
+    message.setVisible(false);
 
-		if (coupons == null) {
-			return;
-		}
+    if (coupons == null) {
+      return;
+    }
 
-		if (coupons.isEmpty()) {
-			displayMessage(StringConstants.NO_COUPONS, AlertType.WARNING);
-			return;
-		}
+    if (coupons.isEmpty()) {
+      displayMessage(StringConstants.NO_COUPONS, AlertType.WARNING);
+      return;
+    }
 
-		couponReportTable.setRowData(start, coupons);
-	}
+    couponReportTable.setRowData(start, coupons);
+  }
 
-	private void buildTable() {
-		Column<CouponDTO, String> couponDescription = new TextColumn<CouponDTO>() {
+  public NoSelectionModel<CouponDTO> getCouponTableSelectionStrategy() {
+    return couponTableSelectionModel;
+  }
 
-			@Override
-			public String getValue(CouponDTO c) {
-				return c.getDescription();
-			}
-		};
-		couponReportTable.addColumn(couponDescription, "Description");
+  public void clear() {
+    couponReportTable.setRowCount(0);
+    message.setText("");
+    displayCouponTransactionDetailsPanel(false);
+    StyleHelper.show(message.getElement(), false);
+  }
 
-		Column<CouponDTO, String> couponPrice = new TextColumn<CouponDTO>() {
+  public void displayMessage(String msg, AlertType type) {
+    message.setText(msg);
+    message.setType(type);
+    message.setVisible(true);
+  }
 
-			@Override
-			public String getValue(CouponDTO c) {
-				return  basicDataFormatter.format(c.getItemPrice(), ValueType.PRICE);
-			}
-		};
-		
-		couponReportTable.addColumn(couponPrice, "Price");
+  public void setTotalCouponCount(Long totalCouponCount) {
+    couponReportTable.setRowCount(totalCouponCount.intValue(), true);
+  }
 
-		Column<CouponDTO, String> discount = new TextColumn<CouponDTO>() {
+  public void displayCouponDetails(List<CouponDTO> coupons, List<CouponItemDTO> couponItems) {
+    this.coupons = coupons;
+    this.couponItems = couponItems;
+    displayCouponTransactionDetailsPanel(true);
+    chartTypeListBox.setSelectedIndex(0);
+    displayChart(ChartType.values()[0]);
+    displayChartTitle(coupons);
+  }
 
-			@Override
-			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getItemPrice().subtract(c.getDiscountedPrice()), ValueType.PRICE);
-			}
-		};
-		couponReportTable.addColumn(discount, "Discount");
+  public void displaySummary(TransactionSummary summary) {
+    totalCouponsSoldLabel.setText(Long.toString(summary.getTotalCouponsSold()));
+    totalSalesLabel.setText(basicDataFormatter.format(
+        summary.getTotalSalesAmount(),
+        ValueType.PRICE));
+    totalCouponsRedeemed.setText(Long.toString(summary.getTotalCouponsRedeemed()));
+    totalCouponsUnused.setText(Long.toString(summary.getTotalCouponsUnused()));
+    totalFee.setText(basicDataFormatter.format(summary.getTotalFees(), ValueType.PRICE));
+  }
 
-		Column<CouponDTO, String> status = new TextColumn<CouponDTO>() {
+  public CellTable<CouponDTO> getCouponReportTable() {
+    return couponReportTable;
+  }
 
-			@Override
-			public String getValue(CouponDTO c) {
-				return "Active";
-			}
-		};
-		couponReportTable.addColumn(status, "Status");
+  public Button getRefreshButton() {
+    return refreshBtn;
+  }
 
-		Column<CouponDTO, String> startTime = new TextColumn<CouponDTO>() {
-
-			@Override
-			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getStartDate(), ValueType.DATE_VALUE_FULL);
-			}
-		};
-		couponReportTable.addColumn(startTime, "Start time");
-
-		Column<CouponDTO, String> endTime = new TextColumn<CouponDTO>() {
-
-			@Override
-			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getEndDate(), ValueType.DATE_VALUE_FULL);
-			}
-		};
-		couponReportTable.addColumn(endTime, "Expiration time");
-
-		Column<CouponDTO, String> creationTime = new TextColumn<CouponDTO>() {
-
-			@Override
-			public String getValue(CouponDTO c) {
-				return basicDataFormatter.format(c.getTimeCreated(), ValueType.DATE_VALUE_FULL);
-			}
-		};
-		couponReportTable.addColumn(creationTime, "Creation time");
-
-		setupSelectionHandler();
-	}
-
-	public NoSelectionModel<CouponDTO> getCouponTableSelectionStrategy() {
-		return couponTableSelectionModel;
-	}
-
-	private void setupSelectionHandler() {
-		couponReportTable.setSelectionModel(couponTableSelectionModel);
-	}
-
-	public void setCouponDetailsTableHeading(CouponDTO coupon) {
-		couponTransactionDetailsHeading.setText("Displaying details for coupon: \""
-		    + coupon.getDescription() + "\"");
-	}
-
-	public void clear() {
-		couponReportTable.setRowCount(0);
-		displayCouponTransactionDetailsPanel(false);
-		message.setText("");
-		StyleHelper.show(message.getElement(), false);
-	}
-
-	public void displayMessage(String msg, AlertType type) {
-		message.setText(msg);
-		message.setType(type);
-		message.setVisible(true);
-	}
-
-	public void setTotalCouponCount(Long totalCouponCount) {
-		couponReportTable.setRowCount(totalCouponCount.intValue(), true);
-	}
-
-	public void displayCouponDetails(GetCouponTransactionResult result) {
-	  this.couponTransactions = result;
-		displayCouponTransactionDetailsPanel(true);
-		chartTypeListBox.setSelectedIndex(0);
-		displayChart(ChartType.values()[0]);
-	}
-
-	public void displaySummary(TransactionSummary summary) {
-		totalCouponsSoldLabel.setText(summary.getTotalCouponsSold().toString());
-		totalSalesLabel.setText(basicDataFormatter.format(summary.getTotalSalesAmount(), ValueType.PRICE));
-		totalCouponsRedeemed.setText(summary.getTotalCouponsRedeemed().toString());
-		totalCouponsUnused.setText(summary.getTotalCouponsUnused().toString());
-		totalFee.setText(basicDataFormatter.format(summary.getTotalFees(), ValueType.PRICE));
-	}
-
-	public CellTable<CouponDTO> getCouponReportTable() {
-		return couponReportTable;
-	}
-
-	public Button getRefreshButton() {
-		return refreshBtn;
-	}
-
-  private void displayChart(ChartType chartType) {
-    chartsPanel.clear();
-    
-//    for (int i = 0; i < 20; i++) {
-//      Date now = new Date(5, i, 2014);
-//      PurchasedCouponDTO pr1 = new PurchasedCouponDTO();
-//      TransactionDTO tr1 = new TransactionDTO();
-//      tr1.setStatus(TransactionStatus.ACTIVE);
-//      tr1.setAmount(new BigDecimal(100*Math.random()));
-//      tr1.setTimeCreated(now);
-//      pr1.setTransaction(tr1);
-//      couponTransactions.getPurchasedCoupons().add(pr1);
-//    }
-      
-    LineChartWidget lineChartWidget = new LineChartWidget(
-      chartType.getAbstractLineChartBuilder().getAdapter(couponTransactions),
-      chartType.getTitle(),
-      chartType.getXAxisTitle(),
-      chartType.getYAxisTitle());
-    chartsPanel.add(lineChartWidget);
+  public Button getNewCouponButton() {
+    return newCouponBtn;
   }
   
-	private void populateChartTypeListBox() {
-	  for(ChartType type : ChartType.values()) {
-	    chartTypeListBox.addItem(type.getTitle());
-	  }
-	}
-	
-	private void displayCouponTransactionDetailsPanel(boolean b) {
-		StyleHelper.show(couponTransactionDetailsPanel.getElement(), b);
-	}
+  private void displayChart(ChartType chartType) {
+    chartsPanel.clear();
+    LineChartWidget lineChartWidget =
+        new LineChartWidget(
+            chartType.getAbstractLineChartBuilder().getAdapter(getCoupons(), getCouponItems()),
+            chartType.getTitle(),
+            chartType.getXAxisTitle(),
+            chartType.getYAxisTitle());
+    chartsPanel.add(lineChartWidget);
+  }
+
+  private List<CouponItemDTO> getCouponItems() {
+    return Collections.unmodifiableList(couponItems);
+  }
+
+  private List<CouponDTO> getCoupons() {
+    return Collections.unmodifiableList(coupons);
+  }
+
+  private void populateChartTypeListBox() {
+    for (ChartType type : ChartType.values()) {
+      chartTypeListBox.addItem(type.getTitle());
+    }
+  }
+
+  private void displayCouponTransactionDetailsPanel(boolean b) {
+    StyleHelper.show(couponTransactionDetailsPanel.getElement(), b);
+  }
+  
+  private void displayChartTitle(List<CouponDTO> coupons) {
+    int totalCoupons = coupons.size();
+    if (totalCoupons > 1) {
+      chartTitle.setText("All coupons");
+    } else if (totalCoupons == 1){
+      chartTitle.setText(coupons.get(0).getDescription());
+    }
+  }
+
+  public void showCreateFormWidget() {
+    couponFormModal.show(true);
+  }
+
+  public CouponFormWidgetModal getCouponFormWidget() {
+    return couponFormModal;
+  }
 }

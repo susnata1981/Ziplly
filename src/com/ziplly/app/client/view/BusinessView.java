@@ -25,6 +25,10 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.activities.SendMessagePresenter;
+import com.ziplly.app.client.activities.util.CommonUtil;
+import com.ziplly.app.client.places.AttributeKey;
+import com.ziplly.app.client.places.BusinessPlace;
+import com.ziplly.app.client.view.community.BusinessViewState;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.client.widget.MessageModal;
 import com.ziplly.app.client.widget.SendMessageWidget;
@@ -41,219 +45,246 @@ import com.ziplly.app.shared.ValidationResult;
 public class BusinessView extends AbstractView implements
     View<BusinessView.EntityListViewPresenter> {
 
-	private static final int PAGE_SIZE = 10;
-	private SendMessageWidget smw;
-	private static BusinessViewUiBinder uiBinder = GWT.create(BusinessViewUiBinder.class);
+  private SendMessageWidget smw;
+  private static BusinessViewUiBinder uiBinder = GWT.create(BusinessViewUiBinder.class);
 
-	public interface EntityListViewPresenter extends Presenter {
-		public void onRangeChangeEvent(int start, int pageSize);
+  public interface EntityListViewPresenter extends Presenter {
+    public void onRangeChangeEvent(int start, int pageSize);
 
-		public void getBusinessList(GetEntityListAction currentEntityListAction);
-	}
+    public void getBusinessList(GetEntityListAction currentEntityListAction);
+  }
 
-	interface BusinessViewUiBinder extends UiBinder<Widget, BusinessView> {
-	}
+  interface BusinessViewUiBinder extends UiBinder<Widget, BusinessView> {
+  }
 
-	@UiField(provided = true)
-	SimplePager pager;
+  @UiField(provided = true)
+  SimplePager pager;
 
-	@UiField(provided = true)
-	CellList<BusinessAccountDTO> businessList;
+  @UiField(provided = true)
+  CellList<BusinessAccountDTO> businessList;
 
-	//
-	// Search
-	//
-	@UiField
-	ControlGroup zipCg;
-	@UiField
-	TextBox zipTextBox;
-	@UiField
-	HelpInline zipError;
+  //
+  // Search
+  //
+  @UiField
+  ControlGroup zipCg;
+  @UiField
+  TextBox zipTextBox;
+  @UiField
+  HelpInline zipError;
 
-	@UiField
-	ListBox neighborhoodListBox;
+  @UiField
+  ListBox neighborhoodListBox;
 
-	@UiField
-	Button searchBtn;
+  @UiField
+  Button searchBtn;
 
-	@UiField
-	Button resetBtn;
+  @UiField
+  Button resetBtn;
 
-	@UiField
-	Alert message;
+  @UiField
+  Alert message;
 
-	private EntityListViewPresenter presenter;
-	private CommunityViewState state;
-	private List<NeighborhoodDTO> neighborhoods;
+  private EntityListViewPresenter presenter;
+  private BusinessViewState state;
+  private List<NeighborhoodDTO> neighborhoods;
 
-	@Inject
-	public BusinessView(EventBus eventBus) {
-		super(eventBus);
-		state = new CommunityViewState(EntityType.BUSINESS_ACCOUNT, PAGE_SIZE);
-		businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell(state));
-		businessList.setPageSize(PAGE_SIZE);
-		pager = new SimplePager();
-		pager.setDisplay(businessList);
-		initWidget(uiBinder.createAndBindUi(this));
-		StyleHelper.show(message.getElement(), false);
-		setupHandlers();
-	}
+  @Inject
+  public BusinessView(EventBus eventBus) {
+    super(eventBus);
+    BusinessPlace place = getPlaceFromUrl();
+    state = new BusinessViewState(EntityType.BUSINESS_ACCOUNT, place.getNeighborhoodId(), place.getPostalCode());
+    businessList = new CellList<BusinessAccountDTO>(new BusinessAccountCell(state));
+    businessList.setPageSize(state.getPageSize());
+    pager = new SimplePager();
+    pager.setDisplay(businessList);
+    initWidget(uiBinder.createAndBindUi(this));
+    StyleHelper.show(message.getElement(), false);
+    setupHandlers();
+  }
 
-	private void setupHandlers() {
-		businessList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				state.setRange(event.getNewRange());
-				presenter.getBusinessList(state.getCurrentEntityListAction());
-			}
-		});
-		
-		neighborhoodListBox.addChangeHandler(new ChangeHandler() {
-
-			@Override
-      public void onChange(ChangeEvent event) {
-				state.setNeighborhood(neighborhoods.get(neighborhoodListBox.getSelectedIndex()).getNeighborhoodId());
+  private BusinessPlace getPlaceFromUrl() {
+    BusinessPlace place = new BusinessPlace();
+    try {
+      String neighborhoodId =
+          CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.NEIGHBORHOOD_ID);
+      if (!FieldVerifier.isEmpty(neighborhoodId) && FieldVerifier.isNumber(neighborhoodId)) {
+        place.setNeighborhoodId(Long.parseLong(neighborhoodId));
       }
-			
-		});
-	}
 
-	public void display(List<BusinessAccountDTO> input) {
-		enableButtonIfRequired();
-		StyleHelper.show(message.getElement(), false);
-		if (input.size() == 0) {
-			displayNoResult();
-		}
-		businessList.setRowData(state.getStart(), input);
-	}
+      String accountId = CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.ACCOUNT_ID);
+      if (!FieldVerifier.isEmpty(accountId) && FieldVerifier.isNumber(accountId)) {
+        place.setAccountId(Long.parseLong(accountId));
+      }
 
-	private void displayNoResult() {
-		businessList.setRowCount(0);
-		message.setAnimation(true);
-		message.setClose(false);
-		message.setText(StringConstants.NO_RESULT_FOUND);
-		StyleHelper.show(message.getElement(), true);
-	}
+      String postalCode = CommonUtil.getPlaceParam(BusinessPlace.TOKEN, AttributeKey.POSTAL_CODE);
+      if (!FieldVerifier.isEmpty(neighborhoodId)) {
+        place.setPostalCode(postalCode);
+      }
 
-	public void setTotalRowCount(Long count) {
-		businessList.setRowCount(count.intValue(), true);
-	}
+      return place;
+    } catch (Exception ex) {
+      return place;
+    }
+  }
 
-	private boolean validateZip() {
-		String zipInput = zipTextBox.getText().trim();
-		ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
-		if (!validateZip.isValid()) {
-			zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
-			zipCg.setType(ControlGroupType.ERROR);
-			return false;
-		}
-		return true;
-	}
+  private void setupHandlers() {
+    businessList.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+      @Override
+      public void onRangeChange(RangeChangeEvent event) {
+        state.setRange(event.getNewRange());
+        presenter.getBusinessList(state.getCurrentEntityListAction());
+      }
+    });
 
-	@UiHandler("searchBtn")
-	void search(ClickEvent event) {
-		clearErrors();
-		if (!FieldVerifier.isEmpty(zipTextBox.getText())) {
-			boolean valid = validateZip();
-			if (!valid) {
-				MessageModal modal = new MessageModal("Please enter a valid zip", AlertType.ERROR);
-				modal.show();
-				return;
-			}
-			state.searchByZip(FieldVerifier.sanitize(zipTextBox.getText()));
-		} else {
-			state.searchByNeighborhood(neighborhoods
-			    .get(neighborhoodListBox.getSelectedIndex())
-			    .getNeighborhoodId());
-		}
-		
-		searchBtn.setEnabled(false);
-		presenter.getBusinessList(state.getCurrentEntityListAction());
-	}
+    neighborhoodListBox.addChangeHandler(new ChangeHandler() {
 
-	@UiHandler("resetBtn")
-	void resetSearch(ClickEvent event) {
-		state.reset();
-		state.setNeighborhood(neighborhoods.get(0).getNeighborhoodId());
-		neighborhoodListBox.setSelectedIndex(0);
-		clear();
-		presenter.getBusinessList(state.getCurrentEntityListAction());
-	}
+      @Override
+      public void onChange(ChangeEvent event) {
+        state.setNeighborhood(neighborhoods
+            .get(neighborhoodListBox.getSelectedIndex())
+            .getNeighborhoodId());
+      }
 
-	@Override
-	public void setPresenter(EntityListViewPresenter presenter) {
-		this.presenter = presenter;
-	}
+    });
+  }
 
-	public int getPageSize() {
-		return PAGE_SIZE;
-	}
+  public void display(List<BusinessAccountDTO> input) {
+    enableButtonIfRequired();
+    StyleHelper.show(message.getElement(), false);
+    if (input.size() == 0) {
+      displayNoResult();
+    }
+    businessList.setRowData(state.getStart(), input);
+  }
 
-	private void enableButtonIfRequired() {
-		if (!searchBtn.isEnabled()) {
-			searchBtn.setEnabled(true);
-		}
+  private void displayNoResult() {
+    businessList.setRowCount(0);
+    message.setAnimation(true);
+    message.setClose(false);
+    message.setText(StringConstants.NO_RESULT_FOUND);
+    StyleHelper.show(message.getElement(), true);
+  }
 
-		if (!resetBtn.isEnabled()) {
-			resetBtn.setEnabled(true);
-		}
-	}
+  public void setTotalRowCount(Long count) {
+    businessList.setRowCount(count.intValue(), true);
+  }
 
-	@Override
-	public void clear() {
-		zipTextBox.setText("");
-		clearErrors();
-		StyleHelper.clearBackground();
-	}
+  private boolean validateZip() {
+    String zipInput = zipTextBox.getText().trim();
+    ValidationResult validateZip = FieldVerifier.validateZip(zipInput);
+    if (!validateZip.isValid()) {
+      zipError.setText(validateZip.getErrors().get(0).getErrorMessage());
+      zipCg.setType(ControlGroupType.ERROR);
+      return false;
+    }
+    return true;
+  }
 
-	private void clearErrors() {
-		zipCg.setType(ControlGroupType.NONE);
-		zipError.setText("");
-	}
+  @UiHandler("searchBtn")
+  void search(ClickEvent event) {
+    clearErrors();
+    if (!FieldVerifier.isEmpty(zipTextBox.getText())) {
+      boolean valid = validateZip();
+      if (!valid) {
+        MessageModal modal = new MessageModal("Please enter a valid zip", AlertType.ERROR);
+        modal.show();
+        return;
+      }
+      state.searchByPostalCode(FieldVerifier.sanitize(zipTextBox.getText()));
+    } else {
+      state.searchByNeighborhood(neighborhoods
+          .get(neighborhoodListBox.getSelectedIndex())
+          .getNeighborhoodId());
+    }
 
-	public void displaySendMessageWidget(Long accountId) {
-		AccountDTO receiver = new AccountDTO();
-		receiver.setAccountId(accountId);
-		smw = new SendMessageWidget(receiver);
-		smw.setPresenter((SendMessagePresenter) presenter);
-		smw.show();
-	}
+    searchBtn.setEnabled(false);
+    presenter.getBusinessList(state.getCurrentEntityListAction());
+  }
 
-	public void updateMessageWidget(AccountDTO account) {
-		if (smw != null) {
-			smw.updateAccountInformation(account);
-		}
-	}
+  @UiHandler("resetBtn")
+  void resetSearch(ClickEvent event) {
+    state.reset();
+    state.setNeighborhood(neighborhoods.get(0).getNeighborhoodId());
+    neighborhoodListBox.setSelectedIndex(0);
+    clear();
+    presenter.getBusinessList(state.getCurrentEntityListAction());
+  }
 
-	public void displayMessage(String msg, AlertType type) {
-		message.setText(msg);
-		message.setType(type);
-		StyleHelper.show(message.getElement(), true);
-	}
+  @Override
+  public void setPresenter(EntityListViewPresenter presenter) {
+    this.presenter = presenter;
+  }
 
-	public void displayNeighborhoodFilters(List<NeighborhoodDTO> neighborhoods) {
-		if (neighborhoods != null) {
-			neighborhoodListBox.clear();
-			this.neighborhoods = neighborhoods;
-			for (NeighborhoodDTO n : neighborhoods) {
-				neighborhoodListBox.addItem(n.getName());
-			}
-			neighborhoodListBox.setSelectedIndex(neighborhoods.size());
-		}
-	}
+  public int getPageSize() {
+    return state.getPageSize();
+  }
 
-	public void setBackground(NeighborhoodDTO neighborhood) {
-		StyleHelper.setBackgroundImage(basicDataFormatter.format(
-		    neighborhood,
-		    ValueType.NEIGHBORHOOD_IMAGE));
-	}
+  private void enableButtonIfRequired() {
+    if (!searchBtn.isEnabled()) {
+      searchBtn.setEnabled(true);
+    }
 
-	public void setNeighborhoodId(Long neighborhoodId) {
-		for(NeighborhoodDTO n : neighborhoods) {
-			if (n.getNeighborhoodId().equals(neighborhoodId)) {
-				neighborhoodListBox.setSelectedValue(n.getName());
-				state.setNeighborhood(neighborhoodId);
-			}
-		}
+    if (!resetBtn.isEnabled()) {
+      resetBtn.setEnabled(true);
+    }
+  }
+
+  @Override
+  public void clear() {
+    zipTextBox.setText("");
+    clearErrors();
+    StyleHelper.clearBackground();
+  }
+
+  private void clearErrors() {
+    zipCg.setType(ControlGroupType.NONE);
+    zipError.setText("");
+  }
+
+  public void displaySendMessageWidget(Long accountId) {
+    AccountDTO receiver = new AccountDTO();
+    receiver.setAccountId(accountId);
+    smw = new SendMessageWidget(receiver);
+    smw.setPresenter((SendMessagePresenter) presenter);
+    smw.show();
+  }
+
+  public void updateMessageWidget(AccountDTO account) {
+    if (smw != null) {
+      smw.updateAccountInformation(account);
+    }
+  }
+
+  public void displayMessage(String msg, AlertType type) {
+    message.setText(msg);
+    message.setType(type);
+    StyleHelper.show(message.getElement(), true);
+  }
+
+  public void displayNeighborhoodFilters(List<NeighborhoodDTO> neighborhoods) {
+    if (neighborhoods != null) {
+      neighborhoodListBox.clear();
+      this.neighborhoods = neighborhoods;
+      for (NeighborhoodDTO n : neighborhoods) {
+        neighborhoodListBox.addItem(n.getName());
+      }
+      neighborhoodListBox.setSelectedIndex(neighborhoods.size());
+    }
+  }
+
+  public void setBackground(NeighborhoodDTO neighborhood) {
+    StyleHelper.setBackgroundImage(basicDataFormatter.format(
+        neighborhood,
+        ValueType.NEIGHBORHOOD_IMAGE));
+  }
+
+  public void setNeighborhoodId(Long neighborhoodId) {
+    for (NeighborhoodDTO n : neighborhoods) {
+      if (n.getNeighborhoodId().equals(neighborhoodId)) {
+        neighborhoodListBox.setSelectedValue(n.getName());
+        state.setNeighborhood(neighborhoodId);
+      }
+    }
   }
 }

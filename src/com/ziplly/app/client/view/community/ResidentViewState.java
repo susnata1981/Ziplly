@@ -1,17 +1,17 @@
-package com.ziplly.app.client.view;
+package com.ziplly.app.client.view.community;
 
 import com.ziplly.app.model.EntityType;
 import com.ziplly.app.model.Gender;
 import com.ziplly.app.shared.GetEntityListAction.SearchType;
 
 public class ResidentViewState extends CommunityViewState {
-
 	private Gender gender;
 
-	public ResidentViewState(EntityType type, int pageSize) {
-		super(type, pageSize);
-		action.setSearchType(SearchType.BY_GENDER);
-		setGender(Gender.ALL);
+	public ResidentViewState(EntityType type, long neighborhoodId, Gender gender) {
+		super(type, neighborhoodId);
+		this.gender = gender;
+		
+		action.setNeedTotalEntityCount(true);
 	}
 
 	@Override
@@ -19,14 +19,14 @@ public class ResidentViewState extends CommunityViewState {
 		start = 0;
 		gender = Gender.ALL;
 		action.setGender(gender);
-		action.setNeedTotalEntityCount(true);
 	}
 
 	public void searchByGender(Gender gender) {
 		reset();
 		this.gender = gender;
-		action.setGender(gender);
 		action.setPage(start);
+		action.setGender(gender);
+		action.setSearchType(SearchType.BY_GENDER);
 	}
 
 	public Gender getGender() {

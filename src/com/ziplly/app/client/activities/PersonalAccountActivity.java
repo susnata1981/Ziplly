@@ -42,7 +42,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
 	private List<TweetDTO> lastTweetList;
-	private TweetViewBinder binder;
+//	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitActionHandler =
 	    new ScrollBottomHitActionHandler();
 	private AsyncProvider<AccountView> viewProvider;
@@ -127,14 +127,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		}
 	}
 
-	private void startInfiniteScrollThread() {
-		if (binder != null) {
-			binder.stop();
-		}
-		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
-		binder.start();
-	}
-
 	@Override
 	public void displayProfile() {
 		if (ctx.getAccount() instanceof BusinessAccountDTO) {
@@ -157,7 +149,8 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		displayAccontUpdate();
 	}
 
-	private void displayAccontUpdate() {
+	@Override
+	public void displayAccontUpdate() {
 	  PersonalAccountDTO account = (PersonalAccountDTO) ctx.getAccount();
     List<PendingActionTypes> pendingActions = new ArrayList<PendingActionTypes>();
     
@@ -265,8 +258,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			super.onFailure(th);
 			view.displayProfileSection(false);
 			view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
-			// TODO(susnata) : invalid url error
-//			view.displayMessage(ErrorDefinitions., type);
 		}
 	}
 
@@ -331,18 +322,19 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		}
 	}
 
+	 void startInfiniteScrollThread() {
+    if (binder != null) {
+      binder.stop();
+    }
+    binder = new TweetViewBinder(view.getTweetSectionElement(), this);
+    binder.start();
+  }
+	   
 	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult> {
 		@Override
 		public void onSuccess(GetTweetForUserResult result) {
 			lastTweetList = result.getTweets();
 			view.addTweets(result.getTweets());
-		}
-	}
-
-	@Override
-	void stopThreads() {
-		if (binder != null) {
-			binder.stop();
 		}
 	}
 }

@@ -100,10 +100,7 @@ a.link:hover {
 .profileInfoBox {
 	clear: both;
 	width: 92%;
-	margin: 5px;
 	padding: 6px;
-	border: 2px solid #ddd;
-	background: #f1f1f1;
 	overflow: hidden;
 }
 
@@ -142,7 +139,6 @@ h2.heading {
 }
 
 .tweetSection {
-	margin-top: 6px;
 	padding: 8px;
 	background: #f1f1f1;
 }
@@ -303,6 +299,11 @@ h2.heading {
 	font-size: 12px;
 }
 
+.accountUpdateSmallfont {
+	font-size: 13px !important;
+	color: red !important;
+}
+
 .leftAlignedLabel {
 	float: left;
 	width: 50px;
@@ -391,7 +392,6 @@ input[type="text"], input[type="password"] {
 	color: #888;
 	padding: 10px;
 	margin: 6px;
-	background: #f1f1f1;
 }
 
 .updateAlertBlock h4 {
@@ -441,6 +441,13 @@ input[type="text"], input[type="password"] {
 	color: #555;
 }
 
+.emailValue {
+	color: #555 !important;
+	font-family: verdana, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+}
+
 .profileInfoInlineValue {
 	display: inline-block;
 	float: left;
@@ -478,4 +485,8 @@ input[type="text"], input[type="password"] {
 	font-weight: 600;
 	padding: 2px;
 	color: #555;
+}
+
+.paddingLeft {
+	padding-left: 6px;
 }
