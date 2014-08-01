@@ -59,7 +59,6 @@ public class CouponTransactionSummaryCalculator {
     return new BigDecimal(0);
   }
 
-  @Deprecated
   public TransactionSummary calculate(GetCouponTransactionResult result) {
     TransactionSummary summary = new TransactionSummary();
     summary.setTotalCouponsSold(result.getTotalTransactions());

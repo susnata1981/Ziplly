@@ -1,5 +1,6 @@
 package com.ziplly.app.client.view.coupon;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -281,5 +282,10 @@ public class CouponReportViewImpl extends AbstractView implements CouponReportVi
   @Override
   public CouponFormWidgetModal getCouponFormWidget() {
     return couponFormWidget;
+  }
+
+  @Override
+  public void loadCouponSalesData(Map<String, BigDecimal> salesAmountData) {
+    couponSalesView.loadCouponSalesData(salesAmountData);
   }
 }

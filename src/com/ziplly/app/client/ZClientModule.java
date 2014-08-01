@@ -29,7 +29,6 @@ import com.ziplly.app.client.activities.HomeActivity.HomeView;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.conversation.ConversationView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
@@ -104,7 +103,8 @@ public class ZClientModule extends AbstractGinModule {
 		bind(SignupPlace.class);
 		bind(BusinessAccountPlace.class);
 
-		bind(GlobalErrorHandler.class).in(Singleton.class);
+//		bind(GlobalErrorHandler.class).in(Singleton.class);
+//		bind(GlobalErrorHandler.class).toProvider(GlobalErrorHandlerProvider.class).in(Singleton.class);
 		
 		bind(ActivityMapper.class).to(ZipllyActivityMapper.class).in(Singleton.class);
 		bind(ActivityMapper.class)
@@ -125,6 +125,22 @@ public class ZClientModule extends AbstractGinModule {
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
 	}
 
+//	public static class GlobalErrorHandlerProvider implements Provider<GlobalErrorHandler> {
+//	  private EventBus eventBus;
+//	  private GlobalErrorHandler handler;
+//	  
+//    @Inject
+//	  public GlobalErrorHandlerProvider(EventBus eventBus) {
+//	    this.eventBus = eventBus;
+//	    this.handler = new GlobalErrorHandler(eventBus);
+//    }
+//    
+//    @Override
+//    public GlobalErrorHandler get() {
+//      return handler;
+//    }
+//	}
+	
 	public static class PlaceControllerProvider implements Provider<PlaceController> {
 		EventBus eventBus;
 

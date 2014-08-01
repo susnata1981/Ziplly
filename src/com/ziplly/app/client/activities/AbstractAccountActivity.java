@@ -79,7 +79,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
     EmailPresenter {
 
 	protected AccountNotificationHandler accountNotificationHandler =
-	    new AccountNotificationHandler();
+	    new AccountNotificationHandler(eventBus);
 	protected int TWEETS_PER_PAGE = 5;
 	protected IAccountView<T> view;
 
@@ -104,7 +104,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 		dispatcher.execute(
 		    eligibilityAction,
-		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
+		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(CheckBuyerEligibilityForCouponResult result) {
@@ -122,7 +122,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void deleteImage(String url) {
 		dispatcher.execute(
 		    new DeleteImageAction(url),
-		    new DispatcherCallbackAsync<DeleteImageResult>() {
+		    new DispatcherCallbackAsync<DeleteImageResult>(eventBus) {
 			    @Override
 			    public void onSuccess(DeleteImageResult result) {
 				    // Nothing to do.
@@ -134,7 +134,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void deleteTweet(final TweetDTO tweet) {
 		dispatcher.execute(
 		    new DeleteTweetAction(tweet.getTweetId()),
-		    new DispatcherCallbackAsync<DeleteTweetResult>() {
+		    new DispatcherCallbackAsync<DeleteTweetResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(DeleteTweetResult result) {
@@ -158,7 +158,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void getCouponFormActionUrl(final CouponFormWidgetModal couponFormWidget) {
 		dispatcher.execute(
 		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetImageUploadUrlResult result) {
 				    couponFormWidget.setFormUploadActionUrl(result.getImageUrl());
@@ -182,7 +182,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		SendEmailAction action = new SendEmailAction();
 		action.setEmailTemplate(EmailTemplate.INVITE_PEOPLE);
 		action.setEmailList(emails);
-		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<SendEmailResult>(eventBus) {
 
 			@Override
 			public void onSuccess(SendEmailResult result) {
@@ -195,7 +195,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void likeTweet(Long tweetId) {
 		LikeTweetAction action = new LikeTweetAction();
 		action.setTweetId(tweetId);
-		dispatcher.execute(action, new DispatcherCallbackAsync<LikeResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<LikeResult>(eventBus) {
 
 			@Override
 			public void onSuccess(LikeResult result) {
@@ -209,7 +209,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void logout() {
 		dispatcher.execute(
 		    new LogoutAction(ctx.getAccount().getUid()),
-		    new DispatcherCallbackAsync<LogoutResult>() {
+		    new DispatcherCallbackAsync<LogoutResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(LogoutResult result) {
@@ -227,7 +227,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	@Override
 	public void postComment(final CommentDTO comment) {
-		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>() {
+		dispatcher.execute(new CommentAction(comment), new DispatcherCallbackAsync<CommentResult>(eventBus) {
 
 			@Override
 			public void onSuccess(CommentResult result) {
@@ -278,7 +278,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void save(T account) {
 		dispatcher.execute(
 		    new UpdateAccountAction(account),
-		    new DispatcherCallbackAsync<UpdateAccountResult>() {
+		    new DispatcherCallbackAsync<UpdateAccountResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(UpdateAccountResult result) {
@@ -306,7 +306,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		conversation.setSender(ctx.getAccount());
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
-		    new DispatcherCallbackAsync<SendMessageResult>() {
+		    new DispatcherCallbackAsync<SendMessageResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
@@ -330,7 +330,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void setImageUploadUrl() {
 		dispatcher.execute(
 		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetImageUploadUrlResult result) {
 				    view.setImageUploadUrl(result.getImageUrl());
@@ -354,7 +354,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 	public void updateComment(CommentDTO comment) {
 		dispatcher.execute(
 		    new UpdateCommentAction(comment),
-		    new DispatcherCallbackAsync<UpdateCommentResult>() {
+		    new DispatcherCallbackAsync<UpdateCommentResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(UpdateCommentResult result) {
@@ -370,7 +370,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		action.setStart(start);
 		action.setPageSize(pageSize);
 
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetCouponTransactionResult result) {
@@ -384,7 +384,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 		GetCouponQRCodeUrlAction action = new GetCouponQRCodeUrlAction();
 		action.setOrderId(ordersId);
 		action.setCouponId(couponId);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponQRCodeUrlResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetCouponQRCodeUrlResult result) {
@@ -401,7 +401,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 		dispatcher.execute(
 		    new UpdateTweetAction(tweet),
-		    new DispatcherCallbackAsync<UpdateTweetResult>() {
+		    new DispatcherCallbackAsync<UpdateTweetResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(UpdateTweetResult result) {
@@ -418,7 +418,7 @@ public abstract class AbstractAccountActivity<T extends AccountDTO> extends Abst
 
 	  eventBus.fireEvent(new LoadingEventStart());
 		GetTweetForUserAction action = new GetTweetForUserAction(accountId, page, pageSize);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetForUserResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetTweetForUserResult result) {

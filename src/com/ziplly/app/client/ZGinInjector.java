@@ -6,7 +6,6 @@ import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 import com.google.gwt.place.shared.PlaceController;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 
 @GinModules({ StandardDispatchModule.class, ZClientModule.class })
 public interface ZGinInjector extends Ginjector {
@@ -16,6 +15,4 @@ public interface ZGinInjector extends Ginjector {
 	ZipllyController getZipllyController();
 
 	PlaceController getPlaceController();
-	
-	GlobalErrorHandler getErrorHandler();
 }

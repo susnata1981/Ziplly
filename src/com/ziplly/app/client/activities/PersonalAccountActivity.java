@@ -44,7 +44,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	private List<TweetDTO> lastTweetList;
 //	private TweetViewBinder binder;
 	private ScrollBottomHitActionHandler scrollBottomHitActionHandler =
-	    new ScrollBottomHitActionHandler();
+	    new ScrollBottomHitActionHandler(eventBus);
 	private AsyncProvider<AccountView> viewProvider;
 
 	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
@@ -120,10 +120,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
-			dispatcher.execute(new GetAccountByIdAction(accountId), new GetAccountByIdActionHandler());
+			dispatcher.execute(new GetAccountByIdAction(accountId), new GetAccountByIdActionHandler(eventBus));
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			startInfiniteScrollThread();
-			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
+			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler(eventBus));
 		}
 	}
 
@@ -142,7 +142,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		fetchTweets(ctx.getAccount().getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, false);
 		startInfiniteScrollThread();
 		displayMap(ctx.getCurrentNeighborhood());
-		getAccountDetails(new GetAccountDetailsActionHandler());
+		getAccountDetails(new GetAccountDetailsActionHandler(eventBus));
 		getAccountNotifications();
 		setupImageUpload();
 		// Display account updates
@@ -210,7 +210,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		SpamDTO spam = new SpamDTO();
 		spam.setTweet(tweet);
 		spam.setReporter(ctx.getAccount());
-		reportSpam(spam, new ReportSpamActionHandler());
+		reportSpam(spam, new ReportSpamActionHandler(eventBus));
 	}
 
 	protected void onAccountDetailsUpdate(GetAccountDetailsResult result) {
@@ -222,7 +222,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 	@Override
 	protected void onAccountDetailsUpdate() {
-		getAccountDetails(new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		getAccountDetails(new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 			@Override
 			public void onSuccess(GetAccountDetailsResult result) {
 				onAccountDetailsUpdate(result);
@@ -241,6 +241,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
+	  public GetAccountByIdActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountByIdResult result) {
 			AccountDTO account = result.getAccount();
@@ -264,6 +268,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	private class GetAccountDetailsActionHandler extends
 	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
+	  public GetAccountDetailsActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
 			onAccountDetailsUpdate(result);
@@ -272,7 +280,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 	@Override
 	public DispatcherCallbackAsync<TweetResult> getTweetHandler() {
-		return new TweetHandler();
+		return new TweetHandler(eventBus);
 	}
 
 	@Override
@@ -283,7 +291,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 		dispatcher.execute(
 		    new DeleteTweetAction(tweet.getTweetId()),
-		    new DispatcherCallbackAsync<DeleteTweetResult>() {
+		    new DispatcherCallbackAsync<DeleteTweetResult>(eventBus) {
 			    @Override
 			    public void onSuccess(DeleteTweetResult result) {
 				    view.displayModalMessage(StringConstants.TWEET_REMOVED, AlertType.SUCCESS);
@@ -295,6 +303,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	private class GetPublicAccountDetailsActionHandler extends
 	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
+	  public GetPublicAccountDetailsActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
 			// onAccountDetailsUpdate(result);
@@ -303,7 +315,12 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	}
 
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
-		@Override
+		
+	  public TweetHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
+	  @Override
 		public void onSuccess(TweetResult result) {
 			placeController.goTo(new HomePlace());
 			view.clearTweet();
@@ -316,7 +333,12 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 	}
 
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
-		@Override
+		
+	  ReportSpamActionHandler(EventBus eventBus) {
+	    super(eventBus);
+	  }
+	  
+	  @Override
 		public void onSuccess(ReportSpamResult result) {
 			view.displayModalMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
 		}
@@ -331,6 +353,11 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
   }
 	   
 	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult> {
+	  
+	  public ScrollBottomHitActionHandler(EventBus eventBus) {
+	    super(eventBus);
+	  }
+	  
 		@Override
 		public void onSuccess(GetTweetForUserResult result) {
 			lastTweetList = result.getTweets();

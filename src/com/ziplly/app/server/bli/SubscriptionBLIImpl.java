@@ -22,7 +22,6 @@ import com.ziplly.app.server.model.jpa.BusinessAccount;
 import com.ziplly.app.server.model.jpa.Subscription;
 import com.ziplly.app.server.model.jpa.SubscriptionPlan;
 import com.ziplly.app.server.model.jpa.Transaction;
-import com.ziplly.app.server.util.TimeUtil;
 import com.ziplly.app.shared.EmailTemplate;
 import com.ziplly.app.shared.SubscriptionEligibilityStatus;
 

@@ -1,11 +1,11 @@
-package com.ziplly.app.model;
+package com.ziplly.app.client.view.coupon;
 
 import java.util.Date;
 
-public class DateRange {
+public class DatePair {
   private Date startDate;
   private Date endDate;
-  public DateRange(Date startDate, Date endDate) {
+  public DatePair(Date startDate, Date endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
   }

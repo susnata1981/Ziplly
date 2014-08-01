@@ -49,7 +49,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	@Override
 	public void register(AccountDTO account) {
 		eventBus.fireEvent(new LoadingEventStart());
-		dispatcher.execute(new RegisterAccountAction(account), new RegisterAccountHandler(account));
+		dispatcher.execute(new RegisterAccountAction(account), new RegisterAccountHandler(eventBus, account));
 	}
 
 	@Deprecated
@@ -75,7 +75,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		GetNeighborhoodAction action = new GetNeighborhoodAction();
 		action.setNeighborhood(n);
 		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>(eventBus) {
 
 			@Override
       public void onSuccess(GetNeighborhoodResult result) {
@@ -169,7 +169,8 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	public class RegisterAccountHandler extends DispatcherCallbackAsync<RegisterAccountResult> {
 	  private AccountDTO account;
 
-    public RegisterAccountHandler(AccountDTO account) {
+    public RegisterAccountHandler(EventBus eventBus, AccountDTO account) {
+      super(eventBus);
 	    this.account = account;
     }
     

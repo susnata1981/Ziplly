@@ -86,7 +86,7 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 	public void onLogin(String email, String password) {
 		dispatcher.execute(
 		    new ValidateLoginAction(email, password),
-		    new DispatcherCallbackAsync<ValidateLoginResult>() {
+		    new DispatcherCallbackAsync<ValidateLoginResult>(eventBus) {
 			    @Override
 			    public void onSuccess(ValidateLoginResult result) {
 				    if (result != null && result.getAccount() != null) {

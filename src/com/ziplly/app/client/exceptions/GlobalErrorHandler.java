@@ -4,6 +4,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.PlaceChangeEvent;
+import com.google.gwt.place.shared.PlaceChangeRequestEvent;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -18,11 +19,10 @@ import com.ziplly.app.client.widget.MessageModal;
 public class GlobalErrorHandler {
   AlertModal modal = new AlertModal();
   MessageModal mmodal = new MessageModal("Error", AlertType.ERROR);
-//  PlaceController controller;
-  private static EventBus eventBus;
+  private EventBus eventBus;
 
-  public GlobalErrorHandler() {
-//    controller = new PlaceController(eventBus);
+  public GlobalErrorHandler(EventBus eventBus) {
+    this.eventBus = eventBus;
   }
 
   public void handlerError(Throwable th) {
@@ -32,10 +32,21 @@ public class GlobalErrorHandler {
     }
 
     mmodal.setContent(errorDef.getErrorMessage());
-    mmodal.show();
+    if (!mmodal.isAttached()) {
+      mmodal.show();
+    }
 
     if (errorDef.getCode() == ErrorCodes.NeedsLoginError) {
-      eventBus.fireEvent(new PlaceChangeEvent(new LoginPlace()));
+      mmodal.getButton().addClickHandler(new ClickHandler() {
+
+        @Override
+        public void onClick(ClickEvent event) {
+          mmodal.hide();
+          eventBus.fireEvent(new PlaceChangeRequestEvent(new LoginPlace()));
+        }
+        
+      });
+      
       return;
     } else if (errorDef.getCode() == ErrorCodes.NeedsSubscriptionError) {
       FlowPanel panel = new FlowPanel();
@@ -76,7 +87,7 @@ public class GlobalErrorHandler {
   public void postHandle() {
   }
 
-  public static void setEventBus(EventBus sharedBus) {
+  public void setEventBus(EventBus sharedBus) {
     eventBus = sharedBus;
   }
 }

@@ -1,8 +1,10 @@
 package com.ziplly.app.shared;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,8 @@ public class GetCouponsResult implements Result {
   private Map<CouponDTO, List<CouponItemDTO>> couponTransactionMap =
       new HashMap<CouponDTO, List<CouponItemDTO>>();
 
+  private Map<String, BigDecimal> salesAmountData = new LinkedHashMap<String, BigDecimal>();
+  
 	private long totalCouponCount;
 
 	public List<CouponDTO> getCoupons() {
@@ -56,5 +60,13 @@ public class GetCouponsResult implements Result {
 
   public Map<CouponDTO, List<CouponItemDTO>> getCouponTransactionMap() {
     return Collections.unmodifiableMap(couponTransactionMap);
+  }
+
+  public Map<String, BigDecimal> getSalesAmountData() {
+    return Collections.unmodifiableMap(salesAmountData);
+  }
+
+  public void setSalesAmountData(Map<String, BigDecimal> salesAmountData) {
+    this.salesAmountData = salesAmountData;
   }
 }

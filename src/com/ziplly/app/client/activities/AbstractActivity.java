@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
+import com.ziplly.app.client.ZipllyController;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -65,7 +66,7 @@ public abstract class AbstractActivity implements Activity {
     if (!ctx.isEnvironmentSet()) {
       dispatcher.execute(
           new GetEnvironmentAction(),
-          new DispatcherCallbackAsync<GetEnvironmentResult>() {
+          new DispatcherCallbackAsync<GetEnvironmentResult>(eventBus) {
 
             @Override
             public void onSuccess(GetEnvironmentResult result) {
@@ -134,7 +135,8 @@ public abstract class AbstractActivity implements Activity {
     }
 
     GetLoggedInUserAction action = new GetLoggedInUserAction();
-    dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>() {
+    dispatcher.execute(action, new DispatcherCallbackAsync<GetLoggedInUserResult>(eventBus) {
+      
       @Override
       public void onSuccess(GetLoggedInUserResult result) {
         if (result != null && result.getAccount() != null) {
@@ -146,12 +148,6 @@ public abstract class AbstractActivity implements Activity {
           doStartOnUserNotLoggedIn();
         }
       }
-
-      @Override
-      public void onFailure(Throwable caught) {
-        Window.alert(caught.getLocalizedMessage());
-      }
-
     });
   }
 
@@ -206,6 +202,10 @@ public abstract class AbstractActivity implements Activity {
   public class AccountNotificationHandler extends
       DispatcherCallbackAsync<GetAccountNotificationResult> {
 
+    public AccountNotificationHandler(EventBus eventBus) {
+      super(eventBus);
+    }
+    
     @Override
     public void onSuccess(GetAccountNotificationResult result) {
       eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
@@ -224,7 +224,7 @@ public abstract class AbstractActivity implements Activity {
   private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
     dispatcher.execute(
         new GetImageUploadUrlAction(),
-        new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+        new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 
           @Override
           public void onSuccess(GetImageUploadUrlResult result) {

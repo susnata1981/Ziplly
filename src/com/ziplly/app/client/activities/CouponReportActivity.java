@@ -1,8 +1,10 @@
 package com.ziplly.app.client.activities;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
@@ -72,6 +74,8 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
     void displayMessage(String message, AlertType success);
 
     CouponFormWidgetModal getCouponFormWidget();
+
+    void loadCouponSalesData(Map<String, BigDecimal> salesAmountData);
   }
 
   @Override
@@ -106,13 +110,14 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
     action.setPageSize(pageSize);
     action.setAccountId(ctx.getAccount().getAccountId());
     eventBus.fireEvent(new LoadingEventStart());
-    dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponsResult>() {
+    dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponsResult>(eventBus) {
 
       @Override
       public void onSuccess(GetCouponsResult result) {
         view.displayCoupons(start, result.getCoupons());
         view.setTotalCouponCount(result.getTotalCouponCount());
         view.displayCouponDetails(result.getCoupons(), result.getCouponItems());
+//        view.loadCouponSalesData(result.getSalesAmountData());
         view.displaySummary(calculator.calculate(result.getCouponTransactionMap()));
         eventBus.fireEvent(new LoadingEventEnd());
       }
@@ -143,7 +148,6 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
   }
 
   private void displayCouponDetails(GetCouponTransactionResult result) {
-//    DateRange range = dataBuilder.getCouponStartEndDateRange(result.getCoupon());
     List<CouponDTO> coupons = new ArrayList<CouponDTO>();
     coupons.add(result.getCoupon());
     view.displayCouponDetails(coupons, result.getPurchasedCoupons());

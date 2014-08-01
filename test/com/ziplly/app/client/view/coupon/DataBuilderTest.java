@@ -40,7 +40,7 @@ public class DataBuilderTest {
     coupons.add(c2);
     coupons.add(c3);
     
-    DateRange dateRange = builder.getDateRange(coupons);
+    DatePair dateRange = builder.getDateRange(coupons);
     Assert.assertEquals(now.minusDays(20).toDate(), dateRange.getStartDate());
   }
   

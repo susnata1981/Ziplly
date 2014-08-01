@@ -12,7 +12,6 @@ import com.googlecode.gwt.charts.client.ColumnType;
 import com.ziplly.app.client.widget.chart.ChartColumn;
 import com.ziplly.app.client.widget.chart.Value;
 import com.ziplly.app.model.CouponDTO;
-import com.ziplly.app.model.DateRange;
 
 public class DataBuilder {
 
@@ -27,10 +26,26 @@ public class DataBuilder {
     });
   }
 
-  public Map<ChartColumn, Value<Double>> populateData(Map<DateKey, Double> salesPerDay, List<CouponDTO> coupons) {
-    DateRange range = getDateRange(coupons);
-    Map<DateKey, Double> continuousSalesData = populateData(range, salesPerDay);
+  public Map<ChartColumn, Value<Double>> populateData(Map<DateKey, Double> salesPerDay, int numDays) {
+    Date endDate = new Date();
+    Date startDate = getLastNthDayFrom(endDate, numDays);
+    DatePair datePair = new DatePair(startDate, endDate);
+    Map<DateKey, Double> continuousSalesData = populateData(datePair, salesPerDay);
+    // show last 30 days
+    return convertToChartData(continuousSalesData);
+  }
+  
+  private Date getLastNthDayFrom(Date endDate, int days) {
+    long secondsInDay = 60 * 60 * 24 * 1000;
+    long millis = endDate.getTime() - secondsInDay * days;
+    Date result = new Date();
+    result.setTime(millis);
+    return result;
+  }
 
+  public Map<ChartColumn, Value<Double>> populateData(Map<DateKey, Double> salesPerDay, List<CouponDTO> coupons) {
+    DatePair range = getDateRange(coupons);
+    Map<DateKey, Double> continuousSalesData = populateData(range, salesPerDay);
     return convertToChartData(continuousSalesData);
   }
 
@@ -38,14 +53,14 @@ public class DataBuilder {
     Map<ChartColumn, Value<Double>> chartData = new LinkedHashMap<ChartColumn, Value<Double>>();
 
     for (DateKey dateKey : continuousSalesData.keySet()) {
-      ChartColumn col1 = new ChartColumn(dateKey.getKey(), ColumnType.NUMBER);
+      ChartColumn col1 = new ChartColumn(dateKey.getKey(), ColumnType.STRING);
       chartData.put(col1, new Value<Double>(dateKey.getKey(), continuousSalesData.get(dateKey)));
     }
     
     return chartData;
   }
 
-  DateRange getDateRange(List<CouponDTO> coupons) {
+  DatePair getDateRange(List<CouponDTO> coupons) {
     Date startDate = null, endDate = null;
     for(CouponDTO coupon: coupons) {
       if (startDate == null || coupon.getTimeCreated().before(startDate)) {
@@ -57,19 +72,16 @@ public class DataBuilder {
       }
     }
     
-    return new DateRange(startDate, endDate);
+    return new DatePair(startDate, endDate);
   }
 
-  public Map<DateKey, Double> populateData(DateRange range, Map<DateKey, Double> sortedSalesData) {
-
+  public Map<DateKey, Double> populateData(DatePair range, Map<DateKey, Double> sortedSalesData) {
     Map<DateKey, Double> continuousSalesDate = new LinkedHashMap<DateKey, Double>();
-    Date now = new Date();
-    Date endDate = min(now, range.getEndDate());
+    Date endDate = range.getEndDate();
     for (Date currDate = range.getStartDate(); currDate.compareTo(endDate) <= 0; CalendarUtil
         .addDaysToDate(currDate, 1)) {
 
       DateKey dateKey = DateKey.get(currDate);
-
       if (sortedSalesData.containsKey(dateKey)) {
         continuousSalesDate.put(dateKey, sortedSalesData.get(dateKey));
       } else {
@@ -91,7 +103,7 @@ public class DataBuilder {
     return minDate;
   }
 
-  public DateRange getCouponStartEndDateRange(List<CouponDTO> coupons) {
+  public DatePair getCouponStartEndDateRange(List<CouponDTO> coupons) {
     Date startDate = coupons.get(0).getStartDate();
     Date endDate = coupons.get(0).getEndDate();
     for (CouponDTO c : coupons) {
@@ -101,11 +113,11 @@ public class DataBuilder {
     }
 
     Date now = new Date();
-    return new DateRange(startDate, min(endDate, now));
+    return new DatePair(startDate, min(endDate, now));
   }
 
-  public DateRange getCouponStartEndDateRange(CouponDTO coupon) {
+  public DatePair getCouponStartEndDateRange(CouponDTO coupon) {
     Date now = new Date();
-    return new DateRange(coupon.getStartDate(), min(coupon.getEndDate(), now));
+    return new DatePair(coupon.getStartDate(), min(coupon.getEndDate(), now));
   }
 }

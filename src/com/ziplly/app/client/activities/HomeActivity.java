@@ -96,14 +96,14 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private static final int LOOKBACK_DAYS = 30;
 	private static final int MAX_HASHTAG_COUNT = 5;
 	
-	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler();
+	private AccountNotificationHandler accountNotificationHandler = new AccountNotificationHandler(eventBus);
 	
 	private TweetViewBinder binder;
 	
-	private CommunityDataHandler communityDataHandler = new CommunityDataHandler();
+	private CommunityDataHandler communityDataHandler = new CommunityDataHandler(eventBus);
 	
 	private GetNeighborhoodDetailsHandler neighborhoodDetailsHandler =
-	    new GetNeighborhoodDetailsHandler();
+	    new GetNeighborhoodDetailsHandler(eventBus);
 	private AcceptsOneWidget panel;
 	
 	private HomePlace place;
@@ -141,7 +141,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		eligibilityAction.setCoupon(coupon);
 		dispatcher.execute(
 		    eligibilityAction,
-		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>() {
+		    new DispatcherCallbackAsync<CheckBuyerEligibilityForCouponResult>(eventBus) {
 
 			    /* (non-Javadoc)
 			     * @see com.google.gwt.user.client.rpc.AsyncCallback#onSuccess(java.lang.Object)
@@ -160,7 +160,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	public void deleteImage(String url) {
 		dispatcher.execute(
 		    new DeleteImageAction(url),
-		    new DispatcherCallbackAsync<DeleteImageResult>() {
+		    new DispatcherCallbackAsync<DeleteImageResult>(eventBus) {
 			    @Override
 			    public void onSuccess(DeleteImageResult result) {
 				    // Nothing to do.
@@ -174,7 +174,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			view.displayMessage(StringConstants.INVALID_ACCESS, AlertType.ERROR);
 		}
 
-		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(tweet));
+		dispatcher.execute(new DeleteTweetAction(tweet.getTweetId()), new DeleteTweetHandler(eventBus, tweet));
 	}
 
 	@Override
@@ -261,7 +261,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	public void likeTweet(Long tweetId) {
 		LikeTweetAction action = new LikeTweetAction();
 		action.setTweetId(tweetId);
-		dispatcher.execute(action, new TweetLikeActionHandler());
+		dispatcher.execute(action, new TweetLikeActionHandler(eventBus));
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			GetCommunityWallDataAction nextSearchAction = state.getNextSearchAction();
 			dispatcher.execute(
 			    nextSearchAction,
-			    new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+			    new DispatcherCallbackAsync<GetCommunityWallDataResult>(eventBus) {
 				    @Override
 				    public void onSuccess(GetCommunityWallDataResult result) {
 					    state.setCurrentTweetList(result.getTweets());
@@ -299,7 +299,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	@Override
 	public void postComment(final CommentDTO comment) {
-		dispatcher.execute(new CommentAction(comment), new PostCommentHandler());
+		dispatcher.execute(new CommentAction(comment), new PostCommentHandler(eventBus));
 	}
 
 	@Override
@@ -307,7 +307,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		SpamDTO spam = new SpamDTO();
 		spam.setTweet(tweet);
 		spam.setReporter(ctx.getAccount());
-		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler());
+		dispatcher.execute(new ReportSpamAction(spam), new ReportSpamActionHandler(eventBus));
 	}
 
 	@Override
@@ -316,7 +316,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		action.setContent(content);
 		action.setSubject(StringConstants.FEEDBACK + " from " + ctx.getAccount().getEmail());
 		action.setFrom(ctx.getAccount().getEmail());
-		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>(eventBus) {
 
 			@Override
 			public void onSuccess(EmailAdminResult result) {
@@ -343,7 +343,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		conversation.setSender(ctx.getAccount());
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
-		    new DispatcherCallbackAsync<SendMessageResult>() {
+		    new DispatcherCallbackAsync<SendMessageResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
@@ -365,7 +365,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	public void setImageUploadUrl() {
 		dispatcher.execute(
 		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetImageUploadUrlResult result) {
 				    view.setImageUploadUrl(result.getImageUrl());
@@ -399,7 +399,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	public void updateComment(CommentDTO comment) {
 		dispatcher.execute(
 		    new UpdateCommentAction(comment),
-		    new DispatcherCallbackAsync<UpdateCommentResult>() {
+		    new DispatcherCallbackAsync<UpdateCommentResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(UpdateCommentResult result) {
@@ -415,7 +415,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 			// do nothing
 			return;
 		}
-		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler(tweet));
+		dispatcher.execute(new UpdateTweetAction(tweet), new UpdateTweetHandler(eventBus, tweet));
 	}
 
 	@Override
@@ -526,7 +526,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		action.setEntityType(EntityType.PERSONAL_ACCOUNT);
 		action.setNeighborhoodId(ctx.getCurrentNeighborhood().getNeighborhoodId());
 
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetNewMemberResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNewMemberResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetNewMemberResult result) {
@@ -539,7 +539,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private void getAccountDetails() {
 		dispatcher.execute(
 		    new GetAccountDetailsAction(),
-		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(GetAccountDetailsResult result) {
@@ -560,7 +560,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private void getCountsForTweetTypes(Long neighborhoodId) {
 		dispatcher.execute(
 		    new GetTweetCategoryDetailsAction(neighborhoodId),
-		    new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>() {
+		    new DispatcherCallbackAsync<GetTweetCategoryDetailsResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetTweetCategoryDetailsResult result) {
 				    // do something.
@@ -573,7 +573,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 		GetHashtagAction action =
 		    new GetHashtagAction(state.getCurrentNeighborhood().getNeighborhoodId());
 		action.setSize(MAX_HASHTAG_COUNT);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetHashtagResult>(eventBus) {
 			@Override
 			public void onSuccess(GetHashtagResult result) {
 				view.displayHashtag(result.getHashtags());
@@ -591,7 +591,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private void setFormUploadActionUrl(final FormUploadWidget formUploadWidget) {
 		dispatcher.execute(
 		    new GetImageUploadUrlAction(),
-		    new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+		    new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(GetImageUploadUrlResult result) {
@@ -676,6 +676,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	private class CommunityDataHandler extends DispatcherCallbackAsync<GetCommunityWallDataResult> {
 
+	  public CommunityDataHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		public void postHandle(Throwable th) {
 			if (th instanceof NotFoundException) {
 				getCommunityWallData(TweetType.ALL);
@@ -697,7 +701,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private class DeleteTweetHandler extends DispatcherCallbackAsync<DeleteTweetResult> {
 		private TweetDTO tweet;
 
-		public DeleteTweetHandler(TweetDTO tweet) {
+		public DeleteTweetHandler(EventBus eventBus, TweetDTO tweet) {
+		  super(eventBus);
 			this.tweet = tweet;
 		}
 
@@ -711,6 +716,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private class GetNeighborhoodDetailsHandler extends
 	    DispatcherCallbackAsync<GetNeighborhoodDetailsResult> {
 
+	  public GetNeighborhoodDetailsHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetNeighborhoodDetailsResult result) {
 			view.displayCommunitySummaryDetails(result);
@@ -718,6 +727,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	private class PostCommentHandler extends DispatcherCallbackAsync<CommentResult> {
+	  
+	  public PostCommentHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(CommentResult result) {
 			view.addComment(result.getComment());
@@ -726,6 +740,11 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	}
 
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+	  
+	  public ReportSpamActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(ReportSpamResult result) {
 			view.displayMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
@@ -745,6 +764,10 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 
 	private class TweetLikeActionHandler extends DispatcherCallbackAsync<LikeResult> {
 
+	  public TweetLikeActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(LikeResult result) {
 			view.updateTweetLike(result.getLike());
@@ -755,7 +778,8 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
 	private class UpdateTweetHandler extends DispatcherCallbackAsync<UpdateTweetResult> {
 		private TweetDTO tweet;
 
-		public UpdateTweetHandler(TweetDTO tweet) {
+		public UpdateTweetHandler(EventBus eventBus, TweetDTO tweet) {
+		  super(eventBus);
 			this.tweet = tweet;
 		}
 
@@ -775,7 +799,7 @@ public class HomeActivity extends AbstractActivity implements HomePresenter, Twe
   public void cancelTransaction(long purchaseCouponId) {
     CancelCouponPurchaseAction action = new CancelCouponPurchaseAction();
     action.setPurchaseCouponId(purchaseCouponId);
-    dispatcher.execute(action, new DispatcherCallbackAsync<CancelCouponPurchaseResult>() {
+    dispatcher.execute(action, new DispatcherCallbackAsync<CancelCouponPurchaseResult>(eventBus) {
 
       @Override
       public void onSuccess(CancelCouponPurchaseResult result) {

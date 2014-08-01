@@ -43,7 +43,7 @@ public class GetEntityActionHandler extends
 	public GetEntityResult
 	    doExecute(GetEntityListAction action, ExecutionContext ctx) throws DispatchException {
 
-		validateSession();
+//		validateSession();
 		if (action.getEntityType() == EntityType.PERSONAL_ACCOUNT) {
 			return findPersonalAccounts(action);
 		} else if (action.getEntityType() == EntityType.BUSINESS_ACCOUNT) {

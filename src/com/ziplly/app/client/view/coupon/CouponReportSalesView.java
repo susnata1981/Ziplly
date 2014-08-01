@@ -1,7 +1,9 @@
 package com.ziplly.app.client.view.coupon;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
@@ -248,5 +250,17 @@ public class CouponReportSalesView extends AbstractView {
 
   public CouponFormWidgetModal getCouponFormWidget() {
     return couponFormModal;
+  }
+
+  public void loadCouponSalesData(Map<String, BigDecimal> salesAmountData) {
+    chartsPanel.clear();
+    ChartType chartType = ChartType.SALES_AMOUNT;
+    LineChartWidget lineChartWidget =
+        new LineChartWidget(
+            chartType.getAbstractLineChartBuilder().getAdapter(salesAmountData),
+            chartType.getTitle(),
+            chartType.getXAxisTitle(),
+            chartType.getYAxisTitle());
+    chartsPanel.add(lineChartWidget);
   }
 }

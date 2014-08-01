@@ -32,7 +32,7 @@ import com.ziplly.app.shared.SendMessageResult;
 public class ResidentActivity extends AbstractActivity implements ResidentsView.EntityListViewPresenter, SendMessagePresenter {
 	private ResidentsView view;
 	private ResidentPlace place;
-	private EntityListHandler handler = new EntityListHandler();
+	private EntityListHandler handler = new EntityListHandler(eventBus);
 	private AcceptsOneWidget panel;
 	private AsyncProvider<ResidentsView> viewProvider;
 
@@ -114,7 +114,7 @@ public class ResidentActivity extends AbstractActivity implements ResidentsView.
   private void updateMessageWidgetWithAccountDetails(Long accountId) {
     dispatcher.execute(
         new GetAccountByIdAction(accountId),
-        new DispatcherCallbackAsync<GetAccountByIdResult>() {
+        new DispatcherCallbackAsync<GetAccountByIdResult>(eventBus) {
 
           @Override
           public void onSuccess(GetAccountByIdResult result) {
@@ -134,6 +134,10 @@ public class ResidentActivity extends AbstractActivity implements ResidentsView.
 
 	private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
 		
+	  public EntityListHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 	  @Override
 		public void onSuccess(GetEntityResult result) {
 	    List<PersonalAccountDTO> accounts = ConversionUtil.convert(

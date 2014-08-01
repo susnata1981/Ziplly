@@ -143,7 +143,7 @@ public class BusinessAccountSettingsActivity extends
 	private void displaySubscriptionPlans() {
 		dispatcher.execute(
 		    new GetAllSubscriptionPlanAction(),
-		    new DispatcherCallbackAsync<GetAllSubscriptionPlanResult>() {
+		    new DispatcherCallbackAsync<GetAllSubscriptionPlanResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetAllSubscriptionPlanResult result) {
 				    if (result != null) {

@@ -138,7 +138,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		view.showAccountLinks(true);
 		dispatcher.execute(
 		    new GetAccountDetailsAction(),
-		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetAccountDetailsResult result) {
 				    eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
@@ -184,7 +184,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	@Override
 	public void logout() {
 		DispatcherCallbackAsync<LogoutResult> dispatcherCallback =
-		    new DispatcherCallbackAsync<LogoutResult>() {
+		    new DispatcherCallbackAsync<LogoutResult>(eventBus) {
 			    @Override
 			    public void onSuccess(LogoutResult result) {
 				    ctx.setAccount(null);
@@ -256,18 +256,13 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	public void switchLocation(LocationDTO location) {
 		dispatcher.execute(
 		    new SwitchLocationAction(location.getLocationId()),
-		    new DispatcherCallbackAsync<SwitchLocationResult>() {
+		    new DispatcherCallbackAsync<SwitchLocationResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(SwitchLocationResult result) {
 				    ctx.setAccount(result.getAccount());
 				    eventBus.fireEvent(new AccountUpdateEvent(result.getAccount()));
 				    placeController.goTo(new HomePlace());
-			    }
-
-			    @Override
-			    public void onFailure(Throwable th) {
-				    Window.alert(th.getMessage());
 			    }
 		    });
 	}

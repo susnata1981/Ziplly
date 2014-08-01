@@ -43,8 +43,8 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private AcceptsOneWidget panel;
 	private int tweetPageIndex;
 	private List<TweetDTO> lastTweetList;
-	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler();
-	private TweetHandler tweetHandler = new TweetHandler();
+	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler(eventBus);
+	private TweetHandler tweetHandler = new TweetHandler(eventBus);
 	private AsyncProvider<BusinessAccountView> viewProvider;
 
 	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
@@ -142,11 +142,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
-			dispatcher.execute(new GetAccountByIdAction(accountId), new GetAccountByIdActionHandler());
+			dispatcher.execute(new GetAccountByIdAction(accountId), new GetAccountByIdActionHandler(eventBus));
 			fetchTweets(place.getAccountId(), tweetPageIndex, TWEETS_PER_PAGE, true);
 			binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 			binder.start();
-			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler());
+			getPublicAccountDetails(accountId, new GetPublicAccountDetailsActionHandler(eventBus));
 		}
 	}
 
@@ -166,7 +166,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		binder = new TweetViewBinder(view.getTweetSectionElement(), this);
 		binder.start();
 		displayMap(ctx.getAccount().getLocations().get(0).getAddress());
-		getAccountDetails(new GetAccountDetailsActionHandler());
+		getAccountDetails(new GetAccountDetailsActionHandler(eventBus));
 		setupImageUpload();
 		displayAccontUpdate();
 	}
@@ -234,7 +234,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	@Override
 	protected void onAccountDetailsUpdate() {
-		getAccountDetails(new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		getAccountDetails(new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 			@Override
 			public void onSuccess(GetAccountDetailsResult result) {
 				onAccountDetailsUpdate(result);
@@ -257,7 +257,7 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		SpamDTO spam = new SpamDTO();
 		spam.setTweet(tweet);
 		spam.setReporter(ctx.getAccount());
-		reportSpam(spam, new ReportSpamActionHandler());
+		reportSpam(spam, new ReportSpamActionHandler(eventBus));
 	}
 
 	void displayMap(String address) {
@@ -267,6 +267,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 
 	private class GetAccountByIdActionHandler extends DispatcherCallbackAsync<GetAccountByIdResult> {
 
+	  public GetAccountByIdActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountByIdResult result) {
 			AccountDTO account = result.getAccount();
@@ -282,6 +286,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private class GetAccountDetailsActionHandler extends
 	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
+	  public GetAccountDetailsActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
 			onAccountDetailsUpdate(result);
@@ -291,6 +299,10 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	private class GetPublicAccountDetailsActionHandler extends
 	    DispatcherCallbackAsync<GetAccountDetailsResult> {
 
+	  public GetPublicAccountDetailsActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetAccountDetailsResult result) {
 			// onAccountDetailsUpdate(result);
@@ -299,6 +311,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	}
 
 	private class TweetHandler extends DispatcherCallbackAsync<TweetResult> {
+	  
+	  public TweetHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(TweetResult result) {
 			placeController.goTo(new HomePlace());
@@ -307,6 +324,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	}
 
 	private class ReportSpamActionHandler extends DispatcherCallbackAsync<ReportSpamResult> {
+	  
+	  public ReportSpamActionHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(ReportSpamResult result) {
 			view.displayModalMessage(StringConstants.REPORT_SPAM_SUCCESSFUL, AlertType.SUCCESS);
@@ -314,6 +336,11 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 	}
 
 	private class ScrollBottomHitActionHandler extends DispatcherCallbackAsync<GetTweetForUserResult> {
+	  
+	  public ScrollBottomHitActionHandler(EventBus eventBus) {
+	    super(eventBus);
+	  }
+	  
 		@Override
 		public void onSuccess(GetTweetForUserResult result) {
 			lastTweetList = result.getTweets();

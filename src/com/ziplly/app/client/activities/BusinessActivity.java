@@ -36,7 +36,7 @@ public class BusinessActivity extends AbstractActivity implements
     SendMessagePresenter {
   private BusinessView view;
   private BusinessPlace place;
-  private EntityListHandler handler = new EntityListHandler();
+  private EntityListHandler handler = new EntityListHandler(eventBus);
   private AcceptsOneWidget panel;
   private AsyncProvider<BusinessView> viewProvider;
 
@@ -134,6 +134,10 @@ public class BusinessActivity extends AbstractActivity implements
   }
 
   private class EntityListHandler extends DispatcherCallbackAsync<GetEntityResult> {
+    
+    public EntityListHandler(EventBus eventBus) {
+      super(eventBus);
+    }
     
     @Override
     public void onSuccess(GetEntityResult result) {

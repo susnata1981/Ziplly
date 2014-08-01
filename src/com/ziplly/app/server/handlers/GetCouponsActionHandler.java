@@ -18,6 +18,8 @@ import com.ziplly.app.dao.OrderDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.model.CouponItemDTO;
 import com.ziplly.app.server.bli.AccountBLI;
+import com.ziplly.app.server.bli.CouponSalesDataBuilder;
+import com.ziplly.app.server.bli.CouponSalesDataType;
 import com.ziplly.app.server.model.jpa.Coupon;
 import com.ziplly.app.server.model.jpa.CouponItem;
 import com.ziplly.app.shared.GetCouponsAction;
@@ -26,6 +28,7 @@ import com.ziplly.app.shared.GetCouponsResult;
 public class GetCouponsActionHandler extends AbstractAccountActionHandler<GetCouponsAction, GetCouponsResult>{
 	private CouponDAO couponDao;
   private OrderDAO orderDao;
+  private CouponSalesDataBuilder dataBuilder;
 
 	@Inject
 	public GetCouponsActionHandler(Provider<EntityManager> entityManagerProvider,
@@ -37,6 +40,7 @@ public class GetCouponsActionHandler extends AbstractAccountActionHandler<GetCou
 	  super(entityManagerProvider, accountDao, sessionDao, accountBli);
 	  this.couponDao = couponDao;
 	  this.orderDao = orderDao;
+	  this.dataBuilder = new CouponSalesDataBuilder();
   }
 
 	@Override
@@ -60,8 +64,10 @@ public class GetCouponsActionHandler extends AbstractAccountActionHandler<GetCou
 		  result.addTransactions(EntityUtil.clone(coupon), couponItemDtos);
 		}
 		
+		
 		long totalCouponCount = couponDao.getTotalCouponCountByAccountId(action.getAccountId());
 		result.setTotalCouponCount(totalCouponCount);
+		result.setSalesAmountData(dataBuilder.getSalesData(CouponSalesDataType.SALES_AMOUNT, 30, result.getCouponTransactionMap()));
 		return result;
   }
 	

@@ -43,12 +43,10 @@ public abstract class AbstractAccountSettingsActivity<T extends AccountDTO, V ex
 		eventBus.fireEvent(new LoadingEventStart());
 		dispatcher.execute(
 		    new UpdateAccountAction(account),
-		    new DispatcherCallbackAsync<UpdateAccountResult>() {
+		    new DispatcherCallbackAsync<UpdateAccountResult>(eventBus) {
 			    @Override
 			    public void onSuccess(UpdateAccountResult result) {
 				    // Fire event.
-//				    view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
-
 			    	view.displayMessage(stringDefinitions.accountUpdated(), AlertType.SUCCESS);
 				    // Update account and fire event.
 				    ctx.setAccount(result.getAccount());
