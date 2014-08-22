@@ -1,5 +1,7 @@
 package com.ziplly.app.server.handlers;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -13,9 +15,7 @@ import com.ziplly.app.client.exceptions.NotFoundException;
 import com.ziplly.app.dao.AccountDAO;
 import com.ziplly.app.dao.SessionDAO;
 import com.ziplly.app.dao.TweetDAO;
-import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.Role;
-import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.server.bli.AccountBLI;
 import com.ziplly.app.server.model.jpa.Account;
 import com.ziplly.app.server.model.jpa.Tweet;
@@ -39,10 +39,8 @@ public class DeleteTweetActionHandler extends
 	public DeleteTweetResult
 	    doExecute(DeleteTweetAction action, ExecutionContext arg1) throws DispatchException {
 
-		if (action == null || action.getTweetId() == null) {
-			throw new IllegalArgumentException();
-		}
-
+		checkArgument(action.getTweetId() != 0);
+		
 		validateSession();
 
 		Tweet tweet;

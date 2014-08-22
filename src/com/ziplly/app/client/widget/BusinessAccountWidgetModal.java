@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -100,7 +101,7 @@ public class BusinessAccountWidgetModal extends Composite implements
 		setupHandlers();
 		displayAccount(account);
 		accountWidgetModal.show();
-		getLatLng(account, new GetLatLngResultHandler());
+		getLatLng(account, new GetLatLngResultHandler(null));
 	}
 
 	public void displayAccount(BusinessAccountDTO account) {
@@ -142,6 +143,11 @@ public class BusinessAccountWidgetModal extends Composite implements
 	}
 
 	private class GetLatLngResultHandler extends DispatcherCallbackAsync<GetLatLngResult> {
+	  
+	  public GetLatLngResultHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetLatLngResult result) {
 			displayFormattedAddress(result);

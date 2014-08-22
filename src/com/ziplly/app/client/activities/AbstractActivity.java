@@ -13,7 +13,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.ApplicationContext;
-import com.ziplly.app.client.ZipllyController;
 import com.ziplly.app.client.ApplicationContext.Environment;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
@@ -21,7 +20,6 @@ import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.resource.StringDefinitions;
-import com.ziplly.app.client.view.event.AccountNotificationEvent;
 import com.ziplly.app.client.view.event.LoadingEventEnd;
 import com.ziplly.app.client.view.event.LoadingEventStart;
 import com.ziplly.app.client.view.event.LoginEvent;
@@ -33,7 +31,6 @@ import com.ziplly.app.model.AccountDTO;
 import com.ziplly.app.model.BusinessAccountDTO;
 import com.ziplly.app.model.NeighborhoodDTO;
 import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.shared.GetAccountNotificationResult;
 import com.ziplly.app.shared.GetEnvironmentAction;
 import com.ziplly.app.shared.GetEnvironmentResult;
 import com.ziplly.app.shared.GetImageUploadUrlAction;
@@ -98,29 +95,16 @@ public abstract class AbstractActivity implements Activity {
     });
   }
 
-  void showLodingIcon() {
+  protected void showLodingIcon() {
     loadingModal.show(true);
   }
 
-  void hideLoadingIcon() {
+  protected void hideLoadingIcon() {
     loadingModal.show(false);
   }
 
   public void goTo(Place place) {
     placeController.goTo(place);
-  }
-
-  @Override
-  public String mayStop() {
-    return null;
-  }
-
-  @Override
-  public void onCancel() {
-  }
-
-  @Override
-  public void onStop() {
   }
 
   /**
@@ -199,18 +183,18 @@ public abstract class AbstractActivity implements Activity {
     }
   }
 
-  public class AccountNotificationHandler extends
-      DispatcherCallbackAsync<GetAccountNotificationResult> {
-
-    public AccountNotificationHandler(EventBus eventBus) {
-      super(eventBus);
-    }
-    
-    @Override
-    public void onSuccess(GetAccountNotificationResult result) {
-      eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
-    }
-  }
+//  public class AccountNotificationHandler extends
+//      DispatcherCallbackAsync<GetAccountNotificationResult> {
+//
+//    public AccountNotificationHandler(EventBus eventBus) {
+//      super(eventBus);
+//    }
+//    
+//    @Override
+//    public void onSuccess(GetAccountNotificationResult result) {
+//      eventBus.fireEvent(new AccountNotificationEvent(result.getAccountNotifications()));
+//    }
+//  }
 
   public static native void log(String msg) /*-{
 		$wnd.console.log(msg);

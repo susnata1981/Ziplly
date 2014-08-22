@@ -74,7 +74,6 @@ public class GlobalErrorHandler {
         @Override
         public void onClick(ClickEvent event) {
           mmodal.hide();
-          eventBus.fireEvent(new PlaceChangeEvent(new PersonalAccountPlace()));
           return;
         }
         

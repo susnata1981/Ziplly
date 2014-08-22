@@ -11,8 +11,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.places.HomePlace;
+import com.ziplly.app.client.view.common.TweetWidgetPresenter;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.client.widget.TweetWidget;
 import com.ziplly.app.model.TweetDTO;
@@ -32,8 +34,11 @@ public class TweetDetailsView extends Composite {
 	HTMLPanel communityWallPanel;
 	
 	private TweetPresenter presenter;
+  private TweetWidgetPresenter tweetWidgetPresenter;
 
-	public TweetDetailsView() {
+  @Inject
+	public TweetDetailsView(TweetWidgetPresenter tweetWidgetPresenter) {
+	  this.tweetWidgetPresenter = tweetWidgetPresenter;
 		initWidget(uiBinder.createAndBindUi(this));
 		displayMessage(false);
 	}
@@ -50,9 +55,9 @@ public class TweetDetailsView extends Composite {
 	public void display(TweetDTO tweet) {
 	  displayMessage(false);
 		clearDisplay();
-		TweetWidget tw = new TweetWidget();
+		TweetWidget tw = new TweetWidget(tweetWidgetPresenter);
 		tw.setWidth("80%");
-		tw.setPresenter(presenter);
+//		tw.setPresenter(presenter);
 		tw.displayTweet(tweet);
 		communityWallPanel.add(tw);
 	}

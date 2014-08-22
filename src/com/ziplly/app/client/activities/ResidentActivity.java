@@ -167,7 +167,7 @@ public class ResidentActivity extends AbstractActivity implements ResidentsView.
 		conversation.setSender(ctx.getAccount());
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
-		    new DispatcherCallbackAsync<SendMessageResult>() {
+		    new DispatcherCallbackAsync<SendMessageResult>(eventBus) {
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
 				    view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
@@ -183,4 +183,17 @@ public class ResidentActivity extends AbstractActivity implements ResidentsView.
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
 }

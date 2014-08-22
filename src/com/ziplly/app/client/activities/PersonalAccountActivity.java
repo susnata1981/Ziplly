@@ -1,64 +1,35 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
-import com.ziplly.app.client.places.BusinessAccountPlace;
-import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
-import com.ziplly.app.client.view.AccountView;
-import com.ziplly.app.client.view.PendingActionTypes;
-import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.LoadingEventEnd;
-import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
-import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.SpamDTO;
-import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.DeleteTweetAction;
-import com.ziplly.app.shared.DeleteTweetResult;
-import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.GetAccountByIdAction;
-import com.ziplly.app.shared.GetAccountByIdResult;
-import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetTweetForUserAction;
-import com.ziplly.app.shared.GetTweetForUserResult;
-import com.ziplly.app.shared.ReportSpamResult;
-import com.ziplly.app.shared.TweetResult;
+import com.ziplly.app.client.view.account.AccountView;
+import com.ziplly.app.client.view.account.PersonalAccountViewPresenter;
 
-public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAccountDTO> implements InfiniteScrollHandler {
-	private PersonalAccountPlace place;
-	private AcceptsOneWidget panel;
-	private int tweetPageIndex;
-	private List<TweetDTO> lastTweetList;
-//	private TweetViewBinder binder;
-	private ScrollBottomHitActionHandler scrollBottomHitActionHandler =
-	    new ScrollBottomHitActionHandler(eventBus);
-	private AsyncProvider<AccountView> viewProvider;
-
-	public PersonalAccountActivity(CachingDispatcherAsync dispatcher,
+public class PersonalAccountActivity extends AbstractActivity { 
+	private AsyncProvider<AccountView> accountView;
+  private AcceptsOneWidget panel;
+  private PersonalAccountPlace place;
+  
+	public PersonalAccountActivity(
+	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
 	    ApplicationContext ctx,
-	    AsyncProvider<AccountView> viewProvider,
+	    AsyncProvider<AccountView> accountView,
 	    PersonalAccountPlace place) {
 
-		super(dispatcher, eventBus, placeController, ctx, null);
+		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
-		this.viewProvider = viewProvider;
+		this.accountView = accountView;
 	}
 
+	/*
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
@@ -75,10 +46,10 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 
 	@Override
 	public void bind() {
-		view.setPresenter(this);
-		view.getTweetView().setPresenter(this);
-		view.getTweetWidget().setPresenter(this);
-		view.getEmailWidget().setPresenter(this);
+//		view.setPresenter(this);
+//		view.getTweetView().setPresenter(this);
+//		view.getTweetWidget().setPresenter(this);
+//		view.getEmailWidget().setPresenter(this);
 	}
 
 	@Override
@@ -114,9 +85,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		});
 	}
 
-	/**
-	 * Display public personal profile
-	 */
+	
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
@@ -174,9 +143,7 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		placeController.goTo(new PersonalAccountSettingsPlace());
 	}
 
-	/*
-	 * For InfiniteScrollHandler interface
-	 */
+	
 	@Override
 	public boolean hasMoreElements() {
 		if (lastTweetList == null) {
@@ -185,9 +152,6 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 		return lastTweetList.size() == TWEETS_PER_PAGE;
 	}
 
-	/*
-	 * For InfiniteScrollHandler interface
-	 */
 	@Override
 	public void onScrollBottomHit() {
 		tweetPageIndex++;
@@ -364,4 +328,47 @@ public class PersonalAccountActivity extends AbstractAccountActivity<PersonalAcc
 			view.addTweets(result.getTweets());
 		}
 	}
+*/
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
+
+  @Override
+  public void start(AcceptsOneWidget panel, EventBus eventBus) {
+    this.panel = panel;
+    checkAccountLogin();
+  }
+
+  @Override
+  protected void doStart() {
+    accountView.get(new DefaultViewLoaderAsyncCallback<AccountView>() {
+
+      @Override
+      public void onSuccess(AccountView accountView) {
+        PersonalAccountActivity.this.panel.setWidget(accountView);
+        new PersonalAccountViewPresenter(dispatcher, eventBus, ctx, accountView, PersonalAccountActivity.this.panel, place);
+//        bind();
+//        setupHandlers();
+//        go(PersonalAccountActivity.this.panel);
+//        if (place.getAccountId() != 0) {
+//          displayPublicProfile(place.getAccountId());
+//        } else if (place.isShowTransactions()) {
+//          displayProfile();
+//          view.displayCouponTransactions();
+//        } else {
+//          displayProfile();
+//        }
+      }
+    });
+  }
 }

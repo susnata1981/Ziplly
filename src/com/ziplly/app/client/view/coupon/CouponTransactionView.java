@@ -7,20 +7,21 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.web.bindery.event.shared.EventBus;
-import com.ziplly.app.client.activities.Presenter;
+import com.google.inject.Inject;
 import com.ziplly.app.client.view.AbstractView;
-import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.account.CouponTransactionViewPresenter;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.CouponItemDTO;
 
-public class CouponTransactionView extends AbstractView implements View<CouponTransactionView.CouponTransactionPresenter> {
+public class CouponTransactionView extends AbstractView implements ICouponTransactionView { //implements View<CouponTransactionViewPresenter> {
 	private static final int pageSize = 10;
 	private static final ColumnDefinition [] transactionTableColumnDefinitions = new ColumnDefinition [] {
 		ColumnDefinition.DESCRIPTION,
@@ -31,14 +32,6 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		ColumnDefinition.VIEW_COUPON,
 		ColumnDefinition.PRINT_COUPON
 	};
-	
-	public static interface CouponTransactionPresenter extends Presenter {
-		void getPurchasedCoupons(int start, int pageSize);
-		
-		void getCouponQRCodeUrl(long orderId, long couponId);
-
-		void printCoupon(long orderId, long couponId);
-	}
 	
 	private static CouponTransactionViewUiBinder uiBinder = GWT
 	    .create(CouponTransactionViewUiBinder.class);
@@ -53,12 +46,13 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 	CouponTransactionTableWidget transactionWidget;
 	
 	private int start;
-	private CouponTransactionPresenter presenter;
+	private CouponTransactionViewPresenter presenter;
 	
+	@Inject
 	public CouponTransactionView(EventBus eventBus) {
 		super(eventBus);
 		transactionWidget = new CouponTransactionTableWidget(
-		    Arrays.asList(transactionTableColumnDefinitions), pageSize, basicDataFormatter);
+		    Arrays.asList(transactionTableColumnDefinitions), pageSize);
 		initWidget(uiBinder.createAndBindUi(this));
 		transactionPanel.add(transactionWidget);
 		setupEventHandler();
@@ -97,7 +91,7 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		});
   }
 
-	public void setRowCount(Long couponTransactionCount) {
+	public void setCouponTransactionCount(Long couponTransactionCount) {
 		transactionWidget.setRowCount(couponTransactionCount.intValue());
 	}
 	
@@ -105,15 +99,15 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
 		transactionWidget.displayPurchasedCoupons(transactions);
 	}
 	
-	@Override
-  public void setPresenter(CouponTransactionPresenter presenter) {
-		this.presenter = presenter;
-  }
-	
-	@Override
-  public void clear() {
-		transactionWidget.clearTable();
-  }
+//	@Override
+//  public void setPresenter(CouponTransactionViewPresenter presenter) {
+//		this.presenter = presenter;
+//  }
+//	
+//	@Override
+//  public void clear() {
+//		transactionWidget.clearTable();
+//  }
 	
 	public void loadCouponTransaction() {
 		presenter.getPurchasedCoupons(start, pageSize);
@@ -132,9 +126,18 @@ public class CouponTransactionView extends AbstractView implements View<CouponTr
   		if (colDef == colDefinition) {
   			return (Column<CouponItemDTO, T>) transactionWidget.getTable().getColumn(index);
   		}
+  		
   		index++;
   	}
   	
   	return null;
 	}
+
+  public void displayQrCode(String url) {
+    Window.open(url, "_blank", "");
+  }
+  
+  public void setPresenter(CouponTransactionViewPresenter presenter) {
+    this.presenter = presenter;
+  }
 }

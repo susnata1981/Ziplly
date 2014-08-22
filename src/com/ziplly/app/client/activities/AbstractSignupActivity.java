@@ -58,7 +58,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		view.displayNeighborhoodListLoading(true);
 		GetNeighborhoodAction action = new GetNeighborhoodAction(postalCode);
 		action.setSearchType(NeighborhoodSearchActionType.BY_ZIP);
-		dispatcher.execute(action, new NeighborhoodHandler());
+		dispatcher.execute(action, new NeighborhoodHandler(eventBus));
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		GetNeighborhoodAction action = new GetNeighborhoodAction();
 		action.setNeighborhood(n);
 		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD);
-		dispatcher.execute(action, new NeighborhoodHandler());
+		dispatcher.execute(action, new NeighborhoodHandler(eventBus));
   }
 	
 	@Override
@@ -97,7 +97,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 		GetNeighborhoodAction action = new GetNeighborhoodAction();
 		action.setNeighborhood(rootNeighborhood);
 		action.setSearchType(NeighborhoodSearchActionType.BY_NEIGHBORHOOD_LOCALITY);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>(eventBus) {
 
 			@Override
       public void onSuccess(GetNeighborhoodResult result) {
@@ -114,7 +114,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	@Override
 	public void addToInviteList(String email, int postalCode) {
 		AddInvitationAction action = new AddInvitationAction(email, postalCode);
-		dispatcher.execute(action, new DispatcherCallbackAsync<AddInvitationResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<AddInvitationResult>(eventBus) {
 
 			@Override
 			public void onSuccess(AddInvitationResult result) {
@@ -126,7 +126,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	public void verifyInvitationForEmail(final AccountDTO account, long code) {
 		CheckEmailRegistrationAction action =
 		    new CheckEmailRegistrationAction(account.getEmail(), code);
-		dispatcher.execute(action, new CheckEmailRegistrationHandler(account));
+		dispatcher.execute(action, new CheckEmailRegistrationHandler(eventBus, account));
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	public void deleteImage(String url) {
 		dispatcher.execute(
 		    new DeleteImageAction(url),
-		    new DispatcherCallbackAsync<DeleteImageResult>() {
+		    new DispatcherCallbackAsync<DeleteImageResult>(eventBus) {
 			    
 		      @Override
 			    public void onSuccess(DeleteImageResult result) {
@@ -198,7 +198,8 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	    DispatcherCallbackAsync<CheckEmailRegistrationResult> {
 		private AccountDTO account;
 
-		public CheckEmailRegistrationHandler(AccountDTO account) {
+		public CheckEmailRegistrationHandler(EventBus eventBus, AccountDTO account) {
+		  super(eventBus);
 			this.account = account;
 		}
 
@@ -219,6 +220,11 @@ public abstract class AbstractSignupActivity extends AbstractActivity implements
 	}
 
 	public class NeighborhoodHandler extends DispatcherCallbackAsync<GetNeighborhoodResult> {
+	  
+	  public NeighborhoodHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetNeighborhoodResult result) {
 			view.displayNeighborhoodListLoading(false);

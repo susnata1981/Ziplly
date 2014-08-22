@@ -1,68 +1,45 @@
 package com.ziplly.app.client.activities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
-import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.BusinessAccountPlace;
-import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
-import com.ziplly.app.client.places.HomePlace;
-import com.ziplly.app.client.places.LoginPlace;
-import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.view.BusinessAccountView;
-import com.ziplly.app.client.view.IAccountView;
-import com.ziplly.app.client.view.PendingActionTypes;
-import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.event.TweetNotAvailableEvent;
-import com.ziplly.app.client.view.handler.TweetNotAvailableEventHandler;
-import com.ziplly.app.model.AccountDTO;
-import com.ziplly.app.model.BusinessAccountDTO;
-import com.ziplly.app.model.PersonalAccountDTO;
-import com.ziplly.app.model.SpamDTO;
-import com.ziplly.app.model.TweetDTO;
-import com.ziplly.app.shared.FieldVerifier;
-import com.ziplly.app.shared.GetAccountByIdAction;
-import com.ziplly.app.shared.GetAccountByIdResult;
-import com.ziplly.app.shared.GetAccountDetailsResult;
-import com.ziplly.app.shared.GetTweetForUserAction;
-import com.ziplly.app.shared.GetTweetForUserResult;
-import com.ziplly.app.shared.ReportSpamResult;
-import com.ziplly.app.shared.TweetResult;
+import com.ziplly.app.client.view.account.BusinessAccountView;
+import com.ziplly.app.client.view.account.BusinessAccountViewPresenter;
 
-public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAccountDTO> implements
-    InfiniteScrollHandler {
+public class BusinessAccountActivity extends AbstractActivity { 
+  //implements InfiniteScrollHandler {
 
 	private BusinessAccountPlace place;
+  private BusinessAccountViewPresenter presenter;
 	private AcceptsOneWidget panel;
-	private int tweetPageIndex;
-	private List<TweetDTO> lastTweetList;
-	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler(eventBus);
-	private TweetHandler tweetHandler = new TweetHandler(eventBus);
+//	private int tweetPageIndex;
+//	private List<TweetDTO> lastTweetList;
+//	private ScrollBottomHitActionHandler scrollBottomHitHandler = new ScrollBottomHitActionHandler(eventBus);
+//	private TweetHandler tweetHandler = new TweetHandler(eventBus);
 	private AsyncProvider<BusinessAccountView> viewProvider;
 
-	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
-		void displayFormattedAddress(String fAddress);
-	}
+//	public static interface IBusinessAccountView extends IAccountView<BusinessAccountDTO> {
+//		void displayFormattedAddress(String fAddress);
+//	}
 
-	public BusinessAccountActivity(CachingDispatcherAsync dispatcher,
+	public BusinessAccountActivity(
+	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
 	    ApplicationContext ctx,
 	    AsyncProvider<BusinessAccountView> viewProvider,
 	    BusinessAccountPlace place) {
 
-		super(dispatcher, eventBus, placeController, ctx, null);
+		super(dispatcher, eventBus, placeController, ctx);
 		this.place = place;
 		this.viewProvider = viewProvider;
 	}
-
+	
+/*
 	@Override
 	protected void setupHandlers() {
 		super.setupHandlers();
@@ -136,9 +113,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		});
 	}
 
-	/**
-	 * Display public profile
-	 */
 	@Override
 	public void displayPublicProfile(final Long accountId) {
 		if (accountId != null) {
@@ -197,9 +171,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		placeController.goTo(new BusinessAccountSettingsPlace());
 	}
 
-	/*
-	 * For InfiniteScrollHandler interface
-	 */
 	@Override
 	public boolean hasMoreElements() {
 		if (lastTweetList == null) {
@@ -208,9 +179,6 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 		return lastTweetList.size() == TWEETS_PER_PAGE;
 	}
 
-	/*
-	 * For InfiniteScrollHandler interface
-	 */
 	@Override
 	public void onScrollBottomHit() {
 		tweetPageIndex++;
@@ -347,4 +315,38 @@ public class BusinessAccountActivity extends AbstractAccountActivity<BusinessAcc
 			view.addTweets(result.getTweets());
 		}
 	}
+*/
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+    presenter.stop();
+  }
+
+  @Override
+  public void start(AcceptsOneWidget panel, EventBus eventBus) {
+    this.panel = panel;
+    checkAccountLogin();
+  }
+
+  @Override
+  protected void doStart() {
+    viewProvider.get(new DefaultViewLoaderAsyncCallback<BusinessAccountView>() {
+
+      @Override
+      public void onSuccess(BusinessAccountView view) {
+//        BusinessAccountActivity.this.panel.setWidget(view);
+        presenter = new BusinessAccountViewPresenter(dispatcher, eventBus, ctx, view, BusinessAccountActivity.this.panel, place);
+      }
+      
+    });
+  }
 }

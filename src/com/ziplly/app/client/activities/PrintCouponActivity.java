@@ -72,4 +72,13 @@ public class PrintCouponActivity extends AbstractActivity {
 	public void onStop() {
 		view.reset();
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
 }

@@ -1,10 +1,10 @@
 package com.ziplly.app.client.view;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.resource.StringDefinitions;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;

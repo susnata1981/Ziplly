@@ -44,7 +44,7 @@ public class EmailVerificationActivity extends AbstractActivity implements
 	}
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
+	public void start(AcceptsOneWidget panel, final EventBus eventBus) {
 		this.panel = panel;
 		viewProvider.get(new DefaultViewLoaderAsyncCallback<EmailVerificationView>() {
 
@@ -57,7 +57,7 @@ public class EmailVerificationActivity extends AbstractActivity implements
 					if (place.getCode() != null && place.getId() != null) {
 						VerifyEmailAction action =
 						    new VerifyEmailAction(Long.parseLong(place.getId()), place.getCode());
-						dispatcher.execute(action, new EmailVerificationHandler());
+						dispatcher.execute(action, new EmailVerificationHandler(eventBus));
 					} else {
 						view.displayMessage(StringConstants.INVALID_URL, AlertType.ERROR);
 					}
@@ -75,6 +75,10 @@ public class EmailVerificationActivity extends AbstractActivity implements
 
 	private class EmailVerificationHandler extends DispatcherCallbackAsync<VerifyEmailResult> {
 
+	  public EmailVerificationHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(VerifyEmailResult result) {
 			view.displayMessage(StringConstants.EMAIL_VERIFICATION_SUCCESSFUL, AlertType.SUCCESS);
@@ -109,7 +113,7 @@ public class EmailVerificationActivity extends AbstractActivity implements
 	public void resendEmailVerification(String email) {
 		dispatcher.execute(
 		    new ResendEmailVerificationAction(email),
-		    new DispatcherCallbackAsync<ResendEmailVerificationResult>() {
+		    new DispatcherCallbackAsync<ResendEmailVerificationResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(ResendEmailVerificationResult result) {
@@ -131,4 +135,17 @@ public class EmailVerificationActivity extends AbstractActivity implements
 			    }
 		    });
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
 }

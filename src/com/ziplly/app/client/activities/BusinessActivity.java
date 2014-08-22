@@ -169,7 +169,7 @@ public class BusinessActivity extends AbstractActivity implements
     conversation.setSender(ctx.getAccount());
     dispatcher.execute(
         new SendMessageAction(conversation),
-        new DispatcherCallbackAsync<SendMessageResult>() {
+        new DispatcherCallbackAsync<SendMessageResult>(eventBus) {
           @Override
           public void onSuccess(SendMessageResult result) {
             view.displayMessage(StringConstants.MESSAGE_SENT, AlertType.SUCCESS);
@@ -180,7 +180,7 @@ public class BusinessActivity extends AbstractActivity implements
   private void updateMessageWidgetWithAccountDetails(Long accountId) {
     dispatcher.execute(
         new GetAccountByIdAction(accountId),
-        new DispatcherCallbackAsync<GetAccountByIdResult>() {
+        new DispatcherCallbackAsync<GetAccountByIdResult>(eventBus) {
 
           @Override
           public void onSuccess(GetAccountByIdResult result) {
@@ -202,5 +202,14 @@ public class BusinessActivity extends AbstractActivity implements
 
   @Override
   public void go(AcceptsOneWidget container) {
+  }
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
   }
 }

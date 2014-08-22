@@ -88,4 +88,13 @@ public class BusinessSignupActivity extends AbstractSignupActivity implements
 		view.clear();
 		StyleHelper.clearBackground();
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
 }

@@ -8,6 +8,10 @@ public class AccountPlace extends Place {
   private long accountId;
 	private boolean showTransactions;
 
+	public AccountPlace(long accountId) {
+	  this.accountId = accountId;
+  }
+	
 	public boolean isShowTransactions() {
 	  return showTransactions;
   }

@@ -73,7 +73,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 	private void verifyPasswordRecoveryHash() {
 		dispatcher.execute(
 		    new VerifyPasswordRecoveryHashAction(place.getHash()),
-		    new DispatcherCallbackAsync<VerifyPasswordRecoveryHashResult>() {
+		    new DispatcherCallbackAsync<VerifyPasswordRecoveryHashResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(VerifyPasswordRecoveryHashResult result) {
@@ -100,7 +100,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 		// do something
 		dispatcher.execute(
 		    new SendPasswordRecoveryEmailAction(email),
-		    new DispatcherCallbackAsync<SendPasswordRecoveryEmailResult>() {
+		    new DispatcherCallbackAsync<SendPasswordRecoveryEmailResult>(eventBus) {
 			    @Override
 			    public void onSuccess(SendPasswordRecoveryEmailResult result) {
 				    view.showMessage(StringConstants.PASSWORD_RESET_LINK_SENT, AlertType.SUCCESS);
@@ -121,7 +121,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 	public void resetPassword(ResetPasswordAction action) {
 		if (account != null) {
 			action.setAccountId(account.getAccountId());
-			dispatcher.execute(action, new DispatcherCallbackAsync<ResetPasswordResult>() {
+			dispatcher.execute(action, new DispatcherCallbackAsync<ResetPasswordResult>(eventBus) {
 				@Override
 				public void onSuccess(ResetPasswordResult result) {
 					view.showMessage(StringConstants.PASSWORD_RESET_SUCCESFULLY, AlertType.SUCCESS);
@@ -145,7 +145,7 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 	public void resendVerficationEmail(String email) {
 		dispatcher.execute(
 		    new ResendEmailVerificationAction(email),
-		    new DispatcherCallbackAsync<ResendEmailVerificationResult>() {
+		    new DispatcherCallbackAsync<ResendEmailVerificationResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(ResendEmailVerificationResult result) {
@@ -169,4 +169,17 @@ public class PasswordRecoveryActivity extends AbstractActivity implements Passwo
 	@Override
 	public void go(AcceptsOneWidget container) {
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
 }

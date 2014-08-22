@@ -20,12 +20,14 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.dao.EntityManagerService;
 import com.ziplly.app.dao.ImageDAO;
+import com.ziplly.app.dao.ImageDAOImpl;
 import com.ziplly.app.model.RecordStatus;
 import com.ziplly.app.server.model.jpa.Image;
 
@@ -35,18 +37,28 @@ public class UploadServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private final BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-	private final ImageDAO imageDao;
+	private ImageDAO imageDao;
 	private final ImagesService imageService = ImagesServiceFactory.getImagesService();
+//  private final Provider<EntityManager> entityManagerProvider;
 
-	@Inject
-	public UploadServlet(ImageDAO imageDao) {
-		System.out.println("Creating upload servlet...");
-//		this.imageDao = new ImageDAOImpl(new EntityManagerProvider());
-		this.imageDao = imageDao;
-	}
+//	@Inject
+//	public UploadServlet(ImageDAO imageDao) {
+//		System.out.println("Creating upload servlet...");
+////		this.imageDao = new ImageDAOImpl(new EntityManagerProvider());
+//		this.imageDao = imageDao;
+//	}
 
+//	@Inject
+  public UploadServlet() {//Provider<EntityManager> entityManagerProvider) {
+    System.out.println("Creating upload servlet...");
+    this.imageDao = new ImageDAOImpl(new EntityManagerProvider());
+//    this.imageDao = imageDao;
+//    this.entityManagerProvider = Preconditions.checkNotNull(entityManagerProvider, "entityManagerProvider");
+  }
+	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
+    System.out.println("ID = "+imageDao);
 		String imageUrl = req.getParameter(StringConstants.IMAGE_URL_KEY);
 		String imageId = req.getParameter(StringConstants.IMAGE_ID);
 
@@ -109,7 +121,7 @@ public class UploadServlet extends HttpServlet {
 		return url;
 	}
 	
-	// A hack to bypass dependency injection
+//	// A hack to bypass dependency injection
 	private static class EntityManagerProvider implements Provider<EntityManager> {
 
 		@Override

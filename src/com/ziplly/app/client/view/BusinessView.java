@@ -246,7 +246,7 @@ public class BusinessView extends AbstractView implements
     AccountDTO receiver = new AccountDTO();
     receiver.setAccountId(accountId);
     smw = new SendMessageWidget(receiver);
-    smw.setPresenter((SendMessagePresenter) presenter);
+//    smw.setPresenter((SendMessagePresenter) presenter);
     smw.show();
   }
 

@@ -259,7 +259,7 @@ public class ResidentsView extends AbstractView implements
 		AccountDTO receiver = new AccountDTO();
 		receiver.setAccountId(receiverAccountId);
 		smw = new SendMessageWidget(receiver);
-		smw.setPresenter((SendMessagePresenter) presenter);
+//		smw.setPresenter((SendMessagePresenter) presenter);
 		smw.show();
 	}
 

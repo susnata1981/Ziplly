@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
+
+	<!-- <filter>
+		<filter-name>guiceFilter</filter-name>
+		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>guiceFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>com.ziplly.app.server.guice.MyGuiceContextListener</listener-class>
+	</listener>
+
+ 	<servlet>
+		<servlet-name>UploadServlet</servlet-name>
+		<servlet-class>com.ziplly.app.server.UploadServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>UploadServlet</servlet-name>
+		<url-pattern>/ziplly/upload</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ConfirmPaymentServlet</servlet-name>
+		<servlet-class>com.ziplly.app.server.ConfirmPaymentServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ConfirmPaymentServlet</servlet-name>
+		<url-pattern>/ziplly/confirmpayment</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>NotificationServlet</servlet-name>
+		<servlet-class>com.ziplly.app.server.NotificationServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>NotificationServlet</servlet-name>
+		<url-pattern>/_ah/start</url-pattern>
+		<url-pattern>/ziplly/sendmail</url-pattern>
+	</servlet-mapping> 
+	 -->
+	<servlet>
+		<servlet-name>mailhandler</servlet-name>
+		<servlet-class>com.ziplly.app.server.MailHandlerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mailhandler</servlet-name>
+		<url-pattern>/_ah/mail/*</url-pattern>
+	</servlet-mapping>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>mail</web-resource-name>
+			<url-pattern>/_ah/mail/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Ziplly.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

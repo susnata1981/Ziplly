@@ -39,7 +39,7 @@ public class OAuthActivity extends AbstractActivity {
 	public void doStartOnUserNotLoggedIn() {
 		dispatcher.execute(
 		    new GetFacebookDetailsAction(place.getCode()),
-		    new DispatcherCallbackAsync<GetFacebookDetailsResult>() {
+		    new DispatcherCallbackAsync<GetFacebookDetailsResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetFacebookDetailsResult result) {
 				    log("Received getFacebookDetailsAction with " + result.getAccount());
@@ -69,4 +69,17 @@ public class OAuthActivity extends AbstractActivity {
 	@Override
 	public void doStart() {
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
+  }
 }

@@ -8,10 +8,11 @@ public class PersonalAccountPlace extends AccountPlace {
   public static final String TOKEN = "personalaccount";
 
   public PersonalAccountPlace(long accountId) {
-    this.setAccountId(accountId);
+    super(accountId);
   }
 
   public PersonalAccountPlace() {
+    super(0L);
   }
 
   @Prefix("personalaccount")
@@ -25,7 +26,7 @@ public class PersonalAccountPlace extends AccountPlace {
         
         for(AttributeKey key: params.keySet()) {
           if (key.equals(AttributeKey.TRANSACTION_VIEW_TOKEN)) {
-            place.setShowTransactions(true);
+            place.setShowTransactions(Boolean.valueOf(params.get(key).value()));
           } else if (key.equals(AttributeKey.ACCOUNT_ID)) {
             place.setAccountId(Long.parseLong(params.get(key).value()));
           }

@@ -7,6 +7,7 @@ import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -45,7 +46,7 @@ public class ProfileListWidget extends AbstractView {
   private Presenter presenter;
   
 	@Inject
-	public ProfileListWidget(com.google.web.bindery.event.shared.EventBus eventBus) {
+	public ProfileListWidget(EventBus eventBus) {
 		super(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		message.setVisible(false);

@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.ziplly.app.client.resource.ZResources;
+import com.ziplly.app.model.FeatureFlags;
 
 public class LoadingPanelWidget extends Composite {
 
@@ -37,6 +38,11 @@ public class LoadingPanelWidget extends Composite {
 	}
 
 	public void show(boolean b) {
+	  // If feature is on
+	  if ( !FeatureFlags.EnableLoadingBanner.isEnabled() ) {
+	    return;
+	  }
+	  
 		if (b) {
 			modal.show();
 		} else {

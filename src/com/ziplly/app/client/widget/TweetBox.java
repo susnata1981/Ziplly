@@ -36,12 +36,11 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.ImageUtil;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.common.TweetBoxPresenter;
 import com.ziplly.app.client.view.coupon.CouponFormWidgetModal;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
@@ -56,7 +55,7 @@ import com.ziplly.app.model.TweetType;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class TweetBox extends AbstractView implements View<TweetPresenter> {
+public class TweetBox extends AbstractView { //implements View<TweetPresenter> {
 
 	private static TweetBoxUiBinder uiBinder = GWT.create(TweetBoxUiBinder.class);
 
@@ -124,7 +123,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 	TweetBoxState state = new TweetBoxState();
 
 	boolean showKeystrokeCounter = true;
-	private TweetPresenter presenter;
+	private TweetBoxPresenter presenter;
 	private BasicDataFormatter basicDataFormatter =
 	    (BasicDataFormatter) AbstractValueFormatterFactory
 	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
@@ -137,8 +136,10 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 	private Map<String, NeighborhoodDTO> neighborhoodNameMap = new HashMap<String, NeighborhoodDTO>();
 	private List<NeighborhoodDTO> neighborhoods;
 
-	public TweetBox(EventBus eventBus) {
+	public TweetBox(EventBus eventBus, TweetBoxPresenter presenter) {
 		super(eventBus);
+		assert(presenter != null);
+		this.presenter = presenter;
 		couponFormWidget = new CouponFormWidgetModal(eventBus);
 		initWidget(uiBinder.createAndBindUi(this));
 		tweetHelpInline.setVisible(false);
@@ -200,7 +201,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 		previewPanel.setWidth(width);
 	}
 
-	public void setHeight(String height) {
+	public void setMinimumHeight(String height) {
 		this.height = height;
 		tweetTextBox.setHeight(height);
 	}
@@ -352,7 +353,7 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 		return true;
 	}
 
-	@Override
+//	@Override
 	public void clear() {
 		// clear control errors.
 		clearError();
@@ -451,12 +452,12 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 		uploadForm.addSubmitCompleteHandler(submitCompleteHandler);
 	}
 
-	@Override
-	public void setPresenter(TweetPresenter presenter) {
-		this.presenter = presenter;
-		// Disable photo upload for coupon for now.
-		// presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
-	}
+//	@Override
+//	public void setPresenter(TweetBoxPresenter presenter) {
+//		this.presenter = presenter;
+//		// Disable photo upload for coupon for now.
+//		// presenter.initializeUploadForm(couponFormWidget.getFormUploadWidget());
+//	}
 
 	public void previewImage(String imageUrl) {
 		// previewTweetImage.setUrl(imageUrl);
@@ -562,5 +563,9 @@ public class TweetBox extends AbstractView implements View<TweetPresenter> {
 	
 	private void refreshPreview() {
 		tweetTextPreview.getElement().setInnerHTML(TweetUtils.getContent(tweetTextBox.getText()));	      
+  }
+
+  public FormPanel getUploadForm() {
+    return uploadForm;
   }
 }

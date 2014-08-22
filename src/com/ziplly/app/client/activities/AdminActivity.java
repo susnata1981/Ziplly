@@ -75,7 +75,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	public void createNeighborhood(final NeighborhoodDTO n) {
 		dispatcher.execute(
 				new CreateNeighborhoodAction(n),
-				new DispatcherCallbackAsync<CreateNeighborhoodResult>() {
+				new DispatcherCallbackAsync<CreateNeighborhoodResult>(eventBus) {
 
 					@Override
 					public void onFailure(final Throwable th) {
@@ -92,7 +92,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	@Override
 	public void deleteNeighborhood(final NeighborhoodDTO n) {
 		DeleteNeighborhoodAction action = new DeleteNeighborhoodAction(n.getNeighborhoodId());
-		dispatcher.execute(action, new DispatcherCallbackAsync<DeleteNeighborhoodResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<DeleteNeighborhoodResult>(eventBus) {
 
 			@Override
 			public void onFailure(final Throwable th) {
@@ -139,7 +139,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		if (email != null) {
 			dispatcher.execute(
 					new CreateRegistrationAction(email, type, btype),
-					new DispatcherCallbackAsync<CreateRegistrationResult>() {
+					new DispatcherCallbackAsync<CreateRegistrationResult>(eventBus) {
 						@Override
 						public void onFailure(final Throwable th) {
 							view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
@@ -164,7 +164,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		action.setStart(start);
 		action.setEnd(end);
 		action.setCriteria(asc);
-		dispatcher.execute(action, new DispatcherCallbackAsync<SearchAccountResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<SearchAccountResult>(eventBus) {
 			@Override
 			public void onSuccess(final SearchAccountResult result) {
 				if (result != null) {
@@ -177,7 +177,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 
 	@Override
 	public void searchNeighborhoods(final GetNeighborhoodAction action) {
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetNeighborhoodResult>(eventBus) {
 
 			@Override
 			public void onSuccess(final GetNeighborhoodResult result) {
@@ -192,7 +192,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		action.setCriteria(tsc);
 		action.setStart(start);
 		action.setEnd(end);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetsResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetTweetsResult>(eventBus) {
 			@Override
 			public void onSuccess(final GetTweetsResult result) {
 				if (result != null) {
@@ -222,7 +222,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	public void setUploadFormActionUrl() {
 		dispatcher.execute(
 				new GetImageUploadUrlAction(),
-				new DispatcherCallbackAsync<GetImageUploadUrlResult>() {
+				new DispatcherCallbackAsync<GetImageUploadUrlResult>(eventBus) {
 					@Override
 					public void onSuccess(final GetImageUploadUrlResult result) {
 						if (ctx.getEnvironment() == Environment.DEVEL) {
@@ -253,7 +253,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 	public void update(final TweetDTO tweet) {
 		dispatcher.execute(
 				new UpdateTweetAction(tweet),
-				new DispatcherCallbackAsync<UpdateTweetResult>() {
+				new DispatcherCallbackAsync<UpdateTweetResult>(eventBus) {
 					@Override
 					public void onSuccess(final UpdateTweetResult result) {
 						view.refresh();
@@ -266,7 +266,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		if (account != null) {
 			dispatcher.execute(
 					new UpdateAccountAction(account),
-					new DispatcherCallbackAsync<UpdateAccountResult>() {
+					new DispatcherCallbackAsync<UpdateAccountResult>(eventBus) {
 						@Override
 						public void onSuccess(final UpdateAccountResult result) {
 							view.displayMessage(StringConstants.ACCOUNT_SAVE_SUCCESSFUL, AlertType.SUCCESS);
@@ -280,7 +280,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		if (neighborhood != null) {
 			dispatcher.execute(
 					new UpdateNeighborhoodAction(neighborhood),
-					new DispatcherCallbackAsync<UpdateNeighborhoodResult>() {
+					new DispatcherCallbackAsync<UpdateNeighborhoodResult>(eventBus) {
 						@Override
 						public void onFailure(final Throwable th) {
 							view.displayMessage(StringConstants.FAILURE, AlertType.ERROR);
@@ -296,7 +296,7 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 
 	@Override
   public void updateAccountLocation(AccountDTO account, LocationDTO newLocation) {
-		dispatcher.execute(new UpdateAccountLocationAction(account, newLocation), new DispatcherCallbackAsync<UpdateAccountLocationResult>() {
+		dispatcher.execute(new UpdateAccountLocationAction(account, newLocation), new DispatcherCallbackAsync<UpdateAccountLocationResult>(eventBus) {
 
 			@Override
       public void onSuccess(UpdateAccountLocationResult result) {
@@ -310,4 +310,12 @@ public class AdminActivity extends AbstractActivity implements AdminPresenter {
 		});
   }
 
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
 }

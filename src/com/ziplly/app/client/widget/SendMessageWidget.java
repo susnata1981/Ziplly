@@ -22,9 +22,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.SendMessagePresenter;
 import com.ziplly.app.client.places.PersonalAccountPlace;
-import com.ziplly.app.client.view.View;
+import com.ziplly.app.client.view.common.MessagePresenter;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AccountFormatter;
 import com.ziplly.app.client.view.factory.ValueFamilyType;
@@ -36,7 +35,7 @@ import com.ziplly.app.model.MessageDTO;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class SendMessageWidget extends Composite implements View<SendMessagePresenter> {
+public class SendMessageWidget extends Composite { //implements View<SendMessagePresenter> {
 
 	private static SendMessageWidgetUiBinder uiBinder = GWT.create(SendMessageWidgetUiBinder.class);
 
@@ -73,7 +72,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 
 	@UiField
 	Modal modal;
-	private SendMessagePresenter presenter;
+	private MessagePresenter presenter;
 	private AccountDTO receiver;
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
 	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
@@ -165,7 +164,7 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		status.setVisible(true);
 	}
 
-	@Override
+//	@Override
 	public void clear() {
 		subject.setText("");
 		message.setText("");
@@ -178,8 +177,8 @@ public class SendMessageWidget extends Composite implements View<SendMessagePres
 		status.setVisible(false);
 	}
 
-	@Override
-	public void setPresenter(SendMessagePresenter presenter) {
+//	@Override
+	public void setPresenter(MessagePresenter presenter) {
 		this.presenter = presenter;
 	}
 

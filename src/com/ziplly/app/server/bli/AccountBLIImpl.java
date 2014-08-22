@@ -530,17 +530,17 @@ public class AccountBLIImpl implements AccountBLI {
     String bucketName = System.getProperty("gcs_bucket_name");
     UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(bucketName);
     String uploadEndpoint = System.getProperty(ZipllyServerConstants.UPLOAD_ENDPOINT);
-    String uploadUrl = blobstoreService.createUploadUrl(uploadEndpoint, options);
+    String uploadUrl = blobstoreService.createUploadUrl("/ziplly/upload", options);
 
     String result = uploadUrl;
     // Hack to make this work in dev environment
-    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-      result = uploadUrl.replace("susnatas-MacBook-Pro.local:8888",
-      // "susnatas-mbp.bauhauscoffee.net:8888",
-          "127.0.0.1:8888");
-    }
+//    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
+//      result = uploadUrl.replace("susnatas-MacBook-Pro.local:8888",
+////       "susnatas-mbp.bauhauscoffee.net:8888",
+//          "127.0.0.1:8888");
+//    }
 
-    logger.log(Level.INFO, String.format("Upload(RESULT) url set to %s", result));
+    logger.log(Level.INFO, String.format("Upload endpoint set to %s", result));
     return result;
   }
 
@@ -557,6 +557,7 @@ public class AccountBLIImpl implements AccountBLI {
       } catch (NotFoundException e) {
       }
     }
+    
     return null;
   }
 

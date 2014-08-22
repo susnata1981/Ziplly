@@ -9,6 +9,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.AboutActivity;
+import com.ziplly.app.client.activities.AccountSwitcherActivity;
 import com.ziplly.app.client.activities.AdminActivity;
 import com.ziplly.app.client.activities.BusinessAccountActivity;
 import com.ziplly.app.client.activities.BusinessAccountSettingsActivity;
@@ -17,7 +18,6 @@ import com.ziplly.app.client.activities.BusinessSignupActivity;
 import com.ziplly.app.client.activities.CouponReportActivity;
 import com.ziplly.app.client.activities.CouponReportActivity.CouponReportView;
 import com.ziplly.app.client.activities.EmailVerificationActivity;
-import com.ziplly.app.client.activities.HomeActivity;
 import com.ziplly.app.client.activities.LoginActivity;
 import com.ziplly.app.client.activities.OAuthActivity;
 import com.ziplly.app.client.activities.PasswordRecoveryActivity;
@@ -31,13 +31,13 @@ import com.ziplly.app.client.conversation.ConversationActivity;
 import com.ziplly.app.client.conversation.ConversationView;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.places.AboutPlace;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.CouponExplorerPlace;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.EmailVerificationPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -51,21 +51,20 @@ import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.places.SignupPlace;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.view.AboutView;
-import com.ziplly.app.client.view.AccountView;
 import com.ziplly.app.client.view.AdminView;
-import com.ziplly.app.client.view.BusinessAccountSettingsView;
-import com.ziplly.app.client.view.BusinessAccountView;
 import com.ziplly.app.client.view.BusinessView;
 import com.ziplly.app.client.view.EmailVerificationView;
-import com.ziplly.app.client.view.HomeViewImpl;
 import com.ziplly.app.client.view.LoginAccountView;
 import com.ziplly.app.client.view.PasswordRecoveryView;
-import com.ziplly.app.client.view.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.PrintCouponView;
 import com.ziplly.app.client.view.TweetDetailsView;
+import com.ziplly.app.client.view.account.AccountView;
+import com.ziplly.app.client.view.account.BusinessAccountSettingsView;
+import com.ziplly.app.client.view.account.BusinessAccountView;
+import com.ziplly.app.client.view.account.PersonalAccountSettingsView;
 import com.ziplly.app.client.view.community.ResidentsView;
-import com.ziplly.app.client.view.coupon.CouponExplorerActivity;
-import com.ziplly.app.client.view.coupon.CouponExplorerView;
+import com.ziplly.app.client.view.home.HomeActivity;
+import com.ziplly.app.client.view.home.HomeViewImpl;
 import com.ziplly.app.client.view.signup.BusinessSignupView;
 import com.ziplly.app.client.view.signup.SignupView;
 
@@ -92,7 +91,6 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	private AsyncProvider<AboutView> aboutView;
 	private AsyncProvider<PrintCouponView> printCouponView;
 	private AsyncProvider<CouponReportView> couponReportView;
-	private AsyncProvider<CouponExplorerView> couponExplorerView;
 	
 	@Inject
 	public ZipllyActivityMapper(AsyncProvider<HomeViewImpl> homeView,
@@ -113,7 +111,6 @@ public class ZipllyActivityMapper implements ActivityMapper {
 	    AsyncProvider<AboutView> aboutView,
 	    AsyncProvider<PrintCouponView> printCouponView,
 	    AsyncProvider<CouponReportView> couponReportView,
-	    AsyncProvider<CouponExplorerView> couponExplorerView,
 	    CachingDispatcherAsync dispatcher,
 	    EventBus eventBus,
 	    PlaceController placeController,
@@ -137,7 +134,6 @@ public class ZipllyActivityMapper implements ActivityMapper {
 		this.aboutView = aboutView;
 		this.printCouponView = printCouponView;
 		this.couponReportView = couponReportView;
-		this.couponExplorerView = couponExplorerView;
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
@@ -202,6 +198,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 			    (SignupPlace) place,
 			    ctx,
 			    signupView);
+			
 		} else if (place instanceof BusinessSignupPlace) {
 			return new ActivityProxy<BusinessSignupActivity>(new AsyncProvider<BusinessSignupActivity>() {
 
@@ -243,6 +240,7 @@ public class ZipllyActivityMapper implements ActivityMapper {
 					        accountView,
 					        (PersonalAccountPlace) place));
 				    }
+				    
 			    });
 		} else if (place instanceof BusinessAccountPlace) {
 
@@ -417,21 +415,10 @@ public class ZipllyActivityMapper implements ActivityMapper {
         }
 				
 			});
-		} else if (place instanceof CouponExplorerPlace) {
-      return new ActivityProxy<CouponExplorerActivity>(new AsyncProvider<CouponExplorerActivity>() {
-
-        @Override
-        public void get(AsyncCallback<? super CouponExplorerActivity> callback) {
-          callback.onSuccess(new CouponExplorerActivity(dispatcher, 
-              eventBus, 
-              placeController, 
-              (CouponExplorerPlace) place,
-              ctx,
-              couponExplorerView));
-        }
-        
-      });
+		}  else if (place instanceof AccountSwitcherPlace) {
+      return new AccountSwitcherActivity(dispatcher, eventBus, placeController, ctx, (AccountSwitcherPlace)place);
     }
-		throw new IllegalArgumentException();
+		
+		throw new IllegalArgumentException("Invalid place encountered");
 	}
 }

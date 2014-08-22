@@ -3,16 +3,16 @@ package com.ziplly.app.shared;
 import net.customware.gwt.dispatch.shared.Action;
 
 public class DeleteTweetAction implements Action<DeleteTweetResult> {
-	private Long tweetId;
+	private long tweetId;
 
 	public DeleteTweetAction() {
 	}
 
-	public DeleteTweetAction(Long tweetId) {
+	public DeleteTweetAction(long tweetId) {
 		this.setTweetId(tweetId);
 	}
 
-	public Long getTweetId() {
+	public long getTweetId() {
 		return tweetId;
 	}
 

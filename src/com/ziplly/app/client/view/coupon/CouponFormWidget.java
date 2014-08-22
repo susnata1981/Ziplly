@@ -16,6 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,7 +26,6 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.view.AbstractView;
 import com.ziplly.app.client.view.event.CouponPublishSuccessfulEvent;
 import com.ziplly.app.client.view.factory.BasicDataFormatter;
@@ -51,7 +51,7 @@ public class CouponFormWidget extends AbstractView {
   private static final int DESCRIPTION_MIN_LENGTH = 30;
   private static CouponFormWidgetUiBinder uiBinder = GWT.create(CouponFormWidgetUiBinder.class);
 
-	interface CouponFormWidgetUiBinder extends UiBinder<Widget, CouponFormWidgetModal> {
+	interface CouponFormWidgetUiBinder extends UiBinder<Widget, CouponFormWidget> {
 	}
 
 	private AbstractBaseTextWidget titleWidget;

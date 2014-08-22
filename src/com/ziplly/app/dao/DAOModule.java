@@ -81,11 +81,11 @@ public class DAOModule extends AbstractModule {
 		bind(CouponDAO.class).to(CouponDAOImpl.class).in(Singleton.class);
 		bind(TransactionDAO.class).to(TransactionDAOImpl.class).in(Singleton.class);
 		bind(OrderDAO.class).to(OrderDAOImpl.class).in(Singleton.class);
-		bind(EntityManagerService.class).in(Singleton.class);
+//		bind(EntityManagerService.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(BackendAddress.class).toProvider(BackendUrlProvider.class);
 		
-		install(new JpaPersistModule("zipllydb").properties(dbConfig));
+//		install(new JpaPersistModule("zipllydb").properties(dbConfig));
 	}
 
 	public static class BackendUrlProvider implements Provider<String> {

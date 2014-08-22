@@ -22,13 +22,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.ziplly.app.client.activities.NavActivity.INavView;
 import com.ziplly.app.client.activities.Presenter;
 import com.ziplly.app.client.places.AboutPlace;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.CouponExplorerPlace;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
-import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.ResidentPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
@@ -163,7 +162,8 @@ public class NavView extends Composite implements INavView {
 
 	@UiHandler("accountLink")
 	void accountDetails(ClickEvent event) {
-		presenter.goTo(new PersonalAccountPlace());
+//		presenter.redirectToAccount();//new PersonalAccountPlace());
+	  presenter.goTo(new AccountSwitcherPlace());
 	}
 
 	@UiHandler("transactionLink")
@@ -174,11 +174,6 @@ public class NavView extends Composite implements INavView {
 	@UiHandler("homeLink")
 	void home(ClickEvent event) {
 		presenter.goTo(new HomePlace());
-	}
-
-	 @UiHandler("couponLink")
-	void coupon(ClickEvent event) {
-	  presenter.goTo(new CouponExplorerPlace());
 	}
 	 
 	@UiHandler("residentsLink")
@@ -220,6 +215,7 @@ public class NavView extends Composite implements INavView {
 	public void clear() {
 		showAccountLinks(false);
 		displayLocationDropdown(false);
+		displayReportingMenu(false);
 	}
 
 	@Override
@@ -343,7 +339,7 @@ public class NavView extends Composite implements INavView {
 	}
 
 	@Override
-  public void displayReportingMenu() {
-		reportingLink.setVisible(true);
+  public void displayReportingMenu(boolean show) {
+		reportingLink.setVisible(show);
   }
 }

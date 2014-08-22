@@ -9,16 +9,14 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.exceptions.GlobalErrorHandler;
 
 public abstract class DispatcherCallbackAsync<T extends Result> implements AsyncCallback<T> {
-//	ZGinInjector injector = GWT.create(ZGinInjector.class);
 	Logger logger = Logger.getLogger(DispatcherCallbackAsync.class.getName());
 
 	private GlobalErrorHandler errorHandler;
+	protected EventBus eventBus;
 	
-	public DispatcherCallbackAsync() {
-		this.errorHandler = new GlobalErrorHandler(null);
-	}
-
 	public DispatcherCallbackAsync(EventBus eventBus) {
+	  assert(eventBus != null);
+	  this.eventBus = eventBus;
 	  this.errorHandler = new GlobalErrorHandler(eventBus);
   }
 	

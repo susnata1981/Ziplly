@@ -5,9 +5,10 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.ziplly.app.client.activities.AccountSettingsPresenter;
 import com.ziplly.app.model.AccountDTO;
 
-public interface ISettingsView<K extends AccountDTO, T extends AccountSettingsPresenter<K>> extends
-    View<T> {
-	void displaySettings(K account);
+//public interface ISettingsView<K extends AccountDTO, T extends AccountSettingsPresenter<K>> extends View<T> {
+public interface ISettingsView<T extends AccountDTO, P extends AccountSettingsPresenter<T>> extends View<P> {
+  
+	void displaySettings(T account);
 
 	void onSave();
 

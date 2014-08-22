@@ -1,5 +1,6 @@
 package com.ziplly.app.server.handlers;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import javax.persistence.EntityManager;
 
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -36,9 +37,11 @@ public class ReportSpamActionHandler extends
 	public ReportSpamResult
 	    doExecute(ReportSpamAction action, ExecutionContext arg1) throws DispatchException {
 
-		if (action == null || action.getSpam() == null) {
-			throw new IllegalArgumentException();
-		}
+	  checkArgument(action.getSpam() != null && action.getSpam().getReporter() != null);
+	  
+//		if (action == null || action.getSpam() == null) {
+//			throw new IllegalArgumentException();
+//		}
 
 		validateSession();
 

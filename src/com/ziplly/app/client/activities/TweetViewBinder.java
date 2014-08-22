@@ -4,8 +4,8 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 
 public class TweetViewBinder {
-	private static final int REFRESH_RATE = 200;
-	private static final int THRESHOLD = 300;
+	private static final int REFRESH_RATE = 400;
+	private static final int THRESHOLD = 200;
 
 	Element elem;
 	InfiniteScrollHandler handler;
@@ -17,10 +17,11 @@ public class TweetViewBinder {
 	}
 
 	protected boolean detectScrollerHitBottom() {
-		//		int sh = elem.getScrollHeight();
-		//		int st = elem.getScrollTop();
-		//		int of = elem.getOffsetHeight();
-		// System.out.println("SH="+sh+" ST="+st+" OF="+of);
+//  int sh = elem.getScrollHeight();
+//  int st = elem.getScrollTop();
+//  int of = elem.getOffsetHeight();
+//System.out.println("SH="+sh+" ST="+st+" OF="+of);
+
 		// if (scrollTop == st) {
 		// return false;
 		// }
@@ -39,9 +40,9 @@ public class TweetViewBinder {
 		timer = new Timer() {
 			@Override
 			public void run() {
-				// System.out.println("RUNNING TWEETVIEWBINDER...");
 				if (hasMoreData()) {
 					if (detectScrollerHitBottom()) {
+					  System.out.println("Detected scroll bottom hit + "+this);
 						handler.onScrollBottomHit();
 					}
 				} else {
@@ -55,6 +56,6 @@ public class TweetViewBinder {
 
 	public void stop() {
 		timer.cancel();
-		// System.out.println("Stopping TweetViewBinder.");
+		 System.out.println("Stopping TweetViewBinder: " + this);
 	}
 }

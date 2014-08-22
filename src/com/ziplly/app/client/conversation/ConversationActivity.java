@@ -1,19 +1,17 @@
 package com.ziplly.app.client.conversation;
 
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
 import com.ziplly.app.client.activities.AbstractActivity;
+import com.ziplly.app.client.activities.DefaultViewLoaderAsyncCallback;
 import com.ziplly.app.client.dispatcher.CachingDispatcherAsync;
 import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.places.ConversationPlace;
 import com.ziplly.app.client.view.IConversationView;
-import com.ziplly.app.client.view.StringConstants;
 import com.ziplly.app.client.view.event.AccountDetailsUpdateEvent;
 import com.ziplly.app.client.view.event.LoginEvent;
 import com.ziplly.app.client.view.handler.AccountDetailsUpdateEventHandler;
@@ -35,8 +33,8 @@ public class ConversationActivity extends AbstractActivity implements
     ConversationView.ConversationViewPresenter {
 	private IConversationView view;
 	private AcceptsOneWidget panel;
-	private GetConversationHandler handler = new GetConversationHandler();
-	private SingleConversationHandler singleConversationHandler = new SingleConversationHandler();
+//	private GetConversationHandler handler = new GetConversationHandler();
+//	private SingleConversationHandler singleConversationHandler = new SingleConversationHandler();
 	private ConversationPlace place;
 	private AsyncProvider<ConversationView> viewProvider;
 
@@ -60,11 +58,7 @@ public class ConversationActivity extends AbstractActivity implements
 
 	@Override
 	public void doStart() {
-		viewProvider.get(new AsyncCallback<ConversationView>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+		viewProvider.get(new DefaultViewLoaderAsyncCallback<ConversationView>() {
 
 			@Override
 			public void onSuccess(ConversationView result) {
@@ -74,6 +68,7 @@ public class ConversationActivity extends AbstractActivity implements
 				setupHandlers();
 				internalStart();
 			}
+			
 		});
 	}
 
@@ -98,8 +93,6 @@ public class ConversationActivity extends AbstractActivity implements
 
 	/**
 	 * Updated unread message count.
-	 * 
-	 * @param result
 	 */
 	private void updateMessageCount(GetAccountDetailsResult result) {
 		view.setUnreadMessageCount(result.getUnreadMessages());
@@ -110,26 +103,26 @@ public class ConversationActivity extends AbstractActivity implements
 			GetConversationsAction action = new GetConversationsAction();
 			action.setType(ConversationType.SINGLE);
 			action.setConversationId(place.getConversationId());
-			dispatcher.execute(action, singleConversationHandler);
+			dispatcher.execute(action, new SingleConversationHandler(eventBus));
 		} else {
 			GetConversationsAction action = new GetConversationsAction();
 			action.setType(ConversationType.RECEIVED);
 			action.setStart(0);
 			action.setPageSize(0);
 			action.setGetTotalConversation(true);
-			dispatcher.execute(action, handler);
+			dispatcher.execute(action, new GetConversationHandler(eventBus));
 		}
 	}
 
 	@Override
 	public void getConversations(GetConversationsAction action) {
-		dispatcher.execute(action, handler);
+		dispatcher.execute(action, new GetConversationHandler(eventBus));
 	}
 
 	private void getAccountDetails() {
 		dispatcher.execute(
 		    new GetAccountDetailsAction(),
-		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(GetAccountDetailsResult result) {
@@ -153,13 +146,6 @@ public class ConversationActivity extends AbstractActivity implements
 		view.setPresenter(this);
 	}
 
-	/*
-	 * Sends message
-	 * 
-	 * @see
-	 * com.ziplly.app.client.activities.AccountPresenter#sendMessage(com.ziplly
-	 * .app.model.MessageDTO)
-	 */
 	@Override
 	public void sendMessage(final ConversationDTO conversation) {
 		if (conversation == null) {
@@ -168,7 +154,7 @@ public class ConversationActivity extends AbstractActivity implements
 
 		dispatcher.execute(
 		    new SendMessageAction(conversation),
-		    new DispatcherCallbackAsync<SendMessageResult>() {
+		    new DispatcherCallbackAsync<SendMessageResult>(eventBus) {
 			    @Override
 			    public void onSuccess(SendMessageResult result) {
 				    view.updateConversation(conversation);
@@ -189,7 +175,7 @@ public class ConversationActivity extends AbstractActivity implements
 
 			dispatcher.execute(
 			    new ViewConversationAction(conversation.getId()),
-			    new DispatcherCallbackAsync<ViewConversationResult>() {
+			    new DispatcherCallbackAsync<ViewConversationResult>(eventBus) {
 				    @Override
 				    public void onSuccess(ViewConversationResult result) {
 					    updateAccountDetails();
@@ -201,7 +187,7 @@ public class ConversationActivity extends AbstractActivity implements
 	private void updateAccountDetails() {
 		dispatcher.execute(
 		    new GetAccountDetailsAction(),
-		    new DispatcherCallbackAsync<GetAccountDetailsResult>() {
+		    new DispatcherCallbackAsync<GetAccountDetailsResult>(eventBus) {
 			    @Override
 			    public void onSuccess(GetAccountDetailsResult result) {
 				    eventBus.fireEvent(new AccountDetailsUpdateEvent(result));
@@ -210,6 +196,11 @@ public class ConversationActivity extends AbstractActivity implements
 	}
 
 	private class GetConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
+	  
+	  public GetConversationHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetConversationsResult result) {
 			if (result.getTotalConversations() != null) {
@@ -217,14 +208,18 @@ public class ConversationActivity extends AbstractActivity implements
 			}
 			view.displayConversations(result.getConversations());
 		}
-
-		@Override
-		public void onFailure(Throwable th) {
-			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
-		}
+//
+//		@Override
+//		public void onFailure(Throwable th) {
+//			view.displayMessage(StringConstants.INTERNAL_ERROR, AlertType.ERROR);
+//		}
 	};
 
 	private class SingleConversationHandler extends DispatcherCallbackAsync<GetConversationsResult> {
+	  public SingleConversationHandler(EventBus eventBus) {
+	    super(eventBus);
+    }
+	  
 		@Override
 		public void onSuccess(GetConversationsResult result) {
 			if (result.getConversations().size() == 1) {
@@ -236,5 +231,14 @@ public class ConversationActivity extends AbstractActivity implements
 	@Override
 	public AccountDTO getAccount() {
 		return ctx.getAccount();
-	};
+	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  };
 }

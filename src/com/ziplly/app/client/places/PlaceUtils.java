@@ -67,7 +67,7 @@ public class PlaceUtils {
 			return null;
 		}
 		
-		return (account instanceof PersonalAccountDTO) ? new PersonalAccountPlace() : new BusinessAccountPlace();
+		return (account instanceof PersonalAccountDTO) ? new PersonalAccountPlace(account.getAccountId()) : new BusinessAccountPlace(account.getAccountId());
 	}
 
   public static String getPlaceToken(PrintCouponPlace place) {
@@ -116,5 +116,9 @@ public class PlaceUtils {
         + AttributeKey.NEIGHBORHOOD_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getNeighborhoodId()
         + PlaceParserImpl.PLACE_SEPARATOR
         + AttributeKey.GENDER_KEY.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getGender();
+  }
+
+  public static String getPlaceToken(AccountSwitcherPlace place) {
+    return AttributeKey.ACCOUNT_ID.getName() + PlaceParserImpl.VALUE_SEPARATOR + place.getAccountId();
   }
 }

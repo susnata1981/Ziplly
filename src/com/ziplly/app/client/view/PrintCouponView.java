@@ -6,12 +6,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.factory.ValueType;
 import com.ziplly.app.model.BusinessAccountDTO;
@@ -27,7 +27,7 @@ public class PrintCouponView extends AbstractView {
 
 	@Inject
 	public PrintCouponView(EventBus eventBus) {
-		super(eventBus);
+	  super(eventBus);
 		RootPanel.get("nav").getElement().getStyle().setDisplay(Display.NONE);
 		initWidget(uiBinder.createAndBindUi(this));
 	}

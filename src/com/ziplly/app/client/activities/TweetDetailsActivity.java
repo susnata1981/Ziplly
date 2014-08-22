@@ -60,7 +60,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 		GetCommunityWallDataAction action = new GetCommunityWallDataAction();
 		action.setSearchType(SearchType.TWEET_BY_ID);
 		action.setTweetId(tweetId);
-		dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<GetCommunityWallDataResult>(eventBus) {
 
 			@Override
 			public void onSuccess(GetCommunityWallDataResult result) {
@@ -102,7 +102,7 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
 	private void displayCoupon() {
 		dispatcher.execute(
 		    new RedeemCouponAction(place.getCouponRedeemCode()),
-		    new DispatcherCallbackAsync<RedeemCouponResult>() {
+		    new DispatcherCallbackAsync<RedeemCouponResult>(eventBus) {
 
 			    @Override
 			    public void onSuccess(RedeemCouponResult result) {
@@ -230,5 +230,18 @@ public class TweetDetailsActivity extends AbstractActivity implements TweetPrese
   public void cancelTransaction(long transactionId) {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
   }
 }

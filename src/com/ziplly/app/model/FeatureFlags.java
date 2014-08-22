@@ -5,7 +5,8 @@ public enum FeatureFlags {
   EnableCouponFeature(true),
   OneCouponPerIndividual(true),
   EnablePaymentPlan(false),
-  EnableCityCheck(true);
+  EnableCityCheck(true),
+  EnableLoadingBanner(true);
 
   private boolean enable;
 

@@ -15,8 +15,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
-import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.factory.BasicDataFormatter;
 import com.ziplly.app.client.widget.StyleHelper;
 import com.ziplly.app.model.CouponItemDTO;
 
@@ -37,18 +35,15 @@ public class CouponTransactionTableWidget extends Composite {
 	private List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
 	private final int pageSize;
 	private int transactionStart;
-	private BasicDataFormatter basicDataFormatter;
 
 	private Handler rangeChangeHandler;
 	
 	public CouponTransactionTableWidget(
 			final List<ColumnDefinition> columnDefinitions, 
-			final int pageSize, 
-			final BasicDataFormatter basicDataFormatter) {
+			final int pageSize) {
 		
 		this.columnDefinitions = columnDefinitions;
 		this.pageSize = pageSize;
-		this.basicDataFormatter = basicDataFormatter;
 		setupUi();
 		initWidget(uiBinder.createAndBindUi(this));
 		StyleHelper.show(message.getElement(), false);
@@ -58,7 +53,7 @@ public class CouponTransactionTableWidget extends Composite {
 		pager = new SimplePager();
 		couponTransactionTable = new CellTable<CouponItemDTO>();
 		couponTransactionTable.setEmptyTableWidget(new Label("No transaction"));
-		couponTransactionTable.setRowData(0, new ArrayList<CouponItemDTO>());
+//		couponTransactionTable.setRowData(0, new ArrayList<CouponItemDTO>());
 		couponTransactionTable.setHover(true);
 		buildTable();
 		pager.setDisplay(couponTransactionTable);
@@ -76,18 +71,21 @@ public class CouponTransactionTableWidget extends Composite {
 					rangeChangeHandler.onRangeChange(event);
 				}
 			}
+			
 		});
   }
 
 	public void setRowCount(int couponCount) {
+	  System.out.println("Setting rowcount to "+couponCount);
 		couponTransactionTable.setRowCount(couponCount, true);
 	}
 	
 	public void displayPurchasedCoupons(List<CouponItemDTO> purchasedCoupons) {
-	  StyleHelper.show(message.getElement(), false);
-		if (purchasedCoupons == null || purchasedCoupons.size() == 0) {
-			displayMessage(StringConstants.NO_COUPON_TRANSACTIONS, AlertType.INFO);
-			return;
+//	  StyleHelper.show(message.getElement(), false);
+		System.out.println("RD = " + purchasedCoupons.size());
+		if (purchasedCoupons.size() == 0) {
+		  setRowCount(purchasedCoupons.size());
+		  return;
 		}
 		
 		couponTransactionTable.setRowData(transactionStart, purchasedCoupons);
@@ -118,7 +116,7 @@ public class CouponTransactionTableWidget extends Composite {
 	public void displayMessage(String msg, AlertType type) {
 		message.setText(msg);
 		message.setType(type);
-		StyleHelper.show(message.getElement(), false);
+		StyleHelper.show(message.getElement(), true);
 	}
 
 	public void addRangeChangeHandler(com.google.gwt.view.client.RangeChangeEvent.Handler handler) {

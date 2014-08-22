@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.PlaceParserImpl;
@@ -72,11 +73,11 @@ public class BusinessAccountCell extends AbstractCell<BusinessAccountDTO> {
 	}
 
 	private String getRedirectUrl(BusinessPlace place) {
-	  return BASE_URL + PlaceParserImpl.HASH + BusinessPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
+	  return BASE_URL + PlaceParserImpl.HASH + AccountSwitcherPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
   }
 
   private String getRedirectUrl(BusinessAccountPlace place) {
-	  return BASE_URL + PlaceParserImpl.HASH + BusinessAccountPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place); 
+	  return BASE_URL + PlaceParserImpl.HASH + AccountSwitcherPlace.TOKEN + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place); 
   }
 
   private Element getAnchorWithClass(NodeList<Element> anchors, String className) {

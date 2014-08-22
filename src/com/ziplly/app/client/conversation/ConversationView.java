@@ -37,6 +37,7 @@ import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.ziplly.app.client.activities.Presenter;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountSettingsPlace;
 import com.ziplly.app.client.resource.TableResources;
@@ -400,7 +401,7 @@ public class ConversationView extends AbstractView implements IConversationView 
 
 	@UiHandler("profileLink")
 	void onProfileLinkClick(ClickEvent event) {
-		presenter.goTo(new PersonalAccountPlace());
+		presenter.goTo(new AccountSwitcherPlace());
 	}
 
 	@UiHandler("settingsLink")

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0">
-	<persistence-unit name="zipllydb">
+	<persistence-unit name="zipllydb" transaction-type="RESOURCE_LOCAL">
 	    <class>com.ziplly.app.server.model.jpa.AbstractEntity</class>
 		<class>com.ziplly.app.server.model.jpa.Account</class>
 		<class>com.ziplly.app.server.model.jpa.PersonalAccount</class>

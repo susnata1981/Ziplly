@@ -16,5 +16,4 @@ public class LogoutEvent extends GwtEvent<LogoutEventHandler> {
 	protected void dispatch(LogoutEventHandler handler) {
 		handler.onEvent(this);
 	}
-
 }

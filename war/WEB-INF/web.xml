@@ -17,7 +17,7 @@
 	<listener>
 		<listener-class>com.ziplly.app.server.guice.MyGuiceContextListener</listener-class>
 	</listener>
-
+	
  	<servlet>
 		<servlet-name>UploadServlet</servlet-name>
 		<servlet-class>com.ziplly.app.server.UploadServlet</servlet-class>
@@ -28,7 +28,7 @@
 		<url-pattern>/ziplly/upload</url-pattern>
 	</servlet-mapping>
 
-	<!-- <servlet>
+		<!-- <servlet>
 		<servlet-name>ConfirmPaymentServlet</servlet-name>
 		<servlet-class>com.ziplly.app.server.ConfirmPaymentServlet
 		</servlet-class>

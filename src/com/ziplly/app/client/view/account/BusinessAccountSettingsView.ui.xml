@@ -1,0 +1,424 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:dt="urn:import:com.ziplly.app.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<!-- <ui:style field="astyle" src="accountview.css" /> -->
+	<ui:style
+		type="com.ziplly.app.client.view.account.BusinessAccountSettingsView.Style">
+		.settingsPanel {
+		}
+		.settingsPanel span.label {
+			display: block;
+			font-weight: 600;
+			text-shadow: none !important;
+			font-color: #525252;
+		}
+		.tabPanel {
+		background: #f1f1f1;
+		opacity: .92;
+		padding: 20px;
+		border-radius: 5px;
+		}
+		.businessSettingsRow {
+		overflow: hidden;
+		}
+		.businessDetailsPanel {
+		position: relative;
+		overflow: hidden;
+		}
+		.businessProfileImageRootPanel {
+		position: relative;
+		top: 60px;
+		}
+		.businessProfileImagePanel
+		{
+			width: 200px;
+			height: 200px;
+			overflow: hidden;
+			border: 1px solid #bbb;
+		}
+		.businessProfileImage {
+			max-height: 100%;
+			max-width: 100%;
+		}
+		.paymentDetailsSection {
+			width: 96%;
+			padding: 10px;
+			overflow: hidden;
+		}
+		.selectList {
+			width: 240px !important;
+			font-size: 14px !important;
+		}
+		.subscriptionPlanTablePanel {
+			margin-bottom: 90px;
+			overflow: none;
+		}
+		.subscriptionPlanTable {
+		width: 96%;
+		}
+		.subscriptionPlanTablePanelMessage {
+		color: #555;
+		font-size: 15px;
+		padding: 2px;
+		}
+		.subscriptionPlanWidget {
+		float: left;
+		margin: 10px;
+		margin-bottom: 0;
+		width: 30%;
+		}
+		.horizontalDiv {
+		clear: both;
+		}
+		.timeOpenLabel {
+		diplay: block;
+		float: left;
+		line-height: 20px;
+		margin:
+		6px 10px;
+		width: 80px;
+		}
+		.timeOpenTextBox {
+		float: left;
+		width: 60px;
+		height: 36px;
+		margin-right: 10px;
+		}
+		.buttonPanel {
+		clear: both;
+		}
+		.verticalDiv {
+		margin: 6px 0;
+		padding: 6px 0;
+		}
+		.inputTextField {
+		height:
+		36px !important;
+		font-size: 18px !important;
+		}
+		.wideTextBox {
+			width: 90%;
+		}
+		.passwordLabel
+		{
+			display: block;
+			width: 180px;
+		}
+		.passwordField {
+			display: block;
+			height: 36px !important;
+			font-size: 16px !important;
+		}
+		.popoverText {
+		display: inline;
+		font-size: 11px !important;
+		}
+		.popoverLink {
+		font-size: 11px !important;
+		}
+		.row {
+		display: block;
+		margin: 10px 4px;
+		}
+		.hpanelNoMargin {
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+		.tinyText {
+			font-size: 10px !important;
+		}
+		.locationItemPanel {
+			width: 440px;
+			border: 2px solid #ddd;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+		.heading {
+		font-size: 20px;
+		font-weight: 500;
+		}
+		.locationBlock {
+			clear: both;
+			float: left;
+			padding: 2px;
+		}
+		.helptext {
+			margin-top: 10px;
+			font-size: 12px;
+		}
+		.newLine {
+			clear: left;
+			display: block;
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-size: 16px;
+			padding: 2px 4px;
+			margin-bottom: 12px;
+		}
+	</ui:style>
+	<b:FluidContainer addStyleNames="{style.settingsPanel}">
+		<b:FluidRow>
+			<b:Column offset="1" size="9">
+				<b:Alert ui:field="message" animation="true" close="false" />
+			</b:Column>
+		</b:FluidRow>
+		<b:FluidRow>
+			<b:Column offset="1" size="9" addStyleNames="{style.tabPanel}">
+				<b:TabPanel tabPosition="left" ui:field="settingsTabPanel">
+					<b:Tab heading="Business details" active="true">
+						<b:Row>
+							<b:Column offset="1" size="7">
+								<g:HTMLPanel addStyleNames="{style.businessDetailsPanel}">
+									<div class="profile_section_heading">
+										<span>Basic Info</span>
+									</div>
+									<b:ControlGroup ui:field="businessNameCg">
+										<b:Controls>
+											<b:Label>Business name</b:Label>
+											<br />
+											<b:TextBox ui:field="businessName" placeholder="BusinessName..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+											<b:HelpInline ui:field="businessNameError"></b:HelpInline>
+										</b:Controls>
+									</b:ControlGroup>
+									<div>
+										<b:Label>Neighborhood</b:Label>
+										<b:TextBox ui:field="neighborhoodTextBox" placeholder="Neighborhood..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+									</div>
+									<b:ControlGroup ui:field="street1Cg">
+										<b:Controls>
+											<b:Label>Street1</b:Label>
+											<br />
+											<b:TextBox ui:field="street1" placeholder="street1..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+											<b:HelpInline ui:field="street1Error"></b:HelpInline>
+										</b:Controls>
+									</b:ControlGroup>
+									<b:ControlGroup ui:field="phoneCg">
+										<b:Controls>
+											<b:Label>Phone</b:Label>
+											<br />
+											<b:TextBox ui:field="phone" placeholder="phone..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+											<b:HelpInline ui:field="phoneError"></b:HelpInline>
+										</b:Controls>
+									</b:ControlGroup>
+									<b:ControlGroup ui:field="websiteCg">
+										<b:Controls>
+											<b:Label>Website</b:Label>
+											<br />
+											<b:TextBox ui:field="website" placeholder="website..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+											<b:HelpInline ui:field="websiteError"></b:HelpInline>
+										</b:Controls>
+									</b:ControlGroup>
+									<b:ControlGroup ui:field="emailCg">
+										<b:Controls>
+											<b:Label>Email</b:Label>
+											<br />
+											<b:TextBox ui:field="email" placeholder="email..."
+												addStyleNames="{style.wideTextBox} {style.inputTextField}" />
+											<b:HelpInline ui:field="emailError"></b:HelpInline>
+										</b:Controls>
+									</b:ControlGroup>
+									<!-- Business Category -->
+									<b:Controls>
+										<b:Label>Business Category</b:Label>
+										<br />
+										<b:ListBox ui:field="businessCategory" addStyleNames="{style.selectList}"></b:ListBox>
+									</b:Controls>
+									<b:Controls ui:field="cuisineControls" addStyleNames="{style.selectList}">
+										<b:Label>Cuisine </b:Label>
+										<br />
+										<b:ListBox ui:field="cuisineListBox"></b:ListBox>
+									</b:Controls>
+									<!-- Price Range -->
+									<b:Controls>
+										<b:Label>Price Range</b:Label>
+										<br />
+										<b:ListBox ui:field="priceRangeListBox"></b:ListBox>
+									</b:Controls>
+									<div class="{style.verticalDiv}">
+										<b:CheckBox ui:field="wifiAvailableCheckbox">Wifi Available</b:CheckBox>
+										<b:CheckBox ui:field="parkingAvailableCheckbox">Parking Available</b:CheckBox>
+									</div>
+
+									<!-- Hours of operation -->
+									<h4>Hours of operation</h4>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Monday</b:Label>
+										<b:TextBox ui:field="mondayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="mondayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Tuesday</b:Label>
+										<b:TextBox ui:field="tuesdayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="tuesdayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Wednesday</b:Label>
+										<b:TextBox ui:field="wednesdayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="wednesdayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Thursday</b:Label>
+										<b:TextBox ui:field="thursdayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="thursdayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Friday</b:Label>
+										<b:TextBox ui:field="fridayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="fridayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Saturday</b:Label>
+										<b:TextBox ui:field="saturdayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="saturdayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.horizontalDiv}">
+										<b:Label addStyleNames="{style.timeOpenLabel}">Sunday</b:Label>
+										<b:TextBox ui:field="sundayStart" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="startTime..." />
+										<b:TextBox ui:field="sundayEnd" addStyleNames="{style.timeOpenTextBox}"
+											placeholder="endTime..." />
+									</div>
+									<div class="{style.buttonPanel}">
+										<b:Button type="PRIMARY" ui:field="saveBtn">Save</b:Button>
+										<b:Button ui:field="cancelBtn">Cancel</b:Button>
+									</div>
+								</g:HTMLPanel>
+							</b:Column>
+							<b:Column size="4">
+								<g:HTMLPanel addStyleNames="{style.businessProfileImageRootPanel}">
+									<g:HTMLPanel ui:field="businessProfileImagePanel" addStyleNames="{style.businessProfileImagePanel}">
+										<b:Image ui:field="profileImagePreview" addStyleNames="{style.businessProfileImage}" />
+									</g:HTMLPanel>
+									<g:FormPanel ui:field="uploadForm">
+										<g:HTMLPanel>
+											<b:Label>Upload image </b:Label>
+											<b:Image ui:field="uploadAnchorIcon" />
+											<b:FileUpload ui:field="uploadField" name="image" />
+											<p class="{style.helptext}">
+											    The image you upload would be applied as a background image on your profile.
+											    To attract more traffic, it is recommended that you upload a medium resolution
+											    custom picture tailer toward your business.
+											</p>
+										</g:HTMLPanel>
+									</g:FormPanel>
+								</g:HTMLPanel>
+							</b:Column>
+						</b:Row>
+					</b:Tab>
+					<b:Tab heading="Subscription Plans" ui:field="subscriptionTab">
+					    <b:Row>
+							<b:Column offset="1" size="11">
+						<g:HTMLPanel addStyleNames="{style.paymentDetailsSection}">
+							<b:Alert ui:field="paymentStatus" close="false" />
+							<div class="profile_section_heading">
+								<span>Subscription plans</span>
+							</div>
+							<g:HTMLPanel ui:field="subscriptionPlanTablePanel"
+								addStyleNames="{style.subscriptionPlanTablePanel}">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
+					</b:Tab>
+					<b:Tab heading="Transaction Details" ui:field="transactionDetailsTab">
+					    <b:Row>
+							<b:Column offset="1" size="11">
+					    <g:HTMLPanel>
+					        <div class="profile_section_heading">
+								<span>Subscription history</span>
+							</div>
+							<g:HTMLPanel ui:field="transactionDetailsPanel">
+							</g:HTMLPanel>
+					    </g:HTMLPanel>
+					    </b:Column>
+					    </b:Row>
+					</b:Tab>
+					<b:Tab ui:field="notification" heading="Notification">
+					    <b:Row>
+							<b:Column offset="1" size="11">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Select your notificaiton settings</span>
+								<g:HTMLPanel addStyleNames="{style.popoverText}">
+									<b:Popover
+										text="You can choose to get email notifications for certain types of messages within your community"
+										heading="help">
+										<g:Anchor addStyleNames="{style.popoverLink}">learn more</g:Anchor>
+									</b:Popover>
+								</g:HTMLPanel>
+							</div>
+							<g:HTMLPanel ui:field="notificationPanel">
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
+					</b:Tab>
+					<!-- <b:Tab ui:field="location" heading="Locations">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Location settings</span> 
+								<g:Anchor ui:field="addLocationAnchor">add</g:Anchor> 
+							</div>
+							<g:HTMLPanel ui:field="locationPanel">
+
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</b:Tab> -->
+					<b:Tab heading="Password Reset">
+					    <b:Row>
+							<b:Column offset="1" size="11">
+						<g:HTMLPanel>
+							<div class="profile_section_heading">
+								<span>Reset your password</span>
+							</div>
+							<b:ControlGroup ui:field="passwordCg">
+								<b:Controls>
+									<b:Label addStyleNames="{style.passwordLabel}">Old Password</b:Label>
+									<b:PasswordTextBox ui:field="password"
+										placeholder="Old password..." addStyleNames="{style.passwordField}" />
+									<b:HelpInline ui:field="passwordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="newPasswordCg">
+								<b:Controls>
+									<b:Label addStyleNames="{style.passwordLabel}">New Password</b:Label>
+									<b:PasswordTextBox ui:field="newPassword"
+										placeholder="New password..." addStyleNames="{style.passwordField}" />
+									<b:HelpInline ui:field="newPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup ui:field="confirmNewPasswordCg">
+								<b:Controls>
+									<b:Label addStyleNames="{style.passwordLabel}">Confirm new password</b:Label>
+									<b:PasswordTextBox ui:field="confirmNewPassword"
+										placeholder="confirm new password..." addStyleNames="{style.passwordField}" />
+									<b:HelpInline ui:field="confirmNewPasswordError"></b:HelpInline>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:Button ui:field="updatePasswordBtn">Update password</b:Button>
+						</g:HTMLPanel>
+						</b:Column>
+						</b:Row>
+					</b:Tab>
+				</b:TabPanel>
+			</b:Column>
+		</b:FluidRow>
+	</b:FluidContainer>
+</ui:UiBinder> 

@@ -68,7 +68,7 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter {
 	@Override
 	public void contact(String subject, String from, String content) {
 		EmailAdminAction action = new EmailAdminAction(from, content, subject);
-		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>() {
+		dispatcher.execute(action, new DispatcherCallbackAsync<EmailAdminResult>(eventBus) {
 
 			@Override
 			public void onSuccess(EmailAdminResult result) {
@@ -86,4 +86,17 @@ public class AboutActivity extends AbstractActivity implements AboutPresenter {
 	public void bind() {
 		view.setPresenter(this);
 	}
+	
+	 @Override
+	  public String mayStop() {
+	    return "";
+	  }
+
+	  @Override
+	  public void onCancel() {
+	  }
+
+	  @Override
+	  public void onStop() {
+	  }
 }

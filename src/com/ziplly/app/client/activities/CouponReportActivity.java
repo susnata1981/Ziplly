@@ -137,7 +137,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
     action.setPageSize(pageSize);
     action.setSearchType(SearchType.BY_COUPON_ID);
     action.setCouponId(coupon.getCouponId());
-    dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>() {
+    dispatcher.execute(action, new DispatcherCallbackAsync<GetCouponTransactionResult>(eventBus) {
 
       @Override
       public void onSuccess(GetCouponTransactionResult result) {
@@ -176,7 +176,7 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
     tweet.getImages().addAll(coupon.getTweet().getImages());
 
     TweetAction action = new TweetAction(tweet);
-    dispatcher.execute(action, new DispatcherCallbackAsync<TweetResult>() {
+    dispatcher.execute(action, new DispatcherCallbackAsync<TweetResult>(eventBus) {
 
       @Override
       public void onSuccess(TweetResult result) {
@@ -224,5 +224,14 @@ public class CouponReportActivity extends AbstractActivity implements CouponRepo
   
   @Override
   public void go(AcceptsOneWidget container) {
+  }
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
   }
 }

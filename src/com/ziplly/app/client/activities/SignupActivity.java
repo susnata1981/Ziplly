@@ -84,4 +84,13 @@ public class SignupActivity extends AbstractSignupActivity {
 		this.panel = panel;
 		checkAccountLogin();
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
 }

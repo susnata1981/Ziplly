@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
 import com.ziplly.app.client.places.PlaceParserImpl;
@@ -72,7 +73,7 @@ public class PersonalAccountCell extends AbstractCell<PersonalAccountDTO> {
   }
 
   private String getRedirectUrl(PersonalAccountPlace place) {
-    return BASE_URL + PlaceParserImpl.HASH + BusinessAccountPlace.TOKEN
+    return BASE_URL + PlaceParserImpl.HASH + AccountSwitcherPlace.TOKEN
         + PlaceParserImpl.TOP_LEVEL_SEPARATOR + PlaceUtils.getPlaceToken(place);
   }
 

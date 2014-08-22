@@ -14,11 +14,11 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.TextArea;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.github.gwtbootstrap.client.ui.constants.BackdropType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -50,8 +50,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.ziplly.app.client.activities.TweetPresenter;
 import com.ziplly.app.client.activities.util.PaymentFlow;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.PersonalAccountPlace;
@@ -59,7 +59,7 @@ import com.ziplly.app.client.places.PlaceUtils;
 import com.ziplly.app.client.places.TweetDetailsPlace;
 import com.ziplly.app.client.resource.ZResources;
 import com.ziplly.app.client.view.StringConstants;
-import com.ziplly.app.client.view.WidgetFactory;
+import com.ziplly.app.client.view.common.TweetWidgetPresenter;
 import com.ziplly.app.client.view.coupon.CouponWidget;
 import com.ziplly.app.client.view.factory.AbstractValueFormatterFactory;
 import com.ziplly.app.client.view.factory.AccountFormatter;
@@ -77,7 +77,7 @@ import com.ziplly.app.model.overlay.GoogleWalletSuccessResult;
 import com.ziplly.app.shared.FieldVerifier;
 import com.ziplly.app.shared.ValidationResult;
 
-public class TweetWidget extends Composite implements ITweetWidgetView<TweetPresenter> {
+public class TweetWidget extends Composite { //implements ITweetWidgetView<TweetPresenter> {
 
 	private static final int DEFAULT_COMMENT_COUNT = 4;
 
@@ -207,21 +207,22 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	@UiField
 	ZAnchor createLink;
 
-	private TweetPresenter presenter;
+//	private TweetPresenter presenter;
 	private TweetDTO tweet;
 	final Anchor showMoreCommentsLink = new Anchor();
 	final Anchor hideCommentsLink = new Anchor("hide comments");
 	private AccountFormatter accountFormatter = (AccountFormatter) AbstractValueFormatterFactory
 	    .getValueFamilyFormatter(ValueFamilyType.ACCOUNT_INFORMATION);
-	private BasicDataFormatter basicDataFormatter =
-	    (BasicDataFormatter) AbstractValueFormatterFactory
-	        .getValueFamilyFormatter(ValueFamilyType.BASIC_DATA_VALUE);
+	private BasicDataFormatter basicDataFormatter = new BasicDataFormatter();
 
 	// Used by comment edit widget to display the edit link
 	private boolean commentEditLinkClicked = false;
 
-	public TweetWidget() {
+  private TweetWidgetPresenter presenter;
+
+	public TweetWidget(TweetWidgetPresenter tweetWidgetPresenter) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.presenter = tweetWidgetPresenter;
 		hideTweetUpdateButtons();
 		hideCommentButtons();
 		setupHandlers();
@@ -240,7 +241,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				boolean confirm = Window.confirm("Are you sure you want to delete this?");
 				if (confirm) {
-					presenter.deleteTweet(tweet);
+					presenter.deleteTweet(TweetWidget.this, tweet);
 				}
 			}
 		});
@@ -250,7 +251,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				boolean confirm = Window.confirm("Are you sure you want to delete this?");
 				if (confirm) {
-					presenter.reportTweetAsSpam(tweet);
+					presenter.reportTweetAsSpam(TweetWidget.this, tweet, presenter.getLoggedInAccount());
 				}
 			}
 		});
@@ -259,7 +260,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			@Override
 			public void onClick(ClickEvent event) {
 				tweet.setContent(tweetContentTextArea.getText());
-				presenter.updateTweet(tweet);
+				presenter.updateTweet(TweetWidget.this, tweet);
 				tweetContentPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 			}
 		});
@@ -310,7 +311,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 				comment.setTimeCreated(new Date());
 				comment.setAuthor(tweet.getSender());
 				comment.setTweet(tweet);
-				presenter.postComment(comment);
+				presenter.postComment(TweetWidget.this, comment);
 				commentInputTextBox.setText("");
 			}
 		});
@@ -329,7 +330,8 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 			public void onClick(ClickEvent event) {
 				SendMessageWidget smw = new SendMessageWidget(tweet.getSender());
 				smw.setSubject(PlaceUtils.getPlaceTokenForTweetDetails(tweet));
-				smw.setPresenter(presenter);
+//				*********************   TODO(FIX)    ****************************
+				smw.setPresenter(presenter.getMessagePresenter());
 				smw.show();
 			}
 		});
@@ -428,7 +430,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	/*
 	 * Main method, called by HomeView
 	 */
-	@Override
+//	@Override
 	public void displayTweet(final TweetDTO tweet) {
 		if (tweet != null) {
 			this.tweet = tweet;
@@ -598,7 +600,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 						comment.setContent(editWidget.getText());
 						comment.setTweet(TweetWidget.this.tweet);
 						comment.setTimeUpdated(new Date());
-						presenter.updateComment(comment);
+						presenter.updateComment(TweetWidget.this, comment);
 					}
 				});
 
@@ -619,10 +621,10 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	<T extends AccountDTO> void displayAccountModal(T acct) {
-		@SuppressWarnings("unchecked")
-		IAccountWidgetModal<T> accountWidgetModal =
-		    (IAccountWidgetModal<T>) WidgetFactory.getAccountWidgetModal(acct, presenter);
-		accountWidgetModal.show(acct);
+//		@SuppressWarnings("unchecked")
+//		IAccountWidgetModal<T> accountWidgetModal =
+//		    (IAccountWidgetModal<T>) WidgetFactory.getAccountWidgetModal(acct, presenter);
+//		accountWidgetModal.show(acct);
 	}
 
 	private void displayLikesSection() {
@@ -630,7 +632,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		likeAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.likeTweet(tweet.getTweetId());
+				presenter.likeTweet(TweetWidget.this, tweet.getTweetId());
 			}
 		});
 
@@ -758,7 +760,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 
 			@Override
       public void onClick(ClickEvent event) {
-				presenter.checkCouponPurchaseEligibility(tweet.getCoupon(), TweetWidget.this);
+				presenter.checkCouponPurchaseEligibility(TweetWidget.this, tweet.getCoupon());
       }
 		});
 		
@@ -797,7 +799,7 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
       
       @Override
       public void onFailure(GoogleWalletFailureResult result) {
-        presenter.cancelTransaction(result.getRequest().getRequest().getCouponOrderId());
+        presenter.cancelTransaction(TweetWidget.this, result.getRequest().getRequest().getCouponOrderId());
       }
     });
 	  
@@ -863,15 +865,15 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	}
 
 	private void displayPublicProfile(AccountDTO account) {
-		presenter.goTo(new PersonalAccountPlace(account.getAccountId()));
+		presenter.goTo(new AccountSwitcherPlace(account.getAccountId()));
 	}
 
-	@Override
-	public void setPresenter(TweetPresenter presenter) {
-		this.presenter = presenter;
-	}
+//	@Override
+//	public void setPresenter(TweetPresenter presenter) {
+//		this.presenter = presenter;
+//	}
 
-	@Override
+//	@Override
 	public void clear() {
 		clearComment();
 	}
@@ -882,17 +884,17 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		commentInputTextBox.setText("");
 	}
 
-	@Override
+//	@Override
 	public void updateTweet(TweetDTO tweet) {
 		displayTweet(tweet);
 	}
 
-	@Override
+//	@Override
 	public void deleteTweet() {
-		presenter.deleteTweet(tweet);
+		presenter.deleteTweet(TweetWidget.this, tweet);
 	}
 
-	@Override
+//	@Override
 	public void updateComment(CommentDTO comment) {
 		FlowPanel panel = (FlowPanel) commentsToWidgetMap.get(comment.getCommentId());
 		if (panel != null) {
@@ -901,24 +903,24 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 		}
 	}
 
-	@Override
+//	@Override
 	public void addComment(final CommentDTO comment) {
 		tweet.getComments().add(comment);
 		displayCommentSection();
 	}
 
-	@Override
+//	@Override
 	public void updateLike(LoveDTO like) {
 		tweet.getLikes().add(like);
 		displayLikesSection();
 	}
 
-	@Override
+//	@Override
 	public void setWidth(String width) {
 		tweetPanel.setWidth(width);
 	}
 
-	@Override
+//	@Override
 	public void remove() {
 		removeFromParent();
 	}
@@ -942,4 +944,9 @@ public class TweetWidget extends Composite implements ITweetWidgetView<TweetPres
 	public TweetDTO getTweet() {
 	  return tweet;
 	}
+
+  public void displayMessage(String comment, AlertType alertType) {
+    AlertModal modal = new AlertModal();
+    modal.showMessage(comment, alertType);
+  }
 }

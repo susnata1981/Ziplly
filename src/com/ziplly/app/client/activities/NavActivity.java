@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.ziplly.app.client.ApplicationContext;
@@ -75,7 +73,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 
 		void displayLocationDropdown(boolean show);
 
-		void displayReportingMenu();
+		void displayReportingMenu(boolean show);
 	}
 
 	@Inject
@@ -100,7 +98,7 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 				if (FeatureFlags.EnableCouponFeature.isEnabled() 
 				    && (event.getAccount() instanceof BusinessAccountDTO)
 				    && FeatureFlags.hasPermissionToPublishCoupon(currentNeighborhood)) {
-					view.displayReportingMenu();
+					view.displayReportingMenu(true);
 				}
 				onLogin();
 				// TODO(susnata): need to enable this.
@@ -148,11 +146,8 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 	}
 
 	private void markNotificationAsRead(AccountNotificationDTO an) {
-		dispatcher.execute(new ViewNotificationAction(an), new AsyncCallback<ViewNotificationResult>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO
-			}
+		dispatcher.execute(new ViewNotificationAction(an), new DispatcherCallbackAsync<ViewNotificationResult>(eventBus) {
+			
 
 			@Override
 			public void onSuccess(ViewNotificationResult result) {
@@ -272,5 +267,18 @@ public class NavActivity extends AbstractActivity implements NavPresenter {
 		AccountPlace place = PlaceUtils.getPlace(ctx.getAccount());
 		place.setShowTransactions(true);
 		goTo(place);
+  }
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
+
+  @Override
+  public void onStop() {
   }
 }

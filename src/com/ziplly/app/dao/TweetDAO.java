@@ -30,18 +30,18 @@ public interface TweetDAO {
 
   List<TweetDTO> findAll();
 
-  Map<TweetType, Integer> findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException;
+  Map<TweetType, Integer> findTweetCategoryCounts(long neighborhoodId) throws NotFoundException;
 
   /**
    * Retrieves all tweets based on Neighborhood
    */
-  List<Tweet> findTweetsByNeighborhood(Long neighborhoodId, int page, int pageSize);
+  List<Tweet> findTweetsByNeighborhood(long neighborhoodId, int page, int pageSize);
 
   /**
    * Retrieves specific tweet type (except coupons) based on Neighborhood
    */
   List<Tweet> findTweetsByTypeAndNeighborhood(TweetType type,
-      Long neighborhoodId,
+      long neighborhoodId,
       int page,
       int pageSize) throws NotFoundException;
 

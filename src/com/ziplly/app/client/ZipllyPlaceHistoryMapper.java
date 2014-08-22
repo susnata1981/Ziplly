@@ -3,13 +3,13 @@ package com.ziplly.app.client;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.place.shared.WithTokenizers;
 import com.ziplly.app.client.places.AboutPlace;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.AdminPlace;
 import com.ziplly.app.client.places.BusinessAccountPlace;
 import com.ziplly.app.client.places.BusinessAccountSettingsPlace;
 import com.ziplly.app.client.places.BusinessPlace;
 import com.ziplly.app.client.places.BusinessSignupPlace;
 import com.ziplly.app.client.places.ConversationPlace;
-import com.ziplly.app.client.places.CouponExplorerPlace;
 import com.ziplly.app.client.places.CouponReportPlace;
 import com.ziplly.app.client.places.EmailVerificationPlace;
 import com.ziplly.app.client.places.HomePlace;
@@ -30,7 +30,8 @@ import com.ziplly.app.client.places.TweetDetailsPlace;
     PasswordRecoveryPlace.Tokenizer.class, AdminPlace.Tokenizer.class, AboutPlace.Tokenizer.class,
     ResidentPlace.Tokenizer.class, BusinessPlace.Tokenizer.class,
     EmailVerificationPlace.Tokenizer.class, PrintCouponPlace.Tokenizer.class,
-    CouponReportPlace.Tokenizer.class, CouponExplorerPlace.Tokenizer.class,BusinessAccountSettingsPlace.Tokenizer.class, })
+    CouponReportPlace.Tokenizer.class, BusinessAccountSettingsPlace.Tokenizer.class, 
+    AccountSwitcherPlace.Tokenizer.class})
 public interface ZipllyPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

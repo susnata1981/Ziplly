@@ -12,6 +12,8 @@ import com.ziplly.app.client.dispatcher.DispatcherCallbackAsync;
 import com.ziplly.app.client.exceptions.AccountNotActiveException;
 import com.ziplly.app.client.exceptions.InvalidCredentialsException;
 import com.ziplly.app.client.exceptions.NotFoundException;
+import com.ziplly.app.client.places.AccountPlace;
+import com.ziplly.app.client.places.AccountSwitcherPlace;
 import com.ziplly.app.client.places.HomePlace;
 import com.ziplly.app.client.places.LoginPlace;
 import com.ziplly.app.client.view.ILoginAccountView;
@@ -93,6 +95,9 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 					    ctx.setAccount(result.getAccount());
 					    eventBus.fireEvent(new LoginEvent(result.getAccount()));
 					    if (ctx.getLastPlace() != null) {
+					      if (ctx.getLastPlace() instanceof AccountPlace) {
+					        goTo(new AccountSwitcherPlace(0L));
+					      }
 					    	goTo(ctx.getLastPlace());
 					    	return;
 					    }
@@ -115,4 +120,13 @@ public class LoginActivity extends AbstractActivity implements LoginPresenter {
 			    }
 		    });
 	}
+
+  @Override
+  public String mayStop() {
+    return null;
+  }
+
+  @Override
+  public void onCancel() {
+  }
 }

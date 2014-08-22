@@ -2,6 +2,7 @@ package com.ziplly.app.dao;
 
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,7 +18,6 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -100,38 +100,40 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     return result;
   }
 
+  /**
+   * Find tweets for all neighborhoods that falls under the city which 
+   * contains the given neighborhood.
+   */
   @Override
-  public List<Tweet> findTweetsByNeighborhood(Long neighborhoodId,
+  public List<Tweet> findTweetsByNeighborhood(
+      long neighborhoodId,
       int page,
       int pageSize) {
 
-    return findTweetsByNeighborhood(neighborhoodId, TweetType.getPromotionTypes(), page, pageSize);
+    List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
+    neighborhoodIds.add(neighborhoodId);
+    return findTweets(neighborhoodIds, Arrays.asList(TweetType.values()), page, pageSize);
   }
 
-  private List<Tweet> findTweetsByNeighborhood(Long neighborhoodId,
-      List<TweetType> promotionTypes,
+  private List<Tweet> findTweets(
+      List<Long> neighborhoodIds,
+      List<TweetType> tweetTypes,
       int page,
       int pageSize) {
 
-    if (neighborhoodId == null) {
-      throw new IllegalArgumentException();
-    }
-
     try {
-      List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
-      List<String> promotionTypeNames = getPromotionType(promotionTypes);
+      List<String> tweetTypeNames = extractTweetTypeNames(tweetTypes);
       
       Query query =
           (Query) getEntityManager()
               .createQuery(
                   "select t from Tweet t join t.targetNeighborhoods tn "
-                      + "where ((tn.neighborhoodId = :neighborhoodId) or (tn.neighborhoodId in (:neigborhoodIds) and t.type in (:tweetTypes)))"
+                      + "where tn.neighborhoodId in (:neigborhoodIds) and t.type in (:tweetTypes)"
                       + " and t.status = :status order by t.timeCreated desc");
 
       query
-          .setParameter("neighborhoodId", neighborhoodId)
           .setParameter("neigborhoodIds", neighborhoodIds)
-          .setParameter("tweetTypes", promotionTypeNames)
+          .setParameter("tweetTypes", tweetTypeNames)
           .setParameter("status", TweetStatus.ACTIVE.name())
           .setFirstResult(page * pageSize)
           .setMaxResults(pageSize);
@@ -139,23 +141,21 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
       @SuppressWarnings("unchecked")
       List<Tweet> tweets = (List<Tweet>) query.getResultList();
       return tweets;
-//      return EntityUtil.cloneList(tweets);
     } catch (NoResultException nre) {
       logger.warning(String.format(
-          "Failed to retrieve tweets for neighborhoodId %d, exception %s",
-          neighborhoodId,
+          "Failed to retrieve tweets for neighborhoodId %s, exception %s",
+          neighborhoodIds,
           nre));
       return ImmutableList.of();
     }
   }
 
   @Override
-  public List<Tweet> findTweetsByTypeAndNeighborhood(TweetType type,
-      Long neighborhoodId,
+  public List<Tweet> findTweetsByTypeAndNeighborhood(
+      TweetType type,
+      long neighborhoodId,
       int page,
       int pageSize) throws NotFoundException {
-
-    Preconditions.checkArgument(neighborhoodId != null);
 
     try {
       Query query = (Query) getEntityManager().createNamedQuery("findTweetsByTypeAndNeighborhood");
@@ -171,7 +171,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
           tweets.size(),
           type.name(),
           neighborhoodId));
-//      return EntityUtil.cloneList(tweets);
+      
       return tweets;
     } catch (NoResultException nre) {
       logger.warning(String.format(
@@ -193,7 +193,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
 
     try {
       List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
-      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      List<String> promotionTypeNames = extractTweetTypeNames(ImmutableList.of(TweetType.COUPON));
       
       Query query =
           (Query) getEntityManager()
@@ -225,7 +225,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
   @Override
   public List<Tweet> findAllCoupons(int page, int pageSize) {
     try {
-      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      List<String> promotionTypeNames = extractTweetTypeNames(ImmutableList.of(TweetType.COUPON));
       Query query =
           (Query) getEntityManager()
               .createQuery(
@@ -500,21 +500,16 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
    * Finds counts for different tweet types
    */
   @Override
-  public Map<TweetType, Integer>
-      findTweetCategoryCounts(Long neighborhoodId) throws NotFoundException {
-
-    if (neighborhoodId == null) {
-      throw new IllegalArgumentException("Invalid argument to findTweetCategoryCounts");
-    }
-
+  public Map<TweetType, Integer> findTweetCategoryCounts(long neighborhoodId) throws NotFoundException {
     Map<TweetType, Integer> result = Maps.newHashMap();
     EntityManager em = getEntityManager();
     Query query;
+
     try {
        query =
           em.createNativeQuery(
-                  "select t.type, count(*) from tweet t, tweet_neighborhood tn "
-                      + "where t.tweet_id = tn.tweet_id and tn.neighborhood_id = :neighborhood_id group by t.type")
+                  "select t.type, count(distinct(t.tweet_id)) from tweet t, tweet_neighborhood tn "
+                      + "where t.tweet_id = tn.tweet_id and tn.neighborhood_id in (:neighborhood_id) group by t.type")
               .setParameter("neighborhood_id", neighborhoodId);
 
       @SuppressWarnings("rawtypes")
@@ -526,7 +521,9 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
       
       // Overwrite it for COUPONS
       result.put(TweetType.COUPON, getTotalCouponCountByNeighborhood(neighborhoodId).intValue());
+      result.put(TweetType.ALL, getTotalTweetTypeCount(result));
       return result;
+      
     } catch (NoResultException nre) {
       logger.info(String.format(
           "Failed to retrieve tweets for neighborhoodId [%d] exception %s",
@@ -536,10 +533,25 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     }
   }
 
-  public Long getTotalCouponCountByNeighborhood(Long neighborhoodId) {
+  private int getTotalTweetTypeCount(Map<TweetType, Integer> countMap) {
+    int total = 0;
+    
+    for(TweetType type : countMap.keySet()) {
+//      System.out.println("T =" + type + " C = "+countMap.get(type));
+      if (type == TweetType.ALL) {
+        continue;
+      }
+      
+      total += countMap.get(type);
+    }
+    System.out.println("TOTAL = "+ total);
+    return total;
+  }
+
+  public Long getTotalCouponCountByNeighborhood(long neighborhoodId) {
     try {
       List<Long> neighborhoodIds = neighborhoodDao.getNeigborhoodIdsForCity(neighborhoodId);
-      List<String> promotionTypeNames = getPromotionType(ImmutableList.of(TweetType.COUPON));
+      List<String> promotionTypeNames = extractTweetTypeNames(ImmutableList.of(TweetType.COUPON));
       
       Query query =
           (Query) getEntityManager()
@@ -559,7 +571,7 @@ public class TweetDAOImpl extends BaseDAO implements TweetDAO {
     }
   }
   
-  private List<String> getPromotionType(List<TweetType> promotionTypes) {
+  private List<String> extractTweetTypeNames(List<TweetType> promotionTypes) {
     return Lists.transform(promotionTypes, new Function<TweetType, String>() {
 
       @Override

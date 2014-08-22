@@ -21,7 +21,6 @@ import com.ziplly.app.dao.TweetDAO;
 import com.ziplly.app.model.TweetDTO;
 import com.ziplly.app.model.TweetType;
 import com.ziplly.app.server.bli.AccountBLI;
-import com.ziplly.app.server.bli.TweetBLI;
 import com.ziplly.app.server.model.jpa.Tweet;
 import com.ziplly.app.shared.GetCommunityWallDataAction;
 import com.ziplly.app.shared.GetCommunityWallDataAction.SearchType;
@@ -32,7 +31,6 @@ public class GetCommunityWallDataActionHandler extends
 
   private HashtagDAO hashtagDao;
   private Logger logger = Logger.getLogger(GetCommunityWallDataAction.class.getName());
-  private TweetBLI tweetBli;
 
   @Inject
   public GetCommunityWallDataActionHandler(Provider<EntityManager> entityManagerProvider,
@@ -40,10 +38,8 @@ public class GetCommunityWallDataActionHandler extends
       SessionDAO sessionDao,
       TweetDAO tweetDao,
       AccountBLI accountBli,
-      TweetBLI tweetBli,
       HashtagDAO hashtagDao) {
     super(entityManagerProvider, accountDao, sessionDao, tweetDao, accountBli);
-    this.tweetBli = tweetBli;
     this.hashtagDao = hashtagDao;
   }
 
@@ -57,16 +53,21 @@ public class GetCommunityWallDataActionHandler extends
 
     if (action.getSearchType() == SearchType.CATEGORY) {
       return getTweetsByCategory(action);
+      
     } else if (action.getSearchType() == SearchType.HASHTAG) {
       return getTweetsByHashtag(action);
+      
     } else if (action.getSearchType() == SearchType.TWEET_BY_ID) {
       return getTweetById(action);
+      
     } else if (action.getSearchType() == SearchType.NEIGHBORHOOD) {
       Preconditions.checkNotNull(action.getNeighborhood());
       return getTweetsByNeighborhood(action);
+      
     } else if (action.getSearchType() == SearchType.COUPONS) {
       return getCoupons(action);
     }
+    
     throw new IllegalArgumentException();
   }
 
@@ -74,6 +75,7 @@ public class GetCommunityWallDataActionHandler extends
       List<Tweet> tweets = tweetDao.findAllCoupons(
           action.getPage(), 
           action.getPageSize());
+      
       GetCommunityWallDataResult result = new GetCommunityWallDataResult();
       result.setTweets(EntityUtil.cloneList(tweets));
       return result;
@@ -92,8 +94,9 @@ public class GetCommunityWallDataActionHandler extends
     return result;
   }
 
-  private GetCommunityWallDataResult
-      getTweetById(GetCommunityWallDataAction action) throws NotFoundException {
+  private GetCommunityWallDataResult getTweetById(
+      GetCommunityWallDataAction action) throws NotFoundException {
+    
     GetCommunityWallDataResult result = new GetCommunityWallDataResult();
     try {
       long tweetId = action.getTweetId();
@@ -107,6 +110,7 @@ public class GetCommunityWallDataActionHandler extends
     } catch (NumberFormatException nfe) {
       throw new IllegalArgumentException();
     }
+    
     return result;
   }
 
@@ -125,12 +129,11 @@ public class GetCommunityWallDataActionHandler extends
     return gcwdr;
   }
 
-  private GetCommunityWallDataResult
-      getTweetsByCategory(GetCommunityWallDataAction action) throws NotFoundException {
+  private GetCommunityWallDataResult getTweetsByCategory(
+      GetCommunityWallDataAction action) throws NotFoundException {
 
     TweetType type = action.getType();
     List<Tweet> tweets = null;
-
     if (type.equals(TweetType.ALL)) {
       tweets =
           tweetDao.findTweetsByNeighborhood(
@@ -144,9 +147,10 @@ public class GetCommunityWallDataActionHandler extends
           action.getPageSize());
     } else {
       tweets =
-          tweetDao.findTweetsByTypeAndNeighborhood(type, action
-              .getNeighborhood()
-              .getNeighborhoodId(), action.getPage(), action.getPageSize());
+          tweetDao.findTweetsByTypeAndNeighborhood(type, 
+              action.getNeighborhood().getNeighborhoodId(), 
+              action.getPage(), 
+              action.getPageSize());
     }
 
     GetCommunityWallDataResult gcwdr = new GetCommunityWallDataResult();

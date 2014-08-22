@@ -115,7 +115,7 @@
 				</div>
 			</b:Controls>
 		</b:ControlGroup>
-		<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadForm}">
+		<g:FormPanel ui:field="uploadForm" addStyleNames="{style.uploadForm}" action="/upload">
 			<!-- <g:HTMLPanel> <b:Icon type="UPLOAD"/><b:FileUpload ui:field="fileUpload" 
 				name="image"/> </g:HTMLPanel> -->
 			<b:FileUpload ui:field="fileUpload" name="image" />
